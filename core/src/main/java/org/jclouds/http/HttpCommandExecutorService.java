@@ -18,7 +18,7 @@
  */
 package org.jclouds.http;
 
-import java.util.concurrent.Future;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Capable of invoking http commands.
@@ -35,7 +35,7 @@ public interface HttpCommandExecutorService {
     *           type of result the command extracts from the return value
     * @param command
     *           that generates requests
-    * @return {@link Future} containing the response from the {@code endpoint}
+    * @return {@link ListenableFuture} containing the response from the {@code endpoint}
     */
-   Future<HttpResponse> submit(HttpCommand command);
+   ListenableFuture<HttpResponse> submit(HttpCommand command);
 }

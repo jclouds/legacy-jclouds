@@ -19,7 +19,6 @@
 package org.jclouds.mezeo.pcs2;
 
 import java.net.URI;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -36,6 +35,8 @@ import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides URIs to PCS services via their REST API.
@@ -73,5 +74,5 @@ public interface PCSCloud {
    @GET
    @XMLResponseParser(CloudXlinkHandler.class)
    @Path("/")
-   Future<Response> authenticate();
+   ListenableFuture<Response> authenticate();
 }

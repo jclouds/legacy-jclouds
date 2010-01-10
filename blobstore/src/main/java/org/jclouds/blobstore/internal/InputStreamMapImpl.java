@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -52,6 +51,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Map representation of a live connection to S3. All put operations will result in ETag
@@ -225,14 +225,14 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
       try {
-         Set<Future<String>> puts = Sets.newHashSet();
+         Set<ListenableFuture<String>> puts = Sets.newHashSet();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
             Blob object = connection.newBlob(prefixer.apply(entry.getKey()));
             object.setPayload(Payloads.newPayload(entry.getValue()));
             object.generateMD5();
             puts.add(connection.putBlob(containerName, object));
          }
-         for (Future<String> put : puts)
+         for (ListenableFuture<String> put : puts)
             // this will throw an exception if there was a problem
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {

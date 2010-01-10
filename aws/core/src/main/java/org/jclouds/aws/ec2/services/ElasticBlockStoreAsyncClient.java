@@ -22,7 +22,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -58,6 +57,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to EC2 Elastic Block Store services via their REST API.
  * <p/>
@@ -76,7 +77,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
-   Future<Volume> createVolumeFromSnapshotInAvailabilityZone(
+   ListenableFuture<Volume> createVolumeFromSnapshotInAvailabilityZone(
             @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
             @FormParam("SnapshotId") String snapshotId);
 
@@ -87,7 +88,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
-   Future<Volume> createVolumeInAvailabilityZone(
+   ListenableFuture<Volume> createVolumeInAvailabilityZone(
             @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
             @FormParam("Size") int size);
 
@@ -98,7 +99,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeVolumes")
    @XMLResponseParser(DescribeVolumesResponseHandler.class)
-   Future<? extends Set<Volume>> describeVolumesInRegion(
+   ListenableFuture<? extends Set<Volume>> describeVolumesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindVolumeIdsToIndexedFormParams.class) String... volumeIds);
 
@@ -108,7 +109,8 @@ public interface ElasticBlockStoreAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteVolume")
-   Future<Void> deleteVolumeInRegion(@EndpointParam(parser = RegionToEndpoint.class) Region region,
+   ListenableFuture<Void> deleteVolumeInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("VolumeId") String volumeId);
 
    /**
@@ -118,7 +120,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DetachVolume")
    @ExceptionParser(ReturnVoidOnVolumeAvailable.class)
-   Future<Void> detachVolumeInRegion(
+   ListenableFuture<Void> detachVolumeInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("VolumeId") String volumeId, @FormParam("Force") boolean force,
             DetachVolumeOptions... options);
@@ -130,7 +132,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "AttachVolume")
    @XMLResponseParser(AttachmentHandler.class)
-   Future<Attachment> attachVolumeInRegion(
+   ListenableFuture<Attachment> attachVolumeInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("VolumeId") String volumeId, @FormParam("InstanceId") String instanceId,
             @FormParam("Device") String device);
@@ -142,7 +144,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateSnapshot")
    @XMLResponseParser(SnapshotHandler.class)
-   Future<Snapshot> createSnapshotInRegion(
+   ListenableFuture<Snapshot> createSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("VolumeId") String volumeId, CreateSnapshotOptions... options);
 
@@ -153,7 +155,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSnapshots")
    @XMLResponseParser(DescribeSnapshotsResponseHandler.class)
-   Future<? extends Set<Snapshot>> describeSnapshotsInRegion(
+   ListenableFuture<? extends Set<Snapshot>> describeSnapshotsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             DescribeSnapshotsOptions... options);
 
@@ -163,7 +165,7 @@ public interface ElasticBlockStoreAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteSnapshot")
-   Future<Void> deleteSnapshotInRegion(
+   ListenableFuture<Void> deleteSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("SnapshotId") String snapshotId);
 
@@ -174,7 +176,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = {
             "ModifySnapshotAttribute", "add", "createVolumePermission" })
-   Future<Void> addCreateVolumePermissionsToSnapshotInRegion(
+   ListenableFuture<Void> addCreateVolumePermissionsToSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
@@ -187,7 +189,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = {
             "ModifySnapshotAttribute", "remove", "createVolumePermission" })
-   Future<Void> removeCreateVolumePermissionsFromSnapshotInRegion(
+   ListenableFuture<Void> removeCreateVolumePermissionsFromSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
@@ -201,7 +203,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeSnapshotAttribute",
             "createVolumePermission" })
    @XMLResponseParser(PermissionHandler.class)
-   Future<Permission> getCreateVolumePermissionForSnapshotInRegion(
+   ListenableFuture<Permission> getCreateVolumePermissionForSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("SnapshotId") String snapshotId);
 
@@ -212,7 +214,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute",
             "createVolumePermission" })
-   Future<Void> resetCreateVolumePermissionsOnSnapshotInRegion(
+   ListenableFuture<Void> resetCreateVolumePermissionsOnSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("SnapshotId") String snapshotId);
 

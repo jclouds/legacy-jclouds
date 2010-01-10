@@ -18,6 +18,7 @@
  */
 package org.jclouds.concurrent.internal;
 
+import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.testng.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
@@ -27,19 +28,20 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
- * Tests behavior of FutureExceptionParser
+ * Tests behavior of ListenableFutureExceptionParser
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "concurrent.FutureExceptionParserTest")
+@Test(groups = "unit", sequential = true, testName = "concurrent.ListenableFutureExceptionParserTest")
 public class SyncProxyTest {
 
    @Test
@@ -70,42 +72,42 @@ public class SyncProxyTest {
 
    public static class Async {
 
-      public Future<String> getString() {
-         return executorService.submit(new Callable<String>() {
+      public ListenableFuture<String> getString() {
+         return makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() throws Exception {
                return "foo";
             }
 
-         });
+         }));
       }
 
-      public Future<String> getRuntimeException() {
-         return executorService.submit(new Callable<String>() {
+      public ListenableFuture<String> getRuntimeException() {
+         return makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() throws Exception {
                throw new RuntimeException();
             }
 
-         });
+         }));
       }
 
-      public Future<String> getTypedException() throws FileNotFoundException {
-         return executorService.submit(new Callable<String>() {
+      public ListenableFuture<String> getTypedException() throws FileNotFoundException {
+         return makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() throws FileNotFoundException {
                throw new FileNotFoundException();
             }
 
-         });
+         }));
       }
 
       public String newString() {
          return "new";
       }
 
-      public Future<String> take20Milliseconds() {
-         return executorService.submit(new Callable<String>() {
+      public ListenableFuture<String> take20Milliseconds() {
+         return makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() {
                try {
@@ -116,11 +118,11 @@ public class SyncProxyTest {
                return "foo";
             }
 
-         });
+         }));
       }
 
-      public Future<String> take100MillisecondsAndTimeout() {
-         return executorService.submit(new Callable<String>() {
+      public ListenableFuture<String> take100MillisecondsAndTimeout() {
+         return makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() {
                try {
@@ -131,10 +133,10 @@ public class SyncProxyTest {
                return "foo";
             }
 
-         });
+         }));
       }
 
-      public Future<String> take100MillisecondsAndOverride() {
+      public ListenableFuture<String> take100MillisecondsAndOverride() {
          return take100MillisecondsAndTimeout();
       }
 
@@ -148,7 +150,7 @@ public class SyncProxyTest {
    }
 
    @Test
-   public void testUnwrapFuture() {
+   public void testUnwrapListenableFuture() {
       assertEquals(sync.getString(), "foo");
    }
 

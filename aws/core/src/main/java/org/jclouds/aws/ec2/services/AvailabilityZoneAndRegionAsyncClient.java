@@ -24,7 +24,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -45,6 +44,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to EC2 Availability Zones and Regions via their REST API.
  * <p/>
@@ -63,7 +64,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeAvailabilityZones")
    @XMLResponseParser(DescribeAvailabilityZonesResponseHandler.class)
-   Future<? extends Set<AvailabilityZoneInfo>> describeAvailabilityZonesInRegion(
+   ListenableFuture<? extends Set<AvailabilityZoneInfo>> describeAvailabilityZonesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             DescribeAvailabilityZonesOptions... options);
 
@@ -75,6 +76,6 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeRegions")
    @XMLResponseParser(DescribeRegionsResponseHandler.class)
-   Future<? extends Map<Region, URI>> describeRegions(DescribeRegionsOptions... options);
+   ListenableFuture<? extends Map<Region, URI>> describeRegions(DescribeRegionsOptions... options);
 
 }

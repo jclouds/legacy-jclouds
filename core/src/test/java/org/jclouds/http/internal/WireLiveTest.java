@@ -30,7 +30,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.encryption.EncryptionService;
@@ -39,6 +38,8 @@ import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -158,7 +159,8 @@ public class WireLiveTest {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       Callable<Void> callable = new ConnectionTester(connection.getInputStream());
-      Future<Void> result = newCachedThreadPool().submit(callable);
+      ListenableFuture<Void> result = Futures
+               .makeListenable(newCachedThreadPool().submit(callable));
       result.get(30, TimeUnit.SECONDS);
    }
 

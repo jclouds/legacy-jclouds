@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * @see SyncClient
  * @see TimeUnit
- * @see Future#get(long,TimeUnit)
+ * @see ListenableFuture#get(long,TimeUnit)
  * @author Adrian Cole
  */
 @Target( { TYPE, METHOD })

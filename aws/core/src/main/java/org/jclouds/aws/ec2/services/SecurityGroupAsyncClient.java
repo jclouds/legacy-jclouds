@@ -22,7 +22,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.SortedSet;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -46,6 +45,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to EC2 via their REST API.
  * <p/>
@@ -63,7 +64,7 @@ public interface SecurityGroupAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateSecurityGroup")
-   Future<Void> createSecurityGroupInRegion(
+   ListenableFuture<Void> createSecurityGroupInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("GroupName") String name, @FormParam("GroupDescription") String description);
 
@@ -74,7 +75,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteSecurityGroup")
    @ExceptionParser(ReturnVoidOnGroupNotFound.class)
-   Future<Void> deleteSecurityGroupInRegion(
+   ListenableFuture<Void> deleteSecurityGroupInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("GroupName") String name);
 
@@ -85,7 +86,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
    @XMLResponseParser(DescribeSecurityGroupsResponseHandler.class)
-   Future<? extends SortedSet<SecurityGroup>> describeSecurityGroupsInRegion(
+   ListenableFuture<? extends SortedSet<SecurityGroup>> describeSecurityGroupsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindGroupNameToIndexedFormParams.class) String... securityGroupNames);
 
@@ -95,7 +96,7 @@ public interface SecurityGroupAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
-   Future<Void> authorizeSecurityGroupIngressInRegion(
+   ListenableFuture<Void> authorizeSecurityGroupIngressInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("GroupName") String groupName,
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
@@ -107,7 +108,7 @@ public interface SecurityGroupAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
-   Future<Void> authorizeSecurityGroupIngressInRegion(
+   ListenableFuture<Void> authorizeSecurityGroupIngressInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("GroupName") String groupName,
             @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
@@ -119,7 +120,7 @@ public interface SecurityGroupAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
-   Future<Void> revokeSecurityGroupIngressInRegion(
+   ListenableFuture<Void> revokeSecurityGroupIngressInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("GroupName") String groupName,
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
@@ -131,7 +132,7 @@ public interface SecurityGroupAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
-   Future<Void> revokeSecurityGroupIngressInRegion(
+   ListenableFuture<Void> revokeSecurityGroupIngressInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("GroupName") String groupName,
             @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,

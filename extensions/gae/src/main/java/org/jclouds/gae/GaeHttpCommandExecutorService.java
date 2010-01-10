@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -55,6 +54,7 @@ import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Google App Engine version of {@link HttpCommandExecutorService}
@@ -77,7 +77,7 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    }
 
    @Override
-   public Future<HttpResponse> submit(HttpCommand command) {
+   public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       convertHostHeaderToEndPoint(command);
       return super.submit(command);
    }

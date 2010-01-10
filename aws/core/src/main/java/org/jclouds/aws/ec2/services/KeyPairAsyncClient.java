@@ -22,7 +22,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -42,6 +41,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to EC2 via their REST API.
  * <p/>
@@ -60,7 +61,7 @@ public interface KeyPairAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateKeyPair")
    @XMLResponseParser(KeyPairResponseHandler.class)
-   Future<KeyPair> createKeyPairInRegion(
+   ListenableFuture<KeyPair> createKeyPairInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("KeyName") String keyName);
 
@@ -71,7 +72,7 @@ public interface KeyPairAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeKeyPairs")
    @XMLResponseParser(DescribeKeyPairsResponseHandler.class)
-   Future<? extends Set<KeyPair>> describeKeyPairsInRegion(
+   ListenableFuture<? extends Set<KeyPair>> describeKeyPairsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
 
@@ -81,7 +82,7 @@ public interface KeyPairAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteKeyPair")
-   Future<Void> deleteKeyPairInRegion(
+   ListenableFuture<Void> deleteKeyPairInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("KeyName") String keyName);
 

@@ -37,7 +37,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * import org.jclouds.aws.s3.S3Client;
  * <p/>
  * S3Client connection = // get connection
- * Future<Boolean> createdInEu = connection.putBucketIfNotExists("bucketName",createIn(EU));
+ * ListenableFuture<Boolean> createdInEu = connection.putBucketIfNotExists("bucketName",createIn(EU));
  * <code>
  * 
  * @author Adrian Cole

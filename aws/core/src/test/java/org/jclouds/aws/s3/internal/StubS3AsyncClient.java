@@ -19,6 +19,7 @@
 package org.jclouds.aws.s3.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.compose;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
@@ -27,7 +28,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -70,6 +70,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Implementation of {@link S3AsyncBlobStore} which keeps all data in a local Map object.
@@ -122,7 +123,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public static final String DEFAULT_OWNER_ID = "abc123";
 
-   public Future<Boolean> putBucketIfNotExists(String name, PutBucketOptions... optionsList) {
+   public ListenableFuture<Boolean> putBucketIfNotExists(String name,
+            PutBucketOptions... optionsList) {
       final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions()
                : optionsList[0];
       if (options.getLocationConstraint() != null)
@@ -131,15 +133,15 @@ public class StubS3AsyncClient implements S3AsyncClient {
       return blobStore.createContainer(name);
    }
 
-   public Future<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {
+   public ListenableFuture<ListBucketResponse> listBucket(final String name,
+            ListBucketOptions... optionsList) {
       ListContainerOptions options = bucket2ContainerListOptions.apply(optionsList);
-      return Futures.compose(Futures.makeListenable(blobStore.list(name, options)),
-               resource2BucketList);
+      return compose(blobStore.list(name, options), resource2BucketList);
    }
 
-   public Future<ObjectMetadata> copyObject(final String sourceBucket, final String sourceObject,
-            final String destinationBucket, final String destinationObject,
-            CopyObjectOptions... nullableOptions) {
+   public ListenableFuture<ObjectMetadata> copyObject(final String sourceBucket,
+            final String sourceObject, final String destinationBucket,
+            final String destinationObject, CopyObjectOptions... nullableOptions) {
       final CopyObjectOptions options = (nullableOptions.length == 0) ? new CopyObjectOptions()
                : nullableOptions[0];
       ConcurrentMap<String, Blob> source = blobStore.getContainerToBlobs().get(sourceBucket);
@@ -179,7 +181,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
       return immediateFailedFuture(new KeyNotFoundException(sourceBucket, sourceObject));
    }
 
-   public Future<String> putObject(final String bucketName, final S3Object object,
+   public ListenableFuture<String> putObject(final String bucketName, final S3Object object,
             PutObjectOptions... nullableOptions) {
       final PutObjectOptions options = (nullableOptions.length == 0) ? new PutObjectOptions()
                : nullableOptions[0];
@@ -204,11 +206,12 @@ public class StubS3AsyncClient implements S3AsyncClient {
       return acl;
    }
 
-   public Future<AccessControlList> getBucketACL(final String bucket) {
+   public ListenableFuture<AccessControlList> getBucketACL(final String bucket) {
       return immediateFuture(getACLforS3Item(bucket));
    }
 
-   public Future<AccessControlList> getObjectACL(final String bucket, final String objectKey) {
+   public ListenableFuture<AccessControlList> getObjectACL(final String bucket,
+            final String objectKey) {
       return immediateFuture(getACLforS3Item(bucket + "/" + objectKey));
    }
 
@@ -235,38 +238,37 @@ public class StubS3AsyncClient implements S3AsyncClient {
       return acl;
    }
 
-   public Future<Boolean> putBucketACL(final String bucket, final AccessControlList acl) {
+   public ListenableFuture<Boolean> putBucketACL(final String bucket, final AccessControlList acl) {
       keyToAcl.put(bucket, sanitizeUploadedACL(acl));
       return immediateFuture(true);
    }
 
-   public Future<Boolean> putObjectACL(final String bucket, final String objectKey,
+   public ListenableFuture<Boolean> putObjectACL(final String bucket, final String objectKey,
             final AccessControlList acl) {
       keyToAcl.put(bucket + "/" + objectKey, sanitizeUploadedACL(acl));
       return immediateFuture(true);
    }
 
-   public Future<Boolean> bucketExists(final String bucketName) {
+   public ListenableFuture<Boolean> bucketExists(final String bucketName) {
       return immediateFuture(blobStore.getContainerToBlobs().containsKey(bucketName));
    }
 
-   public Future<Boolean> deleteBucketIfEmpty(String bucketName) {
+   public ListenableFuture<Boolean> deleteBucketIfEmpty(String bucketName) {
       return blobStore.deleteContainerImpl(bucketName);
    }
 
-   public Future<Void> deleteObject(String bucketName, String key) {
+   public ListenableFuture<Void> deleteObject(String bucketName, String key) {
       return blobStore.removeBlob(bucketName, key);
    }
 
-   public Future<S3Object> getObject(final String bucketName, final String key,
+   public ListenableFuture<S3Object> getObject(final String bucketName, final String key,
             final GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return Futures.compose(
-               Futures.makeListenable(blobStore.getBlob(bucketName, key, getOptions)), blob2Object);
+      return compose(blobStore.getBlob(bucketName, key, getOptions), blob2Object);
    }
 
-   public Future<ObjectMetadata> headObject(String bucketName, String key) {
-      return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(bucketName, key)),
+   public ListenableFuture<ObjectMetadata> headObject(String bucketName, String key) {
+      return compose(Futures.makeListenable(blobStore.blobMetadata(bucketName, key)),
                new Function<BlobMetadata, ObjectMetadata>() {
                   @Override
                   public ObjectMetadata apply(BlobMetadata from) {
@@ -275,7 +277,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
                });
    }
 
-   public Future<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {
+   public ListenableFuture<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {
       return immediateFuture(Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs()
                .keySet(), new Function<String, BucketMetadata>() {
          public BucketMetadata apply(String name) {
@@ -290,33 +292,33 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    @Override
-   public Future<LocationConstraint> getBucketLocation(String bucketName) {
+   public ListenableFuture<LocationConstraint> getBucketLocation(String bucketName) {
       return immediateFuture(LocationConstraint.US_STANDARD);
    }
 
    @Override
-   public Future<Payer> getBucketPayer(String bucketName) {
+   public ListenableFuture<Payer> getBucketPayer(String bucketName) {
       return immediateFuture(Payer.BUCKET_OWNER);
    }
 
    @Override
-   public Future<Void> setBucketPayer(String bucketName, Payer payer) {
+   public ListenableFuture<Void> setBucketPayer(String bucketName, Payer payer) {
       return immediateFuture(null);
 
    }
 
    @Override
-   public Future<Void> disableBucketLogging(String bucketName) {
+   public ListenableFuture<Void> disableBucketLogging(String bucketName) {
       return immediateFuture(null);
    }
 
    @Override
-   public Future<Void> enableBucketLogging(String bucketName, BucketLogging logging) {
+   public ListenableFuture<Void> enableBucketLogging(String bucketName, BucketLogging logging) {
       return immediateFuture(null);
    }
 
    @Override
-   public Future<BucketLogging> getBucketLogging(String bucketName) {
+   public ListenableFuture<BucketLogging> getBucketLogging(String bucketName) {
       return immediateFuture(null);
    }
 

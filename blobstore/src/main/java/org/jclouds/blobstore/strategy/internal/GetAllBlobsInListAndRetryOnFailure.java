@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -45,6 +44,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -80,11 +80,11 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
 
    public SortedSet<? extends Blob> execute(String container, ListContainerOptions options) {
       SortedSet<Blob> objects = Sets.newTreeSet();
-      Map<String, Future<? extends Blob>> futureObjects = Maps.newHashMap();
+      Map<String, ListenableFuture<? extends Blob>> futureObjects = Maps.newHashMap();
       for (BlobMetadata md : getAllBlobMetadata.execute(container, options)) {
          futureObjects.put(md.getName(), connection.getBlob(container, md.getName()));
       }
-      for (Entry<String, Future<? extends Blob>> futureObjectEntry : futureObjects.entrySet()) {
+      for (Entry<String, ListenableFuture<? extends Blob>> futureObjectEntry : futureObjects.entrySet()) {
          try {
             ifNotFoundRetryOtherwiseAddToSet(container, futureObjectEntry.getKey(),
                      futureObjectEntry.getValue(), objects);
@@ -100,7 +100,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
 
    @VisibleForTesting
    public void ifNotFoundRetryOtherwiseAddToSet(String container, String key,
-            Future<? extends Blob> value, Set<Blob> objects) throws InterruptedException,
+            ListenableFuture<? extends Blob> value, Set<Blob> objects) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (int i = 0; i < 3; i++) {
          try {

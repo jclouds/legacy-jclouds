@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,6 +45,7 @@ import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -78,8 +79,8 @@ public class VCloudRestClientModuleTest {
 
          private final AtomicInteger token = new AtomicInteger();
 
-         public Future<VCloudSession> login() {
-            return new Future<VCloudSession>() {
+         public ListenableFuture<VCloudSession> login() {
+            return new ListenableFuture<VCloudSession>() {
                @Override
                public VCloudSession get() throws InterruptedException, ExecutionException {
                   return new VCloudSession() {
@@ -114,6 +115,11 @@ public class VCloudRestClientModuleTest {
                @Override
                public boolean isDone() {
                   return false;
+               }
+
+               @Override
+               public void addListener(Runnable listener, Executor exec) {
+
                }
             };
 

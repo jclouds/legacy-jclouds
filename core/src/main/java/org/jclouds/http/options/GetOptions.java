@@ -45,7 +45,7 @@ import com.google.common.collect.Multimap;
  * 
  * 
  * // this will get the first megabyte of an object, provided it wasn't modified since yesterday
- * Future<S3Object> object = client.get("objectName",range(0,1024).ifUnmodifiedSince(new Date().minusDays(1)));
+ * ListenableFuture<S3Object> object = client.get("objectName",range(0,1024).ifUnmodifiedSince(new Date().minusDays(1)));
  * <code>
  * 
  * @author Adrian Cole

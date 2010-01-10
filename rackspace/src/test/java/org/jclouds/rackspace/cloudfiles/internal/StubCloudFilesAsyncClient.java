@@ -19,13 +19,13 @@
 package org.jclouds.rackspace.cloudfiles.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.compose;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -53,7 +53,7 @@ import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Implementation of {@link CloudFilesAsyncClient} which keeps all data in a local Map object.
@@ -89,46 +89,45 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
    }
 
-   public Future<Boolean> containerExists(final String container) {
+   public ListenableFuture<Boolean> containerExists(final String container) {
       return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
    }
 
-   public Future<Boolean> createContainer(String container) {
+   public ListenableFuture<Boolean> createContainer(String container) {
       return blobStore.createContainer(container);
    }
 
-   public Future<Boolean> deleteContainerIfEmpty(String container) {
+   public ListenableFuture<Boolean> deleteContainerIfEmpty(String container) {
       return blobStore.deleteContainerImpl(container);
    }
 
-   public Future<Boolean> disableCDN(String container) {
+   public ListenableFuture<Boolean> disableCDN(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> enableCDN(String container, long ttl) {
+   public ListenableFuture<URI> enableCDN(String container, long ttl) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> enableCDN(String container) {
+   public ListenableFuture<URI> enableCDN(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<AccountMetadata> getAccountStatistics() {
+   public ListenableFuture<AccountMetadata> getAccountStatistics() {
       throw new UnsupportedOperationException();
    }
 
-   public Future<ContainerCDNMetadata> getCDNMetadata(String container) {
+   public ListenableFuture<ContainerCDNMetadata> getCDNMetadata(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<CFObject> getObject(String container, String key, GetOptions... options) {
+   public ListenableFuture<CFObject> getObject(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return Futures.compose(Futures.makeListenable(blobStore.getBlob(container, key, getOptions)),
-               blob2Object);
+      return compose(blobStore.getBlob(container, key, getOptions), blob2Object);
    }
 
-   public Future<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
-      return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(container, key)),
+   public ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
+      return compose(blobStore.blobMetadata(container, key),
                new Function<BlobMetadata, MutableObjectInfoWithMetadata>() {
 
                   @Override
@@ -140,12 +139,12 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
                });
    }
 
-   public Future<? extends SortedSet<ContainerCDNMetadata>> listCDNContainers(
+   public ListenableFuture<? extends SortedSet<ContainerCDNMetadata>> listCDNContainers(
             ListCdnContainerOptions... options) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<? extends SortedSet<ContainerMetadata>> listContainers(
+   public ListenableFuture<? extends SortedSet<ContainerMetadata>> listContainers(
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... options) {
       return immediateFuture(Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs()
                .keySet(), new Function<String, ContainerMetadata>() {
@@ -155,27 +154,26 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
       })));
    }
 
-   public Future<ListContainerResponse<ObjectInfo>> listObjects(String container,
+   public ListenableFuture<ListContainerResponse<ObjectInfo>> listObjects(String container,
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
-      return Futures.compose(Futures.makeListenable(blobStore.list(container, options)),
-               resource2ObjectList);
+      return compose(blobStore.list(container, options), resource2ObjectList);
    }
 
-   public Future<String> putObject(String container, CFObject object) {
+   public ListenableFuture<String> putObject(String container, CFObject object) {
       return blobStore.putBlob(container, object2Blob.apply(object));
    }
 
-   public Future<Void> removeObject(String container, String key) {
+   public ListenableFuture<Void> removeObject(String container, String key) {
       return blobStore.removeBlob(container, key);
    }
 
-   public Future<Boolean> setObjectInfo(String container, String key,
+   public ListenableFuture<Boolean> setObjectInfo(String container, String key,
             Map<String, String> userMetadata) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> updateCDN(String container, long ttl) {
+   public ListenableFuture<URI> updateCDN(String container, long ttl) {
       throw new UnsupportedOperationException();
    }
 

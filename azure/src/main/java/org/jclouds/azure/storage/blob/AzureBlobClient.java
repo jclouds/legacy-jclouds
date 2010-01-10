@@ -20,7 +20,6 @@ package org.jclouds.azure.storage.blob;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
@@ -33,11 +32,14 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to Azure Blob via their REST API.
  * <p/>
- * All commands return a Future of the result from Azure Blob. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
+ * All commands return a ListenableFuture of the result from Azure Blob. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole

@@ -22,7 +22,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -40,6 +39,8 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to EC2 Monitoring Services via their REST API.
@@ -59,7 +60,7 @@ public interface MonitoringAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "MonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
-   Future<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
+   ListenableFuture<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
@@ -71,7 +72,7 @@ public interface MonitoringAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "UnmonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
-   Future<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
+   ListenableFuture<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);

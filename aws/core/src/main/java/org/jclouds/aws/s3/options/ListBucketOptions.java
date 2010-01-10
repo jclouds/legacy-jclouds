@@ -33,7 +33,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.*
  * <p/>
  * S3Client connection = // get connection
- * Future<S3Bucket> bucket = connection.listBucket("bucketName",withPrefix("home/users").maxKeys(1000));
+ * ListenableFuture<S3Bucket> bucket = connection.listBucket("bucketName",withPrefix("home/users").maxKeys(1000));
  * <code>
  * 
  * @author Adrian Cole

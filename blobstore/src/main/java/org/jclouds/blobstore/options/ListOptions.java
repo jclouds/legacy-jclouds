@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * import static org.jclouds.blobstore.options.ListOptions.Builder.*
  * <p/>
  * BlobStore connection = // get connection
- * Future<BoundedSortedSet<ResourceMetadata>> list = connection.list(maxResults(1000));
+ * ListenableFuture<BoundedSortedSet<ResourceMetadata>> list = connection.list(maxResults(1000));
  * <code>
  * 
  * @author Adrian Cole

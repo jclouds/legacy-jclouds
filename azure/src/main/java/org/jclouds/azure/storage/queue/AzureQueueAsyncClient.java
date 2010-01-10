@@ -19,7 +19,6 @@
 package org.jclouds.azure.storage.queue;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,6 +41,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides asynchronous access to Azure Queue via their REST API.
  * <p/>
@@ -55,8 +56,9 @@ import org.jclouds.rest.annotations.XMLResponseParser;
  * If you need to store messages larger than 8 KB, you can store message data as a blob or in a
  * table, and then store a reference to the data as a message in a queue.
  * <p/>
- * All commands return a Future of the result from Azure Queue. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
+ * All commands return a ListenableFuture of the result from Azure Queue. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole
@@ -74,7 +76,8 @@ public interface AzureQueueAsyncClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   Future<? extends BoundedSortedSet<QueueMetadata>> listQueues(ListOptions... listOptions);
+   ListenableFuture<? extends BoundedSortedSet<QueueMetadata>> listQueues(
+            ListOptions... listOptions);
 
    /**
     * @see AzureQueueClient#createQueue
@@ -82,7 +85,7 @@ public interface AzureQueueAsyncClient {
    @PUT
    @Path("{queue}")
    @QueryParams(keys = "restype", values = "queue")
-   Future<Boolean> createQueue(@PathParam("queue") String queue, CreateOptions... options);
+   ListenableFuture<Boolean> createQueue(@PathParam("queue") String queue, CreateOptions... options);
 
    /**
     * @see AzureQueueClient#deleteQueue
@@ -90,6 +93,6 @@ public interface AzureQueueAsyncClient {
    @DELETE
    @Path("{queue}")
    @QueryParams(keys = "restype", values = "queue")
-   Future<Boolean> deleteQueue(@PathParam("queue") String queue);
+   ListenableFuture<Boolean> deleteQueue(@PathParam("queue") String queue);
 
 }

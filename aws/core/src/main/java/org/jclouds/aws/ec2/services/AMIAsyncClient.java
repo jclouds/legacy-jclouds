@@ -23,7 +23,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -54,6 +53,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to AMI Services.
  * <p/>
@@ -72,7 +73,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeImages")
    @XMLResponseParser(DescribeImagesResponseHandler.class)
-   Future<? extends Set<Image>> describeImagesInRegion(
+   ListenableFuture<? extends Set<Image>> describeImagesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             DescribeImagesOptions... options);
 
@@ -83,7 +84,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateImage")
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> createImageInRegion(
+   ListenableFuture<String> createImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("Name") String name, @FormParam("InstanceId") String instanceId,
             CreateImageOptions... options);
@@ -94,7 +95,7 @@ public interface AMIAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeregisterImage")
-   Future<Void> deregisterImageInRegion(
+   ListenableFuture<Void> deregisterImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 
@@ -105,7 +106,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "RegisterImage")
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> registerImageFromManifestInRegion(
+   ListenableFuture<String> registerImageFromManifestInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("Name") String imageName, @FormParam("ImageLocation") String pathToManifest,
             RegisterImageOptions... options);
@@ -118,7 +119,7 @@ public interface AMIAsyncClient {
    @FormParams(keys = { ACTION, "RootDeviceName", "BlockDeviceMapping.0.DeviceName" }, values = {
             "RegisterImage", "/dev/sda1", "/dev/sda1" })
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> registerUnixImageBackedByEbsInRegion(
+   ListenableFuture<String> registerUnixImageBackedByEbsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("Name") String imageName,
             @FormParam("BlockDeviceMapping.0.Ebs.SnapshotId") String ebsSnapshotId,
@@ -130,7 +131,7 @@ public interface AMIAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetImageAttribute", "launchPermission" })
-   Future<Void> resetLaunchPermissionsOnImageInRegion(
+   ListenableFuture<Void> resetLaunchPermissionsOnImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 
@@ -141,7 +142,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "add", "launchPermission" })
-   Future<Void> addLaunchPermissionsToImageInRegion(
+   ListenableFuture<Void> addLaunchPermissionsToImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
@@ -154,7 +155,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "remove", "launchPermission" })
-   Future<Void> removeLaunchPermissionsFromImageInRegion(
+   ListenableFuture<Void> removeLaunchPermissionsFromImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
@@ -168,7 +169,7 @@ public interface AMIAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute",
             "launchPermission" })
    @XMLResponseParser(PermissionHandler.class)
-   Future<Permission> getLaunchPermissionForImageInRegion(
+   ListenableFuture<Permission> getLaunchPermissionForImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 
@@ -179,7 +180,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute", "productCodes" })
    @XMLResponseParser(ProductCodesHandler.class)
-   Future<? extends Set<String>> getProductCodesForImageInRegion(
+   ListenableFuture<? extends Set<String>> getProductCodesForImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 
@@ -191,7 +192,7 @@ public interface AMIAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute",
             "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
-   Future<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImageInRegion(
+   ListenableFuture<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 
@@ -202,7 +203,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "add", "productCodes" })
-   Future<Void> addProductCodesToImageInRegion(
+   ListenableFuture<Void> addProductCodesToImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);
@@ -214,7 +215,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "remove", "productCodes" })
-   Future<Void> removeProductCodesFromImageInRegion(
+   ListenableFuture<Void> removeProductCodesFromImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);

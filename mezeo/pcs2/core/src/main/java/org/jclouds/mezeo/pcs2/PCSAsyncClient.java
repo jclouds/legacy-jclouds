@@ -21,7 +21,6 @@ package org.jclouds.mezeo.pcs2;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -56,6 +55,8 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindToStringPayload;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides asynchronous access to Mezeo PCS v2 via their REST API.
  * <p/>
@@ -78,7 +79,7 @@ public interface PCSAsyncClient {
    @XMLResponseParser(ContainerHandler.class)
    @Headers(keys = "X-Cloud-Depth", values = "2")
    @Endpoint(RootContainer.class)
-   Future<? extends ContainerList> list();
+   ListenableFuture<? extends ContainerList> list();
 
    /**
     * @see PCSAsyncClient#list(URI)
@@ -86,7 +87,7 @@ public interface PCSAsyncClient {
    @GET
    @XMLResponseParser(ContainerHandler.class)
    @Headers(keys = "X-Cloud-Depth", values = "2")
-   Future<? extends ContainerList> list(@EndpointParam URI container);
+   ListenableFuture<? extends ContainerList> list(@EndpointParam URI container);
 
    /**
     * @see PCSAsyncClient#createContainer
@@ -94,14 +95,15 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    @Endpoint(RootContainer.class)
-   Future<URI> createContainer(@BinderParam(BindContainerNameToXmlPayload.class) String container);
+   ListenableFuture<URI> createContainer(
+            @BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
     * @see PCSAsyncClient#createContainer
     */
    @POST
    @Path("/contents")
-   Future<URI> createContainer(@EndpointParam URI parent,
+   ListenableFuture<URI> createContainer(@EndpointParam URI parent,
             @BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
@@ -109,14 +111,14 @@ public interface PCSAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteContainer(@EndpointParam URI container);
+   ListenableFuture<Void> deleteContainer(@EndpointParam URI container);
 
    /**
     * @see PCSAsyncClient#uploadFile
     */
    @POST
    @Path("/contents")
-   Future<URI> uploadFile(@EndpointParam URI container,
+   ListenableFuture<URI> uploadFile(@EndpointParam URI container,
             @BinderParam(BindPCSFileToMultipartForm.class) PCSFile object);
 
    /**
@@ -124,7 +126,7 @@ public interface PCSAsyncClient {
     */
    @POST
    @Path("/contents")
-   Future<URI> createFile(@EndpointParam URI container,
+   ListenableFuture<URI> createFile(@EndpointParam URI container,
             @BinderParam(BindFileInfoToXmlPayload.class) PCSFile object);
 
    /**
@@ -132,7 +134,7 @@ public interface PCSAsyncClient {
     */
    @PUT
    @Path("/content")
-   Future<Void> uploadBlock(@EndpointParam URI file,
+   ListenableFuture<Void> uploadBlock(@EndpointParam URI file,
             @BinderParam(BindDataToPayload.class) PCSFile object, PutBlockOptions... options);
 
    /**
@@ -140,7 +142,7 @@ public interface PCSAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteFile(@EndpointParam URI file);
+   ListenableFuture<Void> deleteFile(@EndpointParam URI file);
 
    /**
     * @see PCSAsyncClient#downloadFile
@@ -148,7 +150,7 @@ public interface PCSAsyncClient {
    @GET
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("/content")
-   Future<InputStream> downloadFile(@EndpointParam URI file);
+   ListenableFuture<InputStream> downloadFile(@EndpointParam URI file);
 
    /**
     * @see PCSAsyncClient#getFileInfo
@@ -157,15 +159,15 @@ public interface PCSAsyncClient {
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @XMLResponseParser(FileHandler.class)
    @Headers(keys = "X-Cloud-Depth", values = "2")
-   Future<FileInfoWithMetadata> getFileInfo(@EndpointParam URI file);
+   ListenableFuture<FileInfoWithMetadata> getFileInfo(@EndpointParam URI file);
 
    /**
     * @see PCSAsyncClient#putMetadataItem
     */
    @PUT
    @Path("/metadata/{key}")
-   Future<Void> putMetadataItem(@EndpointParam URI resource, @PathParam("key") String key,
-            @BinderParam(BindToStringPayload.class) String value);
+   ListenableFuture<Void> putMetadataItem(@EndpointParam URI resource,
+            @PathParam("key") String key, @BinderParam(BindToStringPayload.class) String value);
 
    /**
     * @see PCSAsyncClient#addMetadataItemToMap
@@ -173,6 +175,6 @@ public interface PCSAsyncClient {
    @GET
    @ResponseParser(AddMetadataItemIntoMap.class)
    @Path("/metadata/{key}")
-   Future<Void> addMetadataItemToMap(@EndpointParam URI resource, @PathParam("key") String key,
-            Map<String, String> map);
+   ListenableFuture<Void> addMetadataItemToMap(@EndpointParam URI resource,
+            @PathParam("key") String key, Map<String, String> map);
 }

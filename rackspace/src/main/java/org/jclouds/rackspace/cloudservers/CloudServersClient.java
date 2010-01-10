@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudservers;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.PathParam;
@@ -38,12 +37,16 @@ import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
+import org.jclouds.rest.ResourceNotFoundException;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to Cloud Servers via their REST API.
  * <p/>
- * All commands return a Future of the result from Cloud Servers. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
+ * All commands return a ListenableFuture of the result from Cloud Servers. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see CloudServersAsyncClient
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
@@ -68,7 +71,8 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified server.
     * 
-    * @throws ResourceNotFoundException if the server is not found
+    * @throws ResourceNotFoundException
+    *            if the server is not found
     * @see Server
     */
    Server getServer(@PathParam("id") int id);
@@ -238,7 +242,8 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified flavor.
     * 
-    * @throws ResourceNotFoundException if the flavor is not found
+    * @throws ResourceNotFoundException
+    *            if the flavor is not found
     * @see Flavor
     */
    Flavor getFlavor(int id);
@@ -256,7 +261,8 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified image.
     * 
-    * @throws ResourceNotFoundException if the image is not found
+    * @throws ResourceNotFoundException
+    *            if the image is not found
     * @see Image
     */
    Image getImage(int id);
@@ -289,7 +295,8 @@ public interface CloudServersClient {
     * Note: At present, image creation is an asynchronous operation, so coordinating the creation
     * with data quiescence, etc. is currently not possible.
     * 
-    * @throws ResourceNotFoundException if the server is not found
+    * @throws ResourceNotFoundException
+    *            if the server is not found
     * @see Image
     */
    Image createImageFromServer(String imageName, int serverId);
@@ -307,7 +314,8 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified shared IP group.
     * 
-    * @throws ResourceNotFoundException if the shared IP group is not found
+    * @throws ResourceNotFoundException
+    *            if the shared IP group is not found
     * @see SharedIpGroup
     */
    SharedIpGroup getSharedIpGroup(int id);

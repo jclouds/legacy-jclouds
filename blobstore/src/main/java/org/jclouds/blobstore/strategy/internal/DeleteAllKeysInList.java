@@ -19,7 +19,6 @@
 package org.jclouds.blobstore.strategy.internal;
 
 import java.util.Set;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -37,6 +36,7 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -66,12 +66,12 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    }
 
    public void execute(final String containerName, ListContainerOptions options) {
-      Set<Future<Void>> deletes = Sets.newHashSet();
+      Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
       for (ResourceMetadata md : getAllBlobMetadata.execute(containerName, options)) {
          if (md.getType() == ResourceType.BLOB)
             deletes.add(connection.removeBlob(containerName, md.getName()));
       }
-      for (Future<Void> isdeleted : deletes) {
+      for (ListenableFuture<Void> isdeleted : deletes) {
          try {
             isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          } catch (Exception e) {

@@ -33,7 +33,7 @@ import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
  * import static org.jclouds.aws.ec2.options.DescribeRegionsOptions.Builder.*
  * <p/>
  * EC2Client connection = // get connection
- * Future<SortedSet<ImageMetadata>> images = connection.getRegionsAndRegionsServices().describeRegions(regions("us-east-1a", "us-east-1b"));
+ * ListenableFuture<SortedSet<ImageMetadata>> images = connection.getRegionsAndRegionsServices().describeRegions(regions("us-east-1a", "us-east-1b"));
  * <code>
  * 
  * @author Adrian Cole

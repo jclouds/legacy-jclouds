@@ -21,7 +21,6 @@ package org.jclouds.mezeo.pcs2.internal;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
@@ -29,49 +28,51 @@ import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Implementation of {@link PCSBlobStore} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  */
 public class StubPCSAsyncClient implements PCSAsyncClient {
-   public Future<? extends ContainerList> list() {
+   public ListenableFuture<? extends ContainerList> list() {
       throw new UnsupportedOperationException();
    }
 
-   public Future<? extends ContainerList> list(URI container) {
+   public ListenableFuture<? extends ContainerList> list(URI container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> createContainer(String container) {
+   public ListenableFuture<URI> createContainer(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> createContainer(URI parent, String container) {
+   public ListenableFuture<URI> createContainer(URI parent, String container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> deleteContainer(URI container) {
+   public ListenableFuture<Void> deleteContainer(URI container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> deleteFile(URI file) {
+   public ListenableFuture<Void> deleteFile(URI file) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<InputStream> downloadFile(URI file) {
+   public ListenableFuture<InputStream> downloadFile(URI file) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> uploadFile(URI container, PCSFile object) {
+   public ListenableFuture<URI> uploadFile(URI container, PCSFile object) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<URI> createFile(URI container, PCSFile object) {
+   public ListenableFuture<URI> createFile(URI container, PCSFile object) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> uploadBlock(URI file, PCSFile object, PutBlockOptions... options) {
+   public ListenableFuture<Void> uploadBlock(URI file, PCSFile object, PutBlockOptions... options) {
       throw new UnsupportedOperationException();
    }
 
@@ -79,15 +80,16 @@ public class StubPCSAsyncClient implements PCSAsyncClient {
       throw new UnsupportedOperationException();
    }
 
-   public Future<FileInfoWithMetadata> getFileInfo(URI file) {
+   public ListenableFuture<FileInfoWithMetadata> getFileInfo(URI file) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> addMetadataItemToMap(URI resource, String key, Map<String, String> map) {
+   public ListenableFuture<Void> addMetadataItemToMap(URI resource, String key,
+            Map<String, String> map) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> putMetadataItem(URI resource, String key, String value) {
+   public ListenableFuture<Void> putMetadataItem(URI resource, String key, String value) {
       throw new UnsupportedOperationException();
    }
 

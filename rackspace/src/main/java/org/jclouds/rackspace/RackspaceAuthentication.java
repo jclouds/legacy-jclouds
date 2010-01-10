@@ -19,7 +19,6 @@
 package org.jclouds.rackspace;
 
 import java.net.URI;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -29,6 +28,8 @@ import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ResponseParser;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to Rackspace resources via their REST API.
@@ -57,7 +58,7 @@ public interface RackspaceAuthentication {
    @GET
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    @Path("/auth")
-   Future<AuthenticationResponse> authenticate(
+   ListenableFuture<AuthenticationResponse> authenticate(
             @HeaderParam(RackspaceHeaders.AUTH_USER) String user,
             @HeaderParam(RackspaceHeaders.AUTH_KEY) String key);
 }

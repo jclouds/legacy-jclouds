@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * import static org.jclouds.blobstore.options.ListContainerOptions.Builder.*
  * <p/>
  * BlobStore connection = // get connection
- * Future<ListResponse<ResourceMetadata>> list = connection.list("container",inDirectory("home/users").maxResults(1000));
+ * ListenableFuture<ListResponse<ResourceMetadata>> list = connection.list("container",inDirectory("home/users").maxResults(1000));
  * <code>
  * 
  * @author Adrian Cole

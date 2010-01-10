@@ -38,7 +38,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -110,6 +109,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -823,7 +823,7 @@ public class RestAnnotationProcessorTest {
    private interface TestMapMatrixParams {
       @POST
       @Path("objects/{id}/action/{action}")
-      Future<String> action(@PathParam("id") String id, @PathParam("action") String action,
+      ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
                @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
    }
 
@@ -1055,13 +1055,13 @@ public class RestAnnotationProcessorTest {
       public InputStream inputStream();
 
       @GET
-      public Future<InputStream> futureInputStream();
+      public ListenableFuture<InputStream> futureInputStream();
 
       @GET
       public URI uri();
 
       @GET
-      public Future<URI> futureUri();
+      public ListenableFuture<URI> futureUri();
    }
 
    @SuppressWarnings("static-access")
@@ -1073,7 +1073,7 @@ public class RestAnnotationProcessorTest {
    }
 
    @SuppressWarnings("static-access")
-   public void testInputStreamFuture() throws SecurityException, NoSuchMethodException {
+   public void testInputStreamListenableFuture() throws SecurityException, NoSuchMethodException {
       Method method = TestTransformers.class.getMethod("futureInputStream");
       Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
                .getParserOrThrowException(method);
@@ -1089,7 +1089,7 @@ public class RestAnnotationProcessorTest {
    }
 
    @SuppressWarnings("static-access")
-   public void testURIFuture() throws SecurityException, NoSuchMethodException {
+   public void testURIListenableFuture() throws SecurityException, NoSuchMethodException {
       Method method = TestTransformers.class.getMethod("futureUri");
       Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
                .getParserOrThrowException(method);
@@ -1136,21 +1136,21 @@ public class RestAnnotationProcessorTest {
       @GET
       @VirtualHost
       @Path("/{id}")
-      public Future<String> get(@PathParam("id") String id, HttpRequestOptions options) {
+      public ListenableFuture<String> get(@PathParam("id") String id, HttpRequestOptions options) {
          return null;
       }
 
       @GET
       @VirtualHost
       @Path("/{id}")
-      public Future<String> get(@PathParam("id") String id, HttpRequestOptions... options) {
+      public ListenableFuture<String> get(@PathParam("id") String id, HttpRequestOptions... options) {
          return null;
       }
 
       @GET
       @Path("/{id}")
       @ResponseParser(ReturnStringIf200.class)
-      public Future<String> get(@PathParam("id") String id,
+      public ListenableFuture<String> get(@PathParam("id") String id,
                @HeaderParam(HttpHeaders.HOST) String host) {
          return null;
       }
@@ -1158,20 +1158,20 @@ public class RestAnnotationProcessorTest {
       @GET
       @Path("/{id}")
       @QueryParams(keys = "max-keys", values = "0")
-      public Future<String> getQuery(@PathParam("id") String id) {
+      public ListenableFuture<String> getQuery(@PathParam("id") String id) {
          return null;
       }
 
       @GET
       @Path("/{id}")
       @QueryParams(keys = "acl")
-      public Future<String> getQueryNull(@PathParam("id") String id) {
+      public ListenableFuture<String> getQueryNull(@PathParam("id") String id) {
          return null;
       }
 
       @PUT
       @Path("/{id}")
-      public Future<String> put(@PathParam("id") @ParamParser(FirstCharacter.class) String id,
+      public ListenableFuture<String> put(@PathParam("id") @ParamParser(FirstCharacter.class) String id,
                @BinderParam(BindToStringPayload.class) String payload) {
          return null;
       }
@@ -1179,7 +1179,7 @@ public class RestAnnotationProcessorTest {
       @PUT
       @Path("/{id}")
       @VirtualHost
-      public Future<String> putOptions(@PathParam("id") String id, HttpRequestOptions options) {
+      public ListenableFuture<String> putOptions(@PathParam("id") String id, HttpRequestOptions options) {
          return null;
       }
 
@@ -1187,7 +1187,7 @@ public class RestAnnotationProcessorTest {
       @Path("/{id}")
       @Headers(keys = "foo", values = "--{id}--")
       @ResponseParser(ReturnTrueIf2xx.class)
-      public Future<String> putHeader(@PathParam("id") String id,
+      public ListenableFuture<String> putHeader(@PathParam("id") String id,
                @BinderParam(BindToStringPayload.class) String payload) {
          return null;
       }
@@ -1354,7 +1354,7 @@ public class RestAnnotationProcessorTest {
       @GET
       @Path("/{id}")
       @VirtualHost
-      public Future<String> get(@PathParam("id") String id, String foo) {
+      public ListenableFuture<String> get(@PathParam("id") String id, String foo) {
          return null;
       }
    }
@@ -1377,19 +1377,19 @@ public class RestAnnotationProcessorTest {
       @GET
       @Path("/{id}")
       @VirtualHost
-      public Future<String> get(@PathParam("id") String id, String foo) {
+      public ListenableFuture<String> get(@PathParam("id") String id, String foo) {
          return null;
       }
 
       @GET
       @Path("/{id}")
-      public Future<String> getPrefix(@PathParam("id") String id, @HostPrefixParam("") String foo) {
+      public ListenableFuture<String> getPrefix(@PathParam("id") String id, @HostPrefixParam("") String foo) {
          return null;
       }
 
       @GET
       @Path("/{id}")
-      public Future<String> getPrefixDot(@PathParam("id") String id, @HostPrefixParam String foo) {
+      public ListenableFuture<String> getPrefixDot(@PathParam("id") String id, @HostPrefixParam String foo) {
          return null;
       }
    }
@@ -1509,7 +1509,7 @@ public class RestAnnotationProcessorTest {
 
       @PUT
       @Path("{foo}")
-      public Future<Void> putWithPath(@PathParam("foo") String path,
+      public ListenableFuture<Void> putWithPath(@PathParam("foo") String path,
                @BinderParam(BindToStringPayload.class) String content);
 
       @PUT

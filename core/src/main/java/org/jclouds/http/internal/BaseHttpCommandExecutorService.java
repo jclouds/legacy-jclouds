@@ -18,10 +18,11 @@
  */
 package org.jclouds.http.internal;
 
+import static com.google.common.util.concurrent.Futures.makeListenable;
+
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -37,6 +38,8 @@ import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
 
@@ -60,8 +63,8 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
       this.wire = wire;
    }
 
-   public Future<HttpResponse> submit(HttpCommand command) {
-      return executorService.submit(new HttpResponseCallable(command));
+   public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+      return makeListenable(executorService.submit(new HttpResponseCallable(command)));
    }
 
    public class HttpResponseCallable implements Callable<HttpResponse> {

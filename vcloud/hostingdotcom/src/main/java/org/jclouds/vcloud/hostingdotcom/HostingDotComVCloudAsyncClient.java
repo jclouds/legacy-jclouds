@@ -21,8 +21,6 @@ package org.jclouds.vcloud.hostingdotcom;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 
-import java.util.concurrent.Future;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,6 +44,8 @@ import org.jclouds.vcloud.hostingdotcom.xml.HostingDotComVAppHandler;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
@@ -63,7 +63,7 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    // produces is incorrect, but required for hosting.com to operate
    @XMLResponseParser(CatalogHandler.class)
    @Override
-   Future<? extends Catalog> getDefaultCatalog();
+   ListenableFuture<? extends Catalog> getDefaultCatalog();
 
    @GET
    @Consumes(VAPP_XML)
@@ -71,7 +71,7 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/vapp/{vAppId}")
    @XMLResponseParser(HostingDotComVAppHandler.class)
    @Override
-   Future<? extends HostingDotComVApp> getVApp(@PathParam("vAppId") String appId);
+   ListenableFuture<? extends HostingDotComVApp> getVApp(@PathParam("vAppId") String appId);
 
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
@@ -82,7 +82,7 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(HostingDotComVAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
-   Future<? extends HostingDotComVApp> instantiateVAppTemplateInVDC(
+   ListenableFuture<? extends HostingDotComVApp> instantiateVAppTemplateInVDC(
             @PathParam("vDCId") String vDCId, @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);

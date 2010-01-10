@@ -20,7 +20,7 @@ package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
-import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +44,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
@@ -88,6 +87,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -152,7 +152,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    }
 
-   public Future<Blob> getBlob(final String bucketName, final String key) {
+   public ListenableFuture<Blob> getBlob(final String bucketName, final String key) {
       if (!getContainerToBlobs().containsKey(bucketName))
          return immediateFailedFuture(new ContainerNotFoundException(bucketName));
       Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
@@ -164,7 +164,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(returnVal);
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             final String name, ListContainerOptions... optionsList) {
       final ListContainerOptions options = (optionsList.length == 0) ? new ListContainerOptions()
                : optionsList[0];
@@ -286,21 +286,21 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
    // return copy(realContents.get(key).getMetadata());
    // }
 
-   public Future<Void> removeBlob(final String container, final String key) {
+   public ListenableFuture<Void> removeBlob(final String container, final String key) {
       if (getContainerToBlobs().containsKey(container)) {
          getContainerToBlobs().get(container).remove(key);
       }
       return immediateFuture(null);
    }
 
-   public Future<Void> deleteContainer(final String container) {
+   public ListenableFuture<Void> deleteContainer(final String container) {
       if (getContainerToBlobs().containsKey(container)) {
          getContainerToBlobs().remove(container);
       }
       return immediateFuture(null);
    }
 
-   public Future<Boolean> deleteContainerImpl(final String container) {
+   public ListenableFuture<Boolean> deleteContainerImpl(final String container) {
       Boolean returnVal = true;
       if (getContainerToBlobs().containsKey(container)) {
          if (getContainerToBlobs().get(container).size() == 0)
@@ -311,11 +311,11 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(returnVal);
    }
 
-   public Future<Boolean> containerExists(final String container) {
+   public ListenableFuture<Boolean> containerExists(final String container) {
       return immediateFuture(getContainerToBlobs().containsKey(container));
    }
 
-   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
       return immediateFuture(new ListResponseImpl<ResourceMetadata>(Iterables.transform(
                getContainerToBlobs().keySet(), new Function<String, ResourceMetadata>() {
                   public ResourceMetadata apply(String name) {
@@ -332,7 +332,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return new MutableResourceMetadataImpl();
    }
 
-   public Future<Boolean> createContainer(final String name) {
+   public ListenableFuture<Boolean> createContainer(final String name) {
       if (!getContainerToBlobs().containsKey(name)) {
          getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
       }
@@ -445,7 +445,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       }, response);
    }
 
-   public Future<String> putBlob(final String bucketName, final Blob object) {
+   public ListenableFuture<String> putBlob(final String bucketName, final Blob object) {
       Map<String, Blob> container = getContainerToBlobs().get(bucketName);
       if (container == null) {
          new RuntimeException("bucketName not found: " + bucketName);
@@ -481,7 +481,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    }
 
-   public Future<? extends Blob> getBlob(final String bucketName, final String key,
+   public ListenableFuture<? extends Blob> getBlob(final String bucketName, final String key,
             GetOptions... optionsList) {
       final GetOptions options = (optionsList.length == 0) ? new GetOptions() : optionsList[0];
       if (!getContainerToBlobs().containsKey(bucketName))
@@ -558,7 +558,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(returnVal);
    }
 
-   public Future<BlobMetadata> blobMetadata(final String container, final String key) {
+   public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
          return immediateFuture((BlobMetadata) copy(getBlob(container, key).get().getMetadata()));
       } catch (Exception e) {
@@ -578,24 +578,24 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return containerToBlobs;
    }
 
-   public Future<Void> clearContainer(final String container) {
+   public ListenableFuture<Void> clearContainer(final String container) {
       getContainerToBlobs().get(container).clear();
       return immediateFuture(null);
    }
 
-   public Future<Void> createDirectory(final String container, final String directory) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             mkdirStrategy.execute(StubAsyncBlobStore.this, container, directory);
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> directoryExists(final String container, final String directory) {
-      return service.submit(new Callable<Boolean>() {
+   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Boolean>() {
 
          public Boolean call() throws Exception {
             try {
@@ -605,7 +605,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             }
          }
 
-      });
+      }));
    }
 
    public Blob newBlob(String name) {

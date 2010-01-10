@@ -20,7 +20,6 @@ package org.jclouds.nirvanix.sdn;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,6 +45,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides asynchronous access to Nirvanix SDN resources via their REST API.
  * <p/>
@@ -68,7 +69,8 @@ public interface SDNAsyncClient {
    @GET
    @Path("/ws/IMFS/GetStorageNode.ashx")
    @ResponseParser(ParseUploadInfoFromJsonResponse.class)
-   Future<UploadInfo> getStorageNode(@QueryParam(SDNQueryParams.DESTFOLDERPATH) String folderPath,
+   ListenableFuture<UploadInfo> getStorageNode(
+            @QueryParam(SDNQueryParams.DESTFOLDERPATH) String folderPath,
             @QueryParam(SDNQueryParams.SIZEBYTES) long size);
 
    /**
@@ -76,7 +78,7 @@ public interface SDNAsyncClient {
     */
    @POST
    @Path("/Upload.ashx")
-   Future<Void> upload(@EndpointParam URI endpoint,
+   ListenableFuture<Void> upload(@EndpointParam URI endpoint,
             @QueryParam(SDNQueryParams.UPLOADTOKEN) String uploadToken,
             @QueryParam(SDNQueryParams.DESTFOLDERPATH) String folderPath,
             @BinderParam(BindBlobToMultipartForm.class) Blob blob);
@@ -87,7 +89,7 @@ public interface SDNAsyncClient {
    @GET
    @Path("/ws/Metadata/SetMetadata.ashx")
    @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
-   Future<Void> setMetadata(@PathParam("path") String path,
+   ListenableFuture<Void> setMetadata(@PathParam("path") String path,
             @BinderParam(BindMetadataToQueryParams.class) Map<String, String> metadata);
 
    /**
@@ -97,7 +99,7 @@ public interface SDNAsyncClient {
    @Path("/ws/Metadata/GetMetadata.ashx")
    @ResponseParser(ParseMetadataFromJsonResponse.class)
    @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
-   Future<Map<String, String>> getMetadata(@PathParam("path") String path);
+   ListenableFuture<Map<String, String>> getMetadata(@PathParam("path") String path);
 
    /**
     * @see SDNClient#getFile
@@ -106,6 +108,6 @@ public interface SDNAsyncClient {
    @Path("/{path}")
    @OverrideRequestFilters
    @RequestFilters(InsertUserContextIntoPath.class)
-   Future<String> getFile(@PathParam("path") String path);
+   ListenableFuture<String> getFile(@PathParam("path") String path);
 
 }

@@ -32,7 +32,7 @@ import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
  * import static org.jclouds.aws.ec2.options.CreateImageOptions.Builder.*
  * <p/>
  * EC2Client connection = // get connection
- * Future<SortedSet<ImageMetadata>> images = connection.getAMIServices().createImage(withDescription("123125").noReboot());
+ * ListenableFuture<SortedSet<ImageMetadata>> images = connection.getAMIServices().createImage(withDescription("123125").noReboot());
  * <code>
  * 
  * @author Adrian Cole

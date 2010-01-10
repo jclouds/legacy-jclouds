@@ -53,14 +53,14 @@ public class HttpCommandRendezvous<T> {
    }
 
    public void cancel() {
-      getFuture().cancel(true);
+      getListenableFuture().cancel(true);
    }
 
    public HttpCommand getCommand() {
       return command;
    }
 
-   public ListenableFuture<T> getFuture() {
+   public ListenableFuture<T> getListenableFuture() {
       return future;
    }
 

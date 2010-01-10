@@ -33,7 +33,7 @@ import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
  * import static org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions.Builder.*
  * <p/>
  * EC2Client connection = // get connection
- * Future<SortedSet<ImageMetadata>> images = connection.getAvailabilityZoneAndRegionServices().describeAvailabilityZones(zones("us-east-1a", "us-east-1b"));
+ * ListenableFuture<SortedSet<ImageMetadata>> images = connection.getAvailabilityZoneAndRegionServices().describeAvailabilityZones(zones("us-east-1a", "us-east-1b"));
  * <code>
  * 
  * @author Adrian Cole

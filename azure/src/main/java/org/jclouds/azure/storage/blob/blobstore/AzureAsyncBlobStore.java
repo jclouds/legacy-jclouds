@@ -25,7 +25,6 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -61,7 +60,12 @@ import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlobStore {
 
    @Inject
@@ -82,8 +86,8 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
    /**
     * This implementation uses the AzureBlob HEAD Object command to return the result
     */
-   public Future<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(makeListenable(async.getBlobProperties(container, key)),
+   public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
+      return compose(async.getBlobProperties(container, key),
                new Function<BlobProperties, BlobMetadata>() {
 
                   @Override
@@ -94,40 +98,40 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
                }, service);
    }
 
-   public Future<Void> clearContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> clearContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             clearContainerStrategy.execute(container, recursive());
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> createContainer(String container) {
+   public ListenableFuture<Boolean> createContainer(String container) {
       return async.createContainer(container);
    }
 
-   public Future<Void> deleteContainer(final String container) {
+   public ListenableFuture<Void> deleteContainer(final String container) {
       return async.deleteContainer(container);
 
    }
 
-   public Future<Boolean> containerExists(String container) {
+   public ListenableFuture<Boolean> containerExists(String container) {
       return async.containerExists(container);
    }
 
-   public Future<Blob> getBlob(String container, String key,
+   public ListenableFuture<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      Future<AzureBlob> returnVal = async.getBlob(container, key, httpOptions);
-      return compose(makeListenable(returnVal), object2Blob, service);
+      ListenableFuture<AzureBlob> returnVal = async.getBlob(container, key, httpOptions);
+      return compose(returnVal, object2Blob, service);
    }
 
-   public Future<? extends org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>> list() {
       return compose(
-               makeListenable(async.listContainers()),
+               async.listContainers(),
                new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
                            SortedSet<ListableContainerProperties> from) {
@@ -137,34 +141,34 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
                }, service);
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
-      Future<ListBlobsResponse> returnVal = async.listBlobs(container, httpOptions);
-      return compose(makeListenable(returnVal), container2ResourceList, service);
+      ListenableFuture<ListBlobsResponse> returnVal = async.listBlobs(container, httpOptions);
+      return compose(returnVal, container2ResourceList, service);
    }
 
-   public Future<String> putBlob(String container, Blob blob) {
+   public ListenableFuture<String> putBlob(String container, Blob blob) {
       return async.putBlob(container, blob2Object.apply(blob));
    }
 
-   public Future<Void> removeBlob(String container, String key) {
+   public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.deleteBlob(container, key);
    }
 
-   public Future<Void> createDirectory(final String container, final String directory) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             mkdirStrategy.execute(AzureAsyncBlobStore.this, container, directory);
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> directoryExists(final String container, final String directory) {
-      return service.submit(new Callable<Boolean>() {
+   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Boolean>() {
 
          public Boolean call() throws Exception {
             try {
@@ -175,7 +179,7 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
             }
          }
 
-      });
+      }));
    }
 
 }

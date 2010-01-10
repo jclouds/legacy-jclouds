@@ -25,10 +25,7 @@ package org.jclouds.rest.internal;
  */
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -43,6 +40,7 @@ import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ValueFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
@@ -83,7 +81,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (method.getName().startsWith("new")) {
          return injector.getInstance(method.getReturnType());
       } else if (util.getDelegateOrNull(method) != null
-               && Future.class.isAssignableFrom(method.getReturnType())) {
+               && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
          method = util.getDelegateOrNull(method);
          logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
          Function<Exception, ?> exceptionParser = util
@@ -103,31 +101,10 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
                final Object toReturn = exceptionParser.apply(e);
                if (toReturn == null)
                   throw e;
-               if (method.getReturnType().isAssignableFrom(Future.class)) {
-                  return new Future<Object>() {
-
-                     public boolean cancel(boolean mayInterruptIfRunning) {
-                        return false;
-                     }
-
-                     public Object get() throws InterruptedException, ExecutionException {
-                        return toReturn;
-                     }
-
-                     public Object get(long timeout, TimeUnit unit) throws InterruptedException,
-                              ExecutionException, TimeoutException {
-                        return get();
-                     }
-
-                     public boolean isCancelled() {
-                        return false;
-                     }
-
-                     public boolean isDone() {
-                        return true;
-                     }
-
-                  };
+               if (method.getReturnType().isAssignableFrom(ListenableFuture.class)) {
+                  ValueFuture<Object> returnVal = ValueFuture.create();
+                  returnVal.set(toReturn);
+                  return returnVal;
                } else {
                   return toReturn;
                }
@@ -150,7 +127,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
             result = new FutureExceptionParser(result, exceptionParser);
          }
 
-         if (method.getReturnType().isAssignableFrom(Future.class)) {
+         if (method.getReturnType().isAssignableFrom(ListenableFuture.class)) {
             return result;
          } else {
             logger.debug("Blocking up to %dms for %s.%s to complete", requestTimeoutMilliseconds,

@@ -20,7 +20,6 @@ package org.jclouds.atmosonline.saas.blobstore.strategy;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -45,6 +44,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -78,15 +78,15 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
       logger.trace("cleared container " + containerName);
    }
 
-   private Future<Void> rm(final String fullPath, FileType type, boolean recursive)
+   private ListenableFuture<Void> rm(final String fullPath, FileType type, boolean recursive)
             throws InterruptedException, ExecutionException, TimeoutException {
-      Set<Future<Void>> deletes = Sets.newHashSet();
+      Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
       if ((type == FileType.DIRECTORY) && recursive) {
          for (DirectoryEntry child : async.listDirectory(fullPath).get(10, TimeUnit.SECONDS)) {
             deletes.add(rm(fullPath + "/" + child.getObjectName(), child.getType(), true));
          }
       }
-      for (Future<Void> isdeleted : deletes) {
+      for (ListenableFuture<Void> isdeleted : deletes) {
          isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       }
       return Futures.compose(async.deletePath(fullPath),
@@ -116,13 +116,13 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
       String path = containerName;
       if (options.getDir() != null)
          path += "/" + options.getDir();
-      Set<Future<Void>> deletes = Sets.newHashSet();
+      Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
       try {
          for (DirectoryEntry md : async.listDirectory(path).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS)) {
             deletes.add(rm(path + "/" + md.getObjectName(), md.getType(), options.isRecursive()));
          }
-         for (Future<Void> isdeleted : deletes) {
+         for (ListenableFuture<Void> isdeleted : deletes) {
             isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          }
       } catch (Exception e) {

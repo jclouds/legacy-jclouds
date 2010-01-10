@@ -20,7 +20,6 @@ package org.jclouds.vcloud.internal;
 
 import java.net.URI;
 import java.util.SortedMap;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -31,6 +30,8 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Establishes a context with a VCloud endpoint.
@@ -49,5 +50,5 @@ public interface VCloudVersionsAsyncClient {
    @XMLResponseParser(SupportedVersionsHandler.class)
    @Path("/versions")
    @Consumes(VCloudMediaType.VCLOUD_XML)
-   Future<SortedMap<String, URI>> getSupportedVersions();
+   ListenableFuture<SortedMap<String, URI>> getSupportedVersions();
 }

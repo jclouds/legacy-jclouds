@@ -22,7 +22,6 @@ import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -83,11 +82,14 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides asynchronous access to S3 via their REST API.
  * <p/>
- * All commands return a Future of the result from S3. Any exceptions incurred during processing
- * will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
+ * All commands return a ListenableFuture of the result from S3. Any exceptions incurred during
+ * processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @author Adrian Cole
  * @author James Murty
@@ -114,8 +116,8 @@ public interface S3AsyncClient {
    @Path("{key}")
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   Future<S3Object> getObject(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            GetOptions... options);
+   ListenableFuture<S3Object> getObject(@HostPrefixParam String bucketName,
+            @PathParam("key") String key, GetOptions... options);
 
    /**
     * @see S3Client#headObject
@@ -124,7 +126,7 @@ public interface S3AsyncClient {
    @Path("{key}")
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @ResponseParser(ParseObjectMetadataFromHeaders.class)
-   Future<ObjectMetadata> headObject(@HostPrefixParam String bucketName,
+   ListenableFuture<ObjectMetadata> headObject(@HostPrefixParam String bucketName,
             @PathParam("key") String key);
 
    /**
@@ -133,7 +135,8 @@ public interface S3AsyncClient {
    @DELETE
    @Path("{key}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteObject(@HostPrefixParam String bucketName, @PathParam("key") String key);
+   ListenableFuture<Void> deleteObject(@HostPrefixParam String bucketName,
+            @PathParam("key") String key);
 
    /**
     * @see S3Client#putObject
@@ -141,7 +144,7 @@ public interface S3AsyncClient {
    @PUT
    @Path("{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<String> putObject(
+   ListenableFuture<String> putObject(
             @HostPrefixParam String bucketName,
             @PathParam("key") @ParamParser(ObjectKey.class) @BinderParam(BindS3ObjectToPayload.class) S3Object object,
             PutObjectOptions... options);
@@ -152,7 +155,7 @@ public interface S3AsyncClient {
    @PUT
    @Path("/")
    @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
-   Future<Boolean> putBucketIfNotExists(@HostPrefixParam String bucketName,
+   ListenableFuture<Boolean> putBucketIfNotExists(@HostPrefixParam String bucketName,
             PutBucketOptions... options);
 
    /**
@@ -161,7 +164,7 @@ public interface S3AsyncClient {
    @DELETE
    @Path("/")
    @ExceptionParser(ReturnTrueOn404FalseIfNotEmpty.class)
-   Future<Boolean> deleteBucketIfEmpty(@HostPrefixParam String bucketName);
+   ListenableFuture<Boolean> deleteBucketIfEmpty(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#bucketExists
@@ -170,7 +173,7 @@ public interface S3AsyncClient {
    @Path("/")
    @QueryParams(keys = "max-keys", values = "0")
    @ExceptionParser(ReturnFalseOn404OrSSLHandshakeException.class)
-   Future<Boolean> bucketExists(@HostPrefixParam String bucketName);
+   ListenableFuture<Boolean> bucketExists(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#getBucketLocation
@@ -179,7 +182,7 @@ public interface S3AsyncClient {
    @QueryParams(keys = "location")
    @Path("/")
    @XMLResponseParser(LocationConstraintHandler.class)
-   Future<LocationConstraint> getBucketLocation(@HostPrefixParam String bucketName);
+   ListenableFuture<LocationConstraint> getBucketLocation(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#getBucketPayer
@@ -188,7 +191,7 @@ public interface S3AsyncClient {
    @QueryParams(keys = "requestPayment")
    @Path("/")
    @XMLResponseParser(PayerHandler.class)
-   Future<Payer> getBucketPayer(@HostPrefixParam String bucketName);
+   ListenableFuture<Payer> getBucketPayer(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#setBucketPayer
@@ -196,7 +199,7 @@ public interface S3AsyncClient {
    @PUT
    @QueryParams(keys = "requestPayment")
    @Path("/")
-   Future<Void> setBucketPayer(@HostPrefixParam String bucketName,
+   ListenableFuture<Void> setBucketPayer(@HostPrefixParam String bucketName,
             @BinderParam(BindPayerToXmlPayload.class) Payer payer);
 
    /**
@@ -205,7 +208,7 @@ public interface S3AsyncClient {
    @GET
    @Path("/")
    @XMLResponseParser(ListBucketHandler.class)
-   Future<ListBucketResponse> listBucket(@HostPrefixParam String bucketName,
+   ListenableFuture<ListBucketResponse> listBucket(@HostPrefixParam String bucketName,
             ListBucketOptions... options);
 
    /**
@@ -214,7 +217,7 @@ public interface S3AsyncClient {
    @GET
    @XMLResponseParser(ListAllMyBucketsHandler.class)
    @Path("/")
-   Future<? extends SortedSet<BucketMetadata>> listOwnedBuckets();
+   ListenableFuture<? extends SortedSet<BucketMetadata>> listOwnedBuckets();
 
    /**
     * @see S3Client#copyObject
@@ -223,7 +226,7 @@ public interface S3AsyncClient {
    @Path("{destinationObject}")
    @Headers(keys = "x-amz-copy-source", values = "/{sourceBucket}/{sourceObject}")
    @XMLResponseParser(CopyObjectHandler.class)
-   Future<ObjectMetadata> copyObject(@PathParam("sourceBucket") String sourceBucket,
+   ListenableFuture<ObjectMetadata> copyObject(@PathParam("sourceBucket") String sourceBucket,
             @PathParam("sourceObject") String sourceObject,
             @HostPrefixParam String destinationBucket,
             @PathParam("destinationObject") String destinationObject, CopyObjectOptions... options);
@@ -236,7 +239,7 @@ public interface S3AsyncClient {
    @XMLResponseParser(AccessControlListHandler.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Path("/")
-   Future<AccessControlList> getBucketACL(@HostPrefixParam String bucketName);
+   ListenableFuture<AccessControlList> getBucketACL(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#putBucketACL
@@ -244,7 +247,7 @@ public interface S3AsyncClient {
    @PUT
    @Path("/")
    @QueryParams(keys = "acl")
-   Future<Boolean> putBucketACL(@HostPrefixParam String bucketName,
+   ListenableFuture<Boolean> putBucketACL(@HostPrefixParam String bucketName,
             @BinderParam(BindACLToXMLPayload.class) AccessControlList acl);
 
    /**
@@ -255,7 +258,7 @@ public interface S3AsyncClient {
    @Path("{key}")
    @XMLResponseParser(AccessControlListHandler.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   Future<AccessControlList> getObjectACL(@HostPrefixParam String bucketName,
+   ListenableFuture<AccessControlList> getObjectACL(@HostPrefixParam String bucketName,
             @PathParam("key") String key);
 
    /**
@@ -264,7 +267,8 @@ public interface S3AsyncClient {
    @PUT
    @QueryParams(keys = "acl")
    @Path("{key}")
-   Future<Boolean> putObjectACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
+   ListenableFuture<Boolean> putObjectACL(@HostPrefixParam String bucketName,
+            @PathParam("key") String key,
             @BinderParam(BindACLToXMLPayload.class) AccessControlList acl);
 
    /**
@@ -275,7 +279,7 @@ public interface S3AsyncClient {
    @XMLResponseParser(BucketLoggingHandler.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Path("/")
-   Future<BucketLogging> getBucketLogging(@HostPrefixParam String bucketName);
+   ListenableFuture<BucketLogging> getBucketLogging(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#enableBucketLogging
@@ -283,7 +287,7 @@ public interface S3AsyncClient {
    @PUT
    @Path("/")
    @QueryParams(keys = "logging")
-   Future<Void> enableBucketLogging(@HostPrefixParam String bucketName,
+   ListenableFuture<Void> enableBucketLogging(@HostPrefixParam String bucketName,
             @BinderParam(BindBucketLoggingToXmlPayload.class) BucketLogging logging);
 
    /**
@@ -292,7 +296,7 @@ public interface S3AsyncClient {
    @PUT
    @Path("/")
    @QueryParams(keys = "logging")
-   Future<Void> disableBucketLogging(
+   ListenableFuture<Void> disableBucketLogging(
             @BinderParam(BindNoBucketLoggingToXmlPayload.class) @HostPrefixParam String bucketName);
 
 }

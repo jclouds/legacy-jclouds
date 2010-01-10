@@ -19,7 +19,8 @@
 package org.jclouds.rest;
 
 import java.net.URI;
-import java.util.concurrent.Future;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Represents an authenticated context to the cloud.
@@ -36,7 +37,7 @@ public interface RestContext<A, S> {
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
     * 
-    * @return a connection to the cloud where all methods return {@link Future}s
+    * @return a connection to the cloud where all methods return {@link ListenableFuture}s
     */
    A getAsyncApi();
 

@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -42,6 +41,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
 
 @Singleton
 public class SyncProxy implements InvocationHandler {
@@ -86,7 +86,7 @@ public class SyncProxy implements InvocationHandler {
                throw new IllegalArgumentException(String.format(
                         "method %s has different typed exceptions than delegated method %s",
                         method, delegatedMethod));
-            if (delegatedMethod.getReturnType().isAssignableFrom(Future.class)) {
+            if (delegatedMethod.getReturnType().isAssignableFrom(ListenableFuture.class)) {
                if (method.isAnnotationPresent(Timeout.class)) {
                   Timeout methodTimeout = method.getAnnotation(Timeout.class);
                   long methodNanos = convertToNanos(methodTimeout);
@@ -120,7 +120,7 @@ public class SyncProxy implements InvocationHandler {
          return syncMethodMap.get(method).invoke(delegate, args);
       } else {
          try {
-            return ((Future<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap
+            return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap
                      .get(method), TimeUnit.NANOSECONDS);
          } catch (ExecutionException e) {
             throw e.getCause();

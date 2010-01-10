@@ -18,12 +18,13 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
+import static com.google.common.util.concurrent.Futures.compose;
+import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -59,8 +60,12 @@ import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import static com.google.common.util.concurrent.Futures.*;
+import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore {
 
    @Inject
@@ -80,7 +85,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
    /**
     * This implementation uses the S3 HEAD Object command to return the result
     */
-   public Future<BlobMetadata> blobMetadata(String container, String key) {
+   public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
       return compose(makeListenable(async.headObject(container, key)),
                new Function<ObjectMetadata, BlobMetadata>() {
 
@@ -92,19 +97,19 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
                }, service);
    }
 
-   public Future<Void> clearContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> clearContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             clearContainerStrategy.execute(container, recursive());
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Void> deleteContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> deleteContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             clearContainerStrategy.execute(container, recursive());
@@ -112,30 +117,30 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> createContainer(String container) {
+   public ListenableFuture<Boolean> createContainer(String container) {
       return async.putBucketIfNotExists(container);
    }
 
-   public Future<Boolean> containerExists(String container) {
+   public ListenableFuture<Boolean> containerExists(String container) {
       return async.bucketExists(container);
    }
 
-   public Future<Void> createDirectory(final String container, final String directory) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             mkdirStrategy.execute(S3AsyncBlobStore.this, container, directory);
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> directoryExists(final String container, final String directory) {
-      return service.submit(new Callable<Boolean>() {
+   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Boolean>() {
 
          public Boolean call() throws Exception {
             try {
@@ -146,19 +151,18 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             }
          }
 
-      });
+      }));
    }
 
-   public Future<Blob> getBlob(String container, String key,
+   public ListenableFuture<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      return compose(makeListenable(async.getObject(container, key, httpOptions)), object2Blob,
-               service);
+      return compose(async.getObject(container, key, httpOptions), object2Blob, service);
    }
 
-   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
       return compose(
-               makeListenable(async.listOwnedBuckets()),
+               async.listOwnedBuckets(),
                new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
                            SortedSet<BucketMetadata> from) {
@@ -168,18 +172,18 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
                }, service);
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
-      Future<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
-      return compose(makeListenable(returnVal), bucket2ResourceList, service);
+      ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
+      return compose(returnVal, bucket2ResourceList, service);
    }
 
-   public Future<String> putBlob(String container, Blob blob) {
+   public ListenableFuture<String> putBlob(String container, Blob blob) {
       return async.putObject(container, blob2Object.apply(blob));
    }
 
-   public Future<Void> removeBlob(String container, String key) {
+   public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.deleteObject(container, key);
    }
 

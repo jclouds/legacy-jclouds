@@ -19,13 +19,13 @@
 package org.jclouds.azure.storage.blob.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.compose;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -55,7 +55,7 @@ import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Implementation of {@link AzureBlobAsyncClient} which keeps all data in a local Map object.
@@ -94,35 +94,36 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
    }
 
-   public Future<Boolean> createContainer(String container, CreateContainerOptions... options) {
+   public ListenableFuture<Boolean> createContainer(String container,
+            CreateContainerOptions... options) {
       return blobStore.createContainer(container);
    }
 
-   public Future<Boolean> createRootContainer(CreateContainerOptions... options) {
+   public ListenableFuture<Boolean> createRootContainer(CreateContainerOptions... options) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> deleteBlob(String container, String key) {
+   public ListenableFuture<Void> deleteBlob(String container, String key) {
       return blobStore.removeBlob(container, key);
    }
 
-   public Future<Void> deleteContainer(final String container) {
+   public ListenableFuture<Void> deleteContainer(final String container) {
       StubAzureBlobAsyncClient.this.containerToBlobs.remove(container);
       return immediateFuture(null);
    }
 
-   public Future<Boolean> deleteRootContainer() {
+   public ListenableFuture<Boolean> deleteRootContainer() {
       throw new UnsupportedOperationException();
    }
 
-   public Future<AzureBlob> getBlob(String container, String key, GetOptions... options) {
+   public ListenableFuture<AzureBlob> getBlob(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return Futures.compose(Futures.makeListenable(blobStore.getBlob(container, key, getOptions)),
+      return compose(blobStore.getBlob(container, key, getOptions),
                blob2Object);
    }
 
-   public Future<BlobProperties> getBlobProperties(String container, String key) {
-      return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(container, key)),
+   public ListenableFuture<BlobProperties> getBlobProperties(String container, String key) {
+      return compose(blobStore.blobMetadata(container, key),
                new Function<BlobMetadata, BlobProperties>() {
 
                   @Override
@@ -134,22 +135,22 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
                });
    }
 
-   public Future<ListableContainerProperties> getContainerProperties(String container) {
+   public ListenableFuture<ListableContainerProperties> getContainerProperties(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<ListBlobsResponse> listBlobs(String container, ListBlobsOptions... optionsList) {
+   public ListenableFuture<ListBlobsResponse> listBlobs(String container,
+            ListBlobsOptions... optionsList) {
       org.jclouds.blobstore.options.ListContainerOptions options = container2ContainerListOptions
                .apply(optionsList);
-      return Futures.compose(Futures.makeListenable(blobStore.list(container, options)),
-               resource2ObjectList);
+      return compose(blobStore.list(container, options), resource2ObjectList);
    }
 
-   public Future<ListBlobsResponse> listBlobs(ListBlobsOptions... options) {
+   public ListenableFuture<ListBlobsResponse> listBlobs(ListBlobsOptions... options) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
+   public ListenableFuture<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
             ListOptions... listOptions) {
       return immediateFuture(new BoundedTreeSet<ListableContainerProperties>(Iterables.transform(
                blobStore.getContainerToBlobs().keySet(),
@@ -166,19 +167,20 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       return objectProvider.create(null);
    }
 
-   public Future<String> putBlob(String container, AzureBlob object) {
+   public ListenableFuture<String> putBlob(String container, AzureBlob object) {
       return blobStore.putBlob(container, object2Blob.apply(object));
    }
 
-   public Future<Void> setBlobMetadata(String container, String key, Map<String, String> metadata) {
+   public ListenableFuture<Void> setBlobMetadata(String container, String key,
+            Map<String, String> metadata) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Void> setResourceMetadata(String container, Map<String, String> metadata) {
+   public ListenableFuture<Void> setResourceMetadata(String container, Map<String, String> metadata) {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Boolean> containerExists(final String container) {
+   public ListenableFuture<Boolean> containerExists(final String container) {
       return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
    }
 

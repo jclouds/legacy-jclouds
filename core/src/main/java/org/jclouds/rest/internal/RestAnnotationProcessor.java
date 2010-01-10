@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -102,6 +101,7 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -618,17 +618,17 @@ public class RestAnnotationProcessor<T> {
       return builder;
    }
 
-   public static final TypeLiteral<Future<Boolean>> futureBooleanLiteral = new TypeLiteral<Future<Boolean>>() {
+   public static final TypeLiteral<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeLiteral<ListenableFuture<Boolean>>() {
    };
 
-   public static final TypeLiteral<Future<String>> futureStringLiteral = new TypeLiteral<Future<String>>() {
+   public static final TypeLiteral<ListenableFuture<String>> futureStringLiteral = new TypeLiteral<ListenableFuture<String>>() {
    };
 
-   public static final TypeLiteral<Future<Void>> futureVoidLiteral = new TypeLiteral<Future<Void>>() {
+   public static final TypeLiteral<ListenableFuture<Void>> futureVoidLiteral = new TypeLiteral<ListenableFuture<Void>>() {
    };
-   public static final TypeLiteral<Future<URI>> futureURILiteral = new TypeLiteral<Future<URI>>() {
+   public static final TypeLiteral<ListenableFuture<URI>> futureURILiteral = new TypeLiteral<ListenableFuture<URI>>() {
    };
-   public static final TypeLiteral<Future<InputStream>> futureInputStreamLiteral = new TypeLiteral<Future<InputStream>>() {
+   public static final TypeLiteral<ListenableFuture<InputStream>> futureInputStreamLiteral = new TypeLiteral<ListenableFuture<InputStream>>() {
    };
 
    public static Class<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {

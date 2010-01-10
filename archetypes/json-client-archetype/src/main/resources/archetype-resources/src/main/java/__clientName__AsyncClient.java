@@ -45,7 +45,7 @@
 package ${package};
 
 import java.util.SortedSet;
-import java.util.concurrent.Future;
+import java.util.concurrent.ListenableFuture;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -72,6 +72,6 @@ public interface ${clientName}AsyncClient {
    @GET
    @ResponseParser(ParseStatusesFromJsonResponse.class)
    @Path("/statuses/mentions.json")
-   Future<SortedSet<Status>> getMyMentions();
+   ListenableFuture<SortedSet<Status>> getMyMentions();
 
 }

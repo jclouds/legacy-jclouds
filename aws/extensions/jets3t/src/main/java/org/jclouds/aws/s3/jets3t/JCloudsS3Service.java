@@ -68,7 +68,7 @@ public class JCloudsS3Service extends S3Service {
     * @param awsCredentials
     *           - credentials to access S3
     * @param modules
-    *           - Module that configures a FutureHttpClient, if not specified, default is
+    *           - Module that configures a ListenableFutureHttpClient, if not specified, default is
     *           URLFetchServiceClientModule
     * @throws S3ServiceException
     */

@@ -19,10 +19,8 @@
 package org.jclouds.http;
 
 import static com.google.common.util.concurrent.Futures.compose;
-import static com.google.common.util.concurrent.Futures.makeListenable;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -50,9 +48,10 @@ public class TransformingHttpCommandExecutorServiceImpl implements
    /**
     * {@inheritDoc}
     */
-   public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer) {
-      Future<HttpResponse> responseFuture = client.submit(command);
-      return compose(makeListenable(responseFuture), responseTransformer, executorService);
+   public <T> ListenableFuture<T> submit(HttpCommand command,
+            Function<HttpResponse, T> responseTransformer) {
+      ListenableFuture<HttpResponse> responseListenableFuture = client.submit(command);
+      return compose(responseListenableFuture, responseTransformer, executorService);
    }
 
 }

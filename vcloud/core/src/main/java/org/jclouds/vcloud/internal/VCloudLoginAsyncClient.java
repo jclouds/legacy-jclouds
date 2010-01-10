@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.internal;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -33,6 +32,8 @@ import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Establishes a context with a VCloud endpoint.
@@ -60,5 +61,5 @@ public interface VCloudLoginAsyncClient {
    @POST
    @ResponseParser(ParseLoginResponseFromHeaders.class)
    @Consumes(VCloudMediaType.ORGLIST_XML)
-   Future<VCloudSession> login();
+   ListenableFuture<VCloudSession> login();
 }

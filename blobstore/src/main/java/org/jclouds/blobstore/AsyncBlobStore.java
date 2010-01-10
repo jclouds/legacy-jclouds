@@ -18,15 +18,15 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.concurrent.Future;
-
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides hooks needed to run a blob store asynchronously
@@ -40,7 +40,7 @@ public interface AsyncBlobStore {
    /**
     * Lists all root-level resources available to the account.
     */
-   Future<? extends ListResponse<? extends ResourceMetadata>> list();
+   ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list();
 
    /**
     * Lists all resources available at the specified path. Note that path may be a container, or a
@@ -49,37 +49,37 @@ public interface AsyncBlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
-   Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
+   ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
             ListContainerOptions... options);
 
-   Future<Boolean> containerExists(String container);
+   ListenableFuture<Boolean> containerExists(String container);
 
-   Future<Boolean> directoryExists(String container, String directory);
+   ListenableFuture<Boolean> directoryExists(String container, String directory);
 
-   Future<Boolean> createContainer(String container);
+   ListenableFuture<Boolean> createContainer(String container);
 
-   Future<Void> createDirectory(String container, String directory);
+   ListenableFuture<Void> createDirectory(String container, String directory);
 
    /**
     * This will delete a container recursively.
     * 
     * @param container
     */
-   Future<Void> deleteContainer(String container);
+   ListenableFuture<Void> deleteContainer(String container);
 
    /**
     * This will delete the contents of a container without removing it
     * 
     * @param container
     */
-   Future<Void> clearContainer(String container);
+   ListenableFuture<Void> clearContainer(String container);
 
-   Future<String> putBlob(String container, Blob blob);
+   ListenableFuture<String> putBlob(String container, Blob blob);
 
-   Future<? extends Blob> getBlob(String container, String key, GetOptions... options);
+   ListenableFuture<? extends Blob> getBlob(String container, String key, GetOptions... options);
 
-   Future<BlobMetadata> blobMetadata(String container, String key);
+   ListenableFuture<BlobMetadata> blobMetadata(String container, String key);
 
-   Future<Void> removeBlob(String container, String key);
+   ListenableFuture<Void> removeBlob(String container, String key);
 
 }

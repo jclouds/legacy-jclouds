@@ -19,7 +19,6 @@
 package org.jclouds.http;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -45,6 +44,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
@@ -56,20 +56,20 @@ public interface IntegrationTestAsyncClient {
 
    @HEAD
    @Path("objects/{id}")
-   Future<Boolean> exists(@PathParam("id") String path);
+   ListenableFuture<Boolean> exists(@PathParam("id") String path);
 
    @GET
    @Path("objects/{id}")
-   Future<String> download(@PathParam("id") String id);
+   ListenableFuture<String> download(@PathParam("id") String id);
 
    @GET
    @Path("{path}")
-   Future<String> synch(@PathParam("path") String id);
+   ListenableFuture<String> synch(@PathParam("path") String id);
 
    @GET
    @Path("objects/{id}")
    @ExceptionParser(FooOnException.class)
-   Future<String> downloadException(@PathParam("id") String id, HttpRequestOptions options);
+   ListenableFuture<String> downloadException(@PathParam("id") String id, HttpRequestOptions options);
 
    static class FooOnException implements Function<Exception, String> {
 
@@ -82,21 +82,22 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    @ExceptionParser(FooOnException.class)
-   Future<String> synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
+   ListenableFuture<String> synchException(@PathParam("id") String id,
+            @HeaderParam("Range") String header);
 
    @PUT
    @Path("objects/{id}")
-   Future<String> upload(@PathParam("id") String id,
+   ListenableFuture<String> upload(@PathParam("id") String id,
             @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   Future<String> post(@PathParam("id") String id,
+   ListenableFuture<String> post(@PathParam("id") String id,
             @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   Future<String> postAsInputStream(@PathParam("id") String id,
+   ListenableFuture<String> postAsInputStream(@PathParam("id") String id,
             @BinderParam(BindToInputStreamPayload.class) String toPut);
 
    static class BindToInputStreamPayload extends BindToStringPayload {
@@ -110,17 +111,19 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("objects/{id}")
    @MapBinder(BindToJsonPayload.class)
-   Future<String> postJson(@PathParam("id") String id, @MapPayloadParam("key") String toPut);
+   ListenableFuture<String> postJson(@PathParam("id") String id,
+            @MapPayloadParam("key") String toPut);
 
    @POST
    @Path("objects/{id}/action/{action}")
-   Future<String> action(@PathParam("id") String id, @PathParam("action") String action,
+   ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
             @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
 
    @GET
    @Path("objects/{id}")
    @RequestFilters(Filter.class)
-   Future<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
+   ListenableFuture<String> downloadFilter(@PathParam("id") String id,
+            @HeaderParam("filterme") String header);
 
    static class Filter implements HttpRequestFilter {
       public void filter(HttpRequest request) throws HttpException {
@@ -132,12 +135,12 @@ public interface IntegrationTestAsyncClient {
 
    @GET
    @Path("objects/{id}")
-   Future<String> download(@PathParam("id") String id, @HeaderParam("test") String header);
+   ListenableFuture<String> download(@PathParam("id") String id, @HeaderParam("test") String header);
 
    @GET
    @Path("objects/{id}")
    @XMLResponseParser(BarHandler.class)
-   Future<String> downloadAndParse(@PathParam("id") String id);
+   ListenableFuture<String> downloadAndParse(@PathParam("id") String id);
 
    public static class BarHandler extends ParseSax.HandlerWithResult<String> {
 

@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -42,6 +41,7 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -69,7 +69,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
       context.getInstance(AsyncBlobStore.class).createContainer("container").get();
 
-      Future<Blob> futureObject = createMock(Future.class);
+      ListenableFuture<Blob> futureObject = createMock(ListenableFuture.class);
       Blob object = blobProvider.create(null);
       object.getMetadata().setName("key");
       object.setPayload("goo");
@@ -95,7 +95,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
       context.getInstance(AsyncBlobStore.class).createContainer("container").get();
 
-      Future<Blob> futureObject = createMock(Future.class);
+      ListenableFuture<Blob> futureObject = createMock(ListenableFuture.class);
       Blob object = createMock(Blob.class);
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException()).atLeastOnce();

@@ -23,7 +23,6 @@ import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.GET;
@@ -44,6 +43,7 @@ import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -62,7 +62,7 @@ public class SharedKeyAuthenticationLiveTest {
       @GET
       @Path("/")
       @QueryParams(keys = "comp", values = "list")
-      Future<String> authenticate();
+      ListenableFuture<String> authenticate();
 
    }
 

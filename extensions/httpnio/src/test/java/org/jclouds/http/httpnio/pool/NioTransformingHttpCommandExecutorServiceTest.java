@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 
 /**
- * Tests for {@link HttpNioConnectionPoolFutureCommandClient}.
+ * Tests for {@link HttpNioConnectionPoolListenableFutureCommandClient}.
  * 
  * @author Adrian Cole
  */

@@ -19,7 +19,6 @@
 package org.jclouds.atmosonline.saas;
 
 import java.net.URI;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -60,6 +59,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides asynchronous access to EMC Atmos Online Storage resources via their REST API.
  * <p/>
@@ -83,7 +84,7 @@ public interface AtmosStorageAsyncClient {
    @Path("/rest/namespace")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @Consumes(MediaType.TEXT_XML)
-   Future<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectories(
+   ListenableFuture<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectories(
             ListOptions... options);
 
    /**
@@ -94,7 +95,7 @@ public interface AtmosStorageAsyncClient {
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Consumes(MediaType.TEXT_XML)
-   Future<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectory(
+   ListenableFuture<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectory(
             @PathParam("directoryName") String directoryName, ListOptions... options);
 
    /**
@@ -104,7 +105,7 @@ public interface AtmosStorageAsyncClient {
    @Path("/rest/namespace/{directoryName}/")
    @ExceptionParser(ReturnEndpointIfAlreadyExists.class)
    @Consumes(MediaType.WILDCARD)
-   Future<URI> createDirectory(@PathParam("directoryName") String directoryName);
+   ListenableFuture<URI> createDirectory(@PathParam("directoryName") String directoryName);
 
    /**
     * @see AtmosStorageClient#createFile
@@ -112,7 +113,7 @@ public interface AtmosStorageAsyncClient {
    @POST
    @Path("/rest/namespace/{parent}/{name}")
    @Consumes(MediaType.WILDCARD)
-   Future<URI> createFile(
+   ListenableFuture<URI> createFile(
             @PathParam("parent") String parent,
             @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindAtmosObjectToPayloadAndMetadataToHeaders.class) AtmosObject object);
 
@@ -123,7 +124,7 @@ public interface AtmosStorageAsyncClient {
    @Path("/rest/namespace/{parent}/{name}")
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Consumes(MediaType.WILDCARD)
-   Future<Void> updateFile(
+   ListenableFuture<Void> updateFile(
             @PathParam("parent") String parent,
             @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindAtmosObjectToPayloadAndMetadataToHeaders.class) AtmosObject object);
 
@@ -135,7 +136,7 @@ public interface AtmosStorageAsyncClient {
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
-   Future<AtmosObject> readFile(@PathParam("path") String path, GetOptions... options);
+   ListenableFuture<AtmosObject> readFile(@PathParam("path") String path, GetOptions... options);
 
    /**
     * @see AtmosStorageClient#headFile
@@ -145,7 +146,7 @@ public interface AtmosStorageAsyncClient {
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
-   Future<AtmosObject> headFile(@PathParam("path") String path);
+   ListenableFuture<AtmosObject> headFile(@PathParam("path") String path);
 
    /**
     * @see AtmosStorageClient#getSystemMetadata
@@ -156,7 +157,7 @@ public interface AtmosStorageAsyncClient {
    // currently throws 403 errors @QueryParams(keys = "metadata/system")
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
-   Future<SystemMetadata> getSystemMetadata(@PathParam("path") String path);
+   ListenableFuture<SystemMetadata> getSystemMetadata(@PathParam("path") String path);
 
    /**
     * @see AtmosStorageClient#getUserMetadata
@@ -167,7 +168,7 @@ public interface AtmosStorageAsyncClient {
    @Path("/rest/namespace/{path}")
    @QueryParams(keys = "metadata/user")
    @Consumes(MediaType.WILDCARD)
-   Future<UserMetadata> getUserMetadata(@PathParam("path") String path);
+   ListenableFuture<UserMetadata> getUserMetadata(@PathParam("path") String path);
 
    /**
     * @see AtmosStorageClient#deletePath
@@ -176,7 +177,7 @@ public interface AtmosStorageAsyncClient {
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
-   Future<Void> deletePath(@PathParam("path") String path);
+   ListenableFuture<Void> deletePath(@PathParam("path") String path);
 
    /**
     * @see AtmosStorageClient#pathExists
@@ -185,7 +186,7 @@ public interface AtmosStorageAsyncClient {
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
-   Future<Boolean> pathExists(@PathParam("path") String path);
+   ListenableFuture<Boolean> pathExists(@PathParam("path") String path);
 
    // signature currently doesn't work
    // @POST

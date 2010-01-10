@@ -25,7 +25,6 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -61,7 +60,12 @@ import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements AsyncBlobStore {
 
    @Inject
@@ -83,9 +87,9 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
    /**
     * This implementation uses the CloudFiles HEAD Object command to return the result
     */
-   public Future<BlobMetadata> blobMetadata(String container, String key) {
+   public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
 
-      return compose(makeListenable(async.getObjectInfo(container, key)),
+      return compose(async.getObjectInfo(container, key),
                new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
 
                   @Override
@@ -96,23 +100,23 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
                }, service);
    }
 
-   public Future<Void> clearContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> clearContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             clearContainerStrategy.execute(container, recursive());
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> createContainer(String container) {
+   public ListenableFuture<Boolean> createContainer(String container) {
       return async.createContainer(container);
    }
 
-   public Future<Void> deleteContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> deleteContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             clearContainerStrategy.execute(container, recursive());
@@ -120,23 +124,23 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> containerExists(String container) {
+   public ListenableFuture<Boolean> containerExists(String container) {
       return async.containerExists(container);
    }
 
-   public Future<Blob> getBlob(String container, String key,
+   public ListenableFuture<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      Future<CFObject> returnVal = async.getObject(container, key, httpOptions);
-      return compose(makeListenable(returnVal), object2Blob, service);
+      ListenableFuture<CFObject> returnVal = async.getObject(container, key, httpOptions);
+      return compose(returnVal, object2Blob, service);
    }
 
-   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
       return compose(
-               makeListenable(async.listContainers()),
+               async.listContainers(),
                new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
                            SortedSet<ContainerMetadata> from) {
@@ -146,36 +150,36 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
                }, service);
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
                .apply(optionsList);
-      Future<ListContainerResponse<ObjectInfo>> returnVal = async.listObjects(container,
+      ListenableFuture<ListContainerResponse<ObjectInfo>> returnVal = async.listObjects(container,
                httpOptions);
-      return compose(makeListenable(returnVal), container2ResourceList, service);
+      return compose(returnVal, container2ResourceList, service);
    }
 
-   public Future<String> putBlob(String container, Blob blob) {
+   public ListenableFuture<String> putBlob(String container, Blob blob) {
       return async.putObject(container, blob2Object.apply(blob));
    }
 
-   public Future<Void> removeBlob(String container, String key) {
+   public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.removeObject(container, key);
    }
 
-   public Future<Void> createDirectory(final String container, final String directory) {
-      return service.submit(new Callable<Void>() {
+   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             mkdirStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);
             return null;
          }
 
-      });
+      }));
    }
 
-   public Future<Boolean> directoryExists(final String container, final String directory) {
-      return service.submit(new Callable<Boolean>() {
+   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Boolean>() {
          public Boolean call() throws Exception {
             try {
                getDirectoryStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);
@@ -185,7 +189,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             }
          }
 
-      });
+      }));
    }
 
 }

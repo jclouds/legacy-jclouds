@@ -18,8 +18,6 @@
  */
 package org.jclouds.nirvanix.sdn;
 
-import java.util.concurrent.Future;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -29,6 +27,8 @@ import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.ResponseParser;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to Nirvanix SDN resources via their REST API.
@@ -49,7 +49,7 @@ public interface SDNAuthentication {
    @GET
    @ResponseParser(ParseSessionTokenFromJsonResponse.class)
    @Path("/ws/Authentication/Login.ashx")
-   Future<String> authenticate(@QueryParam(SDNQueryParams.APPKEY) String appKey,
+   ListenableFuture<String> authenticate(@QueryParam(SDNQueryParams.APPKEY) String appKey,
             @QueryParam(SDNQueryParams.USERNAME) String user,
             @QueryParam(SDNQueryParams.PASSWORD) String password);
 }

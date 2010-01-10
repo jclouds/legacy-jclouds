@@ -20,7 +20,6 @@ package org.jclouds.azure.storage.blob;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -67,11 +66,14 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Provides asynchronous access to Azure Blob via their REST API.
  * <p/>
- * All commands return a Future of the result from Azure Blob. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
+ * All commands return a ListenableFuture of the result from Azure Blob. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @see AzureBlobClient
@@ -93,7 +95,7 @@ public interface AzureBlobAsyncClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   Future<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
+   ListenableFuture<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
             ListOptions... listOptions);
 
    /**
@@ -103,7 +105,7 @@ public interface AzureBlobAsyncClient {
    @Path("{container}")
    @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
    @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> createContainer(@PathParam("container") String container,
+   ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
             CreateContainerOptions... options);
 
    /**
@@ -113,7 +115,7 @@ public interface AzureBlobAsyncClient {
    @Path("{container}")
    @QueryParams(keys = "restype", values = "container")
    @ResponseParser(ParseContainerPropertiesFromHeaders.class)
-   Future<ListableContainerProperties> getContainerProperties(
+   ListenableFuture<ListableContainerProperties> getContainerProperties(
             @PathParam("container") String container);
 
    /**
@@ -123,7 +125,7 @@ public interface AzureBlobAsyncClient {
    @Path("{container}")
    @QueryParams(keys = "restype", values = "container")
    @ExceptionParser(ReturnFalseOn404.class)
-   Future<Boolean> containerExists(@PathParam("container") String container);
+   ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
 
    /**
     * @see AzureBlobClient#setResourceMetadata
@@ -131,7 +133,7 @@ public interface AzureBlobAsyncClient {
    @PUT
    @Path("{container}")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "metadata" })
-   Future<Void> setResourceMetadata(@PathParam("container") String container,
+   ListenableFuture<Void> setResourceMetadata(@PathParam("container") String container,
             @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> metadata);
 
    /**
@@ -141,7 +143,7 @@ public interface AzureBlobAsyncClient {
    @Path("{container}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @QueryParams(keys = "restype", values = "container")
-   Future<Void> deleteContainer(@PathParam("container") String container);
+   ListenableFuture<Void> deleteContainer(@PathParam("container") String container);
 
    /**
     * @see AzureBlobClient#createRootContainer
@@ -150,7 +152,7 @@ public interface AzureBlobAsyncClient {
    @Path("$root")
    @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
    @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> createRootContainer(CreateContainerOptions... options);
+   ListenableFuture<Boolean> createRootContainer(CreateContainerOptions... options);
 
    /**
     * @see AzureBlobClient#deleteRootContainer
@@ -159,7 +161,7 @@ public interface AzureBlobAsyncClient {
    @Path("$root")
    @ExceptionParser(ReturnTrueOn404.class)
    @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> deleteRootContainer();
+   ListenableFuture<Boolean> deleteRootContainer();
 
    /**
     * @see AzureBlobClient#listBlobs(String, ListBlobsOptions)
@@ -168,7 +170,7 @@ public interface AzureBlobAsyncClient {
    @XMLResponseParser(ContainerNameEnumerationResultsHandler.class)
    @Path("{container}")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "list" })
-   Future<ListBlobsResponse> listBlobs(@PathParam("container") String container,
+   ListenableFuture<ListBlobsResponse> listBlobs(@PathParam("container") String container,
             ListBlobsOptions... options);
 
    /**
@@ -178,7 +180,7 @@ public interface AzureBlobAsyncClient {
    @XMLResponseParser(ContainerNameEnumerationResultsHandler.class)
    @Path("$root")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "list" })
-   Future<ListBlobsResponse> listBlobs(ListBlobsOptions... options);
+   ListenableFuture<ListBlobsResponse> listBlobs(ListBlobsOptions... options);
 
    /**
     * @see AzureBlobClient#putBlob
@@ -186,7 +188,7 @@ public interface AzureBlobAsyncClient {
    @PUT
    @Path("{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
-   Future<String> putBlob(
+   ListenableFuture<String> putBlob(
             @PathParam("container") String container,
             @PathParam("name") @ParamParser(BlobName.class) @BinderParam(BindAzureBlobToPayload.class) org.jclouds.azure.storage.blob.domain.AzureBlob object);
 
@@ -197,7 +199,7 @@ public interface AzureBlobAsyncClient {
    @ResponseParser(ParseBlobFromHeadersAndHttpContent.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
-   Future<org.jclouds.azure.storage.blob.domain.AzureBlob> getBlob(
+   ListenableFuture<org.jclouds.azure.storage.blob.domain.AzureBlob> getBlob(
             @PathParam("container") String container, @PathParam("name") String name,
             GetOptions... options);
 
@@ -208,7 +210,7 @@ public interface AzureBlobAsyncClient {
    @ResponseParser(ParseBlobPropertiesFromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
-   Future<BlobProperties> getBlobProperties(@PathParam("container") String container,
+   ListenableFuture<BlobProperties> getBlobProperties(@PathParam("container") String container,
             @PathParam("name") String name);
 
    /**
@@ -217,7 +219,7 @@ public interface AzureBlobAsyncClient {
    @PUT
    @Path("{container}/{name}")
    @QueryParams(keys = { "comp" }, values = { "metadata" })
-   Future<Void> setBlobMetadata(@PathParam("container") String container,
+   ListenableFuture<Void> setBlobMetadata(@PathParam("container") String container,
             @PathParam("name") String name,
             @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> metadata);
 
@@ -227,6 +229,7 @@ public interface AzureBlobAsyncClient {
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("{container}/{name}")
-   Future<Void> deleteBlob(@PathParam("container") String container, @PathParam("name") String name);
+   ListenableFuture<Void> deleteBlob(@PathParam("container") String container,
+            @PathParam("name") String name);
 
 }

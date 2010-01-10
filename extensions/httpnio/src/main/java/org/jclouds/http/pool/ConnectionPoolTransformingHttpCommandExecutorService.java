@@ -27,7 +27,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -136,7 +135,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
       exceptionIfNotActive();
       final SynchronousQueue<?> channel = new SynchronousQueue<Object>();
       // should block and immediately parse the response on exit.
-      Future<T> future = executorService.submit(new Callable<T>() {
+      ListenableFuture<T> future = makeListenable(executorService.submit(new Callable<T>() {
          Logger transformerLogger = logFactory.getLogger(responseTransformer.getClass().getName());
 
          public T call() throws Exception {
@@ -149,12 +148,12 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
             transformerLogger.debug("Processed intermediate result for: %s", o);
             return result;
          }
-      });
+      }));
 
       HttpCommandRendezvous<T> rendezvous = new HttpCommandRendezvous<T>(command, channel,
                makeListenable(future));
       commandQueue.add(rendezvous);
-      return rendezvous.getFuture();
+      return rendezvous.getListenableFuture();
    }
 
    /**
