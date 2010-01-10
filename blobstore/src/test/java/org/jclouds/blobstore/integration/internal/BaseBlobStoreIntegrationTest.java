@@ -41,7 +41,6 @@ import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.util.Utils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -49,6 +48,7 @@ import org.testng.annotations.BeforeSuite;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -299,7 +299,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
 
                                  })));
             } catch (Exception e) {
-               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               Throwables.propagateIfPossible(e);
             }
          }
       });
@@ -395,7 +395,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
                   assert !context.getBlobStore().containerExists(name) : "container " + name
                            + " still exists";
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });

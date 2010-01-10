@@ -56,7 +56,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
+@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
 public class EC2ComputeServiceLiveTest {
 
    private EC2ComputeService client;
@@ -80,7 +80,7 @@ public class EC2ComputeServiceLiveTest {
    }
 
    public void testCreate() throws Exception {
-      server = client.createServer(serverPrefix, Profile.SMALLEST, Image.CENTOS_53);
+      server = client.createServer(serverPrefix, Profile.SMALLEST, Image.RHEL_53);
       assertNotNull(server.getId());
       assertEquals(server.getLoginPort(), 22);
       assertEquals(server.getLoginType(), LoginType.SSH);

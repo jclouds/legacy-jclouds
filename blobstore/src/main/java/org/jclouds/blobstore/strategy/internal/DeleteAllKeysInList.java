@@ -34,8 +34,8 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
-import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -75,7 +75,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          try {
             isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          } catch (Exception e) {
-            Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
             throw new BlobRuntimeException("Error deleting blob in container: " + containerName, e);
          }
       }

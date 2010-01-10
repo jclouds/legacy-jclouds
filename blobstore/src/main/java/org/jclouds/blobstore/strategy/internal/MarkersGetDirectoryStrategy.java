@@ -30,8 +30,8 @@ import org.jclouds.blobstore.functions.ResourceMetadataToRelativePathResourceMet
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
-import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 /**
@@ -76,7 +76,7 @@ public class MarkersGetDirectoryStrategy implements GetDirectoryStrategy {
                      directory + suffix).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS));
          } catch (KeyNotFoundException e) {
          } catch (Exception e) {
-            e = Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
             if (!(e instanceof KeyNotFoundException))
                throw new BlobRuntimeException("Error determining if a directory exists at: "
                         + containerName + "/" + directory, e);

@@ -29,8 +29,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
-import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 /**
@@ -65,7 +65,7 @@ public class MarkerFileMkdirStrategy implements MkdirStrategy {
                      TimeUnit.MILLISECONDS);
          }
       } catch (Exception e) {
-         e = Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          if (!(e instanceof KeyNotFoundException))
             throw new BlobRuntimeException("Error creating marker directory: " + containerName
                      + "/" + directory, e);

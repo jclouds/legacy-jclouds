@@ -31,6 +31,8 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
+
 /**
  * This will parse and set an appropriate exception on the command object.
  * 
@@ -64,15 +66,14 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                }
             } catch (Exception he) {
                command.setException(new HttpResponseException(command, response, content));
-               Utils.rethrowIfRuntime(he);
+               Throwables.propagateIfPossible(he);
             }
-         } else if (response.getStatusCode() == 404){
+         } else if (response.getStatusCode() == 404) {
             command.setException(new HttpResponseException(command, response));
          }
       } catch (Exception e) {
          command.setException(new HttpResponseException(command, response));
-         Utils.rethrowIfRuntime(e);
+         Throwables.propagateIfPossible(e);
       }
    }
-
 }

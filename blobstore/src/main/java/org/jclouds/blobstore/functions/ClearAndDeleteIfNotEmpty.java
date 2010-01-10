@@ -30,9 +30,9 @@ import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, InvocationContext {
@@ -77,7 +77,7 @@ public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, Invo
                         requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
                return v;
             } catch (Exception e) {
-               Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+               Throwables.propagateIfPossible(e, BlobRuntimeException.class);
                throw new BlobRuntimeException("Error deleting container: "
                         + request.getArgs()[0].toString(), e);
             }

@@ -42,6 +42,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
@@ -125,7 +126,7 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
             isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          }
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException("Error deleting path: " + path, e);
       }
    }

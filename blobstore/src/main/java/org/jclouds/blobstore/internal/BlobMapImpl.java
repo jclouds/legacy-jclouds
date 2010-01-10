@@ -37,11 +37,11 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -119,13 +119,12 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
          return stripPrefix(connection.getBlob(containerName, realKey).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS));
       } catch (Exception e) {
-         Throwable cause = Throwables.getRootCause(e);
-         if (cause instanceof KeyNotFoundException) {
+         if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
+                  KeyNotFoundException.class)) >= 1)
             return null;
-         } else {
-            throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
-                     containerName, realKey), cause);
-         }
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+         throw new BlobRuntimeException(String.format("Error geting blob %s:%s", containerName,
+                  realKey), e);
       }
    }
 
@@ -140,8 +139,8 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
          connection.putBlob(containerName, value).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error putting object %1$s:%2$s%n%3$s",
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+         throw new BlobRuntimeException(String.format("Error putting blob %s:%s%n%3$s",
                   containerName, key, value), e);
       }
       return returnVal;
@@ -163,7 +162,7 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
             // this will throw an exception if there was a problem
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException("Error putting into containerName" + containerName, e);
       }
    }
@@ -180,8 +179,8 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
          connection.removeBlob(containerName, realKey).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s",
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+         throw new BlobRuntimeException(String.format("Error removing blob %s:%s",
                   containerName, realKey), e);
       }
       return old;

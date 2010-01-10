@@ -43,7 +43,6 @@ import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -209,7 +208,7 @@ public abstract class BaseBlobMap<V> {
          if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
                   ResourceNotFoundException.class)) >= 1)
             return false;
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException(String.format("Error searching for %1$s:%2$s",
                   containerName, realKey), e);
       }

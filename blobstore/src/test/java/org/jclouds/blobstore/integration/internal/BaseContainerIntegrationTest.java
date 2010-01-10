@@ -19,8 +19,8 @@
 package org.jclouds.blobstore.integration.internal;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -32,8 +32,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Throwables;
 
 /**
  * @author Adrian Cole
@@ -174,7 +175,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
                assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
                         + " still exists";
             } catch (Exception e) {
-               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               Throwables.propagateIfPossible(e);
             }
          }
       });

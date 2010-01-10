@@ -48,7 +48,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
@@ -71,6 +70,7 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -141,7 +141,7 @@ public class VCloudRestClientModule extends AbstractModule {
             try {
                return login.login().get(180, TimeUnit.SECONDS);
             } catch (Exception e) {
-               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               Throwables.propagateIfPossible(e);
                throw new RuntimeException("Error logging in", e);
             }
          }

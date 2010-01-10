@@ -78,10 +78,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -562,8 +562,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       try {
          return immediateFuture((BlobMetadata) copy(getBlob(container, key).get().getMetadata()));
       } catch (Exception e) {
-         Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e);
-         Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, ContainerNotFoundException.class);
+         Throwables.propagateIfPossible(e, KeyNotFoundException.class);
          return immediateFailedFuture(e);
       }
    }

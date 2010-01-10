@@ -52,6 +52,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 /**
@@ -153,7 +154,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
                   assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.WRITE_ACP));
                   assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.FULL_CONTROL));
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });
@@ -252,7 +253,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
                   assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });

@@ -33,8 +33,8 @@ import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
-import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -69,7 +69,7 @@ public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
          }
          return blobM;
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException("Error getting resource metadata in container: "
                   + container, e);
       }

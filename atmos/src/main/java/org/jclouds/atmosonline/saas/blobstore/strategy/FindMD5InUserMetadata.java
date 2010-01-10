@@ -31,7 +31,8 @@ import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
-import org.jclouds.util.Utils;
+
+import com.google.common.base.Throwables;
 
 /**
  * Searches Content-MD5 tag for the value associated with the value
@@ -64,7 +65,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          }
          return false;
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException(String.format(
                   "Error searching for ETAG of value: [%2$s] in container:%1$s", containerName,
                   value), e);

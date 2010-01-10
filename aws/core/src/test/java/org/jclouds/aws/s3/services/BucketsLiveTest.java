@@ -25,7 +25,8 @@ import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -55,6 +56,7 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -192,7 +194,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                   assertEquals(Payer.REQUESTER, context.getApi().getBucketPayer(bucketName));
 
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });
@@ -201,9 +203,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
             public void run() {
                try {
                   assertEquals(Payer.BUCKET_OWNER, context.getApi().getBucketPayer(bucketName));
-
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });
@@ -242,7 +243,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                   assertEquals(logging.getTargetBucket(), newLogging.getTargetBucket());
                   assertEquals(logging.getTargetPrefix(), newLogging.getTargetPrefix());
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });
@@ -252,7 +253,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                try {
                   assertNull(context.getApi().getBucketLogging(bucketName));
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });
@@ -285,7 +286,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
                            .toString());
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });
@@ -316,7 +317,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
                            .toString());
                } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+                  Throwables.propagateIfPossible(e);
                }
             }
          });

@@ -30,13 +30,13 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
 /**
@@ -72,7 +72,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
             throw new HttpException("No input to parse");
          }
       } catch (Exception e) {
-         Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, HttpException.class);
          throw new HttpException("Error parsing input for " + from, e);
       }
    }
@@ -92,8 +92,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input for ").append(handler);
          logger.error(e, message.toString());
-         if (!(e instanceof NullPointerException))
-            Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, HttpException.class);
          throw new HttpException(message.toString(), e);
       } finally {
          Closeables.closeQuietly(xml);

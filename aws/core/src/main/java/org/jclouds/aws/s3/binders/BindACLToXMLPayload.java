@@ -33,8 +33,8 @@ import org.jclouds.aws.s3.domain.AccessControlList.GroupGrantee;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
@@ -53,7 +53,7 @@ public class BindACLToXMLPayload implements Binder {
          request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, stringPayload.getBytes().length + "");
          request.setPayload(stringPayload);
       } catch (Exception e) {
-         Utils.rethrowIfRuntime(e);
+         Throwables.propagateIfPossible(e);
          throw new RuntimeException("error transforming acl: " + from, e);
       }
    }

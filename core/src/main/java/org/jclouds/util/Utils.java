@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +34,6 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ComputationException;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.OutputSupplier;
@@ -82,55 +80,6 @@ public class Utils {
    @Resource
    protected static Logger logger = Logger.NULL;
 
-   /**
-    * 
-    * @param <E>
-    *           Exception type you'd like rethrown
-    * @param e
-    *           Exception you are inspecting
-    * @throws E
-    */
-   public static void rethrowIfRuntime(Exception e) {
-      if (e instanceof ExecutionException || e instanceof ComputationException) {
-         Throwable nested = e.getCause();
-         if (nested instanceof Error)
-            throw (Error) nested;
-         e = (Exception) nested;
-      }
-
-      if (e instanceof RuntimeException) {
-         throw (RuntimeException) e;
-      }
-   }
-
-   /**
-    * 
-    * @param <E>
-    *           Exception type you'd like rethrown
-    * @param e
-    *           Exception you are inspecting
-    * @throws E
-    */
-   @SuppressWarnings("unchecked")
-   public static <E extends Exception> Exception rethrowIfRuntimeOrSameType(Exception e) throws E {
-      if (e instanceof ExecutionException || e instanceof ComputationException) {
-         Throwable nested = e.getCause();
-         if (nested instanceof Error)
-            throw (Error) nested;
-         e = (Exception) nested;
-      }
-
-      if (e instanceof RuntimeException) {
-         throw (RuntimeException) e;
-      } else {
-         try {
-            throw (E) e;
-         } catch (ClassCastException throwAway) {
-            // using cce as there's no way to do instanceof E in current java
-         }
-      }
-      return e;
-   }
 
    public static String toStringAndClose(InputStream input) throws IOException {
       try {

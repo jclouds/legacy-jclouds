@@ -37,7 +37,6 @@ import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -47,6 +46,7 @@ import org.jets3t.service.model.S3BucketLoggingStatus;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
+import com.google.common.base.Throwables;
 import com.google.inject.Module;
 
 /**
@@ -107,7 +107,7 @@ public class JCloudsS3Service extends S3Service {
          map.put("ETag", jcObjectMetadata.getETag());
          return map;
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error copying object", e);
       }
    }
@@ -125,7 +125,7 @@ public class JCloudsS3Service extends S3Service {
             // Bucket created.
          }
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error creating bucket: " + bucketName, e);
       }
       return new S3Bucket(bucketName);
@@ -141,7 +141,7 @@ public class JCloudsS3Service extends S3Service {
       try {
          connection.deleteBucketIfEmpty(bucketName);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error deleting bucket: " + bucketName, e);
       }
    }
@@ -156,7 +156,7 @@ public class JCloudsS3Service extends S3Service {
       try {
          connection.deleteObject(bucketName, objectKey);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException(String.format("error deleting object: %1$s:%2$s", bucketName,
                   objectKey), e);
       }
@@ -168,7 +168,7 @@ public class JCloudsS3Service extends S3Service {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = connection.getBucketACL(bucketName);
          return Util.convertAccessControlList(jcACL);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error getting bucket's ACL: " + bucketName, e);
       }
    }
@@ -194,7 +194,7 @@ public class JCloudsS3Service extends S3Service {
                   objectKey);
          return Util.convertAccessControlList(jcACL);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error getting object's ACL", e);
       }
    }
@@ -215,7 +215,7 @@ public class JCloudsS3Service extends S3Service {
 
          return Util.convertObjectHead(connection.headObject(bucketName, objectKey));
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException(String.format("error retrieving object head: %1$s:%2$s",
                   bucketName, objectKey), e);
       }
@@ -230,7 +230,7 @@ public class JCloudsS3Service extends S3Service {
                   ifMatchTags, ifNoneMatchTags);
          return Util.convertObject(connection.getObject(bucketName, objectKey, options));
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException(String.format("error retrieving object: %1$s:%2$s",
                   bucketName, objectKey), e);
       }
@@ -255,7 +255,7 @@ public class JCloudsS3Service extends S3Service {
                   .listOwnedBuckets();
          return Util.convertBuckets(jcBucketList);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error listing buckets", e);
       }
    }
@@ -289,7 +289,7 @@ public class JCloudsS3Service extends S3Service {
                            .size()]), (String[]) commonPrefixes.toArray(new String[commonPrefixes
                            .size()]), priorLastKey);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error listing objects in bucket " + bucketName, e);
       }
    }
@@ -301,7 +301,7 @@ public class JCloudsS3Service extends S3Service {
          return listObjectsChunked(bucketName, prefix, delimiter, maxListingLength, null, true)
                   .getObjects();
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error listing objects in bucket " + bucketName, e);
       }
    }
@@ -313,7 +313,7 @@ public class JCloudsS3Service extends S3Service {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
          connection.putBucketACL(bucketName, jcACL);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error putting bucket's ACL: " + bucketName, e);
       }
    }
@@ -325,7 +325,7 @@ public class JCloudsS3Service extends S3Service {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
          connection.putObjectACL(bucketName, objectKey, jcACL);
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error putting object's ACL", e);
       }
    }
@@ -340,7 +340,7 @@ public class JCloudsS3Service extends S3Service {
          jsObject.setETag(eTag);
          return jsObject;
       } catch (Exception e) {
-         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error putting object", e);
       }
    }

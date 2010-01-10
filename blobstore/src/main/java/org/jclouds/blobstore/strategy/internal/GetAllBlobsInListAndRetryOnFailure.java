@@ -39,10 +39,10 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
-import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -89,7 +89,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
             ifNotFoundRetryOtherwiseAddToSet(container, futureObjectEntry.getKey(),
                      futureObjectEntry.getValue(), objects);
          } catch (Exception e) {
-            Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
             throw new BlobRuntimeException(String.format("Error getting value from blob %1$s",
                      container), e);
          }
@@ -109,8 +109,8 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
             objects.add(object);
             return;
          } catch (Exception e) {
-            Throwable cause = Throwables.getRootCause(e);
-            if (cause instanceof KeyNotFoundException) {
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
+                     KeyNotFoundException.class)) >= 1) {
                Thread.sleep(requestRetryMilliseconds);
                value = connection.getBlob(container, key);
             } else {

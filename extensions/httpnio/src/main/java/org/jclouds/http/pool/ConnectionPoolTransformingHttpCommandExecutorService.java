@@ -41,9 +41,9 @@ import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.lifecycle.BaseLifeCycle;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -120,7 +120,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
          try {
             invoke(rendezvous);
          } catch (Exception e) {
-            Utils.<InterruptedException> rethrowIfRuntimeOrSameType(e);
+            Throwables.propagateIfPossible(e, InterruptedException.class);
             logger.error(e, "Error processing command %s", rendezvous.getCommand());
          }
       }

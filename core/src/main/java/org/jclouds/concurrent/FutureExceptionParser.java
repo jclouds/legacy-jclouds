@@ -23,8 +23,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.logging.Logger;
-
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -40,17 +38,10 @@ public class FutureExceptionParser<T> implements ListenableFuture<T> {
 
    private final ListenableFuture<T> delegate;
    private final Function<Exception, T> function;
-   private final Logger logger;
 
    public FutureExceptionParser(ListenableFuture<T> delegate, Function<Exception, T> function) {
-      this(delegate, function, Logger.NULL);
-   }
-
-   public FutureExceptionParser(ListenableFuture<T> delegate, Function<Exception, T> function,
-            Logger logger) {
       this.delegate = delegate;
       this.function = function;
-      this.logger = logger;
    }
 
    public boolean cancel(boolean mayInterruptIfRunning) {
@@ -67,10 +58,7 @@ public class FutureExceptionParser<T> implements ListenableFuture<T> {
 
    private T attemptConvert(ExecutionException e) throws ExecutionException {
       if (e.getCause() instanceof Exception) {
-
-         logger.debug("Processing exception for: %s", e.getCause());
          T returnVal = function.apply((Exception) e.getCause());
-         logger.debug("Processed exception for: %s", e.getCause());
          if (returnVal != null)
             return returnVal;
       }

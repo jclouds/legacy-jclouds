@@ -58,9 +58,9 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 import org.jclouds.blobstore.strategy.internal.MarkersIsDirectoryStrategy;
 import org.jclouds.blobstore.util.BlobStoreUtils;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -199,7 +199,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
                throw new FileNotFolderException(getName());
             }
          } catch (Exception ex) {
-            Utils.<FileNotFolderException> rethrowIfRuntimeOrSameType(ex);
+            Throwables.propagateIfPossible(ex, FileNotFolderException.class);
             throw new FileNotFolderException(getName(), ex);
          }
       }

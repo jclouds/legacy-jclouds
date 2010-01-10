@@ -45,12 +45,12 @@ import org.jclouds.http.payloads.ByteArrayPayload;
 import org.jclouds.http.payloads.FilePayload;
 import org.jclouds.http.payloads.InputStreamPayload;
 import org.jclouds.http.payloads.StringPayload;
-import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -82,17 +82,15 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    public InputStream get(Object o) {
       String realKey = prefixer.apply(o.toString());
       try {
-         return (InputStream) (connection.getBlob(containerName, realKey).get(
-                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).getContent();
-      } catch (KeyNotFoundException e) {
-         return null;
+         return connection.getBlob(containerName, realKey).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS).getContent();
       } catch (Exception e) {
-         Throwable cause = Throwables.getRootCause(e);
-         if (cause instanceof KeyNotFoundException)
+         if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
+                  KeyNotFoundException.class)) >= 1)
             return null;
-         Throwables.propagateIfInstanceOf(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
-                  containerName, realKey), e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+         throw new BlobRuntimeException(String.format("Error geting blob %s:%s", containerName,
+                  realKey), e);
       }
    }
 
@@ -108,8 +106,8 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
          connection.removeBlob(containerName, realKey).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s",
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+         throw new BlobRuntimeException(String.format("Error removing blob %s:%s",
                   containerName, realKey), e);
       }
       return old;
@@ -134,7 +132,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
       return Collections2.transform(getAllBlobs.execute(containerName, options),
                new Function<Blob, InputStream>() {
                   public InputStream apply(Blob from) {
-                     return (InputStream) from.getContent();
+                     return from.getContent();
                   }
                });
    }
@@ -147,8 +145,8 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    public Set<Map.Entry<String, InputStream>> entrySet() {
       Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
       for (Blob object : this.getAllBlobs.execute(containerName, options)) {
-         entrySet.add(new Entry(pathStripper.apply(object.getMetadata().getName()),
-                  (InputStream) object.getContent()));
+         entrySet.add(new Entry(pathStripper.apply(object.getMetadata().getName()), object
+                  .getContent()));
       }
       return entrySet;
    }
@@ -233,15 +231,12 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
             object.setPayload(Payloads.newPayload(entry.getValue()));
             object.generateMD5();
             puts.add(connection.putBlob(containerName, object));
-            // / ParamExtractor Funcion<?,String>
-            // / response transformer set key on the way out.
-            // / ExceptionHandler convert 404 to NOT_FOUND
          }
          for (Future<String> put : puts)
             // this will throw an exception if there was a problem
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException("Error putting into containerName" + containerName, e);
       }
    }
@@ -299,8 +294,8 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
                   TimeUnit.MILLISECONDS);
          return returnVal;
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error adding object %1$s:%2$s",
+         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+         throw new BlobRuntimeException(String.format("Error adding blob %s:%s",
                   containerName, object), e);
       }
    }
