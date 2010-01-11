@@ -20,15 +20,9 @@
 
 -->
 <project xmlns:artifact="urn:maven-artifact-ant" name="cargooverssh" default="cargooverssh" basedir=".">
-        <property name="host" value="204.51.114.84" />
-        <property name="username" value="vcloud" />
-        <property name="password" value="p4ssw0rd" />
-
   <property file="build.properties" />
   <property name="password" value="" />
   <property name="keyfile" value="" />
-  <input message="Please enter the ip or hostname of the ssh machine" addproperty="host"/>
-  <input message="Please enter the user you will connect as" addproperty="username"/>
 
   <!-- maven must be available before we use it -->
   <delete dir="build/cargo"/>
