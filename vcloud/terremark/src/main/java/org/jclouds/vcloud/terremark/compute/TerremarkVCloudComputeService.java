@@ -25,6 +25,7 @@ import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
@@ -37,6 +38,7 @@ import org.jclouds.compute.domain.ServerMetadata;
 import org.jclouds.compute.domain.ServerState;
 import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
 import org.jclouds.compute.domain.internal.ServerMetadataImpl;
+import org.jclouds.compute.reference.ComputeConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -58,6 +60,7 @@ import com.google.inject.internal.ImmutableSet;
 @Singleton
 public class TerremarkVCloudComputeService implements ComputeService {
    @Resource
+   @Named(ComputeConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final TerremarkVCloudComputeClient computeClient;
    private final TerremarkVCloudClient tmClient;
@@ -80,7 +83,8 @@ public class TerremarkVCloudComputeService implements ComputeService {
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
       String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
       TerremarkVApp vApp = tmClient.getVApp(id);
-      InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22);
+      InetAddress publicIp = computeClient
+               .createPublicAddressMappedToPorts(vApp, 22, 80, 8080, 443);
       return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState
                .get(vApp.getStatus()), ImmutableSet.<InetAddress> of(publicIp), vApp
                .getNetworkToAddresses().values(), 22, LoginType.SSH, new Credentials("vcloud",

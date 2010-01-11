@@ -16,24 +16,33 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.tools.ant;
+package org.jclouds.tools.ant.logging.config;
 
-import java.io.IOException;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.apache.tools.ant.Project;
+import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.logging.config.LoggingModule;
+import org.jclouds.tools.ant.logging.AntLogger;
 
 /**
+ * Configures logging of type {@link AntLogger}
+ * 
  * @author Adrian Cole
+ * 
  */
-@Test(groups = "unit", testName = "compute.ComputeTaskTest")
-public class ComputeTaskTest {
-   private ComputeTask task;
-   private ServerElement serverElement;
+public class AntLoggingModule extends LoggingModule {
 
-   @BeforeTest
-   protected void setUp() throws IOException {
-      this.task = new ComputeTask();
+   private final Project project;
+   private final String[] upgrades;
 
+   public AntLoggingModule(Project project, String ... upgrades) {
+      this.project = project;
+      this.upgrades = upgrades;
+   }
+
+   @Override
+   public LoggerFactory createLoggerFactory() {
+      return new AntLogger.AntLoggerFactory(checkNotNull(project, "project"), upgrades);
    }
 }

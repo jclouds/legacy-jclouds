@@ -29,8 +29,10 @@ import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.reference.ComputeConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -53,7 +55,8 @@ import com.google.common.collect.Sets;
  */
 public class TerremarkVCloudComputeClient {
    @Resource
-   protected Logger logger = Logger.NULL;
+   @Named(ComputeConstants.COMPUTE_LOGGER)
+   Logger logger = Logger.NULL;
 
    private final Predicate<String> taskTester;
    private final TerremarkVCloudClient tmClient;
@@ -67,7 +70,7 @@ public class TerremarkVCloudComputeClient {
 
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
             Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
-            Image.UBUNTU_JEOS, "11").build();
+            Image.UBUNTU_JEOS_90, "11").build();
 
    public String start(String name, Image image, int minCores, int minMegs,
             Map<String, String> properties) {

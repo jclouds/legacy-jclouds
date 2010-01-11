@@ -16,11 +16,13 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.tools.ant;
+package org.jclouds.tools.ant.taskdefs.compute;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -35,12 +37,14 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.ServerIdentity;
 import org.jclouds.compute.domain.ServerMetadata;
+import org.jclouds.compute.reference.ComputeConstants;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.inject.Module;
 import com.google.inject.Provider;
@@ -59,7 +63,7 @@ public class ComputeTask extends Task {
 
       @Override
       public Module[] get() {
-         return new Module[] { new AntLoggingModule(project) };
+         return new Module[] { new AntLoggingModule(project, ComputeConstants.COMPUTE_LOGGER) };
       }
 
    };
@@ -167,6 +171,26 @@ public class ComputeTask extends Task {
                createdServer.getCredentials().account, createdServer.getCredentials().key,
                createdServer.getPublicAddresses().first().getHostAddress(), createdServer
                         .getLoginPort()));
+      if (serverElement.getIdproperty() != null)
+         getProject().setProperty(serverElement.getIdproperty(), createdServer.getId());
+      if (serverElement.getHostproperty() != null)
+         getProject().setProperty(serverElement.getHostproperty(),
+                  createdServer.getPublicAddresses().first().getHostAddress());
+      if (serverElement.getKeyfile() != null
+               && createdServer.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
+         try {
+            Files.write(createdServer.getCredentials().key, new File(serverElement.getKeyfile()),
+                     Charset.defaultCharset());
+         } catch (IOException e) {
+            throw new BuildException(e);
+         }
+      if (serverElement.getPasswordproperty() != null
+               && !createdServer.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
+         getProject().setProperty(serverElement.getPasswordproperty(),
+                  createdServer.getCredentials().key);
+      if (serverElement.getUsernameproperty() != null)
+         getProject().setProperty(serverElement.getUsernameproperty(),
+                  createdServer.getCredentials().account);
    }
 
    private void destroy(ComputeService computeService) {
@@ -213,7 +237,7 @@ public class ComputeTask extends Task {
 
    public void setAction(String action) {
       this.action = action;
-   }                                                                                                                     
+   }
 
    public ServerElement getServerElement() {
       return serverElement;

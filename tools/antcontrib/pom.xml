@@ -39,6 +39,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
             <version>1.7.1</version>
@@ -48,6 +53,11 @@
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-jsch</artifactId>
             <version>1.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.jcraft</groupId>

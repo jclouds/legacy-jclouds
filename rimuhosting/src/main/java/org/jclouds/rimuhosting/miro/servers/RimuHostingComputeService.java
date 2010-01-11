@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
@@ -32,6 +34,8 @@ import org.jclouds.compute.domain.CreateServerResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.ServerMetadata;
+import org.jclouds.compute.reference.ComputeConstants;
+import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.Server;
@@ -43,6 +47,10 @@ import com.google.common.collect.ImmutableMap;
  */
 @Singleton
 public class RimuHostingComputeService implements ComputeService {
+   @Resource
+   @Named(ComputeConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    RimuHostingClient rhClient;
 
    @Inject
@@ -80,7 +88,7 @@ public class RimuHostingComputeService implements ComputeService {
    public SortedSet<org.jclouds.compute.domain.ServerIdentity> getServerByName(String id) {
       SortedSet<org.jclouds.compute.domain.ServerIdentity> serverSet = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
       for (Server rhServer : rhClient.getServerList()) {
-         if(rhServer.getName().equals(id)){
+         if (rhServer.getName().equals(id)) {
             serverSet.add(new RimuHostingServer(rhServer, rhClient));
          }
       }

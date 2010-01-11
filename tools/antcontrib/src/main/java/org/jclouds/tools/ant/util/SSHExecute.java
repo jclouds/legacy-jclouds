@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.tools.ant.taskdefs.sshjava;
+package org.jclouds.tools.ant.util;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;

@@ -1,7 +1,0 @@
-target
-.settings
-.classpath
-.project
-jclouds-ant-plugin.iml
-jclouds-ant-plugin.ipr
-jclouds-ant-plugin.iws

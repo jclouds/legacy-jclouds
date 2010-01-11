@@ -24,6 +24,7 @@ import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
@@ -36,6 +37,7 @@ import org.jclouds.compute.domain.ServerMetadata;
 import org.jclouds.compute.domain.ServerState;
 import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
 import org.jclouds.compute.domain.internal.ServerMetadataImpl;
+import org.jclouds.compute.reference.ComputeConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -56,6 +58,7 @@ import com.google.inject.internal.ImmutableSet;
 @Singleton
 public class HostingDotComVCloudComputeService implements ComputeService {
    @Resource
+   @Named(ComputeConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final HostingDotComVCloudComputeClient computeClient;
    private final HostingDotComVCloudClient hostingClient;

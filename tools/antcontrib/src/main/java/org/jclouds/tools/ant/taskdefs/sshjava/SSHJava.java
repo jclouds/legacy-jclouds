@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +38,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Java;
+import org.apache.tools.ant.taskdefs.Replace;
+import org.apache.tools.ant.taskdefs.Replace.Replacefilter;
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHUserInfo;
 import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
 import org.apache.tools.ant.types.CommandlineJava;
@@ -49,8 +52,11 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.tools.ant.util.SSHExecute;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -67,8 +73,9 @@ public class SSHJava extends Java {
    private final Scp scp;
    private final SSHUserInfo userInfo;
    private File localDirectory;
-   private File remotebase;
-   private File remotedir;
+   File remotebase;
+   @VisibleForTesting
+   File remotedir;
    @VisibleForTesting
    Environment env = new Environment();
 
@@ -77,21 +84,23 @@ public class SSHJava extends Java {
    private String errorProperty;
    private File outputFile;
    private String outputProperty;
-   private String id = "sshjava" + new SecureRandom().nextLong();
+   String id = "sshjava" + new SecureRandom().nextLong();
    private boolean append;
 
    @VisibleForTesting
-   final Map<String, String> shiftMap = Maps.newHashMap();
+   final LinkedHashMap<String, String> shiftMap = Maps.newLinkedHashMap();
    @VisibleForTesting
-   final Map<String, String> replace = Maps.newHashMap();
+   final LinkedHashMap<String, String> replace = Maps.newLinkedHashMap();
 
    public SSHJava() {
       super();
-      setFork(true);
       exec = new SSHExecute();
       exec.setProject(getProject());
       scp = new Scp();
       userInfo = new SSHUserInfo();
+      scp.init();
+      setFork(true);
+      setTrust(true);
    }
 
    public SSHJava(Task owner) {
@@ -120,15 +129,6 @@ public class SSHJava extends Java {
       if (remotedir == null)
          remotedir = new File(remotebase, id);
 
-      replace.put(localDirectory.getAbsolutePath(), remotedir.getAbsolutePath());
-
-      if (osFamily == OsFamily.UNIX) {
-         log("removing old contents: " + remotedir.getAbsolutePath(), Project.MSG_VERBOSE);
-         sshexec(exec("rm -rf " + remotedir.getAbsolutePath()).render(osFamily));
-      } else {
-         // TODO need recursive remove on windows
-      }
-      // must copy the files over first as we are changing the system properties based on this.
       String command = createInitScript(osFamily, id, remotedir.getAbsolutePath(), env,
                getCommandLine());
 
@@ -141,15 +141,36 @@ public class SSHJava extends Java {
          throw new BuildException(e);
       }
 
+      replaceAllTokensIn(localDirectory);
+
       FileSet cwd = new FileSet();
       cwd.setDir(localDirectory);
+      if (osFamily == OsFamily.UNIX) {
+         log("removing old contents: " + remotedir.getAbsolutePath(), Project.MSG_VERBOSE);
+         sshexec(exec("rm -rf " + remotedir.getAbsolutePath()).render(osFamily));
+      } else {
+         // TODO need recursive remove on windows
+      }
       mkdirAndCopyTo(remotedir.getAbsolutePath(), ImmutableList.of(cwd));
 
       for (Entry<String, String> entry : shiftMap.entrySet()) {
          FileSet set = new FileSet();
-         set.setDir(new File(entry.getKey()));
-         mkdirAndCopyTo(remotebase.getAbsolutePath() + ShellToken.FS.to(osFamily)
-                  + entry.getValue(), ImmutableList.of(set));
+         File source = new File(entry.getKey());
+         if (source.isDirectory()) {
+            set.setDir(new File(entry.getKey()));
+            mkdirAndCopyTo(remotebase.getAbsolutePath() + ShellToken.FS.to(osFamily)
+                     + entry.getValue(), ImmutableList.of(set));
+         } else {
+            String destination = remotebase.getAbsolutePath() + ShellToken.FS.to(osFamily)
+                     + new File(entry.getValue()).getParent();
+            sshexec(exec("{md} " + destination).render(osFamily));
+            scp.init();
+            String scpDestination = getScpDir(destination);
+            log("staging: " + scpDestination, Project.MSG_VERBOSE);
+            scp.setFile(source.getAbsolutePath());
+            scp.setTodir(scpDestination);
+            scp.execute();
+         }
       }
 
       if (getCommandLine().getClasspath() != null) {
@@ -175,6 +196,33 @@ public class SSHJava extends Java {
       } catch (IOException e) {
          throw new BuildException(e, getLocation());
       }
+   }
+
+   void replaceAllTokensIn(File directory) {
+      Replace replacer = new Replace();
+      replacer.setProject(getProject());
+      replacer.setDir(directory);
+
+      Map<String, String> map = Maps.newLinkedHashMap();
+      // this has to go first
+      map.put(directory.getAbsolutePath(), remotedir.getAbsolutePath());
+
+      map.putAll(Maps.transformValues(shiftMap, new Function<String, String>() {
+
+         @Override
+         public String apply(String in) {
+            return remotebase + ShellToken.FS.to(osFamily) + in;
+         }
+
+      }));
+      map.putAll(replace);
+
+      for (Entry<String, String> entry : map.entrySet()) {
+         Replacefilter filter = replacer.createReplacefilter();
+         filter.setToken(entry.getKey());
+         filter.setValue(entry.getValue());
+      }
+      replacer.execute();
    }
 
    private int sshexec(String command) {
@@ -291,17 +339,15 @@ public class SSHJava extends Java {
 
    String createInitScript(OsFamily osFamily, String id, String basedir, Environment env,
             CommandlineJava commandLine) {
-
       Map<String, String> envVariables = Maps.newHashMap();
       String[] environment = env.getVariables();
       if (environment != null) {
          for (int i = 0; i < environment.length; i++) {
             log("Setting environment variable: " + environment[i], Project.MSG_DEBUG);
             String[] keyValue = environment[i].split("=");
-            envVariables.put(keyValue[0], reprefix(keyValue[1]));
+            envVariables.put(keyValue[0], keyValue[1]);
          }
       }
-
       StringBuilder commandBuilder = new StringBuilder(commandLine.getVmCommand().getExecutable());
       if (commandLine.getBootclasspath() != null) {
          commandBuilder.append(" -Xbootclasspath:bootclasspath");
@@ -311,7 +357,8 @@ public class SSHJava extends Java {
 
       if (commandLine.getVmCommand().getArguments() != null
                && commandLine.getVmCommand().getArguments().length > 0) {
-         reprefixArgs(commandLine.getVmCommand().getArguments(), commandBuilder);
+         commandBuilder.append(" ").append(
+                  Joiner.on(' ').join(commandLine.getVmCommand().getArguments()));
       }
       commandBuilder.append(" -cp classpath");
       resetPathToUnderPrefixIfExistsAndIsFileIfNotExistsAddAsIs(commandLine.getClasspath(),
@@ -320,38 +367,21 @@ public class SSHJava extends Java {
       if (commandLine.getSystemProperties() != null
                && commandLine.getSystemProperties().getVariables() != null
                && commandLine.getSystemProperties().getVariables().length > 0) {
-         reprefixValues(commandLine.getSystemProperties().getVariables(), commandBuilder);
+         commandBuilder.append(" ").append(
+                  Joiner.on(' ').join(commandLine.getSystemProperties().getVariables()));
       }
 
       commandBuilder.append(" ").append(commandLine.getClassname());
 
       if (commandLine.getJavaCommand().getArguments() != null
                && commandLine.getJavaCommand().getArguments().length > 0) {
-         reprefixArgs(commandLine.getJavaCommand().getArguments(), commandBuilder);
+         commandBuilder.append(" ").append(
+                  Joiner.on(' ').join(commandLine.getJavaCommand().getArguments()));
       }
 
       InitBuilder testInitBuilder = new InitBuilder(id, basedir, basedir, envVariables,
                commandBuilder.toString());
       return testInitBuilder.build(osFamily);
-   }
-
-   private void reprefixValues(String[] variables, StringBuilder commandBuilder) {
-      for (String variable : variables) {
-         commandBuilder.append(" ");
-         String[] keyValue = variable.split("=");
-         if (keyValue.length == 2) {
-            String newVariable = keyValue[0] + '=' + reprefix(keyValue[1]);
-            commandBuilder.append(newVariable);
-         } else {
-            commandBuilder.append(variable);
-         }
-      }
-   }
-
-   private void reprefixArgs(String[] args, StringBuilder commandBuilder) {
-      for (String arg : args) {
-         commandBuilder.append(" ").append(reprefix(arg));
-      }
    }
 
    @Override
@@ -544,6 +574,16 @@ public class SSHJava extends Java {
          replace.put(sysp.getKey().replaceFirst("sshjava.replace.", ""), sysp.getValue());
       } else if (sysp.getKey().equals("sshjava.id")) {
          setId(sysp.getValue());
+      } else if (sysp.getKey().equals("sshjava.host")) {
+         setHost(sysp.getValue());
+      } else if (sysp.getKey().equals("sshjava.port") && !sysp.getValue().equals("")) {
+         setPort(Integer.parseInt(sysp.getValue()));
+      } else if (sysp.getKey().equals("sshjava.username")) {
+         setUsername(sysp.getValue());
+      } else if (sysp.getKey().equals("sshjava.password") && !sysp.getValue().equals("")) {
+         setPassword(sysp.getValue());
+      } else if (sysp.getKey().equals("sshjava.keyfile") && !sysp.getValue().equals("")) {
+         setKeyfile(sysp.getValue());
       } else if (sysp.getKey().equals("sshjava.remotebase")) {
          setRemotebase(new File(sysp.getValue()));
       } else {

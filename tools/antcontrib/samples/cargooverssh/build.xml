@@ -20,52 +20,103 @@
 
 -->
 <project xmlns:artifact="urn:maven-artifact-ant" name="cargooverssh" default="cargooverssh" basedir=".">
+        <property name="host" value="204.51.114.84" />
+        <property name="username" value="vcloud" />
+        <property name="password" value="p4ssw0rd" />
+
   <property file="build.properties" />
+  <property name="password" value="" />
+  <property name="keyfile" value="" />
   <input message="Please enter the ip or hostname of the ssh machine" addproperty="host"/>
   <input message="Please enter the user you will connect as" addproperty="username"/>
-  <input message="Please enter the path to the dsa key" addproperty="keyfile"/>
 
   <!-- maven must be available before we use it -->
   <delete dir="build/cargo"/>
   <mkdir dir="build/cargo"/>
 
+<!--
   <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
   <get src="http://web-actions.googlecode.com/files/samples-blazeds.war" dest="build/samples-blazeds.war"/>
+-->
 
   <!-- initialize maven tasks -->
   <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks-2.1.0.jar"/>
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath"/>
+
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository"/>
   <artifact:remoteRepository id="jclouds-snapshot.repository" url="http://jclouds.rimuhosting.com/maven2/snapshots"/>
+
   <!-- Setup maven so that we can get latest version of jclouds, jclouds, and jruby -->
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.1-SNAPSHOT"/>
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.1-SNAPSHOT"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT"/>
-    <dependency groupId="org.jclouds" artifactId="jclouds-ant-plugin" version="1.0-SNAPSHOT"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT"/>
     <remoteRepository refid="jclouds-snapshot.repository"/>
     <localRepository refid="local.repository"/>
   </artifact:dependencies>
-  <typedef name="compute" classname="org.jclouds.tools.ant.ComputeTask" classpathref="jclouds.classpath"/>
+
+  <typedef name="compute" classname="org.jclouds.tools.ant.taskdefs.compute.ComputeTask" classpathref="jclouds.classpath" />
+  <taskdef name="sshexec" classname="org.apache.tools.ant.taskdefs.optional.ssh.SSHExec" classpathref="jclouds.classpath" />
   <taskdef resource="cargo.tasks" classpathref="jclouds.classpath"/>
 
   <property name="service" value="terremark"/>
   <input message="What is your account on ${service}?" addproperty="account"/>
   <input message="What is the key for ${account}?" addproperty="key"/>
+  <property name="jclouds.compute.servername" value="terremark-blaze"/>
   <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}"/>
 
-  <target name="boo">
-    <input message="What is the container you wish to store ${zip} in?" addproperty="container"/>
+  <target name="destroy" description="destroy the server ${jclouds.compute.servername}">
+    <compute action="destroy" provider="${jclouds.compute.url}">
+       <server name="${jclouds.compute.servername}" />
+    </compute>
   </target>
 
-  <target name="cargooverssh">
-    <compute action="list-details" provider="${jclouds.compute.url}"/>
-    <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start">
-      <sysproperty key="myproperty" value="myvalue"/>
+  <target name="create" description="create the server ${jclouds.compute.servername}" depends="destroy" >
+     <compute action="create" provider="${jclouds.compute.url}">
+        <server name="${jclouds.compute.servername}" image="UBUNTU_JEOS_90" profile="SMALLEST"
+             hostproperty="host" usernameproperty="username" passwordproperty="password" />
+     </compute>
+                
+     <echo message="provisioning java on: ${jclouds.compute.servername}" />
+     <property name="sudo" value="echo ${password}|sudo -S" />
+     <!-- funny game to get around sudo problems with >>. first sudo is only to prime the password -->
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+             command="${sudo} echo hello;echo nameserver 208.67.222.222 |sudo tee -a /etc/resolv.conf" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+             command="${sudo} apt-get update -qq" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+             command="${sudo} apt-get upgrade -y -qq" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+             command="${sudo} apt-get install -y -qq wget" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+             command="${sudo} apt-get install -y -qq openjdk-6-jdk" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+         command="wget -q http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.tar.gz" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+         command="tar xzf apache-tomcat-6.0.20.tar.gz" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+         command="${sudo} mkdir -p /tmp/cargo/containers/" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+         command="${sudo} chmod 1777 /tmp/cargo" />
+     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
+         command="${sudo} mv apache-tomcat-6.0.20 /tmp/cargo/containers/tomcat6x" />
+  </target>
+
+
+  <target name="cargooverssh" depends="create">
+    <echo message="deploying tomcat and blaze to: ${jclouds.compute.servername}" />
+    <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
       <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>
       <configuration home="build/cargo" type="standalone">
+        <property name="cargo.java.home" value="/usr/lib/jvm/java-6-openjdk"/>
+        <property name="cargo.hostname" value="${host}"/>
         <property name="cargo.servlet.port" value="8080"/>
+        <property name="cargo.ssh.host" value="${host}"/>
+        <property name="cargo.ssh.username" value="${username}"/>
+        <property name="cargo.ssh.password" value="${password}"/>
+        <property name="cargo.ssh.keyfile" value="${keyfile}"/>
+        <property name="cargo.ssh.remotebase" value="/tmp/cargo"/>
         <property name="cargo.logging" value="high"/>
         <deployable type="war" file="build/samples-blazeds.war"/>
       </configuration>

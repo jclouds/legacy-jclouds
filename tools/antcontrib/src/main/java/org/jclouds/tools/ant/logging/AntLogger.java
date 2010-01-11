@@ -20,9 +20,13 @@ package org.jclouds.tools.ant.logging;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import org.apache.tools.ant.Project;
 import org.jclouds.logging.BaseLogger;
 import org.jclouds.logging.Logger;
+
+import com.google.common.collect.Sets;
 
 /**
  * {@link org.apache.tools.ant.Project} implementation of {@link Logger}.
@@ -33,22 +37,26 @@ import org.jclouds.logging.Logger;
 public class AntLogger extends BaseLogger {
    private final Project project;
    private final String category;
+   private boolean alwaysLog;
 
    public static class AntLoggerFactory implements LoggerFactory {
       private final Project project;
+      private final Set<String> upgrades;
 
-      public AntLoggerFactory(Project project) {
+      public AntLoggerFactory(Project project, String... upgrades) {
          this.project = checkNotNull(project, "project");
+         this.upgrades = Sets.newHashSet(upgrades);
       }
 
       public Logger getLogger(String category) {
-         return new AntLogger(project, category);
+         return new AntLogger(project, category, upgrades.contains(category));
       }
    }
 
-   public AntLogger(Project project, String category) {
+   public AntLogger(Project project, String category, boolean alwaysLog) {
       this.project = checkNotNull(project, "project");
       this.category = category;
+      this.alwaysLog = alwaysLog;
    }
 
    @Override
@@ -61,7 +69,7 @@ public class AntLogger extends BaseLogger {
 
    @Override
    protected void logDebug(String message) {
-      project.log(message, Project.MSG_DEBUG);
+      project.log("      " + message, alwaysLog ? Project.MSG_INFO : Project.MSG_DEBUG);
    }
 
    public boolean isDebugEnabled() {
@@ -70,7 +78,7 @@ public class AntLogger extends BaseLogger {
 
    @Override
    protected void logInfo(String message) {
-      project.log(message);
+      project.log("      " + message);
    }
 
    public boolean isInfoEnabled() {
@@ -79,12 +87,12 @@ public class AntLogger extends BaseLogger {
 
    @Override
    protected void logWarn(String message) {
-      project.log(message, Project.MSG_WARN);
+      project.log("      " + message, Project.MSG_WARN);
    }
 
    @Override
    protected void logWarn(String message, Throwable e) {
-      project.log(message, e, Project.MSG_WARN);
+      project.log("      " + message, e, Project.MSG_WARN);
    }
 
    public boolean isWarnEnabled() {
@@ -93,12 +101,12 @@ public class AntLogger extends BaseLogger {
 
    @Override
    protected void logError(String message) {
-      project.log(message, Project.MSG_ERR);
+      project.log("      " + message, Project.MSG_ERR);
    }
 
    @Override
    protected void logError(String message, Throwable e) {
-      project.log(message, e, Project.MSG_ERR);
+      project.log("      " + message, e, Project.MSG_ERR);
    }
 
    public boolean isErrorEnabled() {

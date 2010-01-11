@@ -77,7 +77,7 @@ public class VCloudComputeClientLiveTest {
                      Image.RHEL_53,
                      new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
                      Image.UBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
-                     Image.UBUNTU_JEOS, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
+                     Image.UBUNTU_JEOS_90, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
 
    private Predicate<InetAddress> addressTester;
 
