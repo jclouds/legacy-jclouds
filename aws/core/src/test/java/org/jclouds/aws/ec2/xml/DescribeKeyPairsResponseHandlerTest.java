@@ -26,8 +26,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

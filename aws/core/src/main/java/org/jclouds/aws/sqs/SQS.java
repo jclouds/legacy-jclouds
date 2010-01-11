@@ -16,33 +16,24 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.domain;
+package org.jclouds.aws.sqs;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.google.common.base.CaseFormat;
+import javax.inject.Qualifier;
 
 /**
- * 
- * Regions used for all ec2 commands.
+ * Related to a resource of type SQS
  * 
  * @author Adrian Cole
+ * 
  */
-public enum Region {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface SQS {
 
-   DEFAULT, UNKNOWN, EU_WEST_1, US_EAST_1, US_WEST_1;
-
-   public String value() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
-   }
-
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static Region fromValue(String region) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(region,
-               "region")));
-   }
 }

@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;

@@ -21,8 +21,8 @@ package org.jclouds.aws.ec2.predicates;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;

@@ -25,6 +25,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.aws.domain.Region;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;

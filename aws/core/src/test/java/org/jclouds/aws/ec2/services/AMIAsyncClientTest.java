@@ -29,9 +29,8 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RegisterImageBackedByEbsOptions;
@@ -41,6 +40,7 @@ import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.ImageIdHandler;
 import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;

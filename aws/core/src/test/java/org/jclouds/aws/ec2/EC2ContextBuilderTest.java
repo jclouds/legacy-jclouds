@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.reference.EC2Constants;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.Test;

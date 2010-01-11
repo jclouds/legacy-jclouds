@@ -28,13 +28,13 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;

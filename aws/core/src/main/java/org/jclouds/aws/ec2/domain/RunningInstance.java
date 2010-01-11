@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Attachment.Status;
 
 import com.google.common.collect.Maps;

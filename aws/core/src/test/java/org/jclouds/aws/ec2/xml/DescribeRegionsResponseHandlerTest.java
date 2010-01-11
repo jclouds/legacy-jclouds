@@ -24,8 +24,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;

@@ -28,15 +28,15 @@ import java.util.Set;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.aws.ec2.options.DescribeRegionsOptions;
 import org.jclouds.aws.ec2.xml.DescribeAvailabilityZonesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeRegionsResponseHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;

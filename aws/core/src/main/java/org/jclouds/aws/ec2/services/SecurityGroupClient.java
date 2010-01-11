@@ -21,8 +21,8 @@ package org.jclouds.aws.ec2.services;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.concurrent.Timeout;

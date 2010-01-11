@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;

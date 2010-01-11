@@ -26,7 +26,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;

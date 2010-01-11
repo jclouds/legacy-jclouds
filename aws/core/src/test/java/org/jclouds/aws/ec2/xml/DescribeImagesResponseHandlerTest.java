@@ -27,8 +27,8 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;

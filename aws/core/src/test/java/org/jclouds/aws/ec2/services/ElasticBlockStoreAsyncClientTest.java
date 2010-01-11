@@ -30,10 +30,9 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
 import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
@@ -44,6 +43,7 @@ import org.jclouds.aws.ec2.xml.DescribeSnapshotsResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.SnapshotHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;

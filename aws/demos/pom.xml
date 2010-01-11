@@ -35,6 +35,7 @@
                 <module>googleappengine</module>
         -->
        <module>createlamp</module>
+       <module>speedtest-sqs</module>
        <module>createandlistbuckets</module>
     </modules>
     <dependencies>

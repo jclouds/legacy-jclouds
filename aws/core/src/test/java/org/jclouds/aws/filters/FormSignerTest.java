@@ -16,25 +16,31 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.filters;
+package org.jclouds.aws.filters;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.ec2.config.EC2RestClientModule;
-import org.jclouds.aws.ec2.reference.EC2Constants;
+import java.util.Date;
+
+import javax.inject.Named;
+
+import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.date.DateService;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.util.concurrent.Executors;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 
-@Test(groups = "unit", testName = "ec2.FormSignerTest")
+@Test(groups = "unit", testName = "aws.FormSignerTest")
 public class FormSignerTest {
 
    private Injector injector;
@@ -57,18 +63,25 @@ public class FormSignerTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new EC2RestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(Executors
+               .sameThreadExecutor()), new AbstractModule() {
 
          protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
                      "foo");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_SECRETACCESSKEY))
+            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
                      .to("bar");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT)).to(
-                     "https://ec2.amazonaws.com");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_EXPIREINTERVAL))
+            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL))
                      .to(30);
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @TimeStamp
+         protected String provideTimeStamp(final DateService dateService,
+                  @Named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
+            return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
+                     + (expiration * 1000)));
          }
       });
       filter = injector.getInstance(FormSigner.class);

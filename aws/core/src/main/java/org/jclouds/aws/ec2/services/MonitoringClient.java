@@ -21,8 +21,8 @@ package org.jclouds.aws.ec2.services;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.MonitoringState;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.concurrent.Timeout;
 
 /**

@@ -27,9 +27,9 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.http.functions.BaseHandlerTest;

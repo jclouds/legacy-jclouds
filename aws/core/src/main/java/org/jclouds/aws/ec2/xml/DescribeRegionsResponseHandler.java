@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 

@@ -53,7 +53,7 @@ public class EC2RestClientModuleTest {
                      .to("key");
             bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT)).to(
                      "http://localhost");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_EXPIREINTERVAL))
+            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL))
                      .to(30);
          }
       });

@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.Permission;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;

@@ -28,8 +28,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

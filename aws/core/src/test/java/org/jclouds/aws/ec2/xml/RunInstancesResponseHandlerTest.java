@@ -26,10 +26,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.InetAddress;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;

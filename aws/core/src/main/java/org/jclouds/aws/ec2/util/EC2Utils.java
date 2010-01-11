@@ -21,8 +21,8 @@ package org.jclouds.aws.ec2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**

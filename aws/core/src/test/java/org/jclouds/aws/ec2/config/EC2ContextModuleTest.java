@@ -58,7 +58,7 @@ public class EC2ContextModuleTest {
                      bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT))
                               .to("http://localhost");
                      bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_EC2_EXPIREINTERVAL)).to(30);
+                              Jsr330.named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL)).to(30);
                      super.configure();
                   }
                });

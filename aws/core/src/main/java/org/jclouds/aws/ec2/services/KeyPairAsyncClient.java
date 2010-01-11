@@ -27,13 +27,13 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -55,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface KeyPairAsyncClient {
 
    /**
-    * @see BaseEC2Client#createKeyPairInRegion
+    * @see KeyPairClient#createKeyPairInRegion
     */
    @POST
    @Path("/")
@@ -66,7 +66,7 @@ public interface KeyPairAsyncClient {
             @FormParam("KeyName") String keyName);
 
    /**
-    * @see BaseEC2Client#describeKeyPairsInRegion
+    * @see KeyPairClient#describeKeyPairsInRegion
     */
    @POST
    @Path("/")
@@ -77,7 +77,7 @@ public interface KeyPairAsyncClient {
             @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
 
    /**
-    * @see BaseEC2Client#deleteKeyPairInRegion
+    * @see KeyPairClient#deleteKeyPairInRegion
     */
    @POST
    @Path("/")

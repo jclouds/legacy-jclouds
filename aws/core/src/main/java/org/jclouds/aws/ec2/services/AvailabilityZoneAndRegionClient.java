@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.aws.ec2.options.DescribeRegionsOptions;
 import org.jclouds.concurrent.Timeout;

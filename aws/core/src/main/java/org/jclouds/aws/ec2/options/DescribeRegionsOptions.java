@@ -20,7 +20,7 @@ package org.jclouds.aws.ec2.options;
 
 import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
 
 /**

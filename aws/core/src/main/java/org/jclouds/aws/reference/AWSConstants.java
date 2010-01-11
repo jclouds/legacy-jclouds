@@ -31,4 +31,8 @@ public interface AWSConstants extends HttpConstants, PoolConstants {
    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
 
+   /**
+    * how long do we wait before expiring requests.
+    */
+   public static final String PROPERTY_AWS_EXPIREINTERVAL = "jclouds.aws.expireinterval";
 }

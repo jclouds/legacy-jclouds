@@ -28,12 +28,11 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.aws.ec2.xml.BooleanValueHandler;
@@ -44,6 +43,7 @@ import org.jclouds.aws.ec2.xml.InstanceTypeHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.StringValueHandler;
 import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;

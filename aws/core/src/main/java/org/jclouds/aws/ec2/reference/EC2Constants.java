@@ -28,8 +28,4 @@ import org.jclouds.aws.reference.AWSConstants;
 public interface EC2Constants extends AWSConstants {
    public static final String PROPERTY_EC2_ENDPOINT = "jclouds.ec2.endpoint";
 
-   /**
-    * how long do we wait before expiring requests.
-    */
-   public static final String PROPERTY_EC2_EXPIREINTERVAL = "jclouds.ec2.expireinterval";
 }

@@ -20,7 +20,7 @@ package org.jclouds.aws.ec2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_ENDPOINT;
-import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_EXPIREINTERVAL;
+import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_AWS_EXPIREINTERVAL;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 
@@ -39,7 +39,7 @@ public class EC2PropertiesBuilder extends HttpPropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_EC2_ENDPOINT, "https://ec2.amazonaws.com");
-      properties.setProperty(PROPERTY_EC2_EXPIREINTERVAL, "60");
+      properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, "60");
       return properties;
    }
 
@@ -65,7 +65,7 @@ public class EC2PropertiesBuilder extends HttpPropertiesBuilder {
    }
 
    public EC2PropertiesBuilder withRequestExpiration(long seconds) {
-      properties.setProperty(PROPERTY_EC2_EXPIREINTERVAL, seconds + "");
+      properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, seconds + "");
       return this;
    }
 }

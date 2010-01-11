@@ -47,6 +47,12 @@ public class EC2ContextFactory {
                modules).buildContext();
    }
 
+   public static RestContext<EC2AsyncClient, EC2Client> createContext(Properties properties,
+            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
+      return new EC2ContextBuilder(new EC2PropertiesBuilder(properties).withCredentials(
+               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildContext();
+   }
+
    public static RestContext<EC2AsyncClient, EC2Client> createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new EC2ContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)

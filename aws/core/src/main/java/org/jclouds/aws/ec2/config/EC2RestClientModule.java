@@ -26,12 +26,11 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
@@ -50,6 +49,7 @@ import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -114,7 +114,7 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @TimeStamp
    protected String provideTimeStamp(final DateService dateService,
-            @Named(EC2Constants.PROPERTY_EC2_EXPIREINTERVAL) final int expiration) {
+            @Named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
       return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
                + (expiration * 1000)));
    }

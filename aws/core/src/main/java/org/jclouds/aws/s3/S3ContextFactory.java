@@ -47,14 +47,20 @@ public class S3ContextFactory {
                .buildContext();
    }
 
+   public static RestContext<S3AsyncClient, S3Client> createContext(Properties properties,
+            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder(new S3PropertiesBuilder(properties).withCredentials(
+               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildContext();
+   }
+
    public static RestContext<S3AsyncClient, S3Client> createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<S3AsyncClient, S3Client> createContext(URI endpoint, String awsAccessKeyId,
-            String awsSecretAccessKey, Module... modules) {
+   public static RestContext<S3AsyncClient, S3Client> createContext(URI endpoint,
+            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
       return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }

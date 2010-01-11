@@ -28,9 +28,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;

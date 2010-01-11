@@ -29,11 +29,11 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
+import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
