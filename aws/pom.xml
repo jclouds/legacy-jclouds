@@ -46,7 +46,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-scriptbuilder</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

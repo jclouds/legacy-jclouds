@@ -133,6 +133,7 @@ public class SpeedTest {
                         entry.getKey(), queue.getRegion(), ((double) complete)
                                  / (duration / 1000.0));
             System.out.println("pausing 5 seconds before the next run");
+            System.gc();
             Thread.sleep(5000);// let the network quiet down
          }
       }

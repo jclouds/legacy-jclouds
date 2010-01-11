@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.net.InetAddress;
 import java.util.Map;
@@ -52,6 +53,8 @@ import org.jclouds.compute.domain.internal.ServerIdentityImpl;
 import org.jclouds.compute.domain.internal.ServerMetadataImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.ScriptBuilder;
+import org.jclouds.scriptbuilder.domain.OsFamily;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -101,20 +104,24 @@ public class EC2ComputeService implements ComputeService {
                "profile not supported: " + profile);
       KeyPair keyPair = createKeyPair(name);
       String securityGroupName = name;
-      createSecurityGroup(securityGroupName, 22, 80, 443);
+      createSecurityGroup(securityGroupName, 22, 80, 8080, 443);
+
+      String script = new ScriptBuilder() // update and install jdk
+               .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
+               .addStatement(exec("apt-get install -y openjdk-6-jdk"))//
+               .build(OsFamily.UNIX);
 
       logger.debug(">> running instance ami(%s) type(%s) keyPair(%s) securityGroup(%s)", ami, type,
                keyPair.getKeyName(), securityGroupName);
 
-      RunningInstance runningInstance = Iterables
-               .getLast(ec2Client.getInstanceServices().runInstancesInRegion(
-                        Region.DEFAULT,
-                        null,
-                        ami,
-                        1,
-                        1,
-                        withKeyName(keyPair.getKeyName()).asType(type).withSecurityGroup(
-                                 securityGroupName).withAdditionalInfo(name)).getRunningInstances());
+      RunningInstance runningInstance = Iterables.getLast(ec2Client.getInstanceServices()
+               .runInstancesInRegion(Region.DEFAULT, null, ami, 1, 1,
+                        withKeyName(keyPair.getKeyName())// key I created above
+                                 .asType(type)// instance size
+                                 .withSecurityGroup(securityGroupName)// group I created above
+                                 .withAdditionalInfo(name)// description
+                                 .withUserData(script.getBytes()) // script to run as root
+               ).getRunningInstances());
       logger.debug("<< started instance(%s)", runningInstance.getId());
       instanceStateRunning.apply(runningInstance);
       logger.debug("<< running instance(%s)", runningInstance.getId());
@@ -127,10 +134,9 @@ public class EC2ComputeService implements ComputeService {
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateServerResponseImpl(runningInstance.getId(), name,
-               instanceToServerState.get(runningInstance.getInstanceState()), publicAddresses,
-               privateAddresses, 22, LoginType.SSH, new Credentials("root", keyPair
-                        .getKeyMaterial()));
+      return new CreateServerResponseImpl(runningInstance.getId(), name, instanceToServerState
+               .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses, 22,
+               LoginType.SSH, new Credentials("root", keyPair.getKeyMaterial()));
    }
 
    private KeyPair createKeyPair(String name) {
@@ -189,10 +195,9 @@ public class EC2ComputeService implements ComputeService {
 
       @Override
       public ServerMetadata apply(RunningInstance from) {
-         return new ServerMetadataImpl(from.getId(), from.getKeyName(),
-                  instanceToServerState.get(from.getInstanceState()), nullSafeSet(from
-                           .getIpAddress()), nullSafeSet(from.getPrivateIpAddress()), 22,
-                  LoginType.SSH);
+         return new ServerMetadataImpl(from.getId(), from.getKeyName(), instanceToServerState
+                  .get(from.getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
+                  .getPrivateIpAddress()), 22, LoginType.SSH);
       }
 
       Set<InetAddress> nullSafeSet(InetAddress in) {
