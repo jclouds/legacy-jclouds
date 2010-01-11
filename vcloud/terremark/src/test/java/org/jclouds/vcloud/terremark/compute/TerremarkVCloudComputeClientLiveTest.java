@@ -76,8 +76,8 @@ public class TerremarkVCloudComputeClientLiveTest {
    private Map<Image, Expectation> expectationMap = ImmutableMap.<Image, Expectation> builder()
             .put(Image.CENTOS_53, new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)"))
             .put(Image.RHEL_53, new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)"))
-            .put(Image.UMBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
-                     Image.UMBUNTU_JEOS, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
+            .put(Image.UBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
+                     Image.UBUNTU_JEOS, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
 
    private Predicate<InetAddress> addressTester;
 

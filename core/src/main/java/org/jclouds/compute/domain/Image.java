@@ -22,5 +22,5 @@ package org.jclouds.compute.domain;
  * @author Adrian Cole
  */
 public enum Image {
-   CENTOS_53, RHEL_53, UMBUNTU_90, UMBUNTU_JEOS
+   CENTOS_53, RHEL_53, UBUNTU_90, UBUNTU_JEOS
 }

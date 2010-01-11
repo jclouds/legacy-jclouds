@@ -51,7 +51,7 @@ public class RimuHostingComputeService implements ComputeService {
    }
 
    private Map<Image, String> imageNameMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "centos53").put(Image.UMBUNTU_90, "ubuntu904").build();
+            Image.CENTOS_53, "centos53").put(Image.UBUNTU_90, "ubuntu904").build();
    private Map<Profile, String> profileNameMap = ImmutableMap.<Profile, String> builder().put(
             Profile.SMALLEST, "MIRO1B").build();
 

@@ -51,7 +51,6 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -70,18 +69,21 @@ public class SSHJava extends Java {
    private File localDirectory;
    private File remotebase;
    private File remotedir;
-   private Environment env = new Environment();
+   @VisibleForTesting
+   Environment env = new Environment();
 
    private OsFamily osFamily = OsFamily.UNIX;
    private File errorFile;
    private String errorProperty;
    private File outputFile;
    private String outputProperty;
-   private String id = "javassh" + new SecureRandom().nextLong();
-
+   private String id = "sshjava" + new SecureRandom().nextLong();
    private boolean append;
+
    @VisibleForTesting
    final Map<String, String> shiftMap = Maps.newHashMap();
+   @VisibleForTesting
+   final Map<String, String> replace = Maps.newHashMap();
 
    public SSHJava() {
       super();
@@ -114,8 +116,11 @@ public class SSHJava extends Java {
             throw new BuildException(e);
          }
       }
+
       if (remotedir == null)
          remotedir = new File(remotebase, id);
+
+      replace.put(localDirectory.getAbsolutePath(), remotedir.getAbsolutePath());
 
       if (osFamily == OsFamily.UNIX) {
          log("removing old contents: " + remotedir.getAbsolutePath(), Project.MSG_VERBOSE);
@@ -266,11 +271,21 @@ public class SSHJava extends Java {
    }
 
    String reprefix(String in) {
+      log("comparing: " + in, Project.MSG_DEBUG);
       for (Entry<String, String> entry : shiftMap.entrySet()) {
-         if (in.startsWith(entry.getKey()))
+         if (in.startsWith(entry.getKey())) {
+            log("match shift map: " + entry.getKey(), Project.MSG_DEBUG);
             in = remotebase + ShellToken.FS.to(osFamily) + entry.getValue()
                      + in.substring(entry.getKey().length());
+         }
       }
+      for (Entry<String, String> entry : replace.entrySet()) {
+         if (in.startsWith(entry.getKey())) {
+            log("match replaceMap: " + entry.getKey(), Project.MSG_DEBUG);
+            in = entry.getValue() + in.substring(entry.getKey().length());
+         }
+      }
+      log("now: " + in, Project.MSG_DEBUG);
       return in;
    }
 
@@ -283,7 +298,7 @@ public class SSHJava extends Java {
          for (int i = 0; i < environment.length; i++) {
             log("Setting environment variable: " + environment[i], Project.MSG_DEBUG);
             String[] keyValue = environment[i].split("=");
-            envVariables.put(keyValue[0], keyValue[1]);
+            envVariables.put(keyValue[0], reprefix(keyValue[1]));
          }
       }
 
@@ -296,8 +311,7 @@ public class SSHJava extends Java {
 
       if (commandLine.getVmCommand().getArguments() != null
                && commandLine.getVmCommand().getArguments().length > 0) {
-         commandBuilder.append(" ").append(
-                  Joiner.on(' ').join(commandLine.getVmCommand().getArguments()));
+         reprefixArgs(commandLine.getVmCommand().getArguments(), commandBuilder);
       }
       commandBuilder.append(" -cp classpath");
       resetPathToUnderPrefixIfExistsAndIsFileIfNotExistsAddAsIs(commandLine.getClasspath(),
@@ -306,22 +320,38 @@ public class SSHJava extends Java {
       if (commandLine.getSystemProperties() != null
                && commandLine.getSystemProperties().getVariables() != null
                && commandLine.getSystemProperties().getVariables().length > 0) {
-         commandBuilder.append(" ").append(
-                  Joiner.on(' ').join(commandLine.getSystemProperties().getVariables()));
+         reprefixValues(commandLine.getSystemProperties().getVariables(), commandBuilder);
       }
 
       commandBuilder.append(" ").append(commandLine.getClassname());
 
       if (commandLine.getJavaCommand().getArguments() != null
                && commandLine.getJavaCommand().getArguments().length > 0) {
-         commandBuilder.append(" ").append(
-                  Joiner.on(' ').join(commandLine.getJavaCommand().getArguments()));
+         reprefixArgs(commandLine.getJavaCommand().getArguments(), commandBuilder);
       }
 
       InitBuilder testInitBuilder = new InitBuilder(id, basedir, basedir, envVariables,
                commandBuilder.toString());
-      String script = testInitBuilder.build(osFamily);
-      return reprefix(script);
+      return testInitBuilder.build(osFamily);
+   }
+
+   private void reprefixValues(String[] variables, StringBuilder commandBuilder) {
+      for (String variable : variables) {
+         commandBuilder.append(" ");
+         String[] keyValue = variable.split("=");
+         if (keyValue.length == 2) {
+            String newVariable = keyValue[0] + '=' + reprefix(keyValue[1]);
+            commandBuilder.append(newVariable);
+         } else {
+            commandBuilder.append(variable);
+         }
+      }
+   }
+
+   private void reprefixArgs(String[] args, StringBuilder commandBuilder) {
+      for (String arg : args) {
+         commandBuilder.append(" ").append(reprefix(arg));
+      }
    }
 
    @Override
@@ -508,8 +538,10 @@ public class SSHJava extends Java {
 
    @Override
    public void addSysproperty(Variable sysp) {
-      if (sysp.getKey().startsWith("sshjava.map.")) {
-         shiftMap.put(sysp.getKey().replaceFirst("sshjava.map.", ""), sysp.getValue());
+      if (sysp.getKey().startsWith("sshjava.shift.")) {
+         shiftMap.put(sysp.getKey().replaceFirst("sshjava.shift.", ""), sysp.getValue());
+      } else if (sysp.getKey().startsWith("sshjava.replace.")) {
+         replace.put(sysp.getKey().replaceFirst("sshjava.replace.", ""), sysp.getValue());
       } else if (sysp.getKey().equals("sshjava.id")) {
          setId(sysp.getValue());
       } else if (sysp.getKey().equals("sshjava.remotebase")) {

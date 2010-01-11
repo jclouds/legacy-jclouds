@@ -22,7 +22,6 @@ import static org.jclouds.aws.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -33,7 +32,6 @@ import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContext;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -56,86 +54,78 @@ public class SpeedTest {
       if (args.length < PARAMETERS)
          throw new IllegalArgumentException(INVALID_SYNTAX);
 
+      boolean isEnterprise = System.getProperties().containsKey("jclouds.enterprise");
       // Args
       String accesskeyid = args[0];
       String secretkey = args[1];
       String queueName = args[2];
       int messageCount = Integer.parseInt(args[3]);
 
-      RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext = SQSContextFactory
+      RestContext<SQSAsyncClient, SQSClient> context = isEnterprise ? SQSContextFactory
                .createContext(System.getProperties(), accesskeyid, secretkey,
+                        new NullLoggingModule(), new EnterpriseConfigurationModule())
+               : SQSContextFactory.createContext(System.getProperties(), accesskeyid, secretkey,
                         new NullLoggingModule());
 
-      RestContext<SQSAsyncClient, SQSClient> nullLoggingEnterpriseContext = SQSContextFactory
-               .createContext(System.getProperties(), accesskeyid, secretkey,
-                        new NullLoggingModule(), new EnterpriseConfigurationModule());
       try {
          Set<Queue> queues = Sets.newHashSet();
-         if (purgeQueues(queueName, nullLoggingDefaultContext)) {
+         if (purgeQueues(queueName, context)) {
             System.out.printf("pausing 60 seconds before recreating queues%n");
             Thread.sleep(60 * 1000);
          }
-         createQueues(queueName, nullLoggingDefaultContext, queues);
-         runTests(messageCount, nullLoggingDefaultContext, nullLoggingEnterpriseContext, queues);
+         createQueues(queueName, context, queues);
+         runTests(messageCount, isEnterprise ? "enterprise" : "default", context, queues);
       } finally {
-         purgeQueues(queueName, nullLoggingDefaultContext);
+         purgeQueues(queueName, context);
          // Close connectons
-         nullLoggingDefaultContext.close();
-         nullLoggingEnterpriseContext.close();
+         context.close();
          System.exit(0);
       }
 
    }
 
-   private static void runTests(int messageCount,
-            RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext,
-            RestContext<SQSAsyncClient, SQSClient> nullLoggingEnterpriseContext, Set<Queue> queues)
+   private static void runTests(int messageCount, String contextName,
+            RestContext<SQSAsyncClient, SQSClient> context, Set<Queue> queues)
             throws InterruptedException {
       String message = "1";
       long timeOut = messageCount * 200; // minimum rate should be at least 5/second
 
-      for (Entry<String, RestContext<SQSAsyncClient, SQSClient>> entry : ImmutableMap
-               .<String, RestContext<SQSAsyncClient, SQSClient>> of("enterprise",
-                        nullLoggingEnterpriseContext, "default", nullLoggingDefaultContext)
-               .entrySet()) {
-         for (Queue queue : queues) {
+      for (Queue queue : queues) {
+         int complete = 0;
+         int errors = 0;
+         long start = System.currentTimeMillis();
 
-            int complete = 0;
-            int errors = 0;
-            Set<ListenableFuture<byte[]>> responses = Sets.newHashSet();
-
-            long start = System.currentTimeMillis();
-            for (int i = 0; i < messageCount; i++) {
-               responses.add(entry.getValue().getAsyncApi().sendMessage(queue, message));
-            }
-            do {
-               Set<ListenableFuture<byte[]>> retries = Sets.newHashSet();
-               for (ListenableFuture<byte[]> response : responses) {
-                  try {
-                     response.get(100, TimeUnit.MILLISECONDS);
-                     complete++;
-                  } catch (ExecutionException e) {
-                     System.err.println(e.getMessage());
-                     errors++;
-                  } catch (TimeoutException e) {
-                     retries.add(response);
-                  }
-               }
-               responses = Sets.newHashSet(retries);
-            } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
-            long duration = System.currentTimeMillis() - start;
-            if (duration > timeOut)
-               System.out.printf("TIMEOUT: context: %s, region: %s, rate: %f messages/second%n",
-                        entry.getKey(), queue.getRegion(), ((double) complete)
-                                 / (duration / 1000.0));
-            else
-               System.out.printf("COMPLETE:  context: %s, region: %s, rate: %f messages/second%n",
-                        entry.getKey(), queue.getRegion(), ((double) complete)
-                                 / (duration / 1000.0));
-            System.out.println("pausing 5 seconds before the next run");
-            System.gc();
-            Thread.sleep(5000);// let the network quiet down
+         // fire off all the messages for the test
+         Set<ListenableFuture<byte[]>> responses = Sets.newHashSet();
+         for (int i = 0; i < messageCount; i++) {
+            responses.add(context.getAsyncApi().sendMessage(queue, message));
          }
+
+         do {
+            Set<ListenableFuture<byte[]>> retries = Sets.newHashSet();
+            for (ListenableFuture<byte[]> response : responses) {
+               try {
+                  response.get(100, TimeUnit.MILLISECONDS);
+                  complete++;
+               } catch (ExecutionException e) {
+                  System.err.println(e.getMessage());
+                  errors++;
+               } catch (TimeoutException e) {
+                  retries.add(response);
+               }
+            }
+            responses = Sets.newHashSet(retries);
+         } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
+         long duration = System.currentTimeMillis() - start;
+         if (duration > timeOut)
+            System.out.printf("TIMEOUT: context: %s, region: %s, rate: %f messages/second%n",
+                     contextName, queue.getRegion(), ((double) complete) / (duration / 1000.0));
+         else
+            System.out.printf("COMPLETE:  context: %s, region: %s, rate: %f messages/second%n",
+                     contextName, queue.getRegion(), ((double) complete) / (duration / 1000.0));
+         System.gc();
+         System.out.println("pausing 5 seconds before the next run");
+         Thread.sleep(5000);// let the network quiet down
       }
    }
 

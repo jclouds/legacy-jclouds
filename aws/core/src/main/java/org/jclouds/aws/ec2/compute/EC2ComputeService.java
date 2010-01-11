@@ -83,7 +83,7 @@ public class EC2ComputeService implements ComputeService {
    }
 
    private Map<Image, String> imageAmiIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.UMBUNTU_90, "ami-7e28ca17").put(Image.RHEL_53, "ami-368b685f").build();// todo ami
+            Image.UBUNTU_90, "ami-7e28ca17").put(Image.RHEL_53, "ami-368b685f").build();// todo ami
    // matrix of
    // region
    // 32/64 bit
@@ -107,8 +107,11 @@ public class EC2ComputeService implements ComputeService {
       createSecurityGroup(securityGroupName, 22, 80, 8080, 443);
 
       String script = new ScriptBuilder() // update and install jdk
-               .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
+               .addStatement(exec("apt-get update"))//
+               .addStatement(exec("apt-get upgrade -y"))//
                .addStatement(exec("apt-get install -y openjdk-6-jdk"))//
+               .addStatement(exec("wget -qO/usr/bin/runurl run.alestic.com/runurl"))//
+               .addStatement(exec("chmod 755 /usr/bin/runurl"))//
                .build(OsFamily.UNIX);
 
       logger.debug(">> running instance ami(%s) type(%s) keyPair(%s) securityGroup(%s)", ami, type,

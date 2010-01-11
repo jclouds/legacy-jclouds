@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+
+    ====================================================================
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+
+-->
+<project xmlns:artifact="urn:maven-artifact-ant" name="cargooverssh" default="cargooverssh" basedir=".">
+  <property file="build.properties" />
+  <input message="Please enter the ip or hostname of the ssh machine" addproperty="host"/>
+  <input message="Please enter the user you will connect as" addproperty="username"/>
+  <input message="Please enter the path to the dsa key" addproperty="keyfile"/>
+
+  <!-- maven must be available before we use it -->
+  <delete dir="build/cargo"/>
+  <mkdir dir="build/cargo"/>
+
+  <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
+  <get src="http://web-actions.googlecode.com/files/samples-blazeds.war" dest="build/samples-blazeds.war"/>
+
+  <!-- initialize maven tasks -->
+  <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks-2.1.0.jar"/>
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath"/>
+  <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository"/>
+  <artifact:remoteRepository id="jclouds-snapshot.repository" url="http://jclouds.rimuhosting.com/maven2/snapshots"/>
+  <!-- Setup maven so that we can get latest version of jclouds, jclouds, and jruby -->
+  <artifact:dependencies pathId="jclouds.classpath">
+    <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.1-SNAPSHOT"/>
+    <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.1-SNAPSHOT"/>
+    <dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT"/>
+    <dependency groupId="org.jclouds" artifactId="jclouds-ant-plugin" version="1.0-SNAPSHOT"/>
+    <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT"/>
+    <remoteRepository refid="jclouds-snapshot.repository"/>
+    <localRepository refid="local.repository"/>
+  </artifact:dependencies>
+  <typedef name="compute" classname="org.jclouds.tools.ant.ComputeTask" classpathref="jclouds.classpath"/>
+  <taskdef resource="cargo.tasks" classpathref="jclouds.classpath"/>
+
+  <property name="service" value="terremark"/>
+  <input message="What is your account on ${service}?" addproperty="account"/>
+  <input message="What is the key for ${account}?" addproperty="key"/>
+  <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}"/>
+
+  <target name="boo">
+    <input message="What is the container you wish to store ${zip} in?" addproperty="container"/>
+  </target>
+
+  <target name="cargooverssh">
+    <compute action="list-details" provider="${jclouds.compute.url}"/>
+    <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start">
+      <sysproperty key="myproperty" value="myvalue"/>
+      <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>
+      <configuration home="build/cargo" type="standalone">
+        <property name="cargo.servlet.port" value="8080"/>
+        <property name="cargo.logging" value="high"/>
+        <deployable type="war" file="build/samples-blazeds.war"/>
+      </configuration>
+    </cargo>
+  </target>
+
+</project>

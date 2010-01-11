@@ -32,11 +32,15 @@ import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Environment.Variable;
+import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.tools.ant.TestClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Resources;
 
 /**
  * @author Adrian Cole
@@ -47,11 +51,17 @@ public class SSHJavaTest {
             .entrySet());
 
    // TODO, this test will break in windows
-   public void testShift() throws SecurityException, NoSuchMethodException {
+   @Test(enabled = false, groups = { "live" })
+   public void testShift() throws SecurityException, NoSuchMethodException, IOException {
       SSHJava task = makeSSHJava();
       task = directoryShift(task);
       assertEquals(task.shiftMap, ImmutableMap.<String, String> of(System.getProperty("user.home")
                + "/apache-maven-2.2.1", "maven"));
+      assertEquals(task.replace, ImmutableMap.<String, String> of(System.getProperty("user.name"),
+               "root"));
+      assertEquals(task.createInitScript(OsFamily.UNIX, "1", "remotedir", task.env, task
+               .getCommandLine()), CharStreams.toString(Resources.newReaderSupplier(Resources
+               .getResource("init.sh"), Charsets.UTF_8)));
    }
 
    private Java populateTask(Java task) {
@@ -155,7 +165,7 @@ public class SSHJavaTest {
 
    private <T extends Java> T directoryShift(T java) {
       Variable prop1 = new Environment.Variable();
-      prop1.setKey("sshjava.map." + System.getProperty("user.home") + "/apache-maven-2.2.1");
+      prop1.setKey("sshjava.shift." + System.getProperty("user.home") + "/apache-maven-2.2.1");
       prop1.setValue("maven");
       java.addSysproperty(prop1);
       Variable prop2 = new Environment.Variable();
@@ -166,6 +176,14 @@ public class SSHJavaTest {
       prop3.setKey("appHome");
       prop3.setValue(System.getProperty("user.home") + "/apache-maven-2.2.1");
       java.addSysproperty(prop3);
+      Variable prop4 = new Environment.Variable();
+      prop4.setKey("sshjava.replace." + System.getProperty("user.name"));
+      prop4.setValue("root");
+      java.addSysproperty(prop4);
+      Variable prop5 = new Environment.Variable();
+      prop5.setKey("username");
+      prop5.setValue(System.getProperty("user.name"));
+      java.addSysproperty(prop5);
       return java;
    }
 }
