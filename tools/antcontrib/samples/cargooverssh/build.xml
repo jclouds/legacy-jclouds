@@ -23,6 +23,7 @@
   <property file="build.properties" />
   <property name="password" value="" />
   <property name="keyfile" value="" />
+  <property name="warfile" value="build/samples-blazeds.war" />
 
   <!-- maven must be available before we use it -->
   <delete dir="build/cargo"/>
@@ -30,7 +31,7 @@
 
 <!--
   <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
-  <get src="http://web-actions.googlecode.com/files/samples-blazeds.war" dest="build/samples-blazeds.war"/>
+  <get src="http://web-actions.googlecode.com/files/samples-blazeds.war" dest="${warfile}"/>
 -->
 
   <!-- initialize maven tasks -->
@@ -97,7 +98,6 @@
          command="${sudo} mv apache-tomcat-6.0.20 /tmp/cargo/containers/tomcat6x" />
   </target>
 
-
   <target name="cargooverssh" depends="create">
     <echo message="deploying tomcat and blaze to: ${jclouds.compute.servername}" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
@@ -112,7 +112,19 @@
         <property name="cargo.ssh.keyfile" value="${keyfile}"/>
         <property name="cargo.ssh.remotebase" value="/tmp/cargo"/>
         <property name="cargo.logging" value="high"/>
-        <deployable type="war" file="build/samples-blazeds.war"/>
+        <deployable type="war" file="${warfile}"/>
+      </configuration>
+    </cargo>
+  </target>
+
+  <target name="justplaincargo">
+    <echo message="deploying tomcat and blaze to: localhost" />
+    <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
+      <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>
+      <configuration home="build/cargo" type="standalone">
+        <property name="cargo.servlet.port" value="8080"/>
+        <property name="cargo.logging" value="high"/>
+        <deployable type="war" file="${warfile}"/>
       </configuration>
     </cargo>
   </target>
