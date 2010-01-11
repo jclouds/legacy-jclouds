@@ -28,11 +28,20 @@ import org.jclouds.logging.NullLogger;
  * 
  */
 public class NullLoggingModule extends LoggingModule {
-    public Logger.LoggerFactory createLoggerFactory() {
-	return new Logger.LoggerFactory() {
-	    public Logger getLogger(String category) {
-		return Logger.NULL;
-	    }
-	};
-    }
+
+   public Logger.LoggerFactory createLoggerFactory() {
+      return new Logger.LoggerFactory() {
+         public Logger getLogger(String category) {
+            return Logger.NULL;
+         }
+      };
+   }
+
+   /**
+    * note that we override, as if we are not logging, there's no use in the overhead of listening
+    * for loggers
+    */
+   @Override
+   protected void configure() {
+   }
 }
