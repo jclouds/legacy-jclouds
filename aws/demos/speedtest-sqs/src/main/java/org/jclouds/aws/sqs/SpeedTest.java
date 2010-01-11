@@ -95,8 +95,8 @@ public class SpeedTest {
       long timeOut = messageCount * 200; // minimum rate should be at least 5/second
 
       for (Entry<String, RestContext<SQSAsyncClient, SQSClient>> entry : ImmutableMap
-               .<String, RestContext<SQSAsyncClient, SQSClient>> of("standard",
-                        nullLoggingDefaultContext, "enterprise", nullLoggingEnterpriseContext)
+               .<String, RestContext<SQSAsyncClient, SQSClient>> of("enterprise",
+                        nullLoggingEnterpriseContext, "default", nullLoggingDefaultContext)
                .entrySet()) {
          for (Queue queue : queues) {
 

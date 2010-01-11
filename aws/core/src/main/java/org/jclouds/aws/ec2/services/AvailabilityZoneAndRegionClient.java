@@ -59,5 +59,6 @@ public interface AvailabilityZoneAndRegionClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeRegions.html"
     *      />
     */
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    Map<Region, URI> describeRegions(DescribeRegionsOptions... options);
 }

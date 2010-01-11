@@ -80,7 +80,7 @@ public class EC2ComputeService implements ComputeService {
    }
 
    private Map<Image, String> imageAmiIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "ami-b0a84ad9").put(Image.RHEL_53, "ami-368b685f").build();// todo ami
+            Image.UMBUNTU_90, "ami-7e28ca17").put(Image.RHEL_53, "ami-368b685f").build();// todo ami
    // matrix of
    // region
    // 32/64 bit
