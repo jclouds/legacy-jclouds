@@ -33,6 +33,7 @@
     <name>jclouds demos project</name>
     <modules>
         <module>gae-tweetstore</module>
+        <module>gae-tweetstore-spring</module>
     </modules>
     <dependencies>
         <dependency>
