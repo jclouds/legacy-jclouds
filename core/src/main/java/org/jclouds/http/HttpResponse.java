@@ -30,6 +30,13 @@ public class HttpResponse extends HttpMessage {
    private String message;
    private InputStream content;
 
+   public HttpResponse() {
+   }
+
+   public HttpResponse(InputStream content) {
+      this.content = content;
+   }
+
    public int getStatusCode() {
       return statusCode;
    }

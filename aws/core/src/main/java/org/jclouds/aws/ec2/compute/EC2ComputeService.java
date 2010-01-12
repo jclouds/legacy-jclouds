@@ -92,7 +92,8 @@ public class EC2ComputeService implements ComputeService {
    // 32/64 bit
 
    private Map<Profile, InstanceType> profileInstanceTypeMap = ImmutableMap
-            .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).build();
+            .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).put(
+                     Profile.MEDIUM, InstanceType.C1_MEDIUM).build();
 
    private static Map<InstanceState, ServerState> instanceToServerState = ImmutableMap
             .<InstanceState, ServerState> builder().put(InstanceState.PENDING, ServerState.PENDING)

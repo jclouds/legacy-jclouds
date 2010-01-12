@@ -18,10 +18,19 @@
  */
 package org.jclouds.aws.sqs.xml;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.inject.Inject;
 
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.util.Utils;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
 
 /**
  * 
@@ -29,31 +38,34 @@ import org.jclouds.http.functions.ParseSax;
  *      />
  * @author Adrian Cole
  */
-public class MD5Handler extends ParseSax.HandlerWithResult<byte[]> {
-
-   private StringBuilder currentText = new StringBuilder();
-   byte[] md5;
-
+@Singleton
+public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
+   Pattern pattern = Pattern.compile("<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>");
    private final EncryptionService encryptionService;
 
    @Inject
-   MD5Handler(EncryptionService encryptionService) {
+   RegexMD5Handler(EncryptionService encryptionService) {
       this.encryptionService = encryptionService;
    }
 
-   public byte[] getResult() {
-      return md5;
-   }
-
-   public void endElement(String uri, String name, String qName) {
-      if (qName.equals("MD5OfMessageBody")) {
-         String md5Hex = currentText.toString().trim();
-         this.md5 = encryptionService.fromHexString(md5Hex);
+   @Override
+   public byte[] apply(HttpResponse response) {
+      byte[] value = null;
+      try {
+         Matcher matcher = pattern.matcher(Utils.toStringAndClose(response.getContent()));
+         if (matcher.find()) {
+            value = encryptionService.fromHexString(matcher.group(1));
+         }
+      } catch (IOException e) {
+         Throwables.propagate(e);
+      } finally {
+         try {
+            response.getContent().close();
+         } catch (IOException e) {
+            Throwables.propagate(e);
+         }
       }
-      currentText = new StringBuilder();
+      return value;
    }
 
-   public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
-   }
 }

@@ -33,10 +33,9 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
 import org.jclouds.aws.sqs.options.ListQueuesOptions;
-import org.jclouds.aws.sqs.xml.ListQueuesResponseHandler;
-import org.jclouds.aws.sqs.xml.QueueHandler;
+import org.jclouds.aws.sqs.xml.RegexListQueuesResponseHandler;
+import org.jclouds.aws.sqs.xml.RegexQueueHandler;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -70,8 +69,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
                "Content-Length: 36\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=ListQueues");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, ListQueuesResponseHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, RegexListQueuesResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -89,8 +88,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
                "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=ListQueues&QueueNamePrefix=prefix");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, ListQueuesResponseHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, RegexListQueuesResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -108,8 +107,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
                "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=CreateQueue&QueueName=queueName");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, QueueHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, RegexQueueHandler.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -129,8 +128,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       assertPayloadEquals(httpMethod,
                "Version=2009-02-01&Action=CreateQueue&QueueName=queueName&DefaultVisibilityTimeout=45");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, QueueHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, RegexQueueHandler.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

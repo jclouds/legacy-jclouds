@@ -34,14 +34,14 @@ import org.jclouds.aws.sqs.functions.QueueLocation;
 import org.jclouds.aws.sqs.functions.RegionToEndpoint;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
 import org.jclouds.aws.sqs.options.ListQueuesOptions;
-import org.jclouds.aws.sqs.xml.ListQueuesResponseHandler;
-import org.jclouds.aws.sqs.xml.MD5Handler;
-import org.jclouds.aws.sqs.xml.QueueHandler;
+import org.jclouds.aws.sqs.xml.RegexListQueuesResponseHandler;
+import org.jclouds.aws.sqs.xml.RegexMD5Handler;
+import org.jclouds.aws.sqs.xml.RegexQueueHandler;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.VirtualHost;
-import org.jclouds.rest.annotations.XMLResponseParser;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -62,7 +62,7 @@ public interface SQSAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ListQueues")
-   @XMLResponseParser(ListQueuesResponseHandler.class)
+   @ResponseParser(RegexListQueuesResponseHandler.class)
    ListenableFuture<? extends Set<Queue>> listQueuesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             ListQueuesOptions... options);
@@ -73,7 +73,7 @@ public interface SQSAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateQueue")
-   @XMLResponseParser(QueueHandler.class)
+   @ResponseParser(RegexQueueHandler.class)
    ListenableFuture<Queue> createQueueInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("QueueName") String queueName, CreateQueueOptions... options);
@@ -92,7 +92,7 @@ public interface SQSAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "SendMessage")
-   @XMLResponseParser(MD5Handler.class)
+   @ResponseParser(RegexMD5Handler.class)
    ListenableFuture<byte[]> sendMessage(@EndpointParam(parser = QueueLocation.class) Queue queue,
             @FormParam("MessageBody") String message);
 

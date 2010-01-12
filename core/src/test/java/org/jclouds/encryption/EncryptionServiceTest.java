@@ -48,11 +48,41 @@ import com.google.inject.Injector;
 public class EncryptionServiceTest extends PerformanceTest {
 
    protected EncryptionService encryptionService;
-
    @BeforeTest
    protected void createEncryptionService() {
       Injector i = Guice.createInjector();
       encryptionService = i.getInstance(EncryptionService.class);
+   }
+   
+   public final static Object[][] base64KeyMessageDigest = {
+      { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There",
+               "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
+      { Base64.decode("SmVmZQ=="), "what do ya want for nothing?",
+               "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
+      { Base64.decode("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation",
+               "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
+      {
+               Base64
+                        .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
+               "Test Using Larger Than Block-Size Key - Hash Key First",
+               "qkrl4VJy0A6VcFY3zoo7Ve1AIRI=" },
+      {
+               Base64
+                        .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
+               "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
+               "6OmdD0UjfXhta7qnllx4CLv/GpE=" } };
+   
+
+   @DataProvider(name = "hmacsha1")
+   public Object[][] createData1() {
+      return base64KeyMessageDigest;
+   }
+
+   @Test(dataProvider = "hmacsha1")
+   public void testHmacSha1Base64(byte[] key, String message, String base64Digest)
+            throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
+      String b64 = encryptionService.hmacSha1Base64(message, key);
+      assertEquals(b64, base64Digest);
    }
 
    @Test(dataProvider = "hmacsha1")
@@ -90,35 +120,6 @@ public class EncryptionServiceTest extends PerformanceTest {
             { "dogma", "95eb470e4faee302e9cd3063b1923dab" },
             { "emma", "00a809937eddc44521da9521269e75c6" } };
 
-   public final static Object[][] base64KeyMessageDigest = {
-            { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There",
-                     "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
-            { Base64.decode("SmVmZQ=="), "what do ya want for nothing?",
-                     "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
-            { Base64.decode("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation",
-                     "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
-            {
-                     Base64
-                              .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
-                     "Test Using Larger Than Block-Size Key - Hash Key First",
-                     "qkrl4VJy0A6VcFY3zoo7Ve1AIRI=" },
-            {
-                     Base64
-                              .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
-                     "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
-                     "6OmdD0UjfXhta7qnllx4CLv/GpE=" } };
-
-   @DataProvider(name = "hmacsha1")
-   public Object[][] createData1() {
-      return base64KeyMessageDigest;
-   }
-
-   @Test(dataProvider = "hmacsha1")
-   public void testHmacSha1Base64(byte[] key, String message, String base64Digest)
-            throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
-      String b64 = encryptionService.hmacSha1Base64(message, key);
-      assertEquals(b64, base64Digest);
-   }
 
    @Test(dataProvider = "eTag")
    public void testMD5Digest(String message, String base64Digest) throws NoSuchProviderException,
