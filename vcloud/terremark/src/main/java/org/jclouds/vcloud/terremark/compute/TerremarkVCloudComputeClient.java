@@ -109,6 +109,24 @@ public class TerremarkVCloudComputeClient {
       return Iterables.getLast(vApp.getNetworkToAddresses().values());
    }
 
+   public Set<InetAddress> getPublicAddresses(String id) {
+       TerremarkVApp vApp = tmClient.getVApp(id);
+       Set<InetAddress> ipAddresses = Sets.newHashSet();
+       SERVICE: for (InternetService service : tmClient.getAllInternetServicesInVDC(vApp.getVDC()
+                .getId())) {
+          for (Node node : tmClient.getNodes(service.getId())) 
+          {
+             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) 
+             {
+                ipAddresses.add(service.getPublicIpAddress().getAddress());
+             }
+          }
+       }
+       return ipAddresses;
+    }
+
+
+
    public void reboot(String id) {
       TerremarkVApp vApp = tmClient.getVApp(id);
       logger.debug(">> rebooting vApp(%s)", vApp.getId());
