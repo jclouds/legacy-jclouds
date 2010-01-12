@@ -85,15 +85,22 @@ public class EC2ComputeService implements ComputeService {
       this.runningInstanceToServerMetadata = runningInstanceToServerMetadata;
    }
 
-   private Map<Image, String> imageAmiIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.UBUNTU_90, "ami-7e28ca17").put(Image.RHEL_53, "ami-368b685f").build();// todo ami
-   // matrix of
-   // region
-   // 32/64 bit
+   // TODO: handle regions
+   private Map<InstanceType, Map<Image, String>> imageAmiIdMap = ImmutableMap
+            .<InstanceType, Map<Image, String>> of(InstanceType.M1_SMALL,//
+                     ImmutableMap.<Image, String> builder().put(Image.UBUNTU_90, "ami-1515f67c")
+                              .put(Image.RHEL_53, "ami-368b685f").build(),//
+                     InstanceType.C1_MEDIUM,//
+                     ImmutableMap.<Image, String> builder().put(Image.UBUNTU_90, "ami-1515f67c")
+                              .put(Image.RHEL_53, "ami-368b685f").build(), //
+                     InstanceType.C1_XLARGE,//
+                     ImmutableMap.<Image, String> builder().put(Image.UBUNTU_90, "ami-ab15f6c2")
+                              .build());// todo ami
 
    private Map<Profile, InstanceType> profileInstanceTypeMap = ImmutableMap
             .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).put(
-                     Profile.MEDIUM, InstanceType.C1_MEDIUM).build();
+                     Profile.MEDIUM, InstanceType.C1_MEDIUM).put(Profile.FASTEST,
+                     InstanceType.C1_XLARGE).build();
 
    private static Map<InstanceState, ServerState> instanceToServerState = ImmutableMap
             .<InstanceState, ServerState> builder().put(InstanceState.PENDING, ServerState.PENDING)
@@ -103,9 +110,10 @@ public class EC2ComputeService implements ComputeService {
 
    @Override
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
-      String ami = checkNotNull(imageAmiIdMap.get(image), "image not supported: " + image);
       InstanceType type = checkNotNull(profileInstanceTypeMap.get(profile),
                "profile not supported: " + profile);
+      String ami = checkNotNull(imageAmiIdMap.get(type).get(image), "image not supported: " + image);
+
       KeyPair keyPair = createKeyPair(name);
       String securityGroupName = name;
       createSecurityGroup(securityGroupName, 22, 80, 8080, 443);
