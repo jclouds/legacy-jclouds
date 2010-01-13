@@ -200,4 +200,10 @@ public class MutableResourceMetadataImpl implements MutableResourceMetadata, Ser
       this.location = location;
    }
 
+   @Override
+   public String toString() {
+      return "[type=" + type + ", id=" + id + ", name=" + name + ", size=" + size
+               + ", lastModified=" + lastModified + "]";
+   }
+
 }

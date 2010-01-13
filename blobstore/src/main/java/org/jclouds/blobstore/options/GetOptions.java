@@ -44,6 +44,9 @@ import java.util.List;
  * 
  */
 public class GetOptions {
+
+   public static final GetOptions NONE = new GetOptions();
+
    private final List<String> ranges = new ArrayList<String>();
    private Date ifModifiedSince;
    private Date ifUnmodifiedSince;
@@ -171,8 +174,8 @@ public class GetOptions {
    /**
     * For use in the request header: If-None-Match
     * <p />
-    * Return the object only if its payload tag (ETag) is different from the one specified, otherwise
-    * return a 304 (not modified).
+    * Return the object only if its payload tag (ETag) is different from the one specified,
+    * otherwise return a 304 (not modified).
     * 
     * @see GetOptions#ifETagDoesntMatch(String)
     */

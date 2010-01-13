@@ -37,6 +37,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ListOptions {
 
+   public static final ListOptions NONE = new ListOptions();
+   
    private Integer maxKeys;
    private String marker;
 
@@ -67,7 +69,6 @@ public class ListOptions {
       return this;
    }
 
-
    public static class Builder {
 
       /**
@@ -85,7 +86,6 @@ public class ListOptions {
          ListOptions options = new ListOptions();
          return options.maxResults(maxKeys);
       }
-
 
    }
 }

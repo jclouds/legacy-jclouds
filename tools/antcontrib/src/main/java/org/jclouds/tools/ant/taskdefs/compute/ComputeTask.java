@@ -45,6 +45,7 @@ import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
@@ -52,6 +53,7 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 
 /**
+ * @author Adrian Cole
  * @author Ivan Meredith
  */
 public class ComputeTask extends Task {
@@ -61,11 +63,12 @@ public class ComputeTask extends Task {
     * we don't have a reference to the project during the constructor, so we need to defer expansion
     * with a Provider.
     */
-   private static Provider<Module[]> defaultModulesProvider = new Provider<Module[]>() {
+   private static Provider<Iterable<? extends Module>> defaultModulesProvider = new Provider<Iterable<? extends Module>>() {
 
       @Override
-      public Module[] get() {
-         return new Module[] { new AntLoggingModule(project, ComputeServiceConstants.COMPUTE_LOGGER) };
+      public Iterable<Module> get() {
+         return ImmutableSet.of((Module) new AntLoggingModule(project,
+                  ComputeServiceConstants.COMPUTE_LOGGER));
       }
 
    };

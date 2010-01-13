@@ -41,7 +41,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -87,8 +86,8 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
                                     .toChar(rootName.getUserName()))), UserAuthenticatorUtils
                            .toString(UserAuthenticatorUtils.getData(authData,
                                     UserAuthenticationData.PASSWORD, UserAuthenticatorUtils
-                                             .toChar(rootName.getPassword())))),
-                  Iterables.toArray(modules, Module.class)).getBlobStore();
+                                             .toChar(rootName.getPassword())))), modules)
+                  .getBlobStore();
       } catch (IOException e) {
          throw new FileSystemException("vfs.provider.blobstore/properties.error", name, e);
       } finally {

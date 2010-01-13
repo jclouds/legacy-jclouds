@@ -29,6 +29,8 @@ import javax.inject.Inject;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpPropertiesBuilder;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.inject.Module;
 
@@ -45,8 +47,8 @@ public class ComputeServiceContextFactory {
 
    static Properties init() throws IOException {
       Properties properties = new Properties();
-      properties.load(Resources.newInputStreamSupplier(
-               Resources.getResource("compute.properties")).getInput());
+      properties.load(Resources.newInputStreamSupplier(Resources.getResource("compute.properties"))
+               .getInput());
       return properties;
    }
 
@@ -55,18 +57,32 @@ public class ComputeServiceContextFactory {
       this.properties = properties;
    }
 
-   public ComputeServiceContext<?, ?> createContext(URI computeService, Module... modules) {
-      return createContext(computeService, Credentials.parse(computeService), modules);
+   public ComputeServiceContext<?, ?> createContext(URI blobStore,
+            Iterable<? extends Module> modules) {
+      return createContext(blobStore, Credentials.parse(blobStore), modules);
    }
 
-   public ComputeServiceContext<?, ?> createContext(URI computeService, Credentials creds, Module... modules) {
-      return createContext(checkNotNull(computeService.getHost(), "host"), checkNotNull(creds.account,
+   public ComputeServiceContext<?, ?> createContext(URI blobStore) {
+      return createContext(blobStore, ImmutableSet.<Module> of());
+   }
+
+   public ComputeServiceContext<?, ?> createContext(URI blobStore, Credentials creds,
+            Iterable<? extends Module> modules) {
+      return createContext(checkNotNull(blobStore.getHost(), "host"), checkNotNull(creds.account,
                "account"), creds.key, modules);
+   }
+
+   public ComputeServiceContext<?, ?> createContext(URI blobStore, Credentials creds) {
+      return createContext(blobStore, creds, ImmutableSet.<Module> of());
+   }
+
+   public ComputeServiceContext<?, ?> createContext(String hint, String account, String key) {
+      return createContext(hint, account, key, ImmutableSet.<Module> of());
    }
 
    @SuppressWarnings("unchecked")
    public ComputeServiceContext<?, ?> createContext(String hint, String account, String key,
-            Module... modules) {
+            Iterable<? extends Module> modules) {
       checkNotNull(hint, "hint");
       checkNotNull(account, "account");
       String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
@@ -86,7 +102,7 @@ public class ComputeServiceContextFactory {
          HttpPropertiesBuilder builder = propertiesBuilderClass.getConstructor(String.class,
                   String.class).newInstance(account, key);
          return contextBuilderClass.getConstructor(Properties.class).newInstance(builder.build())
-                  .withModules(modules).buildContext();
+                  .withModules(Iterables.toArray(modules, Module.class)).buildContext();
       } catch (Exception e) {
          throw new RuntimeException("error instantiating " + contextBuilderClassName, e);
       }

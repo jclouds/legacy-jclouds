@@ -48,6 +48,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -68,11 +69,12 @@ public class EC2ComputeServiceLiveTest {
    private ComputeServiceContext<?, ?> context;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new ComputeServiceContextFactory().createContext("ec2", user, password,
-               new Log4JLoggingModule());
+               ImmutableSet.of(new Log4JLoggingModule()));
       Injector injector = Guice.createInjector(new JschSshClientModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

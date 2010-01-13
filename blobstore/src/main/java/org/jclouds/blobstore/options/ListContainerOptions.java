@@ -38,6 +38,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ListContainerOptions extends ListOptions {
 
+   public static final ListContainerOptions NONE = new ListContainerOptions();
+
    private String dir;
 
    private boolean recursive;
