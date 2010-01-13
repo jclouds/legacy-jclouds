@@ -66,9 +66,9 @@ public class TerremarkVCloudComputeService implements ComputeService {
 
    private static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
             .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
-                     VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
-                     NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(
-                     VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+                     VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING)
+            .put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
+                     NodeState.PENDING).build();
 
    @Inject
    public TerremarkVCloudComputeService(TerremarkVCloudClient tmClient,
@@ -86,17 +86,16 @@ public class TerremarkVCloudComputeService implements ComputeService {
       return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState
                .get(vApp.getStatus()), ImmutableSet.<InetAddress> of(publicIp), vApp
                .getNetworkToAddresses().values(), 22, LoginType.SSH, new Credentials("vcloud",
-               "p4ssw0rd"), ImmutableMap.<String,String>of());
+               "p4ssw0rd"), ImmutableMap.<String, String> of());
    }
 
    @Override
    public NodeMetadata getNodeMetadata(String id) {
       VApp vApp = tmClient.getVApp(id);
-      // TODO
-      Set<InetAddress> publicAddresses = ImmutableSet.<InetAddress> of();
+      Set<InetAddress> publicAddresses = computeClient.getPublicAddresses(id);
       return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState.get(vApp
                .getStatus()), publicAddresses, vApp.getNetworkToAddresses().values(), 22,
-               LoginType.SSH, ImmutableMap.<String,String>of());
+               LoginType.SSH, ImmutableMap.<String, String> of());
    }
 
    @Override

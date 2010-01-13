@@ -51,6 +51,13 @@ public class NodeMetadataImpl extends NodeIdentityImpl implements NodeMetadata {
    private final int loginPort;
    private final LoginType loginType;
 
+   @Override
+   public String toString() {
+      return "[id=" + getId() + ", name=" + getName() + ", state=" + getState()
+               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
+               + "]";
+   }
+
    public NodeMetadataImpl(String id, String name, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
             int loginPort, LoginType loginType, Map<String, String> extra) {
