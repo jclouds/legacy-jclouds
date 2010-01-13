@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rimuhosting.miro.servers;
+package org.jclouds.rimuhosting.miro.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,11 +30,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeIdentity;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Profile;
-import org.jclouds.compute.domain.ServerMetadata;
-import org.jclouds.compute.reference.ComputeConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
@@ -48,7 +49,7 @@ import com.google.common.collect.ImmutableMap;
 @Singleton
 public class RimuHostingComputeService implements ComputeService {
    @Resource
-   @Named(ComputeConstants.COMPUTE_LOGGER)
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    RimuHostingClient rhClient;
@@ -64,39 +65,39 @@ public class RimuHostingComputeService implements ComputeService {
             Profile.SMALLEST, "MIRO1B").build();
 
    @Override
-   public CreateServerResponse createServer(String name, Profile profile, Image image) {
+   public CreateNodeResponse createNode(String name, Profile profile, Image image) {
       NewServerResponse serverResponse = rhClient.createServer(name, checkNotNull(imageNameMap
                .get(image), "image not supported: " + image), checkNotNull(profileNameMap
                .get(profile), "profile not supported: " + profile));
-      return new RimuHostingCreateServerResponse(serverResponse);
+      return new RimuHostingCreateNodeResponse(serverResponse);
    }
 
-   public SortedSet<org.jclouds.compute.domain.ServerIdentity> listServers() {
-      SortedSet<org.jclouds.compute.domain.ServerIdentity> servers = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
-      SortedSet<Server> rhServers = rhClient.getServerList();
-      for (Server rhServer : rhServers) {
-         servers.add(new RimuHostingServer(rhServer, rhClient));
+   public SortedSet<NodeIdentity> listNodes() {
+      SortedSet<NodeIdentity> servers = new TreeSet<NodeIdentity>();
+      SortedSet<Server> rhNodes = rhClient.getServerList();
+      for (Server rhNode : rhNodes) {
+         servers.add(new RimuHostingNodeIdentity(rhNode, rhClient));
       }
       return servers;
    }
 
-   public ServerMetadata getServerMetadata(String id) {
+   public NodeMetadata getNodeMetadata(String id) {
       throw new UnsupportedOperationException("not yet implemented");
    }
 
    @Override
-   public SortedSet<org.jclouds.compute.domain.ServerIdentity> getServerByName(String id) {
-      SortedSet<org.jclouds.compute.domain.ServerIdentity> serverSet = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
-      for (Server rhServer : rhClient.getServerList()) {
-         if (rhServer.getName().equals(id)) {
-            serverSet.add(new RimuHostingServer(rhServer, rhClient));
+   public SortedSet<NodeIdentity> getNodeByName(String id) {
+      SortedSet<NodeIdentity> serverSet = new TreeSet<NodeIdentity>();
+      for (Server rhNode : rhClient.getServerList()) {
+         if (rhNode.getName().equals(id)) {
+            serverSet.add(new RimuHostingNodeIdentity(rhNode, rhClient));
          }
       }
       return serverSet;
    }
 
    @Override
-   public void destroyServer(String id) {
+   public void destroyNode(String id) {
       rhClient.destroyServer(new Long(id));
    }
 }

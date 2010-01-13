@@ -16,14 +16,14 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rimuhosting.miro.servers;
+package org.jclouds.rimuhosting.miro.compute;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.ServerState;
-import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.Server;
@@ -31,20 +31,21 @@ import org.jclouds.rimuhosting.miro.domain.Server;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Ivan Meredith
  */
-public class RimuHostingCreateServerResponse extends CreateServerResponseImpl {
+public class RimuHostingCreateNodeResponse extends CreateNodeResponseImpl {
 
-   public RimuHostingCreateServerResponse(NewServerResponse rhServerResponse) {
-      super(rhServerResponse.getServer().getId().toString(),
-               rhServerResponse.getServer().getName(),
-               ServerState.RUNNING,// TODO need a real state!
-               getPublicAddresses(rhServerResponse.getServer()), ImmutableList.<InetAddress> of(),
-               22, LoginType.SSH, new Credentials("root", rhServerResponse.getNewInstanceRequest()
-                        .getCreateOptions().getPassword()));
+   public RimuHostingCreateNodeResponse(NewServerResponse rhNodeResponse) {
+      super(rhNodeResponse.getServer().getId().toString(),
+               rhNodeResponse.getServer().getName(),
+               NodeState.RUNNING,// TODO need a real state!
+               getPublicAddresses(rhNodeResponse.getServer()), ImmutableList.<InetAddress> of(),
+               22, LoginType.SSH, new Credentials("root", rhNodeResponse.getNewInstanceRequest()
+                        .getCreateOptions().getPassword()), ImmutableMap.<String, String> of());
    }
 
    @VisibleForTesting

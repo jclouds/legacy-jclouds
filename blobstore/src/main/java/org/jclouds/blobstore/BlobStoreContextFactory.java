@@ -59,14 +59,19 @@ public class BlobStoreContextFactory {
       return createContext(blobStore, Credentials.parse(blobStore), modules);
    }
 
-   @SuppressWarnings("unchecked")
    public BlobStoreContext<?, ?> createContext(URI blobStore, Credentials creds, Module... modules) {
-      String hint = checkNotNull(blobStore.getHost(), "host");
-      String account = checkNotNull(creds.account, "account");
-      String key = creds.key;
+      return createContext(checkNotNull(blobStore.getHost(), "host"), checkNotNull(creds.account,
+               "account"), creds.key, modules);
+   }
+
+   @SuppressWarnings("unchecked")
+   public BlobStoreContext<?, ?> createContext(String hint, String account, String key,
+            Module... modules) {
+      checkNotNull(hint, "hint");
+      checkNotNull(account, "account");
       String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
       String propertiesBuilderClassName = checkNotNull(
-               properties.getProperty(propertiesBuilderKey), propertiesBuilderKey);
+               properties.getProperty(propertiesBuilderKey), hint + " service not supported");
 
       String contextBuilderKey = String.format("%s.contextbuilder", hint);
       String contextBuilderClassName = checkNotNull(properties.getProperty(contextBuilderKey),

@@ -16,18 +16,16 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rimuhosting.miro.servers;
+package org.jclouds.aws.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Properties;
 
-
+import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.jclouds.rimuhosting.miro.RimuHostingContextBuilder;
-import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
 
 import com.google.common.io.Resources;
 
@@ -45,12 +43,11 @@ public class PropertiesTest {
                .getInput());
    }
 
-   public void testRimu() {
-      assertEquals(properties.getProperty("rimuhosting.contextbuilder"),
-               RimuHostingContextBuilder.class.getName());
-      assertEquals(properties.getProperty("rimuhosting.propertiesbuilder"),
-               RimuHostingPropertiesBuilder.class.getName());
+   public void testProperties() {
+      assertEquals(properties.getProperty("ec2.contextbuilder"),
+               EC2ComputeServiceContextBuilder.class.getName());
+      assertEquals(properties.getProperty("ec2.propertiesbuilder"),
+               EC2PropertiesBuilder.class.getName());
    }
-
 
 }

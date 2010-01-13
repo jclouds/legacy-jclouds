@@ -21,7 +21,7 @@ package org.jclouds.tools.ant.taskdefs.compute;
 /**
  * @author Ivan Meredith
  */
-public class ServerElement {
+public class NodeElement {
    private String name;
    private String profile;
    private String image;
@@ -54,7 +54,7 @@ public class ServerElement {
    public void setImage(String image) {
       this.image = image;
    }
-   
+
    String getUsernameproperty() {
       return usernameproperty;
    }
@@ -66,7 +66,6 @@ public class ServerElement {
    public void setUsernameproperty(String usernameproperty) {
       this.usernameproperty = usernameproperty;
    }
-
 
    String getPasswordproperty() {
       return passwordproperty;

@@ -25,7 +25,6 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -42,17 +41,17 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
+import org.jclouds.compute.domain.NodeIdentity;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Profile;
-import org.jclouds.compute.domain.ServerIdentity;
-import org.jclouds.compute.domain.ServerMetadata;
-import org.jclouds.compute.domain.ServerState;
-import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
-import org.jclouds.compute.domain.internal.ServerIdentityImpl;
-import org.jclouds.compute.domain.internal.ServerMetadataImpl;
-import org.jclouds.compute.reference.ComputeConstants;
+import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
+import org.jclouds.compute.domain.internal.NodeIdentityImpl;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.ScriptBuilder;
@@ -71,18 +70,18 @@ import com.google.inject.internal.ImmutableSet;
 @Singleton
 public class EC2ComputeService implements ComputeService {
    @Resource
-   @Named(ComputeConstants.COMPUTE_LOGGER)
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final EC2Client ec2Client;
    private final Predicate<RunningInstance> instanceStateRunning;
-   private final RunningInstanceToServerMetadata runningInstanceToServerMetadata;
+   private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
 
    @Inject
    public EC2ComputeService(EC2Client tmClient, Predicate<RunningInstance> instanceStateRunning,
-            RunningInstanceToServerMetadata runningInstanceToServerMetadata) {
+            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
       this.ec2Client = tmClient;
       this.instanceStateRunning = instanceStateRunning;
-      this.runningInstanceToServerMetadata = runningInstanceToServerMetadata;
+      this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
    }
 
    // TODO: handle regions
@@ -102,14 +101,13 @@ public class EC2ComputeService implements ComputeService {
                      Profile.MEDIUM, InstanceType.C1_MEDIUM).put(Profile.FASTEST,
                      InstanceType.C1_XLARGE).build();
 
-   private static Map<InstanceState, ServerState> instanceToServerState = ImmutableMap
-            .<InstanceState, ServerState> builder().put(InstanceState.PENDING, ServerState.PENDING)
-            .put(InstanceState.RUNNING, ServerState.RUNNING).put(InstanceState.SHUTTING_DOWN,
-                     ServerState.PENDING).put(InstanceState.TERMINATED, ServerState.TERMINATED)
-            .build();
+   private static Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
+            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
+            .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN,
+                     NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
    @Override
-   public CreateServerResponse createServer(String name, Profile profile, Image image) {
+   public CreateNodeResponse createNode(String name, Profile profile, Image image) {
       InstanceType type = checkNotNull(profileInstanceTypeMap.get(profile),
                "profile not supported: " + profile);
       String ami = checkNotNull(imageAmiIdMap.get(type).get(image), "image not supported: " + image);
@@ -149,9 +147,10 @@ public class EC2ComputeService implements ComputeService {
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateServerResponseImpl(runningInstance.getId(), name, instanceToServerState
+      return new CreateNodeResponseImpl(runningInstance.getId(), name, instanceToNodeState
                .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses, 22,
-               LoginType.SSH, new Credentials("root", keyPair.getKeyMaterial()));
+               LoginType.SSH, new Credentials("root", keyPair.getKeyMaterial()), ImmutableMap
+                        .<String, String> of());
    }
 
    private KeyPair createKeyPair(String name) {
@@ -199,20 +198,20 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public ServerMetadata getServerMetadata(String id) {
+   public NodeMetadata getNodeMetadata(String id) {
       RunningInstance runningInstance = getRunningInstance(id);
-      return runningInstanceToServerMetadata.apply(runningInstance);
+      return runningInstanceToNodeMetadata.apply(runningInstance);
    }
 
    @Singleton
-   private static class RunningInstanceToServerMetadata implements
-            Function<RunningInstance, ServerMetadata> {
+   private static class RunningInstanceToNodeMetadata implements
+            Function<RunningInstance, NodeMetadata> {
 
       @Override
-      public ServerMetadata apply(RunningInstance from) {
-         return new ServerMetadataImpl(from.getId(), from.getKeyName(), instanceToServerState
-                  .get(from.getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
-                  .getPrivateIpAddress()), 22, LoginType.SSH);
+      public NodeMetadata apply(RunningInstance from) {
+         return new NodeMetadataImpl(from.getId(), from.getKeyName(), instanceToNodeState.get(from
+                  .getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
+                  .getPrivateIpAddress()), 22, LoginType.SSH, ImmutableMap.<String, String> of());
       }
 
       Set<InetAddress> nullSafeSet(InetAddress in) {
@@ -231,10 +230,10 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public SortedSet<ServerIdentity> getServerByName(final String name) {
-      return Sets.newTreeSet(Iterables.filter(listServers(), new Predicate<ServerIdentity>() {
+   public Set<NodeIdentity> getNodeByName(final String name) {
+      return Sets.newHashSet(Iterables.filter(listNodes(), new Predicate<NodeIdentity>() {
          @Override
-         public boolean apply(ServerIdentity input) {
+         public boolean apply(NodeIdentity input) {
             return input.getName().equalsIgnoreCase(name);
          }
       }));
@@ -245,16 +244,16 @@ public class EC2ComputeService implements ComputeService {
     * keyname. This will break.
     */
    @Override
-   public SortedSet<ServerIdentity> listServers() {
+   public Set<NodeIdentity> listNodes() {
       logger.debug(">> listing servers");
-      SortedSet<ServerIdentity> servers = Sets.newTreeSet();
+      Set<NodeIdentity> servers = Sets.newHashSet();
       for (Reservation reservation : ec2Client.getInstanceServices().describeInstancesInRegion(
                Region.DEFAULT)) {
          Iterables.addAll(servers, Iterables.transform(reservation.getRunningInstances(),
-                  new Function<RunningInstance, ServerIdentity>() {
+                  new Function<RunningInstance, NodeIdentity>() {
                      @Override
-                     public ServerIdentity apply(RunningInstance from) {
-                        return new ServerIdentityImpl(from.getId(), from.getKeyName());
+                     public NodeIdentity apply(RunningInstance from) {
+                        return new NodeIdentityImpl(from.getId(), from.getKeyName());
                      }
                   }));
       }
@@ -263,7 +262,7 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public void destroyServer(String id) {
+   public void destroyNode(String id) {
       RunningInstance runningInstance = getRunningInstance(id);
       // grab the old keyname
       String name = runningInstance.getKeyName();

@@ -20,20 +20,22 @@ package org.jclouds.compute.domain.internal;
 
 import java.net.InetAddress;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.SortedSet;
 
 import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.ServerMetadata;
-import org.jclouds.compute.domain.ServerState;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMetadata {
+public class NodeMetadataImpl extends NodeIdentityImpl implements NodeMetadata {
    public static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
 
       @Override
@@ -42,21 +44,23 @@ public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMeta
       }
 
    };
-   private final ServerState state;
+   private final NodeState state;
    private final SortedSet<InetAddress> publicAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
    private final SortedSet<InetAddress> privateAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
+   private final Map<String, String> extra = Maps.newLinkedHashMap();
    private final int loginPort;
    private final LoginType loginType;
 
-   public ServerMetadataImpl(String id, String name, ServerState state,
+   public NodeMetadataImpl(String id, String name, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
-            int loginPort, LoginType loginType) {
+            int loginPort, LoginType loginType, Map<String, String> extra) {
       super(id, name);
       this.state = state;
       Iterables.addAll(this.publicAddresses, publicAddresses);
       Iterables.addAll(this.privateAddresses, privateAddresses);
       this.loginPort = loginPort;
       this.loginType = loginType;
+      this.extra.putAll(extra);
    }
 
    /**
@@ -87,14 +91,31 @@ public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMeta
       return loginType;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public NodeState getState() {
+      return state;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Map<String, String> getExtra() {
+      return extra;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + ((extra == null) ? 0 : extra.hashCode());
       result = prime * result + loginPort;
       result = prime * result + ((loginType == null) ? 0 : loginType.hashCode());
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
+      result = prime * result + ((state == null) ? 0 : state.hashCode());
       return result;
    }
 
@@ -106,7 +127,12 @@ public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMeta
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ServerMetadataImpl other = (ServerMetadataImpl) obj;
+      NodeMetadataImpl other = (NodeMetadataImpl) obj;
+      if (extra == null) {
+         if (other.extra != null)
+            return false;
+      } else if (!extra.equals(other.extra))
+         return false;
       if (loginPort != other.loginPort)
          return false;
       if (loginType == null) {
@@ -124,11 +150,12 @@ public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMeta
             return false;
       } else if (!publicAddresses.equals(other.publicAddresses))
          return false;
+      if (state == null) {
+         if (other.state != null)
+            return false;
+      } else if (!state.equals(other.state))
+         return false;
       return true;
-   }
-
-   public ServerState getState() {
-      return state;
    }
 
 }

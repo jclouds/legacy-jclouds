@@ -16,7 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.compute;
+
+package org.jclouds.vcloud.terremark.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
@@ -30,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
@@ -44,6 +44,8 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -57,21 +59,21 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
-public class EC2ComputeServiceLiveTest {
+@Test(groups = "live", enabled = false, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
+public class TerremarkVCloudComputeServiceLiveTest {
 
    protected SshClient.Factory sshFactory;
-   private String nodePrefix = System.getProperty("user.name") + ".ec2";
+   private String nodePrefix = System.getProperty("user.name");
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
-   private ComputeServiceContext<?, ?> context;
+   private ComputeServiceContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> context;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      context = new ComputeServiceContextFactory().createContext("ec2", user, password,
+      context = TerremarkVCloudComputeServiceContextFactory.createContext(user, password,
                new Log4JLoggingModule());
       Injector injector = Guice.createInjector(new JschSshClientModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -81,7 +83,7 @@ public class EC2ComputeServiceLiveTest {
    }
 
    public void testCreate() throws Exception {
-      node = context.getComputeService().createNode(nodePrefix, Profile.SMALLEST, Image.RHEL_53);
+      node = context.getComputeService().createNode(nodePrefix, Profile.SMALLEST, Image.UBUNTU_90);
       assertNotNull(node.getId());
       assertEquals(node.getLoginPort(), 22);
       assertEquals(node.getLoginType(), LoginType.SSH);
@@ -128,7 +130,7 @@ public class EC2ComputeServiceLiveTest {
                .getLoginPort());
       socketTester.apply(socket);
       SshClient connection = sshFactory.create(socket, node.getCredentials().account, node
-               .getCredentials().key.getBytes());
+               .getCredentials().key);
       try {
          connection.connect();
          InputStream etcPasswd = connection.get("/etc/passwd");

@@ -16,18 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rimuhosting.miro.servers;
+package org.jclouds.rimuhosting.miro.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.RimuHostingContextBuilder;
 import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
+import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeService;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -36,27 +37,26 @@ import com.google.inject.Injector;
 /**
  * @author Ivan Meredith
  */
-@Test(groups = "live", sequential = true, testName = "rimuhosting.RimuHostingServerServiceLiveTest")
+@Test(groups = "live", sequential = true, testName = "rimuhosting.RimuHostingNodeServiceLiveTest")
 public class RimuHostingComputeServiceLiveTest {
    RimuHostingClient rhClient;
-   RimuHostingComputeService rhServerService;
+   RimuHostingComputeService rhNodeService;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String account = "ddd";
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule())
-               .buildInjector();
+      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(key)
+               .relaxSSLHostname().build()).withModules(new Log4JLoggingModule()).buildInjector();
 
       rhClient = injector.getInstance(RimuHostingClient.class);
-      rhServerService = injector.getInstance(RimuHostingComputeService.class);
+      rhNodeService = injector.getInstance(RimuHostingComputeService.class);
    }
 
    @Test
-   public void testServerCreate() {
-      CreateServerResponse server = rhServerService.createServer("test.com", Profile.SMALLEST,
+   public void testNodeCreate() {
+      CreateNodeResponse server = rhNodeService.createNode("test.com", Profile.SMALLEST,
                Image.CENTOS_53);
       assertNotNull(rhClient.getServer(Long.valueOf(server.getId())));
-      rhServerService.destroyServer(server.getId());
+      rhNodeService.destroyNode(server.getId());
    }
 }

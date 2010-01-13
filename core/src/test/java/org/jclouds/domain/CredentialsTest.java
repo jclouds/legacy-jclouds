@@ -27,19 +27,19 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "blobstore.CredentialsTest")
+@Test(groups = "unit", testName = "compute.CredentialsTest")
 public class CredentialsTest {
 
    public void testAzure() {
       Credentials creds = Credentials.parse(URI
-               .create("blobstore://account:Base64==@azureblob/container-hyphen/prefix"));
+               .create("compute://account:Base64==@azureblob/container-hyphen/prefix"));
       assertEquals(creds.account, "account");
       assertEquals(creds.key, "Base64==");
    }
 
    public void testAtmos() {
       Credentials creds = Credentials.parse(URI
-               .create("blobstore://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
+               .create("compute://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
       assertEquals(creds.account, "domain/user");
       assertEquals(creds.key, "Base64==");
    }
@@ -53,7 +53,7 @@ public class CredentialsTest {
 
    public void testCloudFiles() {
       Credentials creds = Credentials.parse(URI
-               .create("blobstore://account:h3c@cloudfiles/container-hyphen/prefix"));
+               .create("compute://account:h3c@cloudfiles/container-hyphen/prefix"));
       assertEquals(creds.account, "account");
       assertEquals(creds.key, "h3c");
 
@@ -62,7 +62,7 @@ public class CredentialsTest {
    public void testS3() {
 
       Credentials creds = Credentials.parse(URI
-               .create("blobstore://0AB:aA%2B%2F0@s3/buck-et/prefix"));
+               .create("compute://0AB:aA%2B%2F0@s3/buck-et/prefix"));
       assertEquals(creds.account, "0AB");
       assertEquals(creds.key, "aA+/0");
    }
@@ -70,7 +70,7 @@ public class CredentialsTest {
    public void testS3Space() {
 
       Credentials creds = Credentials.parse(URI
-               .create("blobstore://0AB:aA%2B%2F0@s3/buck-et/pre%20fix"));
+               .create("compute://0AB:aA%2B%2F0@s3/buck-et/pre%20fix"));
       assertEquals(creds.account, "0AB");
       assertEquals(creds.key, "aA+/0");
    }

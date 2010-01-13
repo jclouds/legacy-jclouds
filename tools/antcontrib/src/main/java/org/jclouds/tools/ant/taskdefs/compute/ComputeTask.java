@@ -25,19 +25,21 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceFactory;
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeIdentity;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Profile;
-import org.jclouds.compute.domain.ServerIdentity;
-import org.jclouds.compute.domain.ServerMetadata;
-import org.jclouds.compute.reference.ComputeConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
@@ -53,7 +55,7 @@ import com.google.inject.Provider;
  * @author Ivan Meredith
  */
 public class ComputeTask extends Task {
-   private final Map<URI, ComputeService> computeMap;
+   private final Map<URI, ComputeServiceContext<?, ?>> computeMap;
    private static Project project;
    /**
     * we don't have a reference to the project during the constructor, so we need to defer expansion
@@ -63,12 +65,12 @@ public class ComputeTask extends Task {
 
       @Override
       public Module[] get() {
-         return new Module[] { new AntLoggingModule(project, ComputeConstants.COMPUTE_LOGGER) };
+         return new Module[] { new AntLoggingModule(project, ComputeServiceConstants.COMPUTE_LOGGER) };
       }
 
    };
 
-   public ComputeTask(Map<URI, ComputeService> computeMap) {
+   public ComputeTask(Map<URI, ComputeServiceContext<?, ?>> computeMap) {
       this.computeMap = computeMap;
    }
 
@@ -83,12 +85,13 @@ public class ComputeTask extends Task {
       return properties;
    }
 
-   static Map<URI, ComputeService> buildComputeMap(final Properties props) {
-      return new MapMaker().makeComputingMap(new Function<URI, ComputeService>() {
+   static Map<URI, ComputeServiceContext<?, ?>> buildComputeMap(final Properties props) {
+      return new MapMaker().makeComputingMap(new Function<URI, ComputeServiceContext<?, ?>>() {
 
          @Override
-         public ComputeService apply(URI from) {
-            return new ComputeServiceFactory(props).create(from, defaultModulesProvider.get());
+         public ComputeServiceContext<?, ?> apply(URI from) {
+            return new ComputeServiceContextFactory(props).createContext(from,
+                     defaultModulesProvider.get());
          }
 
       });
@@ -101,125 +104,127 @@ public class ComputeTask extends Task {
 
    private String provider;
    private String action;
-   private ServerElement serverElement;
+   private NodeElement nodeElement;
 
    /**
-    * @return the configured {@link ServerElement} element
+    * @return the configured {@link NodeElement} element
     */
-   public final ServerElement createServer() {
-      if (getServer() == null) {
-         this.serverElement = new ServerElement();
+   public final NodeElement createNode() {
+      if (getNode() == null) {
+         this.nodeElement = new NodeElement();
       }
 
-      return this.serverElement;
+      return this.nodeElement;
    }
 
-   public ServerElement getServer() {
-      return this.serverElement;
+   public NodeElement getNode() {
+      return this.nodeElement;
    }
 
    public void execute() throws BuildException {
       ComputeTask.project = getProject();
       Action action = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
                this.action));
-      ComputeService computeService = computeMap.get(HttpUtils.createUri(provider));
-      switch (action) {
-         case CREATE:
-         case GET:
-         case DESTROY:
-            if (serverElement != null) {
-               switch (action) {
-                  case CREATE:
-                     create(computeService);
-                     break;
-                  case GET:
-                     get(computeService);
-                     break;
-                  case DESTROY:
-                     destroy(computeService);
-                     break;
+      ComputeServiceContext<?, ?> context = computeMap.get(HttpUtils.createUri(provider));
+      try {
+         ComputeService computeService = context.getComputeService();
+         switch (action) {
+            case CREATE:
+            case GET:
+            case DESTROY:
+               if (nodeElement != null) {
+                  switch (action) {
+                     case CREATE:
+                        create(computeService);
+                        break;
+                     case GET:
+                        get(computeService);
+                        break;
+                     case DESTROY:
+                        destroy(computeService);
+                        break;
+                  }
+               } else {
+                  this.log("missing node element for action: " + action, Project.MSG_ERR);
                }
-            } else {
-               this.log("missing server element for action: " + action, Project.MSG_ERR);
-            }
-            break;
-         case LIST:
-            log("list");
-            for (ServerIdentity server : computeService.listServers()) {
-               log(String.format("   id=%s, name=%s", server.getId(), server.getName()));
-            }
-            break;
-         case LIST_DETAILS:
-            log("list details");
-            for (ServerIdentity server : computeService.listServers()) {// TODO parallel
-               logDetails(computeService, server);
-            }
-            break;
-         default:
-            this.log("bad action: " + action, Project.MSG_ERR);
+               break;
+            case LIST:
+               log("list");
+               for (NodeIdentity node : computeService.listNodes()) {
+                  log(String.format("   id=%s, name=%s", node.getId(), node.getName()));
+               }
+               break;
+            case LIST_DETAILS:
+               log("list details");
+               for (NodeIdentity node : computeService.listNodes()) {// TODO parallel
+                  logDetails(computeService, node);
+               }
+               break;
+            default:
+               this.log("bad action: " + action, Project.MSG_ERR);
+         }
+      } finally {
+         context.close();
       }
    }
 
    private void create(ComputeService computeService) {
-      log(String.format("create name: %s, profile: %s, image: %s", serverElement.getName(),
-               serverElement.getProfile(), serverElement.getImage()));
-      CreateServerResponse createdServer = computeService.createServer(serverElement.getName(),
-               Profile.valueOf(serverElement.getProfile().toUpperCase()), Image
-                        .valueOf(serverElement.getImage().toUpperCase()));
-      log(String.format("   id=%s, name=%s, connection=%s://%s:%s@%s:%d", createdServer.getId(),
-               createdServer.getName(), createdServer.getLoginType().toString().toLowerCase(),
-               createdServer.getCredentials().account, createdServer.getCredentials().key,
-               createdServer.getPublicAddresses().first().getHostAddress(), createdServer
-                        .getLoginPort()));
-      if (serverElement.getIdproperty() != null)
-         getProject().setProperty(serverElement.getIdproperty(), createdServer.getId());
-      if (serverElement.getHostproperty() != null)
-         getProject().setProperty(serverElement.getHostproperty(),
-                  createdServer.getPublicAddresses().first().getHostAddress());
-      if (serverElement.getKeyfile() != null
-               && createdServer.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
+      log(String.format("create name: %s, profile: %s, image: %s", nodeElement.getName(),
+               nodeElement.getProfile(), nodeElement.getImage()));
+      CreateNodeResponse createdNode = computeService.createNode(nodeElement.getName(), Profile
+               .valueOf(nodeElement.getProfile().toUpperCase()), Image.valueOf(nodeElement
+               .getImage().toUpperCase()));
+      log(String.format("   id=%s, name=%s, connection=%s://%s:%s@%s:%d", createdNode.getId(),
+               createdNode.getName(), createdNode.getLoginType().toString().toLowerCase(),
+               createdNode.getCredentials().account, createdNode.getCredentials().key, createdNode
+                        .getPublicAddresses().first().getHostAddress(), createdNode.getLoginPort()));
+      if (nodeElement.getIdproperty() != null)
+         getProject().setProperty(nodeElement.getIdproperty(), createdNode.getId());
+      if (nodeElement.getHostproperty() != null)
+         getProject().setProperty(nodeElement.getHostproperty(),
+                  createdNode.getPublicAddresses().first().getHostAddress());
+      if (nodeElement.getKeyfile() != null
+               && createdNode.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
          try {
-            Files.write(createdServer.getCredentials().key, new File(serverElement.getKeyfile()),
+            Files.write(createdNode.getCredentials().key, new File(nodeElement.getKeyfile()),
                      Charset.defaultCharset());
          } catch (IOException e) {
             throw new BuildException(e);
          }
-      if (serverElement.getPasswordproperty() != null
-               && !createdServer.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
-         getProject().setProperty(serverElement.getPasswordproperty(),
-                  createdServer.getCredentials().key);
-      if (serverElement.getUsernameproperty() != null)
-         getProject().setProperty(serverElement.getUsernameproperty(),
-                  createdServer.getCredentials().account);
+      if (nodeElement.getPasswordproperty() != null
+               && !createdNode.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
+         getProject().setProperty(nodeElement.getPasswordproperty(),
+                  createdNode.getCredentials().key);
+      if (nodeElement.getUsernameproperty() != null)
+         getProject().setProperty(nodeElement.getUsernameproperty(),
+                  createdNode.getCredentials().account);
    }
 
    private void destroy(ComputeService computeService) {
-      log(String.format("destroy name: %s", serverElement.getName()));
-      SortedSet<ServerIdentity> serversThatMatch = computeService.getServerByName(serverElement
-               .getName());
-      if (serversThatMatch.size() > 0) {
-         for (ServerIdentity server : serversThatMatch) {
-            log(String.format("   destroying id=%s, name=%s", server.getId(), server.getName()));
-            computeService.destroyServer(server.getId());
+      log(String.format("destroy name: %s", nodeElement.getName()));
+      Set<NodeIdentity> nodesThatMatch = computeService.getNodeByName(nodeElement.getName());
+      if (nodesThatMatch.size() > 0) {
+         for (NodeIdentity node : nodesThatMatch) {
+            log(String.format("   destroying id=%s, name=%s", node.getId(), node.getName()));
+            computeService.destroyNode(node.getId());
          }
       }
    }
 
    private void get(ComputeService computeService) {
-      log(String.format("get name: %s", serverElement.getName()));
-      SortedSet<ServerIdentity> serversThatMatch = computeService.getServerByName(serverElement
-               .getName());
-      if (serversThatMatch.size() > 0) {
-         for (ServerIdentity server : serversThatMatch) {
-            logDetails(computeService, server);
+      log(String.format("get name: %s", nodeElement.getName()));
+      Set<NodeIdentity> nodesThatMatch = computeService.getNodeByName(nodeElement.getName());
+      if (nodesThatMatch.size() > 0) {
+         for (NodeIdentity node : nodesThatMatch) {
+            logDetails(computeService, node);
          }
       }
    }
 
-   private void logDetails(ComputeService computeService, ServerIdentity server) {
-      ServerMetadata metadata = computeService.getServerMetadata(server.getId());
-      log(String.format("   server id=%s, name=%s, state=%s, publicIp=%s, privateIp=%s", metadata
-               .getId(), server.getName(), metadata.getState(), ipOrEmptyString(metadata
+   private void logDetails(ComputeService computeService, NodeIdentity node) {
+      NodeMetadata metadata = computeService.getNodeMetadata(node.getId());
+      log(String.format("   node id=%s, name=%s, state=%s, publicIp=%s, privateIp=%s", metadata
+               .getId(), node.getName(), metadata.getState(), ipOrEmptyString(metadata
                .getPublicAddresses()), ipOrEmptyString(metadata.getPrivateAddresses())));
    }
 
@@ -239,12 +244,12 @@ public class ComputeTask extends Task {
       this.action = action;
    }
 
-   public ServerElement getServerElement() {
-      return serverElement;
+   public NodeElement getNodeElement() {
+      return nodeElement;
    }
 
-   public void setServerElement(ServerElement serverElement) {
-      this.serverElement = serverElement;
+   public void setNodeElement(NodeElement nodeElement) {
+      this.nodeElement = nodeElement;
    }
 
    public void setProvider(String provider) {

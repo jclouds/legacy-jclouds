@@ -16,29 +16,14 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.compute.domain;
+package org.jclouds.compute.reference;
 
 /**
- * Indicates the status of a server
  * 
  * @author Adrian Cole
  */
-public enum ServerState {
-   /**
-    * The server is in transition
-    */
-   PENDING,
-   /**
-    * The server is not running
-    */
-   TERMINATED,
-   /**
-    * The server is deployed, but suspended
-    */
-   SUSPENDED,
-   /**
-    * The server is available for requests
-    */
-   RUNNING;
+public interface ComputeServiceConstants {
+
+   public static final String COMPUTE_LOGGER = "jclouds.compute";
 
 }

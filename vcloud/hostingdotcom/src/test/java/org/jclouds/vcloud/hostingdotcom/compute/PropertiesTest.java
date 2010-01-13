@@ -16,14 +16,14 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.compute;
+package org.jclouds.vcloud.hostingdotcom.compute;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
+import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -43,11 +43,11 @@ public class PropertiesTest {
                .getInput());
    }
 
-   public void testRimu() {
-      assertEquals(properties.getProperty("terremark.contextbuilder"),
-               TerremarkVCloudComputeServiceContextBuilder.class.getName());
-      assertEquals(properties.getProperty("terremark.propertiesbuilder"),
-               TerremarkVCloudPropertiesBuilder.class.getName());
+   public void test() {
+      assertEquals(properties.getProperty("hostingdotcom.contextbuilder"),
+               HostingDotComVCloudComputeServiceContextBuilder.class.getName());
+      assertEquals(properties.getProperty("hostingdotcom.propertiesbuilder"),
+               HostingDotComVCloudPropertiesBuilder.class.getName());
    }
 
 }

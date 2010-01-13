@@ -19,24 +19,25 @@
 package org.jclouds.compute.domain.internal;
 
 import java.net.InetAddress;
+import java.util.Map;
 
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.ServerState;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public class CreateServerResponseImpl extends ServerMetadataImpl implements CreateServerResponse {
+public class CreateNodeResponseImpl extends NodeMetadataImpl implements CreateNodeResponse {
 
    private final Credentials credentials;
 
-   public CreateServerResponseImpl(String id, String name, ServerState state,
+   public CreateNodeResponseImpl(String id, String name, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
-            int loginPort, LoginType loginType, Credentials credentials) {
-      super(id, name, state, publicAddresses, privateAddresses, loginPort, loginType);
+            int loginPort, LoginType loginType, Credentials credentials, Map<String, String> extra) {
+      super(id, name, state, publicAddresses, privateAddresses, loginPort, loginType, extra);
       this.credentials = credentials;
    }
 
@@ -60,7 +61,7 @@ public class CreateServerResponseImpl extends ServerMetadataImpl implements Crea
          return false;
       if (getClass() != obj.getClass())
          return false;
-      CreateServerResponseImpl other = (CreateServerResponseImpl) obj;
+      CreateNodeResponseImpl other = (CreateNodeResponseImpl) obj;
       if (credentials == null) {
          if (other.credentials != null)
             return false;

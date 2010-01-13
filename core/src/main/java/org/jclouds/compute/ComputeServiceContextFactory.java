@@ -20,6 +20,7 @@ package org.jclouds.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
@@ -27,34 +28,50 @@ import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpPropertiesBuilder;
-import org.jclouds.rest.RestContextBuilder;
 
+import com.google.common.io.Resources;
 import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class NodeServiceFactory {
+public class ComputeServiceContextFactory {
    private final Properties properties;
 
+   public ComputeServiceContextFactory() throws IOException {
+      this(init());
+   }
+
+   static Properties init() throws IOException {
+      Properties properties = new Properties();
+      properties.load(Resources.newInputStreamSupplier(
+               Resources.getResource("compute.properties")).getInput());
+      return properties;
+   }
+
    @Inject
-   public NodeServiceFactory(Properties properties) {
+   public ComputeServiceContextFactory(Properties properties) {
       this.properties = properties;
    }
 
-   public NodeService create(URI provider, Module... modules) {
-      return create(provider, Credentials.parse(provider), modules);
+   public ComputeServiceContext<?, ?> createContext(URI computeService, Module... modules) {
+      return createContext(computeService, Credentials.parse(computeService), modules);
+   }
+
+   public ComputeServiceContext<?, ?> createContext(URI computeService, Credentials creds, Module... modules) {
+      return createContext(checkNotNull(computeService.getHost(), "host"), checkNotNull(creds.account,
+               "account"), creds.key, modules);
    }
 
    @SuppressWarnings("unchecked")
-   public NodeService create(URI provider, Credentials creds, Module... modules) {
-      String hint = checkNotNull(provider.getHost(), "host");
-      String account = checkNotNull(creds.account, "account");
-      String key = creds.key;
+   public ComputeServiceContext<?, ?> createContext(String hint, String account, String key,
+            Module... modules) {
+      checkNotNull(hint, "hint");
+      checkNotNull(account, "account");
       String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
       String propertiesBuilderClassName = checkNotNull(
-               properties.getProperty(propertiesBuilderKey), propertiesBuilderKey);
+               properties.getProperty(propertiesBuilderKey), hint + " service not supported");
 
       String contextBuilderKey = String.format("%s.contextbuilder", hint);
       String contextBuilderClassName = checkNotNull(properties.getProperty(contextBuilderKey),
@@ -63,13 +80,13 @@ public class NodeServiceFactory {
       try {
          Class<HttpPropertiesBuilder> propertiesBuilderClass = (Class<HttpPropertiesBuilder>) Class
                   .forName(propertiesBuilderClassName);
-         Class<RestContextBuilder<?, ?>> contextBuilderClass = (Class<RestContextBuilder<?, ?>>) Class
+         Class<ComputeServiceContextBuilder<?, ?>> contextBuilderClass = (Class<ComputeServiceContextBuilder<?, ?>>) Class
                   .forName(contextBuilderClassName);
 
          HttpPropertiesBuilder builder = propertiesBuilderClass.getConstructor(String.class,
                   String.class).newInstance(account, key);
          return contextBuilderClass.getConstructor(Properties.class).newInstance(builder.build())
-                  .withModules(modules).buildInjector().getInstance(NodeService.class);
+                  .withModules(modules).buildContext();
       } catch (Exception e) {
          throw new RuntimeException("error instantiating " + contextBuilderClassName, e);
       }

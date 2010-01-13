@@ -18,13 +18,13 @@
  */
 package org.jclouds.compute;
 
-import java.util.SortedSet;
+import java.util.Set;
 
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeIdentity;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Profile;
-import org.jclouds.compute.domain.ServerIdentity;
-import org.jclouds.compute.domain.ServerMetadata;
 
 /**
  * 
@@ -32,31 +32,30 @@ import org.jclouds.compute.domain.ServerMetadata;
  * @author Adrian Cole
  */
 public interface ComputeService {
+   /**
+    * List all nodes available to the current user
+    */
+   Set<NodeIdentity> listNodes();
 
    /**
-    * List all servers available to the current user
+    * Find all nodes matching the specified name
     */
-   SortedSet<ServerIdentity> listServers();
-   
+   Set<NodeIdentity> getNodeByName(String name);
+
    /**
-    * Find all servers matching the specified name
-    */
-   SortedSet<ServerIdentity> getServerByName(String name);
-   
-   /**
-    * Create a new server given the name, profile, and image.
+    * Create a new node given the name, profile, and Image
     * 
     */
-   CreateServerResponse createServer(String name, Profile profile, Image image);
+   CreateNodeResponse createNode(String name, Profile profile, Image image);
 
    /**
-    * destroy the server.
+    * destroy the node.
     */
-   void destroyServer(String id);
-   
+   void destroyNode(String id);
+
    /**
-    * Find a server by its id
+    * Find a node by its id
     */
-   ServerMetadata getServerMetadata(String id);
+   NodeMetadata getNodeMetadata(String id);
 
 }

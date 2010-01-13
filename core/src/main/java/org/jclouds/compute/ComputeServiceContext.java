@@ -16,14 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.compute.reference;
+package org.jclouds.compute;
+
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.rest.RestContext;
+
+import com.google.inject.ImplementedBy;
 
 /**
+ * Represents a cloud that has compute functionality.
+ * 
  * 
  * @author Adrian Cole
+ * 
  */
-public interface ComputeConstants {
+@ImplementedBy(ComputeServiceContextImpl.class)
+public interface ComputeServiceContext<A, S> extends RestContext<A, S> {
 
-   public static final String COMPUTE_LOGGER = "jclouds.compute";
-
+   ComputeService getComputeService();
 }

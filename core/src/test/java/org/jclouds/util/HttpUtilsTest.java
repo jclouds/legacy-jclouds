@@ -47,16 +47,16 @@ public class HttpUtilsTest extends PerformanceTest {
 
    public void testAtmos() {
       URI creds = HttpUtils
-               .createUri("blobstore://domain/user:Base64==@azureblob/container-hyphen/prefix");
+               .createUri("compute://domain/user:Base64==@azureblob/container-hyphen/prefix");
       assertEquals(creds, URI
-               .create("blobstore://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
+               .create("compute://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
    }
 
    public void testAzure() {
       URI creds = HttpUtils
-               .createUri("blobstore://account:Base64==@azureblob/container-hyphen/prefix");
+               .createUri("compute://account:Base64==@azureblob/container-hyphen/prefix");
       assertEquals(creds, URI
-               .create("blobstore://account:Base64==@azureblob/container-hyphen/prefix"));
+               .create("compute://account:Base64==@azureblob/container-hyphen/prefix"));
    }
 
    public void testHosting() {
@@ -72,21 +72,21 @@ public class HttpUtilsTest extends PerformanceTest {
    }
 
    public void testCloudFiles() {
-      URI creds = HttpUtils.createUri("blobstore://account:h3c@cloudfiles/container-hyphen/prefix");
-      assertEquals(creds, URI.create("blobstore://account:h3c@cloudfiles/container-hyphen/prefix"));
+      URI creds = HttpUtils.createUri("compute://account:h3c@cloudfiles/container-hyphen/prefix");
+      assertEquals(creds, URI.create("compute://account:h3c@cloudfiles/container-hyphen/prefix"));
    }
 
    public void testS3() {
 
-      URI creds = HttpUtils.createUri("blobstore://0AB:aA+/0@s3/buck-et/prefix");
-      assertEquals(creds, URI.create("blobstore://0AB:aA%2B%2F0@s3/buck-et/prefix"));
+      URI creds = HttpUtils.createUri("compute://0AB:aA+/0@s3/buck-et/prefix");
+      assertEquals(creds, URI.create("compute://0AB:aA%2B%2F0@s3/buck-et/prefix"));
    }
 
    public void testS3Space() {
 
-      URI creds = HttpUtils.createUri("blobstore://0AB:aA+/0@s3/buck-et/pre fix");
+      URI creds = HttpUtils.createUri("compute://0AB:aA+/0@s3/buck-et/pre fix");
 
-      assertEquals(creds, URI.create("blobstore://0AB:aA%2B%2F0@s3/buck-et/pre%20fix"));
+      assertEquals(creds, URI.create("compute://0AB:aA%2B%2F0@s3/buck-et/pre%20fix"));
    }
 
    public void testPercent() {

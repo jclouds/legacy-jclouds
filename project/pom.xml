@@ -163,6 +163,8 @@
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
+        <http.proxyHost></http.proxyHost>
+        <http.proxyPort></http.proxyPort>
         <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
         <jclouds.blobstore.httpstream.md5>c581a15cb0001d9b771ad6df7c8156f8</jclouds.blobstore.httpstream.md5>
         <jclouds.wire.httpstream.url>http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>

@@ -16,17 +16,18 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rimuhosting.miro.servers;
+package org.jclouds.rimuhosting.miro.compute;
 
-import org.jclouds.compute.domain.ServerIdentity;
+import org.jclouds.compute.domain.NodeIdentity;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.domain.Server;
 
-public class RimuHostingServer implements ServerIdentity {
+public class RimuHostingNodeIdentity implements NodeIdentity {
    org.jclouds.rimuhosting.miro.domain.Server rhServer;
 
    RimuHostingClient rhClient;
 
-   public RimuHostingServer(org.jclouds.rimuhosting.miro.domain.Server rhServer,
+   public RimuHostingNodeIdentity(Server rhServer,
             RimuHostingClient rhClient) {
       this.rhServer = rhServer;
       this.rhClient = rhClient;
@@ -47,7 +48,7 @@ public class RimuHostingServer implements ServerIdentity {
    }
 
    @Override
-   public int compareTo(ServerIdentity o) {
+   public int compareTo(NodeIdentity o) {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 }

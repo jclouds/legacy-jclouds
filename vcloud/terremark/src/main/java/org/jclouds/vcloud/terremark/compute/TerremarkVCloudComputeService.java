@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark.compute;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -29,16 +28,16 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
+import org.jclouds.compute.domain.NodeIdentity;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Profile;
-import org.jclouds.compute.domain.ServerIdentity;
-import org.jclouds.compute.domain.ServerMetadata;
-import org.jclouds.compute.domain.ServerState;
-import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
-import org.jclouds.compute.domain.internal.ServerMetadataImpl;
-import org.jclouds.compute.reference.ComputeConstants;
+import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -60,70 +59,69 @@ import com.google.inject.internal.ImmutableSet;
 @Singleton
 public class TerremarkVCloudComputeService implements ComputeService {
    @Resource
-   @Named(ComputeConstants.COMPUTE_LOGGER)
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final TerremarkVCloudComputeClient computeClient;
    private final TerremarkVCloudClient tmClient;
 
-   private static final Map<VAppStatus, ServerState> vAppStatusToServerState = ImmutableMap
-            .<VAppStatus, ServerState> builder().put(VAppStatus.OFF, ServerState.TERMINATED).put(
-                     VAppStatus.ON, ServerState.RUNNING).put(VAppStatus.RESOLVED,
-                     ServerState.PENDING).put(VAppStatus.SUSPENDED, ServerState.SUSPENDED).put(
-                     VAppStatus.UNRESOLVED, ServerState.PENDING).build();
+   private static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
+            .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
+                     VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
+                     NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(
+                     VAppStatus.UNRESOLVED, NodeState.PENDING).build();
 
    @Inject
    public TerremarkVCloudComputeService(TerremarkVCloudClient tmClient,
             TerremarkVCloudComputeClient computeClient) {
       this.tmClient = tmClient;
       this.computeClient = computeClient;
-
    }
 
    @Override
-   public CreateServerResponse createServer(String name, Profile profile, Image image) {
+   public CreateNodeResponse createNode(String name, Profile profile, Image image) {
       String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
       TerremarkVApp vApp = tmClient.getVApp(id);
       InetAddress publicIp = computeClient
                .createPublicAddressMappedToPorts(vApp, 22, 80, 8080, 443);
-      return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState
+      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState
                .get(vApp.getStatus()), ImmutableSet.<InetAddress> of(publicIp), vApp
                .getNetworkToAddresses().values(), 22, LoginType.SSH, new Credentials("vcloud",
-               "p4ssw0rd"));
+               "p4ssw0rd"), ImmutableMap.<String,String>of());
    }
 
    @Override
-   public ServerMetadata getServerMetadata(String id) {
+   public NodeMetadata getNodeMetadata(String id) {
       VApp vApp = tmClient.getVApp(id);
       // TODO
       Set<InetAddress> publicAddresses = ImmutableSet.<InetAddress> of();
-      return new ServerMetadataImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState.get(vApp
+      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState.get(vApp
                .getStatus()), publicAddresses, vApp.getNetworkToAddresses().values(), 22,
-               LoginType.SSH);
+               LoginType.SSH, ImmutableMap.<String,String>of());
    }
 
    @Override
-   public SortedSet<ServerIdentity> getServerByName(final String name) {
-      return Sets.newTreeSet(Iterables.filter(listServers(), new Predicate<ServerIdentity>() {
+   public Set<NodeIdentity> getNodeByName(final String name) {
+      return Sets.newHashSet(Iterables.filter(listNodes(), new Predicate<NodeIdentity>() {
          @Override
-         public boolean apply(ServerIdentity input) {
+         public boolean apply(NodeIdentity input) {
             return input.getName().equalsIgnoreCase(name);
          }
       }));
    }
 
    @Override
-   public SortedSet<ServerIdentity> listServers() {
-      SortedSet<ServerIdentity> servers = Sets.newTreeSet();
+   public Set<NodeIdentity> listNodes() {
+      Set<NodeIdentity> nodes = Sets.newHashSet();
       for (NamedResource resource : tmClient.getDefaultVDC().getResourceEntities().values()) {
          if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-            servers.add(getServerMetadata(resource.getId()));
+            nodes.add(getNodeMetadata(resource.getId()));
          }
       }
-      return servers;
+      return nodes;
    }
 
    @Override
-   public void destroyServer(String id) {
+   public void destroyNode(String id) {
       computeClient.stop(id);
    }
 }

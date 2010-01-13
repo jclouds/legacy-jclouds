@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class HttpRequestTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testConstructorHostNull() throws Exception {
-      URI uri = URI.create("http://adriancole.blobstore1138eu.s3-external-3.amazonaws.com:-1");
+      URI uri = URI.create("http://adriancole.compute1138eu.s3-external-3.amazonaws.com:-1");
       assert uri.getHost() == null : "test requires something to produce a uri with a null hostname";
 
       new HttpRequest("GET", uri);

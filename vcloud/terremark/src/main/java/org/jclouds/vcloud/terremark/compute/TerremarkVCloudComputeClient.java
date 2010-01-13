@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.reference.ComputeConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -55,7 +55,7 @@ import com.google.common.collect.Sets;
  */
 public class TerremarkVCloudComputeClient {
    @Resource
-   @Named(ComputeConstants.COMPUTE_LOGGER)
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    Logger logger = Logger.NULL;
 
    private final Predicate<String> taskTester;
@@ -110,22 +110,17 @@ public class TerremarkVCloudComputeClient {
    }
 
    public Set<InetAddress> getPublicAddresses(String id) {
-       TerremarkVApp vApp = tmClient.getVApp(id);
-       Set<InetAddress> ipAddresses = Sets.newHashSet();
-       SERVICE: for (InternetService service : tmClient.getAllInternetServicesInVDC(vApp.getVDC()
-                .getId())) {
-          for (Node node : tmClient.getNodes(service.getId())) 
-          {
-             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) 
-             {
-                ipAddresses.add(service.getPublicIpAddress().getAddress());
-             }
-          }
-       }
-       return ipAddresses;
-    }
-
-
+      TerremarkVApp vApp = tmClient.getVApp(id);
+      Set<InetAddress> ipAddresses = Sets.newHashSet();
+      for (InternetService service : tmClient.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
+         for (Node node : tmClient.getNodes(service.getId())) {
+            if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
+               ipAddresses.add(service.getPublicIpAddress().getAddress());
+            }
+         }
+      }
+      return ipAddresses;
+   }
 
    public void reboot(String id) {
       TerremarkVApp vApp = tmClient.getVApp(id);

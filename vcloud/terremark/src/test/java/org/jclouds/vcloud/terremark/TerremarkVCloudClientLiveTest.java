@@ -254,7 +254,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    public void testCloneVApp() {
       assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
-      
+
       // lookup the id of the datacenter you are deploying into
       String vDCId = tmClient.getDefaultVDC().getId();
 
@@ -271,10 +271,10 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       // wait for the task to complete
       assert successTester.apply(task.getId());
       System.out.printf("%d: done cloning vApp%n", System.currentTimeMillis());
-      
+
       assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
-      
+
       // refresh task to get the new vApp location
       task = tmClient.getTask(task.getId());
 
@@ -282,6 +282,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(clone.getStatus(), VAppStatus.ON);
 
       assertEquals(clone.getName(), newName);
+      assertEquals(clone.getNetworkToAddresses().values().size(), 1);
    }
 
    @Test(dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
