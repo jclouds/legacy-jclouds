@@ -18,11 +18,13 @@
  */
 package org.jclouds.http;
 
-import com.google.inject.Module;
+import java.util.Properties;
+
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.testng.annotations.Test;
 
-import java.util.Properties;
+import com.google.inject.Module;
 
 /**
  * Tests the functionality of the {@link JavaUrlHttpCommandExecutorService}
@@ -39,4 +41,5 @@ public class JavaUrlHttpCommandExecutorServiceTest extends BaseHttpCommandExecut
    protected void addConnectionProperties(Properties props) {
       // NONE
    }
+
 }

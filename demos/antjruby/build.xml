@@ -119,7 +119,7 @@ class ShrinkBlob < Task
     print "connecting to service ",destination.getHost(),"/",@container,"\n"
     
     # array thing is a weird hack since jruby doesn't understand varargs
-    context = BlobStoreContextFactory.new().createContext(destination, java.lang.reflect.Array.newInstance(com.google.inject.Module.java_class,0))
+    context = BlobStoreContextFactory.new().createContext(destination)
     context.getBlobStore().createContainer(@container)
 
     print "uploading to ",destination.getHost(),"/",@container,"/",@zip,"\n"

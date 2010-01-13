@@ -22,10 +22,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
@@ -40,6 +46,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
@@ -59,7 +66,22 @@ public class JavaUrlHttpCommandExecutorService extends
    @Named(HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME)
    private boolean relaxHostname = false;
    private final Map<String, String> sslMap;
-
+   
+   @Inject(optional = true)
+   @Named(HttpConstants.PROPERTY_HTTP_PROXY_ADDRESS)
+   @Nullable
+   private String proxyAddress = System.getProperty("http.proxyHost");
+   
+   @Inject(optional = true)
+   @Named(HttpConstants.PROPERTY_HTTP_PROXY_ADDRESS)
+   private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? 
+         Boolean.parseBoolean(System.getProperty("java.net.useSystemProxies")) : false;
+   
+   @Inject(optional = true)
+   @Named(HttpConstants.PROPERTY_HTTP_PROXY_PORT)
+   private int proxyPort = System.getProperty("http.proxyPort") != null ? 
+         Integer.parseInt(System.getProperty("http.proxyPort")) : 80;
+   
    @Inject
    public JavaUrlHttpCommandExecutorService(ExecutorService executorService,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
@@ -105,7 +127,19 @@ public class JavaUrlHttpCommandExecutorService extends
    @Override
    protected HttpURLConnection convert(HttpRequest request) throws IOException {
       URL url = request.getEndpoint().toURL();
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      HttpURLConnection connection;
+      if (systemProxies) {
+         System.setProperty("java.net.useSystemProxies", "true");
+         Iterable<Proxy> proxies = ProxySelector.getDefault().select(request.getEndpoint());
+         Proxy proxy = Iterables.getLast(proxies);
+         connection = (HttpURLConnection) url.openConnection(proxy);
+      } else if (proxyAddress != null) {
+         SocketAddress proxySocketAddress = new InetSocketAddress(InetAddress.getByName(proxyAddress), proxyPort);
+         Proxy proxy = new Proxy(Proxy.Type.HTTP, proxySocketAddress);
+         connection = (HttpURLConnection) url.openConnection(proxy);
+      } else {
+        connection = (HttpURLConnection) url.openConnection();
+      }
       if (relaxHostname && connection instanceof HttpsURLConnection) {
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;
          sslCon.setHostnameVerifier(new LogToMapHostnameVerifier());
