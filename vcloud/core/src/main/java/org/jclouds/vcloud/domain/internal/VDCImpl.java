@@ -209,4 +209,9 @@ public class VDCImpl implements VDC {
    public int compareTo(NamedResource o) {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
+
+   @Override
+   public String toString() {
+      return "[id=" + id + ", name=" + name + ", description=" + description + "]";
+   }
 }

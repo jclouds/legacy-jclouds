@@ -39,7 +39,8 @@ public interface Task extends Comparable<Task> {
    Date getStartTime();
 
    Date getEndTime();
-
+   
+   Date getExpiryTime();
    /**
     * A link to the vDC in which the task was started
     */

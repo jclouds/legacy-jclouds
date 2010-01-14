@@ -44,7 +44,7 @@ public class ParseTaskFromLocationHeader implements Function<HttpResponse, Task>
       if (location != null) {
          String taskId = location.substring(location.lastIndexOf('/') + 1);
          return new TaskImpl(taskId, URI.create(location), TaskStatus.QUEUED, new Date(), null,
-                  null, null, null);
+                  null, null, null, null);
       } else {
          throw new HttpResponseException("no uri in headers or content", null, from);
       }

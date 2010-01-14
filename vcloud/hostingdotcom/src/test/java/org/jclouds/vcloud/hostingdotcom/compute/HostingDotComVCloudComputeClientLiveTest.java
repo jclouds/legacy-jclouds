@@ -53,10 +53,10 @@ import com.google.inject.internal.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "vcloud.HostingDotComVCloudClientLiveTest")
+@Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.HostingDotComVCloudClientLiveTest")
 public class HostingDotComVCloudComputeClientLiveTest {
    HostingDotComVCloudComputeClient client;
-   HostingDotComVCloudClient tmClient;
+   HostingDotComVCloudClient hostingClient;
 
    private String id;
    private InetAddress privateAddress;
@@ -79,11 +79,12 @@ public class HostingDotComVCloudComputeClientLiveTest {
                      Image.RHEL_53,
                      new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
                      Image.UBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
-                     Image.UBUNTU_JEOS_90, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
+                     Image.UBUNTU_JEOS_90, new Expectation(4194304, "Ubuntu Linux (32-bit)"))
+            .build();
 
    private Predicate<InetAddress> addressTester;
 
-   @Test
+   @Test(enabled = true)
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       Image toTest = Image.CENTOS_53;
@@ -97,7 +98,7 @@ public class HostingDotComVCloudComputeClientLiveTest {
       id = client.start(serverName, toTest, processorCount, memory, disk, properties).get("id");
       Expectation expectation = expectationMap.get(toTest);
 
-      VApp vApp = tmClient.getVApp(id);
+      VApp vApp = hostingClient.getVApp(id);
       verifyConfigurationOfVApp(vApp, serverName, expectation.os, processorCount, memory,
                expectation.hardDisk);
       assertEquals(vApp.getStatus(), VAppStatus.ON);
@@ -110,7 +111,7 @@ public class HostingDotComVCloudComputeClientLiveTest {
       return serverName;
    }
 
-   @Test(dependsOnMethods = "testPowerOn")
+   @Test(dependsOnMethods = "testPowerOn", enabled = true)
    public void testGetAnyPrivateAddress() {
       privateAddress = client.getAnyPrivateAddress(id);
       assert !addressTester.apply(privateAddress);
@@ -150,7 +151,7 @@ public class HostingDotComVCloudComputeClientLiveTest {
                new HostingDotComVCloudPropertiesBuilder(account, key).relaxSSLHostname().build())
                .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(HostingDotComVCloudComputeClient.class);
-      tmClient = injector.getInstance(HostingDotComVCloudClient.class);
+      hostingClient = injector.getInstance(HostingDotComVCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
       }));
    }

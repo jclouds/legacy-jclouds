@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VApp href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-74"
-    type="application/vnd.vmware.vcloud.vApp+xml" name="188849-74"
-    status="4" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 vapp.xsd"
+<VApp href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-96"
+    type="application/vnd.vmware.vcloud.vApp+xml" name="188849-96"
+    status="2" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 vapp.xsd"
     xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://www.vmware.com/vcloud/v0.8"
     xmlns:vmw="http://www.vmware.com/schema/ovf"
     xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
@@ -11,7 +11,7 @@
     <NetworkConnectionSection>
         <Info xmlns="http://schemas.dmtf.org/ovf/envelope/1">Network Information about the vApp</Info>
         <NetworkConnection Network="Network 1">
-            <IpAddress>204.12.59.147</IpAddress>
+            <IpAddress>204.12.11.167</IpAddress>
         </NetworkConnection>
     </NetworkConnectionSection>
 
@@ -233,4 +233,3 @@
         </Item>
     </VirtualHardwareSection>
 </VApp>
-

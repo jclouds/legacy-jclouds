@@ -48,12 +48,12 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private TaskStatus status;
    private Date startTime;
    private Date endTime;
+   private Date expiryTime;
    private Task task;
    private Error error;
 
    @Resource
    protected Logger logger = Logger.NULL;
-
 
    @Inject
    public TaskHandler(DateService dateService) {
@@ -73,9 +73,10 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("startTime") != -1)
             startTime = parseDate(attributes, "startTime");
-         if (attributes.getIndex("endTime") != -1) {
+         if (attributes.getIndex("endTime") != -1)
             endTime = parseDate(attributes, "endTime");
-         }
+         if (attributes.getIndex("expiryTime") != -1)
+            expiryTime = parseDate(attributes, "expiryTime");
       } else if (qName.equals("Owner")) {
          owner = Utils.newNamedResource(attributes);
       } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
@@ -89,14 +90,14 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    }
 
    private Date parseDate(Attributes attributes, String attribute) {
-      String toParse =attributes.getValue(attributes.getIndex(attribute)); 
+      String toParse = attributes.getValue(attributes.getIndex(attribute));
       try {
          return dateService.iso8601DateParse(toParse);
       } catch (RuntimeException e) {
          if (e.getCause() instanceof ParseException) {
             try {
                if (!toParse.endsWith("Z"))
-                  toParse+="Z";
+                  toParse += "Z";
                return dateService.iso8601SecondsDateParse(toParse);
             } catch (RuntimeException ex) {
                logger.error(e, "error parsing date");
@@ -111,7 +112,8 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getId(), taskLink.getLocation(), status, startTime, endTime, owner, result, error);
+         this.task = new TaskImpl(taskLink.getId(), taskLink.getLocation(), status, startTime,
+                  endTime, expiryTime, owner, result, error);
          taskLink = null;
          status = null;
          startTime = null;

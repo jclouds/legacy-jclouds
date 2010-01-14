@@ -53,9 +53,9 @@ public class VCloudClientLiveTest {
       assertNotNull(response);
       assertNotNull(response.getId());
       assertNotNull(account);
-      assert response.getCatalogs().size() >=1;
-      assert response.getTasksLists().size() >=1;
-      assert response.getVDCs().size() >=1;
+      assert response.getCatalogs().size() >= 1;
+      assert response.getTasksLists().size() >= 1;
+      assert response.getVDCs().size() >= 1;
       assertEquals(connection.getOrganization(response.getId()), response);
    }
 
@@ -119,7 +119,7 @@ public class VCloudClientLiveTest {
       assertNotNull(response.getLocation());
       assertNotNull(response.getResourceEntities());
       assertNotNull(response.getAvailableNetworks());
-      assertEquals(connection.getVDC(response.getId()), response);
+      assertEquals(connection.getVDC(response.getId()).getId(), response.getId());
    }
 
    @Test
@@ -138,8 +138,10 @@ public class VCloudClientLiveTest {
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
-      Task task = response.getTasks().last();
-      assertEquals(connection.getTask(task.getId()).getLocation(), task.getLocation());
+      if (response.getTasks().size() > 0) {
+         Task task = response.getTasks().last();
+         assertEquals(connection.getTask(task.getId()).getLocation(), task.getLocation());
+      }
    }
 
    @Test

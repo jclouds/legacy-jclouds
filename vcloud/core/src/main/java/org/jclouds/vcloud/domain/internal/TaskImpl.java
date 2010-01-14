@@ -112,6 +112,8 @@ public class TaskImpl implements Task {
    private final Date startTime;
    @Nullable
    private final Date endTime;
+   @Nullable
+   private final Date expiryTime;
    private final NamedResource owner;
    @Nullable
    private final NamedResource result;
@@ -119,13 +121,14 @@ public class TaskImpl implements Task {
    private final Error error;
 
    public TaskImpl(String id, URI location, TaskStatus status, Date startTime,
-         @Nullable Date endTime, NamedResource owner,
+         @Nullable Date endTime,@Nullable Date expiryTime, NamedResource owner,
          @Nullable NamedResource result, Error error) {
       this.id = checkNotNull(id, "id");
       this.location = checkNotNull(location, "location");
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;
       this.endTime = endTime;
+      this.expiryTime = expiryTime;
       this.owner = owner;
       this.result = result;
       this.error = error;
@@ -173,13 +176,12 @@ public class TaskImpl implements Task {
       int result = 1;
       result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
       result = prime * result + ((error == null) ? 0 : error.hashCode());
+      result = prime * result + ((expiryTime == null) ? 0 : expiryTime.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result
-            + ((this.result == null) ? 0 : this.result.hashCode());
-      result = prime * result
-            + ((startTime == null) ? 0 : startTime.hashCode());
+      result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
+      result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       return result;
    }
@@ -202,6 +204,11 @@ public class TaskImpl implements Task {
          if (other.error != null)
             return false;
       } else if (!error.equals(other.error))
+         return false;
+      if (expiryTime == null) {
+         if (other.expiryTime != null)
+            return false;
+      } else if (!expiryTime.equals(other.expiryTime))
          return false;
       if (id == null) {
          if (other.id != null)
@@ -241,6 +248,10 @@ public class TaskImpl implements Task {
       return "TaskImpl [endTime=" + endTime + ", error=" + error + ", id=" + id
             + ", location=" + location + ", owner=" + owner + ", result="
             + result + ", startTime=" + startTime + ", status=" + status + "]";
+   }
+
+   public Date getExpiryTime() {
+      return expiryTime;
    }
 
 }
