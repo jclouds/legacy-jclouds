@@ -23,7 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem;
+import org.jclouds.vcloud.domain.VirtualSystem;
+import org.jclouds.vcloud.xml.VirtualSystemHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -44,7 +45,7 @@ public class VirtualSystemHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/system.xml");
 
-      TerremarkVirtualSystem result = (TerremarkVirtualSystem) factory.create(
+      VirtualSystem result =  factory.create(
                injector.getInstance(VirtualSystemHandler.class)).parse(is);
       assertEquals(result.getName(), "Virtual Hardware Family");
       assertEquals(result.getId(), 0);

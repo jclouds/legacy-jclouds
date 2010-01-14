@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -35,7 +35,6 @@ import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
@@ -49,13 +48,6 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  */
 @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
-
-   @Override
-   TerremarkVApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
-            InstantiateVAppTemplateOptions... options);
-
-   @Override
-   TerremarkVApp getVApp(String vAppId);
 
    /**
     * This call returns the compute options for the vApp. The compute options are the CPU and memory
@@ -159,6 +151,6 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * @param configuration(s) to change
     * @return task of configuration change
     */
-   Task configureVApp(TerremarkVApp vApp, VAppConfiguration configuration);
+   Task configureVApp(VApp vApp, VAppConfiguration configuration);
 
 }

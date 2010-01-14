@@ -51,7 +51,7 @@ import com.google.inject.internal.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.HostingDotComVCloudClientLiveTest")
+@Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
 public class VCloudComputeClientLiveTest {
    VCloudComputeClient client;
    VCloudClient tmClient;
@@ -59,7 +59,7 @@ public class VCloudComputeClientLiveTest {
    private String id;
    private InetAddress privateAddress;
 
-   public static final String PREFIX = System.getProperty("user.name") + "-terremark";
+   public static final String PREFIX = (System.getProperty("user.name") + "-vcloud").replaceAll("\\.","");
 
    private static class Expectation {
       final long hardDisk;
@@ -103,8 +103,8 @@ public class VCloudComputeClientLiveTest {
 
    private String getCompatibleServerName(Image toTest) {
       String serverName = CaseFormat.UPPER_UNDERSCORE
-               .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
-                        toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
+               .to(CaseFormat.LOWER_CAMEL, toTest.toString()).substring(0,
+                        toTest.toString().length()-1 <= 15 ? toTest.toString().length()-1 : 14);
       return serverName;
    }
 

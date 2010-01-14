@@ -39,8 +39,8 @@ import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 
 import com.google.common.collect.Iterables;
@@ -77,7 +77,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
-      TerremarkVApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
+      VApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
       checkArgument(vApp.getStatus() == VAppStatus.OFF, "vApp must be off!");
       VAppConfiguration configuration = checkNotNull(findConfigInArgsOrNull(gRequest), "config");
 
@@ -93,7 +93,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
 
    }
 
-   protected String generateXml(TerremarkVApp vApp, VAppConfiguration configuration)
+   protected String generateXml(VApp vApp, VAppConfiguration configuration)
             throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       String name = configuration.getName() != null ? configuration.getName() : vApp.getName();
 
@@ -114,7 +114,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
       return rootBuilder.asString(outputProperties);
    }
 
-   private void addProcessorItem(XMLBuilder sectionBuilder, TerremarkVApp vApp,
+   private void addProcessorItem(XMLBuilder sectionBuilder, VApp vApp,
             VAppConfiguration configuration) {
       ResourceAllocation cpu = Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(
                ResourceType.PROCESSOR));
@@ -123,7 +123,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
       addResourceWithQuantity(sectionBuilder, cpu, quantity);
    }
 
-   private void addMemoryItem(XMLBuilder sectionBuilder, TerremarkVApp vApp,
+   private void addMemoryItem(XMLBuilder sectionBuilder, VApp vApp,
             VAppConfiguration configuration) {
       ResourceAllocation memory = Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(
                ResourceType.MEMORY));
@@ -132,7 +132,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
       addResourceWithQuantity(sectionBuilder, memory, quantity);
    }
 
-   private void addDiskItems(XMLBuilder sectionBuilder, TerremarkVApp vApp,
+   private void addDiskItems(XMLBuilder sectionBuilder, VApp vApp,
             VAppConfiguration configuration) {
       for (ResourceAllocation disk : vApp.getResourceAllocationByType()
                .get(ResourceType.DISK_DRIVE)) {
@@ -169,21 +169,21 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
       return itemBuilder;
    }
 
-   protected XMLBuilder buildRoot(TerremarkVApp vApp, String name)
+   protected XMLBuilder buildRoot(VApp vApp, String name)
             throws ParserConfigurationException, FactoryConfigurationError {
       XMLBuilder rootBuilder = XMLBuilder.create("VApp").a("type", vApp.getType()).a("name", name)
-               .a("status", vApp.getStatus().value()).a("size", vApp.getSize().toString()).a(
+               .a("status", vApp.getStatus().value()).a("size", vApp.getSize()+"").a(
                         "xmlns", ns).a("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").a(
                         "xsi:schemaLocation", ns + " " + schema);
       return rootBuilder;
    }
 
-   protected TerremarkVApp findVAppInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected VApp findVAppInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof TerremarkVApp) {
-            return (TerremarkVApp) arg;
-         } else if (arg instanceof TerremarkVApp[]) {
-            TerremarkVApp[] vapps = (TerremarkVApp[]) arg;
+         if (arg instanceof VApp) {
+            return (VApp) arg;
+         } else if (arg instanceof VApp[]) {
+            VApp[] vapps = (VApp[]) arg;
             return (vapps.length > 0) ? vapps[0] : null;
          }
       }

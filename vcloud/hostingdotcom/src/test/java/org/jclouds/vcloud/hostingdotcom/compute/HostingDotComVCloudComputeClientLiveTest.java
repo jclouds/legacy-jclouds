@@ -53,7 +53,7 @@ import com.google.inject.internal.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.HostingDotComVCloudClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true, testName = "vcloud.HostingDotComVCloudClientLiveTest")
 public class HostingDotComVCloudComputeClientLiveTest {
    HostingDotComVCloudComputeClient client;
    HostingDotComVCloudClient tmClient;

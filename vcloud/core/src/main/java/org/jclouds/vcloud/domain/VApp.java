@@ -21,8 +21,11 @@ package org.jclouds.vcloud.domain;
 import java.net.InetAddress;
 import java.util.Set;
 
+import org.jclouds.vcloud.domain.internal.VAppImpl;
+
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.ImplementedBy;
 
 /**
  * A virtual application (vApp) is a software solution, packaged in OVF containing one or more
@@ -31,7 +34,9 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(VAppImpl.class)
 public interface VApp extends NamedResource {
+   NamedResource getVDC();
 
    VAppStatus getStatus();
 

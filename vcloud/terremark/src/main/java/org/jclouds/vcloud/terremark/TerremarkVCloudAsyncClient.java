@@ -48,6 +48,7 @@ import org.jclouds.rest.functions.InetAddressToHostAddress;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.CatalogIdToUri;
@@ -66,7 +67,6 @@ import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.functions.ParseTaskFromLocationHeader;
 import org.jclouds.vcloud.terremark.functions.ReturnVoidOnDeleteDefaultIp;
@@ -80,9 +80,9 @@ import org.jclouds.vcloud.terremark.xml.IpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
-import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.VAppHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -134,10 +134,10 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
-   @XMLResponseParser(TerremarkVAppHandler.class)
+   @XMLResponseParser(VAppHandler.class)
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
-   ListenableFuture<? extends TerremarkVApp> instantiateVAppTemplateInVDC(
+   ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(
             @PathParam("vDCId") String vDCId, @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
@@ -316,17 +316,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    ListenableFuture<Void> deleteNode(@PathParam("nodeId") int nodeId);
 
    /**
-    * @see TerremarkVCloudClient#getVApp
-    */
-   @GET
-   @Consumes(VAPP_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}")
-   @XMLResponseParser(TerremarkVAppHandler.class)
-   @Override
-   ListenableFuture<? extends TerremarkVApp> getVApp(@PathParam("vAppId") String vAppId);
-
-   /**
     * @see TerremarkVCloudClient#configureVApp
     */
    @PUT
@@ -337,7 +326,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @MapBinder(BindVAppConfigurationToXmlPayload.class)
    @ResponseParser(ParseTaskFromLocationHeader.class)
    ListenableFuture<? extends Task> configureVApp(
-            @PathParam("vAppId") @ParamParser(VAppId.class) TerremarkVApp vApp,
+            @PathParam("vAppId") @ParamParser(VAppId.class) VApp vApp,
             VAppConfiguration configuration);
 
    /**

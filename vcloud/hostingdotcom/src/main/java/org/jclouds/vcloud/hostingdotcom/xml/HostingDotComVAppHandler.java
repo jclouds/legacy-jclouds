@@ -43,7 +43,7 @@ public class HostingDotComVAppHandler extends VAppHandler {
    }
 
    public HostingDotComVApp getResult() {
-      return new HostingDotComVAppImpl(id, name, location, status, size, networkToAddresses,
+      return new HostingDotComVAppImpl(id, name, location, status, size, vDC, networkToAddresses,
                operatingSystemDescription, system, allocations, username, password);
    }
 

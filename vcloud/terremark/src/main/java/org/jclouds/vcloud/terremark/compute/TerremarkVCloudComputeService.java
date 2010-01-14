@@ -45,7 +45,6 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -80,7 +79,7 @@ public class TerremarkVCloudComputeService implements ComputeService {
    @Override
    public CreateNodeResponse createNode(String name, Profile profile, Image image) {
       String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
-      TerremarkVApp vApp = tmClient.getVApp(id);
+      VApp vApp = tmClient.getVApp(id);
       InetAddress publicIp = computeClient
                .createPublicAddressMappedToPorts(vApp, 22, 80, 8080, 443);
       return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState

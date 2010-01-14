@@ -37,8 +37,8 @@ import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
-import org.jclouds.vcloud.terremark.domain.internal.TerremarkVAppImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.HashMultimap;
@@ -69,10 +69,10 @@ public class BindVAppConfigurationToXmlPayloadTest {
    });
 
    public void testChangeName() throws IOException {
-      TerremarkVAppImpl vApp = new TerremarkVAppImpl("4213", "MyAppServer6",
-               "application/vnd.vmware.vcloud.vApp+xml", URI
+      VAppImpl vApp = new VAppImpl("4213", "MyAppServer6",
+             URI
                         .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304, null, ImmutableListMultimap.<String, InetAddress> of(),
+               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, InetAddress> of(),
                null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
                         ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
                         new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
@@ -103,10 +103,10 @@ public class BindVAppConfigurationToXmlPayloadTest {
    }
 
    public void testRemoveDisk() throws IOException {
-      TerremarkVAppImpl vApp = new TerremarkVAppImpl("4213", "MyAppServer6",
-               "application/vnd.vmware.vcloud.vApp+xml", URI
+      VAppImpl vApp = new VAppImpl("4213", "MyAppServer6",
+        URI
                         .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304, null, ImmutableListMultimap.<String, InetAddress> of(),
+               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, InetAddress> of(),
                null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
                         ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
                         new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,

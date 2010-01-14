@@ -56,7 +56,7 @@ public class VCloudComputeClient {
    }
 
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "3").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
+            Image.CENTOS_53, "1").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
             Image.UBUNTU_JEOS_90, "11").build();
 
    public Map<String, String> start(String name, Image image, int minCores, int minMegs,

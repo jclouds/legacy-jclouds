@@ -44,6 +44,7 @@ public class VAppImpl implements VApp {
    private final String id;
    private final String name;
    private final URI location;
+   private final NamedResource vDC;
    private final VAppStatus status;
    private final Long size;
    private final ListMultimap<String, InetAddress> networkToAddresses;
@@ -55,7 +56,7 @@ public class VAppImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(String id, String name, URI location, VAppStatus status, Long size,
+   public VAppImpl(String id, String name, URI location, VAppStatus status, Long size, NamedResource vDC,
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
             Set<ResourceAllocation> resourceAllocations) {
@@ -64,6 +65,7 @@ public class VAppImpl implements VApp {
       this.location = location;
       this.status = status;
       this.size = size;
+      this.vDC = vDC;
       this.networkToAddresses = networkToAddresses;
       this.operatingSystemDescription = operatingSystemDescription;
       this.system = system;
@@ -101,96 +103,107 @@ public class VAppImpl implements VApp {
       return resourceAllocationByType;
    }
 
-   @Override
-public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((id == null) ? 0 : id.hashCode());
-	result = prime * result + ((location == null) ? 0 : location.hashCode());
-	result = prime * result + ((name == null) ? 0 : name.hashCode());
-	result = prime
-			* result
-			+ ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
-	result = prime
-			* result
-			+ ((operatingSystemDescription == null) ? 0
-					: operatingSystemDescription.hashCode());
-	result = prime
-			* result
-			+ ((resourceAllocationByType == null) ? 0
-					: resourceAllocationByType.hashCode());
-	result = prime
-			* result
-			+ ((resourceAllocations == null) ? 0 : resourceAllocations
-					.hashCode());
-	result = prime * result + ((size == null) ? 0 : size.hashCode());
-	result = prime * result + ((status == null) ? 0 : status.hashCode());
-	result = prime * result + ((system == null) ? 0 : system.hashCode());
-	return result;
-}
+   public NamedResource getVDC() {
+      return vDC;
+   }
 
    @Override
-public boolean equals(Object obj) {
-	if (this == obj)
-		return true;
-	if (obj == null)
-		return false;
-	if (getClass() != obj.getClass())
-		return false;
-	VAppImpl other = (VAppImpl) obj;
-	if (id == null) {
-		if (other.id != null)
-			return false;
-	} else if (!id.equals(other.id))
-		return false;
-	if (location == null) {
-		if (other.location != null)
-			return false;
-	} else if (!location.equals(other.location))
-		return false;
-	if (name == null) {
-		if (other.name != null)
-			return false;
-	} else if (!name.equals(other.name))
-		return false;
-	if (networkToAddresses == null) {
-		if (other.networkToAddresses != null)
-			return false;
-	} else if (!networkToAddresses.equals(other.networkToAddresses))
-		return false;
-	if (operatingSystemDescription == null) {
-		if (other.operatingSystemDescription != null)
-			return false;
-	} else if (!operatingSystemDescription
-			.equals(other.operatingSystemDescription))
-		return false;
-	if (resourceAllocationByType == null) {
-		if (other.resourceAllocationByType != null)
-			return false;
-	} else if (!resourceAllocationByType.equals(other.resourceAllocationByType))
-		return false;
-	if (resourceAllocations == null) {
-		if (other.resourceAllocations != null)
-			return false;
-	} else if (!resourceAllocations.equals(other.resourceAllocations))
-		return false;
-	if (size == null) {
-		if (other.size != null)
-			return false;
-	} else if (!size.equals(other.size))
-		return false;
-	if (status == null) {
-		if (other.status != null)
-			return false;
-	} else if (!status.equals(other.status))
-		return false;
-	if (system == null) {
-		if (other.system != null)
-			return false;
-	} else if (!system.equals(other.system))
-		return false;
-	return true;
-}
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime
+            * result
+            + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
+      result = prime
+            * result
+            + ((operatingSystemDescription == null) ? 0
+                  : operatingSystemDescription.hashCode());
+      result = prime
+            * result
+            + ((resourceAllocationByType == null) ? 0
+                  : resourceAllocationByType.hashCode());
+      result = prime
+            * result
+            + ((resourceAllocations == null) ? 0 : resourceAllocations
+                  .hashCode());
+      result = prime * result + ((size == null) ? 0 : size.hashCode());
+      result = prime * result + ((status == null) ? 0 : status.hashCode());
+      result = prime * result + ((system == null) ? 0 : system.hashCode());
+      result = prime * result + ((vDC == null) ? 0 : vDC.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VAppImpl other = (VAppImpl) obj;
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
+         return false;
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (networkToAddresses == null) {
+         if (other.networkToAddresses != null)
+            return false;
+      } else if (!networkToAddresses.equals(other.networkToAddresses))
+         return false;
+      if (operatingSystemDescription == null) {
+         if (other.operatingSystemDescription != null)
+            return false;
+      } else if (!operatingSystemDescription
+            .equals(other.operatingSystemDescription))
+         return false;
+      if (resourceAllocationByType == null) {
+         if (other.resourceAllocationByType != null)
+            return false;
+      } else if (!resourceAllocationByType
+            .equals(other.resourceAllocationByType))
+         return false;
+      if (resourceAllocations == null) {
+         if (other.resourceAllocations != null)
+            return false;
+      } else if (!resourceAllocations.equals(other.resourceAllocations))
+         return false;
+      if (size == null) {
+         if (other.size != null)
+            return false;
+      } else if (!size.equals(other.size))
+         return false;
+      if (status == null) {
+         if (other.status != null)
+            return false;
+      } else if (!status.equals(other.status))
+         return false;
+      if (system == null) {
+         if (other.system != null)
+            return false;
+      } else if (!system.equals(other.system))
+         return false;
+      if (vDC == null) {
+         if (other.vDC != null)
+            return false;
+      } else if (!vDC.equals(other.vDC))
+         return false;
+      return true;
+   }
 
    public String getId() {
       return id;
@@ -210,11 +223,13 @@ public boolean equals(Object obj) {
 
    @Override
    public String toString() {
-      return "VAppImpl [id=" + id + ", location=" + location + ", name=" + name
-               + ", networkToAddresses=" + networkToAddresses + ", operatingSystemDescription="
-               + operatingSystemDescription + ", resourceAllocationByType="
-               + resourceAllocationByType + ", resourceAllocations=" + resourceAllocations
-               + ", size=" + size + ", status=" + status + ", system=" + system + "]";
+      return "[id=" + id + ", location=" + location + ", name=" + name
+            + ", networkToAddresses=" + networkToAddresses
+            + ", operatingSystemDescription=" + operatingSystemDescription
+            + ", resourceAllocationByType=" + resourceAllocationByType
+            + ", resourceAllocations=" + resourceAllocations + ", size=" + size
+            + ", status=" + status + ", system=" + system + ", vDC=" + vDC
+            + "]";
    }
 
    @Override

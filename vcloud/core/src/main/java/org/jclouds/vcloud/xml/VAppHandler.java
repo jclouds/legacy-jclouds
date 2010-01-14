@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VApp;
@@ -72,9 +73,10 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected String id;
    protected URI location;
    protected Long size;
+   protected NamedResource vDC;
 
    public VApp getResult() {
-      return new VAppImpl(id, name, location, status, size, networkToAddresses,
+      return new VAppImpl(id, name, location, status, size, vDC, networkToAddresses,
                operatingSystemDescription, system, allocations);
    }
 
@@ -88,6 +90,10 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
          status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("size") != -1)
             size = new Long(attributes.getValue(attributes.getIndex("size")));
+      } else if (qName.equals("Link")) {
+         if (attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
+            vDC = Utils.newNamedResource(attributes);
+         }
       } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;
       } else if (qName.equals("NetworkConnection")) {

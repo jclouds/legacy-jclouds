@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VirtualSystem;
@@ -45,10 +46,10 @@ public class HostingDotComVAppImpl extends VAppImpl implements HostingDotComVApp
    private static final long serialVersionUID = 8464716396538298809L;
 
    public HostingDotComVAppImpl(String id, String name, URI location, VAppStatus status, Long size,
-            ListMultimap<String, InetAddress> networkToAddresses,
+            NamedResource vDC, ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
             Set<ResourceAllocation> resourceAllocations, String username, String password) {
-      super(id, name, location, status, size, networkToAddresses, operatingSystemDescription,
+      super(id, name, location, status, size, vDC, networkToAddresses, operatingSystemDescription,
                system, resourceAllocations);
       this.username = username;
       this.password = password;

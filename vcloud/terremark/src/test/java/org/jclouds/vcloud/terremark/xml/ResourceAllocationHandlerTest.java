@@ -25,6 +25,7 @@ import java.io.InputStream;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.xml.ResourceAllocationHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -19,11 +19,13 @@
 package org.jclouds.vcloud.hostingdotcom.config;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -31,7 +33,9 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudAsyncClient;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
+import org.jclouds.vcloud.predicates.TaskSuccess;
 
+import com.google.common.base.Predicate;
 import com.google.inject.Provides;
 
 /**
@@ -71,5 +75,9 @@ public class HostingDotComVCloudRestClientModule extends VCloudRestClientModule 
    protected URI provideDefaultNetwork(VCloudAsyncClient client) {
       return URI.create("https://vcloud.safesecureweb.com/network/1990");
    }
-
+   
+   @Override
+   protected Predicate<String> successTester(TaskSuccess success) {
+      return new RetryablePredicate<String>(success, 45, 10, TimeUnit.MINUTES);
+   }
 }

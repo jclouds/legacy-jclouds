@@ -31,11 +31,11 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudContextBuilder;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -94,7 +94,7 @@ public class TerremarkVCloudComputeClientLiveTest {
       id = client.start(serverName, toTest, processorCount, memory, properties);
       Expectation expectation = expectationMap.get(toTest);
 
-      TerremarkVApp vApp = tmClient.getVApp(id);
+      VApp vApp = tmClient.getVApp(id);
       verifyConfigurationOfVApp(vApp, serverName, expectation.os, processorCount, memory,
                expectation.hardDisk);
       assertEquals(vApp.getStatus(), VAppStatus.ON);
@@ -122,7 +122,7 @@ public class TerremarkVCloudComputeClientLiveTest {
       // client.exec(publicIp, "uname -a");
    }
 
-   private void verifyConfigurationOfVApp(TerremarkVApp vApp, String serverName, String expectedOs,
+   private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,
             int processorCount, int memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);

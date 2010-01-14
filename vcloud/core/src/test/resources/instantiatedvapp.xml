@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VApp href="http://10.150.4.49/api/v0.8/vApp/10" type="application/vnd.vmware.vcloud.vApp+xml"
+    name="centos53" status="1"
+    size="123456789" xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Link rel="up"
+    	href="http://10.150.4.49/api/v0.8/vdc/4"
+    	type="application/vnd.vmware.vcloud.vdc+xml"/>
+</VApp>

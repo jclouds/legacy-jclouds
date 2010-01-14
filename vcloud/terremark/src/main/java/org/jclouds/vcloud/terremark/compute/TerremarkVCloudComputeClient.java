@@ -35,13 +35,13 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
@@ -81,7 +81,7 @@ public class TerremarkVCloudComputeClient {
                .debug(
                         ">> instantiating vApp vDC(%s) template(%s) name(%s) minCores(%d) minMegs(%d) properties(%s)",
                         vDCId, templateId, name, minCores, minMegs, properties);
-      TerremarkVApp vApp = tmClient.instantiateVAppTemplateInVDC(vDCId, name, templateId,
+      VApp vApp = tmClient.instantiateVAppTemplateInVDC(vDCId, name, templateId,
                TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(minCores).memory(
                         minMegs).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());
@@ -105,12 +105,12 @@ public class TerremarkVCloudComputeClient {
     *            if no address is configured
     */
    public InetAddress getAnyPrivateAddress(String id) {
-      TerremarkVApp vApp = tmClient.getVApp(id);
+      VApp vApp = tmClient.getVApp(id);
       return Iterables.getLast(vApp.getNetworkToAddresses().values());
    }
 
    public Set<InetAddress> getPublicAddresses(String id) {
-      TerremarkVApp vApp = tmClient.getVApp(id);
+      VApp vApp = tmClient.getVApp(id);
       Set<InetAddress> ipAddresses = Sets.newHashSet();
       for (InternetService service : tmClient.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
          for (Node node : tmClient.getNodes(service.getId())) {
@@ -123,14 +123,14 @@ public class TerremarkVCloudComputeClient {
    }
 
    public void reboot(String id) {
-      TerremarkVApp vApp = tmClient.getVApp(id);
+      VApp vApp = tmClient.getVApp(id);
       logger.debug(">> rebooting vApp(%s)", vApp.getId());
       blockUntilVAppStatusOrThrowException(vApp, tmClient.resetVApp(vApp.getId()), "reset",
                VAppStatus.ON);
       logger.debug("<< on vApp(%s)", vApp.getId());
    }
 
-   public InetAddress createPublicAddressMappedToPorts(TerremarkVApp vApp, int... ports) {
+   public InetAddress createPublicAddressMappedToPorts(VApp vApp, int... ports) {
       PublicIpAddress ip = null;
       InetAddress privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
       for (int port : ports) {
@@ -180,7 +180,7 @@ public class TerremarkVCloudComputeClient {
    }
 
    public void stop(String id) {
-      TerremarkVApp vApp = tmClient.getVApp(id);
+      VApp vApp = tmClient.getVApp(id);
 
       Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
 
@@ -198,7 +198,7 @@ public class TerremarkVCloudComputeClient {
       logger.debug("<< deleted vApp(%s)", vApp.getId());
    }
 
-   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(TerremarkVApp vApp) {
+   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VApp vApp) {
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
       SERVICE: for (InternetService service : tmClient.getAllInternetServicesInVDC(vApp.getVDC()
                .getId())) {
@@ -238,7 +238,7 @@ public class TerremarkVCloudComputeClient {
       }
    }
 
-   private TerremarkVApp blockUntilVAppStatusOrThrowException(TerremarkVApp vApp, Task deployTask,
+   private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask,
             String taskType, VAppStatus expectedStatus) {
       if (!taskTester.apply(deployTask.getId())) {
          throw new TaskException(taskType, vApp, deployTask);
@@ -258,7 +258,7 @@ public class TerremarkVCloudComputeClient {
       /** The serialVersionUID */
       private static final long serialVersionUID = 251801929573211256L;
 
-      public TaskException(String type, TerremarkVApp vApp, Task task) {
+      public TaskException(String type, VApp vApp, Task task) {
          super(String.format("failed to %s vApp %s status %s;task %s status %s", type,
                   vApp.getId(), vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
          this.task = task;
@@ -289,16 +289,16 @@ public class TerremarkVCloudComputeClient {
 
    public static class VAppException extends RuntimeException {
 
-      private final TerremarkVApp vApp;
+      private final VApp vApp;
       /** The serialVersionUID */
       private static final long serialVersionUID = 251801929573211256L;
 
-      public VAppException(String message, TerremarkVApp vApp) {
+      public VAppException(String message, VApp vApp) {
          super(message);
          this.vApp = vApp;
       }
 
-      public TerremarkVApp getvApp() {
+      public VApp getvApp() {
          return vApp;
       }
 
