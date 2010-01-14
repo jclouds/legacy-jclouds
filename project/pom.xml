@@ -430,16 +430,21 @@ pageTracker._trackPageview();
                                     <systemProperties>
                                     <!--                                        
                                         If you're behind a proxy, set this here
+                                        http://java.sun.com/javase/6/docs/technotes/guides/net/proxies.html
+                                        
                                         <property>
-                                           <name>http.proxyHost</name>
-                                           <value>host</value>
+                                           <name>https.proxyHost</name>
+                                           <value>proxy</value>
                                         </property>
                                         <property>
-                                           <name>http.proxyPort</name>
+                                           <name>https.proxyPort</name>
                                            <value>port</value>
                                         </property>
-                                    
-                                   -->
+                                        <property>
+                                           <name>https.noProxyHosts</name>
+                                           <value>localhost|10.150.4.49</value>
+                                        </property>
+                                  -->
                                         <property>
                                             <name>file.encoding</name>
                                             <value>${sourceEncoding}</value>

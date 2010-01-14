@@ -20,8 +20,6 @@ package org.jclouds.http;
 
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PROXY_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PROXY_PORT;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PROXY_SYSTEM;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
@@ -30,7 +28,6 @@ import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_R
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
-import java.net.InetAddress;
 import java.util.Properties;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -50,18 +47,8 @@ public class HttpPropertiesBuilder {
       return this;
    }
 
-   public HttpPropertiesBuilder withProxyAddress(InetAddress proxyAddress) {
-      properties.setProperty(PROPERTY_HTTP_PROXY_ADDRESS, proxyAddress.getHostAddress());
-      return this;
-   }
-   
    public HttpPropertiesBuilder useSystemProxies(boolean useSystemProxies) {
       properties.setProperty(PROPERTY_HTTP_PROXY_SYSTEM, useSystemProxies+"");
-      return this;
-   }
-   
-   public HttpPropertiesBuilder withProxyPort(int proxyPort) {
-      properties.setProperty(PROPERTY_HTTP_PROXY_PORT, proxyPort+"");
       return this;
    }
    

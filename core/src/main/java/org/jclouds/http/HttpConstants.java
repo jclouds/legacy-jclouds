@@ -24,9 +24,7 @@ package org.jclouds.http;
  * @author Adrian Cole
  */
 public interface HttpConstants {
-   public static final String PROPERTY_HTTP_PROXY_ADDRESS = "jclouds.http.proxy.address";
    public static final String PROPERTY_HTTP_PROXY_SYSTEM = "jclouds.http.proxy.system";
-   public static final String PROPERTY_HTTP_PROXY_PORT = "jclouds.http.proxy.port";
    public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
    public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
    public static final String HTTP_HEADERS_LOGGER = "jclouds.http.headers";
