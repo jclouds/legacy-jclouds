@@ -18,7 +18,6 @@
  */
 package org.jclouds.http;
 
-import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -33,7 +32,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
@@ -138,9 +136,6 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id, @HeaderParam("test") String header);
-
-   @GET
-   ListenableFuture<String> download(@EndpointParam URI endpoint);
    
    @GET
    @Path("objects/{id}")

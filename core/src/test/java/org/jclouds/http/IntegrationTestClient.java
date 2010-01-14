@@ -60,6 +60,4 @@ public interface IntegrationTestClient {
    String downloadAndParse(String id);
 
    StringBuffer newStringBuffer();
-
-   String download(URI endpoint);
 }
