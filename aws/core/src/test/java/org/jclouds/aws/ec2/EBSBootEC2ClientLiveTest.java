@@ -199,15 +199,14 @@ public class EBSBootEC2ClientLiveTest {
       while (instance == null) {
          try {
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
-            instance = client.getInstanceServices().runInstancesInRegion(
-                     Region.DEFAULT,
-                     null,
-                     imageId,
-                     1,
-                     1,
-                     withKeyName(keyPair.getKeyName()).asType(InstanceType.M1_SMALL)
-                              .withSecurityGroup(securityGroupName)).getRunningInstances()
-                     .iterator().next();
+            Reservation reservation = client.getInstanceServices().runInstancesInRegion(
+                     Region.DEFAULT, null, // allow ec2 to chose an availability zone
+                     imageId, 1, // minimum instances
+                     1, // maximum instances
+                     withKeyName(keyPair.getKeyName())// key I created above
+                              .asType(InstanceType.M1_SMALL)// smallest instance size
+                              .withSecurityGroup(securityGroupName));// group I created above
+            instance = Iterables.getOnlyElement(reservation.getRunningInstances());
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
                continue;
