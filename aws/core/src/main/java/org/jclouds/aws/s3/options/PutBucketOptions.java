@@ -21,7 +21,6 @@ package org.jclouds.aws.s3.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
@@ -47,20 +46,6 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  */
 public class PutBucketOptions extends BaseHttpRequestOptions {
    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;
-   private LocationConstraint constraint;
-
-   /**
-    * Depending on your latency and legal requirements, you can specify a location constraint that
-    * will affect where your data physically resides.
-    */
-   public PutBucketOptions createIn(LocationConstraint constraint) {
-      this.constraint = checkNotNull(constraint, "constraint");
-      this.payload = String
-               .format(
-                        "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-                        constraint.value());
-      return this;
-   }
 
    /**
     * Override the default ACL (private) with the specified one.
@@ -75,30 +60,15 @@ public class PutBucketOptions extends BaseHttpRequestOptions {
    }
 
    /**
-    * @see PutBucketOptions#withBucketAcl(CannedAccessPolicy)
+    * @see PutBucketOptions#withBucketAcl
     */
    public CannedAccessPolicy getAcl() {
       return acl;
    }
 
-   /**
-    * @see PutBucketOptions#createIn(org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint)
-    */
-   public LocationConstraint getLocationConstraint() {
-      return constraint;
-   }
-
    public static class Builder {
       /**
-       * @see PutBucketOptions#createIn(org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint)
-       */
-      public static PutBucketOptions createIn(LocationConstraint constraint) {
-         PutBucketOptions options = new PutBucketOptions();
-         return options.createIn(constraint);
-      }
-
-      /**
-       * @see PutBucketOptions#withBucketAcl(CannedAccessPolicy)
+       * @see PutBucketOptions#withBucketAcl
        */
       public static PutBucketOptions withBucketAcl(CannedAccessPolicy acl) {
          PutBucketOptions options = new PutBucketOptions();

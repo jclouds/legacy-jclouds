@@ -21,7 +21,7 @@ package org.jclouds.blobstore;
 import java.util.Map;
 import java.util.SortedSet;
 
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 
 /**
  * All Map views of {@link ContainerListing}s provide means to access the underlying Blob.
@@ -35,6 +35,6 @@ public interface ListableMap<K, V> extends Map<K, V> {
     * 
     * @return blob listing that this map represents
     */
-   SortedSet<? extends ResourceMetadata> list();
+   SortedSet<? extends StorageMetadata> list();
 
 }

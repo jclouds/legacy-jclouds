@@ -1,0 +1,47 @@
+/**
+ *
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+package org.jclouds.atmosonline.saas.domain.internal;
+
+import java.util.HashSet;
+
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
+
+import com.google.common.collect.Iterables;
+
+/**
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public class BoundedHashSet<T> extends HashSet<T> implements BoundedSet<T> {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7133632087734650835L;
+   protected final String token;
+
+   public BoundedHashSet(Iterable<T> contents, String token) {
+      Iterables.addAll(this, contents);
+      this.token = token;
+   }
+
+   public String getToken() {
+      return token;
+   }
+
+}

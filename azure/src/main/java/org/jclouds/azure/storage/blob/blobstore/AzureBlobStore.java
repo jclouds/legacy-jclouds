@@ -42,7 +42,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
@@ -86,7 +86,10 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
       clearContainerStrategy.execute(container, recursive());
    }
 
-   public boolean createContainer(String container) {
+   /**
+    * Note that location is currently ignored.
+    */
+   public boolean createContainerInLocation(String location, String container) {
       return sync.createContainer(container);
    }
 
@@ -117,17 +120,17 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
       return object2Blob.apply(sync.getBlob(container, key, httpOptions));
    }
 
-   public ListResponse<? extends ResourceMetadata> list() {
-      return new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
-         public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+   public ListResponse<? extends StorageMetadata> list() {
+      return new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+         public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
                   SortedSet<ListableContainerProperties> from) {
-            return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+            return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                      container2ResourceMd), null, null, false);
          }
       }.apply(sync.listContainers());
    }
 
-   public ListContainerResponse<? extends ResourceMetadata> list(String container,
+   public ListContainerResponse<? extends StorageMetadata> list(String container,
             ListContainerOptions... optionsList) {
       ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
       return container2ResourceList.apply(sync.listBlobs(container, httpOptions));

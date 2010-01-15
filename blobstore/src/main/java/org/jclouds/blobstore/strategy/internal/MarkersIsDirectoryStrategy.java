@@ -21,7 +21,7 @@ package org.jclouds.blobstore.strategy.internal;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 
@@ -32,7 +32,7 @@ import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 @Singleton
 public class MarkersIsDirectoryStrategy implements IsDirectoryStrategy {
 
-   public boolean execute(ResourceMetadata metadata) {
+   public boolean execute(StorageMetadata metadata) {
       switch (metadata.getType()) {
          case CONTAINER:
          case FOLDER:

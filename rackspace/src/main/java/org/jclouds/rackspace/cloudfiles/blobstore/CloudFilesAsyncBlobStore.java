@@ -34,7 +34,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -111,7 +111,11 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
       }));
    }
 
-   public ListenableFuture<Boolean> createContainer(String container) {
+   /**
+    * Note that location is currently ignored.
+    */
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
       return async.createContainer(container);
    }
 
@@ -138,19 +142,19 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
       return compose(returnVal, object2Blob, service);
    }
 
-   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
       return compose(
                async.listContainers(),
-               new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
-                  public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+               new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+                  public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
                            SortedSet<ContainerMetadata> from) {
-                     return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+                     return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                               container2ResourceMd), null, null, false);
                   }
                }, service);
    }
 
-   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
                .apply(optionsList);

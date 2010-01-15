@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
-import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
@@ -43,9 +43,9 @@ public interface AtmosStorageClient {
 
    AtmosObject newObject();
 
-   BoundedSortedSet<? extends DirectoryEntry> listDirectories(ListOptions... options);
+   BoundedSet<? extends DirectoryEntry> listDirectories(ListOptions... options);
 
-   BoundedSortedSet<? extends DirectoryEntry> listDirectory(String directoryName,
+   BoundedSet<? extends DirectoryEntry> listDirectory(String directoryName,
             ListOptions... options);
 
    URI createDirectory(String directoryName);

@@ -22,7 +22,7 @@ import java.net.URI;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.MutableFileInfo;
 
 /**
@@ -40,7 +40,7 @@ public class MutableFileInfoImpl extends MutableResourceInfoImpl implements
    private URI thumbnail;
 
    public MutableFileInfoImpl() {
-      setType(ResourceType.BLOB);
+      setType(StorageType.BLOB);
       setMimeType(MediaType.APPLICATION_OCTET_STREAM);
    }
 

@@ -42,6 +42,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
@@ -68,7 +69,7 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/run_instances.xml");
 
       Reservation expected = new Reservation(Region.DEFAULT, ImmutableSortedSet.of("default"),
-               ImmutableSortedSet.of(new RunningInstance(Region.DEFAULT, "0", null, "ami-60a54009",
+               ImmutableSet.of(new RunningInstance(Region.DEFAULT, "0", null, "ami-60a54009",
                         "i-2ba64342", InstanceState.PENDING, InstanceType.M1_SMALL,
                         (InetAddress) null, null, "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
@@ -76,7 +77,7 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
                                  .<String> newTreeSet(), null, null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        Region.DEFAULT, "0", null, "ami-60a54009", "i-2bc64242",
+                        Region.DEFAULT, "1", null, "ami-60a54009", "i-2bc64242",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
                         "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
@@ -84,7 +85,7 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
                                  .<String> newTreeSet(), null, null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        Region.DEFAULT, "0", null, "ami-60a54009", "i-2be64332",
+                        Region.DEFAULT, "2", null, "ami-60a54009", "i-2be64332",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
                         "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,

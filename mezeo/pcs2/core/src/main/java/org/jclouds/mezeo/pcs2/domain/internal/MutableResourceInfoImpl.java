@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.domain.internal;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.MutableResourceInfo;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 
@@ -32,7 +32,7 @@ import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
  */
 public class MutableResourceInfoImpl implements MutableResourceInfo {
 
-   private ResourceType type;
+   private StorageType type;
    private URI url;
    private String name;
    private Date created;
@@ -53,11 +53,11 @@ public class MutableResourceInfoImpl implements MutableResourceInfo {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
-   public ResourceType getType() {
+   public StorageType getType() {
       return type;
    }
 
-   public void setType(ResourceType type) {
+   public void setType(StorageType type) {
       this.type = type;
    }
 

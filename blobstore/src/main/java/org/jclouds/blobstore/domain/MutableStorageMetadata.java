@@ -18,12 +18,35 @@
  */
 package org.jclouds.blobstore.domain;
 
-public enum ResourceType {
+import java.util.Date;
 
-   CONTAINER, BLOB, FOLDER, 
+import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
+import org.jclouds.domain.MutableResourceMetadata;
+
+import com.google.inject.ImplementedBy;
+
+/**
+ * Used to construct new resources or modify existing ones.
+ * 
+ * @author Adrian Cole
+ */
+@ImplementedBy(MutableStorageMetadataImpl.class)
+public interface MutableStorageMetadata extends MutableResourceMetadata<StorageType>,
+         StorageMetadata {
+
    /**
-    * path will only include a name
+    * @see #getETag
     */
-   RELATIVE_PATH;
+   void setETag(String eTag);
+
+   /**
+    * @see #getSize
+    */
+   void setSize(long size);
+
+   /**
+    * @see #getLastModified
+    */
+   void setLastModified(Date lastModified);
 
 }

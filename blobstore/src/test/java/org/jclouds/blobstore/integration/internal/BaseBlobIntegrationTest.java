@@ -37,7 +37,7 @@ import java.util.SortedSet;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
@@ -266,7 +266,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
    }
 
    private void assertContainerEmptyDeleting(String containerName, String key) {
-      SortedSet<? extends ResourceMetadata> listing = context.getBlobStore().list(containerName);
+      SortedSet<? extends StorageMetadata> listing = context.getBlobStore().list(containerName);
       assertEquals(listing.size(), 0, String.format(
                "deleting %s, we still have %s left in container %s, using encoding %s", key,
                listing.size(), containerName, LOCAL_ENCODING));

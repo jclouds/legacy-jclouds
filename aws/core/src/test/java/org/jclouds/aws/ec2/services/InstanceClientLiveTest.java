@@ -19,11 +19,9 @@
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2ContextFactory;
@@ -33,7 +31,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code EC2Client}
@@ -60,27 +57,9 @@ public class InstanceClientLiveTest {
    void testDescribeInstances() {
       for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
-         SortedSet<Reservation> allResults = Sets.newTreeSet(client
-                  .describeInstancesInRegion(region));
+         Set<Reservation> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
-         if (allResults.size() >= 2) {
-            Iterator<Reservation> iterator = allResults.iterator();
-            String id1 = Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getId();
-            String id2 = Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getId();
-            SortedSet<Reservation> twoResults = Sets.newTreeSet(client.describeInstancesInRegion(
-                     region, id1, id2));
-            assertNotNull(twoResults);
-            assertEquals(twoResults.size(), 2);
-            iterator = allResults.iterator();
-            assertEquals(Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getId(), id1);
-            assertEquals(Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getId(), id2);
-         }
       }
    }
-
 }

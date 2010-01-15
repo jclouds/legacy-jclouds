@@ -20,10 +20,10 @@ package org.jclouds.azure.storage.blob.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.MutableResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
-import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import org.jclouds.blobstore.domain.MutableStorageMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -33,14 +33,14 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class CommonPrefixesToResourceMetadata implements
-         Function<Iterable<String>, Iterable<ResourceMetadata>> {
-   public Iterable<ResourceMetadata> apply(
+         Function<Iterable<String>, Iterable<StorageMetadata>> {
+   public Iterable<StorageMetadata> apply(
 
    Iterable<String> prefixes) {
-      return Iterables.transform(prefixes, new Function<String, ResourceMetadata>() {
-         public ResourceMetadata apply(String from) {
-            MutableResourceMetadata returnVal = new MutableResourceMetadataImpl();
-            returnVal.setType(ResourceType.RELATIVE_PATH);
+      return Iterables.transform(prefixes, new Function<String, StorageMetadata>() {
+         public StorageMetadata apply(String from) {
+            MutableStorageMetadata returnVal = new MutableStorageMetadataImpl();
+            returnVal.setType(StorageType.RELATIVE_PATH);
             returnVal.setName(from);
             return returnVal;
          }

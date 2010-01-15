@@ -18,12 +18,15 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -38,18 +41,19 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.NodeIdentity;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
-import org.jclouds.compute.domain.internal.NodeIdentityImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
@@ -107,14 +111,17 @@ public class EC2ComputeService implements ComputeService {
                      NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
    @Override
-   public CreateNodeResponse createNode(String name, Profile profile, Image image) {
+   public CreateNodeResponse startNodeInLocation(String location, String name, Profile profile,
+            Image image) {
+      Region region = Region.fromValue(location);
+
       InstanceType type = checkNotNull(profileInstanceTypeMap.get(profile),
                "profile not supported: " + profile);
       String ami = checkNotNull(imageAmiIdMap.get(type).get(image), "image not supported: " + image);
 
-      KeyPair keyPair = createKeyPair(name);
+      KeyPair keyPair = createKeyPairInRegion(region, name);
       String securityGroupName = name;
-      createSecurityGroup(securityGroupName, 22, 80, 8080, 443);
+      createSecurityGroupInRegion(region, securityGroupName, 22, 80, 8080, 443);
 
       String script = new ScriptBuilder() // update and install jdk
                .addStatement(exec("apt-get update"))//
@@ -127,43 +134,46 @@ public class EC2ComputeService implements ComputeService {
       logger.debug(">> running instance ami(%s) type(%s) keyPair(%s) securityGroup(%s)", ami, type,
                keyPair.getKeyName(), securityGroupName);
 
-      RunningInstance runningInstance = Iterables.getLast(ec2Client.getInstanceServices()
-               .runInstancesInRegion(Region.DEFAULT, null, ami, 1, 1,
-                        withKeyName(keyPair.getKeyName())// key I created above
-                                 .asType(type)// instance size
-                                 .withSecurityGroup(securityGroupName)// group I created above
-                                 .withAdditionalInfo(name)// description
-                                 .withUserData(script.getBytes()) // script to run as root
-               ).getRunningInstances());
+      RunningInstance runningInstance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
+               .runInstancesInRegion(region, null, ami, 1, 1, withKeyName(keyPair.getKeyName())// key
+                        // I
+                        // created
+                        // above
+                        .asType(type)// instance size
+                        .withSecurityGroup(securityGroupName)// group I created above
+                        .withAdditionalInfo(name)// description
+                        .withUserData(script.getBytes()) // script to run as root
+               ));
       logger.debug("<< started instance(%s)", runningInstance.getId());
       instanceStateRunning.apply(runningInstance);
       logger.debug("<< running instance(%s)", runningInstance.getId());
 
       // refresh to get IP address
-      runningInstance = getRunningInstance(runningInstance.getId());
+      runningInstance = getOnlyRunningInstanceInRegion(region, runningInstance.getId());
 
       Set<InetAddress> publicAddresses = runningInstance.getIpAddress() == null ? ImmutableSet
                .<InetAddress> of() : ImmutableSet.<InetAddress> of(runningInstance.getIpAddress());
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateNodeResponseImpl(runningInstance.getId(), name, instanceToNodeState
+      return new CreateNodeResponseImpl(runningInstance.getId(), name, runningInstance.getRegion()
+               .toString(), null, ImmutableMap.<String, String> of(), instanceToNodeState
                .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses, 22,
-               LoginType.SSH, new Credentials("root", keyPair.getKeyMaterial()), ImmutableMap
-                        .<String, String> of());
+               LoginType.SSH, new Credentials(image == Image.UBUNTU_90 ? "ubuntu" : "root", keyPair
+                        .getKeyMaterial()), ImmutableMap.<String, String> of());
    }
 
-   private KeyPair createKeyPair(String name) {
+   private KeyPair createKeyPairInRegion(Region region, String name) {
       logger.debug(">> creating keyPair name(%s)", name);
       KeyPair keyPair;
       try {
-         keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(Region.DEFAULT, name);
+         keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, name);
          logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
 
       } catch (AWSResponseException e) {
          if (e.getError().getCode().equals("InvalidKeyPair.Duplicate")) {
             keyPair = Iterables.getLast(ec2Client.getKeyPairServices().describeKeyPairsInRegion(
-                     Region.DEFAULT, name));
+                     region, name));
             logger.debug("<< reused keyPair(%s)", keyPair.getKeyName());
 
          } else {
@@ -173,18 +183,17 @@ public class EC2ComputeService implements ComputeService {
       return keyPair;
    }
 
-   private void createSecurityGroup(String name, int... ports) {
+   private void createSecurityGroupInRegion(Region region, String name, int... ports) {
       logger.debug(">> creating securityGroup name(%s)", name);
-
       try {
-         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT, name,
-                  name);
+         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
          logger.debug("<< created securityGroup(%s)", name);
-         logger.debug(">> authorizing securityGroup name(%s) ports(%s)", name, ImmutableSet
-                  .of(ports));
+         logger
+                  .debug(">> authorizing securityGroup name(%s) ports(%s)", name, Arrays
+                           .asList(ports));
          for (int port : ports) {
-            ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(
-                     Region.DEFAULT, name, IpProtocol.TCP, port, port, "0.0.0.0/0");
+            ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region,
+                     name, IpProtocol.TCP, port, port, "0.0.0.0/0");
          }
          logger.debug("<< authorized securityGroup(%s)", name);
       } catch (AWSResponseException e) {
@@ -198,8 +207,13 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public NodeMetadata getNodeMetadata(String id) {
-      RunningInstance runningInstance = getRunningInstance(id);
+   public NodeMetadata getNodeMetadata(ComputeMetadata node) {
+      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
+               + node.getType());
+      checkNotNull(node.getId(), "node.id");
+      Region region = getRegionFromNodeOrDefault(node);
+      RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
+               region, node.getId()));
       return runningInstanceToNodeMetadata.apply(runningInstance);
    }
 
@@ -209,9 +223,12 @@ public class EC2ComputeService implements ComputeService {
 
       @Override
       public NodeMetadata apply(RunningInstance from) {
-         return new NodeMetadataImpl(from.getId(), from.getKeyName(), instanceToNodeState.get(from
-                  .getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
-                  .getPrivateIpAddress()), 22, LoginType.SSH, ImmutableMap.<String, String> of());
+         return new NodeMetadataImpl(from.getId(), from.getKeyName(), from.getRegion().toString(),
+                  null, ImmutableMap.<String, String> of(), instanceToNodeState.get(from
+                           .getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
+                           .getPrivateIpAddress()), 22, LoginType.SSH, ImmutableMap
+                           .<String, String> of("availabilityZone", from.getAvailabilityZone()
+                                    .toString()));
       }
 
       Set<InetAddress> nullSafeSet(InetAddress in) {
@@ -222,21 +239,32 @@ public class EC2ComputeService implements ComputeService {
       }
    }
 
-   private RunningInstance getRunningInstance(String id) {
-      RunningInstance runningInstance = Iterables.getLast(Iterables.getLast(
-               ec2Client.getInstanceServices().describeInstancesInRegion(Region.DEFAULT, id))
-               .getRunningInstances());
-      return runningInstance;
+   private RunningInstance getOnlyRunningInstanceInRegion(Region region, String id) {
+      Iterable<RunningInstance> instances = Iterables.filter(getAllRunningInstancesInRegion(region,
+               id), new Predicate<RunningInstance>() {
+
+         @Override
+         public boolean apply(RunningInstance instance) {
+            return instance.getInstanceState() == InstanceState.PENDING
+                     || instance.getInstanceState() == InstanceState.RUNNING;
+         }
+
+      });
+      int size = Iterables.size(instances);
+      if (size == 0)
+         throw new NoSuchElementException(String.format(
+                  "%d instances in region %s have an instance with id %s running.", size, region,
+                  id));
+      if (size > 1)
+         throw new IllegalStateException(String.format(
+                  "%d instances in region %s have an instance with id %s running.  Expected 1",
+                  size, region, id));
+      return Iterables.getOnlyElement(instances);
    }
 
-   @Override
-   public Set<NodeIdentity> getNodeByName(final String name) {
-      return Sets.newHashSet(Iterables.filter(listNodes(), new Predicate<NodeIdentity>() {
-         @Override
-         public boolean apply(NodeIdentity input) {
-            return input.getName().equalsIgnoreCase(name);
-         }
-      }));
+   private Iterable<RunningInstance> getAllRunningInstancesInRegion(Region region, String id) {
+      return Iterables
+               .concat(ec2Client.getInstanceServices().describeInstancesInRegion(region, id));
    }
 
    /**
@@ -244,16 +272,18 @@ public class EC2ComputeService implements ComputeService {
     * keyname. This will break.
     */
    @Override
-   public Set<NodeIdentity> listNodes() {
+   public Set<ComputeMetadata> listNodes() {
       logger.debug(">> listing servers");
-      Set<NodeIdentity> servers = Sets.newHashSet();
-      for (Reservation reservation : ec2Client.getInstanceServices().describeInstancesInRegion(
-               Region.DEFAULT)) {
-         Iterables.addAll(servers, Iterables.transform(reservation.getRunningInstances(),
-                  new Function<RunningInstance, NodeIdentity>() {
+      Set<ComputeMetadata> servers = Sets.newHashSet();
+      for (Region region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
+         Iterables.addAll(servers, Iterables.transform(Iterables.concat(ec2Client
+                  .getInstanceServices().describeInstancesInRegion(region)),
+                  new Function<RunningInstance, ComputeMetadata>() {
                      @Override
-                     public NodeIdentity apply(RunningInstance from) {
-                        return new NodeIdentityImpl(from.getId(), from.getKeyName());
+                     public ComputeMetadata apply(RunningInstance from) {
+                        return new ComputeMetadataImpl(ComputeType.NODE, from.getId(), from
+                                 .getKeyName(), from.getRegion().toString(), null, ImmutableMap
+                                 .<String, String> of());
                      }
                   }));
       }
@@ -262,18 +292,34 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public void destroyNode(String id) {
-      RunningInstance runningInstance = getRunningInstance(id);
-      // grab the old keyname
-      String name = runningInstance.getKeyName();
-      logger.debug(">> terminating instance(%s)", runningInstance.getId());
-      ec2Client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT, id);
-      logger.debug("<< terminated instance(%s)", runningInstance.getId());
-      logger.debug(">> deleting keyPair(%s)", name);
-      ec2Client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, name);
-      logger.debug("<< deleted keyPair(%s)", name);
-      logger.debug(">> deleting securityGroup(%s)", name);
-      ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT, name);
-      logger.debug("<< deleted securityGroup(%s)", name);
+   public void destroyNode(ComputeMetadata node) {
+      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
+               + node.getType());
+      checkNotNull(node.getId(), "node.id");
+      Region region = getRegionFromNodeOrDefault(node);
+      for (RunningInstance runningInstance : getAllRunningInstancesInRegion(region, node.getId())) {
+         // grab the old keyname
+         String name = runningInstance.getKeyName();
+         logger.debug(">> terminating instance(%s)", node.getId());
+         ec2Client.getInstanceServices().terminateInstancesInRegion(region, node.getId());
+         logger.debug("<< terminated instance(%s)", node.getId());
+         logger.debug(">> deleting keyPair(%s)", name);
+         ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, name);
+         logger.debug("<< deleted keyPair(%s)", name);
+         logger.debug(">> deleting securityGroup(%s)", name);
+         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, name);
+         logger.debug("<< deleted securityGroup(%s)", name);
+      }
+   }
+
+   private Region getRegionFromNodeOrDefault(ComputeMetadata node) {
+      Region region = node.getLocation() != null ? Region.fromValue(node.getLocation())
+               : Region.DEFAULT;
+      return region;
+   }
+
+   @Override
+   public Map<String, Size> getSizes() {
+      throw new UnsupportedOperationException();
    }
 }

@@ -33,7 +33,7 @@ import com.google.common.base.Function;
 public class BlobToFileInfo implements Function<BlobMetadata, MutableFileInfo> {
    public MutableFileInfo apply(BlobMetadata base) {
       MutableFileInfo to = new MutableFileInfoImpl();
-      to.setUrl(base.getLocation());
+      to.setUrl(base.getUri());
       to.setMimeType(base.getContentType());
       to.setName(base.getName());
       to.setModified(base.getLastModified());

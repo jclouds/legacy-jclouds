@@ -16,94 +16,162 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.domain.internal;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+package org.jclouds.domain.internal;
 
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.domain.MutableResourceMetadata;
+import org.jclouds.domain.ResourceMetadata;
 
-import com.google.inject.internal.Nullable;
+import com.google.common.collect.Maps;
 
 /**
- * Idpayload of the object
+ * Used to construct new resources or modify existing ones.
  * 
  * @author Adrian Cole
  */
-public class ResourceMetadataImpl implements ResourceMetadata, Serializable {
+public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableResourceMetadata<T>,
+         Serializable {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -280558162576368264L;
 
-   private final ResourceType type;
-   private final @Nullable
-   String id;
-   private final @Nullable
-   String name;
-   private final @Nullable
-   URI location;
-   private final @Nullable
-   String eTag;
-   private final @Nullable
-   Long size;
-   private final @Nullable
-   Date lastModified;
-   private final Map<String, String> userMetadata;
+   private T type;
+   private String id;
+   private String name;
+   private String location;
+   private URI uri;
+   private String eTag;
+   private Long size;
+   private Date lastModified;
+   private Map<String, String> userMetadata;
 
-   public ResourceMetadataImpl(ResourceType type, @Nullable String id, @Nullable String name,
-            @Nullable URI location, @Nullable String eTag, @Nullable Long size,
-            @Nullable Date lastModified, Map<String, String> userMetadata) {
-      this.type = checkNotNull(type, "type");
-      this.id = id;
-      this.name = name;
-      this.location = location;
-      this.eTag = eTag;
-      this.size = size;
-      this.lastModified = lastModified;
-      this.userMetadata = checkNotNull(userMetadata, "userMetadata");
+   public MutableResourceMetadataImpl() {
+      userMetadata = Maps.newHashMap();
    }
 
-   public int compareTo(ResourceMetadata o) {
+   public MutableResourceMetadataImpl(ResourceMetadata<T> from) {
+      this.type = from.getType();
+      this.id = from.getId();
+      this.name = from.getName();
+      this.location = from.getLocation();
+      this.uri = from.getUri();
+      this.userMetadata = from.getUserMetadata();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int compareTo(ResourceMetadata<T> o) {
       if (getName() == null)
          return -1;
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
-   public ResourceType getType() {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public T getType() {
       return type;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getName() {
       return name;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getId() {
       return id;
    }
 
-   public URI getLocation() {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URI getUri() {
+      return uri;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Map<String, String> getUserMetadata() {
+      return userMetadata;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setType(T type) {
+      this.type = type;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setUserMetadata(Map<String, String> userMetadata) {
+      this.userMetadata = userMetadata;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setId(String id) {
+      this.id = id;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setUri(URI uri) {
+      this.uri = uri;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setLocation(String location) {
+      this.location = location;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getLocation() {
       return location;
    }
 
-   public String getETag() {
-      return eTag;
-   }
-
-   public Long getSize() {
-      return size;
-   }
-
-   public Date getLastModified() {
-      return lastModified;
-   }
-
-   public Map<String, String> getUserMetadata() {
-      return userMetadata;
+   @Override
+   public String toString() {
+      return "[type=" + type + ", id=" + id + ", name=" + name + ", location=" + location
+               + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
    }
 
    @Override
@@ -117,6 +185,7 @@ public class ResourceMetadataImpl implements ResourceMetadata, Serializable {
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((size == null) ? 0 : size.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + ((uri == null) ? 0 : uri.hashCode());
       result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
    }
@@ -129,7 +198,7 @@ public class ResourceMetadataImpl implements ResourceMetadata, Serializable {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ResourceMetadataImpl other = (ResourceMetadataImpl) obj;
+      MutableResourceMetadataImpl<?> other = (MutableResourceMetadataImpl<?>) obj;
       if (eTag == null) {
          if (other.eTag != null)
             return false;
@@ -164,6 +233,11 @@ public class ResourceMetadataImpl implements ResourceMetadata, Serializable {
          if (other.type != null)
             return false;
       } else if (!type.equals(other.type))
+         return false;
+      if (uri == null) {
+         if (other.uri != null)
+            return false;
+      } else if (!uri.equals(other.uri))
          return false;
       if (userMetadata == null) {
          if (other.userMetadata != null)

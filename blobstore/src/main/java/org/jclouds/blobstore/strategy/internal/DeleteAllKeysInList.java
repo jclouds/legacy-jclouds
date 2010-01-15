@@ -25,8 +25,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
@@ -67,8 +67,8 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
    public void execute(final String containerName, ListContainerOptions options) {
       Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
-      for (ResourceMetadata md : getAllBlobMetadata.execute(containerName, options)) {
-         if (md.getType() == ResourceType.BLOB)
+      for (StorageMetadata md : getAllBlobMetadata.execute(containerName, options)) {
+         if (md.getType() == StorageType.BLOB)
             deletes.add(connection.removeBlob(containerName, md.getName()));
       }
       for (ListenableFuture<Void> isdeleted : deletes) {

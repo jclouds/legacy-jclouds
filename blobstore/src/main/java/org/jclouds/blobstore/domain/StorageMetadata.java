@@ -22,7 +22,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.blobstore.domain.internal.ResourceMetadataImpl;
+import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
+import org.jclouds.domain.ResourceMetadata;
 
 import com.google.inject.ImplementedBy;
 
@@ -31,13 +32,14 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(ResourceMetadataImpl.class)
-public interface ResourceMetadata extends Comparable<ResourceMetadata> {
+@ImplementedBy(StorageMetadataImpl.class)
+public interface StorageMetadata extends ResourceMetadata<StorageType> {
 
    /**
     * Whether this resource is a container, file, etc.
     */
-   ResourceType getType();
+   @Override
+   StorageType getType();
 
    /**
     * Unique identifier of this resource within its enclosing namespace. In some scenarios, this id
@@ -46,6 +48,7 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * 
     * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_METADATA
     */
+   @Override
    String getId();
 
    /**
@@ -53,12 +56,32 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * ex. file.txt
     * 
     */
+   @Override
    String getName();
+
+   /**
+    * Physical location of the resource.
+    * 
+    * ex. us-west-1
+    * 
+    */
+   @Override
+   String getLocation();
 
    /**
     * URI used to access this resource
     */
-   URI getLocation();
+   @Override
+   URI getUri();
+
+   /**
+    * Any key-value pairs associated with the resource.
+    * 
+    * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_METADATA
+    * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_METADATA
+    */
+   @Override
+   Map<String, String> getUserMetadata();
 
    /**
     * The eTag value stored in the Etag header returned by HTTP.
@@ -84,13 +107,5 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#MILLISECOND_PRECISION
     */
    Date getLastModified();
-
-   /**
-    * Any key-value pairs associated with the resource.
-    * 
-    * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_METADATA
-    * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_METADATA
-    */
-   Map<String, String> getUserMetadata();
 
 }

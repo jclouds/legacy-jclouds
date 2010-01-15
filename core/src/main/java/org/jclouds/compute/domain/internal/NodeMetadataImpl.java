@@ -19,10 +19,12 @@
 package org.jclouds.compute.domain.internal;
 
 import java.net.InetAddress;
+import java.net.URI;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -35,7 +37,10 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public class NodeMetadataImpl extends NodeIdentityImpl implements NodeMetadata {
+public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7924307572338157887L;
+
    public static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
 
       @Override
@@ -51,17 +56,11 @@ public class NodeMetadataImpl extends NodeIdentityImpl implements NodeMetadata {
    private final int loginPort;
    private final LoginType loginType;
 
-   @Override
-   public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", state=" + getState()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
-               + "]";
-   }
-
-   public NodeMetadataImpl(String id, String name, NodeState state,
+   public NodeMetadataImpl(String id, String name, String location, URI uri,
+            Map<String, String> userMetadata, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
             int loginPort, LoginType loginType, Map<String, String> extra) {
-      super(id, name);
+      super(ComputeType.NODE, id, name, location, uri, userMetadata);
       this.state = state;
       Iterables.addAll(this.publicAddresses, publicAddresses);
       Iterables.addAll(this.privateAddresses, privateAddresses);
@@ -111,6 +110,14 @@ public class NodeMetadataImpl extends NodeIdentityImpl implements NodeMetadata {
    @Override
    public Map<String, String> getExtra() {
       return extra;
+   }
+
+   @Override
+   public String toString() {
+      return "[id=" + getId() + ", name=" + getName() + ", location=" + getLocation() + ", uri="
+               + getUri() + ", userMetadata=" + getUserMetadata() + ", state=" + getState()
+               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
+               + "]";
    }
 
    @Override

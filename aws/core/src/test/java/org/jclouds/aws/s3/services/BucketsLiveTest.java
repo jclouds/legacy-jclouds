@@ -22,7 +22,6 @@ import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.afterMarker;
 import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.delimiter;
 import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.maxResults;
 import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.withPrefix;
-import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -36,6 +35,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.AccessControlList;
@@ -50,7 +50,6 @@ import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.internal.StubS3AsyncClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.util.Utils;
@@ -148,7 +147,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testPublicReadAccessPolicy() throws Exception {
       String bucketName = getScratchContainerName();
       try {
-         context.getApi().putBucketIfNotExists(bucketName,
+         context.getApi().putBucketInRegion(Region.DEFAULT, bucketName,
                   withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          AccessControlList acl = context.getApi().getBucketACL(bucketName);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
@@ -176,8 +175,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testDefaultBucketLocation() throws Exception {
       String bucketName = getContainerName();
       try {
-         assertEquals(LocationConstraint.US_STANDARD, context.getApi()
-                  .getBucketLocation(bucketName));
+         assertEquals(Region.US_STANDARD, context.getApi().getBucketLocation(bucketName));
       } finally {
          returnContainer(bucketName);
       }
@@ -232,8 +230,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                   BucketLogging newLogging = context.getApi().getBucketLogging(bucketName);
                   AccessControlList acl = new AccessControlList();
                   for (Grant grant : newLogging.getTargetGrants()) { // TODO: add permission
-                                                                     // checking features to
-                                                                     // bucketlogging
+                     // checking features to
+                     // bucketlogging
                      acl.addPermission(grant.getGrantee(), grant.getPermission());
                   }
                   // EmailAddressGrantee is replaced by a CanonicalUserGrantee, so we cannot test by
@@ -277,8 +275,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testEu() throws Exception {
       final String bucketName = getScratchContainerName();
       try {
-         context.getApi().putBucketIfNotExists(bucketName + "eu",
-                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
+         context.getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "eu",
+                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
@@ -290,7 +288,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                }
             }
          });
-         assertEquals(LocationConstraint.EU, context.getApi().getBucketLocation(bucketName + "eu"));
+         assertEquals(Region.EU_WEST_1, context.getApi().getBucketLocation(bucketName + "eu"));
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
          // URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));
@@ -306,10 +304,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testNorthernCalifornia() throws Exception {
       final String bucketName = getScratchContainerName();
       try {
-         context.getApi().putBucketIfNotExists(
-                  bucketName + "cali",
-                  createIn(LocationConstraint.US_WEST)
-                           .withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
+         context.getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "cali",
+                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
@@ -321,8 +317,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                }
             }
          });
-         assertEquals(LocationConstraint.US_WEST, context.getApi().getBucketLocation(
-                  bucketName + "cali"));
+         assertEquals(Region.EU_WEST_1, context.getApi().getBucketLocation(bucketName + "cali"));
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
          // URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));

@@ -18,12 +18,13 @@
  */
 package org.jclouds.aws.s3.samples;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 
 /**
  * This the Main class of an Application that demonstrates the use of the blobstore.
@@ -56,16 +57,16 @@ public class MainApp {
 
          // Create Container
          BlobStore blobStore = context.getBlobStore();
-         blobStore.createContainer(containerName);
+         blobStore.createContainerInLocation(Region.DEFAULT.toString(), containerName);
 
          Blob blob = blobStore.newBlob("test");
          blob.setPayload("testdata");
          blobStore.putBlob(containerName, blob);
 
          // List Container
-         for (ResourceMetadata resourceMd : blobStore.list()) {
-            if (resourceMd.getType() == ResourceType.CONTAINER
-                     || resourceMd.getType() == ResourceType.FOLDER) {
+         for (StorageMetadata resourceMd : blobStore.list()) {
+            if (resourceMd.getType() == StorageType.CONTAINER
+                     || resourceMd.getType() == StorageType.FOLDER) {
                System.out.printf("  %s: %s entries%n", resourceMd.getName(), context
                         .createInputStreamMap(resourceMd.getName()).size());
             }

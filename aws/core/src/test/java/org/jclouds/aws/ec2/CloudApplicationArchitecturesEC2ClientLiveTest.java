@@ -164,7 +164,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                               .withSecurityGroup(securityGroupName) // group I created above
                               .withUserData(script.getBytes())); // script to run as root
 
-            instance = Iterables.getOnlyElement(reservation.getRunningInstances());
+            instance = Iterables.getOnlyElement(reservation);
 
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
@@ -339,9 +339,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       Reservation reservation = Iterables.getOnlyElement(client.getInstanceServices()
                .describeInstancesInRegion(Region.DEFAULT, instanceId));
 
-      assertNotNull(Iterables.getOnlyElement(reservation.getRunningInstances()).getIpAddress());
-      assertFalse(Iterables.getOnlyElement(reservation.getRunningInstances()).getIpAddress()
-               .equals(address));
+      assertNotNull(Iterables.getOnlyElement(reservation).getIpAddress());
+      assertFalse(Iterables.getOnlyElement(reservation).getIpAddress().equals(address));
 
       doCheckKey(address);
 
@@ -393,7 +392,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
                Region.DEFAULT, instanceId); // last parameter (ids) narrows the search
 
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations).getRunningInstances());
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
    }
 
    /**

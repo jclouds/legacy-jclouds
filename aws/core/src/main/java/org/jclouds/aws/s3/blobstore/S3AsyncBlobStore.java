@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
@@ -48,7 +49,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -120,8 +121,8 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
       }));
    }
 
-   public ListenableFuture<Boolean> createContainer(String container) {
-      return async.putBucketIfNotExists(container);
+   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
+      return async.putBucketInRegion(Region.DEFAULT, container);// TODO
    }
 
    public ListenableFuture<Boolean> containerExists(String container) {
@@ -160,19 +161,19 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
       return compose(async.getObject(container, key, httpOptions), object2Blob, service);
    }
 
-   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
       return compose(
                async.listOwnedBuckets(),
-               new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
-                  public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+               new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+                  public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
                            SortedSet<BucketMetadata> from) {
-                     return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+                     return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                               bucket2ResourceMd), null, null, false);
                   }
                }, service);
    }
 
-   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
       ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);

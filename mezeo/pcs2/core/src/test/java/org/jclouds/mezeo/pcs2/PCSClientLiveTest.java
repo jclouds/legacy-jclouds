@@ -34,7 +34,7 @@ import java.util.concurrent.TimeoutException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -71,7 +71,7 @@ public class PCSClientLiveTest {
                new Log4JLoggingModule()).getApi();
       ContainerList response = connection.list();
       for (ResourceInfo resource : response) {
-         if (resource.getType() == ResourceType.FOLDER
+         if (resource.getType() == StorageType.FOLDER
                   && resource.getName().startsWith(containerPrefix)) {
             System.err.printf("*** deleting container %s...%n", resource.getName());
             connection.deleteContainer(resource.getUrl());

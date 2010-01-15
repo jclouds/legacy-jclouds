@@ -29,15 +29,17 @@
   <delete dir="build/cargo"/>
   <mkdir dir="build/cargo"/>
 
+<!--
   <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
   <get src="http://web-actions.googlecode.com/files/samples-blazeds.war" dest="${warfile}"/>
-
+-->
   <!-- initialize maven tasks -->
   <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks-2.1.0.jar"/>
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath"/>
 
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository"/>
   <artifact:remoteRepository id="jclouds-snapshot.repository" url="http://jclouds.rimuhosting.com/maven2/snapshots"/>
+  <artifact:remoteRepository id="cargo-snapshot.repository" url="http://snapshots.repository.codehaus.org" />
 
   <!-- Setup maven so that we can get latest version of jclouds, jclouds, and jruby -->
   <artifact:dependencies pathId="jclouds.classpath">
@@ -46,6 +48,7 @@
     <dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT"/>
     <remoteRepository refid="jclouds-snapshot.repository"/>
+    <remoteRepository refid="cargo-snapshot.repository"/>
     <localRepository refid="local.repository"/>
   </artifact:dependencies>
 
@@ -63,6 +66,7 @@
     <compute action="destroy" provider="${jclouds.compute.url}">
        <node name="${jclouds.compute.nodename}" />
     </compute>
+    <sleep seconds="2" />
   </target>
 
   <target name="create" description="create the node ${jclouds.compute.nodename}" depends="destroy" >
@@ -96,7 +100,7 @@
          command="${sudo} mv apache-tomcat-6.0.20 /tmp/cargo/containers/tomcat6x" />
   </target>
 
-  <target name="cargooverssh" depends="create">
+  <target name="cargooverssh" depends="create" description="run cargo on remote node" >
     <echo message="deploying tomcat and blaze to: ${jclouds.compute.nodename}" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
       <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>
@@ -115,7 +119,7 @@
     </cargo>
   </target>
 
-  <target name="justplaincargo">
+  <target name="justplaincargo" description="run cargo on local machine" >
     <echo message="deploying tomcat and blaze to: localhost" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
       <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>

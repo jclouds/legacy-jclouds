@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.internal.BasePayloadEnclosingImpl;
 
@@ -32,7 +32,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Value type for an HTTP Blob service. Blobs are stored in {@link ResourceMetadata containers} and consist
+ * Value type for an HTTP Blob service. Blobs are stored in {@link StorageMetadata containers} and consist
  * of a {@link org.jclouds.blobstore.domain.Value#getContent() value}, a {@link Blob#getKey key and
  * 
  * @link Blob.Metadata#getUserMetadata() metadata}

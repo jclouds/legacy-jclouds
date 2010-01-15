@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -44,15 +44,16 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() {
       assert !context.getBlobStore().containerExists("forgetaboutit");
-      assert !context.getBlobStore().containerExists("bog.cloudcachestorefunctionalintegrationtest-first");
+      assert !context.getBlobStore().containerExists(
+               "bog.cloudcachestorefunctionalintegrationtest-first");
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutTwiceIsOk() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         context.getBlobStore().createContainer(containerName);
-         context.getBlobStore().createContainer(containerName);
+         context.getBlobStore().createContainerInLocation("default", containerName);
+         context.getBlobStore().createContainerInLocation("default", containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -74,7 +75,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListResponse<? extends StorageMetadata> container = context.getBlobStore().list(
                   containerName, afterMarker("y"));
          assertEquals(container.getMarker(), "y");
          assert !container.isTruncated();
@@ -91,7 +92,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
          String prefix = "apps";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
-         ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListResponse<? extends StorageMetadata> container = context.getBlobStore().list(
                   containerName);
          assert !container.isTruncated();
          assertEquals(container.size(), 16);
@@ -108,7 +109,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 
-         ListContainerResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListContainerResponse<? extends StorageMetadata> container = context.getBlobStore().list(
                   containerName, inDirectory("apps/"));
          assert !container.isTruncated();
          assertEquals(container.size(), 10);
@@ -124,7 +125,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListResponse<? extends StorageMetadata> container = context.getBlobStore().list(
                   containerName, maxResults(5));
          assertEquals(container.getMaxResults(), 5);
          assert container.isTruncated();
@@ -172,8 +173,8 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
-                        + " still exists";
+               assert !context.getBlobStore().containerExists(containerName) : "container "
+                        + containerName + " still exists";
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
             }
@@ -187,8 +188,8 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         SortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName);
+         SortedSet<? extends StorageMetadata> container = context.getBlobStore()
+                  .list(containerName);
          assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);

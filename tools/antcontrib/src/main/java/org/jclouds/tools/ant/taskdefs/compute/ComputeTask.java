@@ -25,7 +25,6 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.tools.ant.BuildException;
@@ -34,12 +33,13 @@ import org.apache.tools.ant.Task;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeIdentity;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
@@ -57,6 +57,7 @@ import com.google.inject.Provider;
  * @author Ivan Meredith
  */
 public class ComputeTask extends Task {
+
    private final Map<URI, ComputeServiceContext<?, ?>> computeMap;
    private static Project project;
    /**
@@ -153,13 +154,15 @@ public class ComputeTask extends Task {
                break;
             case LIST:
                log("list");
-               for (NodeIdentity node : computeService.listNodes()) {
-                  log(String.format("   id=%s, name=%s", node.getId(), node.getName()));
+               for (ComputeMetadata node : computeService.listNodes()) {
+                  log(String.format("   location=%s, id=%s, name=%s", node.getLocation(), node
+                           .getId(), node.getName()));
                }
                break;
             case LIST_DETAILS:
                log("list details");
-               for (NodeIdentity node : computeService.listNodes()) {// TODO parallel
+               for (ComputeMetadata node : computeService.listNodes()) {// TODO
+                  // parallel
                   logDetails(computeService, node);
                }
                break;
@@ -174,9 +177,10 @@ public class ComputeTask extends Task {
    private void create(ComputeService computeService) {
       log(String.format("create name: %s, profile: %s, image: %s", nodeElement.getName(),
                nodeElement.getProfile(), nodeElement.getImage()));
-      CreateNodeResponse createdNode = computeService.createNode(nodeElement.getName(), Profile
-               .valueOf(nodeElement.getProfile().toUpperCase()), Image.valueOf(nodeElement
-               .getImage().toUpperCase()));
+      CreateNodeResponse createdNode = computeService.startNodeInLocation(
+               nodeElement.getLocation(), nodeElement.getName(), Profile.valueOf(nodeElement
+                        .getProfile().toUpperCase()), Image.valueOf(nodeElement.getImage()
+                        .toUpperCase()));
       log(String.format("   id=%s, name=%s, connection=%s://%s:%s@%s:%d", createdNode.getId(),
                createdNode.getName(), createdNode.getLoginType().toString().toLowerCase(),
                createdNode.getCredentials().account, createdNode.getCredentials().key, createdNode
@@ -205,30 +209,31 @@ public class ComputeTask extends Task {
 
    private void destroy(ComputeService computeService) {
       log(String.format("destroy name: %s", nodeElement.getName()));
-      Set<NodeIdentity> nodesThatMatch = computeService.getNodeByName(nodeElement.getName());
-      if (nodesThatMatch.size() > 0) {
-         for (NodeIdentity node : nodesThatMatch) {
-            log(String.format("   destroying id=%s, name=%s", node.getId(), node.getName()));
-            computeService.destroyNode(node.getId());
-         }
+      Iterable<ComputeMetadata> nodesThatMatch = ComputeUtils.filterByName(computeService
+               .listNodes(), nodeElement.getName());
+      for (ComputeMetadata node : nodesThatMatch) {
+         log(String.format("   destroying id=%s, name=%s", node.getId(), node.getName()));
+         computeService.destroyNode(node);
       }
    }
 
    private void get(ComputeService computeService) {
       log(String.format("get name: %s", nodeElement.getName()));
-      Set<NodeIdentity> nodesThatMatch = computeService.getNodeByName(nodeElement.getName());
-      if (nodesThatMatch.size() > 0) {
-         for (NodeIdentity node : nodesThatMatch) {
-            logDetails(computeService, node);
-         }
+      Iterable<ComputeMetadata> nodesThatMatch = ComputeUtils.filterByName(computeService
+               .listNodes(), nodeElement.getName());
+      for (ComputeMetadata node : nodesThatMatch) {
+         logDetails(computeService, node);
       }
    }
 
-   private void logDetails(ComputeService computeService, NodeIdentity node) {
-      NodeMetadata metadata = computeService.getNodeMetadata(node.getId());
-      log(String.format("   node id=%s, name=%s, state=%s, publicIp=%s, privateIp=%s", metadata
-               .getId(), node.getName(), metadata.getState(), ipOrEmptyString(metadata
-               .getPublicAddresses()), ipOrEmptyString(metadata.getPrivateAddresses())));
+   private void logDetails(ComputeService computeService, ComputeMetadata node) {
+      NodeMetadata metadata = computeService.getNodeMetadata(node);
+      log(String
+               .format(
+                        "   node id=%s, name=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
+                        metadata.getId(), node.getName(), node.getLocation(), metadata.getState(),
+                        ipOrEmptyString(metadata.getPublicAddresses()), ipOrEmptyString(metadata
+                                 .getPrivateAddresses()), metadata.getExtra()));
    }
 
    public static String ipOrEmptyString(SortedSet<InetAddress> set) {

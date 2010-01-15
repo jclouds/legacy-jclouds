@@ -38,7 +38,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
@@ -59,7 +59,8 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
             ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions,
-            DirectoryEntryListToResourceMetadataList container2ResourceList, ExecutorService service,EncryptionService encryptionService) {
+            DirectoryEntryListToResourceMetadataList container2ResourceList,
+            ExecutorService service, EncryptionService encryptionService) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
                container2ResourceList, service);
@@ -77,7 +78,10 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
       clearContainerStrategy.execute(container, recursive());
    }
 
-   public boolean createContainer(String container) {
+   /**
+    * Note that location is currently ignored.
+    */
+   public boolean createContainerInLocation(String location, String container) {
       sync.createDirectory(container);
       return true;// no etag
    }
@@ -120,11 +124,11 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
       return object2Blob.apply(sync.readFile(container + "/" + key, httpOptions));
    }
 
-   public ListResponse<? extends ResourceMetadata> list() {
+   public ListResponse<? extends StorageMetadata> list() {
       return container2ResourceList.apply(sync.listDirectories());
    }
 
-   public ListContainerResponse<? extends ResourceMetadata> list(String container,
+   public ListContainerResponse<? extends StorageMetadata> list(String container,
             org.jclouds.blobstore.options.ListContainerOptions... optionsList) {
       if (optionsList.length == 1) {
          if (optionsList[0].isRecursive()) {

@@ -22,7 +22,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 
@@ -40,7 +40,7 @@ public interface AsyncBlobStore {
    /**
     * Lists all root-level resources available to the account.
     */
-   ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list();
+   ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list();
 
    /**
     * Lists all resources available at the specified path. Note that path may be a container, or a
@@ -49,14 +49,14 @@ public interface AsyncBlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
-   ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
-            ListContainerOptions... options);
+   ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container, ListContainerOptions... options);
 
    ListenableFuture<Boolean> containerExists(String container);
 
    ListenableFuture<Boolean> directoryExists(String container, String directory);
 
-   ListenableFuture<Boolean> createContainer(String container);
+   ListenableFuture<Boolean> createContainerInLocation(String location, String container);
 
    ListenableFuture<Void> createDirectory(String container, String directory);
 

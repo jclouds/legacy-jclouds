@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.ResourceMetadataToRelativePathResourceMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
@@ -69,7 +69,7 @@ public class MarkersGetDirectoryStrategy implements GetDirectoryStrategy {
       this.resource2Directory = resource2Directory;
    }
 
-   public ResourceMetadata execute(AsyncBlobStore connection, String containerName, String directory) {
+   public StorageMetadata execute(AsyncBlobStore connection, String containerName, String directory) {
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
          try {
             return resource2Directory.apply(connection.blobMetadata(containerName,

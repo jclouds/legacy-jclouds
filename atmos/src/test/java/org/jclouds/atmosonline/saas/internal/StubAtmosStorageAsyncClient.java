@@ -35,7 +35,7 @@ import org.jclouds.atmosonline.saas.blobstore.functions.ListOptionsToBlobStoreLi
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlob;
 import org.jclouds.atmosonline.saas.blobstore.functions.ResourceMetadataListToDirectoryEntryList;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
-import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
@@ -96,13 +96,14 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
          container = directoryName.substring(0, directoryName.indexOf('/'));
       else
          container = directoryName;
-      return Futures.compose(blobStore.createContainer(container), new Function<Boolean, URI>() {
+      return Futures.compose(blobStore.createContainerInLocation("default", container),
+               new Function<Boolean, URI>() {
 
-         public URI apply(Boolean from) {
-            return URI.create("http://stub/containers/" + container);
-         }
+                  public URI apply(Boolean from) {
+                     return URI.create("http://stub/containers/" + container);
+                  }
 
-      });
+               });
    }
 
    public ListenableFuture<URI> createFile(String parent, AtmosObject object) {
@@ -171,14 +172,14 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
       }
    }
 
-   public ListenableFuture<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectories(
+   public ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> listDirectories(
             ListOptions... optionsList) {
       // org.jclouds.blobstore.options.ListOptions options = container2ContainerListOptions
       // .apply(optionsList);
       return Futures.compose(blobStore.list(), resource2ObjectList);
    }
 
-   public ListenableFuture<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectory(
+   public ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> listDirectory(
             String directoryName, ListOptions... optionsList) {
       org.jclouds.blobstore.options.ListContainerOptions options = container2ContainerListOptions
                .apply(optionsList);

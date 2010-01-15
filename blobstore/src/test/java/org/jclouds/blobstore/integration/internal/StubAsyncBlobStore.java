@@ -20,7 +20,8 @@ package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
-import static com.google.common.util.concurrent.Futures.*;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.makeListenable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,12 +59,12 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.MutableResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.MutableStorageMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
-import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -164,7 +165,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(returnVal);
    }
 
-   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
             final String name, ListContainerOptions... optionsList) {
       final ListContainerOptions options = (optionsList.length == 0) ? new ListContainerOptions()
                : optionsList[0];
@@ -174,21 +175,21 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       if (realContents == null)
          return immediateFailedFuture(new ContainerNotFoundException(name));
 
-      SortedSet<ResourceMetadata> contents = Sets.newTreeSet(Iterables.transform(realContents
-               .keySet(), new Function<String, ResourceMetadata>() {
-         public ResourceMetadata apply(String key) {
+      SortedSet<StorageMetadata> contents = Sets.newTreeSet(Iterables.transform(realContents
+               .keySet(), new Function<String, StorageMetadata>() {
+         public StorageMetadata apply(String key) {
             MutableBlobMetadata md = copy(realContents.get(key).getMetadata());
             if (isDirectoryStrategy.execute(md))
-               md.setType(ResourceType.RELATIVE_PATH);
+               md.setType(StorageType.RELATIVE_PATH);
             return md;
          }
       }));
 
       if (options.getMarker() != null) {
          final String finalMarker = options.getMarker();
-         ResourceMetadata lastMarkerMetadata = Iterables.find(contents,
-                  new Predicate<ResourceMetadata>() {
-                     public boolean apply(ResourceMetadata metadata) {
+         StorageMetadata lastMarkerMetadata = Iterables.find(contents,
+                  new Predicate<StorageMetadata>() {
+                     public boolean apply(StorageMetadata metadata) {
                         return metadata.getName().equals(finalMarker);
                      }
                   });
@@ -198,8 +199,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
       final String prefix = options.getDir();
       if (prefix != null) {
-         contents = Sets.newTreeSet(Iterables.filter(contents, new Predicate<ResourceMetadata>() {
-            public boolean apply(ResourceMetadata o) {
+         contents = Sets.newTreeSet(Iterables.filter(contents, new Predicate<StorageMetadata>() {
+            public boolean apply(StorageMetadata o) {
                return (o != null && o.getName().startsWith(prefix));
             }
          }));
@@ -209,7 +210,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       boolean truncated = false;
       String marker = null;
       if (options.getMaxResults() != null && contents.size() > 0) {
-         SortedSet<ResourceMetadata> contentsSlice = firstSliceOfSize(contents, options
+         SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, options
                   .getMaxResults().intValue());
          maxResults = options.getMaxResults();
          if (!contentsSlice.contains(contents.last())) {
@@ -233,17 +234,17 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          contents = Sets.newTreeSet(Iterables.filter(contents, new DelimiterFilter(
                   prefix != null ? prefix : null, delimiter)));
 
-         Iterables.<ResourceMetadata> addAll(contents, Iterables.transform(commonPrefixes,
-                  new Function<String, ResourceMetadata>() {
-                     public ResourceMetadata apply(String o) {
-                        MutableResourceMetadata md = new MutableResourceMetadataImpl();
-                        md.setType(ResourceType.RELATIVE_PATH);
+         Iterables.<StorageMetadata> addAll(contents, Iterables.transform(commonPrefixes,
+                  new Function<String, StorageMetadata>() {
+                     public StorageMetadata apply(String o) {
+                        MutableStorageMetadata md = new MutableStorageMetadataImpl();
+                        md.setType(StorageType.RELATIVE_PATH);
                         md.setName(o);
                         return md;
                      }
                   }));
       }
-      return immediateFuture(new ListContainerResponseImpl<ResourceMetadata>(contents, prefix,
+      return immediateFuture(new ListContainerResponseImpl<StorageMetadata>(contents, prefix,
                marker, maxResults, truncated));
 
    }
@@ -315,24 +316,25 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(getContainerToBlobs().containsKey(container));
    }
 
-   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
-      return immediateFuture(new ListResponseImpl<ResourceMetadata>(Iterables.transform(
-               getContainerToBlobs().keySet(), new Function<String, ResourceMetadata>() {
-                  public ResourceMetadata apply(String name) {
-                     MutableResourceMetadata cmd = create();
+   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
+      return immediateFuture(new ListResponseImpl<StorageMetadata>(Iterables.transform(
+               getContainerToBlobs().keySet(), new Function<String, StorageMetadata>() {
+                  public StorageMetadata apply(String name) {
+                     MutableStorageMetadata cmd = create();
                      cmd.setName(name);
-                     cmd.setType(ResourceType.CONTAINER);
+                     cmd.setType(StorageType.CONTAINER);
                      return cmd;
                   }
                }), null, null, false));
 
    }
 
-   protected MutableResourceMetadata create() {
-      return new MutableResourceMetadataImpl();
+   protected MutableStorageMetadata create() {
+      return new MutableStorageMetadataImpl();
    }
 
-   public ListenableFuture<Boolean> createContainer(final String name) {
+   public ListenableFuture<Boolean> createContainerInLocation(final String location,
+            final String name) {
       if (!getContainerToBlobs().containsKey(name)) {
          getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
       }
@@ -346,7 +348,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;
    }
 
-   protected class DelimiterFilter implements Predicate<ResourceMetadata> {
+   protected class DelimiterFilter implements Predicate<StorageMetadata> {
       private final String prefix;
       private final String delimiter;
 
@@ -355,7 +357,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          this.delimiter = delimiter;
       }
 
-      public boolean apply(ResourceMetadata metadata) {
+      public boolean apply(StorageMetadata metadata) {
          if (prefix == null)
             return metadata.getName().indexOf(delimiter) == -1;
          if (metadata.getName().startsWith(prefix))
@@ -364,7 +366,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       }
    }
 
-   protected class CommonPrefixes implements Function<ResourceMetadata, String> {
+   protected class CommonPrefixes implements Function<StorageMetadata, String> {
       private final String prefix;
       private final String delimiter;
       public static final String NO_PREFIX = "NO_PREFIX";
@@ -374,7 +376,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          this.delimiter = delimiter;
       }
 
-      public String apply(ResourceMetadata metadata) {
+      public String apply(StorageMetadata metadata) {
          String working = metadata.getName();
 
          if (prefix != null) {

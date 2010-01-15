@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.domain.internal;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 
 /**
@@ -31,7 +31,7 @@ import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
  */
 public class ResourceInfoImpl implements ResourceInfo {
 
-   private final ResourceType type;
+   private final StorageType type;
    private final URI url;
    private final String name;
    private final Date created;
@@ -46,7 +46,7 @@ public class ResourceInfoImpl implements ResourceInfo {
    private final URI metadata;
    private final URI parent;
 
-   protected ResourceInfoImpl(ResourceType type, URI url, String name, Date created,
+   protected ResourceInfoImpl(StorageType type, URI url, String name, Date created,
             boolean inProject, Date modified, String owner, int version, boolean shared,
             Date accessed, long bytes, URI tags, URI metadata, URI parent) {
       super();
@@ -74,7 +74,7 @@ public class ResourceInfoImpl implements ResourceInfo {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
-   public ResourceType getType() {
+   public StorageType getType() {
       return type;
    }
 

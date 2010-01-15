@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.domain;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.internal.MutableResourceInfoImpl;
 
 import com.google.inject.ImplementedBy;
@@ -33,7 +33,7 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(MutableResourceInfoImpl.class)
 public interface MutableResourceInfo extends ResourceInfo {
-   void setType(ResourceType value);
+   void setType(StorageType value);
 
    void setUrl(URI value);
 

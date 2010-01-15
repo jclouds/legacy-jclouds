@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 
@@ -50,9 +50,9 @@ public class ListableBlobPropertiesToBlobMetadata<T extends ListableBlobProperti
       to.setLastModified(from.getLastModified());
       to.setName(from.getName());
       to.setSize(from.getSize());
-      to.setType(ResourceType.BLOB);
+      to.setType(StorageType.BLOB);
       if (isDirectoryStrategy.execute(to)) {
-         to.setType(ResourceType.RELATIVE_PATH);
+         to.setType(StorageType.RELATIVE_PATH);
       }
       return to;
    }

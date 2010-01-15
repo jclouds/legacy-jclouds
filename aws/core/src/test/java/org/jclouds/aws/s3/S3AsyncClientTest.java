@@ -25,6 +25,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
 import org.jclouds.aws.s3.config.S3ObjectModule;
 import org.jclouds.aws.s3.domain.AccessControlList;
@@ -352,15 +353,34 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       checkFilters(httpMethod);
    }
 
-   public void testPutBucketIfNotExists() throws ArrayIndexOutOfBoundsException, SecurityException,
+   public void testPutBucketDefault() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = S3AsyncClient.class.getMethod("putBucketIfNotExists", String.class, Array
-               .newInstance(PutBucketOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
+      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", Region.class,
+               String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT, "bucket");
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 0\nHost: bucket.stub\n");
       assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnTrueIfBucketAlreadyOwnedByYou.class);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testPutBucketEu() throws ArrayIndexOutOfBoundsException, SecurityException,
+            IllegalArgumentException, NoSuchMethodException, IOException {
+      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", Region.class,
+               String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
+               Region.EU_WEST_1, "bucket");
+
+      assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Content-Length: 98\nContent-Type: application/unknown\nHost: bucket.stub\n");
+      assertPayloadEquals(httpMethod, "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);

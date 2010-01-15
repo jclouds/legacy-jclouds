@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;
@@ -53,7 +52,7 @@ public class InstanceHasIpAddress implements Predicate<RunningInstance> {
    public boolean apply(RunningInstance instance) {
       logger.trace("looking for ipAddress on instance %s", instance);
       try {
-         instance = refresh(instance.getId());
+         instance = refresh(instance);
          return instance.getIpAddress() != null;
       } catch (AWSResponseException e) {
          if (e.getError().getCode().equals("InvalidInstanceID.NotFound"))
@@ -62,8 +61,8 @@ public class InstanceHasIpAddress implements Predicate<RunningInstance> {
       }
    }
 
-   private RunningInstance refresh(String instanceId) {
-      return Iterables.getLast(Iterables.getLast(
-               client.describeInstancesInRegion(Region.DEFAULT, instanceId)).getRunningInstances());
+   private RunningInstance refresh(RunningInstance instance) {
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.describeInstancesInRegion(
+               instance.getRegion(), instance.getId())));
    }
 }

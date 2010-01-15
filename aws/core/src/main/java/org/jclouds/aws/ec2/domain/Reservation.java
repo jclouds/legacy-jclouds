@@ -20,10 +20,13 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -32,11 +35,13 @@ import com.google.inject.internal.Nullable;
  *      />
  * @author Adrian Cole
  */
-public class Reservation implements Comparable<Reservation> {
+public class Reservation extends LinkedHashSet<RunningInstance> implements Comparable<Reservation>,
+         Set<RunningInstance> {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -9051777593518861395L;
    private final Region region;
-   private final Set<String> groupIds;
-   private final Set<RunningInstance> instances;
+   private final Set<String> groupIds = Sets.newLinkedHashSet();
    private final @Nullable
    String ownerId;
    private final @Nullable
@@ -44,11 +49,12 @@ public class Reservation implements Comparable<Reservation> {
    private final @Nullable
    String reservationId;
 
-   public Reservation(Region region, Set<String> groupIds, Set<RunningInstance> instances,
-            @Nullable String ownerId, @Nullable String requesterId, @Nullable String reservationId) {
+   public Reservation(Region region, Iterable<String> groupIds,
+            Iterable<RunningInstance> instances, @Nullable String ownerId,
+            @Nullable String requesterId, @Nullable String reservationId) {
       this.region = checkNotNull(region, "region");
-      this.groupIds = checkNotNull(groupIds, "groupIds");
-      this.instances = checkNotNull(instances, "instances");
+      Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
+      Iterables.addAll(this, checkNotNull(instances, "instances"));
       this.ownerId = ownerId;
       this.requesterId = requesterId;
       this.reservationId = reservationId;
@@ -70,10 +76,6 @@ public class Reservation implements Comparable<Reservation> {
     */
    public Set<String> getGroupIds() {
       return groupIds;
-   }
-
-   public Set<RunningInstance> getRunningInstances() {
-      return instances;
    }
 
    /**
@@ -100,9 +102,8 @@ public class Reservation implements Comparable<Reservation> {
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
-      result = prime * result + ((instances == null) ? 0 : instances.hashCode());
       result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
       result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((requesterId == null) ? 0 : requesterId.hashCode());
@@ -114,7 +115,7 @@ public class Reservation implements Comparable<Reservation> {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -123,11 +124,6 @@ public class Reservation implements Comparable<Reservation> {
          if (other.groupIds != null)
             return false;
       } else if (!groupIds.equals(other.groupIds))
-         return false;
-      if (instances == null) {
-         if (other.instances != null)
-            return false;
-      } else if (!instances.equals(other.instances))
          return false;
       if (ownerId == null) {
          if (other.ownerId != null)

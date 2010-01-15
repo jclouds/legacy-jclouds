@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
@@ -43,7 +44,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -90,8 +91,8 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
       return sync.bucketExists(container);
    }
 
-   public boolean createContainer(String container) {
-      return sync.putBucketIfNotExists(container);
+   public boolean createContainerInLocation(String location, String container) {
+      return sync.putBucketInRegion(Region.DEFAULT, container);// TODO parameterize
    }
 
    public void deleteContainer(String container) {
@@ -118,17 +119,17 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
       return object2Blob.apply(sync.getObject(container, key, httpOptions));
    }
 
-   public ListResponse<? extends ResourceMetadata> list() {
-      return new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
-         public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+   public ListResponse<? extends StorageMetadata> list() {
+      return new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+         public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
                   SortedSet<BucketMetadata> from) {
-            return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+            return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                      bucket2ResourceMd), null, null, false);
          }
       }.apply(sync.listOwnedBuckets());
    }
 
-   public ListContainerResponse<? extends ResourceMetadata> list(String container,
+   public ListContainerResponse<? extends StorageMetadata> list(String container,
             ListContainerOptions... optionsList) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
       return bucket2ResourceList.apply(sync.listBucket(container, httpOptions));

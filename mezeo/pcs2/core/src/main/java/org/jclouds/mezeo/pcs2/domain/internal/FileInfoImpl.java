@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.domain.internal;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.FileInfo;
 
 /**
@@ -42,7 +42,7 @@ public class FileInfoImpl extends ResourceInfoImpl implements FileInfo {
             String owner, int version, boolean shared, Date accessed,
             boolean isPublic, String mimeType, long bytes, URI content, URI parent,
             URI permissions, URI tags, URI metadata, URI thumbnail) {
-      super(ResourceType.BLOB, url, name, created, inProject, modified, owner, version, shared,
+      super(StorageType.BLOB, url, name, created, inProject, modified, owner, version, shared,
                accessed, bytes, tags, metadata, parent);
       this.isPublic = isPublic;
       this.mimeType = mimeType;

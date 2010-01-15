@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,19 +30,20 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.NodeIdentity;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -62,7 +62,7 @@ import com.google.inject.Injector;
 public class EC2ComputeServiceLiveTest {
 
    protected SshClient.Factory sshFactory;
-   private String nodePrefix = System.getProperty("user.name") + ".ec2";
+   private String nodePrefix = System.getProperty("user.name") + ".ec2serv";
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
@@ -83,7 +83,8 @@ public class EC2ComputeServiceLiveTest {
    }
 
    public void testCreate() throws Exception {
-      node = context.getComputeService().createNode(nodePrefix, Profile.SMALLEST, Image.RHEL_53);
+      node = context.getComputeService().startNodeInLocation("default", nodePrefix,
+               Profile.SMALLEST, Image.UBUNTU_90);
       assertNotNull(node.getId());
       assertEquals(node.getLoginPort(), 22);
       assertEquals(node.getLoginType(), LoginType.SSH);
@@ -98,7 +99,7 @@ public class EC2ComputeServiceLiveTest {
 
    @Test(dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
-      NodeMetadata metadata = context.getComputeService().getNodeMetadata(node.getId());
+      NodeMetadata metadata = context.getComputeService().getNodeMetadata(node);
       assertEquals(metadata.getId(), node.getId());
       assertEquals(metadata.getLoginPort(), node.getLoginPort());
       assertEquals(metadata.getLoginType(), node.getLoginType());
@@ -108,8 +109,10 @@ public class EC2ComputeServiceLiveTest {
    }
 
    public void testList() throws Exception {
-      for (NodeIdentity node : context.getComputeService().listNodes()) {
+      for (ComputeMetadata node : context.getComputeService().listNodes()) {
          assert node.getId() != null;
+         assert node.getLocation() != null;
+         assertEquals(node.getType(), ComputeType.NODE);
       }
    }
 
@@ -129,22 +132,24 @@ public class EC2ComputeServiceLiveTest {
       InetSocketAddress socket = new InetSocketAddress(node.getPublicAddresses().last(), node
                .getLoginPort());
       socketTester.apply(socket);
-      SshClient connection = sshFactory.create(socket, node.getCredentials().account, node
-               .getCredentials().key.getBytes());
+      SshClient ssh = node.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----") ? sshFactory
+               .create(socket, node.getCredentials().account, node.getCredentials().key.getBytes())
+               : sshFactory
+                        .create(socket, node.getCredentials().account, node.getCredentials().key);
       try {
-         connection.connect();
-         InputStream etcPasswd = connection.get("/etc/passwd");
-         Utils.toStringAndClose(etcPasswd);
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
       } finally {
-         if (connection != null)
-            connection.disconnect();
+         if (ssh != null)
+            ssh.disconnect();
       }
    }
 
    @AfterTest
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (node != null)
-         context.getComputeService().destroyNode(node.getId());
+         context.getComputeService().destroyNode(node);
       context.close();
    }
 

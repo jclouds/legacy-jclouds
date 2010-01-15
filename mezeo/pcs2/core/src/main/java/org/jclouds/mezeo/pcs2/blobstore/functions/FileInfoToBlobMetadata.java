@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.blobstore.functions;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.mezeo.pcs2.domain.FileInfo;
 
@@ -37,7 +37,7 @@ public class FileInfoToBlobMetadata implements Function<FileInfo, MutableBlobMet
       if (from.getUrl() != null) {
          to.setId(from.getUrl().getPath().replaceAll(".*objects/", ""));
       }
-      to.setLocation(from.getUrl());
+      to.setUri(from.getUrl());
       to.setName(from.getName());
       if (from.getMimeType() != null)
          to.setContentType(from.getMimeType());
@@ -45,7 +45,7 @@ public class FileInfoToBlobMetadata implements Function<FileInfo, MutableBlobMet
          to.setLastModified(from.getModified());
       if (from.getBytes() != null)
          to.setSize(from.getBytes());
-      to.setType(ResourceType.BLOB);
+      to.setType(StorageType.BLOB);
       return to;
    }
 }

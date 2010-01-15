@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.strategy.internal.MarkersIsDirectoryStrategy;
 
 import com.google.inject.ImplementedBy;
@@ -31,5 +31,5 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(MarkersIsDirectoryStrategy.class)
 public interface IsDirectoryStrategy {
 
-   boolean execute(ResourceMetadata metadata);
+   boolean execute(StorageMetadata metadata);
 }

@@ -18,9 +18,9 @@
  */
 package org.jclouds.atmosonline.saas.domain;
 
-import java.util.SortedSet;
+import java.util.Set;
 
-import org.jclouds.atmosonline.saas.domain.internal.BoundedTreeSet;
+import org.jclouds.atmosonline.saas.domain.internal.BoundedHashSet;
 
 import com.google.inject.ImplementedBy;
 
@@ -29,8 +29,8 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  * 
  */
-@ImplementedBy(BoundedTreeSet.class)
-public interface BoundedSortedSet<T> extends SortedSet<T> {
+@ImplementedBy(BoundedHashSet.class)
+public interface BoundedSet<T> extends Set<T> {
 
    String getToken();
 

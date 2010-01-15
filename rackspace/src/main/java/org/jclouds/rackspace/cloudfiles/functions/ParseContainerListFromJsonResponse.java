@@ -26,7 +26,7 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
@@ -34,7 +34,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * This parses {@link ResourceMetadata} from a gson string.
+ * This parses {@link StorageMetadata} from a gson string.
  * 
  * @author Adrian Cole
  */

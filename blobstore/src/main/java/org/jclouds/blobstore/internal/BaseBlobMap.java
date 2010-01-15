@@ -32,8 +32,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
@@ -193,8 +193,8 @@ public abstract class BaseBlobMap<V> {
 
    public Set<String> keySet() {
       Set<String> keys = Sets.newHashSet();
-      for (ResourceMetadata object : getAllBlobMetadata.execute(containerName, options))
-         if (object.getType() == ResourceType.BLOB)
+      for (StorageMetadata object : getAllBlobMetadata.execute(containerName, options))
+         if (object.getType() == StorageType.BLOB)
             keys.add(pathStripper.apply(object.getName()));
       return keys;
    }

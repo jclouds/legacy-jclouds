@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
@@ -49,7 +50,6 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
@@ -114,7 +114,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
    public static final String TEST_ACL_EMAIL = "james@misterm.org";
-   private static Map<String, BucketMetadata.LocationConstraint> bucketToLocation = new ConcurrentHashMap<String, BucketMetadata.LocationConstraint>();
+   private static Map<String, Region> bucketToLocation = new ConcurrentHashMap<String, Region>();
 
    /**
     * An S3 item's "ACL" may be a {@link CannedAccessPolicy} or an {@link AccessControlList}.
@@ -123,14 +123,14 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public static final String DEFAULT_OWNER_ID = "abc123";
 
-   public ListenableFuture<Boolean> putBucketIfNotExists(String name,
+   @Override
+   public ListenableFuture<Boolean> putBucketInRegion(Region region, String name,
             PutBucketOptions... optionsList) {
       final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions()
                : optionsList[0];
-      if (options.getLocationConstraint() != null)
-         bucketToLocation.put(name, options.getLocationConstraint());
+      bucketToLocation.put(name, region);
       keyToAcl.put(name, options.getAcl());
-      return blobStore.createContainer(name);
+      return blobStore.createContainerInLocation(region.value(), name);
    }
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name,
@@ -292,8 +292,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    @Override
-   public ListenableFuture<LocationConstraint> getBucketLocation(String bucketName) {
-      return immediateFuture(LocationConstraint.US_STANDARD);
+   public ListenableFuture<Region> getBucketLocation(String bucketName) {
+      return immediateFuture(bucketToLocation.get(bucketName));
    }
 
    @Override

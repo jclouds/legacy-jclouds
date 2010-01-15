@@ -206,7 +206,7 @@ public class EBSBootEC2ClientLiveTest {
                      withKeyName(keyPair.getKeyName())// key I created above
                               .asType(InstanceType.M1_SMALL)// smallest instance size
                               .withSecurityGroup(securityGroupName));// group I created above
-            instance = Iterables.getOnlyElement(reservation.getRunningInstances());
+            instance = Iterables.getOnlyElement(reservation);
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
                continue;
@@ -540,8 +540,7 @@ public class EBSBootEC2ClientLiveTest {
       Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
                instance.getRegion(), instance.getId()); // last parameter (ids) narrows the search
 
-      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations)
-               .getRunningInstances());
+      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());

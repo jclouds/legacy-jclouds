@@ -28,7 +28,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(MutableBlobMetadataImpl.class)
-public interface MutableBlobMetadata extends BlobMetadata, MutableResourceMetadata {
+public interface MutableBlobMetadata extends BlobMetadata, MutableStorageMetadata {
 
    /**
     * A standard MIME type describing the format of the contents. If none is provided, the default

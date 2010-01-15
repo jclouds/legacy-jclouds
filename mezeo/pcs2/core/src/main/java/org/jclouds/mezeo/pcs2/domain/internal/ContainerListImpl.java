@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 
@@ -44,7 +44,7 @@ public class ContainerListImpl extends TreeSet<ResourceInfo> implements Containe
             String owner, int version, boolean shared, Date accessed, long bytes,
             SortedSet<? extends ResourceInfo> contents, URI tags, URI metadata,
             Map<String, URI> metadataItems, URI parent) {
-      this.info = new ResourceInfoImpl(ResourceType.FOLDER, url, name, created, inProject,
+      this.info = new ResourceInfoImpl(StorageType.FOLDER, url, name, created, inProject,
                modified, owner, version, shared, accessed, bytes, tags, metadata, parent);
       addAll(contents);
       this.metadataItems = metadataItems;
@@ -90,7 +90,7 @@ public class ContainerListImpl extends TreeSet<ResourceInfo> implements Containe
       return info.getTags();
    }
 
-   public ResourceType getType() {
+   public StorageType getType() {
       return info.getType();
    }
 

@@ -21,10 +21,10 @@ package org.jclouds.azure.storage.blob.blobstore.functions;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
-import org.jclouds.blobstore.domain.MutableResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
-import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import org.jclouds.blobstore.domain.MutableStorageMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 
 import com.google.common.base.Function;
 
@@ -32,14 +32,15 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ContainerToResourceMetadata implements Function<ListableContainerProperties, ResourceMetadata> {
-   public ResourceMetadata apply(ListableContainerProperties from) {
-      MutableResourceMetadata to = new MutableResourceMetadataImpl();
+public class ContainerToResourceMetadata implements
+         Function<ListableContainerProperties, StorageMetadata> {
+   public StorageMetadata apply(ListableContainerProperties from) {
+      MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
       to.setETag(from.getETag());
       to.setLastModified(from.getLastModified());
-      to.setLocation(from.getUrl());
-      to.setType(ResourceType.CONTAINER);
+      to.setUri(from.getUrl());
+      to.setType(StorageType.CONTAINER);
       return to;
    }
 }

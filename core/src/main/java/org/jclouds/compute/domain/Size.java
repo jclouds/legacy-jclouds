@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public interface Size {
    /**
-    * Unique ID provided by the provider (m1.small, etc)
+    * provider-specific identifier (m1.small, etc)
     * 
     */
    String getId();

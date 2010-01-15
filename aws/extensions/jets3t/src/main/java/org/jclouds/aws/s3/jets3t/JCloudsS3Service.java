@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
@@ -121,7 +122,7 @@ public class JCloudsS3Service extends S3Service {
          throw new UnsupportedOperationException("Bucket ACL is not yet supported");
 
       try {
-         if (connection.putBucketIfNotExists(bucketName)) {
+         if (connection.putBucketInRegion(Region.fromValue(location), bucketName)) {
             // Bucket created.
          }
       } catch (Exception e) {

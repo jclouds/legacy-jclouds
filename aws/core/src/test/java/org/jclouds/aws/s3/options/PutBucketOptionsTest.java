@@ -18,80 +18,43 @@
  */
 package org.jclouds.aws.s3.options;
 
-import com.google.common.collect.Multimap;
-
-import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
-
-import org.jclouds.aws.s3.domain.CannedAccessPolicy;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
-import org.jclouds.aws.s3.options.PutBucketOptions;
-import org.jclouds.aws.s3.reference.S3Headers;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import org.testng.annotations.Test;
 
 import java.io.UnsupportedEncodingException;
 
+import org.jclouds.aws.s3.domain.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.Multimap;
+
 /**
  * Tests possible uses of PutBucketOptions and PutBucketOptions.Builder.*
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "s3.PutBucketOptionsTest")
 public class PutBucketOptionsTest {
 
-    @Test
-    public void testLocationConstraint() {
-        PutBucketOptions options = new PutBucketOptions();
-        options.createIn(LocationConstraint.EU);
-        assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
-    }
+   @Test
+   public void testAclDefault() {
+      PutBucketOptions options = new PutBucketOptions();
+      assertEquals(options.getAcl(), CannedAccessPolicy.PRIVATE);
+   }
 
-    @Test
-    public void testPayload() {
-        PutBucketOptions options = new PutBucketOptions();
-        options.createIn(LocationConstraint.EU);
-        assertEquals(
-                options.buildStringPayload(),
-                "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
-    }
+   @Test
+   public void testAclStatic() {
+      PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
+      assertEquals(options.getAcl(), CannedAccessPolicy.AUTHENTICATED_READ);
+   }
 
-    @Test
-    public void testNullLocationConstraint() {
-        PutBucketOptions options = new PutBucketOptions();
-        assertNull(options.getLocationConstraint());
-    }
+   @Test
+   void testBuildRequestHeaders() throws UnsupportedEncodingException {
 
-    @Test
-    public void testLocationConstraintStatic() {
-        PutBucketOptions options = createIn(LocationConstraint.EU);
-        assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
-    }
-
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testNPE() {
-        createIn(null);
-    }
-
-    @Test
-    public void testAclDefault() {
-        PutBucketOptions options = new PutBucketOptions();
-        assertEquals(options.getAcl(), CannedAccessPolicy.PRIVATE);
-    }
-
-    @Test
-    public void testAclStatic() {
-        PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
-        assertEquals(options.getAcl(), CannedAccessPolicy.AUTHENTICATED_READ);
-    }
-
-    @Test
-    void testBuildRequestHeaders() throws UnsupportedEncodingException {
-
-        Multimap<String, String> headers = withBucketAcl(
-                CannedAccessPolicy.AUTHENTICATED_READ).buildRequestHeaders();
-        assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
-                CannedAccessPolicy.AUTHENTICATED_READ.toString());
-    }
+      Multimap<String, String> headers = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ)
+               .buildRequestHeaders();
+      assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
+               CannedAccessPolicy.AUTHENTICATED_READ.toString());
+   }
 }

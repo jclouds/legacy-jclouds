@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import javax.inject.Provider;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.testng.annotations.Test;
 
@@ -45,10 +45,10 @@ public class BlobMetadataToRelativePathResourceMetadataTest {
       MutableBlobMetadata md = blobMetadataProvider.get();
       md.setName("dir/");
       md.setId("dir/");
-      ResourceMetadata rd = parser.apply(md);
+      StorageMetadata rd = parser.apply(md);
       assertEquals(rd.getName(), "dir");
       assertEquals(rd.getId(), "dir/");
-      assertEquals(rd.getType(), ResourceType.RELATIVE_PATH);
+      assertEquals(rd.getType(), StorageType.RELATIVE_PATH);
    }
 
    @Test
@@ -56,10 +56,10 @@ public class BlobMetadataToRelativePathResourceMetadataTest {
       MutableBlobMetadata md = blobMetadataProvider.get();
       md.setName("dir_$folder$");
       md.setId("dir_$folder$");
-      ResourceMetadata rd = parser.apply(md);
+      StorageMetadata rd = parser.apply(md);
       assertEquals(rd.getName(), "dir");
       assertEquals(rd.getId(), "dir_$folder$");
-      assertEquals(rd.getType(), ResourceType.RELATIVE_PATH);
+      assertEquals(rd.getType(), StorageType.RELATIVE_PATH);
    }
 
    @Test
@@ -67,9 +67,9 @@ public class BlobMetadataToRelativePathResourceMetadataTest {
       MutableBlobMetadata md = blobMetadataProvider.get();
       md.setName("dir");
       md.setId("dir");
-      ResourceMetadata rd = parser.apply(md);
+      StorageMetadata rd = parser.apply(md);
       assertEquals(rd.getName(), "dir");
       assertEquals(rd.getId(), "dir");
-      assertEquals(rd.getType(), ResourceType.RELATIVE_PATH);
+      assertEquals(rd.getType(), StorageType.RELATIVE_PATH);
    }
 }

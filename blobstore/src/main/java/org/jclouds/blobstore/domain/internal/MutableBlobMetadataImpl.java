@@ -25,14 +25,14 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 
 /**
  * System and user Metadata for the {@link Blob}.
  * 
  * @author Adrian Cole
  */
-public class MutableBlobMetadataImpl extends MutableResourceMetadataImpl implements
+public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implements
          MutableBlobMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
@@ -42,12 +42,12 @@ public class MutableBlobMetadataImpl extends MutableResourceMetadataImpl impleme
 
    public MutableBlobMetadataImpl() {
       super();
-      this.setType(ResourceType.BLOB);
+      this.setType(StorageType.BLOB);
    }
 
    public MutableBlobMetadataImpl(BlobMetadata from) {
       super(from);
-      this.setType(ResourceType.BLOB);
+      this.setType(StorageType.BLOB);
       this.contentType = from.getContentType();
       this.contentMD5 = from.getContentMD5();
    }

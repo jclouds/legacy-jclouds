@@ -43,7 +43,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
@@ -101,7 +101,10 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       }));
    }
 
-   public ListenableFuture<Boolean> createContainer(String container) {
+   /**
+    * Note that location is currently ignored.
+    */
+   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
       return compose(async.createDirectory(container), new Function<URI, Boolean>() {
 
          public Boolean apply(URI from) {
@@ -155,11 +158,11 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       return compose(returnVal, object2Blob, service);
    }
 
-   public ListenableFuture<? extends ListResponse<? extends ResourceMetadata>> list() {
+   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
       return compose(async.listDirectories(), container2ResourceList, service);
    }
 
-   public ListenableFuture<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
             String container, org.jclouds.blobstore.options.ListContainerOptions... optionsList) {
       if (optionsList.length == 1) {
          if (optionsList[0].isRecursive()) {

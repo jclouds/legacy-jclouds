@@ -20,25 +20,25 @@ package org.jclouds.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
-import org.jclouds.blobstore.domain.internal.ResourceMetadataImpl;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 
 import com.google.common.base.Function;
 
 @Singleton
 public class ResourceMetadataToRelativePathResourceMetadata implements
-         Function<ResourceMetadata, ResourceMetadata> {
+         Function<StorageMetadata, StorageMetadata> {
 
-   public ResourceMetadata apply(ResourceMetadata md) {
+   public StorageMetadata apply(StorageMetadata md) {
       String name = md.getName();
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
          if (name.endsWith(suffix))
             name = name.substring(0, name.length() - suffix.length());
       }
-      return new ResourceMetadataImpl(ResourceType.RELATIVE_PATH, md.getId(), name, md
-               .getLocation(), md.getETag(), md.getSize(), md.getLastModified(), md
+      return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getId(), name, md
+               .getLocation(), md.getUri(), md.getETag(), md.getSize(), md.getLastModified(), md
                .getUserMetadata());
    }
 

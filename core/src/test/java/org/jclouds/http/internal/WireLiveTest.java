@@ -142,7 +142,7 @@ public class WireLiveTest {
    }
 
    @Test(groups = "live")
-   public void testRemoteInputInputStream() throws Exception {
+   public void testRemoteInputStream() throws Exception {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       HttpWire wire = setUp();
@@ -154,8 +154,8 @@ public class WireLiveTest {
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 
-   @Test(groups = "live")
-   public void testCopyRemoteInputInputStream() throws Exception {
+   @Test(groups = "live", enabled = false)
+   public void testCopyRemoteInputStream() throws Exception {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       Callable<Void> callable = new ConnectionTester(connection.getInputStream());
@@ -165,7 +165,7 @@ public class WireLiveTest {
    }
 
    @Test(groups = "live")
-   public void testRemoteInputInputStreamSynch() throws Exception {
+   public void testRemoteInputStreamSynch() throws Exception {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       HttpWire wire = setUpSynch();

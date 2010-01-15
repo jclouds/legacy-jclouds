@@ -37,8 +37,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.testng.ITestContext;
@@ -176,16 +176,16 @@ public class BaseBlobStoreIntegrationTest<A, S> {
    protected static void deleteEverything(final BlobStoreContext<?, ?> context) throws Exception {
       try {
          for (int i = 0; i < 2; i++) {
-            Iterable<? extends ResourceMetadata> testContainers = Iterables.filter(context
-                     .getBlobStore().list(), new Predicate<ResourceMetadata>() {
-               public boolean apply(ResourceMetadata input) {
-                  return (input.getType() == ResourceType.CONTAINER || input.getType() == ResourceType.FOLDER)
+            Iterable<? extends StorageMetadata> testContainers = Iterables.filter(context
+                     .getBlobStore().list(), new Predicate<StorageMetadata>() {
+               public boolean apply(StorageMetadata input) {
+                  return (input.getType() == StorageType.CONTAINER || input.getType() == StorageType.FOLDER)
                            && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
                }
             });
             if (testContainers.iterator().hasNext()) {
                ExecutorService executor = Executors.newCachedThreadPool();
-               for (final ResourceMetadata metaDatum : testContainers) {
+               for (final StorageMetadata metaDatum : testContainers) {
                   executor.execute(new Runnable() {
                      public void run() {
                         deleteContainerOrWarnIfUnable(context, metaDatum.getName());
@@ -239,7 +239,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
 
    protected static void createContainerAndEnsureEmpty(BlobStoreContext<?, ?> context,
             final String containerName) throws InterruptedException {
-      context.getBlobStore().createContainer(containerName);
+      context.getBlobStore().createContainerInLocation("default", containerName);
       if (context.getConsistencyModel() == ConsistencyModels.EVENTUAL)
          Thread.sleep(1000);
       context.getBlobStore().clearContainer(containerName);
@@ -287,13 +287,13 @@ public class BaseBlobStoreIntegrationTest<A, S> {
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               SortedSet<? extends ResourceMetadata> list = context.getBlobStore().list(
+               SortedSet<? extends StorageMetadata> list = context.getBlobStore().list(
                         containerName);
                assert list.size() == count : String.format("expected only %d values in %s: %s",
                         count, containerName, Sets.newHashSet(Iterables.transform(list,
-                                 new Function<ResourceMetadata, String>() {
+                                 new Function<StorageMetadata, String>() {
 
-                                    public String apply(ResourceMetadata from) {
+                                    public String apply(StorageMetadata from) {
                                        return from.getName();
                                     }
 
@@ -335,8 +335,8 @@ public class BaseBlobStoreIntegrationTest<A, S> {
           * *substantially* slow down tests on a real server over a network.
           */
          if (SANITY_CHECK_RETURNED_BUCKET_NAME) {
-            if (!Iterables.any(context.getBlobStore().list(), new Predicate<ResourceMetadata>() {
-               public boolean apply(ResourceMetadata md) {
+            if (!Iterables.any(context.getBlobStore().list(), new Predicate<StorageMetadata>() {
+               public boolean apply(StorageMetadata md) {
                   return containerName.equals(md.getName());
                }
             })) {

@@ -18,44 +18,49 @@
  */
 package org.jclouds.compute;
 
+import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeIdentity;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.Size;
 
 /**
+ * Provides portable access to launching compute instances.
  * 
- * @author Ivan Meredith
  * @author Adrian Cole
+ * @author Ivan Meredith
  */
 public interface ComputeService {
+
+   /**
+    * List all sizes available to the current user
+    */
+   Map<String, Size> getSizes();
+   
    /**
     * List all nodes available to the current user
     */
-   Set<NodeIdentity> listNodes();
+   Set<ComputeMetadata> listNodes();
+
 
    /**
-    * Find all nodes matching the specified name
-    */
-   Set<NodeIdentity> getNodeByName(String name);
-
-   /**
-    * Create a new node given the name, profile, and Image
+    * Create a new node given the name, size, and Image
     * 
     */
-   CreateNodeResponse createNode(String name, Profile profile, Image image);
+   CreateNodeResponse startNodeInLocation(String location, String name, Profile size, Image image);
 
    /**
     * destroy the node.
     */
-   void destroyNode(String id);
+   void destroyNode(ComputeMetadata node);
 
    /**
     * Find a node by its id
     */
-   NodeMetadata getNodeMetadata(String id);
+   NodeMetadata getNodeMetadata(ComputeMetadata node);
 
 }

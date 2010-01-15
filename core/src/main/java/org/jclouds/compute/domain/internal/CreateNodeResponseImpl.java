@@ -19,6 +19,7 @@
 package org.jclouds.compute.domain.internal;
 
 import java.net.InetAddress;
+import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.domain.CreateNodeResponse;
@@ -32,12 +33,17 @@ import org.jclouds.domain.Credentials;
  */
 public class CreateNodeResponseImpl extends NodeMetadataImpl implements CreateNodeResponse {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3414239861247046054L;
+
    private final Credentials credentials;
 
-   public CreateNodeResponseImpl(String id, String name, NodeState state,
+   public CreateNodeResponseImpl(String id, String name, String location, URI uri,
+            Map<String, String> userMetadata, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
             int loginPort, LoginType loginType, Credentials credentials, Map<String, String> extra) {
-      super(id, name, state, publicAddresses, privateAddresses, loginPort, loginType, extra);
+      super(id, name, location, uri, userMetadata, state, publicAddresses, privateAddresses,
+               loginPort, loginType, extra);
       this.credentials = credentials;
    }
 

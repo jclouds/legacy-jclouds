@@ -122,7 +122,7 @@ public class GetPathLiveTest {
       }
       for (BlobStoreContext<?, ?> context : contexts) {
          System.err.printf("creating container %s at %s%n", container, context.getEndPoint());
-         context.getBlobStore().createContainer(container);
+         context.getBlobStore().createContainerInLocation("default", container);
       }
       if (deleted) {
          System.err.println("sleeping 5 seconds to allow containers to create");

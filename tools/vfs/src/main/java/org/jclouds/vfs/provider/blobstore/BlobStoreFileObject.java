@@ -51,8 +51,8 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.functions.ResourceMetadataToRelativePathResourceMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
 public class BlobStoreFileObject extends AbstractFileObject {
    private final BlobStore blobStore;
    private final String container;
-   private ResourceMetadata metadata;
+   private StorageMetadata metadata;
 
    private static final IsDirectoryStrategy isDirectoryStrategy = new MarkersIsDirectoryStrategy();
    private static final ResourceMetadataToRelativePathResourceMetadata resource2Directory = new ResourceMetadataToRelativePathResourceMetadata();
@@ -129,7 +129,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       if (!getType().hasContent()) {
          throw new FileSystemException("vfs.provider/read-not-file.error", getName());
       }
-      if (metadata != null && metadata.getType() != ResourceType.BLOB) {
+      if (metadata != null && metadata.getType() != StorageType.BLOB) {
          throw new FileTypeHasNoContentException(getName());
       }
       logger.info(String.format(">> get: %s/%s", getContainer(), getNameTrimLeadingSlashes()));
@@ -147,7 +147,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
          return FileType.IMAGINARY;
       if (getNameTrimLeadingSlashes().equals("") || getName().getParent() == null)
          return FileType.FOLDER;
-      return (metadata.getType() == ResourceType.BLOB) ? FileType.FILE : FileType.FOLDER;
+      return (metadata.getType() == StorageType.BLOB) ? FileType.FILE : FileType.FOLDER;
    }
 
    @Override
@@ -165,12 +165,12 @@ public class BlobStoreFileObject extends AbstractFileObject {
       } else {
          logger.info(String.format(">> list: %s", getContainer()));
       }
-      ListContainerResponse<? extends ResourceMetadata> list = getBlobStore().list(getContainer(),
+      ListContainerResponse<? extends StorageMetadata> list = getBlobStore().list(getContainer(),
                options);
       Set<BlobStoreFileObject> children = Sets.newHashSet();
-      loop: for (ResourceMetadata md : list) {
+      loop: for (StorageMetadata md : list) {
          if (!md.getName().equals("")) {
-            if (name.equals(md.getName()) && md.getType() != ResourceType.BLOB) {
+            if (name.equals(md.getName()) && md.getType() != StorageType.BLOB) {
                continue loop;
             }
             if (isDirectoryStrategy.execute(md)) {
@@ -190,7 +190,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
 
    @Override
    public FileObject[] getChildren() throws FileSystemException {
-      if (metadata != null && metadata.getType() == ResourceType.BLOB)
+      if (metadata != null && metadata.getType() == StorageType.BLOB)
          throw new FileNotFolderException(getName());
       if (metadata == null) {
          try {
@@ -224,7 +224,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
    }
 
    private void deleteBasedOnType() {
-      if (metadata.getType() != ResourceType.CONTAINER) {
+      if (metadata.getType() != StorageType.CONTAINER) {
          deleteBlob(metadata.getId());
       } else {
          getBlobStore().deleteContainer(getContainer());
@@ -276,9 +276,9 @@ public class BlobStoreFileObject extends AbstractFileObject {
 
    private void getContainer(String name) {
       metadata = Iterables.find(Iterables.transform(getBlobStore().list(), resource2Directory),
-               new Predicate<ResourceMetadata>() {
+               new Predicate<StorageMetadata>() {
                   @Override
-                  public boolean apply(ResourceMetadata input) {
+                  public boolean apply(StorageMetadata input) {
                      return input.getName().equals(container);
                   }
                });
@@ -306,9 +306,9 @@ public class BlobStoreFileObject extends AbstractFileObject {
       try {
          metadata = Iterables.find(Iterables.transform(
                   getBlobStore().list(getContainer(), options), resource2Directory),
-                  new Predicate<ResourceMetadata>() {
+                  new Predicate<StorageMetadata>() {
                      @Override
-                     public boolean apply(ResourceMetadata input) {
+                     public boolean apply(StorageMetadata input) {
                         return input.getName().equals(name);
                      }
                   });

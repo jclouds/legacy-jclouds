@@ -20,10 +20,10 @@ package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.MutableResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
-import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import org.jclouds.blobstore.domain.MutableStorageMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 import com.google.common.base.Function;
@@ -32,11 +32,11 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ContainerToResourceMetadata implements Function<ContainerMetadata, ResourceMetadata> {
-   public ResourceMetadata apply(ContainerMetadata from) {
-      MutableResourceMetadata to = new MutableResourceMetadataImpl();
+public class ContainerToResourceMetadata implements Function<ContainerMetadata, StorageMetadata> {
+   public StorageMetadata apply(ContainerMetadata from) {
+      MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
-      to.setType(ResourceType.CONTAINER);
+      to.setType(StorageType.CONTAINER);
       return to;
    }
 }

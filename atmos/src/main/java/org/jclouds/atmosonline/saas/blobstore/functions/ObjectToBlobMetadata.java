@@ -29,7 +29,7 @@ import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.functions.AtmosObjectName;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.encryption.EncryptionService;
 
@@ -66,9 +66,9 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
       to.setName(objectName.apply(from));
       to.setSize(from.getSystemMetadata().getSize());
       if (from.getSystemMetadata().getType() == FileType.DIRECTORY) {
-         to.setType(ResourceType.FOLDER);
+         to.setType(StorageType.FOLDER);
       } else {
-         to.setType(ResourceType.BLOB);
+         to.setType(StorageType.BLOB);
       }
       Map<String, String> lowerKeyMetadata = Maps.newHashMap();
       for (Entry<String, String> entry : from.getUserMetadata().getMetadata().entrySet()) {

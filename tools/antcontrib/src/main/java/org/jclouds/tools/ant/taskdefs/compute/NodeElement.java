@@ -19,6 +19,7 @@
 package org.jclouds.tools.ant.taskdefs.compute;
 
 /**
+ * @author Adrian Cole
  * @author Ivan Meredith
  */
 public class NodeElement {
@@ -30,7 +31,16 @@ public class NodeElement {
    private String hostproperty;
    private String idproperty;
    private String usernameproperty;
+   private String location = "default";
 
+   public String getLocation() {
+      return location;
+   }
+
+   public void setLocation(String location) {
+      this.location = location;
+   }
+   
    String getName() {
       return name;
    }
@@ -113,4 +123,5 @@ public class NodeElement {
    String getKeyfile() {
       return keyfi1le;
    }
+
 }

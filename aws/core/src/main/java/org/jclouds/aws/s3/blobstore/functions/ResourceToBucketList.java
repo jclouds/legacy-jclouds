@@ -29,8 +29,8 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class ResourceToBucketList implements
-         Function<ListContainerResponse<? extends ResourceMetadata>, ListBucketResponse> {
+         Function<ListContainerResponse<? extends StorageMetadata>, ListBucketResponse> {
    private final BlobToObjectMetadata blob2ObjectMd;
 
    @Inject
@@ -50,33 +50,33 @@ public class ResourceToBucketList implements
       this.blob2ObjectMd = blob2ObjectMd;
    }
 
-   public ListBucketResponse apply(ListContainerResponse<? extends ResourceMetadata> list) {
+   public ListBucketResponse apply(ListContainerResponse<? extends StorageMetadata> list) {
 
       Iterable<ObjectMetadata> contents = Iterables.transform(Iterables.filter(
-               list, new Predicate<ResourceMetadata>() {
+               list, new Predicate<StorageMetadata>() {
 
-                  public boolean apply(ResourceMetadata input) {
-                     return input.getType() == ResourceType.BLOB;
+                  public boolean apply(StorageMetadata input) {
+                     return input.getType() == StorageType.BLOB;
                   }
 
-               }), new Function<ResourceMetadata, ObjectMetadata>() {
+               }), new Function<StorageMetadata, ObjectMetadata>() {
 
-         public MutableObjectMetadata apply(ResourceMetadata from) {
+         public MutableObjectMetadata apply(StorageMetadata from) {
             return blob2ObjectMd.apply((BlobMetadata) from);
          }
 
       });
 
       SortedSet<String> commonPrefixes = Sets.newTreeSet(Iterables.transform(Iterables.filter(list,
-               new Predicate<ResourceMetadata>() {
+               new Predicate<StorageMetadata>() {
 
-                  public boolean apply(ResourceMetadata input) {
-                     return input.getType() == ResourceType.RELATIVE_PATH;
+                  public boolean apply(StorageMetadata input) {
+                     return input.getType() == StorageType.RELATIVE_PATH;
                   }
 
-               }), new Function<ResourceMetadata, String>() {
+               }), new Function<StorageMetadata, String>() {
 
-         public String apply(ResourceMetadata from) {
+         public String apply(StorageMetadata from) {
             return from.getName();
          }
 

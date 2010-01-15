@@ -30,6 +30,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.binders.BindACLToXMLPayload;
 import org.jclouds.aws.s3.binders.BindBucketLoggingToXmlPayload;
 import org.jclouds.aws.s3.binders.BindNoBucketLoggingToXmlPayload;
@@ -42,8 +43,8 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
+import org.jclouds.aws.s3.functions.BindRegionToXmlPayload;
 import org.jclouds.aws.s3.functions.ObjectKey;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
@@ -150,13 +151,14 @@ public interface S3AsyncClient {
             PutObjectOptions... options);
 
    /**
-    * @see S3Client#putBucketIfNotExists
+    * @see S3Client#putBucketInRegion
     */
    @PUT
    @Path("/")
    @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
-   ListenableFuture<Boolean> putBucketIfNotExists(@HostPrefixParam String bucketName,
-            PutBucketOptions... options);
+   ListenableFuture<Boolean> putBucketInRegion(//TODO endpoint based on region
+            @BinderParam(BindRegionToXmlPayload.class) Region region,
+            @HostPrefixParam String bucketName, PutBucketOptions... options);
 
    /**
     * @see S3Client#deleteBucketIfEmpty
@@ -182,7 +184,7 @@ public interface S3AsyncClient {
    @QueryParams(keys = "location")
    @Path("/")
    @XMLResponseParser(LocationConstraintHandler.class)
-   ListenableFuture<LocationConstraint> getBucketLocation(@HostPrefixParam String bucketName);
+   ListenableFuture<Region> getBucketLocation(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#getBucketPayer

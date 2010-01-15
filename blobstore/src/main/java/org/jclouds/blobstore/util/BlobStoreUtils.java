@@ -26,7 +26,7 @@ import java.io.InputStream;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.util.Utils;
 
 /**
@@ -36,7 +36,7 @@ import org.jclouds.util.Utils;
  */
 public class BlobStoreUtils {
 
-   public static Blob newBlob(BlobStore blobStore, ResourceMetadata blobMeta) {
+   public static Blob newBlob(BlobStore blobStore, StorageMetadata blobMeta) {
       Blob blob = blobStore.newBlob(blobMeta.getName());
       if (blobMeta instanceof BlobMetadata) {
          blob.getMetadata().setContentMD5(((BlobMetadata) blobMeta).getContentMD5());
@@ -46,6 +46,7 @@ public class BlobStoreUtils {
       blob.getMetadata().setId(blobMeta.getId());
       blob.getMetadata().setLastModified(blobMeta.getLastModified());
       blob.getMetadata().setLocation(blobMeta.getLocation());
+      blob.getMetadata().setUri(blobMeta.getUri());
       blob.getMetadata().setUserMetadata(blobMeta.getUserMetadata());
       return blob;
    }

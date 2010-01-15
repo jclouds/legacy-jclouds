@@ -68,7 +68,7 @@ public interface SQSAsyncClient {
             ListQueuesOptions... options);
 
    /**
-    * @see SQSClient#createQueuesInRegion
+    * @see SQSClient#createQueueInRegion
     */
    @POST
    @Path("/")

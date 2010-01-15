@@ -27,8 +27,8 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
@@ -60,11 +60,11 @@ public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
 
    public SortedSet<? extends BlobMetadata> execute(String container, ListContainerOptions options) {
       try {
-         ListResponse<? extends ResourceMetadata> resources = connection.list(container, options)
+         ListResponse<? extends StorageMetadata> resources = connection.list(container, options)
                   .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          SortedSet<BlobMetadata> blobM = Sets.newTreeSet();
-         for (ResourceMetadata from : resources) {
-            if (from.getType() == ResourceType.BLOB)
+         for (StorageMetadata from : resources) {
+            if (from.getType() == StorageType.BLOB)
                blobM.add((BlobMetadata) from);
          }
          return blobM;

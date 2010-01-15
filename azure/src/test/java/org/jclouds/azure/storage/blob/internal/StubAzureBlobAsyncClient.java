@@ -96,7 +96,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
 
    public ListenableFuture<Boolean> createContainer(String container,
             CreateContainerOptions... options) {
-      return blobStore.createContainer(container);
+      return blobStore.createContainerInLocation("default", container);
    }
 
    public ListenableFuture<Boolean> createRootContainer(CreateContainerOptions... options) {
@@ -118,8 +118,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
 
    public ListenableFuture<AzureBlob> getBlob(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return compose(blobStore.getBlob(container, key, getOptions),
-               blob2Object);
+      return compose(blobStore.getBlob(container, key, getOptions), blob2Object);
    }
 
    public ListenableFuture<BlobProperties> getBlobProperties(String container, String key) {

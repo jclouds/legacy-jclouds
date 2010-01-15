@@ -20,8 +20,8 @@ package org.jclouds.blobstore.integration.internal;
 
 import java.util.SortedSet;
 
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -32,8 +32,8 @@ public class BaseServiceIntegrationTest<A, S> extends BaseBlobStoreIntegrationTe
 
    @Test(groups = { "integration", "live" })
    void containerDoesntExist() {
-      SortedSet<? extends ResourceMetadata> list = context.getBlobStore().list();
-      assert !list.contains(new MutableResourceMetadataImpl());
+      SortedSet<? extends StorageMetadata> list = context.getBlobStore().list();
+      assert !list.contains(new MutableStorageMetadataImpl());
    }
 
 }

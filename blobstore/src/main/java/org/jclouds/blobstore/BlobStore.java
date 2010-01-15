@@ -22,7 +22,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 
@@ -38,7 +38,7 @@ public interface BlobStore {
    /**
     * Lists all root-level resources available to the account.
     */
-   ListResponse<? extends ResourceMetadata> list();
+   ListResponse<? extends StorageMetadata> list();
 
    /**
     * Lists all resources available at the specified path. Note that path may be a container, or a
@@ -47,14 +47,14 @@ public interface BlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
-   ListContainerResponse<? extends ResourceMetadata> list(String container,
+   ListContainerResponse<? extends StorageMetadata> list(String container,
             ListContainerOptions... options);
 
    boolean containerExists(String container);
 
    boolean directoryExists(String container, String directory);
 
-   boolean createContainer(String container);
+   boolean createContainerInLocation(String location, String container);
 
    void createDirectory(String container, String directory);
 

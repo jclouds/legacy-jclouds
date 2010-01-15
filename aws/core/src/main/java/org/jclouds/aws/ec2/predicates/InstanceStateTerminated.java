@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.predicates;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
@@ -53,14 +52,14 @@ public class InstanceStateTerminated implements Predicate<RunningInstance> {
    public boolean apply(RunningInstance instance) {
       logger.trace("looking for state on instance %s", instance);
 
-      instance = refresh(instance.getId());
+      instance = refresh(instance);
       logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(),
                InstanceState.TERMINATED, instance.getInstanceState());
       return instance.getInstanceState() == InstanceState.TERMINATED;
    }
 
-   private RunningInstance refresh(String instanceId) {
-      return Iterables.getLast(Iterables.getLast(
-               client.describeInstancesInRegion(Region.DEFAULT, instanceId)).getRunningInstances());
+   private RunningInstance refresh(RunningInstance instance) {
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.describeInstancesInRegion(
+               instance.getRegion(), instance.getId())));
    }
 }

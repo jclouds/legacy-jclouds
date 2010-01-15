@@ -32,7 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.atmosonline.saas.binders.BindAtmosObjectToPayloadAndMetadataToHeaders;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
-import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
@@ -84,7 +84,7 @@ public interface AtmosStorageAsyncClient {
    @Path("/rest/namespace")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @Consumes(MediaType.TEXT_XML)
-   ListenableFuture<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectories(
+   ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> listDirectories(
             ListOptions... options);
 
    /**
@@ -95,7 +95,7 @@ public interface AtmosStorageAsyncClient {
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Consumes(MediaType.TEXT_XML)
-   ListenableFuture<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectory(
+   ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> listDirectory(
             @PathParam("directoryName") String directoryName, ListOptions... options);
 
    /**

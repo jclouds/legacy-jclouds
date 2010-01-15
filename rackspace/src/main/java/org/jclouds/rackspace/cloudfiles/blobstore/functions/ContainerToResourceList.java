@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
@@ -35,7 +35,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class ContainerToResourceList implements
-         Function<ListContainerResponse<ObjectInfo>, ListContainerResponse<? extends ResourceMetadata>> {
+         Function<ListContainerResponse<ObjectInfo>, ListContainerResponse<? extends StorageMetadata>> {
    private final ObjectToBlobMetadata object2blobMd;
 
    @Inject
@@ -43,10 +43,10 @@ public class ContainerToResourceList implements
       this.object2blobMd = object2blobMd;
    }
 
-   public ListContainerResponse<? extends ResourceMetadata> apply(ListContainerResponse<ObjectInfo> from) {
-      return new ListContainerResponseImpl<ResourceMetadata>(Iterables.transform(Iterables.transform(from,
-               object2blobMd), new Function<BlobMetadata, ResourceMetadata>() {
-         public ResourceMetadata apply(BlobMetadata arg0) {
+   public ListContainerResponse<? extends StorageMetadata> apply(ListContainerResponse<ObjectInfo> from) {
+      return new ListContainerResponseImpl<StorageMetadata>(Iterables.transform(Iterables.transform(from,
+               object2blobMd), new Function<BlobMetadata, StorageMetadata>() {
+         public StorageMetadata apply(BlobMetadata arg0) {
             return arg0;
          }
       }), from.getPath(), from.getMarker(), from.getMaxResults(), from.isTruncated());

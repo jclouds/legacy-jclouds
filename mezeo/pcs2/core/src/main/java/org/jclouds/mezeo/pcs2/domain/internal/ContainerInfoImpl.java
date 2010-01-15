@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.domain.internal;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.ContainerInfo;
 
 /**
@@ -35,7 +35,7 @@ public class ContainerInfoImpl extends ResourceInfoImpl implements ContainerInfo
    public ContainerInfoImpl(URI url, String name, Date created, boolean inProject, Date modified,
             String owner, int version, boolean shared, Date accessed, long bytes, URI contents,
             URI tags, URI metadata, URI parent) {
-      super(ResourceType.FOLDER, url, name, created, inProject, modified, owner, version, shared,
+      super(StorageType.FOLDER, url, name, created, inProject, modified, owner, version, shared,
                accessed, bytes, tags, metadata, parent);
       this.contents = contents;
    }

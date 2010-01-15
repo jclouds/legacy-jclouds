@@ -26,7 +26,7 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public interface NodeMetadata extends NodeIdentity {
+public interface NodeMetadata extends ComputeMetadata {
    NodeState getState();
 
    SortedSet<InetAddress> getPublicAddresses();

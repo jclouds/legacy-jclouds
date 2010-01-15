@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 import org.jclouds.encryption.EncryptionService;
@@ -58,11 +58,11 @@ public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMet
          to.setSize(from.getBytes());
       if (from.getLastModified() != null)
          to.setLastModified(from.getLastModified());
-      to.setType(ResourceType.BLOB);
+      to.setType(StorageType.BLOB);
       if (from instanceof MutableObjectInfoWithMetadata)
          to.setUserMetadata(((MutableObjectInfoWithMetadata) from).getMetadata());
       if (isDirectoryStrategy.execute(to)) {
-         to.setType(ResourceType.RELATIVE_PATH);
+         to.setType(StorageType.RELATIVE_PATH);
       }
       return to;
    }

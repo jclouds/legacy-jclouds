@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
-import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
@@ -128,7 +128,7 @@ public class AtmosStorageClientLiveTest {
 
    @Test
    public void testListDirectorys() throws Exception {
-      BoundedSortedSet<? extends DirectoryEntry> response = connection.listDirectories();
+      BoundedSet<? extends DirectoryEntry> response = connection.listDirectories();
       assert null != response;
    }
 
@@ -150,9 +150,9 @@ public class AtmosStorageClientLiveTest {
             throw e;
          }
       }
-      BoundedSortedSet<? extends DirectoryEntry> response = connection.listDirectories();
+      BoundedSet<? extends DirectoryEntry> response = connection.listDirectories();
       for (DirectoryEntry id : response) {
-         BoundedSortedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id
+         BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id
                   .getObjectName());
          assert r2 != null;
       }
@@ -163,7 +163,7 @@ public class AtmosStorageClientLiveTest {
       createOrReplaceObject("object2", "here is my data!", "meta-value1");
       createOrReplaceObject("object3", "here is my data!", "meta-value1");
       createOrReplaceObject("object4", "here is my data!", "meta-value1");
-      BoundedSortedSet<? extends DirectoryEntry> r2 = connection.listDirectory(privateDirectory,
+      BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(privateDirectory,
                ListOptions.Builder.limit(1));
       // test bug exists:
       assertEquals(r2.size(), 3);

@@ -28,7 +28,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(BlobMetadataImpl.class)
-public interface BlobMetadata extends ResourceMetadata {
+public interface BlobMetadata extends StorageMetadata {
 
    /**
     * A standard MIME type describing the format of the contents. If none is provided, the default

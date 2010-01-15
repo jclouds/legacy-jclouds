@@ -25,32 +25,42 @@ import java.util.Map;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
+
+import com.google.inject.internal.Nullable;
 
 /**
  * System and user Metadata for the {@link Blob}.
  * 
  * @author Adrian Cole
  */
-public class BlobMetadataImpl extends ResourceMetadataImpl implements Serializable, BlobMetadata {
+public class BlobMetadataImpl extends StorageMetadataImpl implements Serializable, BlobMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
 
    private final String contentType;
    private final byte[] contentMD5;
 
-   public BlobMetadataImpl(String id, String name, URI location, String eTag, Long size,
-            Date lastModified, Map<String, String> userMetadata, String contentType,
+   public BlobMetadataImpl(String id, String name, @Nullable String location, URI uri, String eTag,
+            Long size, Date lastModified, Map<String, String> userMetadata, String contentType,
             byte[] contentMD5) {
-      super(ResourceType.BLOB, id, name, location, eTag, size, lastModified, userMetadata);
+      super(StorageType.BLOB, id, name, location, uri, eTag, size, lastModified, userMetadata);
       this.contentType = contentType;
       this.contentMD5 = contentMD5;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getContentType() {
       return contentType;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public byte[] getContentMD5() {
       if (contentMD5 != null) {
          byte[] retval = new byte[contentMD5.length];
@@ -61,9 +71,4 @@ public class BlobMetadataImpl extends ResourceMetadataImpl implements Serializab
       }
    }
 
-   public int compareTo(BlobMetadata o) {
-      if (getName() == null)
-         return -1;
-      return (this == o) ? 0 : getName().compareTo(o.getName());
-   }
 }

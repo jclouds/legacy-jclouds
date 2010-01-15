@@ -22,8 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.internal.MutableObjectInfoWithMetadataImpl;
@@ -35,7 +35,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ResourceToObjectInfo implements
-         Function<ResourceMetadata, MutableObjectInfoWithMetadata> {
+         Function<StorageMetadata, MutableObjectInfoWithMetadata> {
    private final EncryptionService encryptionService;
 
    @Inject
@@ -43,12 +43,12 @@ public class ResourceToObjectInfo implements
       this.encryptionService = encryptionService;
    }
 
-   public MutableObjectInfoWithMetadata apply(ResourceMetadata base) {
+   public MutableObjectInfoWithMetadata apply(StorageMetadata base) {
       MutableObjectInfoWithMetadata to = new MutableObjectInfoWithMetadataImpl();
-      if (base.getType() == ResourceType.BLOB) {
+      if (base.getType() == StorageType.BLOB) {
          to.setContentType(((BlobMetadata) base).getContentType());
          to.setHash(((BlobMetadata) base).getContentMD5());
-      } else if (base.getType() == ResourceType.RELATIVE_PATH) {
+      } else if (base.getType() == StorageType.RELATIVE_PATH) {
          to.setContentType("application/directory");
       }
       if (base.getETag() != null && to.getHash() == null)

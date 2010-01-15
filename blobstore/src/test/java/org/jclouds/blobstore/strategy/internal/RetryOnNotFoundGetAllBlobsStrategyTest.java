@@ -67,7 +67,8 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Injector context = new StubBlobStoreContextBuilder().buildInjector();
       GetAllBlobsInListAndRetryOnFailure map = context
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
-      context.getInstance(AsyncBlobStore.class).createContainer("container").get();
+      context.getInstance(AsyncBlobStore.class).createContainerInLocation("default", "container")
+               .get();
 
       ListenableFuture<Blob> futureObject = createMock(ListenableFuture.class);
       Blob object = blobProvider.create(null);
@@ -93,7 +94,8 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Injector context = new StubBlobStoreContextBuilder().buildInjector();
       GetAllBlobsInListAndRetryOnFailure map = context
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
-      context.getInstance(AsyncBlobStore.class).createContainer("container").get();
+      context.getInstance(AsyncBlobStore.class).createContainerInLocation("default", "container")
+               .get();
 
       ListenableFuture<Blob> futureObject = createMock(ListenableFuture.class);
       Blob object = createMock(Blob.class);

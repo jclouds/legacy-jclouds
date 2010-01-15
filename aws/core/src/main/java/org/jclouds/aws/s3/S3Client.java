@@ -22,6 +22,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
@@ -29,7 +30,6 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
@@ -42,8 +42,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides access to S3 via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from S3. Any exceptions incurred during processing
- * will be wrapped in an {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
+ * All commands return a ListenableFuture of the result from S3. Any exceptions incurred during
+ * processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @author Adrian Cole
  * @author James Murty
@@ -78,8 +79,8 @@ public interface S3Client {
     *           namespace of the object you are retrieving
     * @param key
     *           unique key in the s3Bucket identifying the object
-    * @return ListenableFuture reference to a fully populated S3Object including data stored in S3 or
-    *         {@link S3Object#NOT_FOUND} if not present.
+    * @return ListenableFuture reference to a fully populated S3Object including data stored in S3
+    *         or {@link S3Object#NOT_FOUND} if not present.
     * 
     * @throws org.jclouds.http.HttpResponseException
     *            if the conditions requested set were not satisfied by the object on the server.
@@ -181,7 +182,7 @@ public interface S3Client {
     *      />
     * 
     */
-   boolean putBucketIfNotExists(String bucketName, PutBucketOptions... options);
+   boolean putBucketInRegion(Region region, String bucketName, PutBucketOptions... options);
 
    /**
     * Deletes the bucket, if it is empty.
@@ -217,8 +218,8 @@ public interface S3Client {
     * 
     * @param bucketName
     *           namespace of the objects you wish to list
-    * @return ListenableFuture reference to a fully populated S3Bucket including metadata of the S3Objects it
-    *         contains or {@link BoundedList<ObjectMetadata>#NOT_FOUND} if not present.
+    * @return ListenableFuture reference to a fully populated S3Bucket including metadata of the
+    *         S3Objects it contains or {@link BoundedList<ObjectMetadata>#NOT_FOUND} if not present.
     * @see ListBucketOptions
     * 
     * @see <a
@@ -344,7 +345,7 @@ public interface S3Client {
     *      "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTBucketLocationGET.html"
     *      />
     */
-   LocationConstraint getBucketLocation(String bucketName);
+   Region getBucketLocation(String bucketName);
 
    /**
     * A GET request operation on a requestPayment resource returns the request payment configuration

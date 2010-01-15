@@ -18,6 +18,9 @@
  */
 package org.jclouds.vcloud.terremark.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
@@ -28,13 +31,15 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.NodeIdentity;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -46,9 +51,7 @@ import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.internal.ImmutableSet;
 
@@ -61,7 +64,7 @@ public class TerremarkVCloudComputeService implements ComputeService {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final TerremarkVCloudComputeClient computeClient;
-   private final TerremarkVCloudClient tmClient;
+   private final TerremarkVCloudClient client;
 
    private static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
             .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
@@ -72,54 +75,65 @@ public class TerremarkVCloudComputeService implements ComputeService {
    @Inject
    public TerremarkVCloudComputeService(TerremarkVCloudClient tmClient,
             TerremarkVCloudComputeClient computeClient) {
-      this.tmClient = tmClient;
+      this.client = tmClient;
       this.computeClient = computeClient;
    }
 
    @Override
-   public CreateNodeResponse createNode(String name, Profile profile, Image image) {
+   public CreateNodeResponse startNodeInLocation(String location, String name, Profile profile,
+            Image image) {
+      if (checkNotNull(location, "location").equalsIgnoreCase("default"))
+         location = client.getDefaultVDC().getId();
       String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
-      VApp vApp = tmClient.getVApp(id);
+      VApp vApp = client.getVApp(id);
       InetAddress publicIp = computeClient
                .createPublicAddressMappedToPorts(vApp, 22, 80, 8080, 443);
-      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState
-               .get(vApp.getStatus()), ImmutableSet.<InetAddress> of(publicIp), vApp
-               .getNetworkToAddresses().values(), 22, LoginType.SSH, new Credentials("vcloud",
-               "p4ssw0rd"), ImmutableMap.<String, String> of());
+      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), location, vApp.getLocation(),
+               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
+               ImmutableSet.<InetAddress> of(publicIp), vApp.getNetworkToAddresses().values(), 22,
+               LoginType.SSH, new Credentials("vcloud", "p4ssw0rd"), ImmutableMap
+                        .<String, String> of());
    }
 
    @Override
-   public NodeMetadata getNodeMetadata(String id) {
-      VApp vApp = tmClient.getVApp(id);
-      Set<InetAddress> publicAddresses = computeClient.getPublicAddresses(id);
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vAppStatusToNodeState.get(vApp
-               .getStatus()), publicAddresses, vApp.getNetworkToAddresses().values(), 22,
-               LoginType.SSH, ImmutableMap.<String, String> of());
+   public NodeMetadata getNodeMetadata(ComputeMetadata node) {
+      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
+               + node.getType());
+      return getNodeMetadataByIdInVDC(checkNotNull(node.getLocation(), "location"), checkNotNull(node.getId(),
+               "node.id"));
+   }
+
+   private NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
+      VApp vApp = client.getVApp(id);
+      Set<InetAddress> publicAddresses = computeClient.getPublicAddresses(vApp.getId());
+      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
+               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
+               publicAddresses, vApp.getNetworkToAddresses().values(), 22, LoginType.SSH,
+               ImmutableMap.<String, String> of());
    }
 
    @Override
-   public Set<NodeIdentity> getNodeByName(final String name) {
-      return Sets.newHashSet(Iterables.filter(listNodes(), new Predicate<NodeIdentity>() {
-         @Override
-         public boolean apply(NodeIdentity input) {
-            return input.getName().equalsIgnoreCase(name);
-         }
-      }));
-   }
-
-   @Override
-   public Set<NodeIdentity> listNodes() {
-      Set<NodeIdentity> nodes = Sets.newHashSet();
-      for (NamedResource resource : tmClient.getDefaultVDC().getResourceEntities().values()) {
-         if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-            nodes.add(getNodeMetadata(resource.getId()));
+   public Set<ComputeMetadata> listNodes() {
+      Set<ComputeMetadata> nodes = Sets.newHashSet();
+      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
+         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+            if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
+               nodes.add(getNodeMetadataByIdInVDC(vdc.getId(), resource.getId()));
+            }
          }
       }
       return nodes;
    }
 
    @Override
-   public void destroyNode(String id) {
-      computeClient.stop(id);
+   public void destroyNode(ComputeMetadata node) {
+      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
+               + node.getType());
+      computeClient.stop(checkNotNull(node.getId(), "node.id"));
+   }
+
+   @Override
+   public Map<String, Size> getSizes() {
+      return null;// TODO
    }
 }

@@ -22,9 +22,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
-import org.jclouds.atmosonline.saas.domain.internal.BoundedTreeSet;
+import org.jclouds.atmosonline.saas.domain.internal.BoundedHashSet;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.atmosonline.saas.xml.ListDirectoryResponseHandler;
 import org.jclouds.http.HttpResponse;
@@ -34,13 +34,13 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import com.google.common.base.Function;
 
 /**
- * This parses {@link BoundedSortedSet} from HTTP headers and xml content.
+ * This parses {@link BoundedSet} from HTTP headers and xml content.
  * 
  * @author Adrian Cole
  */
 @Singleton
 public class ParseDirectoryListFromContentAndHeaders implements
-         Function<HttpResponse, BoundedSortedSet<DirectoryEntry>> {
+         Function<HttpResponse, BoundedSet<DirectoryEntry>> {
 
    private final ParseSax.Factory factory;
    private final Provider<ListDirectoryResponseHandler> listHandlerProvider;
@@ -53,11 +53,11 @@ public class ParseDirectoryListFromContentAndHeaders implements
    }
 
    /**
-    * parses the http response headers to create a new {@link BoundedSortedSet} object.
+    * parses the http response headers to create a new {@link BoundedSet} object.
     */
-   public BoundedSortedSet<DirectoryEntry> apply(HttpResponse from) {
+   public BoundedSet<DirectoryEntry> apply(HttpResponse from) {
       String token = from.getFirstHeaderOrNull(AtmosStorageHeaders.TOKEN);
-      return new BoundedTreeSet<DirectoryEntry>(factory.create(listHandlerProvider.get()).parse(
+      return new BoundedHashSet<DirectoryEntry>(factory.create(listHandlerProvider.get()).parse(
                from.getContent()), token);
    }
 }

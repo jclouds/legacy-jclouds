@@ -21,7 +21,7 @@ package org.jclouds.mezeo.pcs2.domain;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.mezeo.pcs2.domain.internal.ResourceInfoImpl;
 
 import com.google.inject.ImplementedBy;
@@ -33,7 +33,7 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(ResourceInfoImpl.class)
 public interface ResourceInfo extends Comparable<ResourceInfo> {
-   ResourceType getType();
+   StorageType getType();
 
    URI getUrl();
 

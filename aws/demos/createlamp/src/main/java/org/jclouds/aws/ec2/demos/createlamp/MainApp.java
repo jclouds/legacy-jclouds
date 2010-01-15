@@ -174,7 +174,7 @@ public class MainApp {
                         .withSecurityGroup(securityGroupName) // group I created above
                         .withUserData(script.getBytes())); // script to run as root
 
-      return Iterables.getOnlyElement(reservation.getRunningInstances());
+      return Iterables.getOnlyElement(reservation);
 
    }
 
@@ -217,7 +217,7 @@ public class MainApp {
                Region.DEFAULT, instanceId); // last parameter (ids) narrows the search
 
       // since we refined by instanceId there should only be one instance
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations).getRunningInstances());
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
    }
 
    private static RunningInstance findInstanceByKeyName(EC2Client client, final String keyName) {
@@ -228,7 +228,7 @@ public class MainApp {
       // extract all the instances from all reservations
       Set<RunningInstance> allInstances = Sets.newHashSet();
       for (Reservation reservation : reservations) {
-         allInstances.addAll(reservation.getRunningInstances());
+         allInstances.addAll(reservation);
       }
 
       // get the first one that has a keyname matching what I just created
