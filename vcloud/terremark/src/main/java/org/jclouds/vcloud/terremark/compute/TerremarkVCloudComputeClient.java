@@ -70,7 +70,7 @@ public class TerremarkVCloudComputeClient {
 
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
             Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
-            Image.UBUNTU_JEOS_90, "11").build();
+            Image.UBUNTU_JEOS_90, "11").put(Image.WEBAPPVM_93, "29").build();
 
    public String start(String name, Image image, int minCores, int minMegs,
             Map<String, String> properties) {
