@@ -155,7 +155,7 @@ public class TerremarkVCloudComputeClientLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       Injector injector = new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
-               account, key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule(),
+               account, key).build()).withModules(new Log4JLoggingModule(),
                new JschSshClientModule()).buildInjector();
       client = injector.getInstance(TerremarkVCloudComputeClient.class);
       tmClient = injector.getInstance(TerremarkVCloudClient.class);

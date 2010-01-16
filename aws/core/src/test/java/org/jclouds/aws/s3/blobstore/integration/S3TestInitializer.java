@@ -18,17 +18,20 @@
  */
 package org.jclouds.aws.s3.blobstore.integration;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -37,12 +40,14 @@ import com.google.inject.Module;
  */
 public class S3TestInitializer extends BaseTestInitializer<S3AsyncClient, S3Client> {
 
+   @SuppressWarnings("unchecked")
    @Override
    protected BlobStoreContext<S3AsyncClient, S3Client> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key) {
+            Module configurationModule, String url, String app, String account, String key) throws IOException {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(account, key)
-               .build()).withModules(configurationModule, new Log4JLoggingModule()).buildContext();
+      return (BlobStoreContext<S3AsyncClient, S3Client>) new BlobStoreContextFactory()
+               .createContext("s3", account, key, ImmutableSet.of(configurationModule,
+                        new Log4JLoggingModule()), new Properties());
    }
 
    @Override

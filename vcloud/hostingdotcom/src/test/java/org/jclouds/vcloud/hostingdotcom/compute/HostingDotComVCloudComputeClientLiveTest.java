@@ -148,7 +148,7 @@ public class HostingDotComVCloudComputeClientLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       Injector injector = new HostingDotComVCloudContextBuilder(
-               new HostingDotComVCloudPropertiesBuilder(account, key).relaxSSLHostname().build())
+               new HostingDotComVCloudPropertiesBuilder(account, key).build())
                .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(HostingDotComVCloudComputeClient.class);
       hostingClient = injector.getInstance(HostingDotComVCloudClient.class);

@@ -28,6 +28,7 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -79,7 +80,7 @@ public class RimuHostingComputeServiceLiveTest {
    public void setupClient() throws IOException {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new ComputeServiceContextFactory().createContext("rimuhosting", key, key,
-               ImmutableSet.of(new Log4JLoggingModule()));
+               ImmutableSet.of(new Log4JLoggingModule()), new Properties());
       Injector injector = Guice.createInjector(new JschSshClientModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

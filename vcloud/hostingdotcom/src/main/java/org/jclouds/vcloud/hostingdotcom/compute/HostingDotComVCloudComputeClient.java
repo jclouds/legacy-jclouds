@@ -58,9 +58,21 @@ public class HostingDotComVCloudComputeClient {
    }
 
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "3").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
-            Image.UBUNTU_JEOS_90, "11").build();
+            Image.CENTOS_53, "3").build();
 
+//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/1"
+//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+//        name="Plesk (Linux) 64-bit Template" />
+//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2"
+//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+//        name="Windows 2008 Datacenter 64 Bit Template" />
+//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"
+//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+//        name="Cent OS 64 Bit Template" />
+//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/4"
+//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+//        name="cPanel (Linux) 64 Bit Template" />
+      
    public Map<String, String> start(String name, Image image, int minCores, int minMegs,
             long diskSize, Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);

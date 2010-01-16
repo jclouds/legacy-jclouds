@@ -18,91 +18,39 @@
  */
 package org.jclouds.blobstore;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.IOException;
-import java.net.URI;
 import java.util.Properties;
 
 import javax.inject.Inject;
 
-import org.jclouds.domain.Credentials;
-import org.jclouds.http.HttpPropertiesBuilder;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Resources;
-import com.google.inject.Module;
+import org.jclouds.rest.RestContextFactory;
 
 /**
+ * Helper class to instantiate {@code BlobStoreContext} instances.
  * 
  * @author Adrian Cole
  */
-public class BlobStoreContextFactory {
-   private final Properties properties;
+public class BlobStoreContextFactory extends
+         RestContextFactory<BlobStoreContext<?, ?>, BlobStoreContextBuilder<?, ?>> {
 
+   /**
+    * Initializes with the default properties built-in to jclouds. This is typically stored in the
+    * classpath resource {@code blobstore.properties}
+    * 
+    * @throws IOException
+    *            if the default properties file cannot be loaded
+    * @see #init
+    */
    public BlobStoreContextFactory() throws IOException {
-      this(init());
+      super("blobstore.properties");
    }
 
-   static Properties init() throws IOException {
-      Properties properties = new Properties();
-      properties.load(Resources.newInputStreamSupplier(
-               Resources.getResource("blobstore.properties")).getInput());
-      return properties;
-   }
-
+   /**
+    * 
+    * Initializes the {@code BlobStoreContext) definitions from the specified properties.
+    */
    @Inject
    public BlobStoreContextFactory(Properties properties) {
-      this.properties = properties;
-   }
-
-   public BlobStoreContext<?, ?> createContext(URI blobStore, Iterable<? extends Module> modules) {
-      return createContext(blobStore, Credentials.parse(blobStore), modules);
-   }
-
-   public BlobStoreContext<?, ?> createContext(URI blobStore) {
-      return createContext(blobStore, ImmutableSet.<Module> of());
-   }
-
-   public BlobStoreContext<?, ?> createContext(URI blobStore, Credentials creds,
-            Iterable<? extends Module> modules) {
-      return createContext(checkNotNull(blobStore.getHost(), "host"), checkNotNull(creds.account,
-               "account"), creds.key, modules);
-   }
-
-   public BlobStoreContext<?, ?> createContext(URI blobStore, Credentials creds) {
-      return createContext(blobStore, creds, ImmutableSet.<Module> of());
-   }
-
-   public BlobStoreContext<?, ?> createContext(String hint, String account, String key) {
-      return createContext(hint, account, key, ImmutableSet.<Module> of());
-   }
-
-   @SuppressWarnings("unchecked")
-   public BlobStoreContext<?, ?> createContext(String hint, String account, String key,
-            Iterable<? extends Module> modules) {
-      checkNotNull(hint, "hint");
-      checkNotNull(account, "account");
-      String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
-      String propertiesBuilderClassName = checkNotNull(
-               properties.getProperty(propertiesBuilderKey), hint + " service not supported");
-
-      String contextBuilderKey = String.format("%s.contextbuilder", hint);
-      String contextBuilderClassName = checkNotNull(properties.getProperty(contextBuilderKey),
-               contextBuilderKey);
-
-      try {
-         Class<HttpPropertiesBuilder> propertiesBuilderClass = (Class<HttpPropertiesBuilder>) Class
-                  .forName(propertiesBuilderClassName);
-         Class<BlobStoreContextBuilder<?, ?>> contextBuilderClass = (Class<BlobStoreContextBuilder<?, ?>>) Class
-                  .forName(contextBuilderClassName);
-         HttpPropertiesBuilder builder = propertiesBuilderClass.getConstructor(String.class,
-                  String.class).newInstance(account, key);
-         return contextBuilderClass.getConstructor(Properties.class).newInstance(builder.build())
-                  .withModules(Iterables.toArray(modules, Module.class)).buildContext();
-      } catch (Exception e) {
-         throw new RuntimeException("error instantiating " + contextBuilderClassName, e);
-      }
+      super(properties);
    }
 }

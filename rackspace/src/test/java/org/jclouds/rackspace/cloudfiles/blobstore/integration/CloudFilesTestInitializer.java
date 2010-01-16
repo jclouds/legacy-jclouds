@@ -18,17 +18,20 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
-import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -38,12 +41,14 @@ import com.google.inject.Module;
 public class CloudFilesTestInitializer extends
          BaseTestInitializer<CloudFilesAsyncClient, CloudFilesClient> {
 
+   @SuppressWarnings("unchecked")
    @Override
    protected BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key) {
-      return new CloudFilesBlobStoreContextBuilder(new CloudFilesPropertiesBuilder(account, key)
-               .relaxSSLHostname().build()).withModules(configurationModule,
-               new Log4JLoggingModule()).buildContext();
+            Module configurationModule, String url, String app, String account, String key)
+            throws IOException {
+      return (BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient>) new BlobStoreContextFactory()
+               .createContext("cloudfiles", account, key, ImmutableSet.of(configurationModule,
+                        new Log4JLoggingModule()), new Properties());
    }
 
    @Override

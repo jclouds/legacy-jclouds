@@ -71,13 +71,62 @@ public interface BlobStore {
     * @param container
     */
    void clearContainer(String container);
-
+   
+   /**
+    * Adds a {@code Blob} representing the data at location {@code container/blob.metadata.name}
+    * 
+    * @param container
+    *           container to place the blob.
+    * @param blob
+    *           fully qualified name relative to the container.
+    * @param options
+    *           byte range or condition options
+    * @return etag of the blob you uploaded, possibly null where etags are unsupported
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
    String putBlob(String container, Blob blob);
 
-   Blob getBlob(String container, String key, GetOptions... options);
+   /**
+    * Retrieves a {@code Blob} representing the data at location {@code container/name}
+    * 
+    * @param container
+    *           container where this exists.
+    * @param name
+    *           fully qualified name relative to the container.
+    * @param options
+    *           byte range or condition options
+    * @return the blob you intended to receive.
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    * @throws KeyNotFoundException
+    *            if the container doesn't exist
+    */
+   Blob getBlob(String container, String name, GetOptions... options);
 
-   BlobMetadata blobMetadata(String container, String key);
+   /**
+    * Retrieves the metadata of a {@code Blob} at location {@code container/name}
+    * 
+    * @param container
+    *           container where this exists.
+    * @param name
+    *           fully qualified name relative to the container.
+    * @return null if name isn't present or the blob you intended to receive.
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
+   BlobMetadata blobMetadata(String container, String name);
 
-   void removeBlob(String container, String key);
+   /**
+    * Deletes a {@code Blob} representing the data at location {@code container/name}
+    * 
+    * @param container
+    *           container where this exists.
+    * @param name
+    *           fully qualified name relative to the container.
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
+   void removeBlob(String container, String name);
 
 }

@@ -18,16 +18,19 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
-import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
-import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextFactory;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -37,12 +40,14 @@ import com.google.inject.Module;
 public class AzureBlobTestInitializer extends
          BaseTestInitializer<AzureBlobAsyncClient, AzureBlobClient> {
 
+   @SuppressWarnings("unchecked")
    @Override
    protected BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key) {
-      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(account, key)
-               .relaxSSLHostname().build()).withModules(configurationModule,
-               new Log4JLoggingModule()).buildContext();
+            Module configurationModule, String url, String app, String account, String key)
+            throws IOException {
+      return (BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>) new BlobStoreContextFactory()
+               .createContext("azureblob", account, key, ImmutableSet.of(configurationModule,
+                        new Log4JLoggingModule()), new Properties());
    }
 
    @Override

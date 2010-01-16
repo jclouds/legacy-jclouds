@@ -48,7 +48,6 @@ import org.jclouds.aws.s3.functions.BindRegionToXmlPayload;
 import org.jclouds.aws.s3.functions.ObjectKey;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.aws.s3.functions.ReturnFalseOn404OrSSLHandshakeException;
 import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
 import org.jclouds.aws.s3.functions.ReturnTrueOn404FalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
@@ -69,6 +68,7 @@ import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
+import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -156,7 +156,8 @@ public interface S3AsyncClient {
    @PUT
    @Path("/")
    @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
-   ListenableFuture<Boolean> putBucketInRegion(//TODO endpoint based on region
+   ListenableFuture<Boolean> putBucketInRegion(
+            // TODO endpoint based on region
             @BinderParam(BindRegionToXmlPayload.class) Region region,
             @HostPrefixParam String bucketName, PutBucketOptions... options);
 
@@ -174,7 +175,7 @@ public interface S3AsyncClient {
    @HEAD
    @Path("/")
    @QueryParams(keys = "max-keys", values = "0")
-   @ExceptionParser(ReturnFalseOn404OrSSLHandshakeException.class)
+   @ExceptionParser(ReturnFalseOn404.class)
    ListenableFuture<Boolean> bucketExists(@HostPrefixParam String bucketName);
 
    /**

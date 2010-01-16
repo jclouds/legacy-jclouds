@@ -48,7 +48,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.Files;
-import com.google.common.io.Resources;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 
@@ -74,28 +73,41 @@ public class ComputeTask extends Task {
 
    };
 
+   /**
+    * we don't have a reference to the project during the constructor, so we need to defer expansion
+    * with a Provider.
+    */
+   private static Provider<Properties> defaultPropertiesProvider = new Provider<Properties>() {
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public Properties get() {
+         Properties props = new Properties();
+         props.putAll(project.getProperties());
+         return props;
+      }
+
+   };
+
    public ComputeTask(Map<URI, ComputeServiceContext<?, ?>> computeMap) {
       this.computeMap = computeMap;
    }
 
    public ComputeTask() throws IOException {
-      this(buildComputeMap(loadDefaultProperties()));
+      this(buildComputeMap());
    }
 
-   static Properties loadDefaultProperties() throws IOException {
-      Properties properties = new Properties();
-      properties.load(Resources.newInputStreamSupplier(Resources.getResource("compute.properties"))
-               .getInput());
-      return properties;
-   }
-
-   static Map<URI, ComputeServiceContext<?, ?>> buildComputeMap(final Properties props) {
+   static Map<URI, ComputeServiceContext<?, ?>> buildComputeMap() {
       return new MapMaker().makeComputingMap(new Function<URI, ComputeServiceContext<?, ?>>() {
 
          @Override
          public ComputeServiceContext<?, ?> apply(URI from) {
-            return new ComputeServiceContextFactory(props).createContext(from,
-                     defaultModulesProvider.get());
+            try {
+               return new ComputeServiceContextFactory().createContext(from, defaultModulesProvider
+                        .get(), defaultPropertiesProvider.get());
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            }
          }
 
       });

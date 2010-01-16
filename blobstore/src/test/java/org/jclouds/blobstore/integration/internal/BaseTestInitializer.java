@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import java.io.IOException;
+
 import org.jclouds.blobstore.BlobStoreContext;
 import org.testng.ITestContext;
 
@@ -49,5 +51,5 @@ public abstract class BaseTestInitializer<A, S> {
    protected abstract BlobStoreContext<A, S> createStubContext();
 
    protected abstract BlobStoreContext<A, S> createLiveContext(Module configurationModule,
-            String url, String app, String account, String key);
+            String url, String app, String account, String key) throws IOException;
 }

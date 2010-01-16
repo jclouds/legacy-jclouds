@@ -24,6 +24,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -74,7 +75,7 @@ public class EC2ComputeServiceLiveTest {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new ComputeServiceContextFactory().createContext("ec2", user, password,
-               ImmutableSet.of(new Log4JLoggingModule()));
+               ImmutableSet.of(new Log4JLoggingModule()), new Properties());
       Injector injector = Guice.createInjector(new JschSshClientModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

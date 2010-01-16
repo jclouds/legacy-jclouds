@@ -146,7 +146,7 @@ public class VCloudComputeClientLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       Injector injector = new VCloudContextBuilder(new VCloudPropertiesBuilder(
-               URI.create(endpoint), account, key).relaxSSLHostname().build()).withModules(
+               URI.create(endpoint), account, key).build()).withModules(
                new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(VCloudComputeClient.class);
       tmClient = injector.getInstance(VCloudClient.class);

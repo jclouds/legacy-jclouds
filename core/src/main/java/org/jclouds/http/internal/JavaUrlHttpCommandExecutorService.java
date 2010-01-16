@@ -62,12 +62,13 @@ public class JavaUrlHttpCommandExecutorService extends
    @Named(HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME)
    private boolean relaxHostname = false;
    private final Map<String, String> sslMap;
-         
+
    @Inject(optional = true)
    @Named(HttpConstants.PROPERTY_HTTP_PROXY_SYSTEM)
-   private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? 
-         Boolean.parseBoolean(System.getProperty("java.net.useSystemProxies")) : false;
-         
+   private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? Boolean
+            .parseBoolean(System.getProperty("java.net.useSystemProxies"))
+            : false;
+
    @Inject
    public JavaUrlHttpCommandExecutorService(ExecutorService executorService,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
@@ -120,7 +121,7 @@ public class JavaUrlHttpCommandExecutorService extends
          Proxy proxy = Iterables.getLast(proxies);
          connection = (HttpURLConnection) url.openConnection(proxy);
       } else {
-        connection = (HttpURLConnection) url.openConnection();
+         connection = (HttpURLConnection) url.openConnection();
       }
       if (relaxHostname && connection instanceof HttpsURLConnection) {
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;

@@ -39,7 +39,6 @@ import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.aws.s3.functions.ReturnFalseOn404OrSSLHandshakeException;
 import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
 import org.jclouds.aws.s3.functions.ReturnTrueOn404FalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
@@ -63,6 +62,7 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.GetOptions;
@@ -186,7 +186,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseOn404OrSSLHandshakeException.class);
+      assertExceptionParserClassEquals(method, ReturnFalseOn404.class);
 
       checkFilters(httpMethod);
    }
@@ -379,8 +379,11 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
                Region.EU_WEST_1, "bucket");
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
-      assertHeadersEqual(httpMethod, "Content-Length: 98\nContent-Type: application/unknown\nHost: bucket.stub\n");
-      assertPayloadEquals(httpMethod, "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 98\nContent-Type: application/unknown\nHost: bucket.stub\n");
+      assertPayloadEquals(
+               httpMethod,
+               "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);

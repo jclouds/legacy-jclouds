@@ -18,16 +18,19 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
-import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
-import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextBuilder;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextFactory;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -37,12 +40,14 @@ import com.google.inject.Module;
 public class AtmosStorageTestInitializer extends
          BaseTestInitializer<AtmosStorageAsyncClient, AtmosStorageClient> {
 
+   @SuppressWarnings("unchecked")
    @Override
    protected BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key) {
-      return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder(account, key)
-               .relaxSSLHostname().build()).withModules(configurationModule,
-               new Log4JLoggingModule()).buildContext();
+            Module configurationModule, String url, String app, String account, String key)
+            throws IOException {
+      return (BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient>) new BlobStoreContextFactory()
+               .createContext("atmos", account, key, ImmutableSet.of(configurationModule,
+                        new Log4JLoggingModule()), new Properties());
    }
 
    @Override

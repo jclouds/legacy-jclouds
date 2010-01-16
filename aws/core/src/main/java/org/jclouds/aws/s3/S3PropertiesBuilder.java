@@ -28,6 +28,7 @@ import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERV
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_TIMEOUT;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME;
 
 import java.net.URI;
 import java.util.Properties;
@@ -44,6 +45,7 @@ public class S3PropertiesBuilder extends HttpPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, "true");
       properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_METADATA_PREFIX, "x-amz-meta-");
       properties.setProperty(PROPERTY_S3_SESSIONINTERVAL, "60");
@@ -60,6 +62,7 @@ public class S3PropertiesBuilder extends HttpPropertiesBuilder {
       withCredentials(id, secret);
    }
 
+   @Override
    public S3PropertiesBuilder withCredentials(String id, String secret) {
       properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(id, "awsAccessKeyId"));
       properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(secret,

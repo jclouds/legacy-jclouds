@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Properties;
 
 import org.apache.commons.vfs.Capability;
 import org.apache.commons.vfs.FileName;
@@ -86,8 +87,8 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
                                     .toChar(rootName.getUserName()))), UserAuthenticatorUtils
                            .toString(UserAuthenticatorUtils.getData(authData,
                                     UserAuthenticationData.PASSWORD, UserAuthenticatorUtils
-                                             .toChar(rootName.getPassword())))), modules)
-                  .getBlobStore();
+                                             .toChar(rootName.getPassword())))), modules,
+                  new Properties()).getBlobStore();
       } catch (IOException e) {
          throw new FileSystemException("vfs.provider.blobstore/properties.error", name, e);
       } finally {

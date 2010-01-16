@@ -41,7 +41,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Tests behavior of {@code TerremarkVCloudClient}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "rimuhosting.RimuHostingComputeClientLiveTest")
@@ -50,7 +50,6 @@ public class RimuHostingComputeClientLiveTest {
    RimuHostingClient rhClient;
 
    private Long id;
-
 
    private InetAddress publicIp;
    private Predicate<InetAddress> addressTester;
@@ -78,7 +77,8 @@ public class RimuHostingComputeClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule(),
+      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(key)
+               .relaxSSLHostname(true).build()).withModules(new Log4JLoggingModule(),
                new JschSshClientModule(), new AbstractModule() {
 
                   @Override
@@ -99,7 +99,6 @@ public class RimuHostingComputeClientLiveTest {
                      return new RetryablePredicate<InetAddress>(reachable, 60, 5, TimeUnit.SECONDS);
                   }
 
-             
                }).buildInjector();
       client = injector.getInstance(RimuHostingComputeClient.class);
       rhClient = injector.getInstance(RimuHostingClient.class);

@@ -32,6 +32,8 @@
 
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-hostingdotcom" version="1.0-SNAPSHOT" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-rimuhosting" version="1.0-SNAPSHOT" />
     <dependency groupId="org.jclouds" artifactId="jclouds-aws" version="1.0-SNAPSHOT" />
     <dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT" />
     <localRepository refid="local.repository" />
@@ -41,8 +43,8 @@
   <typedef name="compute" classname="org.jclouds.tools.ant.taskdefs.compute.ComputeTask" classpathref="jclouds.classpath" />
 
   <input
-    message="Which service would you like to use (ec2, terremark)?"
-    validargs="ec2,terremark"
+    message="Which service would you like to use (ec2, terremark, rimuhosting, hostingdotcom)?"
+    validargs="ec2,terremark,rimuhosting,hostingdotcom"
     addproperty="service"
   />
 
@@ -54,6 +56,12 @@
   <input
     message="What is the key for ${account}?"
     addproperty="key"
+  />
+
+  <input
+    message="What is the image you want to use (CENTOS_53, UBUNTU_90)?"
+    validargs="CENTOS_53,UBUNTU_90"
+    addproperty="image"
   />
 
   <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}" />
@@ -81,7 +89,7 @@
 
   <target name="create" description="create the node ${nodename}">
     <compute action="create" provider="${jclouds.compute.url}">
-      <node name="${nodename}" image="UBUNTU_90" profile="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <node name="${nodename}" image="${image}" profile="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

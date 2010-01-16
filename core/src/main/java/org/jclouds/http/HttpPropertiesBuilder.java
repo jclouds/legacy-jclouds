@@ -42,16 +42,16 @@ public class HttpPropertiesBuilder {
    /**
     * allow mismatches between the certificate and the hostname of ssl requests.
     */
-   public HttpPropertiesBuilder relaxSSLHostname() {
-      properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, "true");
+   public HttpPropertiesBuilder relaxSSLHostname(boolean relax) {
+      properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, relax+"");
       return this;
    }
 
    public HttpPropertiesBuilder useSystemProxies(boolean useSystemProxies) {
-      properties.setProperty(PROPERTY_HTTP_PROXY_SYSTEM, useSystemProxies+"");
+      properties.setProperty(PROPERTY_HTTP_PROXY_SYSTEM, useSystemProxies + "");
       return this;
    }
-   
+
    public HttpPropertiesBuilder withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
@@ -107,6 +107,10 @@ public class HttpPropertiesBuilder {
    public HttpPropertiesBuilder(Properties properties) {
       this();
       this.properties.putAll(properties);
+   }
+
+   public HttpPropertiesBuilder withCredentials(String account, String key) {
+      return this;
    }
 
    @VisibleForTesting
