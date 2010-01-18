@@ -37,6 +37,7 @@
         <module>archetypes</module>
         <module>thirdparty</module>
         <module>core</module>
+        <module>compute</module>
         <module>blobstore</module>
         <module>extensions</module>
         <module>tools</module>

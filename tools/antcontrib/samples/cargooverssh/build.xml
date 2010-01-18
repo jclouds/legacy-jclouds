@@ -23,6 +23,7 @@
   <property file="build.properties" />
   <property name="password" value="" />
   <property name="keyfile" value="" />
+  <property name="container.zip" value="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip" />
   <property name="warfile" value="build/samples-blazeds.war" />
 
   <!-- maven must be available before we use it -->
@@ -103,7 +104,7 @@
   <target name="cargooverssh" depends="create" description="run cargo on remote node" >
     <echo message="deploying tomcat and blaze to: ${jclouds.compute.nodename}" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
-      <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>
+      <zipurlinstaller installurl="${container.zip}" />
       <configuration home="build/cargo" type="standalone">
         <property name="cargo.java.home" value="/usr/lib/jvm/java-6-openjdk"/>
         <property name="cargo.hostname" value="${host}"/>
@@ -122,7 +123,7 @@
   <target name="justplaincargo" description="run cargo on local machine" >
     <echo message="deploying tomcat and blaze to: localhost" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
-      <zipurlinstaller installurl="http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip"/>
+      <zipurlinstaller installurl="${container.zip}" />
       <configuration home="build/cargo" type="standalone">
         <property name="cargo.servlet.port" value="8080"/>
         <property name="cargo.logging" value="high"/>
