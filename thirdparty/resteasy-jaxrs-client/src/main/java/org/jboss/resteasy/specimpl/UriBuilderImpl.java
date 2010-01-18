@@ -1,21 +1,3 @@
-/**
- *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
 package org.jboss.resteasy.specimpl;
 
 import org.jboss.resteasy.util.Encode;
@@ -68,6 +50,23 @@ public class UriBuilderImpl extends UriBuilder
    }
 
    private static final Pattern uriPattern = Pattern.compile("([^:]+)://([^/:]+)(:(\\d+))?(/[^?]*)?(\\?([^#]+))?(#(.*))?");
+
+   /**
+    * Must follow the patter scheme://host:port/path?query#fragment
+    * <p/>
+    * port, path, query and fragment are optional. Scheme and host must be specified.
+    * <p/>
+    * You may put path parameters anywhere within the uriTemplate except port
+    *
+    * @param uriTemplate
+    * @return
+    */
+   public static UriBuilder fromTemplate(String uriTemplate)
+   {
+      UriBuilderImpl impl = new UriBuilderImpl();
+      impl.uriTemplate(uriTemplate);
+      return impl;
+   }
 
    /**
     * Must follow the patter scheme://host:port/path?query#fragment
@@ -213,6 +212,10 @@ public class UriBuilderImpl extends UriBuilder
          String[] segments = new String[]{ann.value()};
          path = paths(true, path, segments);
       }
+      else
+      {
+         throw new IllegalArgumentException("Class must be annotated with @Path to invoke path(Class)");
+      }
       return this;
    }
 
@@ -330,7 +333,7 @@ public class UriBuilderImpl extends UriBuilder
       if (query != null)
       {
          buffer.append("?");
-         replaceParameter(paramMap, isEncoded, query, buffer);
+         replaceQueryStringParameter(paramMap, isEncoded, query, buffer);
       }
       if (fragment != null)
       {
@@ -397,6 +400,29 @@ public class UriBuilderImpl extends UriBuilder
       return buffer;
    }
 
+   protected StringBuffer replaceQueryStringParameter(Map<String, ? extends Object> paramMap, boolean isEncoded, String string, StringBuffer buffer)
+   {
+      Matcher matcher = createUriParamMatcher(string);
+      while (matcher.find())
+      {
+         String param = matcher.group(1);
+         String value = paramMap.get(param).toString();
+         if (value != null)
+         {
+            if (!isEncoded)
+            {
+               value = Encode.encodeQueryStringNameOrValue(value);
+            }
+            matcher.appendReplacement(buffer, value);
+         }
+         else
+         {
+            throw new IllegalArgumentException("path param " + param + " has not been provided by the parameter map");
+         }
+      }
+      matcher.appendTail(buffer);
+      return buffer;
+   }
 
    /**
     * Return a unique order list of path params
@@ -554,7 +580,7 @@ public class UriBuilderImpl extends UriBuilder
       {
          if (query == null) query = "";
          else query += "&";
-         query += Encode.encodeQueryString(name) + "=" + Encode.encodeQueryString(value.toString());
+         query += Encode.encodeQueryStringNameOrValue(name) + "=" + Encode.encodeQueryStringNameOrValue(value.toString());
       }
       return this;
    }

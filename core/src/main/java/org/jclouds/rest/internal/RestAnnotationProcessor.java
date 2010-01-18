@@ -47,6 +47,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.MatrixParam;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -316,7 +317,8 @@ public class RestAnnotationProcessor<T> {
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
       UriBuilder builder = addHostPrefixIfPresent(endpoint, method, args);
-      builder.path(declaring);
+      if (declaring.isAnnotationPresent(Path.class))
+         builder.path(declaring);
       builder.path(method);
 
       Multimap<String, String> tokenValues = encodeValues(getPathParamKeyValues(method, args),
