@@ -37,7 +37,7 @@ import org.jclouds.logging.internal.Wire;
 public class HttpWire extends Wire {
 
    @Resource
-   @Named(HttpConstants.HTTP_WIRE_LOGGER)
+   @Named(HttpConstants.LOGGER_HTTP_WIRE)
    Logger wireLog = Logger.NULL;
    
    @Inject

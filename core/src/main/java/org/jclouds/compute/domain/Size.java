@@ -28,13 +28,11 @@ import java.util.Map;
 public interface Size {
    /**
     * provider-specific identifier (m1.small, etc)
-    * 
     */
    String getId();
 
    /**
     * Name provided by the provider (Small CPU, etc)
-    * 
     */
    String getName();
 
@@ -59,10 +57,7 @@ public interface Size {
    Long getBandwidth();
 
    /**
-    * 
     * Hourly price of this server in USD, estimated if monthly.
-    * 
-    * @return
     */
    Float getPrice();
 

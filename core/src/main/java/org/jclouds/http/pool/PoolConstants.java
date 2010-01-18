@@ -19,14 +19,35 @@
 package org.jclouds.http.pool;
 
 /**
- * // TODO: Adrian: Document this!
+ * Properties used in pooling http engines
  * 
  * @author Adrian Cole
  */
 public interface PoolConstants {
-    public static final String PROPERTY_POOL_MAX_CONNECTIONS = "jclouds.pool.max_connections";
-    public static final String PROPERTY_POOL_IO_WORKER_THREADS = "jclouds.http.pool.io_worker_threads";
-    public static final String PROPERTY_POOL_REQUEST_INVOKER_THREADS = "jclouds.http.pool.request_invoker_threads";
-    public static final String PROPERTY_POOL_MAX_SESSION_FAILURES = "jclouds.http.pool.max_session_failures";
-    public static final String PROPERTY_POOL_MAX_CONNECTION_REUSE = "jclouds.http.pool.max_connection_reuse";
+   /**
+    * Integer property. default (12)
+    * <p/>
+    * Limits the amount of connections per host.
+    */
+   public static final String PROPERTY_POOL_MAX_CONNECTIONS = "jclouds.pool.max_connections";
+   /**
+    * Integer property. default (12)
+    * <p/>
+    * Amount of threads servicing the I/O of http connections
+    */
+   public static final String PROPERTY_POOL_IO_WORKER_THREADS = "jclouds.http.pool.io_worker_threads";
+
+   /**
+    * Integer property. default (2)
+    * <p/>
+    * Maximum amount of http session failures before a pool is disabled.
+    */
+   public static final String PROPERTY_POOL_MAX_SESSION_FAILURES = "jclouds.http.pool.max_session_failures";
+   /**
+    * Integer property. default (75)
+    * <p/>
+    * Maximum amount of times to re-use an http connection. Services like Amazon S3 throw errors if
+    * connections are reused too many times.
+    */
+   public static final String PROPERTY_POOL_MAX_CONNECTION_REUSE = "jclouds.http.pool.max_connection_reuse";
 }

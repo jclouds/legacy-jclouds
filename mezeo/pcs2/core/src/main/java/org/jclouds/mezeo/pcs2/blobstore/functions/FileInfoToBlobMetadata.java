@@ -18,12 +18,15 @@
  */
 package org.jclouds.mezeo.pcs2.blobstore.functions;
 
+import java.util.regex.Pattern;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.mezeo.pcs2.domain.FileInfo;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
@@ -32,10 +35,12 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class FileInfoToBlobMetadata implements Function<FileInfo, MutableBlobMetadata> {
+   public static final Pattern OBJECTS_PATTERN = Pattern.compile(".*objects/");
+
    public MutableBlobMetadata apply(FileInfo from) {
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       if (from.getUrl() != null) {
-         to.setId(from.getUrl().getPath().replaceAll(".*objects/", ""));
+         to.setId(Utils.replaceAll(from.getUrl().getPath(), OBJECTS_PATTERN, ""));
       }
       to.setUri(from.getUrl());
       to.setName(from.getName());

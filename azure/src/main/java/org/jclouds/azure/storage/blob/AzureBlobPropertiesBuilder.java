@@ -31,8 +31,10 @@ import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_M
 
 import java.net.URI;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.util.Utils;
 
 /**
  * Builds properties used in AzureBlob Connections
@@ -60,12 +62,15 @@ public class AzureBlobPropertiesBuilder extends HttpPropertiesBuilder {
       withCredentials(id, secret);
    }
 
+   public static final Pattern ACCOUNT_PATTERN = Pattern.compile("\\{account\\}");
+
    public AzureBlobPropertiesBuilder withCredentials(String id, String secret) {
       properties
                .setProperty(PROPERTY_AZURESTORAGE_ACCOUNT, checkNotNull(id, "azureStorageAccount"));
       properties.setProperty(PROPERTY_AZURESTORAGE_KEY, checkNotNull(secret, "azureStorageKey"));
       String endpoint = properties.getProperty(PROPERTY_AZUREBLOB_ENDPOINT);
-      properties.setProperty(PROPERTY_AZUREBLOB_ENDPOINT, endpoint.replaceAll("\\{account\\}", id));
+      properties.setProperty(PROPERTY_AZUREBLOB_ENDPOINT, Utils.replaceAll(endpoint,
+               ACCOUNT_PATTERN, id));
       return this;
    }
 
@@ -74,8 +79,8 @@ public class AzureBlobPropertiesBuilder extends HttpPropertiesBuilder {
                "azureStorageAccount");
       properties.setProperty(PROPERTY_AZUREBLOB_ENDPOINT, checkNotNull(endpoint, "endpoint")
                .toString());
-      properties.setProperty(PROPERTY_AZUREBLOB_ENDPOINT, endpoint.toString().replaceAll(
-               "\\{account\\}", account));
+      properties.setProperty(PROPERTY_AZUREBLOB_ENDPOINT, Utils.replaceAll(
+               endpoint.toASCIIString(), ACCOUNT_PATTERN, account));
       return this;
    }
 

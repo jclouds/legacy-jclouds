@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.replaceTokens;
 
 import java.util.Map;
 
@@ -29,6 +30,10 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.util.Patterns;
+import org.jclouds.util.Utils;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -52,13 +57,11 @@ public class BindAddNodeServiceToXmlPayload implements MapBinder {
       String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present");
       String description = postParams.get("description");
 
-      String payload = xmlTemplate.replaceAll("\\{ipAddress\\}", ipAddress);
-      payload = payload.replaceAll("\\{name\\}", name);
-      payload = payload.replaceAll("\\{port\\}", port);
-      payload = payload.replaceAll("\\{enabled\\}", enabled);
-      payload = payload.replaceAll("\\{description\\}", description == null ? "" : String.format(
-               "\n    <Description>%s</Description>", description));
-
+      String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name, "ipAddress",
+               ipAddress, "port", port, "enabled", enabled));
+      payload = Utils.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"),
+               description == null ? "" : String.format("\n    <Description>%s</Description>",
+                        description));
       stringBinder.bindToRequest(request, payload);
    }
 

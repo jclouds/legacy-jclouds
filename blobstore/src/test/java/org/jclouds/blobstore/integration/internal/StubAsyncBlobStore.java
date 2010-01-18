@@ -415,10 +415,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             return false;
          }
 
-         public void redirect(String host, int port) {
+         public void changeHostAndPortTo(String host, int port) {
          }
 
-         public void redirectAsGet() {
+         public void changeToGETRequest() {
          }
 
          public Exception getException() {
@@ -442,7 +442,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          }
 
          @Override
-         public void redirectPath(String newPath) {
+         public void changePathTo(String newPath) {
          }
       }, response);
    }

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.jclouds.scriptbuilder.util.Utils;
 
@@ -182,8 +183,10 @@ public class CreateRunScript implements Statement {
                "echo %s%s%s>>%s{lf}", quote, line, quote, runScript)));
    }
 
+   public static final Pattern REDIRECT_FD_PATTERN = Pattern.compile(".*[0-2]>>.*");
+
    static String addSpaceToEnsureWeDontAccidentallyRedirectFd(String line) {
-      return line.matches(".*[0-2]>>.*") ? line.replace(">>", " >>") : line;
+      return REDIRECT_FD_PATTERN.matcher(line).matches() ? line.replace(">>", " >>") : line;
    }
 
 }

@@ -94,10 +94,10 @@ public class S3UtilsTest {
             return false;
          }
 
-         public void redirect(String host, int port) {
+         public void changeHostAndPortTo(String host, int port) {
          }
 
-         public void redirectAsGet() {
+         public void changeToGETRequest() {
          }
 
          public Exception getException() {
@@ -121,7 +121,7 @@ public class S3UtilsTest {
          }
 
          @Override
-         public void redirectPath(String newPath) {
+         public void changePathTo(String newPath) {
          }
       };
 

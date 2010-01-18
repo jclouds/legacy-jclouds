@@ -23,10 +23,12 @@ import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY
 
 import java.net.URI;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.util.Utils;
 
 /**
  * Builds properties used in AzureQueue Connections
@@ -52,14 +54,16 @@ public class AzureQueuePropertiesBuilder extends HttpPropertiesBuilder {
       withCredentials(id, secret);
    }
 
+   public static final Pattern ACCOUNT_PATTERN = Pattern.compile("\\{account\\}");
+
    public AzureQueuePropertiesBuilder withCredentials(String id, String secret) {
       properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT, checkNotNull(id,
                "azureStorageAccount"));
       properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY, checkNotNull(secret,
                "azureStorageKey"));
       String endpoint = properties.getProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT);
-      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, endpoint.replaceAll(
-               "\\{account\\}", id));
+      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, Utils.replaceAll(
+               endpoint, ACCOUNT_PATTERN, id));
       return this;
    }
 
@@ -69,8 +73,8 @@ public class AzureQueuePropertiesBuilder extends HttpPropertiesBuilder {
                "azureStorageAccount");
       properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, checkNotNull(
                endpoint, "endpoint").toString());
-      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, endpoint.toString()
-               .replaceAll("\\{account\\}", account));
+      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, Utils.replaceAll(
+               endpoint.toASCIIString(), ACCOUNT_PATTERN, account));
       return this;
    }
 

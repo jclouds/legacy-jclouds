@@ -50,7 +50,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    @Resource
    protected Logger logger = Logger.NULL;
    @Resource
-   @Named(HttpConstants.HTTP_HEADERS_LOGGER)
+   @Named(HttpConstants.LOGGER_HTTP_HEADERS)
    protected Logger headerLog = Logger.NULL;
 
    private final HttpWire wire;

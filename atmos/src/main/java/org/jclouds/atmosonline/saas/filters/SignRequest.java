@@ -18,6 +18,9 @@
  */
 package org.jclouds.atmosonline.saas.filters;
 
+import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
+import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -64,7 +67,7 @@ public class SignRequest implements HttpRequestFilter {
    Logger logger = Logger.NULL;
 
    @Resource
-   @Named(HttpConstants.SIGNATURE_LOGGER)
+   @Named(HttpConstants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
 
    @Inject
@@ -143,8 +146,11 @@ public class SignRequest implements HttpRequestFilter {
             // For headers with values that span multiple lines, convert them into one line by
             // replacing any
             // newline characters and extra embedded white spaces in the value.
-            for (String value : request.getHeaders().get(header))
-               toSign.append(value.replaceAll("\r?\n", "").replaceAll("  ", " ")).append(" ");
+            for (String value : request.getHeaders().get(header)) {
+               value = Utils.replaceAll(value, TWO_SPACE_PATTERN, " ");
+               value = Utils.replaceAll(value, NEWLINE_PATTERN, "");
+               toSign.append(value).append(' ');
+            }
             toSign.deleteCharAt(toSign.lastIndexOf(" "));
             // Concatenate all headers together, using newlines (\n) separating each header from the
             // next one.

@@ -83,7 +83,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * <p />
     * This also removes the Host header in order to avoid ssl problems.
     */
-   public void redirect(String host, int port) {
+   public void changeHostAndPortTo(String host, int port) {
       UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
       builder.host(host);
       builder.port(port);
@@ -96,7 +96,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * 
     * @param method
     */
-   public void redirectAsGet() {
+   public void changeToGETRequest() {
       request.setMethod(HttpMethod.GET);
    }
 
@@ -130,7 +130,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    }
 
    @Override
-   public void redirectPath(String newPath) {
+   public void changePathTo(String newPath) {
       request.replacePath(newPath);
    }
 

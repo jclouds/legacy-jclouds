@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.terremark.functions;
 
 import java.lang.reflect.Constructor;
+import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 
@@ -34,6 +35,8 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ReturnVoidOnDeleteDefaultIp implements Function<Exception, Void> {
+   public static final Pattern MESSAGE_PATTERN = Pattern
+            .compile(".*Cannot release this Public IP as it is default oubound IP.*");
 
    static final Void v;
    static {
@@ -50,10 +53,8 @@ public class ReturnVoidOnDeleteDefaultIp implements Function<Exception, Void> {
    public Void apply(Exception from) {
       if (from instanceof HttpResponseException) {
          HttpResponseException hre = (HttpResponseException) from;
-         if (hre.getResponse().getStatusCode() == 503
-                  || hre.getResponse().getStatusCode() == 401
-                  || hre.getMessage().matches(
-                           ".*Cannot release this Public IP as it is default oubound IP.*"))
+         if (hre.getResponse().getStatusCode() == 503 || hre.getResponse().getStatusCode() == 401
+                  || MESSAGE_PATTERN.matcher(hre.getMessage()).matches())
             return v;
       }
       return null;

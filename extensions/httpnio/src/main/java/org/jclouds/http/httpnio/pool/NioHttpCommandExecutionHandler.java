@@ -63,7 +63,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    @Resource
    protected Logger logger = Logger.NULL;
    @Resource
-   @Named(HttpConstants.HTTP_HEADERS_LOGGER)
+   @Named(HttpConstants.LOGGER_HTTP_HEADERS)
    protected Logger headerLog = Logger.NULL;
 
    @Inject

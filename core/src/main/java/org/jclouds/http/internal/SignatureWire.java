@@ -37,7 +37,7 @@ import org.jclouds.logging.internal.Wire;
 public class SignatureWire extends Wire {
 
    @Resource
-   @Named(HttpConstants.SIGNATURE_LOGGER)
+   @Named(HttpConstants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
    
    @Inject

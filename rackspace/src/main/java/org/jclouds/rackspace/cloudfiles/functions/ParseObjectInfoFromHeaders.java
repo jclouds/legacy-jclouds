@@ -28,6 +28,7 @@ import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
@@ -58,7 +59,8 @@ public class ParseObjectInfoFromHeaders implements
       MutableObjectInfoWithMetadata to = blobToObjectInfo.apply(base);
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
-         to.setHash(encryptionService.fromHexString(eTagHeader.replaceAll("\"", "")));
+         String hashString = Utils.replaceAll(eTagHeader, '"', "");
+         to.setHash(encryptionService.fromHexString(hashString));
       }
       return to;
    }

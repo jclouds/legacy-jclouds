@@ -18,8 +18,6 @@
  */
 package org.jclouds.http;
 
-
-
 /**
  * Command whose endpoint is an http service.
  * 
@@ -27,43 +25,68 @@ package org.jclouds.http;
  */
 public interface HttpCommand {
 
+   /**
+    * increments the current number of redirect attempts for this command.
+    * 
+    * @see getRedirectCount
+    */
    int incrementRedirectCount();
 
+   /**
+    * This displays the current number of redirect attempts for this command.
+    * 
+    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS
+    */
    int getRedirectCount();
 
+   /**
+    * Commands need to be replayed, if redirected or on a retryable error. Typically, this implies
+    * the payload carried is not a streaming type.
+    */
    boolean isReplayable();
 
    /**
-    * to allow redirects to work
+    * change the destination of the current http command. typically used in handling redirects.
     */
-   void redirect(String host, int port);
+   void changeHostAndPortTo(String host, int port);
 
    /**
-    * to allow redirects to work on methods that were HEAD
+    * change method from GET to HEAD. typically used in handling redirects.
     */
-   void redirectAsGet();
+   void changeToGETRequest();
 
    /**
-    * change the path of the service
+    * change the path of the service. typically used in handling redirects.
     */
-   void redirectPath(String newPath);
+   void changePathTo(String newPath);
 
+   /**
+    * increment the current failure count.
+    * 
+    * @see getFailureCount
+    */
    int incrementFailureCount();
 
+   /**
+    * This displays the current number of error retries for this command.
+    * 
+    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES
+    */
    int getFailureCount();
 
+   /**
+    * The request associated with this command.
+    */
    HttpRequest getRequest();
 
    /**
-    * 
-    * Used to prevent a command from being re-executed.
-    * 
-    * Any calls to {@link execute} following this will return the below exception.
-    * 
-    * @param exception
+    * Used to prevent a command from being re-executed, or having its response parsed.
     */
    void setException(Exception exception);
-   
+
+   /**
+    * @see setException
+    */
    Exception getException();
 
 }

@@ -19,6 +19,13 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.util.Patterns.CHAR_TO_ENCODED_PATTERN;
+import static org.jclouds.util.Patterns.PATTERN_THAT_BREAKS_URI;
+import static org.jclouds.util.Patterns.PLUS_PATTERN;
+import static org.jclouds.util.Patterns.STAR_PATTERN;
+import static org.jclouds.util.Patterns.URI_PATTERN;
+import static org.jclouds.util.Patterns.URL_ENCODED_PATTERN;
+import static org.jclouds.util.Patterns._7E_PATTERN;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,32 +36,26 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 
+/**
+ * @author Adrian Cole
+ */
 public class HttpUtils {
-   public static final Pattern URI_PATTERN = Pattern.compile("([a-z0-9]+)://([^:]*):(.*)@(.*)");
-   public static final Pattern PATTERN_THAT_BREAKS_URI = Pattern.compile("[a-z0-9]+://.*/.*@.*"); // slash
-
-   @Resource
-   protected static Logger logger = Logger.NULL;
 
    /**
     * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
@@ -63,10 +64,12 @@ public class HttpUtils {
       if (isUrlEncoded(in))
          return in;
       try {
-         String returnVal = URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll(
-                  "\\*", "%2A").replaceAll("%7E", "~");
+         String returnVal = URLEncoder.encode(in, "UTF-8");
+         returnVal = Utils.replaceAll(returnVal, '+', PLUS_PATTERN, "%20");
+         returnVal = Utils.replaceAll(returnVal, '*', STAR_PATTERN, "%2A");
+         returnVal = Utils.replaceAll(returnVal, _7E_PATTERN, "~");
          for (char c : skipEncode) {
-            returnVal = returnVal.replaceAll(plainToEncodedChars.get(c + ""), c + "");
+            returnVal = Utils.replaceAll(returnVal, CHAR_TO_ENCODED_PATTERN.get(c), c + "");
          }
          return returnVal;
       } catch (UnsupportedEncodingException e) {
@@ -75,19 +78,8 @@ public class HttpUtils {
    }
 
    public static boolean isUrlEncoded(String in) {
-      return in.matches(".*%[a-fA-F0-9][a-fA-F0-9].*");
+      return URL_ENCODED_PATTERN.matcher(in).matches();
    }
-
-   static Map<String, String> plainToEncodedChars = new MapMaker()
-            .makeComputingMap(new Function<String, String>() {
-               public String apply(String plain) {
-                  try {
-                     return URLEncoder.encode(plain, "UTF-8");
-                  } catch (UnsupportedEncodingException e) {
-                     throw new IllegalStateException("Bad encoding on input: " + plain, e);
-                  }
-               }
-            });
 
    public static String urlDecode(String in) {
       try {
@@ -107,7 +99,7 @@ public class HttpUtils {
             response.setContent(new ByteArrayInputStream(data));
             return data;
          } catch (IOException e) {
-            logger.error(e, "Error consuming input");
+            Throwables.propagate(e);
          } finally {
             Closeables.closeQuietly(response.getContent());
          }
@@ -124,7 +116,7 @@ public class HttpUtils {
       int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme()
                .equals("https") ? 443 : 80;
       String host = redirectURI.getHost();
-      checkState(!host.matches("[/]"), String.format(
+      checkState(host.indexOf('/') == -1, String.format(
                "header %s didn't parse an http host correctly: [%s]", hostHeader, host));
       URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
       return endPoint;
@@ -165,8 +157,8 @@ public class HttpUtils {
             String rest = matcher.group(4);
             String account = matcher.group(2);
             String key = matcher.group(3);
-            return URI
-                     .create(String.format("%s://%s:%s@%s", scheme, urlEncode(account), urlEncode(key), rest));
+            return URI.create(String.format("%s://%s:%s@%s", scheme, urlEncode(account),
+                     urlEncode(key), rest));
          } else {
             throw new IllegalArgumentException("bad syntax");
          }
@@ -174,10 +166,6 @@ public class HttpUtils {
          return URI.create(uriPath);
       }
    }
-
-   public static final Pattern IP_PATTERN = Pattern
-            .compile("b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).)"
-                     + "{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)b");
 
    public static void logRequest(Logger logger, HttpRequest request, String prefix) {
       if (logger.isDebugEnabled()) {

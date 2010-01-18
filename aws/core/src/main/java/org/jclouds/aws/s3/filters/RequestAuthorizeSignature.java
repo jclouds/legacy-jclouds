@@ -19,6 +19,7 @@
 package org.jclouds.aws.s3.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +70,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final EncryptionService encryptionService;
 
    @Resource
-   @Named(HttpConstants.SIGNATURE_LOGGER)
+   @Named(HttpConstants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
 
    @Inject
@@ -138,8 +139,9 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       for (String header : headers) {
          if (header.startsWith("x-amz-")) {
             toSign.append(header.toLowerCase()).append(":");
-            for (String value : request.getHeaders().get(header))
-               toSign.append(value.replaceAll("\r?\n", "")).append(",");
+            for (String value : request.getHeaders().get(header)) {
+               toSign.append(Utils.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
+            }
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");
          }

@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -33,7 +34,7 @@ import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.util.Patterns;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.
@@ -60,16 +61,17 @@ public class S3Utils extends BlobStoreUtils {
                .getBytes()));
    }
 
+   public static final Pattern BUCKET_NAME_PATTERN = Pattern.compile("^[a-z0-9][-_.a-z0-9]+");
+
+   // TODO add validatorparam so that this is actually used
    public static String validateBucketName(String bucketName) {
       checkNotNull(bucketName, "bucketName");
-      checkArgument(bucketName.matches("^[a-z0-9].*"),
-               "bucketName name must start with a number or letter");
       checkArgument(
-               bucketName.matches("^[-_.a-z0-9]+"),
-               "bucketName name can only contain lowercase letters, numbers, periods (.), underscores (_), and dashes (-)");
+               BUCKET_NAME_PATTERN.matcher(bucketName).matches(),
+               "bucketName name must start with a number or letter and  can only contain lowercase letters, numbers, periods (.), underscores (_), and dashes (-)");
       checkArgument(bucketName.length() > 2 && bucketName.length() < 256,
                "bucketName name must be between 3 and 255 characters long");
-      checkArgument(!HttpUtils.IP_PATTERN.matcher(bucketName).matches(),
+      checkArgument(!Patterns.IP_PATTERN.matcher(bucketName).matches(),
                "bucketName name cannot be ip address style");
       return bucketName;
    }

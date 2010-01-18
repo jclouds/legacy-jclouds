@@ -36,7 +36,6 @@ public class HttpPropertiesBuilderTest {
       int poolMaxClientReuse = 3932;
       int poolMaxClients = 3382;
       int poolMaxSessionFailures = 857;
-      int poolRequestInvokerThreads = 8362;
 
       HttpPropertiesBuilder builder = new HttpPropertiesBuilder(new Properties());
       builder.withHttpMaxRetries(httpMaxRetries);
@@ -45,6 +44,5 @@ public class HttpPropertiesBuilderTest {
       builder.withPoolMaxClientReuse(poolMaxClientReuse);
       builder.withPoolMaxClients(poolMaxClients);
       builder.withPoolMaxSessionFailures(poolMaxSessionFailures);
-      builder.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
    }
 }

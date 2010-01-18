@@ -24,15 +24,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 
  * This class or method has a timeout used for synchronous calls.
  * 
- * @see SyncClient
  * @see TimeUnit
- * @see ListenableFuture#get(long,TimeUnit)
+ * @see Future#get(long,TimeUnit)
  * @author Adrian Cole
  */
 @Target( { TYPE, METHOD })

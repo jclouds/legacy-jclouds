@@ -19,12 +19,16 @@
 package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Patterns.CHAR_TO_PATTERN;
+import static org.jclouds.util.Patterns.TOKEN_TO_PATTERN;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +49,33 @@ import com.google.common.io.OutputSupplier;
  */
 public class Utils {
    public static final String UTF8_ENCODING = "UTF-8";
+
+   public static String replaceTokens(String value, Collection<Entry<String, String>> tokenValues) {
+      for (Entry<String, String> tokenValue : tokenValues) {
+         value = replaceAll(value, TOKEN_TO_PATTERN.get(tokenValue.getKey()), tokenValue.getValue());
+      }
+      return value;
+   }
+
+   public static String replaceAll(String returnVal, Pattern pattern, String replace) {
+      Matcher m = pattern.matcher(returnVal);
+      returnVal = m.replaceAll(replace);
+      return returnVal;
+   }
+
+   public static String replaceAll(String input, char ifMatch, Pattern pattern, String replacement) {
+      if (input.indexOf(ifMatch) != -1) {
+         input = pattern.matcher(input).replaceAll(replacement);
+      }
+      return input;
+   }
+
+   public static String replaceAll(String input, char match, String replacement) {
+      if (input.indexOf(match) != -1) {
+         input = CHAR_TO_PATTERN.get(match).matcher(input).replaceAll(replacement);
+      }
+      return input;
+   }
 
    /**
     * Returns a factory that will supply instances of {@link OutputStream} that read from the given
@@ -79,7 +110,6 @@ public class Utils {
 
    @Resource
    protected static Logger logger = Logger.NULL;
-
 
    public static String toStringAndClose(InputStream input) throws IOException {
       try {

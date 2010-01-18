@@ -67,12 +67,12 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
          if (redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
                   && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {
             if (!redirectionUrl.getPath().equals(command.getRequest().getEndpoint().getPath())) {
-               command.redirectPath(redirectionUrl.getPath());
+               command.changePathTo(redirectionUrl.getPath());
             } else {
                return backoffHandler.shouldRetryRequest(command, response);
             }
          } else {
-            command.redirect(redirectionUrl.getHost(), redirectionUrl.getPort());
+            command.changeHostAndPortTo(redirectionUrl.getHost(), redirectionUrl.getPort());
          }
          return true;
       } else {

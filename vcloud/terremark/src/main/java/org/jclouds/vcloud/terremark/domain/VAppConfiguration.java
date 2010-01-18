@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark.domain;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
@@ -36,6 +37,8 @@ public class VAppConfiguration {
    private List<Long> disks = Lists.newArrayList();
    private List<Integer> disksToDelete = Lists.newArrayList();
 
+   public static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z][-a-zA-Z0-9]+");
+
    /**
     * The vApp name has the following requirements: Name can use uppercase and/or lowercase letters.
     * Name can contain numbers or hyphens (-). Name may only begin with a letter. A maximum of 15
@@ -44,7 +47,7 @@ public class VAppConfiguration {
     */
    public VAppConfiguration changeNameTo(String name) {
       checkArgument(
-               name.matches("^[a-zA-Z][-a-zA-Z0-9]+"),
+               NAME_PATTERN.matcher(name).matches(),
                "Name can use uppercase and/or lowercase letters, numbers or hyphens (-). Name may only begin with a letter.");
       checkArgument(name.length() <= 15, "A maximum of 15 characters are allowed.");
       this.name = name;

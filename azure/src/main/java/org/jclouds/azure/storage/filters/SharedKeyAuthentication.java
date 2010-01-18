@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.filters;
 
+import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -62,7 +64,7 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
    @Resource
-   @Named(HttpConstants.SIGNATURE_LOGGER)
+   @Named(HttpConstants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
 
    @Inject
@@ -130,8 +132,9 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
       for (String header : headers) {
          if (header.startsWith("x-ms-")) {
             toSign.append(header.toLowerCase()).append(":");
-            for (String value : request.getHeaders().get(header))
-               toSign.append(value.replaceAll("\r?\n", "")).append(",");
+            for (String value : request.getHeaders().get(header)) {
+               toSign.append(Utils.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
+            }
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");
          }

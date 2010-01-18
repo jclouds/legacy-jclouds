@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
+import java.util.regex.Pattern;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -134,14 +135,19 @@ public class SimpleDateFormatDateService implements DateService {
       }
    }
 
+   public static final Pattern NANOS_TO_MILLIS_PATTERN = Pattern
+            .compile(".*[0-9][0-9][0-9][0-9][0-9][0-9]");
+
    private String trimNanosToMillis(String toParse) {
-      if (toParse.matches(".*[0-9][0-9][0-9][0-9][0-9][0-9]"))
+      if (NANOS_TO_MILLIS_PATTERN.matcher(toParse).matches())
          toParse = toParse.substring(0, toParse.length() - 3) + 'Z';
       return toParse;
    }
 
+   public static final Pattern SECOND_PATTERN = Pattern.compile(".*[0-2][0-9]:00");
+
    private String trimTZ(String toParse) {
-      if (toParse.length() == 25 && toParse.matches(".*[0-2][0-9]:00"))
+      if (toParse.length() == 25 && SECOND_PATTERN.matcher(toParse).matches())
          toParse = toParse.substring(0, toParse.length() - 6) + 'Z';
       return toParse;
    }

@@ -21,6 +21,7 @@ package org.jclouds.mezeo.pcs2.xml;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -28,6 +29,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoWithMetadataImpl;
+import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -37,6 +39,9 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class FileHandler extends ParseSax.HandlerWithResult<FileInfoWithMetadata> {
+   private static final Pattern CONTENT_PATTERN = Pattern.compile("/content");
+   private static final Pattern METADATA_PATTERN = Pattern.compile(".*/metadata/");
+
    protected Map<String, URI> metadataItems = Maps.newHashMap();
 
    protected URI currentUrl;
@@ -82,7 +87,8 @@ public class FileHandler extends ParseSax.HandlerWithResult<FileInfoWithMetadata
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
             currentContent = URI.create(attributes.getValue(index));
-            currentUrl = URI.create(attributes.getValue(index).replaceAll("/content", ""));
+            currentUrl = URI.create(Utils.replaceAll(attributes.getValue(index), CONTENT_PATTERN,
+                     ""));
          }
       } else if (qName.equals("permissions")) {
          int index = attributes.getIndex("xlink:href");
@@ -109,12 +115,11 @@ public class FileHandler extends ParseSax.HandlerWithResult<FileInfoWithMetadata
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
             currentMetadata = URI.create(attributes.getValue(index));
-
          }
       } else if (qName.equals("metadata-item")) {
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
-            String key = attributes.getValue(index).replaceAll(".*/metadata/", "");
+            String key = Utils.replaceAll(attributes.getValue(index), METADATA_PATTERN, "");
             metadataItems.put(key.toLowerCase(), URI.create(attributes.getValue(index)));
          }
       }

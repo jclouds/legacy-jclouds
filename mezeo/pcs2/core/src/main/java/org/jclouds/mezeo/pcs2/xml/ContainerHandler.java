@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerInfoImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerListImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoImpl;
+import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -171,11 +173,13 @@ public class ContainerHandler extends ParseSax.HandlerWithResult<ContainerList> 
       } else if (qName.equals("metadata-item")) {
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
-            String key = attributes.getValue(index).replaceAll(".*/metadata/", "");
+            String key = Utils.replaceAll(attributes.getValue(index), METADATA_PATTERN, "");
             metadataItems.put(key.toLowerCase(), URI.create(attributes.getValue(index)));
          }
       }
    }
+
+   public final Pattern METADATA_PATTERN = Pattern.compile(".*/metadata/");
 
    @Override
    public void endElement(String uri, String name, String qName) {

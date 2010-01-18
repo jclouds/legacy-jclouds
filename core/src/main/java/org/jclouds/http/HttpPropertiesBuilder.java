@@ -26,7 +26,6 @@ import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREAD
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
 import java.util.Properties;
 
@@ -40,34 +39,49 @@ import com.google.common.annotations.VisibleForTesting;
 public class HttpPropertiesBuilder {
 
    /**
-    * allow mismatches between the certificate and the hostname of ssl requests.
+    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME
     */
    public HttpPropertiesBuilder relaxSSLHostname(boolean relax) {
-      properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, relax+"");
+      properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, relax + "");
       return this;
    }
 
+   /**
+    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_PROXY_SYSTEM
+    */
    public HttpPropertiesBuilder useSystemProxies(boolean useSystemProxies) {
       properties.setProperty(PROPERTY_HTTP_PROXY_SYSTEM, useSystemProxies + "");
       return this;
    }
 
+   /**
+    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES
+    */
    public HttpPropertiesBuilder withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
    }
 
+   /**
+    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS
+    */
    public HttpPropertiesBuilder withHttpMaxRedirects(int httpMaxRedirects) {
       properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
       return this;
    }
 
+   /**
+    * @see org.jclouds.http.HttpConstants.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE
+    */
    public HttpPropertiesBuilder withPoolMaxClientReuse(int poolMaxClientReuse) {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, Integer
                .toString(poolMaxClientReuse));
       return this;
    }
 
+   /**
+    * @see org.jclouds.http.HttpConstants.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES
+    */
    public HttpPropertiesBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
       properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, Integer
                .toString(poolMaxSessionFailures));
@@ -75,13 +89,9 @@ public class HttpPropertiesBuilder {
 
    }
 
-   public HttpPropertiesBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, Integer
-               .toString(poolRequestInvokerThreads));
-      return this;
-
-   }
-
+   /**
+    * @see org.jclouds.http.HttpConstants.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS
+    */
    public HttpPropertiesBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
       properties
                .setProperty(PROPERTY_POOL_IO_WORKER_THREADS, Integer.toString(poolIoWorkerThreads));
@@ -89,6 +99,9 @@ public class HttpPropertiesBuilder {
 
    }
 
+   /**
+    * @see org.jclouds.http.HttpConstants.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS
+    */
    public HttpPropertiesBuilder withPoolMaxClients(int poolMaxClients) {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, Integer.toString(poolMaxClients));
       return this;

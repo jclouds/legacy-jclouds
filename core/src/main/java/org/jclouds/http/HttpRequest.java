@@ -40,7 +40,6 @@ import com.google.inject.internal.Nullable;
 public class HttpRequest extends HttpMessage {
 
    private List<HttpRequestFilter> requestFilters = Lists.newArrayList();
-
    private String method;
    private URI endpoint;
    private Payload payload;

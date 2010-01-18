@@ -208,16 +208,29 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
 
    class NHttpClientConnectionPoolSessionRequestCallback implements SessionRequestCallback {
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public void completed(SessionRequest request) {
 
       }
 
+      /**
+       * @see releaseConnectionAndSetResponseException
+       */
+      @Override
       public void cancelled(SessionRequest request) {
          releaseConnectionAndSetResponseException(request, new CancellationException(
                   "Cancelled request: " + request.getRemoteAddress()));
       }
 
-      private void releaseConnectionAndSetResponseException(SessionRequest request, Exception e) {
+      /**
+       * Releases a connection and associates the current exception with the request using the
+       * session.
+       */
+      @VisibleForTesting
+      void releaseConnectionAndSetResponseException(SessionRequest request, Exception e) {
          allConnections.release();
          TransformingHttpCommand<?> frequest = (TransformingHttpCommand<?>) request.getAttachment();
          if (frequest != null) {
@@ -225,6 +238,12 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
          }
       }
 
+      /**
+       * Disables the pool, if {@code maxSessionFailures} is reached}
+       * 
+       * @see releaseConnectionAndSetResponseException
+       */
+      @Override
       public void failed(SessionRequest request) {
          int count = currentSessionFailures.getAndIncrement();
          releaseConnectionAndSetResponseException(request, request.getException());
@@ -237,6 +256,10 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
 
       }
 
+      /**
+       * @see releaseConnectionAndSetResponseException
+       */
+      @Override
       public void timeout(SessionRequest request) {
          releaseConnectionAndSetResponseException(request, new TimeoutException("Timeout on: "
                   + request.getRemoteAddress()));

@@ -20,6 +20,8 @@ package org.jclouds.vfs.provider.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.util.Patterns.LEADING_SLASHES;
+import static org.jclouds.util.Patterns.TRAILING_SLASHES;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +33,7 @@ import java.nio.channels.Channels;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileNotFolderException;
@@ -58,6 +61,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 import org.jclouds.blobstore.strategy.internal.MarkersIsDirectoryStrategy;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
@@ -75,6 +79,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
    private static final IsDirectoryStrategy isDirectoryStrategy = new MarkersIsDirectoryStrategy();
    private static final ResourceMetadataToRelativePathResourceMetadata resource2Directory = new ResourceMetadataToRelativePathResourceMetadata();
    private static final Logger logger = Logger.getLogger(BlobStoreFileObject.class);
+   private static final Pattern UNDESCRIBED = Pattern.compile("[^/]*//*");
 
    public BlobStoreFileObject(FileName fileName, BlobStoreFileSystem fileSystem,
             BlobStore blobStore, String container) throws FileSystemException {
@@ -138,7 +143,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
    }
 
    String getNameTrimLeadingSlashes() {
-      return getName().getPath().replaceAll("^[/]+", "");
+      return Utils.replaceAll(getName().getPath(), LEADING_SLASHES, "");
    }
 
    @Override
@@ -176,7 +181,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
             if (isDirectoryStrategy.execute(md)) {
                md = resource2Directory.apply(md);
             }
-            String childName = md.getName().replaceAll("[^/]*//*", "");
+            String childName = Utils.replaceAll(md.getName(), UNDESCRIBED, "");
             BlobStoreFileObject fo = (BlobStoreFileObject) FileObjectUtils
                      .getAbstractFileObject(getFileSystem().resolveFile(
                               getFileSystem().getFileSystemManager().resolveName(getName(),
@@ -323,7 +328,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
    }
 
    public String trimLeadingAndTrailingSlashes(String in) {
-      return in.replaceAll("^[/]*", "").replaceAll("[/]*$", "");
+      return Utils.replaceAll(Utils.replaceAll(in, LEADING_SLASHES, ""), TRAILING_SLASHES, "");
    }
 
    @Override

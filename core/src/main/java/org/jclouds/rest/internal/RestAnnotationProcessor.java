@@ -20,6 +20,7 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.replaceTokens;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -436,7 +437,7 @@ public class RestAnnotationProcessor<T> {
             String key = indexOfFirstEquals == -1 ? parts[partIndex] : parts[partIndex].substring(
                      0, indexOfFirstEquals);
             String value = indexOfFirstEquals == -1 ? null : parts[partIndex]
-                     .substring(indexOfFirstEquals+1);
+                     .substring(indexOfFirstEquals + 1);
             map.put(key, value);
          }
       }
@@ -900,13 +901,6 @@ public class RestAnnotationProcessor<T> {
          headers.put(header.keys()[i], value);
       }
 
-   }
-
-   private String replaceTokens(String value, Collection<Entry<String, String>> tokenValues) {
-      for (Entry<String, String> tokenValue : tokenValues) {
-         value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue());
-      }
-      return value;
    }
 
    private Map<String, String> convertUnsafe(Multimap<String, String> in) {

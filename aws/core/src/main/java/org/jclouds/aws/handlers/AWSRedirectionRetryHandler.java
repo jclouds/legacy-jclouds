@@ -52,7 +52,7 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
                && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
          byte[] content = HttpUtils.closeClientButKeepContentStream(response);
          if (command.getRequest().getMethod() == HttpMethod.HEAD) {
-            command.redirectAsGet();
+            command.changeToGETRequest();
             return true;
          } else {
             command.incrementRedirectCount();
@@ -66,7 +66,7 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
                      // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
                      return backoffHandler.shouldRetryRequest(command, response);
                   } else {
-                     command.redirect(host, command.getRequest().getEndpoint().getPort());
+                     command.changeHostAndPortTo(host, command.getRequest().getEndpoint().getPort());
                   }
                   return true;
                } else {

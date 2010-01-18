@@ -78,7 +78,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    private final Provider<String> dateService;
    private final EncryptionService encryptionService;
    @Resource
-   @Named(HttpConstants.SIGNATURE_LOGGER)
+   @Named(HttpConstants.LOGGER_SIGNATURE)
    private Logger signatureLog = Logger.NULL;
 
    @Inject

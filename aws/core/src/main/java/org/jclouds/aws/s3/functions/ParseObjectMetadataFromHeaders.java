@@ -30,6 +30,7 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -63,7 +64,7 @@ public class ParseObjectMetadataFromHeaders implements
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
-      to.setContentMD5(encryptionService.fromHexString(to.getETag().replaceAll("\"", "")));
+      to.setContentMD5(encryptionService.fromHexString(Utils.replaceAll(to.getETag(), '"', "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));
       to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));

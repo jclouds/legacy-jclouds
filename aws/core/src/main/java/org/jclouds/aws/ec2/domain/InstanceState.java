@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 
+import com.google.common.base.CaseFormat;
+
 /**
  * 
  * The current state of the instance..
@@ -62,7 +64,7 @@ public enum InstanceState {
    STOPPED;
 
    public String value() {
-      return name().toLowerCase().replaceAll("_", "-");
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
    }
 
    @Override
@@ -71,7 +73,8 @@ public enum InstanceState {
    }
 
    public static InstanceState fromValue(String state) {
-      return valueOf(checkNotNull(state, "state").replaceAll("-", "_").toUpperCase());
+      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state,
+               "state")));
    }
 
    public static InstanceState fromValue(int v) {
