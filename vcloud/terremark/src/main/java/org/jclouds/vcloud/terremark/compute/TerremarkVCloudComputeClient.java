@@ -75,7 +75,11 @@ public class TerremarkVCloudComputeClient {
    public String start(String name, Image image, int minCores, int minMegs,
             Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
-      String templateId = imageCatalogIdMap.get(image);
+      return start(name, imageCatalogIdMap.get(image), minCores, minMegs, properties);
+   }
+
+   public String start(String name, String templateId, int minCores, int minMegs,
+            Map<String, String> properties) {
       String vDCId = tmClient.getDefaultVDC().getId();
       logger
                .debug(
@@ -238,8 +242,8 @@ public class TerremarkVCloudComputeClient {
       }
    }
 
-   private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask,
-            String taskType, VAppStatus expectedStatus) {
+   private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask, String taskType,
+            VAppStatus expectedStatus) {
       if (!taskTester.apply(deployTask.getId())) {
          throw new TaskException(taskType, vApp, deployTask);
       }
