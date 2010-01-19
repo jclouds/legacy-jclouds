@@ -2,7 +2,7 @@ target
 .settings
 .classpath
 .project
-jclouds-gae-tweetstore.iml
-jclouds-gae-tweetstore.ipr
-jclouds-gae-tweetstore.iws
+jclouds-demo-gae-tweetstore.iml
+jclouds-demo-gae-tweetstore.ipr
+jclouds-demo-gae-tweetstore.iws
 temp-testng-customsuite.xml
