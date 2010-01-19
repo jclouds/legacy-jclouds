@@ -27,7 +27,7 @@
 		<artifactId>jclouds-demos-project</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>jclouds-speedtest-azurequeue</artifactId>
+	<artifactId>jclouds-demo-speedtest-azurequeue</artifactId>
 	<name>tests speed of azurequeue</name>
 	<description>creates a queue and then tests performance against it</description>
         <dependencies>
