@@ -19,8 +19,8 @@
 package org.jclouds.atmosonline.saas.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
-import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 
 import java.net.URI;
 import java.util.concurrent.Callable;
@@ -98,7 +98,7 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
             return null;
          }
 
-      }));
+      }), service);
    }
 
    /**
@@ -140,7 +140,7 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Boolean> containerExists(String container) {

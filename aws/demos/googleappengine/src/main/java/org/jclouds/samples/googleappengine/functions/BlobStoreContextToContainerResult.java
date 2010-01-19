@@ -26,8 +26,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.ContainerResult;
 
@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 
 @Singleton
 public class BlobStoreContextToContainerResult implements Function<String, ContainerResult> {
-   private final class BuildContainerResult implements Function<ResourceMetadata, ContainerResult> {
+   private final class BuildContainerResult implements Function<StorageMetadata, ContainerResult> {
       private final String host;
       private final BlobStoreContext<?, ?> context;
       private final String contextName;
@@ -49,7 +49,7 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
          this.contextName = contextName;
       }
 
-      public ContainerResult apply(ResourceMetadata from) {
+      public ContainerResult apply(StorageMetadata from) {
          String status;
          try {
             try {
@@ -77,11 +77,11 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
       final BlobStoreContext<?, ?> context = contexts.get(contextName);
       final String host = context.getEndPoint().getHost();
       try {
-         ResourceMetadata md = Iterables.getLast(Sets.newTreeSet(Iterables.filter(context
-                  .getBlobStore().list(), new Predicate<ResourceMetadata>() {
+         StorageMetadata md = Iterables.getLast(Sets.newTreeSet(Iterables.filter(context
+                  .getBlobStore().list(), new Predicate<StorageMetadata>() {
 
-            public boolean apply(ResourceMetadata input) {
-               return input.getType() == ResourceType.CONTAINER;
+            public boolean apply(StorageMetadata input) {
+               return input.getType() == StorageType.CONTAINER;
             }
 
          })));

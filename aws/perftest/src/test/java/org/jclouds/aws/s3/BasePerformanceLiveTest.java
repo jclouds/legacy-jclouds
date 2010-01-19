@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -35,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Provider;
 
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -89,7 +87,7 @@ public abstract class BasePerformanceLiveTest extends
    protected String createScratchContainerInEU() throws InterruptedException, ExecutionException,
             TimeoutException {
       String containerName = getScratchContainerName();
-      context.getApi().putBucketIfNotExists(containerName, createIn(LocationConstraint.EU));
+      context.getApi().putBucketInRegion(Region.EU_WEST_1, containerName);
       return containerName;
    }
 

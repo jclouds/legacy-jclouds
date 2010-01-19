@@ -19,7 +19,7 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
-import static com.google.common.util.concurrent.Futures.makeListenable;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
@@ -108,7 +108,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             return null;
          }
 
-      }));
+      }), service);
    }
 
    /**
@@ -128,7 +128,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Boolean> containerExists(String container) {
@@ -179,7 +179,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
@@ -193,7 +193,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             }
          }
 
-      }));
+      }), service);
    }
 
 }

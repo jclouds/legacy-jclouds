@@ -19,8 +19,8 @@
 package org.jclouds.aws.s3.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
-import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -87,7 +87,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
     * This implementation uses the S3 HEAD Object command to return the result
     */
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(makeListenable(async.headObject(container, key)),
+      return compose(makeListenable(async.headObject(container, key), service),
                new Function<ObjectMetadata, BlobMetadata>() {
 
                   @Override
@@ -106,7 +106,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Void> deleteContainer(final String container) {
@@ -118,7 +118,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
@@ -137,7 +137,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
@@ -152,7 +152,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             }
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Blob> getBlob(String container, String key,

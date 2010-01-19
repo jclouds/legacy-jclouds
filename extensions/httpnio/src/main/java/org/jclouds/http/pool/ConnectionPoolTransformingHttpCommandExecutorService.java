@@ -19,7 +19,7 @@
 package org.jclouds.http.pool;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.util.concurrent.Futures.makeListenable;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 
 import java.net.URI;
 import java.util.concurrent.BlockingQueue;
@@ -148,10 +148,10 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
             transformerLogger.debug("Processed intermediate result for: %s", o);
             return result;
          }
-      }));
+      }), executorService);
 
       HttpCommandRendezvous<T> rendezvous = new HttpCommandRendezvous<T>(command, channel,
-               makeListenable(future));
+               makeListenable(future, executorService));
       commandQueue.add(rendezvous);
       return rendezvous.getListenableFuture();
    }

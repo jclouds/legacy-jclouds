@@ -60,7 +60,7 @@ public class StoreTweetsControllerTest {
                .<String, BlobStoreContext<?, ?>> of("test1", new StubBlobStoreContextBuilder()
                         .buildContext(), "test2", new StubBlobStoreContextBuilder().buildContext());
       for (BlobStoreContext<?, ?> blobstore : contexts.values()) {
-         blobstore.getAsyncBlobStore().createContainer("favo").get();
+         blobstore.getAsyncBlobStore().createContainerInLocation(null, "favo").get();
       }
       return contexts;
    }

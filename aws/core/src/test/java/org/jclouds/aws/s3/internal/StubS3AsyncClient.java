@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 
@@ -63,13 +64,13 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.concurrent.internal.ConcurrentUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -90,6 +91,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final BlobToObjectMetadata blob2ObjectMetadata;
    private final BucketToContainerListOptions bucket2ContainerListOptions;
    private final ResourceToBucketList resource2BucketList;
+   private final ExecutorService executorService;
 
    @Inject
    private StubS3AsyncClient(StubAsyncBlobStore blobStore,
@@ -98,7 +100,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, BlobToObjectMetadata blob2ObjectMetadata,
             BucketToContainerListOptions bucket2ContainerListOptions,
-            ResourceToBucketList resource2BucketList) {
+            ResourceToBucketList resource2BucketList, ExecutorService executorService) {
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.blobProvider = blobProvider;
@@ -110,6 +112,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
       this.bucket2ContainerListOptions = checkNotNull(bucket2ContainerListOptions,
                "bucket2ContainerListOptions");
       this.resource2BucketList = checkNotNull(resource2BucketList, "resource2BucketList");
+      this.executorService = checkNotNull(executorService, "executorService");
    }
 
    public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
@@ -268,13 +271,13 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    public ListenableFuture<ObjectMetadata> headObject(String bucketName, String key) {
-      return compose(Futures.makeListenable(blobStore.blobMetadata(bucketName, key)),
-               new Function<BlobMetadata, ObjectMetadata>() {
-                  @Override
-                  public ObjectMetadata apply(BlobMetadata from) {
-                     return blob2ObjectMetadata.apply(from);
-                  }
-               });
+      return compose(ConcurrentUtils.makeListenable(blobStore.blobMetadata(bucketName, key),
+               executorService), new Function<BlobMetadata, ObjectMetadata>() {
+         @Override
+         public ObjectMetadata apply(BlobMetadata from) {
+            return blob2ObjectMetadata.apply(from);
+         }
+      });
    }
 
    public ListenableFuture<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {

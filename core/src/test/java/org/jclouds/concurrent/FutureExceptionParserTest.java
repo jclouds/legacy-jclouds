@@ -18,7 +18,7 @@
  */
 package org.jclouds.concurrent;
 
-import static com.google.common.util.concurrent.Futures.makeListenable;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
@@ -76,7 +76,7 @@ public class FutureExceptionParserTest {
             throw exception;
          }
 
-      }));
+      }), executorService);
 
       future = new FutureExceptionParser(future, new Function<Exception, String>() {
 

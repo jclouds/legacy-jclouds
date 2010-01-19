@@ -21,7 +21,7 @@ package org.jclouds.blobstore.integration.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static com.google.common.util.concurrent.Futures.makeListenable;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -593,7 +593,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             return null;
          }
 
-      }));
+      }), service);
    }
 
    public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
@@ -607,7 +607,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             }
          }
 
-      }));
+      }), service);
    }
 
    public Blob newBlob(String name) {

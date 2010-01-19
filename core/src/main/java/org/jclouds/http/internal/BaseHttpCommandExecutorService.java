@@ -18,7 +18,7 @@
  */
 package org.jclouds.http.internal;
 
-import static com.google.common.util.concurrent.Futures.makeListenable;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -64,7 +64,8 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    }
 
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
-      return makeListenable(executorService.submit(new HttpResponseCallable(command)));
+      return makeListenable(executorService.submit(new HttpResponseCallable(command)),
+               executorService);
    }
 
    public class HttpResponseCallable implements Callable<HttpResponse> {

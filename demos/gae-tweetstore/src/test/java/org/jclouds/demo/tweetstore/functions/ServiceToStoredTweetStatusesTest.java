@@ -50,7 +50,7 @@ public class ServiceToStoredTweetStatusesTest {
       for (String name : new String[] { "1", "2" }) {
          BlobStoreContext<AsyncBlobStore, BlobStore> context = new StubBlobStoreContextBuilder()
                   .buildContext();
-         context.getAsyncBlobStore().createContainer(container).get();
+         context.getAsyncBlobStore().createContainerInLocation(null, container).get();
          Blob blob = context.getAsyncBlobStore().newBlob("1");
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
          blob.setPayload("I love beans!");

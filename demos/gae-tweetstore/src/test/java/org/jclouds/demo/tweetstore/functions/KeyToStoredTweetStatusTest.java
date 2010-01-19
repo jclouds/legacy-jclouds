@@ -44,7 +44,7 @@ public class KeyToStoredTweetStatusTest {
    BlobMap createMap() throws InterruptedException, ExecutionException {
       BlobStoreContext<AsyncBlobStore, BlobStore> context = new StubBlobStoreContextBuilder()
                .buildContext();
-      context.getBlobStore().createContainer("test1");
+      context.getBlobStore().createContainerInLocation(null, "test1");
       return context.createBlobMap("test1");
    }
 

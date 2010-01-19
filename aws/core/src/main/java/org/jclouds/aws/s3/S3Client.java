@@ -182,6 +182,7 @@ public interface S3Client {
     *      />
     * 
     */
+   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    boolean putBucketInRegion(Region region, String bucketName, PutBucketOptions... options);
 
    /**

@@ -18,7 +18,7 @@
  */
 package org.jclouds.concurrent.internal;
 
-import static com.google.common.util.concurrent.Futures.makeListenable;
+import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 import static org.testng.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
@@ -79,7 +79,7 @@ public class SyncProxyTest {
                return "foo";
             }
 
-         }));
+         }), executorService);
       }
 
       public ListenableFuture<String> getRuntimeException() {
@@ -89,7 +89,7 @@ public class SyncProxyTest {
                throw new RuntimeException();
             }
 
-         }));
+         }), executorService);
       }
 
       public ListenableFuture<String> getTypedException() throws FileNotFoundException {
@@ -99,7 +99,7 @@ public class SyncProxyTest {
                throw new FileNotFoundException();
             }
 
-         }));
+         }), executorService);
       }
 
       public String newString() {
@@ -118,7 +118,7 @@ public class SyncProxyTest {
                return "foo";
             }
 
-         }));
+         }), executorService);
       }
 
       public ListenableFuture<String> take100MillisecondsAndTimeout() {
@@ -133,7 +133,7 @@ public class SyncProxyTest {
                return "foo";
             }
 
-         }));
+         }), executorService);
       }
 
       public ListenableFuture<String> take100MillisecondsAndOverride() {

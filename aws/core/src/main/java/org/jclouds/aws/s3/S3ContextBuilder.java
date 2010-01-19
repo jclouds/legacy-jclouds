@@ -18,8 +18,15 @@
  */
 package org.jclouds.aws.s3;
 
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_METADATA_PREFIX;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_RETRY;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_TIMEOUT;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_RETRY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.aws.s3.config.S3ContextModule;
@@ -28,6 +35,7 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContextBuilder;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -50,7 +58,17 @@ public class S3ContextBuilder extends RestContextBuilder<S3AsyncClient, S3Client
    public S3ContextBuilder(Properties props) {
       super(new TypeLiteral<S3AsyncClient>() {
       }, new TypeLiteral<S3Client>() {
-      }, props);
+      }, convert(props));
+   }
+
+   private static Properties convert(Properties props) {
+      for (Entry<String, String> entry : ImmutableMap.of(PROPERTY_S3_METADATA_PREFIX,
+               PROPERTY_USER_METADATA_PREFIX, PROPERTY_S3_RETRY, PROPERTY_BLOBSTORE_RETRY,
+               PROPERTY_S3_TIMEOUT, PROPERTY_USER_METADATA_PREFIX).entrySet()) {
+         if (props.containsKey(entry.getKey()))
+            props.setProperty(entry.getValue(), props.getProperty(entry.getKey()));
+      }
+      return props;
    }
 
    @Override
