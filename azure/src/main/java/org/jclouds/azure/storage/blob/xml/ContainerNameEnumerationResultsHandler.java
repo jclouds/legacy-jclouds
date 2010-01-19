@@ -73,7 +73,7 @@ public class ContainerNameEnumerationResultsHandler extends
    private BlobType currentBlobType;
    private boolean inBlob;
    private boolean inBlobPrefix;
-   private boolean inBlobMetadata;
+   private boolean inMetadata;
    private Set<String> blobPrefixes = Sets.newHashSet();
    private byte[] currentContentMD5;
    private Map<String, String> currentMetadata = Maps.newHashMap();
@@ -96,25 +96,25 @@ public class ContainerNameEnumerationResultsHandler extends
       if (qName.equals("Blob")) {
          inBlob = true;
          inBlobPrefix = false;
+         inMetadata = false;
       } else if (qName.equals("BlobPrefix")) {
          inBlob = false;
          inBlobPrefix = true;
       } else if (qName.equals("Metadata")) {
          inBlob = true;
-         inBlobMetadata = true;
+         inMetadata = true;
       } else if (qName.equals("EnumerationResults")) {
          containerUrl = URI.create(attributes.getValue("ContainerName").toString().trim());
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (inBlobMetadata && !qName.equals("Metadata")) {
+      if (inMetadata && !qName.equals("Metadata")) {
          currentMetadata.put(qName, currentText.toString().trim());
-      }
-      if (qName.equals("MaxResults")) {
-         maxResults = Integer.parseInt(currentText.toString().trim());
       } else if (qName.equals("Metadata")) {
-         inBlobMetadata = false;
+         inMetadata = false;
+      } else if (qName.equals("MaxResults")) {
+         maxResults = Integer.parseInt(currentText.toString().trim());
       } else if (qName.equals("Marker")) {
          marker = currentText.toString().trim();
          marker = (marker.equals("")) ? null : marker;

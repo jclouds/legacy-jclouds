@@ -20,7 +20,7 @@ package org.jclouds.azure.storage.blob.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
@@ -32,15 +32,15 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ContainerToResourceMetadata implements
-         Function<ListableContainerProperties, StorageMetadata> {
-   public StorageMetadata apply(ListableContainerProperties from) {
+public class ContainerToResourceMetadata implements Function<ContainerProperties, StorageMetadata> {
+   public StorageMetadata apply(ContainerProperties from) {
       MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
       to.setETag(from.getETag());
       to.setLastModified(from.getLastModified());
       to.setUri(from.getUrl());
       to.setType(StorageType.CONTAINER);
+      to.setUserMetadata(from.getMetadata());
       return to;
    }
 }

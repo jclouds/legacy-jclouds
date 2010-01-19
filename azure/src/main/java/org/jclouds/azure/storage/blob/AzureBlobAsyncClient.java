@@ -31,8 +31,8 @@ import javax.ws.rs.PathParam;
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.binders.BindAzureBlobToPayload;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.functions.BlobName;
 import org.jclouds.azure.storage.blob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azure.storage.blob.functions.ParseBlobPropertiesFromHeaders;
@@ -95,7 +95,7 @@ public interface AzureBlobAsyncClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   ListenableFuture<? extends BoundedSet<ListableContainerProperties>> listContainers(
+   ListenableFuture<? extends BoundedSet<ContainerProperties>> listContainers(
             ListOptions... listOptions);
 
    /**
@@ -115,7 +115,7 @@ public interface AzureBlobAsyncClient {
    @Path("{container}")
    @QueryParams(keys = "restype", values = "container")
    @ResponseParser(ParseContainerPropertiesFromHeaders.class)
-   ListenableFuture<ListableContainerProperties> getContainerProperties(
+   ListenableFuture<ContainerProperties> getContainerProperties(
             @PathParam("container") String container);
 
    /**

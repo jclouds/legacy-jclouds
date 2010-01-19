@@ -24,8 +24,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.SortedSet;
 
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
-import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
+import org.jclouds.azure.storage.blob.domain.internal.ContainerPropertiesImpl;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.date.DateService;
@@ -33,6 +33,7 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -55,43 +56,47 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/blob/test_list_containers.xml");
-      SortedSet<ListableContainerProperties> contents = Sets.newTreeSet();
-      contents.add(new ListableContainerPropertiesImpl(URI
+      SortedSet<ContainerProperties> contents = Sets.newTreeSet();
+      contents.add(new ContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/audio"), dateService
-               .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C6B1B2"));
-      contents.add(new ListableContainerPropertiesImpl(URI
+               .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C6B1B2", Maps
+               .<String, String> newHashMap()));
+      contents.add(new ContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/images"), dateService
-               .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C1EEEC"));
-      contents.add(new ListableContainerPropertiesImpl(URI
+               .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C1EEEC", Maps
+               .<String, String> newHashMap()));
+      contents.add(new ContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
-               .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3"));
-      BoundedSet<ListableContainerProperties> list = new BoundedHashSet<ListableContainerProperties>(
-               contents, URI.create("http://myaccount.blob.core.windows.net/"), null, null, 3,
-               "video");
+               .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3", Maps
+               .<String, String> newHashMap()));
+      BoundedSet<ContainerProperties> list = new BoundedHashSet<ContainerProperties>(contents, URI
+               .create("http://myaccount.blob.core.windows.net/"), null, null, 3, "video");
 
-      BoundedSet<ListableContainerProperties> result = (BoundedSet<ListableContainerProperties>) factory
-               .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
+      BoundedSet<ContainerProperties> result = (BoundedSet<ContainerProperties>) factory.create(
+               injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
    }
 
    public void testApplyInputStreamWithOptions() {
-      SortedSet<ListableContainerProperties> contents = Sets.newTreeSet();
-      contents.add(new ListableContainerPropertiesImpl(URI
+      SortedSet<ContainerProperties> contents = Sets.newTreeSet();
+      contents.add(new ContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/audio"), dateService
-               .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C6B1B2"));
-      contents.add(new ListableContainerPropertiesImpl(URI
+               .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C6B1B2", Maps
+               .<String, String> newHashMap()));
+      contents.add(new ContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/images"), dateService
-               .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C1EEEC"));
-      contents.add(new ListableContainerPropertiesImpl(URI
+               .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C1EEEC", Maps
+               .<String, String> newHashMap()));
+      contents.add(new ContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
-               .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3"));
+               .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3", Maps
+               .<String, String> newHashMap()));
       InputStream is = getClass().getResourceAsStream("/blob/test_list_containers_options.xml");
-      BoundedSet<ListableContainerProperties> list = new BoundedHashSet<ListableContainerProperties>(
-               contents, URI.create("http://myaccount.blob.core.windows.net"), "prefix", "marker",
-               1, "video");
-      BoundedSet<ListableContainerProperties> result = (BoundedSet<ListableContainerProperties>) factory
-               .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
+      BoundedSet<ContainerProperties> list = new BoundedHashSet<ContainerProperties>(contents, URI
+               .create("http://myaccount.blob.core.windows.net"), "prefix", "marker", 1, "video");
+      BoundedSet<ContainerProperties> result = (BoundedSet<ContainerProperties>) factory.create(
+               injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }
 }

@@ -51,7 +51,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    private final byte[] contentMD5;
    private final String contentEncoding;
    private final String contentLanguage;
-   private final Map<String, String> metadata = Maps.newHashMap();
+   private final Map<String, String> metadata = Maps.newLinkedHashMap();
 
    public BlobPropertiesImpl(BlobType type, String name, URI url, Date lastModified, String eTag,
             long size, String contentType, @Nullable byte[] contentMD5,
@@ -89,6 +89,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getName() {
       return name;
    }
@@ -96,6 +97,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getContentEncoding() {
       return contentEncoding;
    }
@@ -103,6 +105,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getContentType() {
       return contentType;
    }
@@ -110,6 +113,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public Date getLastModified() {
       return lastModified;
    }
@@ -117,6 +121,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getETag() {
       return eTag;
    }
@@ -124,6 +129,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public Long getContentLength() {
       return size;
    }
@@ -131,14 +137,31 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    /**
     *{@inheritDoc}
     */
+   @Override
    public int compareTo(BlobProperties o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public Map<String, String> getMetadata() {
+      return metadata;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
    public String getContentLanguage() {
       return contentLanguage;
    }
 
+   /**
+    *{@inheritDoc}
+    */
+   @Override
    public URI getUrl() {
       return url;
    }
@@ -220,11 +243,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       } else if (!url.equals(other.url))
          return false;
       return true;
-   }
-
-   @Override
-   public Map<String, String> getMetadata() {
-      return metadata;
    }
 
 }

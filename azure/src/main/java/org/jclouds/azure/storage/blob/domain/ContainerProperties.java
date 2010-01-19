@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
+import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -25,7 +27,14 @@ import java.util.Map;
  * @author Adrian Cole
  * 
  */
-public interface ContainerProperties extends ListableContainerProperties {
+public interface ContainerProperties extends Comparable<ContainerProperties> {
+   URI getUrl();
+
+   String getName();
+
+   Date getLastModified();
+
+   String getETag();
 
    Map<String, String> getMetadata();
 }

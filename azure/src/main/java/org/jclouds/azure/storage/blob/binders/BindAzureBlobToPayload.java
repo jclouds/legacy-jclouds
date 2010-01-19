@@ -70,12 +70,11 @@ public class BindAzureBlobToPayload implements Binder {
       }
 
       request.setPayload(checkNotNull(object.getContent(), "object.getContent()"));
-      request.getHeaders().put(
-               HttpHeaders.CONTENT_TYPE,
-               checkNotNull(object.getProperties().getContentType(),
-                        "object.metadata.contentType()"));
 
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
+      // in azure content-type is optional
+      if (object.getProperties().getContentType() != null)
+         request.getHeaders()
+                  .put(HttpHeaders.CONTENT_TYPE, object.getProperties().getContentType());
 
       if (object.getProperties().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",

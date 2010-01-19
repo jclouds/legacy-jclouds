@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.blob.blobstore;
 
+import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.Set;
@@ -34,7 +35,7 @@ import org.jclouds.azure.storage.blob.blobstore.functions.ContainerToResourceMet
 import org.jclouds.azure.storage.blob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListOptionsToListBlobsOptions;
 import org.jclouds.azure.storage.blob.blobstore.internal.BaseAzureBlobStore;
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -116,24 +117,24 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
 
    public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
-      GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      return object2Blob.apply(sync.getBlob(container, key, httpOptions));
+      GetOptions azureOptions = blob2ObjectGetOptions.apply(optionsList);
+      return object2Blob.apply(sync.getBlob(container, key, azureOptions));
    }
 
    public ListResponse<? extends StorageMetadata> list() {
-      return new Function<Set<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+      return new Function<Set<ContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
          public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                  Set<ListableContainerProperties> from) {
+                  Set<ContainerProperties> from) {
             return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                      container2ResourceMd), null, null, false);
          }
-      }.apply(sync.listContainers());
+      }.apply(sync.listContainers(includeMetadata()));
    }
 
    public ListContainerResponse<? extends StorageMetadata> list(String container,
             ListContainerOptions... optionsList) {
-      ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
-      return container2ResourceList.apply(sync.listBlobs(container, httpOptions));
+      ListBlobsOptions azureOptions = container2ContainerListOptions.apply(optionsList);
+      return container2ResourceList.apply(sync.listBlobs(container, azureOptions.includeMetadata()));
    }
 
    public String putBlob(String container, Blob blob) {

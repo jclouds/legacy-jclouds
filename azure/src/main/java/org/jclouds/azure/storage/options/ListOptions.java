@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkState;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Options used to control paginated results (aka list commands).
  * 
@@ -31,6 +33,19 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  */
 public class ListOptions extends BaseHttpRequestOptions {
    public static final ListOptions NONE = new ListOptions();
+
+   /**
+    * Include this parameter to specify that the container's metadata be returned as part of the
+    * response body.
+    * 
+    * Note that metadata requested with this parameter must be stored in accordance with the naming
+    * restrictions imposed by the 2009-09-19 version of the Blob service. Beginning with this
+    * version, all metadata names must adhere to the naming conventions for C# identifiers.
+    */
+   public ListOptions includeMetadata() {
+      this.queryParameters.replaceValues("include", ImmutableSet.of("metadata"));
+      return this;
+   }
 
    /**
     * Filters the results to return only objects whose name begins with the specified prefix.
@@ -79,6 +94,13 @@ public class ListOptions extends BaseHttpRequestOptions {
    }
 
    public static class Builder {
+      /**
+       * @see ListOptions#includeMetadata()
+       */
+      public static ListOptions includeMetadata() {
+         ListOptions options = new ListOptions();
+         return options.includeMetadata();
+      }
 
       /**
        * @see ListOptions#prefix(String)

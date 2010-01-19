@@ -51,11 +51,11 @@ public class ListBlobsOptions extends ListOptions {
       this.queryParameters.put("delimiter", delimiter);
       return this;
    }
-   
+
    public String getDelimiter() {
       return this.getFirstQueryOrNull("delimiter");
    }
-   
+
    public static class Builder {
 
       /**
@@ -66,5 +66,68 @@ public class ListBlobsOptions extends ListOptions {
          return options.delimiter(delimiter);
       }
 
+      /**
+       * @see ListOptions#includeMetadata()
+       */
+      public static ListBlobsOptions includeMetadata() {
+         ListBlobsOptions options = new ListBlobsOptions();
+         return options.includeMetadata();
+      }
+
+      /**
+       * @see ListOptions#prefix(String)
+       */
+      public static ListBlobsOptions prefix(String prefix) {
+         ListBlobsOptions options = new ListBlobsOptions();
+         return options.prefix(prefix);
+      }
+
+      /**
+       * @see ListOptions#marker(String)
+       */
+      public static ListBlobsOptions marker(String marker) {
+         ListBlobsOptions options = new ListBlobsOptions();
+         return options.marker(marker);
+      }
+
+      /**
+       * @see ListOptions#maxResults(long)
+       */
+      public static ListBlobsOptions maxResults(int maxKeys) {
+         ListBlobsOptions options = new ListBlobsOptions();
+         return options.maxResults(maxKeys);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListBlobsOptions includeMetadata() {
+      return (ListBlobsOptions) super.includeMetadata();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListBlobsOptions marker(String marker) {
+      return (ListBlobsOptions) super.marker(marker);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListBlobsOptions maxResults(int maxresults) {
+      return (ListBlobsOptions) super.maxResults(maxresults);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListBlobsOptions prefix(String prefix) {
+      return (ListBlobsOptions) super.prefix(prefix);
    }
 }

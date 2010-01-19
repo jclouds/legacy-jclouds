@@ -23,8 +23,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
@@ -57,7 +57,7 @@ public interface AzureBlobClient {
     *           controls the number or type of results requested
     * @see ListOptions
     */
-   BoundedSet<ListableContainerProperties> listContainers(ListOptions... listOptions);
+   BoundedSet<ContainerProperties> listContainers(ListOptions... listOptions);
 
    /**
     * The Create Container operation creates a new container under the specified account. If the
@@ -75,7 +75,7 @@ public interface AzureBlobClient {
     * The Get Container Properties operation returns all user-defined metadata and system properties
     * for the specified container. The data returned does not include the container's list of blobs.
     */
-   ListableContainerProperties getContainerProperties(String container);
+   ContainerProperties getContainerProperties(String container);
 
    /**
     * Issues a HEAD command to determine if the container exists or not.

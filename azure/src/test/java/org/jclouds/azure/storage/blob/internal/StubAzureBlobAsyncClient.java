@@ -37,9 +37,9 @@ import org.jclouds.azure.storage.blob.blobstore.functions.ListBlobsOptionsToList
 import org.jclouds.azure.storage.blob.blobstore.functions.ResourceToListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
-import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
+import org.jclouds.azure.storage.blob.domain.internal.ContainerPropertiesImpl;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
@@ -55,6 +55,7 @@ import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -134,7 +135,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
                });
    }
 
-   public ListenableFuture<ListableContainerProperties> getContainerProperties(String container) {
+   public ListenableFuture<ContainerProperties> getContainerProperties(String container) {
       throw new UnsupportedOperationException();
    }
 
@@ -149,17 +150,16 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       throw new UnsupportedOperationException();
    }
 
-   public ListenableFuture<? extends BoundedSet<ListableContainerProperties>> listContainers(
+   public ListenableFuture<? extends BoundedSet<ContainerProperties>> listContainers(
             ListOptions... listOptions) {
-      return immediateFuture(new BoundedHashSet<ListableContainerProperties>(Iterables.transform(
-               blobStore.getContainerToBlobs().keySet(),
-               new Function<String, ListableContainerProperties>() {
-                  public ListableContainerProperties apply(String name) {
-                     return new ListableContainerPropertiesImpl(URI.create("http://stub/" + name),
-                              new Date(), "");
-                  }
+      return immediateFuture(new BoundedHashSet<ContainerProperties>(Iterables.transform(blobStore
+               .getContainerToBlobs().keySet(), new Function<String, ContainerProperties>() {
+         public ContainerProperties apply(String name) {
+            return new ContainerPropertiesImpl(URI.create("http://stub/" + name), new Date(), "",
+                     Maps.<String, String> newHashMap());
+         }
 
-               }), null, null, null, null, null));
+      }), null, null, null, null, null));
    }
 
    public AzureBlob newBlob() {

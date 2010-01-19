@@ -23,15 +23,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
+
+import com.google.common.collect.Maps;
 
 /**
  * Allows you to manipulate metadata.
  * 
  * @author Adrian Cole
  */
-public class ListableContainerPropertiesImpl implements Serializable, ListableContainerProperties {
+public class ContainerPropertiesImpl implements Serializable, ContainerProperties {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -4648755473986695062L;
@@ -40,17 +43,20 @@ public class ListableContainerPropertiesImpl implements Serializable, ListableCo
    private final URI url;
    private final Date lastModified;
    private final String eTag;
+   private final Map<String, String> metadata = Maps.newLinkedHashMap();
 
-   public ListableContainerPropertiesImpl(URI url, Date lastModified, String eTag) {
+   public ContainerPropertiesImpl(URI url, Date lastModified, String eTag,Map<String, String> metadata) {
       this.url = checkNotNull(url, "url");
       this.name = checkNotNull(url.getPath(), "url.getPath()").replaceFirst("/", "");
       this.lastModified = checkNotNull(lastModified, "lastModified");
       this.eTag = checkNotNull(eTag, "eTag");
+      this.metadata.putAll(checkNotNull(metadata, "metadata"));
    }
 
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getName() {
       return name;
    }
@@ -58,6 +64,7 @@ public class ListableContainerPropertiesImpl implements Serializable, ListableCo
    /**
     *{@inheritDoc}
     */
+   @Override
    public Date getLastModified() {
       return lastModified;
    }
@@ -65,17 +72,27 @@ public class ListableContainerPropertiesImpl implements Serializable, ListableCo
    /**
     *{@inheritDoc}
     */
+   @Override
    public String getETag() {
       return eTag;
    }
-
    /**
     *{@inheritDoc}
     */
-   public int compareTo(ListableContainerProperties o) {
+   @Override
+   public int compareTo(ContainerProperties o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
-
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public Map<String, String> getMetadata() {
+      return metadata;
+   }   /**
+    *{@inheritDoc}
+    */
+   @Override
    public URI getUrl() {
       return url;
    }
@@ -99,7 +116,7 @@ public class ListableContainerPropertiesImpl implements Serializable, ListableCo
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ListableContainerPropertiesImpl other = (ListableContainerPropertiesImpl) obj;
+      ContainerPropertiesImpl other = (ContainerPropertiesImpl) obj;
       if (eTag == null) {
          if (other.eTag != null)
             return false;

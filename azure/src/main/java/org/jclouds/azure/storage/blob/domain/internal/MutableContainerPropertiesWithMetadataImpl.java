@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.MutableContainerPropertiesWithMetadata;
 
 import com.google.common.collect.Maps;
@@ -73,7 +73,7 @@ public class MutableContainerPropertiesWithMetadataImpl implements Serializable,
    /**
     *{@inheritDoc}
     */
-   public int compareTo(ListableContainerProperties o) {
+   public int compareTo(ContainerProperties o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 

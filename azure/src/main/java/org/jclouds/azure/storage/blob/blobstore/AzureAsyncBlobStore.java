@@ -21,7 +21,7 @@ package org.jclouds.azure.storage.blob.blobstore;
 import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
-
+import static org.jclouds.azure.storage.options.ListOptions.Builder.*;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -40,7 +40,7 @@ import org.jclouds.azure.storage.blob.blobstore.internal.BaseAzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -127,17 +127,17 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
 
    public ListenableFuture<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
-      GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      ListenableFuture<AzureBlob> returnVal = async.getBlob(container, key, httpOptions);
+      GetOptions azureOptions = blob2ObjectGetOptions.apply(optionsList);
+      ListenableFuture<AzureBlob> returnVal = async.getBlob(container, key, azureOptions);
       return compose(returnVal, object2Blob, service);
    }
 
    public ListenableFuture<? extends org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>> list() {
       return compose(
-               async.listContainers(),
-               new Function<Set<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+               async.listContainers(includeMetadata()),
+               new Function<Set<ContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                           Set<ListableContainerProperties> from) {
+                           Set<ContainerProperties> from) {
                      return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                               container2ResourceMd), null, null, false);
                   }
@@ -146,8 +146,9 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
 
    public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
             String container, ListContainerOptions... optionsList) {
-      ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
-      ListenableFuture<ListBlobsResponse> returnVal = async.listBlobs(container, httpOptions);
+      ListBlobsOptions azureOptions = container2ContainerListOptions.apply(optionsList);
+      ListenableFuture<ListBlobsResponse> returnVal = async.listBlobs(container, azureOptions
+               .includeMetadata());
       return compose(returnVal, container2ResourceList, service);
    }
 
