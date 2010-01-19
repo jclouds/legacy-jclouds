@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
@@ -39,12 +38,11 @@ import com.google.common.collect.Sets;
 @Singleton
 public class ListBlobsResponseToResourceList implements
          Function<ListBlobsResponse, ListContainerResponse<? extends StorageMetadata>> {
-   private final ListableBlobPropertiesToBlobMetadata<ListableBlobProperties> object2blobMd;
+   private final BlobPropertiesToBlobMetadata object2blobMd;
    private final CommonPrefixesToResourceMetadata prefix2ResourceMd;
 
    @Inject
-   public ListBlobsResponseToResourceList(
-            ListableBlobPropertiesToBlobMetadata<ListableBlobProperties> object2blobMd,
+   public ListBlobsResponseToResourceList(BlobPropertiesToBlobMetadata object2blobMd,
             CommonPrefixesToResourceMetadata prefix2ResourceMd) {
       this.object2blobMd = object2blobMd;
       this.prefix2ResourceMd = prefix2ResourceMd;
@@ -53,8 +51,8 @@ public class ListBlobsResponseToResourceList implements
    public ListContainerResponse<? extends StorageMetadata> apply(ListBlobsResponse from) {
       SortedSet<StorageMetadata> contents = Sets.newTreeSet(Iterables.concat(Iterables.transform(
                from, object2blobMd), prefix2ResourceMd.apply(from.getBlobPrefixes())));
-      return new ListContainerResponseImpl<StorageMetadata>(contents, from.getPrefix(), from.getMarker(),
-               from.getMaxResults(), from.size() == from.getMaxResults());
+      return new ListContainerResponseImpl<StorageMetadata>(contents, from.getPrefix(), from
+               .getMarker(), from.getMaxResults(), from.size() == from.getMaxResults());
 
    }
 }

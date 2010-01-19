@@ -23,10 +23,10 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
-import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.internal.HashSetListBlobsResponse;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -52,14 +52,14 @@ public class ResourceToListBlobsResponse implements
 
    public ListBlobsResponse apply(ListContainerResponse<? extends StorageMetadata> list) {
 
-      Iterable<ListableBlobProperties> contents = Iterables.transform(Iterables.filter(list,
+      Iterable<BlobProperties> contents = Iterables.transform(Iterables.filter(list,
                new Predicate<StorageMetadata>() {
 
                   public boolean apply(StorageMetadata input) {
                      return input.getType() == StorageType.BLOB;
                   }
 
-               }), new Function<StorageMetadata, ListableBlobProperties>() {
+               }), new Function<StorageMetadata, BlobProperties>() {
 
          public MutableBlobProperties apply(StorageMetadata from) {
             return blob2ObjectMd.apply((BlobMetadata) from);
@@ -81,7 +81,7 @@ public class ResourceToListBlobsResponse implements
          }
 
       }));
-      return new TreeSetListBlobsResponse(contents, null, list.getPath(), null, list
-               .getMaxResults(),list.getMarker(), "/", commonPrefixes);
+      return new HashSetListBlobsResponse(contents, null, list.getPath(), null, list
+               .getMaxResults(), list.getMarker(), "/", commonPrefixes);
    }
 }

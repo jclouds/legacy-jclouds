@@ -77,9 +77,9 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
       }
 
       if (contentRange == null && contentLength != null) {
-         object.getProperties().setSize(object.getContentLength());
+         object.getProperties().setContentLength(object.getContentLength());
       } else if (contentRange != null) {
-         object.getProperties().setSize(
+         object.getProperties().setContentLength(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
       }
    }

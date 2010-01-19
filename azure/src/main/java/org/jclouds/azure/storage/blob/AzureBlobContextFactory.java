@@ -40,11 +40,16 @@ import com.google.inject.Module;
  * @see AzureBlobAsyncClient
  */
 public class AzureBlobContextFactory {
-
    public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
             Properties properties, Module... modules) {
       return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
+   }
+
+   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
+            Properties properties, String account, String encodedKey, Module... modules) {
+      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties)
+               .withCredentials(account, encodedKey).build()).withModules(modules).buildContext();
    }
 
    public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(String account,

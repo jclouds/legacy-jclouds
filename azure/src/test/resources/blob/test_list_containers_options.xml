@@ -31,17 +31,17 @@
   <Containers>
     <Container>
       <Url>http://myaccount.blob.core.windows.net/audio</Url>
-      <LastModified>Wed, 13 Aug 2008 20:39:39 GMT</LastModified>
+      <Last-Modified>Wed, 13 Aug 2008 20:39:39 GMT</Last-Modified>
       <Etag>0x8CACB9BD7C6B1B2</Etag>
     </Container>
     <Container>
       <Url>http://myaccount.blob.core.windows.net/images</Url>
-      <LastModified>Wed, 14 Aug 2008 20:39:39 GMT</LastModified>
+      <Last-Modified>Wed, 14 Aug 2008 20:39:39 GMT</Last-Modified>
       <Etag>0x8CACB9BD7C1EEEC</Etag>
     </Container>
     <Container>
       <Url>http://myaccount.blob.core.windows.net/textfiles</Url>
-      <LastModified>Wed, 15 Aug 2008 20:39:39 GMT</LastModified>
+      <Last-Modified>Wed, 15 Aug 2008 20:39:39 GMT</Last-Modified>
       <Etag>0x8CACB9BD7BACAC3</Etag>
     </Container>
   </Containers>

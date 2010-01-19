@@ -22,10 +22,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
+import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.BlobType;
 
+import com.google.common.collect.Maps;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -33,31 +37,53 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public class ListableBlobPropertiesImpl implements Serializable, ListableBlobProperties {
+public class BlobPropertiesImpl implements Serializable, BlobProperties {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -4648755473986695062L;
-
+   private final BlobType type;
    private final String name;
    private final URI url;
    private final Date lastModified;
    private final String eTag;
    private final long size;
    private final String contentType;
+   private final byte[] contentMD5;
    private final String contentEncoding;
    private final String contentLanguage;
+   private final Map<String, String> metadata = Maps.newHashMap();
 
-   public ListableBlobPropertiesImpl(String name, URI url, Date lastModified, String eTag,
-            long size, String contentType, @Nullable String contentEncoding,
-            @Nullable String contentLanguage) {
+   public BlobPropertiesImpl(BlobType type, String name, URI url, Date lastModified, String eTag,
+            long size, String contentType, @Nullable byte[] contentMD5,
+            @Nullable String contentEncoding, @Nullable String contentLanguage,
+            Map<String, String> metadata) {
+      this.type = checkNotNull(type, "type");
       this.name = checkNotNull(name, "name");
       this.url = checkNotNull(url, "url");
       this.lastModified = checkNotNull(lastModified, "lastModified");
       this.eTag = checkNotNull(eTag, "eTag");
       this.size = size;
       this.contentType = checkNotNull(contentType, "contentType");
+      this.contentMD5 = contentMD5;
       this.contentEncoding = contentEncoding;
       this.contentLanguage = contentLanguage;
+      this.metadata.putAll(checkNotNull(metadata, "metadata"));
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public byte[] getContentMD5() {
+      return contentMD5;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public BlobType getType() {
+      return type;
    }
 
    /**
@@ -98,14 +124,14 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
    /**
     *{@inheritDoc}
     */
-   public Long getSize() {
+   public Long getContentLength() {
       return size;
    }
 
    /**
     *{@inheritDoc}
     */
-   public int compareTo(ListableBlobProperties o) {
+   public int compareTo(BlobProperties o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
@@ -123,11 +149,14 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
       int result = 1;
       result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
       result = prime * result + ((contentLanguage == null) ? 0 : contentLanguage.hashCode());
+      result = prime * result + Arrays.hashCode(contentMD5);
       result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
       result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
    }
@@ -140,7 +169,7 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ListableBlobPropertiesImpl other = (ListableBlobPropertiesImpl) obj;
+      BlobPropertiesImpl other = (BlobPropertiesImpl) obj;
       if (contentEncoding == null) {
          if (other.contentEncoding != null)
             return false;
@@ -150,6 +179,8 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
          if (other.contentLanguage != null)
             return false;
       } else if (!contentLanguage.equals(other.contentLanguage))
+         return false;
+      if (!Arrays.equals(contentMD5, other.contentMD5))
          return false;
       if (contentType == null) {
          if (other.contentType != null)
@@ -166,6 +197,11 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
             return false;
       } else if (!lastModified.equals(other.lastModified))
          return false;
+      if (metadata == null) {
+         if (other.metadata != null)
+            return false;
+      } else if (!metadata.equals(other.metadata))
+         return false;
       if (name == null) {
          if (other.name != null)
             return false;
@@ -173,12 +209,22 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
          return false;
       if (size != other.size)
          return false;
+      if (type == null) {
+         if (other.type != null)
+            return false;
+      } else if (!type.equals(other.type))
+         return false;
       if (url == null) {
          if (other.url != null)
             return false;
       } else if (!url.equals(other.url))
          return false;
       return true;
+   }
+
+   @Override
+   public Map<String, String> getMetadata() {
+      return metadata;
    }
 
 }

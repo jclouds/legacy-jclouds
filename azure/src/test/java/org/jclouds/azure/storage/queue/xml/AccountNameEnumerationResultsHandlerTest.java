@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -41,24 +41,24 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/queue/test_list_queues.xml");
-      BoundedSortedSet<QueueMetadata> list = new BoundedTreeSet<QueueMetadata>(ImmutableSortedSet.of(
+      BoundedSet<QueueMetadata> list = new BoundedHashSet<QueueMetadata>(ImmutableSortedSet.of(
                new QueueMetadata("q1", URI.create("http://myaccount.queue.core.windows.net/q1")),
                new QueueMetadata("q2", URI.create("http://myaccount.queue.core.windows.net/q2")),
                new QueueMetadata("q3", URI.create("http://myaccount.queue.core.windows.net/q3"))),
                URI.create("http://myaccount.queue.core.windows.net"), "q", null, 3, "q4");
-      BoundedSortedSet<QueueMetadata> result = (BoundedSortedSet<QueueMetadata>) factory.create(
+      BoundedSet<QueueMetadata> result = (BoundedSet<QueueMetadata>) factory.create(
                injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }
 
    public void testApplyInputStreamWithOptions() {
       InputStream is = getClass().getResourceAsStream("/queue/test_list_queues_options.xml");
-      BoundedSortedSet<QueueMetadata> list = new BoundedTreeSet<QueueMetadata>(ImmutableSortedSet.of(
+      BoundedSet<QueueMetadata> list = new BoundedHashSet<QueueMetadata>(ImmutableSortedSet.of(
                new QueueMetadata("q4", URI.create("http://myaccount.queue.core.windows.net/q4")),
                new QueueMetadata("q5", URI.create("http://myaccount.queue.core.windows.net/q5"))),
                URI.create("http://myaccount.queue.core.windows.net"), "q", "q4", 3, null);
 
-      BoundedSortedSet<QueueMetadata> result = (BoundedSortedSet<QueueMetadata>) factory.create(
+      BoundedSet<QueueMetadata> result = (BoundedSet<QueueMetadata>) factory.create(
                injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);

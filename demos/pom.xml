@@ -32,6 +32,7 @@
     <packaging>pom</packaging>
     <name>jclouds demos project</name>
     <modules>
+        <module>speedtest-azurequeue</module>
         <module>gae-tweetstore</module>
         <module>gae-tweetstore-spring</module>
     </modules>

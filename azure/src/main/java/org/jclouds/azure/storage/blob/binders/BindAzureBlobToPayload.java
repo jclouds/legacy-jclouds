@@ -23,35 +23,64 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
-import org.jclouds.blobstore.binders.BindBlobToPayloadAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.Binder;
 
-public class BindAzureBlobToPayload extends BindBlobToPayloadAndUserMetadataToHeadersWithPrefix {
+@Singleton
+public class BindAzureBlobToPayload implements Binder {
 
-   private final AzureBlobToBlob azureBlob2Blob;
+   private final String metadataPrefix;
+   private final EncryptionService encryptionService;
 
    @Inject
-   public BindAzureBlobToPayload(AzureBlobToBlob azureBlob2Blob,
+   public BindAzureBlobToPayload(
             @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX) String prefix,
             EncryptionService encryptionService) {
-      super(prefix, encryptionService);
-      this.azureBlob2Blob = azureBlob2Blob;
+      this.metadataPrefix = prefix;
+      this.encryptionService = encryptionService;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       AzureBlob object = (AzureBlob) payload;
-      checkArgument(object.getProperties().getSize() >= 0, "size must be set");
-      checkArgument(
-               checkNotNull(object.getContentLength(), "object.getContentLength()") <= 64 * 1024 * 1024,
-               "maximum size for put Blob is 64MB");
-      super.bindToRequest(request, azureBlob2Blob.apply(object));
+      checkArgument(object.getProperties().getContentLength() >= 0, "size must be set");
+      request.getHeaders().put("x-ms-blob-type", object.getProperties().getType().toString());
 
+      switch (object.getProperties().getType()) {
+         case PAGE_BLOB:
+            request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "0");
+            request.getHeaders().put("x-ms-blob-content-length", object.getContentLength() + "");
+            break;
+         case BLOCK_BLOB:
+            checkArgument(
+                     checkNotNull(object.getContentLength(), "object.getContentLength()") <= 64 * 1024 * 1024,
+                     "maximum size for put Blob is 64MB");
+            request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
+            break;
+      }
+
+      for (String key : object.getProperties().getMetadata().keySet()) {
+         request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
+                  object.getProperties().getMetadata().get(key));
+      }
+
+      request.setPayload(checkNotNull(object.getContent(), "object.getContent()"));
+      request.getHeaders().put(
+               HttpHeaders.CONTENT_TYPE,
+               checkNotNull(object.getProperties().getContentType(),
+                        "object.metadata.contentType()"));
+
+      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
+
+      if (object.getProperties().getContentMD5() != null) {
+         request.getHeaders().put("Content-MD5",
+                  encryptionService.toBase64String(object.getProperties().getContentMD5()));
+      }
       if (object.getProperties().getContentLanguage() != null) {
          request.getHeaders().put(HttpHeaders.CONTENT_LANGUAGE,
                   object.getProperties().getContentLanguage());

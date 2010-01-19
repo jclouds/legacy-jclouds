@@ -22,18 +22,22 @@ import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.AzureQueue;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.azure.storage.queue.binders.BindToXmlStringPayload;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
+import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.QueryParams;
@@ -64,8 +68,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @SkipEncoding('/')
-@RequestFilters(SharedKeyAuthentication.class)
-@Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
+@RequestFilters(SharedKeyLiteAuthentication.class)
+@Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
 @Endpoint(AzureQueue.class)
 public interface AzureQueueAsyncClient {
 
@@ -76,15 +80,13 @@ public interface AzureQueueAsyncClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   ListenableFuture<? extends BoundedSortedSet<QueueMetadata>> listQueues(
-            ListOptions... listOptions);
+   ListenableFuture<? extends BoundedSet<QueueMetadata>> listQueues(ListOptions... listOptions);
 
    /**
     * @see AzureQueueClient#createQueue
     */
    @PUT
    @Path("{queue}")
-   @QueryParams(keys = "restype", values = "queue")
    ListenableFuture<Boolean> createQueue(@PathParam("queue") String queue, CreateOptions... options);
 
    /**
@@ -92,7 +94,20 @@ public interface AzureQueueAsyncClient {
     */
    @DELETE
    @Path("{queue}")
-   @QueryParams(keys = "restype", values = "queue")
-   ListenableFuture<Boolean> deleteQueue(@PathParam("queue") String queue);
+   ListenableFuture<Void> deleteQueue(@PathParam("queue") String queue);
 
+   /**
+    * @see AzureQueueClient#putMessage
+    */
+   @POST
+   @Path("{queue}/messages")
+   ListenableFuture<Void> putMessage(@PathParam("queue") String queue,
+            @BinderParam(BindToXmlStringPayload.class) String message, PutMessageOptions... options);
+
+   /**
+    * @see AzureQueueClient#clearMessages
+    */
+   @DELETE
+   @Path("{queue}/messages")
+   ListenableFuture<Void> clearMessages(@PathParam("queue") String queue);
 }

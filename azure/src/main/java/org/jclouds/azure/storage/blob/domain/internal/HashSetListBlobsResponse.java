@@ -19,38 +19,41 @@
 package org.jclouds.azure.storage.blob.domain.internal;
 
 import java.net.URI;
-import java.util.SortedSet;
+import java.util.Set;
 
+import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class TreeSetListBlobsResponse extends BoundedTreeSet<ListableBlobProperties> implements
+public class HashSetListBlobsResponse extends BoundedHashSet<BlobProperties> implements
          ListBlobsResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;
 
-   public TreeSetListBlobsResponse(Iterable<ListableBlobProperties> contents, URI url, String prefix,
+   protected final String delimiter;
+   protected final Set<String> blobPrefixes = Sets.newHashSet();
+
+   public HashSetListBlobsResponse(Iterable<BlobProperties> contents, URI url, String prefix,
             String marker, Integer maxResults, String nextMarker, String delimiter,
-            SortedSet<String> blobPrefixes) {
+            Iterable<String> blobPrefixes) {
       super(contents, url, prefix, marker, maxResults, nextMarker);
       this.delimiter = delimiter;
-      this.blobPrefixes = blobPrefixes;
+      Iterables.addAll(this.blobPrefixes, blobPrefixes);
    }
-
-   protected final String delimiter;
-   protected final SortedSet<String> blobPrefixes;
 
    public String getDelimiter() {
       return delimiter;
    }
 
-   public SortedSet<String> getBlobPrefixes() {
+   public Set<String> getBlobPrefixes() {
       return blobPrefixes;
    }
 }

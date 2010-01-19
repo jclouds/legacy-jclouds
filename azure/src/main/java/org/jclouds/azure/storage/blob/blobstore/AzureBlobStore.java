@@ -20,7 +20,7 @@ package org.jclouds.azure.storage.blob.blobstore;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -121,9 +121,9 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
    }
 
    public ListResponse<? extends StorageMetadata> list() {
-      return new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+      return new Function<Set<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
          public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                  SortedSet<ListableContainerProperties> from) {
+                  Set<ListableContainerProperties> from) {
             return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                      container2ResourceMd), null, null, false);
          }

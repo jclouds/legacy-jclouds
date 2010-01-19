@@ -54,7 +54,7 @@ import com.google.common.annotations.VisibleForTesting;
  * 
  */
 @Singleton
-public class SharedKeyAuthentication implements HttpRequestFilter {
+public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    private final String[] firstHeadersToSign = new String[] { "Content-MD5",
             HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
@@ -68,7 +68,7 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyAuthentication(SignatureWire signatureWire,
+   public SharedKeyLiteAuthentication(SignatureWire signatureWire,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY) String encodedKey,
             @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
@@ -105,7 +105,7 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
-               Collections.singletonList("SharedKey " + account + ":" + signature));
+               Collections.singletonList("SharedKeyLite " + account + ":" + signature));
    }
 
    public String signString(String toSign) {

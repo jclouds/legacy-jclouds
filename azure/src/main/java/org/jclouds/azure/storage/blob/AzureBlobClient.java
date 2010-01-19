@@ -27,7 +27,7 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
@@ -57,7 +57,7 @@ public interface AzureBlobClient {
     *           controls the number or type of results requested
     * @see ListOptions
     */
-   BoundedSortedSet<ListableContainerProperties> listContainers(ListOptions... listOptions);
+   BoundedSet<ListableContainerProperties> listContainers(ListOptions... listOptions);
 
    /**
     * The Create Container operation creates a new container under the specified account. If the
@@ -138,7 +138,7 @@ public interface AzureBlobClient {
     * @see deleteContainer(String)
     * @see createRootContainer(CreateContainerOptions)
     */
-   boolean deleteRootContainer();
+   void deleteRootContainer();
 
    /**
     * The List Blobs operation enumerates the list of blobs under the specified container.

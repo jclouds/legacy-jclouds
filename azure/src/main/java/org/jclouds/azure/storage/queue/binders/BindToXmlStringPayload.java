@@ -16,25 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.domain;
+package org.jclouds.azure.storage.queue.binders;
 
-import java.net.URI;
-import java.util.SortedSet;
+import javax.inject.Singleton;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.binders.BindToStringPayload;
 
 /**
+ * Adds an payload to a request.
  * 
  * @author Adrian Cole
- * 
  */
-public interface BoundedSortedSet<T> extends SortedSet<T> {
-   URI getUrl();
-
-   String getPrefix();
-
-   String getMarker();
-
-   int getMaxResults();
-
-   String getNextMarker();
-
+@Singleton
+public class BindToXmlStringPayload extends BindToStringPayload {
+   public void bindToRequest(HttpRequest request, Object payload) {
+      super.bindToRequest(request, new StringBuilder().append("<QueueMessage><MessageText>")
+               .append(payload).append("</MessageText></QueueMessage>").toString());
+   }
 }

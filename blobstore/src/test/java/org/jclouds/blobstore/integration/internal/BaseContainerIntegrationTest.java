@@ -45,7 +45,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
    public void containerDoesntExist() {
       assert !context.getBlobStore().containerExists("forgetaboutit");
       assert !context.getBlobStore().containerExists(
-               "bog.cloudcachestorefunctionalintegrationtest-first");
+               "cloudcachestorefunctionalintegrationtest-first");
    }
 
    @Test(groups = { "integration", "live" })

@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.handlers;
 
+import java.io.ByteArrayInputStream;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -72,7 +74,7 @@ public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
       } else if (response.getStatusCode() == 409) {
          try {
             AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response,
-                     new String(content));
+                     new ByteArrayInputStream(content));
             if ("ContainerBeingDeleted".equals(error.getCode())) {
                backoffHandler.imposeBackoffExponentialDelay(100L, 3, command.getFailureCount(),
                         command.toString());

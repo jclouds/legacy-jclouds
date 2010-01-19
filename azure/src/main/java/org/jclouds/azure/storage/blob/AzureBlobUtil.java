@@ -24,7 +24,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
+import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseContentMD5FromHeaders;
@@ -43,7 +43,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
  * @author Adrian Cole
  */
 @SkipEncoding('/')
-@RequestFilters(SharedKeyAuthentication.class)
+@RequestFilters(SharedKeyLiteAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
 public interface AzureBlobUtil {
 

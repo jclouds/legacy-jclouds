@@ -22,7 +22,7 @@ import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -135,9 +135,9 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
    public ListenableFuture<? extends org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>> list() {
       return compose(
                async.listContainers(),
-               new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+               new Function<Set<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                           SortedSet<ListableContainerProperties> from) {
+                           Set<ListableContainerProperties> from) {
                      return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
                               container2ResourceMd), null, null, false);
                   }

@@ -26,8 +26,8 @@ import java.util.SortedSet;
 
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.BeforeTest;
@@ -65,11 +65,11 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
       contents.add(new ListableContainerPropertiesImpl(URI
                .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
                .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3"));
-      BoundedSortedSet<ListableContainerProperties> list = new BoundedTreeSet<ListableContainerProperties>(
+      BoundedSet<ListableContainerProperties> list = new BoundedHashSet<ListableContainerProperties>(
                contents, URI.create("http://myaccount.blob.core.windows.net/"), null, null, 3,
                "video");
 
-      BoundedSortedSet<ListableContainerProperties> result = (BoundedSortedSet<ListableContainerProperties>) factory
+      BoundedSet<ListableContainerProperties> result = (BoundedSet<ListableContainerProperties>) factory
                .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
@@ -87,10 +87,10 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
                .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3"));
       InputStream is = getClass().getResourceAsStream("/blob/test_list_containers_options.xml");
-      BoundedSortedSet<ListableContainerProperties> list = new BoundedTreeSet<ListableContainerProperties>(
+      BoundedSet<ListableContainerProperties> list = new BoundedHashSet<ListableContainerProperties>(
                contents, URI.create("http://myaccount.blob.core.windows.net"), "prefix", "marker",
                1, "video");
-      BoundedSortedSet<ListableContainerProperties> result = (BoundedSortedSet<ListableContainerProperties>) factory
+      BoundedSet<ListableContainerProperties> result = (BoundedSet<ListableContainerProperties>) factory
                .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }

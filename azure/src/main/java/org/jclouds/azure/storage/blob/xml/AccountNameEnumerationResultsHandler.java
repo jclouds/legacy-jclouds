@@ -26,8 +26,8 @@ import javax.inject.Inject;
 
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedSortedSet<ListableContainerProperties>> {
+         ParseSax.HandlerWithResult<BoundedSet<ListableContainerProperties>> {
 
    private SortedSet<ListableContainerProperties> containerMetadata = Sets.newTreeSet();
    private String prefix;
@@ -62,8 +62,8 @@ public class AccountNameEnumerationResultsHandler extends
       this.dateParser = dateParser;
    }
 
-   public BoundedSortedSet<ListableContainerProperties> getResult() {
-      return new BoundedTreeSet<ListableContainerProperties>(containerMetadata, currentUrl, prefix,
+   public BoundedSet<ListableContainerProperties> getResult() {
+      return new BoundedHashSet<ListableContainerProperties>(containerMetadata, currentUrl, prefix,
                marker, maxResults, nextMarker);
    }
 
@@ -87,7 +87,7 @@ public class AccountNameEnumerationResultsHandler extends
          currentETag = null;
       } else if (qName.equals("Url")) {
          currentUrl = URI.create(currentText.toString().trim());
-      } else if (qName.equals("LastModified")) {
+      } else if (qName.equals("Last-Modified")) {
          currentLastModified = dateParser.rfc822DateParse(currentText.toString().trim());
       } else if (qName.equals("Etag")) {
          currentETag = currentText.toString().trim();

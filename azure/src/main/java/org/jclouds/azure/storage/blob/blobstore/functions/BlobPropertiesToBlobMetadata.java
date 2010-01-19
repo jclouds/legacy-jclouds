@@ -23,24 +23,39 @@ import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class BlobPropertiesToBlobMetadata extends
-         ListableBlobPropertiesToBlobMetadata<BlobProperties> {
+public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, MutableBlobMetadata> {
+   private final IsDirectoryStrategy isDirectoryStrategy;
+
    @Inject
    public BlobPropertiesToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
-      super(isDirectoryStrategy);
+      this.isDirectoryStrategy = isDirectoryStrategy;
    }
 
-   @Override
    public MutableBlobMetadata apply(BlobProperties from) {
-      MutableBlobMetadata to = super.apply(from);
-      to.setContentMD5(from.getContentMD5());
+      MutableBlobMetadata to = new MutableBlobMetadataImpl();
+      if (from.getContentMD5() != null)
+         to.setContentMD5(from.getContentMD5());
+      if (from.getContentType() != null)
+         to.setContentType(from.getContentType());
       to.setUserMetadata(from.getMetadata());
+      to.setETag(from.getETag());
+      to.setLastModified(from.getLastModified());
+      to.setName(from.getName());
+      to.setSize(from.getContentLength());
+      to.setType(StorageType.BLOB);
+      if (isDirectoryStrategy.execute(to)) {
+         to.setType(StorageType.RELATIVE_PATH);
+      }
       return to;
    }
 }

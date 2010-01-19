@@ -34,52 +34,52 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(MutableBlobPropertiesImpl.class)
 public interface MutableBlobProperties extends BlobProperties {
    /**
-    * @see ListableContainerProperties#setUrl
+    * @see ListableContainerProperties#getUrl
     */
    void setUrl(URI url);
 
    /**
-    * @see ListableContainerProperties#setName
+    * @see ListableContainerProperties#getName
     */
    void setName(String name);
 
    /**
-    * @see ListableContainerProperties#setLastModified
+    * @see ListableContainerProperties#getLastModified
     */
    void setLastModified(Date lastModified);
 
    /**
-    * @see ListableContainerProperties#setETag
+    * @see ListableContainerProperties#getETag
     */
    void setETag(String eTag);
 
    /**
-    * @see ListableContainerProperties#setSize
+    * @see ListableContainerProperties#getContentLength
     */
-   void setSize(long size);
+   void setContentLength(long size);
 
    /**
-    * @see ListableContainerProperties#setContentMD5
+    * @see ListableContainerProperties#getContentMD5
     */
    void setContentMD5(byte[] md5);
 
    /**
-    * @see ListableContainerProperties#setContentType
+    * @see ListableContainerProperties#getContentType
     */
    void setContentType(String contentType);
 
    /**
-    * @see ListableContainerProperties#setContentEncoding
+    * @see ListableContainerProperties#getContentEncoding
     */
    void setContentEncoding(String contentEncoding);
 
    /**
-    * @see ListableContainerProperties#setContentLanguage
+    * @see ListableContainerProperties#getContentLanguage
     */
    void setContentLanguage(String contentLanguage);
 
    /**
-    * @see ListableContainerProperties#setMetadata
+    * @see ListableContainerProperties#getMetadata
     */
    void setMetadata(Map<String, String> metadata);
 

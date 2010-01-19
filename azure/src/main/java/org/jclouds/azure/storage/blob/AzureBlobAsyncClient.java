@@ -42,8 +42,8 @@ import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.blob.xml.ContainerNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.attr.ConsistencyModel;
@@ -80,8 +80,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @SkipEncoding('/')
-@RequestFilters(SharedKeyAuthentication.class)
-@Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
+@RequestFilters(SharedKeyLiteAuthentication.class)
+@Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
 @Endpoint(AzureBlob.class)
 @ConsistencyModel(ConsistencyModels.STRICT)
 public interface AzureBlobAsyncClient {
@@ -95,7 +95,7 @@ public interface AzureBlobAsyncClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   ListenableFuture<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
+   ListenableFuture<? extends BoundedSet<ListableContainerProperties>> listContainers(
             ListOptions... listOptions);
 
    /**
@@ -161,7 +161,7 @@ public interface AzureBlobAsyncClient {
    @Path("$root")
    @ExceptionParser(ReturnTrueOn404.class)
    @QueryParams(keys = "restype", values = "container")
-   ListenableFuture<Boolean> deleteRootContainer();
+   ListenableFuture<Void> deleteRootContainer();
 
    /**
     * @see AzureBlobClient#listBlobs(String, ListBlobsOptions)

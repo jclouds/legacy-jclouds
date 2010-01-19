@@ -19,9 +19,9 @@
 package org.jclouds.azure.storage.domain.internal;
 
 import java.net.URI;
-import java.util.TreeSet;
+import java.util.HashSet;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
 
 import com.google.common.collect.Iterables;
 
@@ -30,7 +30,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  * 
  */
-public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T> {
+public class BoundedHashSet<T> extends HashSet<T> implements BoundedSet<T> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -7133632087734650835L;
@@ -40,7 +40,7 @@ public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T>
    protected final Integer maxResults;
    protected final String nextMarker;
 
-   public BoundedTreeSet(Iterable<T> contents, URI url, String prefix, String marker,
+   public BoundedHashSet(Iterable<T> contents, URI url, String prefix, String marker,
             Integer maxResults, String nextMarker) {
       Iterables.addAll(this, contents);
       this.url = url;

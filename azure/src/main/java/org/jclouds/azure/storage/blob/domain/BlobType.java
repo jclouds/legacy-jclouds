@@ -18,17 +18,27 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
-import java.util.Set;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.azure.storage.domain.BoundedSet;
+import com.google.common.base.CaseFormat;
 
 /**
- * 
  * @author Adrian Cole
  */
-public interface ListBlobsResponse extends BoundedSet<BlobProperties> {
+public enum BlobType {
+   BLOCK_BLOB, PAGE_BLOB;
 
-   String getDelimiter();
+   public String value() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+   }
 
-   Set<String> getBlobPrefixes();
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static BlobType fromValue(String type) {
+      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type,
+               "type")));
+   }
 }

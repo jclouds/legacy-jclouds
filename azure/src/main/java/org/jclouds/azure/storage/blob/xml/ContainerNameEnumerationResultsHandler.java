@@ -20,20 +20,24 @@ package org.jclouds.azure.storage.blob.xml;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.SortedSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.BlobType;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
-import org.jclouds.azure.storage.blob.domain.internal.ListableBlobPropertiesImpl;
-import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.internal.BlobPropertiesImpl;
+import org.jclouds.azure.storage.blob.domain.internal.HashSetListBlobsResponse;
 import org.jclouds.date.DateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -46,8 +50,7 @@ import com.google.common.collect.Sets;
  */
 public class ContainerNameEnumerationResultsHandler extends
          ParseSax.HandlerWithResult<ListBlobsResponse> {
-
-   private SortedSet<ListableBlobProperties> blobMetadata = Sets.newTreeSet();
+   private Set<BlobProperties> blobMetadata = Sets.newLinkedHashSet();
    private String prefix;
    private String marker;
    private int maxResults;
@@ -59,6 +62,7 @@ public class ContainerNameEnumerationResultsHandler extends
 
    private StringBuilder currentText = new StringBuilder();
 
+   private final EncryptionService encryptionService;
    private final DateService dateParser;
    private String delimiter;
    private String currentName;
@@ -66,17 +70,23 @@ public class ContainerNameEnumerationResultsHandler extends
    private String currentContentType;
    private String currentContentEncoding;
    private String currentContentLanguage;
+   private BlobType currentBlobType;
    private boolean inBlob;
    private boolean inBlobPrefix;
-   private SortedSet<String> blobPrefixes = Sets.newTreeSet();
+   private boolean inBlobMetadata;
+   private Set<String> blobPrefixes = Sets.newHashSet();
+   private byte[] currentContentMD5;
+   private Map<String, String> currentMetadata = Maps.newHashMap();
 
    @Inject
-   public ContainerNameEnumerationResultsHandler(DateService dateParser) {
+   public ContainerNameEnumerationResultsHandler(EncryptionService encryptionService,
+            DateService dateParser) {
+      this.encryptionService = encryptionService;
       this.dateParser = dateParser;
    }
 
    public ListBlobsResponse getResult() {
-      return new TreeSetListBlobsResponse(blobMetadata, containerUrl, prefix, marker, maxResults,
+      return new HashSetListBlobsResponse(blobMetadata, containerUrl, prefix, marker, maxResults,
                nextMarker, delimiter, blobPrefixes);
    }
 
@@ -89,14 +99,22 @@ public class ContainerNameEnumerationResultsHandler extends
       } else if (qName.equals("BlobPrefix")) {
          inBlob = false;
          inBlobPrefix = true;
+      } else if (qName.equals("Metadata")) {
+         inBlob = true;
+         inBlobMetadata = true;
       } else if (qName.equals("EnumerationResults")) {
          containerUrl = URI.create(attributes.getValue("ContainerName").toString().trim());
       }
    }
 
    public void endElement(String uri, String name, String qName) {
+      if (inBlobMetadata && !qName.equals("Metadata")) {
+         currentMetadata.put(qName, currentText.toString().trim());
+      }
       if (qName.equals("MaxResults")) {
          maxResults = Integer.parseInt(currentText.toString().trim());
+      } else if (qName.equals("Metadata")) {
+         inBlobMetadata = false;
       } else if (qName.equals("Marker")) {
          marker = currentText.toString().trim();
          marker = (marker.equals("")) ? null : marker;
@@ -109,11 +127,15 @@ public class ContainerNameEnumerationResultsHandler extends
       } else if (qName.equals("NextMarker")) {
          nextMarker = currentText.toString().trim();
          nextMarker = (nextMarker.equals("")) ? null : nextMarker;
+      } else if (qName.equals("BlobType")) {
+         currentBlobType = BlobType.fromValue(currentText.toString().trim());
       } else if (qName.equals("Blob")) {
-         ListableBlobProperties md = new ListableBlobPropertiesImpl(currentName, currentUrl,
+         BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, currentUrl,
                   currentLastModified, currentETag, currentSize, currentContentType,
-                  currentContentEncoding, currentContentLanguage);
+                  currentContentMD5, currentContentEncoding, currentContentLanguage,
+                  currentMetadata);
          blobMetadata.add(md);
+         currentBlobType = null;
          currentName = null;
          currentUrl = null;
          currentLastModified = null;
@@ -122,9 +144,11 @@ public class ContainerNameEnumerationResultsHandler extends
          currentContentType = null;
          currentContentEncoding = null;
          currentContentLanguage = null;
+         currentContentMD5 = null;
+         currentMetadata = Maps.newHashMap();
       } else if (qName.equals("Url")) {
          currentUrl = HttpUtils.createUri(currentText.toString().trim());
-      } else if (qName.equals("LastModified")) {
+      } else if (qName.equals("Last-Modified")) {
          currentLastModified = dateParser.rfc822DateParse(currentText.toString().trim());
       } else if (qName.equals("Etag")) {
          currentETag = currentText.toString().trim();
@@ -133,15 +157,17 @@ public class ContainerNameEnumerationResultsHandler extends
             currentName = currentText.toString().trim();
          else if (inBlobPrefix)
             blobPrefixes.add(currentText.toString().trim());
-      } else if (qName.equals("Size")) {
+      } else if (qName.equals("Content-Length")) {
          currentSize = Long.parseLong(currentText.toString().trim());
-      } else if (qName.equals("ContentType")) {
+      } else if (qName.equals("Content-MD5")) {
+         currentContentMD5 = encryptionService.fromBase64String(currentText.toString().trim());
+      } else if (qName.equals("Content-Type")) {
          currentContentType = currentText.toString().trim();
-      } else if (qName.equals("ContentEncoding")) {
+      } else if (qName.equals("Content-Encoding")) {
          currentContentEncoding = currentText.toString().trim();
          if (currentContentEncoding.equals(""))
             currentContentEncoding = null;
-      } else if (qName.equals("ContentLanguage")) {
+      } else if (qName.equals("Content-Language")) {
          currentContentLanguage = currentText.toString().trim();
          if (currentContentLanguage.equals(""))
             currentContentLanguage = null;

@@ -16,19 +16,25 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.domain;
+package org.jclouds.azure.storage.domain;
 
+import java.net.URI;
 import java.util.Set;
-
-import org.jclouds.azure.storage.domain.BoundedSet;
 
 /**
  * 
  * @author Adrian Cole
+ * 
  */
-public interface ListBlobsResponse extends BoundedSet<BlobProperties> {
+public interface BoundedSet<T> extends Set<T> {
+   URI getUrl();
 
-   String getDelimiter();
+   String getPrefix();
 
-   Set<String> getBlobPrefixes();
+   String getMarker();
+
+   int getMaxResults();
+
+   String getNextMarker();
+
 }

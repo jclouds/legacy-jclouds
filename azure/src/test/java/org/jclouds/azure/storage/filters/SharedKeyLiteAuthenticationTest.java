@@ -42,13 +42,17 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-@Test(groups = "unit", testName = "azurestorage.SharedKeyAuthenticationTest")
-public class SharedKeyAuthenticationTest {
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit", testName = "azurestorage.SharedKeyLiteAuthenticationTest")
+public class SharedKeyLiteAuthenticationTest {
 
    private static final String KEY = Base64.encodeBytes("bar".getBytes());
    private static final String ACCOUNT = "foo";
    private Injector injector;
-   private SharedKeyAuthentication filter;
+   private SharedKeyLiteAuthentication filter;
 
    @DataProvider(parallel = true)
    public Object[][] dataProvider() {
@@ -145,7 +149,7 @@ public class SharedKeyAuthenticationTest {
          }
 
       });
-      filter = injector.getInstance(SharedKeyAuthentication.class);
+      filter = injector.getInstance(SharedKeyLiteAuthentication.class);
    }
 
 }

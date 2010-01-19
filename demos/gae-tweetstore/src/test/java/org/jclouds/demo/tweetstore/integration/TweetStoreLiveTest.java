@@ -40,12 +40,12 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
+import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
 import org.jclouds.twitter.TwitterPropertiesBuilder;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
@@ -53,7 +53,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Starts up the Google App Engine for Java Development environment and deploys an application which
@@ -66,7 +66,7 @@ public class TweetStoreLiveTest {
 
    GoogleDevServer server;
    private URL url;
-   private ImmutableSet<BlobStoreContext<? extends Object, ? extends Object>> contexts;
+   private Iterable<BlobStoreContext<? extends Object, ? extends Object>> contexts;
    private String container;
 
    @BeforeTest
@@ -79,14 +79,9 @@ public class TweetStoreLiveTest {
                .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
       props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS,
       // WATCH THIS.. when adding a new context, you must update the string
-               // String.format("%s,%s,%s", S3BlobStoreContextBuilder.class.getName(),
-               // CloudFilesBlobStoreContextBuilder.class.getName(),
-               // AzureBlobStoreContextBuilder.class.getName()));
-               String.format("%s,%s", S3BlobStoreContextBuilder.class.getName(),
-                        CloudFilesBlobStoreContextBuilder.class.getName()));
-      props = new TwitterPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
-               System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
+               String.format("%s,%s,%s", S3BlobStoreContextBuilder.class.getName(),
+                        CloudFilesBlobStoreContextBuilder.class.getName(),
+                        AzureBlobStoreContextBuilder.class.getName()));
 
       props = new TwitterPropertiesBuilder(props).withCredentials(
                checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
@@ -114,22 +109,22 @@ public class TweetStoreLiveTest {
 
    @BeforeClass
    void clearAndCreateContainers() throws InterruptedException, ExecutionException,
-            TimeoutException {
+            TimeoutException, IOException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
-      BlobStoreContext<?, ?> s3Context = S3BlobStoreContextFactory.createContext(checkNotNull(
-               System.getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
+      BlobStoreContextFactory factory = new BlobStoreContextFactory();
+      BlobStoreContext<?, ?> s3Context = factory.createContext("s3", checkNotNull(System
+               .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
 
-      BlobStoreContext<?, ?> cfContext = CloudFilesBlobStoreContextFactory.createContext(
-               checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
-               System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
+      BlobStoreContext<?, ?> cfContext = factory.createContext("cloudfiles", checkNotNull(System
+               .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
+               PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
 
-//      BlobStoreContext<?, ?> azContext = AzureBlobStoreContextFactory.createContext(checkNotNull(
-//               System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT),
-//               System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
-//
-//      this.contexts = ImmutableSet.of(s3Context, cfContext, azContext);
-      this.contexts = ImmutableSet.of(s3Context, cfContext);
+      BlobStoreContext<?, ?> azContext = factory.createContext("azureblob", checkNotNull(System
+               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
+               .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
+
+      this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
       boolean deleted = false;
       for (BlobStoreContext<?, ?> context : contexts) {
          if (context.getBlobStore().containerExists(container)) {
@@ -139,8 +134,8 @@ public class TweetStoreLiveTest {
          }
       }
       if (deleted) {
-         System.err.println("sleeping 30 seconds to allow containers to clear");
-         Thread.sleep(30000);
+         System.err.println("sleeping 60 seconds to allow containers to clear");
+         Thread.sleep(60000);
       }
       for (BlobStoreContext<?, ?> context : contexts) {
          System.err.printf("creating container %s at %s%n", container, context.getEndPoint());
@@ -168,8 +163,7 @@ public class TweetStoreLiveTest {
    public void testPrimeContainers() throws IOException, InterruptedException {
       URL gurl = new URL(url, "/store/do");
 
-      for (String context : new String[] { "S3", "CloudFiles" }) {
-         // for (String context : new String[] { "S3", "Azure", "CloudFiles" }) {
+      for (String context : new String[] { "S3", "Azure", "CloudFiles" }) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
@@ -180,8 +174,8 @@ public class TweetStoreLiveTest {
          connection.disconnect();
       }
 
-      System.err.println("sleeping 10 seconds to allow for eventual consistency delay");
-      Thread.sleep(10000);
+      System.err.println("sleeping 20 seconds to allow for eventual consistency delay");
+      Thread.sleep(20000);
       for (BlobStoreContext<?, ?> context : contexts) {
          assert context.createInputStreamMap(container).size() > 0 : context.getEndPoint();
       }

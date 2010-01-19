@@ -26,7 +26,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
@@ -34,8 +34,9 @@ import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
@@ -46,6 +47,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.internal.Iterables;
 
 /**
  * Tests behavior of {@code AzureBlobClient}
@@ -70,8 +72,7 @@ public class AzureBlobClientLiveTest {
 
    @Test
    public void testListContainers() throws Exception {
-
-      SortedSet<ListableContainerProperties> response = connection.listContainers();
+      Set<ListableContainerProperties> response = connection.listContainers();
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -97,7 +98,7 @@ public class AzureBlobClientLiveTest {
             throw e;
          }
       }
-      SortedSet<ListableContainerProperties> response = connection.listContainers();
+      Set<ListableContainerProperties> response = connection.listContainers();
       assert null != response;
       long containerCount = response.size();
       assertTrue(containerCount >= 1);
@@ -132,9 +133,16 @@ public class AzureBlobClientLiveTest {
    public void testCreatePublicRootContainer() throws Exception {
       try {
          connection.deleteRootContainer();
-      } catch (AzureStorageResponseException e) {
-         sleepIfWaitingForDeleteToFinish(e);
+      } catch (ContainerNotFoundException e) {
+         Thread.sleep(5000);
+      } catch (AzureStorageResponseException htpe) {
+         if (htpe.getResponse().getStatusCode() == 409) {// TODO look for specific message
+            Thread.sleep(5000);
+         } else {
+            throw htpe;
+         }
       }
+
       boolean created = false;
       while (!created) {
          try {
@@ -153,18 +161,10 @@ public class AzureBlobClientLiveTest {
                "https://%s.blob.core.windows.net/%%24root", account)));
    }
 
-   private void sleepIfWaitingForDeleteToFinish(AzureStorageResponseException e)
-            throws InterruptedException {
-      if (e.getResponse().getStatusCode() == 409) {
-         Thread.sleep(5000);
-      }
-
-   }
-
    @Test
    public void testListContainersWithOptions() throws Exception {
 
-      BoundedSortedSet<ListableContainerProperties> response = connection
+      BoundedSet<ListableContainerProperties> response = connection
                .listContainers(ListOptions.Builder.prefix(privateContainer).maxResults(1));
       assert null != response;
       long initialContainerCount = response.size();
@@ -175,7 +175,7 @@ public class AzureBlobClientLiveTest {
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreatePublicRootContainer" })
    public void testDeleteRootContainer() throws Exception {
-      assert connection.deleteRootContainer();
+      connection.deleteRootContainer();
       // TODO loop for up to 30 seconds checking if they are really gone
    }
 
@@ -184,7 +184,7 @@ public class AzureBlobClientLiveTest {
    public void testListOwnedContainers() throws Exception {
 
       // Test default listing
-      SortedSet<ListableContainerProperties> response = connection.listContainers();
+      Set<ListableContainerProperties> response = connection.listContainers();
       // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
       // exist, this will fail
 
@@ -192,12 +192,12 @@ public class AzureBlobClientLiveTest {
       response = connection.listContainers(ListOptions.Builder.prefix(
                privateContainer.substring(0, privateContainer.length() - 1)).maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.first().getName(), privateContainer);
+      assertEquals(Iterables.getOnlyElement(response).getName(), privateContainer);
 
       response = connection.listContainers(ListOptions.Builder.prefix(publicContainer)
                .maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.first().getName(), publicContainer);
+      assertEquals(Iterables.getOnlyElement(response).getName(), publicContainer);
 
    }
 

@@ -24,7 +24,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
+import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.BlobType;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 
 import com.google.common.collect.Maps;
@@ -39,6 +40,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    /** The serialVersionUID */
    private static final long serialVersionUID = -4648755473986695062L;
 
+   private BlobType type = BlobType.BLOCK_BLOB;
    private String name;
    private URI url;
    private Date lastModified;
@@ -51,6 +53,20 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    private Map<String, String> metadata = Maps.newHashMap();
 
    public MutableBlobPropertiesImpl() {
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   public BlobType getType() {
+      return type;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   public void setType(BlobType type) {
+      this.type = type;
    }
 
    /**
@@ -91,14 +107,14 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    /**
     *{@inheritDoc}
     */
-   public Long getSize() {
+   public Long getContentLength() {
       return size;
    }
 
    /**
     *{@inheritDoc}
     */
-   public int compareTo(ListableBlobProperties o) {
+   public int compareTo(BlobProperties o) {
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
@@ -171,7 +187,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    /**
     *{@inheritDoc}
     */
-   public void setSize(long size) {
+   public void setContentLength(long size) {
       this.size = size;
    }
 
@@ -211,6 +227,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
    }
@@ -262,6 +279,11 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
       } else if (!name.equals(other.name))
          return false;
       if (size != other.size)
+         return false;
+      if (type == null) {
+         if (other.type != null)
+            return false;
+      } else if (!type.equals(other.type))
          return false;
       if (url == null) {
          if (other.url != null)

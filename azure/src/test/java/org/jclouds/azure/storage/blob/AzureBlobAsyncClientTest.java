@@ -69,12 +69,12 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code AzureBlobClient}
+ * Tests behavior of {@code AzureBlobAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azureblob.AzureBlobClientTest")
-public class AzureBlobClientTest {
+@Test(groups = "unit", testName = "azureblob.AzureBlobAsyncClientTest")
+public class AzureBlobAsyncClientTest {
 
    public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobAsyncClient.class.getMethod("listContainers", Array.newInstance(
@@ -88,7 +88,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor
@@ -111,7 +111,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor
@@ -131,7 +131,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
@@ -152,7 +152,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
       // TODO check generic type of response parser
@@ -174,7 +174,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 4);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-foo"), Collections.singletonList("bar"));
       assertEquals(httpMethod.getHeaders().get("x-ms-prop-publicaccess"), Collections
                .singletonList("true"));
@@ -199,7 +199,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
@@ -220,9 +220,9 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               ReturnVoidIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -241,7 +241,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 4);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-foo"), Collections.singletonList("bar"));
       assertEquals(httpMethod.getHeaders().get("x-ms-prop-publicaccess"), Collections
                .singletonList("true"));
@@ -266,7 +266,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor
@@ -286,7 +286,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor
@@ -305,7 +305,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.HEAD);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseContainerPropertiesFromHeaders.class);
       assertEquals(processor
@@ -327,7 +327,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("0"));
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-key"), Collections.singletonList("value"));
 
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -348,7 +348,7 @@ public class AzureBlobClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 3);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-07-17"));
+               .singletonList("2009-09-19"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("0"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-key"), Collections.singletonList("value"));

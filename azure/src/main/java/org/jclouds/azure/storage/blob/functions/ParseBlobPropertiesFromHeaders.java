@@ -58,7 +58,7 @@ public class ParseBlobPropertiesFromHeaders implements
       MutableBlobProperties to = blobToBlobProperties.apply(base);
       if (from.getFirstHeaderOrNull("Content-Range") != null) {
          String range = from.getFirstHeaderOrNull("Content-Range");
-         to.setSize(Long.parseLong(range.split("/")[1]));
+         to.setContentLength(Long.parseLong(range.split("/")[1]));
       }
       to.setContentLanguage(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LANGUAGE));
       to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));

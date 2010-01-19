@@ -22,17 +22,19 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.SortedSet;
+import java.util.Set;
 
+import org.jclouds.azure.storage.blob.domain.BlobProperties;
+import org.jclouds.azure.storage.blob.domain.BlobType;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
-import org.jclouds.azure.storage.blob.domain.internal.ListableBlobPropertiesImpl;
-import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.internal.BlobPropertiesImpl;
+import org.jclouds.azure.storage.blob.domain.internal.HashSetListBlobsResponse;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -54,21 +56,22 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/blob/test_list_blobs.xml");
-      SortedSet<ListableBlobProperties> contents = Sets.newTreeSet();
-      contents.add(new ListableBlobPropertiesImpl("blob1.txt", URI
+      Set<BlobProperties> contents = Sets.newTreeSet();
+      contents.add(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob1.txt", URI
                .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"), dateService
                .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55D050B8B", 8,
-               "text/plain; charset=UTF-8", null, null));
-      contents.add(new ListableBlobPropertiesImpl("blob2.txt", URI
+               "text/plain; charset=UTF-8", null, null, null, ImmutableMap.<String, String> of()));
+      contents.add(new BlobPropertiesImpl(BlobType.BLOCK_BLOB, "blob2.txt", URI
                .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"), dateService
                .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339", 14,
-               "text/plain; charset=UTF-8", null, null));
-      contents.add(new ListableBlobPropertiesImpl("newblob1.txt", URI
+               "text/plain; charset=UTF-8", null, null, null, ImmutableMap.<String, String> of()));
+      contents.add(new BlobPropertiesImpl(BlobType.PAGE_BLOB, "newblob1.txt", URI
                .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"),
                dateService.rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), "0x8CAE7D55CF6C339",
-               25, "text/plain; charset=UTF-8", null, null));
+               25, "text/plain; charset=UTF-8", null, null, null, ImmutableMap
+                        .<String, String> of()));
 
-      ListBlobsResponse list = new TreeSetListBlobsResponse(contents, URI
+      ListBlobsResponse list = new HashSetListBlobsResponse(contents, URI
                .create("http://myaccount.blob.core.windows.net/mycontainer"),
 
       "myfolder/", null, 4, "newblob2.txt", "/", Sets.<String> newTreeSet());

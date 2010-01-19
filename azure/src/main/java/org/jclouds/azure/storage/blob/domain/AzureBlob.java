@@ -18,10 +18,12 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.http.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
-import com.google.inject.internal.Nullable;
+
 
 /**
  * Amazon S3 is designed to store objects. Objects are stored in buckets and consist of a
@@ -33,6 +35,8 @@ import com.google.inject.internal.Nullable;
  *      />
  */
 public interface AzureBlob extends PayloadEnclosing, Comparable<AzureBlob> {
+
+
    public interface Factory {
       AzureBlob create(@Nullable MutableBlobProperties properties);
    }

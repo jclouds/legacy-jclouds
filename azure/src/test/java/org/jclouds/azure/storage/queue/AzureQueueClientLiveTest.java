@@ -23,10 +23,11 @@ import static org.testng.Assert.assertTrue;
 
 import java.security.SecureRandom;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
+import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
@@ -61,7 +62,7 @@ public class AzureQueueClientLiveTest {
    @Test
    public void testListQueues() throws Exception {
 
-      BoundedSortedSet<QueueMetadata> response = connection.listQueues();
+      BoundedSet<QueueMetadata> response = connection.listQueues();
       assert null != response;
       long initialQueueCount = response.size();
       assertTrue(initialQueueCount >= 0);
@@ -86,17 +87,16 @@ public class AzureQueueClientLiveTest {
             }
          }
       }
-      BoundedSortedSet<QueueMetadata> response = connection.listQueues();
+      BoundedSet<QueueMetadata> response = connection.listQueues();
       assert null != response;
       long queueCount = response.size();
       assertTrue(queueCount >= 1);
       // TODO ... check to see the queue actually exists
    }
 
-   @Test
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateQueue" })
    public void testListQueuesWithOptions() throws Exception {
-
-      BoundedSortedSet<QueueMetadata> response = connection.listQueues(ListOptions.Builder.prefix(
+      BoundedSet<QueueMetadata> response = connection.listQueues(ListOptions.Builder.prefix(
                privateQueue).maxResults(1));
       assert null != response;
       long initialQueueCount = response.size();
@@ -104,10 +104,17 @@ public class AzureQueueClientLiveTest {
       assertEquals(privateQueue, response.getPrefix());
       assertEquals(1, response.getMaxResults());
    }
-
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateQueue" })
+   public void testPutMessage() throws Exception {
+      connection.putMessage(privateQueue,"holycow",PutMessageOptions.Builder.withTTL(4));
+      // TODO loop for up to 30 seconds checking if they are really gone
+   }
+   
+   
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testPutMessage" })
    public void testDeleteQueue() throws Exception {
-      assert connection.deleteQueue(privateQueue);
+      connection.clearMessages(privateQueue);
+      connection.deleteQueue(privateQueue);
       // TODO loop for up to 30 seconds checking if they are really gone
    }
 

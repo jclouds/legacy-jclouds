@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.handlers;
 
+import java.io.ByteArrayInputStream;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
@@ -30,9 +32,10 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -53,15 +56,16 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      String content;
+      byte[] content;
       try {
-         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
+         content = response.getContent() != null ? ByteStreams.toByteArray(response.getContent())
                   : null;
          if (content != null) {
+            String message = new String(content);
             try {
-               if (content.indexOf('<') >= 0) {
+               if (message.indexOf('<') >= 0) {
                   AzureStorageError error = utils.parseAzureStorageErrorFromContent(command,
-                           response, content);
+                           response, new ByteArrayInputStream(content));
                   AzureStorageResponseException ex = new AzureStorageResponseException(command,
                            response, error);
                   if (error.getCode().equals("ContainerNotFound")) {
@@ -70,10 +74,10 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                      command.setException(ex);
                   }
                } else {
-                  command.setException(new HttpResponseException(command, response, content));
+                  command.setException(new HttpResponseException(command, response, message));
                }
             } catch (Exception he) {
-               command.setException(new HttpResponseException(command, response, content));
+               command.setException(new HttpResponseException(command, response, message));
                Throwables.propagateIfPossible(he);
             }
          } else {
@@ -82,7 +86,8 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
       } catch (Exception e) {
          command.setException(new HttpResponseException(command, response));
          Throwables.propagateIfPossible(e);
+      } finally {
+         Closeables.closeQuietly(response.getContent());
       }
    }
-
 }

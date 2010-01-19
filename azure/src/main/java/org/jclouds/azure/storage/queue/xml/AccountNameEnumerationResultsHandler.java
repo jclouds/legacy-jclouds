@@ -19,15 +19,16 @@
 package org.jclouds.azure.storage.queue.xml;
 
 import java.net.URI;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
+
+import com.google.common.collect.Sets;
 
 /**
  * Parses the following XML document:
@@ -38,9 +39,9 @@ import org.jclouds.http.functions.ParseSax;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedSortedSet<QueueMetadata>> {
+         ParseSax.HandlerWithResult<BoundedSet<QueueMetadata>> {
 
-   private SortedSet<QueueMetadata> metadata = new TreeSet<QueueMetadata>();
+   private Set<QueueMetadata> metadata = Sets.newLinkedHashSet();
    private URI currentUrl;
    private String prefix;
    private String marker;
@@ -54,8 +55,8 @@ public class AccountNameEnumerationResultsHandler extends
    public AccountNameEnumerationResultsHandler() {
    }
 
-   public BoundedSortedSet<QueueMetadata> getResult() {
-      return new BoundedTreeSet<QueueMetadata>(metadata, currentUrl, prefix, marker, maxResults,
+   public BoundedSet<QueueMetadata> getResult() {
+      return new BoundedHashSet<QueueMetadata>(metadata, currentUrl, prefix, marker, maxResults,
                nextMarker);
    }
 

@@ -42,8 +42,8 @@ import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
@@ -112,7 +112,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       return immediateFuture(null);
    }
 
-   public ListenableFuture<Boolean> deleteRootContainer() {
+   public ListenableFuture<Void> deleteRootContainer() {
       throw new UnsupportedOperationException();
    }
 
@@ -149,9 +149,9 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       throw new UnsupportedOperationException();
    }
 
-   public ListenableFuture<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
+   public ListenableFuture<? extends BoundedSet<ListableContainerProperties>> listContainers(
             ListOptions... listOptions) {
-      return immediateFuture(new BoundedTreeSet<ListableContainerProperties>(Iterables.transform(
+      return immediateFuture(new BoundedHashSet<ListableContainerProperties>(Iterables.transform(
                blobStore.getContainerToBlobs().keySet(),
                new Function<String, ListableContainerProperties>() {
                   public ListableContainerProperties apply(String name) {

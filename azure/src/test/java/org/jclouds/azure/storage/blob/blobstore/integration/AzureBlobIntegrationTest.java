@@ -30,5 +30,4 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobIntegrationTest")
 public class AzureBlobIntegrationTest extends
          BaseBlobIntegrationTest<AzureBlobAsyncClient, AzureBlobClient> {
-
 }

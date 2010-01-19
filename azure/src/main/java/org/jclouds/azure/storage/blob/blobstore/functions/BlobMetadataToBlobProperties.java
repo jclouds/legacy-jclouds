@@ -39,7 +39,7 @@ public class BlobMetadataToBlobProperties implements Function<BlobMetadata, Muta
       to.setName(base.getName());
       to.setLastModified(base.getLastModified());
       if (base.getSize() != null)
-         to.setSize(base.getSize());
+         to.setContentLength(base.getSize());
       if (base.getUserMetadata() != null)
          to.setMetadata(base.getUserMetadata());
       return to;

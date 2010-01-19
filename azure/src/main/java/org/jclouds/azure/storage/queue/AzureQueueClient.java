@@ -21,12 +21,11 @@ package org.jclouds.azure.storage.queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.PathParam;
-
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
+import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.concurrent.Timeout;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -64,7 +63,7 @@ public interface AzureQueueClient {
     *           controls the number or type of results requested
     * @see ListOptions
     */
-   BoundedSortedSet<QueueMetadata> listQueues(ListOptions... listOptions);
+   BoundedSet<QueueMetadata> listQueues(ListOptions... listOptions);
 
    /**
     * The Create Queue operation creates a new queue under the specified account.
@@ -83,7 +82,7 @@ public interface AzureQueueClient {
     * @see CreateQueueOptions
     * 
     */
-   boolean createQueue(@PathParam("queue") String queue, CreateOptions... options);
+   boolean createQueue(String queue, CreateOptions... options);
 
    /**
     * The Delete Queue operation permanently deletes the specified queue.
@@ -94,6 +93,34 @@ public interface AzureQueueClient {
     * collection.
     * 
     */
-   boolean deleteQueue(@PathParam("queue") String queue);
+   void deleteQueue(String queue);
 
+   /**
+    * The Put Message operation adds a new message to the back of the message queue. A message may
+    * be up to 8 KB in size and must be in a format that can be included in an XML request with
+    * UTF-8 encoding.
+    * 
+    * <p/>
+    * 
+    * The message time-to-live specifies how long a message will remain in the queue, from the time
+    * it is added to the time it is retrieved and deleted. If a message is not retrieved before the
+    * time-to-live interval expires, the message is removed from the queue.
+    * 
+    * If the message is too large, the service returns status code 400 (Bad Request).
+    * 
+    */
+   void putMessage(String queue, String message, PutMessageOptions... options);
+
+   /**
+    * The Clear Messages operation deletes all messages from the specified queue.
+    * 
+    * <p/>
+    * If a queue contains a large number of messages, Clear Messages may time out before all
+    * messages have been deleted. In this case the Queue service will return status code 500
+    * (Internal Server Error), with the additional error code OperationTimedOut. If the operation
+    * times out, the client should continue to retry Clear Messages until it succeeds, to ensure
+    * that all messages have been deleted.
+    */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
+   void clearMessages(String queue);
 }
