@@ -19,6 +19,10 @@
 package org.jclouds.gae.config;
 
 import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.concurrent.config.ConfiguresExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.date.joda.config.JodaDateServiceModule;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
@@ -27,7 +31,7 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.inject.AbstractModule;
+import com.google.common.util.concurrent.Executors;
 import com.google.inject.Provides;
 
 /**
@@ -36,11 +40,19 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresHttpCommandExecutorService
+@ConfiguresExecutorService
 @SingleThreaded
-public class GaeHttpCommandExecutorServiceModule extends AbstractModule {
+public class GoogleAppEngineConfigurationModule extends ExecutorServiceModule {
+
+   public GoogleAppEngineConfigurationModule() {
+      super(Executors.sameThreadExecutor());
+   }
 
    @Override
    protected void configure() {
+      super.configure();
+      install(new BouncyCastleEncryptionServiceModule());
+      install(new JodaDateServiceModule());
       bind(HttpCommandExecutorService.class).to(GaeHttpCommandExecutorService.class);
       bind(TransformingHttpCommandExecutorService.class).to(
                TransformingHttpCommandExecutorServiceImpl.class);
@@ -50,5 +62,4 @@ public class GaeHttpCommandExecutorServiceModule extends AbstractModule {
    URLFetchService provideURLFetchService() {
       return URLFetchServiceFactory.getURLFetchService();
    }
-
 }

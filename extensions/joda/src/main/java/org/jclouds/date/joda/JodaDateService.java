@@ -20,6 +20,7 @@ package org.jclouds.date.joda;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 
@@ -100,10 +101,29 @@ public class JodaDateService implements DateService {
    }
 
    public final Date iso8601DateParse(String toParse) {
+      toParse = trimNanosToMillis(toParse);
       return iso8601DateFormatter.parseDateTime(toParse).toDate();
    }
 
+   public static final Pattern NANOS_TO_MILLIS_PATTERN = Pattern
+            .compile(".*[0-9][0-9][0-9][0-9][0-9][0-9]");
+
+   private String trimNanosToMillis(String toParse) {
+      if (NANOS_TO_MILLIS_PATTERN.matcher(toParse).matches())
+         toParse = toParse.substring(0, toParse.length() - 3) + 'Z';
+      return toParse;
+   }
+
+   public static final Pattern SECOND_PATTERN = Pattern.compile(".*[0-2][0-9]:00");
+
+   private String trimTZ(String toParse) {
+      if (toParse.length() == 25 && SECOND_PATTERN.matcher(toParse).matches())
+         toParse = toParse.substring(0, toParse.length() - 6) + 'Z';
+      return toParse;
+   }
+
    public final Date iso8601SecondsDateParse(String toParse) {
+      toParse = trimTZ(toParse);
       return iso8601SecondsDateFormatter.parseDateTime(toParse).toDate();
    }
 }

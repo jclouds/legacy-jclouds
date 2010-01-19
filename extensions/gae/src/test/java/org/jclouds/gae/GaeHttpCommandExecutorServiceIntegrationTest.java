@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
+import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -241,7 +241,7 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
    }
 
    protected Module createConnectionModule() {
-      return new GaeHttpCommandExecutorServiceModule();
+      return new GoogleAppEngineConfigurationModule();
    }
 
    @Override

@@ -31,7 +31,7 @@ import javax.servlet.ServletContextEvent;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
+import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.samples.googleappengine.GetAllContainersController;
 
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
@@ -68,7 +68,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             Constructor<BlobStoreContextBuilder<?, ?>> constructor = builderClass
                      .getConstructor(Properties.class);
             contexts.put(name, constructor.newInstance(props).withModules(
-                     new GaeHttpCommandExecutorServiceModule()).buildContext());
+                     new GoogleAppEngineConfigurationModule()).buildContext());
          } catch (Exception e) {
             throw new RuntimeException(e);
          }

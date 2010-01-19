@@ -35,7 +35,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
-import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
+import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.TwitterContextFactory;
 
@@ -71,7 +71,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
       // shared across all blobstores and used to retrieve tweets
       twitterClient = TwitterContextFactory.createContext(props,
-               new GaeHttpCommandExecutorServiceModule()).getApi();
+               new GoogleAppEngineConfigurationModule()).getApi();
 
       // common namespace for storing tweets.
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
@@ -92,7 +92,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
             constructor = builderClass.getConstructor(Properties.class);
             context = constructor.newInstance(props).withModules(
-                     new GaeHttpCommandExecutorServiceModule()).buildContext();
+                     new GoogleAppEngineConfigurationModule()).buildContext();
          } catch (Exception e) {
             throw new RuntimeException("error instantiating " + className, e);
          }

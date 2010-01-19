@@ -24,16 +24,14 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.date.joda.config.JodaDateServiceModule;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
-import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
-import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.v6.Maps;
 
 import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
+import com.google.inject.Module;
 
 /**
  * 
@@ -152,16 +150,6 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
       });
    }
 
-   @ConfiguresHttpCommandExecutorService
-   private static final class Module extends GaeHttpCommandExecutorServiceModule {
-      @Override
-      protected void configure() {
-         super.configure();
-         install(new JodaDateServiceModule());
-         install(new BouncyCastleEncryptionServiceModule());
-      }
-   }
-
    class TestEnvironment implements ApiProxy.Environment {
       public String getAppId() {
          return "Unit Tests";
@@ -205,6 +193,6 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @Override
    protected Module createHttpModule() {
-      return new Module();
+      return new GoogleAppEngineConfigurationModule();
    }
 }
