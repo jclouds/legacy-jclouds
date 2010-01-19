@@ -87,9 +87,10 @@
     </compute>
   </target>
 
+  <property name="location" value="default" />
   <target name="create" description="create the node ${nodename}">
     <compute action="create" provider="${jclouds.compute.url}">
-      <node name="${nodename}" image="${image}" profile="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <node name="${nodename}" location="${location}" image="${image}" profile="FASTEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

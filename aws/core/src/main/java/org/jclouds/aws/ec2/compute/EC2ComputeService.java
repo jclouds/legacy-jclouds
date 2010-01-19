@@ -62,6 +62,7 @@ import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -88,17 +89,31 @@ public class EC2ComputeService implements ComputeService {
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
    }
 
-   // TODO: handle regions
-   private Map<InstanceType, Map<Image, String>> imageAmiIdMap = ImmutableMap
-            .<InstanceType, Map<Image, String>> of(InstanceType.M1_SMALL,//
-                     ImmutableMap.<Image, String> builder().put(Image.UBUNTU_90, "ami-1515f67c")
-                              .put(Image.RHEL_53, "ami-368b685f").build(),//
+   private Map<InstanceType, Map<Image, Map<Region, String>>> imageAmiIdMap = ImmutableMap
+            .<InstanceType, Map<Image, Map<Region, String>>> of(InstanceType.M1_SMALL,//
+                     ImmutableMap.<Image, Map<Region, String>> builder().put(
+                              Image.UBUNTU_90,
+                              ImmutableMap.of(Region.DEFAULT, "ami-1515f67c", Region.US_EAST_1,
+                                       "ami-1515f67c", Region.US_WEST_1, "ami-7d3c6d38",
+                                       Region.EU_WEST_1, "ami-a62a01d2")).put(
+                              Image.RHEL_53,
+                              ImmutableMap.of(Region.DEFAULT, "ami-368b685f", Region.US_EAST_1,
+                                       "ami-368b685f")).build(),//
                      InstanceType.C1_MEDIUM,//
-                     ImmutableMap.<Image, String> builder().put(Image.UBUNTU_90, "ami-1515f67c")
-                              .put(Image.RHEL_53, "ami-368b685f").build(), //
+                     ImmutableMap.<Image, Map<Region, String>> builder().put(
+                              Image.UBUNTU_90,
+                              ImmutableMap.of(Region.DEFAULT, "ami-1515f67c", Region.US_EAST_1,
+                                       "ami-1515f67c", Region.US_WEST_1, "ami-7d3c6d38",
+                                       Region.EU_WEST_1, "ami-a62a01d2")).put(
+                              Image.RHEL_53,
+                              ImmutableMap.of(Region.DEFAULT, "ami-368b685f", Region.US_EAST_1,
+                                       "ami-368b685f")).build(), //
                      InstanceType.C1_XLARGE,//
-                     ImmutableMap.<Image, String> builder().put(Image.UBUNTU_90, "ami-ab15f6c2")
-                              .build());// todo ami
+                     ImmutableMap.<Image, Map<Region, String>> builder().put(
+                              Image.UBUNTU_90,
+                              ImmutableMap.of(Region.DEFAULT, "ami-ab15f6c2", Region.US_EAST_1,
+                                       "ami-ab15f6c2", Region.US_WEST_1, "ami-7b3c6d3e",
+                                       Region.EU_WEST_1, "ami-9a2a01ee")).build());// todo ami
 
    private Map<Profile, InstanceType> profileInstanceTypeMap = ImmutableMap
             .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).put(
@@ -117,7 +132,9 @@ public class EC2ComputeService implements ComputeService {
 
       InstanceType type = checkNotNull(profileInstanceTypeMap.get(profile),
                "profile not supported: " + profile);
-      String ami = checkNotNull(imageAmiIdMap.get(type).get(image), "image not supported: " + image);
+      String ami = checkNotNull(checkNotNull(
+               checkNotNull(imageAmiIdMap.get(type), "type not supported: " + type).get(image),
+               "image not supported: " + image).get(region), "region not supported: " + region);
 
       KeyPair keyPair = createKeyPairInRegion(region, name);
       String securityGroupName = name;
@@ -131,8 +148,8 @@ public class EC2ComputeService implements ComputeService {
                .addStatement(exec("chmod 755 /usr/bin/runurl"))//
                .build(OsFamily.UNIX);
 
-      logger.debug(">> running instance ami(%s) type(%s) keyPair(%s) securityGroup(%s)", ami, type,
-               keyPair.getKeyName(), securityGroupName);
+      logger.debug(">> running instance region(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
+               region, ami, type, keyPair.getKeyName(), securityGroupName);
 
       RunningInstance runningInstance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
                .runInstancesInRegion(region, null, ami, 1, 1, withKeyName(keyPair.getKeyName())// key
@@ -164,7 +181,7 @@ public class EC2ComputeService implements ComputeService {
    }
 
    private KeyPair createKeyPairInRegion(Region region, String name) {
-      logger.debug(">> creating keyPair name(%s)", name);
+      logger.debug(">> creating keyPair region(%s) name(%s)", region, name);
       KeyPair keyPair;
       try {
          keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, name);
@@ -184,13 +201,12 @@ public class EC2ComputeService implements ComputeService {
    }
 
    private void createSecurityGroupInRegion(Region region, String name, int... ports) {
-      logger.debug(">> creating securityGroup name(%s)", name);
+      logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
       try {
          ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
          logger.debug("<< created securityGroup(%s)", name);
-         logger
-                  .debug(">> authorizing securityGroup name(%s) ports(%s)", name, Arrays
-                           .asList(ports));
+         logger.debug(">> authorizing securityGroup region(%s) name(%s) ports(%s)", region, name,
+                  Joiner.on(',').join(Arrays.asList(ports)));
          for (int port : ports) {
             ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region,
                      name, IpProtocol.TCP, port, port, "0.0.0.0/0");

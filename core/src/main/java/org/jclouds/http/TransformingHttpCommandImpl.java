@@ -134,4 +134,9 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
       request.replacePath(newPath);
    }
 
+   @Override
+   public String toString() {
+      return "TransformingHttpCommandImpl [request=" + request.getRequestLine() + "]";
+   }
+
 }
