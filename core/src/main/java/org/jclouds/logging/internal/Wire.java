@@ -26,19 +26,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 
-import org.jclouds.concurrent.SingleThreaded;
-import org.jclouds.io.TeeInputStream;
 import org.jclouds.logging.Logger;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.io.FileBackedOutputStream;
+
 /**
  * Logs data to the wire LOG.
  * 
@@ -49,12 +45,7 @@ public abstract class Wire {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   protected final ExecutorService exec;
 
-   @Inject
-   public Wire(ExecutorService exec) {
-      this.exec = checkNotNull(exec, "executor");
-   }
    protected abstract Logger getWireLog();
 
    private void wire(String header, InputStream instream) {
@@ -94,36 +85,21 @@ public abstract class Wire {
    }
 
    public InputStream copy(final String header, InputStream instream) {
+      int limit = 256 * 1024;
+      FileBackedOutputStream out = null;
       try {
-         byte[] data = ByteStreams.toByteArray(instream);
-         wire(header, new ByteArrayInputStream(data));
-         return new ByteArrayInputStream(data);
+         out = new FileBackedOutputStream(limit);
+         long bytesRead = ByteStreams.copy(instream, out);
+         if (bytesRead >= limit)
+            logger.warn("over limit %d/%d: wrote temp file", bytesRead, limit);
+         wire(header, out.getSupplier().getInput());
+         return out.getSupplier().getInput();
       } catch (IOException e) {
          throw new RuntimeException("Error tapping line", e);
       } finally {
+         Closeables.closeQuietly(out);
          Closeables.closeQuietly(instream);
       }
-   }
-
-   public InputStream tapAsynch(final String header, InputStream instream) {
-      PipedOutputStream out = new PipedOutputStream();
-      InputStream toReturn = new TeeInputStream(instream, out, true);
-      final InputStream line;
-      try {
-         line = new PipedInputStream(out);
-         exec.submit(new Runnable() {
-            public void run() {
-               try {
-                  wire(header, line);
-               } finally {
-                  Closeables.closeQuietly(line);
-               }
-            }
-         });
-      } catch (IOException e) {
-         logger.error(e, "Error tapping line");
-      }
-      return toReturn;
    }
 
    public InputStream input(InputStream instream) {
@@ -134,10 +110,7 @@ public abstract class Wire {
    public <T> T output(T data) {
       checkNotNull(data, "data");
       if (data instanceof InputStream) {
-         if (exec.getClass().isAnnotationPresent(SingleThreaded.class))
-            return (T) copy(">> ", (InputStream) data);
-         else
-            return (T) tapAsynch(">> ", (InputStream) data);
+         return (T) copy(">> ", (InputStream) data);
       } else if (data instanceof byte[]) {
          output((byte[]) data);
          return data;
@@ -154,19 +127,15 @@ public abstract class Wire {
 
    private void output(final File out) {
       checkNotNull(out, "output");
-      exec.submit(new Runnable() {
-         public void run() {
-            InputStream in = null;
-            try {
-               in = new FileInputStream(out);
-               wire(">> ", in);
-            } catch (FileNotFoundException e) {
-               logger.error(e, "Error tapping file: %s", out);
-            } finally {
-               Closeables.closeQuietly(in);
-            }
-         }
-      });
+      InputStream in = null;
+      try {
+         in = new FileInputStream(out);
+         wire(">> ", in);
+      } catch (FileNotFoundException e) {
+         logger.error(e, "Error tapping file: %s", out);
+      } finally {
+         Closeables.closeQuietly(in);
+      }
    }
 
    private void output(byte[] b) {

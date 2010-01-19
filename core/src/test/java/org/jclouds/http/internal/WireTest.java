@@ -18,13 +18,10 @@
  */
 package org.jclouds.http.internal;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
@@ -89,17 +86,15 @@ public class WireTest {
    }
 
    public HttpWire setUp() throws Exception {
-      ExecutorService service = Executors.newCachedThreadPool();
       BufferLogger bufferLogger = new BufferLogger();
-      HttpWire wire = new HttpWire(service);
+      HttpWire wire = new HttpWire();
       wire.wireLog = (bufferLogger);
       return wire;
    }
 
    public HttpWire setUpSynch() throws Exception {
-      ExecutorService service = sameThreadExecutor();
       BufferLogger bufferLogger = new BufferLogger();
-      HttpWire wire = new HttpWire(service);
+      HttpWire wire = new HttpWire();
       wire.wireLog = (bufferLogger);
       return wire;
    }

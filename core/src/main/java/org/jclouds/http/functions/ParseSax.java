@@ -30,13 +30,11 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
 /**
@@ -51,6 +49,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    private final HandlerWithResult<T> handler;
    @Resource
    protected Logger logger = Logger.NULL;
+   private GeneratedHttpRequest<?> request;
 
    public static interface Factory {
       <T> ParseSax<T> create(HandlerWithResult<T> handler);
@@ -63,39 +62,27 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    }
 
    public T apply(HttpResponse from) throws HttpException {
-      InputStream input = null;
-      try {
-         input = from.getContent();
-         if (input != null) {
-            return parse(input);
-         } else {
-            throw new HttpException("No input to parse");
-         }
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, HttpException.class);
-         throw new HttpException("Error parsing input for " + from, e);
-      }
+      return parse(from.getContent());
    }
 
-   public T parse(InputStream xml) throws HttpException {
-      parseAndCloseStream(xml, getHandler());
-      return getHandler().getResult();
-   }
-
-   private void parseAndCloseStream(InputStream xml, ContentHandler handler) throws HttpException {
+   public T parse(InputStream from) throws HttpException {
+      if (from == null)
+         throw new HttpException("No input to parse");
       try {
-         parser.setContentHandler(handler);
+         parser.setContentHandler(getHandler());
          // This method should accept documents with a BOM (Byte-order mark)
-         InputSource input = new InputSource(xml);
-         parser.parse(input);
+         parser.parse(new InputSource(from));
+         return getHandler().getResult();
       } catch (Exception e) {
          StringBuilder message = new StringBuilder();
-         message.append("Error parsing input for ").append(handler);
+         if (request != null)
+            message.append("Error parsing input for ").append(request.getRequestLine())
+                     .append(": ");
+         message.append(e.getMessage());
          logger.error(e, message.toString());
-         Throwables.propagateIfPossible(e, HttpException.class);
          throw new HttpException(message.toString(), e);
       } finally {
-         Closeables.closeQuietly(xml);
+         Closeables.closeQuietly(from);
       }
    }
 
@@ -111,9 +98,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    public abstract static class HandlerWithResult<T> extends DefaultHandler implements
             InvocationContext {
       protected GeneratedHttpRequest<?> request;
-
       public abstract T getResult();
-
       @Override
       public void setContext(GeneratedHttpRequest<?> request) {
          this.request = request;
@@ -123,5 +108,6 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    @Override
    public void setContext(GeneratedHttpRequest<?> request) {
       handler.setContext(request);
+      this.request = request;
    }
 }

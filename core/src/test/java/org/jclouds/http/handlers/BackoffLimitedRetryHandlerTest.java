@@ -92,7 +92,7 @@ public class BackoffLimitedRetryHandlerTest {
       ExecutorService execService = Executors.newCachedThreadPool();
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
                execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(),
-               new HttpWire(Executors.newCachedThreadPool()));
+               new HttpWire());
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
    }
 

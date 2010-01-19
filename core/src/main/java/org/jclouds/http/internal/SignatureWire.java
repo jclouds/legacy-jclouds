@@ -18,10 +18,7 @@
  */
 package org.jclouds.http.internal;
 
-import java.util.concurrent.ExecutorService;
-
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.http.HttpConstants;
@@ -39,11 +36,6 @@ public class SignatureWire extends Wire {
    @Resource
    @Named(HttpConstants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
-   
-   @Inject
-   public SignatureWire(ExecutorService exec) {
-      super(exec);
-   }
 
    public Logger getWireLog() {
       return signatureLog;
