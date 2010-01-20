@@ -18,22 +18,16 @@
  */
 package org.jclouds.vcloud.hostingdotcom.compute.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudAsyncClient;
-import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
 import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeService;
-import org.jclouds.vcloud.reference.VCloudConstants;
+import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudContextModule;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -42,21 +36,20 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends AbstractModule {
+public class HostingDotComVCloudComputeServiceContextModule extends
+         HostingDotComVCloudContextModule {
 
    @Override
    protected void configure() {
+      super.configure();
       bind(ComputeService.class).to(HostingDotComVCloudComputeService.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   ComputeServiceContext<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient> provideContext(
-            Closer closer, ComputeService computeService, HostingDotComVCloudAsyncClient asynchApi,
-            HostingDotComVCloudClient defaultApi, @VCloud URI endPoint,
-            @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new ComputeServiceContextImpl<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient>(
-               closer, computeService, asynchApi, defaultApi, endPoint, account);
+   ComputeServiceContext provideContext(ComputeService computeService,
+            RestContext<HostingDotComVCloudAsyncClient, HostingDotComVCloudAsyncClient> context) {
+      return new ComputeServiceContextImpl<HostingDotComVCloudAsyncClient, HostingDotComVCloudAsyncClient>(
+               computeService, context);
    }
-
 }

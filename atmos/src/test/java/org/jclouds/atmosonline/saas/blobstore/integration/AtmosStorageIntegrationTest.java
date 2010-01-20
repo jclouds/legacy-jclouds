@@ -18,8 +18,6 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
-import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -29,8 +27,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageIntegrationTest")
-public class AtmosStorageIntegrationTest extends
-         BaseBlobIntegrationTest<AtmosStorageAsyncClient, AtmosStorageClient> {
+public class AtmosStorageIntegrationTest extends BaseBlobIntegrationTest {
 
    @DataProvider(name = "delete")
    // no unicode support

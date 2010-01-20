@@ -40,10 +40,10 @@ import com.google.common.collect.Sets;
 public class BlobStoreContextToContainerResult implements Function<String, ContainerResult> {
    private final class BuildContainerResult implements Function<StorageMetadata, ContainerResult> {
       private final String host;
-      private final BlobStoreContext<?, ?> context;
+      private final BlobStoreContext context;
       private final String contextName;
 
-      private BuildContainerResult(String host, BlobStoreContext<?, ?> context, String contextName) {
+      private BuildContainerResult(String host, BlobStoreContext context, String contextName) {
          this.host = host;
          this.context = context;
          this.contextName = contextName;
@@ -68,14 +68,14 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
    }
 
    @Inject
-   private Map<String, BlobStoreContext<?, ?>> contexts;
+   private Map<String, BlobStoreContext> contexts;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    public ContainerResult apply(final String contextName) {
-      final BlobStoreContext<?, ?> context = contexts.get(contextName);
-      final String host = context.getEndPoint().getHost();
+      final BlobStoreContext context = contexts.get(contextName);
+      final String host = context.getProviderSpecificContext().getEndPoint().getHost();
       try {
          StorageMetadata md = Iterables.getLast(Sets.newTreeSet(Iterables.filter(context
                   .getBlobStore().list(), new Predicate<StorageMetadata>() {

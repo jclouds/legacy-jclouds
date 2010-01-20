@@ -74,7 +74,7 @@ public class StoreTweetsController extends HttpServlet {
     /** The serialVersionUID */
     private static final long serialVersionUID = 7215420527854203714L;
 
-    private final Map<String, BlobStoreContext<?, ?>> contexts;
+    private final Map<String, BlobStoreContext> contexts;
     private final TwitterClient client;
     private final String container;
 
@@ -83,7 +83,7 @@ public class StoreTweetsController extends HttpServlet {
 
     @Inject
     public StoreTweetsController(
-            Map<String, BlobStoreContext<?, ?>> contexts,
+            Map<String, BlobStoreContext> contexts,
             @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) final String container,
             TwitterClient client) {
         this.container = container;
@@ -93,7 +93,7 @@ public class StoreTweetsController extends HttpServlet {
 
     @VisibleForTesting
     void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
-        BlobStoreContext<?, ?> context = checkNotNull(contexts.get(contextName), 
+        BlobStoreContext context = checkNotNull(contexts.get(contextName), 
                 "no context for " + contextName + " in " + contexts.keySet());
         BlobMap map = context.createBlobMap(container);
         for (Status status : allAboutMe) {

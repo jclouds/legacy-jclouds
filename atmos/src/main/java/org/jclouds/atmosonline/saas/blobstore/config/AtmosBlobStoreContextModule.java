@@ -18,34 +18,28 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.atmosonline.saas.AtmosStorage;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
-import org.jclouds.atmosonline.saas.config.AtmosObjectModule;
-import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
+import org.jclouds.atmosonline.saas.config.AtmosStorageContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -53,13 +47,12 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public class AtmosBlobStoreContextModule extends AbstractModule {
+public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreObjectModule());
+      super.configure();
       install(new BlobStoreMapModule());
-      install(new AtmosObjectModule());
       bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(AtmosBlobStore.class).asEagerSingleton();
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
@@ -69,13 +62,12 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> provideContext(
-            BlobMap.Factory blobMapFactory, InputStreamMap.Factory inputStreamMapFactory,
-            Closer closer, AsyncBlobStore asynchBlobStore, BlobStore blobStore, AtmosStorageAsyncClient async,
-            AtmosStorageClient defaultApi, @AtmosStorage URI endPoint,
-            @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String account) {
+   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
+            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
+            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
+            RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context) {
       return new BlobStoreContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>(blobMapFactory,
-               inputStreamMapFactory, closer, asynchBlobStore, blobStore, async, defaultApi, endPoint, account);
+               inputStreamMapFactory, asynchBlobStore, blobStore, context);
    }
 
 }

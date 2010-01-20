@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
+public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testGetIfModifiedSince() throws InterruptedException {

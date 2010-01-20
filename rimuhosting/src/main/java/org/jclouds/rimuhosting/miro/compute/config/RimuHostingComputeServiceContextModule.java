@@ -18,43 +18,38 @@
  */
 package org.jclouds.rimuhosting.miro.compute.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rimuhosting.miro.RimuHosting;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeService;
-import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
+import org.jclouds.rimuhosting.miro.config.RimuHostingContextModule;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link RimuHostingComputeServiceContext}; requires {@link RimuHostingComputeService} bound.
+ * Configures the {@link RimuHostingComputeServiceContext}; requires
+ * {@link RimuHostingComputeService} bound.
  * 
  * @author Adrian Cole
  */
-public class RimuHostingComputeServiceContextModule extends AbstractModule {
+public class RimuHostingComputeServiceContextModule extends RimuHostingContextModule {
 
    @Override
    protected void configure() {
+      super.configure();
       bind(ComputeService.class).to(RimuHostingComputeService.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   ComputeServiceContext<RimuHostingAsyncClient, RimuHostingClient> provideContext(Closer closer,
-            ComputeService computeService, RimuHostingAsyncClient asynchApi, RimuHostingClient defaultApi,
-            @RimuHosting URI endPoint, @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String account) {
-      return new ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>(closer, computeService,
-               asynchApi, defaultApi, endPoint, account);
+   ComputeServiceContext provideContext(ComputeService computeService,
+            RestContext<RimuHostingAsyncClient, RimuHostingClient> context) {
+      return new ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>(
+               computeService, context);
    }
-
 }

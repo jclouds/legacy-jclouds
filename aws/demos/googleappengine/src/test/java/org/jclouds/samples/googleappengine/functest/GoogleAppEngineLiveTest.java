@@ -23,7 +23,7 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
@@ -62,7 +62,7 @@ public class GoogleAppEngineLiveTest {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
 
-      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS, String.format("%s,%s,%s",
+      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTS, String.format("%s,%s,%s",
                S3BlobStoreContextBuilder.class.getName(), CloudFilesBlobStoreContextBuilder.class
                         .getName(), AzureBlobStoreContextBuilder.class.getName()));
 

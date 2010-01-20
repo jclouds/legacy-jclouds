@@ -39,11 +39,11 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ServiceToStoredTweetStatuses implements Function<String, Iterable<StoredTweetStatus>> {
 
-   private final Map<String, BlobStoreContext<?,?>> contexts;
+   private final Map<String, BlobStoreContext> contexts;
    private final String container;
 
    @Inject
-   public ServiceToStoredTweetStatuses(Map<String, BlobStoreContext<?,?>> contexts,
+   public ServiceToStoredTweetStatuses(Map<String, BlobStoreContext> contexts,
             @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container) {
       this.contexts = contexts;
       this.container = container;
@@ -53,8 +53,8 @@ public class ServiceToStoredTweetStatuses implements Function<String, Iterable<S
    protected Logger logger = Logger.NULL;
 
    public Iterable<StoredTweetStatus> apply(String service) {
-      BlobStoreContext<?, ?> context = contexts.get(service);
-      String host = context.getEndPoint().getHost();
+      BlobStoreContext context = contexts.get(service);
+      String host = context.getProviderSpecificContext().getEndPoint().getHost();
       try {
          BlobMap blobMap = context.createBlobMap(container);
          Set<String> blobs = blobMap.keySet();

@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
@@ -47,12 +45,11 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "tweetstore.AddTweetsControllerTest")
 public class AddTweetsControllerTest {
 
-   Map<String, BlobStoreContext<?, ?>> createServices(String container)
-            throws InterruptedException, ExecutionException {
-      Map<String, BlobStoreContext<?, ?>> services = Maps.newHashMap();
+   Map<String, BlobStoreContext> createServices(String container) throws InterruptedException,
+            ExecutionException {
+      Map<String, BlobStoreContext> services = Maps.newHashMap();
       for (String name : new String[] { "1", "2" }) {
-         BlobStoreContext<AsyncBlobStore, BlobStore> context = new StubBlobStoreContextBuilder()
-                  .buildContext();
+         BlobStoreContext context = new StubBlobStoreContextBuilder().buildBlobStoreContext();
          context.getAsyncBlobStore().createContainerInLocation(null, container).get();
          Blob blob = context.getAsyncBlobStore().newBlob("1");
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
@@ -65,7 +62,7 @@ public class AddTweetsControllerTest {
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
       String container = "container";
-      Map<String, BlobStoreContext<?, ?>> contexts = createServices(container);
+      Map<String, BlobStoreContext> contexts = createServices(container);
 
       ServiceToStoredTweetStatuses function = new ServiceToStoredTweetStatuses(contexts, container);
       AddTweetsController controller = new AddTweetsController(contexts, function);

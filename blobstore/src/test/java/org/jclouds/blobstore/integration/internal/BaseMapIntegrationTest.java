@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
-public abstract class BaseMapIntegrationTest<A, S, V> extends BaseBlobStoreIntegrationTest<A, S> {
+public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegrationTest {
 
    public abstract void testPutAll() throws InterruptedException, ExecutionException,
             TimeoutException;
@@ -94,7 +94,7 @@ public abstract class BaseMapIntegrationTest<A, S, V> extends BaseBlobStoreInteg
       }
    }
 
-   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?> context, String bucket);
+   protected abstract Map<String, V> createMap(BlobStoreContext context, String bucket);
 
    @Test(groups = { "integration", "live" })
    public void testClear() throws InterruptedException, ExecutionException, TimeoutException {

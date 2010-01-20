@@ -19,15 +19,12 @@
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
-import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesInputStreamMapIntegrationTest")
-public class CloudFilesInputStreamMapIntegrationTest extends
-         BaseInputStreamMapIntegrationTest<CloudFilesAsyncClient, CloudFilesClient> {
+public class CloudFilesInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
 
 }

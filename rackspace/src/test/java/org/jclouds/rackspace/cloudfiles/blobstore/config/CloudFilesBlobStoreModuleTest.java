@@ -26,8 +26,6 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
-import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.util.Jsr330;
@@ -35,8 +33,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -64,11 +60,7 @@ public class CloudFilesBlobStoreModuleTest {
 
    @Test
    void testContextImpl() {
-      BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> context = createInjector()
-               .getInstance(
-                        Key
-                                 .get(new TypeLiteral<BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient>>() {
-                                 }));
+      BlobStoreContext context = createInjector().getInstance(BlobStoreContext.class);
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
    }
 

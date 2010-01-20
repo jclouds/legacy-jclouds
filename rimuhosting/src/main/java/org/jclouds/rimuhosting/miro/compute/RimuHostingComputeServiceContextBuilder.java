@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
@@ -31,12 +33,13 @@ import org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceCont
 import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RimuHostingComputeServiceContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link RimuHostingComputeServiceContext} or {@link Injector} instances based on the most
+ * commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -74,5 +77,16 @@ public class RimuHostingComputeServiceContextBuilder extends
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new RimuHostingRestClientModule());
+   }
+
+   @Override
+   public ComputeServiceContext buildComputeServiceContext() {
+      // need the generic type information
+      return (ComputeServiceContext) this
+               .buildInjector()
+               .getInstance(
+                        Key
+                                 .get(new TypeLiteral<ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>>() {
+                                 }));
    }
 }

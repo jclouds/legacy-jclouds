@@ -18,9 +18,6 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
@@ -29,18 +26,15 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStore;
-import org.jclouds.rackspace.cloudfiles.config.CFObjectModule;
-import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
+import org.jclouds.rest.RestContext;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -49,27 +43,23 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public class CloudFilesBlobStoreContextModule extends AbstractModule {
+public class CloudFilesBlobStoreContextModule extends CloudFilesContextModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreObjectModule());
+      super.configure();
       install(new BlobStoreMapModule());
-      install(new CFObjectModule());
       bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(CloudFilesBlobStore.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> provideContext(
-            BlobMap.Factory blobMapFactory, InputStreamMap.Factory inputStreamMapFactory,
-            Closer closer, AsyncBlobStore asyncBlobStore, BlobStore blobStore,
-            CloudFilesAsyncClient asyncApi, CloudFilesClient defaultApi, @CloudFiles URI endPoint,
-            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
+            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
+            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
+            RestContext<CloudFilesAsyncClient, CloudFilesClient> context) {
       return new BlobStoreContextImpl<CloudFilesAsyncClient, CloudFilesClient>(blobMapFactory,
-               inputStreamMapFactory, closer, asyncBlobStore, blobStore, asyncApi, defaultApi,
-               endPoint, account);
+               inputStreamMapFactory, asynchBlobStore, blobStore, context);
    }
-
 }

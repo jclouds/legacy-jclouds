@@ -44,8 +44,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public abstract class BasePerformanceLiveTest extends
-         BaseBlobStoreIntegrationTest<S3AsyncClient, S3Client> {
+public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTest {
    static {
       containerCount = 1;
    }
@@ -77,6 +76,10 @@ public abstract class BasePerformanceLiveTest extends
       }
    }
 
+   public S3Client getApi() {
+      return (S3Client) context.getProviderSpecificContext().getApi();
+   }
+
    /**
     * using scratch containerName as we are changing location
     * 
@@ -87,7 +90,7 @@ public abstract class BasePerformanceLiveTest extends
    protected String createScratchContainerInEU() throws InterruptedException, ExecutionException,
             TimeoutException {
       String containerName = getScratchContainerName();
-      context.getApi().putBucketInRegion(Region.EU_WEST_1, containerName);
+      getApi().putBucketInRegion(Region.EU_WEST_1, containerName);
       return containerName;
    }
 

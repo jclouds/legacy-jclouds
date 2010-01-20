@@ -50,15 +50,15 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-   private Map<String, BlobStoreContext<?, ?>> contexts;
+   private Map<String, BlobStoreContext> contexts;
 
    @SuppressWarnings("unchecked")
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       Properties props = loadJCloudsProperties(servletContextEvent);
       ImmutableList<String> list = ImmutableList.<String> of(checkNotNull(
-               props.getProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS),
-               BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS).split(","));
+               props.getProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS),
+               BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS).split(","));
       contexts = Maps.newHashMap();
       for (String className : list) {
          try {
@@ -68,7 +68,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             Constructor<BlobStoreContextBuilder<?, ?>> constructor = builderClass
                      .getConstructor(Properties.class);
             contexts.put(name, constructor.newInstance(props).withModules(
-                     new GoogleAppEngineConfigurationModule()).buildContext());
+                     new GoogleAppEngineConfigurationModule()).buildBlobStoreContext());
          } catch (Exception e) {
             throw new RuntimeException(e);
          }
@@ -95,7 +95,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       return Guice.createInjector(new ServletModule() {
          @Override
          protected void configureServlets() {
-            bind(new TypeLiteral<Map<String, BlobStoreContext<?, ?>>>() {
+            bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
             }).toInstance(GuiceServletConfig.this.contexts);
             serve("*.blobstore").with(GetAllContainersController.class);
             requestInjection(this);
@@ -107,7 +107,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext<?, ?> context : contexts.values()) {
+      for (BlobStoreContext context : contexts.values()) {
          context.close();
       }
       super.contextDestroyed(servletContextEvent);

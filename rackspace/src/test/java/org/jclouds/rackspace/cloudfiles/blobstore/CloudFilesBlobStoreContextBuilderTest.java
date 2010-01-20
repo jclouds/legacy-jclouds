@@ -31,7 +31,6 @@ import org.jclouds.blobstore.domain.internal.BlobImpl;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
-import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
@@ -43,9 +42,7 @@ import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in CloudFilesContextBuilder
@@ -72,22 +69,22 @@ public class CloudFilesBlobStoreContextBuilderTest {
    }
 
    public void testBuildContext() {
-      BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> context = newBuilder()
-               .buildContext();
+      BlobStoreContext context = newBuilder().buildBlobStoreContext();
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
-      assertEquals(context.getAsyncApi().getClass(), StubCloudFilesAsyncClient.class);
+      assertEquals(context.getProviderSpecificContext().getAsyncApi().getClass(),
+               StubCloudFilesAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), CloudFilesAsyncBlobStore.class);
-      assertEquals(context.getAsyncApi().newCFObject().getClass(), CFObjectImpl.class);
+      assertEquals(((CloudFilesAsyncClient) context.getProviderSpecificContext().getAsyncApi())
+               .newCFObject().getClass(), CFObjectImpl.class);
       assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
-      assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("http://localhost/rackspacestub/cloudfiles"));
+      assertEquals(context.getProviderSpecificContext().getAccount(), "id");
+      assertEquals(context.getProviderSpecificContext().getEndPoint(), URI
+               .create("http://localhost/rackspacestub/cloudfiles"));
    }
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key
-               .get(new TypeLiteral<BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient>>() {
-               })) != null;
+      assert i.getInstance(BlobStoreContext.class) != null;
       assert i.getInstance(CFObject.class) != null;
       assert i.getInstance(Blob.class) != null;
    }

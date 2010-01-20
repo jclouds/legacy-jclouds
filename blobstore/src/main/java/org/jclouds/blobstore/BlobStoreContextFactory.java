@@ -31,7 +31,7 @@ import org.jclouds.rest.RestContextFactory;
  * @author Adrian Cole
  */
 public class BlobStoreContextFactory extends
-         RestContextFactory<BlobStoreContext<?, ?>, BlobStoreContextBuilder<?, ?>> {
+         RestContextFactory<BlobStoreContext, BlobStoreContextBuilder<?, ?>> {
 
    /**
     * Initializes with the default properties built-in to jclouds. This is typically stored in the
@@ -52,5 +52,10 @@ public class BlobStoreContextFactory extends
    @Inject
    public BlobStoreContextFactory(Properties properties) {
       super(properties);
+   }
+
+   @Override
+   protected BlobStoreContext build(BlobStoreContextBuilder<?, ?> contextBuilder) {
+      return contextBuilder.buildBlobStoreContext();
    }
 }

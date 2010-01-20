@@ -55,4 +55,5 @@ public class S3StubClientModule extends AbstractModule {
             SecurityException, NoSuchMethodException {
       return SyncProxy.create(S3Client.class, client);
    }
+
 }

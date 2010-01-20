@@ -67,7 +67,7 @@ public class EC2ComputeServiceLiveTest {
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
-   private ComputeServiceContext<?, ?> context;
+   private ComputeServiceContext context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,

@@ -31,7 +31,7 @@ import org.jclouds.rest.RestContextFactory;
  * @author Adrian Cole
  */
 public class ComputeServiceContextFactory extends
-         RestContextFactory<ComputeServiceContext<?, ?>, ComputeServiceContextBuilder<?, ?>> {
+         RestContextFactory<ComputeServiceContext, ComputeServiceContextBuilder<?, ?>> {
 
    /**
     * Initializes with the default properties built-in to jclouds. This is typically stored in the
@@ -52,5 +52,10 @@ public class ComputeServiceContextFactory extends
    @Inject
    public ComputeServiceContextFactory(Properties properties) {
       super(properties);
+   }
+
+   @Override
+   protected ComputeServiceContext build(ComputeServiceContextBuilder<?, ?> contextBuilder) {
+      return contextBuilder.buildComputeServiceContext();
    }
 }

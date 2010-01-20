@@ -23,8 +23,6 @@ import java.util.Properties;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
-import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
 
 import com.google.inject.Module;
@@ -43,15 +41,14 @@ import com.google.inject.Module;
  * @see RimuHostingComputeServiceContext
  */
 public class RimuHostingComputeServiceContextFactory {
-   public static ComputeServiceContext<RimuHostingAsyncClient, RimuHostingClient> createContext(
-            Properties properties, Module... modules) {
+   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
       return new RimuHostingComputeServiceContextBuilder(new RimuHostingPropertiesBuilder(
-               properties).build()).withModules(modules).buildContext();
+               properties).build()).withModules(modules).buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext<RimuHostingAsyncClient, RimuHostingClient> createContext(
-            String apiKey, String awsSecretAccessKey, Module... modules) {
+   public static ComputeServiceContext createContext(String apiKey, String awsSecretAccessKey,
+            Module... modules) {
       return new RimuHostingComputeServiceContextBuilder(new RimuHostingPropertiesBuilder(apiKey)
-               .build()).withModules(modules).buildContext();
+               .build()).withModules(modules).buildComputeServiceContext();
    }
 }

@@ -23,14 +23,12 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudAsyncClient;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
-import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeService;
 import org.jclouds.vcloud.reference.VCloudConstants;
 
 import com.google.inject.AbstractModule;
@@ -42,7 +40,6 @@ import com.google.inject.Provides;
 public class HostingDotComVCloudContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      bind(ComputeService.class).to(HostingDotComVCloudComputeService.class);
    }
 
    @Provides

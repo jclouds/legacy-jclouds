@@ -36,7 +36,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketLogging;
@@ -64,14 +63,17 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3ClientLiveTest")
-public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient, S3Client> {
+public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
+   public S3Client getApi() {
+      return (S3Client) context.getProviderSpecificContext().getApi();
+   }
 
    /**
     * this method overrides bucketName to ensure it isn't found
     */
    @Test(groups = { "integration", "live" })
    public void deleteBucketIfEmptyNotFound() throws Exception {
-      assert context.getApi().deleteBucketIfEmpty("dbienf");
+      assert getApi().deleteBucketIfEmpty("dbienf");
    }
 
    @Test(groups = { "integration", "live" })
@@ -79,7 +81,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       String bucketName = getContainerName();
       try {
          addBlobToContainer(bucketName, "test");
-         assert !context.getApi().deleteBucketIfEmpty(bucketName);
+         assert !getApi().deleteBucketIfEmpty(bucketName);
       } finally {
          returnContainer(bucketName);
       }
@@ -89,7 +91,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
             TimeoutException, IOException {
       String bucketName = getContainerName();
       try {
-         AccessControlList acl = context.getApi().getBucketACL(bucketName);
+         AccessControlList acl = getApi().getBucketACL(bucketName);
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.getOwner() != null);
          String ownerId = acl.getOwner().getId();
@@ -105,17 +107,17 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       String bucketName = getContainerName();
       try {
          // Confirm the bucket is private
-         AccessControlList acl = context.getApi().getBucketACL(bucketName);
+         AccessControlList acl = getApi().getBucketACL(bucketName);
          String ownerId = acl.getOwner().getId();
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
 
          addGrantsToACL(acl);
          assertEquals(acl.getGrants().size(), 4);
-         assertTrue(context.getApi().putBucketACL(bucketName, acl));
+         assertTrue(getApi().putBucketACL(bucketName, acl));
 
          // Confirm that the updated ACL has stuck.
-         acl = context.getApi().getBucketACL(bucketName);
+         acl = getApi().getBucketACL(bucketName);
          checkGrants(acl);
       } finally {
          destroyContainer(bucketName);
@@ -147,9 +149,9 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testPublicReadAccessPolicy() throws Exception {
       String bucketName = getScratchContainerName();
       try {
-         context.getApi().putBucketInRegion(Region.DEFAULT, bucketName,
+         getApi().putBucketInRegion(Region.DEFAULT, bucketName,
                   withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
-         AccessControlList acl = context.getApi().getBucketACL(bucketName);
+         AccessControlList acl = getApi().getBucketACL(bucketName);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
@@ -175,7 +177,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testDefaultBucketLocation() throws Exception {
       String bucketName = getContainerName();
       try {
-         assertEquals(Region.US_STANDARD, context.getApi().getBucketLocation(bucketName));
+         assertEquals(Region.US_STANDARD, getApi().getBucketLocation(bucketName));
       } finally {
          returnContainer(bucketName);
       }
@@ -184,23 +186,23 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testBucketPayer() throws Exception {
       final String bucketName = getContainerName();
       try {
-         assertEquals(Payer.BUCKET_OWNER, context.getApi().getBucketPayer(bucketName));
-         context.getApi().setBucketPayer(bucketName, Payer.REQUESTER);
+         assertEquals(Payer.BUCKET_OWNER, getApi().getBucketPayer(bucketName));
+         getApi().setBucketPayer(bucketName, Payer.REQUESTER);
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  assertEquals(Payer.REQUESTER, context.getApi().getBucketPayer(bucketName));
+                  assertEquals(Payer.REQUESTER, getApi().getBucketPayer(bucketName));
 
                } catch (Exception e) {
                   Throwables.propagateIfPossible(e);
                }
             }
          });
-         context.getApi().setBucketPayer(bucketName, Payer.BUCKET_OWNER);
+         getApi().setBucketPayer(bucketName, Payer.BUCKET_OWNER);
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  assertEquals(Payer.BUCKET_OWNER, context.getApi().getBucketPayer(bucketName));
+                  assertEquals(Payer.BUCKET_OWNER, getApi().getBucketPayer(bucketName));
                } catch (Exception e) {
                   Throwables.propagateIfPossible(e);
                }
@@ -215,19 +217,19 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       final String bucketName = getContainerName();
       final String targetBucket = getContainerName();
       try {
-         assertNull(context.getApi().getBucketLogging(bucketName));
+         assertNull(getApi().getBucketLogging(bucketName));
 
          setupAclForBucketLoggingTarget(targetBucket);
          final BucketLogging logging = new BucketLogging(targetBucket, "access_log-", ImmutableSet
                   .<Grant> of(new Grant(new EmailAddressGrantee(StubS3AsyncClient.TEST_ACL_EMAIL),
                            Permission.FULL_CONTROL)));
 
-         context.getApi().enableBucketLogging(bucketName, logging);
+         getApi().enableBucketLogging(bucketName, logging);
 
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  BucketLogging newLogging = context.getApi().getBucketLogging(bucketName);
+                  BucketLogging newLogging = getApi().getBucketLogging(bucketName);
                   AccessControlList acl = new AccessControlList();
                   for (Grant grant : newLogging.getTargetGrants()) { // TODO: add permission
                      // checking features to
@@ -245,11 +247,11 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                }
             }
          });
-         context.getApi().disableBucketLogging(bucketName);
+         getApi().disableBucketLogging(bucketName);
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  assertNull(context.getApi().getBucketLogging(bucketName));
+                  assertNull(getApi().getBucketLogging(bucketName));
                } catch (Exception e) {
                   Throwables.propagateIfPossible(e);
                }
@@ -263,10 +265,10 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
 
    private void setupAclForBucketLoggingTarget(final String targetBucket) {
       // http://docs.amazonwebservices.com/AmazonS3/latest/LoggingHowTo.html
-      AccessControlList acl = context.getApi().getBucketACL(targetBucket);
+      AccessControlList acl = getApi().getBucketACL(targetBucket);
       acl.addPermission(GroupGranteeURI.LOG_DELIVERY, Permission.WRITE);
       acl.addPermission(GroupGranteeURI.LOG_DELIVERY, Permission.READ_ACP);
-      assertTrue(context.getApi().putBucketACL(targetBucket, acl));
+      assertTrue(getApi().putBucketACL(targetBucket, acl));
    }
 
    /**
@@ -275,12 +277,12 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testEu() throws Exception {
       final String bucketName = getScratchContainerName();
       try {
-         context.getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "eu",
+         getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "eu",
                   withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = context.getApi().getBucketACL(bucketName + "eu");
+                  AccessControlList acl = getApi().getBucketACL(bucketName + "eu");
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
                            .toString());
                } catch (Exception e) {
@@ -288,7 +290,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                }
             }
          });
-         assertEquals(Region.EU_WEST_1, context.getApi().getBucketLocation(bucketName + "eu"));
+         assertEquals(Region.EU_WEST_1, getApi().getBucketLocation(bucketName + "eu"));
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
          // URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));
@@ -304,12 +306,12 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    public void testNorthernCalifornia() throws Exception {
       final String bucketName = getScratchContainerName();
       try {
-         context.getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "cali",
+         getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "cali",
                   withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = context.getApi().getBucketACL(bucketName + "cali");
+                  AccessControlList acl = getApi().getBucketACL(bucketName + "cali");
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
                            .toString());
                } catch (Exception e) {
@@ -317,7 +319,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
                }
             }
          });
-         assertEquals(Region.EU_WEST_1, context.getApi().getBucketLocation(bucketName + "cali"));
+         assertEquals(Region.EU_WEST_1, getApi().getBucketLocation(bucketName + "cali"));
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
          // URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));
@@ -330,7 +332,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
    void bucketExists() throws Exception {
       String bucketName = getContainerName();
       try {
-         SortedSet<BucketMetadata> list = context.getApi().listOwnedBuckets();
+         SortedSet<BucketMetadata> list = getApi().listOwnedBuckets();
          BucketMetadata firstBucket = list.first();
          BucketMetadata toMatch = new BucketMetadata(bucketName, new Date(), firstBucket.getOwner());
          assert list.contains(toMatch);
@@ -341,10 +343,10 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
 
    protected void addAlphabetUnderRoot(String bucketName) {
       for (char letter = 'a'; letter <= 'z'; letter++) {
-         S3Object blob = context.getApi().newS3Object();
+         S3Object blob = getApi().newS3Object();
          blob.getMetadata().setKey(letter + "");
          blob.setPayload(letter + "content");
-         context.getApi().putObject(bucketName, blob);
+         getApi().putObject(bucketName, blob);
       }
    }
 
@@ -353,7 +355,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       String bucketName = getContainerName();
       try {
          addAlphabetUnderRoot(bucketName);
-         ListBucketResponse bucket = context.getApi().listBucket(bucketName, afterMarker("y"));
+         ListBucketResponse bucket = getApi().listBucket(bucketName, afterMarker("y"));
          assertEquals(bucket.getMarker(), "y");
          assert !bucket.isTruncated();
          assertEquals(bucket.size(), 1);
@@ -369,7 +371,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
          String prefix = "apps";
          addTenObjectsUnderPrefix(bucketName, prefix);
          add15UnderRoot(bucketName);
-         ListBucketResponse bucket = context.getApi().listBucket(bucketName, delimiter("/"));
+         ListBucketResponse bucket = getApi().listBucket(bucketName, delimiter("/"));
          assertEquals(bucket.getDelimiter(), "/");
          assert !bucket.isTruncated();
          assertEquals(bucket.size(), 15);
@@ -388,7 +390,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
          addTenObjectsUnderPrefix(bucketName, prefix);
          add15UnderRoot(bucketName);
 
-         ListBucketResponse bucket = context.getApi().listBucket(bucketName, withPrefix("apps/"));
+         ListBucketResponse bucket = getApi().listBucket(bucketName, withPrefix("apps/"));
          assert !bucket.isTruncated();
          assertEquals(bucket.size(), 10);
          assertEquals(bucket.getPrefix(), "apps/");
@@ -403,7 +405,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       String bucketName = getContainerName();
       try {
          addAlphabetUnderRoot(bucketName);
-         ListBucketResponse bucket = context.getApi().listBucket(bucketName, maxResults(5));
+         ListBucketResponse bucket = getApi().listBucket(bucketName, maxResults(5));
          assertEquals(bucket.getMaxKeys(), 5);
          assert bucket.isTruncated();
          assertEquals(bucket.size(), 5);
@@ -414,19 +416,19 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
 
    protected void add15UnderRoot(String bucketName) {
       for (int i = 0; i < 15; i++) {
-         S3Object blob = context.getApi().newS3Object();
+         S3Object blob = getApi().newS3Object();
          blob.getMetadata().setKey(i + "");
          blob.setPayload(i + "content");
-         context.getApi().putObject(bucketName, blob);
+         getApi().putObject(bucketName, blob);
       }
    }
 
    protected void addTenObjectsUnderPrefix(String bucketName, String prefix) {
       for (int i = 0; i < 10; i++) {
-         S3Object blob = context.getApi().newS3Object();
+         S3Object blob = getApi().newS3Object();
          blob.getMetadata().setKey(prefix + "/" + i);
          blob.setPayload(i + "content");
-         context.getApi().putObject(bucketName, blob);
+         getApi().putObject(bucketName, blob);
       }
    }
 }

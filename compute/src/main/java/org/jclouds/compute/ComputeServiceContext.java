@@ -31,7 +31,11 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(ComputeServiceContextImpl.class)
-public interface ComputeServiceContext<A, S> extends RestContext<A, S> {
+public interface ComputeServiceContext {
 
    ComputeService getComputeService();
+
+   <A, S> RestContext<A, S> getProviderSpecificContext();
+
+   void close();
 }

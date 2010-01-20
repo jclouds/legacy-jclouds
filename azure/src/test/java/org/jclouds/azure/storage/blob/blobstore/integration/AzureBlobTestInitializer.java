@@ -21,8 +21,6 @@ package org.jclouds.azure.storage.blob.blobstore.integration;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
-import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextFactory;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -37,21 +35,18 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobTestInitializer extends
-         BaseTestInitializer<AzureBlobAsyncClient, AzureBlobClient> {
+public class AzureBlobTestInitializer extends BaseTestInitializer {
 
-   @SuppressWarnings("unchecked")
    @Override
-   protected BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key)
-            throws IOException {
-      return (BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>) new BlobStoreContextFactory()
-               .createContext("azureblob", account, key, ImmutableSet.of(configurationModule,
-                        new Log4JLoggingModule()), new Properties());
+   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
+            String account, String key) throws IOException {
+      return (BlobStoreContext) new BlobStoreContextFactory().createContext("azureblob", account,
+               key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
+               new Properties());
    }
 
    @Override
-   protected BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createStubContext() {
+   protected BlobStoreContext createStubContext() {
       return AzureBlobStoreContextFactory.createContext("user", "pass",
                new AzureBlobStubClientModule());
    }

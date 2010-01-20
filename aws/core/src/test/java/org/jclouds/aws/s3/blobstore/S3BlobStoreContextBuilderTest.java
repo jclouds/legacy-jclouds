@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.aws.s3.S3AsyncClient;
-import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.blobstore.config.S3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.S3RestClientModule;
@@ -43,9 +42,7 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in S3ContextBuilder
@@ -65,23 +62,24 @@ public class S3BlobStoreContextBuilderTest {
    }
 
    public void testBuildContext() {
-      BlobStoreContext<S3AsyncClient, S3Client> context = new S3BlobStoreContextBuilder(
-               new S3PropertiesBuilder("id", "secret").build()).withModules(
-               new S3StubClientModule()).buildContext();
+      BlobStoreContext context = new S3BlobStoreContextBuilder(new S3PropertiesBuilder("id",
+               "secret").build()).withModules(new S3StubClientModule()).buildBlobStoreContext();
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
-      assertEquals(context.getAsyncApi().getClass(), StubS3AsyncClient.class);
+      assertEquals(context.getProviderSpecificContext().getAsyncApi().getClass(),
+               StubS3AsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), S3AsyncBlobStore.class);
-      assertEquals(context.getAsyncApi().newS3Object().getClass(), S3ObjectImpl.class);
+      assertEquals(((S3AsyncClient) context.getProviderSpecificContext().getAsyncApi())
+               .newS3Object().getClass(), S3ObjectImpl.class);
       assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
-      assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("https://localhost/s3stub"));
+      assertEquals(context.getProviderSpecificContext().getAccount(), "id");
+      assertEquals(context.getProviderSpecificContext().getEndPoint(), URI
+               .create("https://localhost/s3stub"));
    }
 
    public void testBuildInjector() {
       Injector i = new S3BlobStoreContextBuilder(new S3PropertiesBuilder("id", "secret").build())
                .withModules(new S3StubClientModule()).buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<BlobStoreContext<S3AsyncClient, S3Client>>() {
-      })) != null;
+      assert i.getInstance(BlobStoreContext.class) != null;
       assert i.getInstance(S3Object.class) != null;
       assert i.getInstance(Blob.class) != null;
    }

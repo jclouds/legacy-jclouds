@@ -21,6 +21,7 @@ package org.jclouds.compute;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Key;
@@ -46,17 +47,16 @@ public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuil
       this(asyncClientType, syncClientType, new Properties());
    }
 
-   public ComputeServiceContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType,
-            Properties properties) {
+   public ComputeServiceContextBuilder(TypeLiteral<A> asyncClientType,
+            TypeLiteral<S> syncClientType, Properties properties) {
       super(asyncClientType, syncClientType, properties);
 
    }
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public ComputeServiceContext<A, S> buildContext() {
-      return (ComputeServiceContext<A, S>) this.buildInjector().getInstance(
-               Key.get(Types.newParameterizedType(ComputeServiceContext.class,
-                        asyncClientType.getType(), syncClientType.getType())));
+   public ComputeServiceContext buildComputeServiceContext() {
+      // need the generic type information
+      return (ComputeServiceContext) buildInjector().getInstance(
+               Key.get(Types.newParameterizedType(ComputeServiceContextImpl.class, asyncClientType
+                        .getType(), syncClientType.getType())));
    }
 }

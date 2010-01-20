@@ -62,8 +62,7 @@ public class GetPath {
       File destinationDir = new File(args[1]);
       destinationDir.mkdirs();
 
-      BlobStoreContext<?, ?> context = new BlobStoreContextFactory()
-               .createContext(uri);
+      BlobStoreContext context = new BlobStoreContextFactory().createContext(uri);
       String path = uri.getPath();
       if (path.startsWith("/"))
          path = path.substring(1);
@@ -72,7 +71,7 @@ public class GetPath {
       copyDirectoryToDestination(context, container, directory, destinationDir);
    }
 
-   private static void copyDirectoryToDestination(BlobStoreContext<?, ?> context, String container,
+   private static void copyDirectoryToDestination(BlobStoreContext context, String container,
             String directory, File destinationDir) throws FileNotFoundException, IOException {
       InputStream input = null;
 
@@ -84,8 +83,8 @@ public class GetPath {
 
          String path = container + "/" + directory;
          InputStreamMap map = context.createInputStreamMap(path);
-         System.out.printf("fetching %d entries from %s %s%n", map.size(), context.getAccount(),
-                  path);
+         System.out.printf("fetching %d entries from %s %s%n", map.size(), context
+                  .getProviderSpecificContext().getAccount(), path);
          for (Entry<String, InputStream> entry : map.entrySet()) {
             System.out.printf("getting file: %s/%s%n", path, entry.getKey());
             input = entry.getValue();

@@ -41,7 +41,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    // object.setContentType("application/octetstream");
    // //object.setPayload("this is a test");
    // object.setPayload(test);
-   // return context.getApi()Provider.getObject(s3Bucket,
+   // return getApi()Provider.getObject(s3Bucket,
    // object.getKey()).get(120,TimeUnit.SECONDS) !=
    // S3Object.NOT_FOUND;
 
@@ -53,7 +53,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
-      return context.getApi().putObject(bucket, object) != null;
+      return getApi().putObject(bucket, object) != null;
    }
 
    @Override
@@ -62,11 +62,11 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
-      return context.getApi().putObject(bucket, object) != null;
+      return getApi().putObject(bucket, object) != null;
    }
 
    private S3Object newObject(String key) {
-      S3Object object = context.getApi().newS3Object();
+      S3Object object = getApi().newS3Object();
       object.getMetadata().setKey(key);
       return object;
    }
@@ -78,7 +78,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
       object.setContentLength(new Long(data.available()));
-      return context.getApi().putObject(bucket, object) != null;
+      return getApi().putObject(bucket, object) != null;
    }
 
    @Override
@@ -87,6 +87,6 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
-      return context.getApi().putObject(bucket, object) != null;
+      return getApi().putObject(bucket, object) != null;
    }
 }

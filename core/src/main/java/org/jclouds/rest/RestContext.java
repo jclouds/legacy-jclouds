@@ -20,7 +20,10 @@ package org.jclouds.rest;
 
 import java.net.URI;
 
+import org.jclouds.rest.internal.RestContextImpl;
+
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.ImplementedBy;
 
 /**
  * Represents an authenticated context to the cloud.
@@ -32,6 +35,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * 
  */
+@ImplementedBy(RestContextImpl.class)
 public interface RestContext<A, S> {
 
    /**

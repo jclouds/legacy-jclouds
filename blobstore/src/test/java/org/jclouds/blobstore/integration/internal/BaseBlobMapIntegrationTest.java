@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, S, Blob> {
+public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
 
    @Override
    @Test(groups = { "integration", "live" })
@@ -220,7 +220,6 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       map.putAll(newMap);
    }
 
-   @SuppressWarnings("unchecked")
    protected Map<String, Blob> createMap(BlobStoreContext context, String bucket) {
       return context.createBlobMap(bucket);
    }

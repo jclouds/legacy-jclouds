@@ -37,7 +37,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
@@ -72,9 +71,13 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "jets3t.JCloudsS3ServiceIntegrationTest")
-public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient, S3Client> {
+public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    AWSCredentials credentials;
    S3Service service;
+
+   public S3Client getApi() {
+      return (S3Client) context.getProviderSpecificContext().getApi();
+   }
 
    /**
     * overridden only to get access to the amazon credentials used for jets3t initialization.
@@ -102,7 +105,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
       try {
          S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
          assertEquals(bucket.getName(), bucketName);
-         assertTrue(context.getApi().bucketExists(bucketName));
+         assertTrue(getApi().bucketExists(bucketName));
       } finally {
          returnContainer(bucketName);
       }
@@ -115,7 +118,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
       service.deleteBucket(bucketName);
       assertConsistencyAware(new Runnable() {
          public void run() {
-            assertFalse(context.getApi().bucketExists(bucketName));
+            assertFalse(getApi().bucketExists(bucketName));
          }
       });
    }
@@ -200,7 +203,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          // Ensure there is at least 1 bucket in S3 account to list and compare.
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
-         SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = context.getApi()
+         SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = getApi()
                   .listOwnedBuckets();
 
          assert jsBuckets.length == jcBuckets.size();
@@ -352,7 +355,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          // Upload empty object
          requestObject = new S3Object(objectKey);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getObject(bucketName, objectKey);
+         jcObject = getApi().getObject(bucketName, objectKey);
          // TODO null keys from s3object! assertEquals(jcObject.getKey(), objectKey);
          assertEquals(jcObject.getMetadata().getSize(), new Long(0));
          assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
@@ -363,7 +366,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          // Upload unicode-named object
          requestObject = new S3Object("₪n₪₪₪d₪-object");
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getObject(bucketName, requestObject.getKey());
+         jcObject = getApi().getObject(bucketName, requestObject.getKey());
          // TODO null keys from s3object! assertEquals(jcObject.getKey(), requestObject.getKey());
          assertEquals(jcObject.getMetadata().getSize(), new Long(0));
          assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
@@ -375,7 +378,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          String data = "This is my ₪n₪₪₪d₪ data";
          requestObject = new S3Object(objectKey, data);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getObject(bucketName, objectKey);
+         jcObject = getApi().getObject(bucketName, objectKey);
          assertEquals(jcObject.getMetadata().getSize(), new Long(data.getBytes("UTF-8").length));
          assertTrue(jcObject.getMetadata().getContentType().startsWith("text/plain"));
          assertEquals(jsResultObject.getContentLength(), data.getBytes("UTF-8").length);
@@ -385,7 +388,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          requestObject = new S3Object(objectKey);
          requestObject.addMetadata("x-amz-meta-" + "my-metadata-1", "value-1");
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getObject(bucketName, objectKey);
+         jcObject = getApi().getObject(bucketName, objectKey);
          assertEquals(jcObject.getMetadata().getUserMetadata().get("my-metadata-1"), "value-1");
          assertEquals(jsResultObject.getMetadata("x-amz-meta-" + "my-metadata-1"), "value-1");
 
@@ -393,8 +396,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          requestObject = new S3Object(objectKey);
          requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getObjectACL(
-                  bucketName, objectKey);
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = getApi().getObjectACL(bucketName,
+                  objectKey);
          assertTrue(jcACL.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
          assertEquals(jcACL.getGrants().size(), 2);
@@ -409,7 +412,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          data = "Here is some d₪t₪ for you";
          requestObject.setDataInputStream(new ByteArrayInputStream(data.getBytes("UTF-8")));
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getObject(bucketName, objectKey);
+         jcObject = getApi().getObject(bucketName, objectKey);
          assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
          assertEquals(jsResultObject.getETag(), jcObject.getMetadata().getETag().replaceAll("\"",
                   ""));
@@ -444,15 +447,15 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          destinationObject = new S3Object(destinationObjectKey);
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, false);
-         jcDestinationObject = context.getApi().getObject(bucketName, destinationObject.getKey());
+         jcDestinationObject = getApi().getObject(bucketName, destinationObject.getKey());
          // TODO null keys from s3object! assertEquals(jcDestinationObject.getKey(),
          // destinationObjectKey);
          assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName),
                   sourceMetadataValue);
          assertEquals(copyResult.get("ETag"), jcDestinationObject.getMetadata().getETag());
          // Test destination ACL is unchanged (ie private)
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getObjectACL(
-                  bucketName, destinationObject.getKey());
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = getApi().getObjectACL(bucketName,
+                  destinationObject.getKey());
          assertEquals(jcACL.getGrants().size(), 1);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
 
@@ -461,11 +464,11 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          destinationObject.addMetadata("x-amz-meta-" + metadataName, destinationMetadataValue);
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, true);
-         jcDestinationObject = context.getApi().getObject(bucketName, destinationObject.getKey());
+         jcDestinationObject = getApi().getObject(bucketName, destinationObject.getKey());
          assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName),
                   destinationMetadataValue);
          // Test destination ACL is unchanged (ie private)
-         jcACL = context.getApi().getObjectACL(bucketName, destinationObject.getKey());
+         jcACL = getApi().getObjectACL(bucketName, destinationObject.getKey());
          assertEquals(jcACL.getGrants().size(), 1);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
 
@@ -475,7 +478,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, false);
          // Test destination ACL is changed (ie public-read)
-         jcACL = context.getApi().getObjectACL(bucketName, destinationObject.getKey());
+         jcACL = getApi().getObjectACL(bucketName, destinationObject.getKey());
          assertEquals(jcACL.getGrants().size(), 2);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
          assertTrue(jcACL.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
@@ -654,7 +657,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          multiService.putObjects(bucket, objects);
 
          assertEquals(countOfUploadCompletions[0], OBJECT_COUNT);
-         ListBucketResponse theBucket = context.getApi().listBucket(bucketName);
+         ListBucketResponse theBucket = getApi().listBucket(bucketName);
          assertEquals(theBucket.size(), OBJECT_COUNT);
 
       } finally {

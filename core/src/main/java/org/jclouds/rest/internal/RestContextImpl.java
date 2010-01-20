@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
@@ -40,6 +41,7 @@ public class RestContextImpl<A, S> implements RestContext<A, S> {
    private final URI endPoint;
    private final String account;
 
+   @Inject
    public RestContextImpl(Closer closer, A asyncApi, S syncApi, URI endPoint, String account) {
       this.asyncApi = asyncApi;
       this.syncApi = syncApi;

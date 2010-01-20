@@ -18,8 +18,6 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
-import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobLiveTest;
 import org.testng.annotations.Test;
 
@@ -28,7 +26,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "emcsaas.AtmosStorageLiveTest")
-public class AtmosStorageLiveTest extends
-         BaseBlobLiveTest<AtmosStorageAsyncClient, AtmosStorageClient> {
+public class AtmosStorageLiveTest extends BaseBlobLiveTest {
 
 }

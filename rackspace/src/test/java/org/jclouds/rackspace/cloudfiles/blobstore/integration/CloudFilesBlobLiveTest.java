@@ -19,8 +19,6 @@
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobLiveTest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
-import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.testng.annotations.Test;
 
 /**
@@ -29,7 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "cloudfiles.CloudFilesBlobLiveTest")
-public class CloudFilesBlobLiveTest extends
-         BaseBlobLiveTest<CloudFilesAsyncClient, CloudFilesClient> {
+public class CloudFilesBlobLiveTest extends BaseBlobLiveTest {
 
 }

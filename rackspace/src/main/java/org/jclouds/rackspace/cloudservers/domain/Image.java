@@ -101,7 +101,9 @@ public class Image {
    public Date getUpdated() {
       return updated;
    }
-
+   /**
+    * note that this ignores the create time
+    */
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -112,6 +114,9 @@ public class Image {
       return result;
    }
 
+   /**
+    * note that this ignores the serverid and create time.
+    */
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
@@ -127,11 +132,6 @@ public class Image {
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
-         return false;
-      if (serverId == null) {
-         if (other.serverId != null)
-            return false;
-      } else if (!serverId.equals(other.serverId))
          return false;
       return true;
    }

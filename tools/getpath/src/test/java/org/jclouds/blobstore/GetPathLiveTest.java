@@ -62,7 +62,7 @@ public class GetPathLiveTest {
    public static final String PROPERTY_GETPATH_CONTAINER = "jclouds.getpath.container";
    public static final String PROPERTY_GETPATH_PATH = "jclouds.getpath.path";
 
-   private ImmutableSet<BlobStoreContext<? extends Object, ? extends Object>> contexts;
+   private ImmutableSet<BlobStoreContext> contexts;
    private String container;
    private String path;
 
@@ -83,25 +83,25 @@ public class GetPathLiveTest {
             TimeoutException {
       container = checkNotNull(System.getProperty(PROPERTY_GETPATH_CONTAINER));
       path = checkNotNull(System.getProperty(PROPERTY_GETPATH_PATH));
-      BlobStoreContext<?, ?> s3Context = S3BlobStoreContextFactory.createContext(checkNotNull(
-               System.getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
+      BlobStoreContext s3Context = S3BlobStoreContextFactory.createContext(checkNotNull(System
+               .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY),
                new Log4JLoggingModule());
       urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
                .getProperty(PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY), "s3", container, path));
 
-      BlobStoreContext<?, ?> cfContext = CloudFilesBlobStoreContextFactory.createContext(
-               checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
-               System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY),
+      BlobStoreContext cfContext = CloudFilesBlobStoreContextFactory.createContext(checkNotNull(
+               System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System
+               .getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY),
                new Log4JLoggingModule());
       urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
                .getProperty(PROPERTY_RACKSPACE_USER), System.getProperty(PROPERTY_RACKSPACE_KEY),
                "cloudfiles", container, path));
 
-      BlobStoreContext<?, ?> azContext = AzureBlobStoreContextFactory.createContext(checkNotNull(
-               System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT),
-               System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY),
+      BlobStoreContext azContext = AzureBlobStoreContextFactory.createContext(checkNotNull(System
+               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
+               .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY),
                new Log4JLoggingModule());
       urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
                .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), System
@@ -109,9 +109,10 @@ public class GetPathLiveTest {
 
       this.contexts = ImmutableSet.of(s3Context, cfContext, azContext);
       boolean deleted = false;
-      for (BlobStoreContext<?, ?> context : contexts) {
+      for (BlobStoreContext context : contexts) {
          if (context.getBlobStore().containerExists(container)) {
-            System.err.printf("deleting container %s at %s%n", container, context.getEndPoint());
+            System.err.printf("deleting container %s at %s%n", container, context
+                     .getProviderSpecificContext().getEndPoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -120,26 +121,27 @@ public class GetPathLiveTest {
          System.err.println("sleeping 30 seconds to allow containers to clear");
          Thread.sleep(30000);
       }
-      for (BlobStoreContext<?, ?> context : contexts) {
-         System.err.printf("creating container %s at %s%n", container, context.getEndPoint());
+      for (BlobStoreContext context : contexts) {
+         System.err.printf("creating container %s at %s%n", container, context
+                  .getProviderSpecificContext().getEndPoint());
          context.getBlobStore().createContainerInLocation("default", container);
       }
       if (deleted) {
          System.err.println("sleeping 5 seconds to allow containers to create");
          Thread.sleep(30000);
       }
-      for (BlobStoreContext<?, ?> context : contexts) {
+      for (BlobStoreContext context : contexts) {
          System.err.printf("creating directory %s in container %s at %s%n", container, path,
-                  context.getEndPoint());
+                  context.getProviderSpecificContext().getEndPoint());
          context.getBlobStore().createDirectory(container, path);
       }
    }
 
    @BeforeClass(dependsOnMethods = "clearAndCreateContainers", groups = { "integration", "live" })
    protected void addFiles() {
-      for (BlobStoreContext<?, ?> context : contexts) {
-         System.err
-                  .printf("adding files to container %s at %s%n", container, context.getEndPoint());
+      for (BlobStoreContext context : contexts) {
+         System.err.printf("adding files to container %s at %s%n", container, context
+                  .getProviderSpecificContext().getEndPoint());
          context.createInputStreamMap(container + "/" + path).putAllStrings(fiveStrings);
       }
    }
@@ -174,7 +176,7 @@ public class GetPathLiveTest {
 
    @AfterTest
    public void closeContexts() {
-      for (BlobStoreContext<?, ?> context : contexts) {
+      for (BlobStoreContext context : contexts) {
          context.close();
       }
    }

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
-import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.config.AzureBlobStoreContextModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
@@ -42,9 +41,7 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in AzureBlobContextBuilder
@@ -69,21 +66,22 @@ public class AzureBlobStoreContextBuilderTest {
    }
 
    public void testBuildContext() {
-      BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> context = newBuilder().buildContext();
+      BlobStoreContext context = newBuilder().buildBlobStoreContext();
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
-      assertEquals(context.getAsyncApi().getClass(), StubAzureBlobAsyncClient.class);
+      assertEquals(context.getProviderSpecificContext().getAsyncApi().getClass(),
+               StubAzureBlobAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), AzureAsyncBlobStore.class);
-      assertEquals(context.getAsyncApi().newBlob().getClass(), AzureBlobImpl.class);
+      assertEquals(((AzureBlobAsyncClient) context.getProviderSpecificContext().getAsyncApi())
+               .newBlob().getClass(), AzureBlobImpl.class);
       assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
-      assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("https://localhost/azurestub"));
+      assertEquals(context.getProviderSpecificContext().getAccount(), "id");
+      assertEquals(context.getProviderSpecificContext().getEndPoint(), URI
+               .create("https://localhost/azurestub"));
    }
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key
-               .get(new TypeLiteral<BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>>() {
-               })) != null;
+      assert i.getInstance(BlobStoreContext.class) != null;
       assert i.getInstance(AzureBlob.class) != null;
       assert i.getInstance(Blob.class) != null;
    }

@@ -21,8 +21,6 @@ package org.jclouds.azure.storage.blob.blobstore.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
-import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
@@ -37,8 +35,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -70,14 +66,11 @@ public class AzureBlobStoreModuleTest {
    void testContextImpl() {
 
       Injector injector = createInjector();
-      BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> handler = injector.getInstance(Key
-               .get(new TypeLiteral<BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>>() {
-               }));
+      BlobStoreContext handler = injector.getInstance(BlobStoreContext.class);
       assertEquals(handler.getClass(), BlobStoreContextImpl.class);
       ContainsValueInListStrategy valueList = injector
                .getInstance(ContainsValueInListStrategy.class);
 
       assertEquals(valueList.getClass(), FindMD5InBlobProperties.class);
    }
-
 }

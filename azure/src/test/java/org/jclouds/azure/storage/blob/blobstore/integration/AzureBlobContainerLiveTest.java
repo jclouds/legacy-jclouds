@@ -18,8 +18,6 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
-import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
-import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
 import org.testng.annotations.Test;
 
@@ -27,7 +25,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "azureblob.AzureBlobContainerLiveTest")
-public class AzureBlobContainerLiveTest extends
-         BaseContainerLiveTest<AzureBlobAsyncClient, AzureBlobClient> {
+public class AzureBlobContainerLiveTest extends BaseContainerLiveTest {
 
 }

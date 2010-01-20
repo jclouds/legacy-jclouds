@@ -44,8 +44,6 @@ import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -67,7 +65,7 @@ public class TerremarkVCloudComputeServiceLiveTest {
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
-   private ComputeServiceContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> context;
+   private ComputeServiceContext context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {

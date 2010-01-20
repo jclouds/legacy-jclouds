@@ -23,9 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
@@ -42,8 +40,7 @@ import org.testng.annotations.Test;
 public class KeyToStoredTweetStatusTest {
 
    BlobMap createMap() throws InterruptedException, ExecutionException {
-      BlobStoreContext<AsyncBlobStore, BlobStore> context = new StubBlobStoreContextBuilder()
-               .buildContext();
+      BlobStoreContext context = new StubBlobStoreContextBuilder().buildBlobStoreContext();
       context.getBlobStore().createContainerInLocation(null, "test1");
       return context.createBlobMap("test1");
    }

@@ -21,8 +21,6 @@ package org.jclouds.aws.s3.blobstore.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.s3.S3AsyncClient;
-import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -34,8 +32,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -61,9 +57,7 @@ public class S3BlobStoreModuleTest {
 
    @Test
    void testContextImpl() {
-      BlobStoreContext<S3AsyncClient, S3Client> context = createInjector().getInstance(
-               Key.get(new TypeLiteral<BlobStoreContext<S3AsyncClient, S3Client>>() {
-               }));
+      BlobStoreContext context = createInjector().getInstance(BlobStoreContext.class);
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
    }
 

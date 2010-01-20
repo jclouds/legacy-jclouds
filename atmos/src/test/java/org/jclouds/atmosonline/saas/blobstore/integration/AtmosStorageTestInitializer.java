@@ -21,8 +21,6 @@ package org.jclouds.atmosonline.saas.blobstore.integration;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextFactory;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -37,21 +35,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class AtmosStorageTestInitializer extends
-         BaseTestInitializer<AtmosStorageAsyncClient, AtmosStorageClient> {
+public class AtmosStorageTestInitializer extends BaseTestInitializer {
 
-   @SuppressWarnings("unchecked")
    @Override
-   protected BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key)
-            throws IOException {
-      return (BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient>) new BlobStoreContextFactory()
-               .createContext("atmos", account, key, ImmutableSet.of(configurationModule,
-                        new Log4JLoggingModule()), new Properties());
+   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
+            String account, String key) throws IOException {
+      return new BlobStoreContextFactory().createContext("atmos", account, key, ImmutableSet.of(
+               configurationModule, new Log4JLoggingModule()), new Properties());
    }
 
    @Override
-   protected BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createStubContext() {
+   protected BlobStoreContext createStubContext() {
       return AtmosBlobStoreContextFactory.createContext("user", "pass",
                new AtmosStorageStubClientModule());
    }

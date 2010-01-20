@@ -18,8 +18,6 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
-import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -27,13 +25,12 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageContainerIntegrationTest")
-public class AtmosStorageContainerIntegrationTest extends
-         BaseContainerIntegrationTest<AtmosStorageAsyncClient, AtmosStorageClient> {
+public class AtmosStorageContainerIntegrationTest extends BaseContainerIntegrationTest {
 
    @Override
    @Test(enabled = false)
    // some reason this fails on the stub.
-   public void testClearWhenContentsUnderPath() throws InterruptedException  {
+   public void testClearWhenContentsUnderPath() throws InterruptedException {
       super.testClearWhenContentsUnderPath();
    }
 

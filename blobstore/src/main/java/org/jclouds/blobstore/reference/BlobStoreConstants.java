@@ -48,10 +48,10 @@ public interface BlobStoreConstants {
    public static final String PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX = "jclouds.blobstore.directorysuffix";
 
    /**
-    * comma-separated, fully qualified class names of implementations of BlobStoreContextBuilder
+    * comma-separated hints from {@code blobstore.properties}
     * 
     */
-   public static final String PROPERTY_BLOBSTORE_CONTEXTBUILDERS = "jclouds.blobstore.contextbuilders";
+   public static final String PROPERTY_BLOBSTORE_CONTEXTS = "jclouds.blobstore.contexts";
 
    /**
     * longest time a single synchronous operation can take before throwing an exception.

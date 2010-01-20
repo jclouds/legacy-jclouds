@@ -18,29 +18,23 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.S3BlobStore;
-import org.jclouds.aws.s3.config.S3ObjectModule;
+import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -48,27 +42,24 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public class S3BlobStoreContextModule extends AbstractModule {
+public class S3BlobStoreContextModule extends S3ContextModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreObjectModule());
+      super.configure();
       install(new BlobStoreMapModule());
-      install(new S3ObjectModule());
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(S3BlobStore.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   BlobStoreContext<S3AsyncClient, S3Client> provideContext(BlobMap.Factory blobMapFactory,
+   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
             InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            AsyncBlobStore asyncBlobstore, BlobStore blobStore, S3AsyncClient asynchApi,
-            S3Client defaultApi, @S3 URI endPoint,
-            @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
+            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
+            RestContext<S3AsyncClient, S3Client> context) {
       return new BlobStoreContextImpl<S3AsyncClient, S3Client>(blobMapFactory,
-               inputStreamMapFactory, closer, asyncBlobstore, blobStore, asynchApi, defaultApi,
-               endPoint, account);
+               inputStreamMapFactory, asynchBlobStore, blobStore, context);
    }
 
 }

@@ -21,8 +21,6 @@ package org.jclouds.atmosonline.saas.blobstore.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
@@ -36,8 +34,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -67,10 +63,7 @@ public class AtmosBlobStoreModuleTest {
    void testContextImpl() {
 
       Injector injector = createInjector();
-      BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> handler = injector
-               .getInstance(Key
-                        .get(new TypeLiteral<BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient>>() {
-                        }));
+      BlobStoreContext handler = injector.getInstance(BlobStoreContext.class);
       assertEquals(handler.getClass(), BlobStoreContextImpl.class);
       ContainsValueInListStrategy valueList = injector
                .getInstance(ContainsValueInListStrategy.class);

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
@@ -39,7 +40,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class RestContextFactory<T extends RestContext<?, ?>, B extends RestContextBuilder<?, ?>> {
+public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> {
    private final static Properties NO_PROPERTIES = new Properties();
    private final Properties properties;
 
@@ -115,23 +116,31 @@ public class RestContextFactory<T extends RestContext<?, ?>, B extends RestConte
       return createContext(hint, account, key, ImmutableSet.<Module> of(), NO_PROPERTIES);
    }
 
+   public T createContext(String hint, Properties overrides) {
+      return createContext(hint, null, null, ImmutableSet.<Module> of(), overrides);
+   }
+
+   public T createContext(String hint, Iterable<? extends Module> modules, Properties overrides) {
+      return createContext(hint, null, null, modules, overrides);
+   }
+
    /**
     * 
     * FIXME Comment this // ImmutableSet.<Module>of(new ExecutorServiceModule(myexecutor))
     * 
     * @param hint
     * @param account
+    *           nullable, if credentials are present in the overrides
     * @param key
+    *           nullable, if credentials are present in the overrides
     * @param modules
     * @param overrides
     * @return
     */
    @SuppressWarnings("unchecked")
-   public T createContext(String hint, String account, String key,
+   public T createContext(String hint, @Nullable String account, @Nullable String key,
             Iterable<? extends Module> modules, Properties overrides) {
       checkNotNull(hint, "hint");
-      checkNotNull(account, "account");
-      checkNotNull(key, "key");
       checkNotNull(modules, "modules");
       checkNotNull(overrides, "overrides");
       String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
@@ -147,12 +156,17 @@ public class RestContextFactory<T extends RestContext<?, ?>, B extends RestConte
                   .forName(propertiesBuilderClassName);
          Class<B> contextBuilderClass = (Class<B>) Class.forName(contextBuilderClassName);
          HttpPropertiesBuilder builder = propertiesBuilderClass.getConstructor(Properties.class)
-                  .newInstance(overrides).withCredentials(account, key);
-         return (T) contextBuilderClass.getConstructor(Properties.class).newInstance(
-                  builder.build()).withModules(Iterables.toArray(modules, Module.class))
-                  .buildContext();
+                  .newInstance(overrides);
+         if (key != null)
+            builder.withCredentials(account, key);
+
+         B contextBuilder = (B) contextBuilderClass.getConstructor(Properties.class).newInstance(
+                  builder.build()).withModules(Iterables.toArray(modules, Module.class));
+         return build(contextBuilder);
       } catch (Exception e) {
          throw new RuntimeException("error instantiating " + contextBuilderClassName, e);
       }
    }
+
+   protected abstract T build(B contextBuilder);
 }

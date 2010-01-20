@@ -21,8 +21,6 @@ package org.jclouds.aws.ec2.compute;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -44,28 +42,28 @@ import com.google.inject.Module;
  * @see EC2ComputeServiceContext
  */
 public class EC2ComputeServiceContextFactory {
-   public static ComputeServiceContext<EC2AsyncClient, EC2Client> createContext(Properties properties,
-            Module... modules) {
+   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
       return new EC2ComputeServiceContextBuilder(new EC2PropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
+               .withModules(modules).buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext<EC2AsyncClient, EC2Client> createContext(String awsAccessKeyId,
+   public static ComputeServiceContext createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new EC2ComputeServiceContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId,
-               awsSecretAccessKey).build()).withModules(modules).buildContext();
+               awsSecretAccessKey).build()).withModules(modules).buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext<EC2AsyncClient, EC2Client> createContext(Properties properties,
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new EC2ComputeServiceContextBuilder(new EC2PropertiesBuilder(properties).withCredentials(
-               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(Properties properties, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return new EC2ComputeServiceContextBuilder(new EC2PropertiesBuilder(properties)
+               .withCredentials(awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext<EC2AsyncClient, EC2Client> createContext(URI endpoint,
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
+   public static ComputeServiceContext createContext(URI endpoint, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
       return new EC2ComputeServiceContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId,
                awsSecretAccessKey).withEndpoint(endpoint).build()).withModules(modules)
-               .buildContext();
+               .buildComputeServiceContext();
    }
 }

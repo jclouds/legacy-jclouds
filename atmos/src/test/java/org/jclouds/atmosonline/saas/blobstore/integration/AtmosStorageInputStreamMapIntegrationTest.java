@@ -21,8 +21,6 @@ package org.jclouds.atmosonline.saas.blobstore.integration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -30,8 +28,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageInputStreamMapIntegrationTest")
-public class AtmosStorageInputStreamMapIntegrationTest extends
-         BaseInputStreamMapIntegrationTest<AtmosStorageAsyncClient, AtmosStorageClient> {
+public class AtmosStorageInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
 
    @Override
    @Test(enabled = false)

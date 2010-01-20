@@ -26,8 +26,6 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
-import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 
@@ -38,21 +36,18 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudFilesTestInitializer extends
-         BaseTestInitializer<CloudFilesAsyncClient, CloudFilesClient> {
+public class CloudFilesTestInitializer extends BaseTestInitializer {
 
-   @SuppressWarnings("unchecked")
    @Override
-   protected BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key)
-            throws IOException {
-      return (BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient>) new BlobStoreContextFactory()
-               .createContext("cloudfiles", account, key, ImmutableSet.of(configurationModule,
-                        new Log4JLoggingModule()), new Properties());
+   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
+            String account, String key) throws IOException {
+      return (BlobStoreContext) new BlobStoreContextFactory().createContext("cloudfiles", account,
+               key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
+               new Properties());
    }
 
    @Override
-   protected BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> createStubContext() {
+   protected BlobStoreContext createStubContext() {
       return CloudFilesBlobStoreContextFactory.createContext("user", "pass",
                new StubRackspaceAuthenticationModule(), new CloudFilesStubClientModule());
    }

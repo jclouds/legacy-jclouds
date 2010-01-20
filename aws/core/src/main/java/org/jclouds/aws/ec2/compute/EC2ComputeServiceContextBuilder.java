@@ -75,4 +75,5 @@ public class EC2ComputeServiceContextBuilder extends
    protected void addClientModule(List<Module> modules) {
       modules.add(new EC2RestClientModule());
    }
+
 }

@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseServiceIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
+public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    void containerDoesntExist() {

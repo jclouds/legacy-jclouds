@@ -26,19 +26,17 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
-import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -91,12 +89,10 @@ public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<AsyncBl
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         BlobStoreContext<AsyncBlobStore, BlobStore> provideContext(BlobMap.Factory blobMapFactory,
-                  InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-                  AsyncBlobStore asynch, BlobStore synch) {
-            return new BlobStoreContextImpl<AsyncBlobStore, BlobStore>(blobMapFactory,
-                     inputStreamMapFactory, closer, asynch, synch, asynch, synch, URI
-                              .create("http://localhost/blobstub"), "foo");
+         RestContext<AsyncBlobStore, BlobStore> provideContext(Closer closer,
+                  final AsyncBlobStore async, final BlobStore sync) {
+            return new RestContextImpl<AsyncBlobStore, BlobStore>(closer, async, sync, URI
+                     .create("http://localhost/blobstub"), "foo");
          }
 
       });

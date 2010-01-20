@@ -23,7 +23,6 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
@@ -32,7 +31,6 @@ import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rimuhosting.miro.RimuHosting;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeService;
 import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
 
 import com.google.inject.AbstractModule;
@@ -40,22 +38,22 @@ import com.google.inject.Provides;
 
 /**
  * Configures the RimuHosting connection, including logging and http transport.
- *
+ * 
  * @author Adrian Cole
  */
 public class RimuHostingContextModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(CDateAdapter.class);
-      bind(ComputeService.class).to(RimuHostingComputeService.class);
    }
 
    @Provides
    @Singleton
-   RestContext<RimuHostingAsyncClient, RimuHostingClient> provideContext(Closer closer, RimuHostingAsyncClient asyncApi,
-                                                                         RimuHostingClient syncApi, @RimuHosting URI endPoint, @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String account) {
-      return new RestContextImpl<RimuHostingAsyncClient, RimuHostingClient>(closer, asyncApi, syncApi, endPoint, account);
+   RestContext<RimuHostingAsyncClient, RimuHostingClient> provideContext(Closer closer,
+            RimuHostingAsyncClient asyncApi, RimuHostingClient syncApi, @RimuHosting URI endPoint,
+            @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String account) {
+      return new RestContextImpl<RimuHostingAsyncClient, RimuHostingClient>(closer, asyncApi,
+               syncApi, endPoint, account);
    }
-
 
 }

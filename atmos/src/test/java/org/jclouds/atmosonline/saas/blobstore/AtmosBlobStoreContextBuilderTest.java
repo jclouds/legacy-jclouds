@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.atmosonline.saas.blobstore.config.AtmosBlobStoreContextModule;
 import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
@@ -42,9 +41,7 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in AtmosStorageContextBuilder
@@ -69,23 +66,22 @@ public class AtmosBlobStoreContextBuilderTest {
    }
 
    public void testBuildContext() {
-      BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> context = newBuilder()
-               .buildContext();
+      BlobStoreContext context = newBuilder().buildBlobStoreContext();
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
-      assertEquals(context.getAsyncApi().getClass(), StubAtmosStorageAsyncClient.class);
+      assertEquals(context.getProviderSpecificContext().getAsyncApi().getClass(),
+               StubAtmosStorageAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), AtmosAsyncBlobStore.class);
-      assertEquals(context.getAsyncApi().newObject().getClass(), AtmosObjectImpl.class);
+      assertEquals(((AtmosStorageAsyncClient)context.getProviderSpecificContext().getAsyncApi()).newObject().getClass(),
+               AtmosObjectImpl.class);
       assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
-      assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("https://localhost/azurestub"));
+      assertEquals(context.getProviderSpecificContext().getAccount(), "id");
+      assertEquals(context.getProviderSpecificContext().getEndPoint(), URI
+               .create("https://localhost/azurestub"));
    }
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i
-               .getInstance(Key
-                        .get(new TypeLiteral<BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient>>() {
-                        })) != null;
+      assert i.getInstance(BlobStoreContext.class) != null;
       assert i.getInstance(AtmosObject.class) != null;
       assert i.getInstance(Blob.class) != null;
    }

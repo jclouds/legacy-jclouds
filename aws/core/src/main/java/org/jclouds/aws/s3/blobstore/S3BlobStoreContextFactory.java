@@ -21,8 +21,6 @@ package org.jclouds.aws.s3.blobstore;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.aws.s3.S3AsyncClient;
-import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -43,28 +41,28 @@ import com.google.inject.Module;
  * @see S3BlobStoreContext
  */
 public class S3BlobStoreContextFactory {
-   public static BlobStoreContext<S3AsyncClient, S3Client> createContext(Properties properties,
-            Module... modules) {
+   public static BlobStoreContext createContext(Properties properties, Module... modules) {
       return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
+               .withModules(modules).buildBlobStoreContext();
    }
 
-   public static BlobStoreContext<S3AsyncClient, S3Client> createContext(String awsAccessKeyId,
+   public static BlobStoreContext createContext(String awsAccessKeyId, String awsSecretAccessKey,
+            Module... modules) {
+      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(awsAccessKeyId,
+               awsSecretAccessKey).build()).withModules(modules).buildBlobStoreContext();
+   }
+
+   public static BlobStoreContext createContext(Properties properties, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(properties).withCredentials(
+               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules)
+               .buildBlobStoreContext();
+   }
+
+   public static BlobStoreContext createContext(URI endpoint, String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(awsAccessKeyId,
-               awsSecretAccessKey).build()).withModules(modules).buildContext();
-   }
-
-   public static BlobStoreContext<S3AsyncClient, S3Client> createContext(Properties properties,
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(properties).withCredentials(
-               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildContext();
-   }
-
-   public static BlobStoreContext<S3AsyncClient, S3Client> createContext(URI endpoint,
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(awsAccessKeyId,
                awsSecretAccessKey).withEndpoint(endpoint).build()).withModules(modules)
-               .buildContext();
+               .buildBlobStoreContext();
    }
 }

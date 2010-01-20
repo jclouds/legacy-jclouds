@@ -29,15 +29,15 @@ import java.util.SortedSet;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
+import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.rest.RestContext;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -60,7 +60,7 @@ public class JCloudsS3Service extends S3Service {
 
    private static final long serialVersionUID = 1L;
 
-   private final BlobStoreContext<S3AsyncClient, S3Client> context;
+   private final RestContext<S3AsyncClient, S3Client> context;
    private final S3Client connection;
 
    /**
@@ -76,8 +76,8 @@ public class JCloudsS3Service extends S3Service {
    protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
             throws S3ServiceException {
       super(awsCredentials);
-      context = S3BlobStoreContextFactory.createContext(awsCredentials.getAccessKey(),
-               awsCredentials.getSecretKey(), modules);
+      context = S3ContextFactory.createContext(awsCredentials.getAccessKey(), awsCredentials
+               .getSecretKey(), modules);
       connection = context.getApi();
    }
 

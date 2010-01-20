@@ -18,13 +18,20 @@
  */
 package org.jclouds.aws.s3.samples;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
+import org.jclouds.aws.s3.S3AsyncClient;
+import org.jclouds.aws.s3.S3Client;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.rest.RestContext;
 
 /**
  * This the Main class of an Application that demonstrates the use of the blobstore.
@@ -39,8 +46,7 @@ public class MainApp {
    public static int PARAMETERS = 3;
    public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretkey\" \"bucketName\" ";
 
-   @SuppressWarnings("unchecked")
-   public static void main(String[] args) {
+   public static void main(String[] args) throws IOException {
 
       if (args.length < PARAMETERS)
          throw new IllegalArgumentException(INVALID_SYNTAX);
@@ -51,7 +57,8 @@ public class MainApp {
       String containerName = args[2];
 
       // Init
-      BlobStoreContext context = S3BlobStoreContextFactory.createContext(accesskeyid, secretkey);
+      BlobStoreContext context = new BlobStoreContextFactory().createContext("s3", accesskeyid,
+               secretkey);
 
       try {
 
@@ -59,6 +66,7 @@ public class MainApp {
          BlobStore blobStore = context.getBlobStore();
          blobStore.createContainerInLocation(Region.DEFAULT.toString(), containerName);
 
+         // Add Blob
          Blob blob = blobStore.newBlob("test");
          blob.setPayload("testdata");
          blobStore.putBlob(containerName, blob);
@@ -67,10 +75,17 @@ public class MainApp {
          for (StorageMetadata resourceMd : blobStore.list()) {
             if (resourceMd.getType() == StorageType.CONTAINER
                      || resourceMd.getType() == StorageType.FOLDER) {
-               System.out.printf("  %s: %s entries%n", resourceMd.getName(), context
-                        .createInputStreamMap(resourceMd.getName()).size());
+               // Use Map API
+               Map<String, InputStream> containerMap = context.createInputStreamMap(resourceMd
+                        .getName());
+               System.out.printf("  %s: %s entries%n", resourceMd.getName(), containerMap.size());
             }
          }
+
+         // Use Provider API
+         RestContext<S3AsyncClient, S3Client> providerContext = context
+                  .getProviderSpecificContext();
+         providerContext.getApi().getBucketLogging(containerName);
 
       } finally {
          // Close connecton

@@ -61,14 +61,17 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3ClientLiveTest")
-public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient, S3Client> {
+public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
+   public S3Client getApi() {
+      return (S3Client) context.getProviderSpecificContext().getApi();
+   }
 
    /**
     * this method overrides containerName to ensure it isn't found
     */
    @Test(groups = { "integration", "live" })
    public void deleteContainerIfEmptyNotFound() throws Exception {
-      assert context.getApi().deleteBucketIfEmpty("dbienf");
+      assert getApi().deleteBucketIfEmpty("dbienf");
    }
 
    @Test(groups = { "integration", "live" })
@@ -76,7 +79,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         assert !context.getApi().deleteBucketIfEmpty(containerName);
+         assert !getApi().deleteBucketIfEmpty(containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -86,10 +89,10 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       String containerName = getContainerName();
       try {
          String key = "hello";
-         S3Object object = context.getApi().newS3Object();
+         S3Object object = getApi().newS3Object();
          object.getMetadata().setKey(key);
          object.setPayload(TEST_STRING);
-         context.getApi().putObject(containerName, object,
+         getApi().putObject(containerName, object,
 
          withAcl(CannedAccessPolicy.PUBLIC_READ));
 
@@ -108,7 +111,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
          addBlobToContainer(containerName, sourceKey);
          validateContent(containerName, sourceKey);
 
-         context.getApi().copyObject(containerName, sourceKey, destinationContainer,
+         getApi().copyObject(containerName, sourceKey, destinationContainer,
                   destinationKey, overrideAcl(CannedAccessPolicy.PUBLIC_READ));
 
          validateContent(destinationContainer, destinationKey);
@@ -131,17 +134,17 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       final String publicReadWriteObjectKey = "public-read-write-acl";
       final String containerName = getContainerName();
       try {
-         S3Object object = context.getApi().newS3Object();
+         S3Object object = getApi().newS3Object();
          object.getMetadata().setKey(publicReadWriteObjectKey);
          object.setPayload("");
          // Public Read-Write object
-         context.getApi().putObject(containerName, object,
+         getApi().putObject(containerName, object,
                   new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE));
 
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = context.getApi().getObjectACL(containerName,
+                  AccessControlList acl = getApi().getObjectACL(containerName,
                            publicReadWriteObjectKey);
                   assertEquals(acl.getGrants().size(), 3);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 2);
@@ -172,7 +175,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
 
          // Private object
          addBlobToContainer(containerName, objectKey);
-         AccessControlList acl = context.getApi().getObjectACL(containerName, objectKey);
+         AccessControlList acl = getApi().getObjectACL(containerName, objectKey);
          String ownerId = acl.getOwner().getId();
 
          assertEquals(acl.getGrants().size(), 1);
@@ -180,10 +183,10 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
 
          addGrantsToACL(acl);
          assertEquals(acl.getGrants().size(), 4);
-         assertTrue(context.getApi().putObjectACL(containerName, objectKey, acl));
+         assertTrue(getApi().putObjectACL(containerName, objectKey, acl));
 
          // Confirm that the updated ACL has stuck.
-         acl = context.getApi().getObjectACL(containerName, objectKey);
+         acl = getApi().getObjectACL(containerName, objectKey);
          checkGrants(acl);
 
          /*
@@ -197,10 +200,10 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
 
          // Update the object's ACL settings
-         assertTrue(context.getApi().putObjectACL(containerName, objectKey, acl));
+         assertTrue(getApi().putObjectACL(containerName, objectKey, acl));
 
          // Confirm that the updated ACL has stuck
-         acl = context.getApi().getObjectACL(containerName, objectKey);
+         acl = getApi().getObjectACL(containerName, objectKey);
          assertEquals(acl.getGrants().size(), 1);
          assertEquals(acl.getPermissions(ownerId).size(), 0);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
@@ -217,7 +220,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          // Private object
          addBlobToContainer(containerName, privateObjectKey);
-         AccessControlList acl = context.getApi().getObjectACL(containerName, privateObjectKey);
+         AccessControlList acl = getApi().getObjectACL(containerName, privateObjectKey);
 
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.getOwner() != null);
@@ -234,16 +237,16 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       final String publicReadObjectKey = "public-read-acl";
       final String containerName = getContainerName();
       try {
-         S3Object object = context.getApi().newS3Object();
+         S3Object object = getApi().newS3Object();
          object.getMetadata().setKey(publicReadObjectKey);
          object.setPayload("");
-         context.getApi().putObject(containerName, object,
+         getApi().putObject(containerName, object,
                   new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ));
 
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = context.getApi().getObjectACL(containerName,
+                  AccessControlList acl = getApi().getObjectACL(containerName,
                            publicReadObjectKey);
 
                   assertEquals(acl.getGrants().size(), 2);
@@ -265,17 +268,17 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
    }
 
    protected String addBlobToContainer(String sourceContainer, String key) {
-      S3Object sourceObject = context.getApi().newS3Object();
+      S3Object sourceObject = getApi().newS3Object();
       sourceObject.getMetadata().setKey(key);
       sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setPayload(TEST_STRING);
-      return context.getApi().putObject(sourceContainer, sourceObject);
+      return getApi().putObject(sourceContainer, sourceObject);
    }
 
    protected S3Object validateObject(String sourceContainer, String key)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       assertConsistencyAwareContainerSize(sourceContainer, 1);
-      S3Object newObject = context.getApi().getObject(sourceContainer, key);
+      S3Object newObject = getApi().getObject(sourceContainer, key);
       assert newObject != null;
       assertEquals(Utils.toStringAndClose(newObject.getContent()), TEST_STRING);
       return newObject;
@@ -284,14 +287,14 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
    public void testMetadataWithCacheControlAndContentDisposition() throws Exception {
       String key = "hello";
 
-      S3Object object = context.getApi().newS3Object();
+      S3Object object = getApi().newS3Object();
       object.getMetadata().setKey(key);
       object.setPayload(TEST_STRING);
       object.getMetadata().setCacheControl("no-cache");
       object.getMetadata().setContentDisposition("attachment; filename=hello.txt");
       String containerName = getContainerName();
       try {
-         context.getApi().putObject(containerName, object);
+         getApi().putObject(containerName, object);
 
          S3Object newObject = validateObject(containerName, key);
 
@@ -307,13 +310,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
    public void testMetadataContentEncoding() throws Exception {
       String key = "hello";
 
-      S3Object object = context.getApi().newS3Object();
+      S3Object object = getApi().newS3Object();
       object.getMetadata().setKey(key);
       object.setPayload(TEST_STRING);
       object.getMetadata().setContentEncoding("x-compress");
       String containerName = getContainerName();
       try {
-         context.getApi().putObject(containerName, object);
+         getApi().putObject(containerName, object);
          S3Object newObject = validateObject(containerName, key);
 
          assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
@@ -329,7 +332,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          addToContainerAndValidate(containerName, sourceKey);
 
-         context.getApi()
+         getApi()
                   .copyObject(containerName, sourceKey, destinationContainer, destinationKey);
 
          validateContent(destinationContainer, destinationKey);
@@ -357,12 +360,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
          addToContainerAndValidate(containerName, sourceKey + "mod");
          Date after = new Date(System.currentTimeMillis() + 1000);
 
-         context.getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
+         getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
                   destinationKey, ifSourceModifiedSince(before));
          validateContent(destinationContainer, destinationKey);
 
          try {
-            context.getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
+            getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
                      destinationKey, ifSourceModifiedSince(after));
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -384,12 +387,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
          addToContainerAndValidate(containerName, sourceKey + "un");
          Date after = new Date(System.currentTimeMillis() + 1000);
 
-         context.getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
+         getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
                   destinationKey, ifSourceUnmodifiedSince(after));
          validateContent(destinationContainer, destinationKey);
 
          try {
-            context.getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
+            getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
                      destinationKey, ifSourceModifiedSince(before));
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -407,12 +410,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
-         context.getApi().copyObject(containerName, sourceKey, destinationContainer,
+         getApi().copyObject(containerName, sourceKey, destinationContainer,
                   destinationKey, ifSourceETagMatches(goodETag));
          validateContent(destinationContainer, destinationKey);
 
          try {
-            context.getApi().copyObject(containerName, sourceKey, destinationContainer,
+            getApi().copyObject(containerName, sourceKey, destinationContainer,
                      destinationKey, ifSourceETagMatches("setsds"));
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -430,12 +433,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
-         context.getApi().copyObject(containerName, sourceKey, destinationContainer,
+         getApi().copyObject(containerName, sourceKey, destinationContainer,
                   destinationKey, ifSourceETagDoesntMatch("asfasdf"));
          validateContent(destinationContainer, destinationKey);
 
          try {
-            context.getApi().copyObject(containerName, sourceKey, destinationContainer,
+            getApi().copyObject(containerName, sourceKey, destinationContainer,
                      destinationKey, ifSourceETagDoesntMatch(goodETag));
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -457,12 +460,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
          Map<String, String> metadata = Maps.newHashMap();
          metadata.put("adrian", "cole");
 
-         context.getApi().copyObject(containerName, sourceKey, destinationContainer,
+         getApi().copyObject(containerName, sourceKey, destinationContainer,
                   destinationKey, overrideMetadataWith(metadata));
 
          validateContent(destinationContainer, destinationKey);
 
-         ObjectMetadata objectMeta = context.getApi().headObject(destinationContainer,
+         ObjectMetadata objectMeta = getApi().headObject(destinationContainer,
                   destinationKey);
 
          assertEquals(objectMeta.getUserMetadata(), metadata);

@@ -18,8 +18,6 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
-import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
-import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -27,7 +25,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobServiceIntegrationTest")
-public class AzureBlobServiceIntegrationTest extends
-         BaseServiceIntegrationTest<AzureBlobAsyncClient, AzureBlobClient> {
+public class AzureBlobServiceIntegrationTest extends BaseServiceIntegrationTest {
 
 }

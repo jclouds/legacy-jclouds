@@ -74,7 +74,7 @@ public class RimuHostingComputeServiceLiveTest {
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
-   private ComputeServiceContext<?, ?> context;
+   private ComputeServiceContext context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {

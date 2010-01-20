@@ -32,7 +32,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(BlobStoreContextImpl.class)
-public interface BlobStoreContext<A, S> extends RestContext<A, S> {
+public interface BlobStoreContext {
 
    /**
     * Creates a <code>Map<String,InputStream></code> view of the specified container.
@@ -53,4 +53,8 @@ public interface BlobStoreContext<A, S> extends RestContext<A, S> {
    BlobStore getBlobStore();
 
    ConsistencyModels getConsistencyModel();
+
+   <A, S> RestContext<A, S> getProviderSpecificContext();
+
+   void close();
 }

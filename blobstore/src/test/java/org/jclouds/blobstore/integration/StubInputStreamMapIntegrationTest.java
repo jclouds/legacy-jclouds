@@ -18,8 +18,6 @@
  */
 package org.jclouds.blobstore.integration;
 
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -27,7 +25,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "blobstore.StubInputStreamMapIntegrationTest")
-public class StubInputStreamMapIntegrationTest extends
-         BaseInputStreamMapIntegrationTest<AsyncBlobStore, BlobStore> {
+public class StubInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
 
 }

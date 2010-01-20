@@ -57,7 +57,7 @@ import com.google.inject.Provider;
  */
 public class ComputeTask extends Task {
 
-   private final Map<URI, ComputeServiceContext<?, ?>> computeMap;
+   private final Map<URI, ComputeServiceContext> computeMap;
    private static Project project;
    /**
     * we don't have a reference to the project during the constructor, so we need to defer expansion
@@ -89,7 +89,7 @@ public class ComputeTask extends Task {
 
    };
 
-   public ComputeTask(Map<URI, ComputeServiceContext<?, ?>> computeMap) {
+   public ComputeTask(Map<URI, ComputeServiceContext> computeMap) {
       this.computeMap = computeMap;
    }
 
@@ -97,11 +97,11 @@ public class ComputeTask extends Task {
       this(buildComputeMap());
    }
 
-   static Map<URI, ComputeServiceContext<?, ?>> buildComputeMap() {
-      return new MapMaker().makeComputingMap(new Function<URI, ComputeServiceContext<?, ?>>() {
+   static Map<URI, ComputeServiceContext> buildComputeMap() {
+      return new MapMaker().makeComputingMap(new Function<URI, ComputeServiceContext>() {
 
          @Override
-         public ComputeServiceContext<?, ?> apply(URI from) {
+         public ComputeServiceContext apply(URI from) {
             try {
                return new ComputeServiceContextFactory().createContext(from, defaultModulesProvider
                         .get(), defaultPropertiesProvider.get());
@@ -141,7 +141,7 @@ public class ComputeTask extends Task {
       ComputeTask.project = getProject();
       Action action = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
                this.action));
-      ComputeServiceContext<?, ?> context = computeMap.get(HttpUtils.createUri(provider));
+      ComputeServiceContext context = computeMap.get(HttpUtils.createUri(provider));
       try {
          ComputeService computeService = context.getComputeService();
          switch (action) {

@@ -18,22 +18,17 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
-import org.jclouds.aws.reference.AWSConstants;
+import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -41,20 +36,19 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public class EC2ComputeServiceContextModule extends AbstractModule {
+public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Override
    protected void configure() {
+      super.configure();
       bind(ComputeService.class).to(EC2ComputeService.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   ComputeServiceContext<EC2AsyncClient, EC2Client> provideContext(Closer closer,
-            ComputeService computeService, EC2AsyncClient asynchApi, EC2Client defaultApi,
-            @EC2 URI endPoint, @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new ComputeServiceContextImpl<EC2AsyncClient, EC2Client>(closer, computeService,
-               asynchApi, defaultApi, endPoint, account);
+   ComputeServiceContext provideContext(ComputeService computeService,
+            RestContext<EC2AsyncClient, EC2Client> context) {
+      return new ComputeServiceContextImpl<EC2AsyncClient, EC2Client>(computeService, context);
    }
 
 }

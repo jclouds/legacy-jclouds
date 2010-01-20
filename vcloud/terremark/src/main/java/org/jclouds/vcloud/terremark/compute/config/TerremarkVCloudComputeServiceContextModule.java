@@ -18,22 +18,17 @@
  */
 package org.jclouds.vcloud.terremark.compute.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.vcloud.endpoints.VCloud;
-import org.jclouds.vcloud.reference.VCloudConstants;
+import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
+import org.jclouds.vcloud.terremark.config.TerremarkVCloudContextModule;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -42,21 +37,20 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudComputeServiceContextModule extends AbstractModule {
+public class TerremarkVCloudComputeServiceContextModule extends TerremarkVCloudContextModule {
 
    @Override
    protected void configure() {
+      super.configure();
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   ComputeServiceContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> provideContext(
-            Closer closer, ComputeService computeService, TerremarkVCloudAsyncClient asynchApi,
-            TerremarkVCloudClient defaultApi, @VCloud URI endPoint,
-            @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+   ComputeServiceContext provideContext(ComputeService computeService,
+            RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> context) {
       return new ComputeServiceContextImpl<TerremarkVCloudAsyncClient, TerremarkVCloudClient>(
-               closer, computeService, asynchApi, defaultApi, endPoint, account);
+               computeService, context);
    }
 
 }

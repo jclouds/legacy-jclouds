@@ -41,8 +41,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseInputStreamMapIntegrationTest<A, S> extends
-         BaseMapIntegrationTest<A, S, InputStream> {
+public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<InputStream> {
 
    @Override
    @Test(groups = { "integration", "live" })
@@ -191,7 +190,7 @@ public class BaseInputStreamMapIntegrationTest<A, S> extends
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllFiles() throws InterruptedException{
+   public void testPutAllFiles() throws InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -236,8 +235,7 @@ public class BaseInputStreamMapIntegrationTest<A, S> extends
    }
 
    void getOneReturnsAppleAndOldValueIsNull(Map<String, InputStream> map, InputStream old)
-            throws IOException, InterruptedException
-       {
+            throws IOException, InterruptedException {
       assert old == null;
       assertEquals(Utils.toStringAndClose(map.get("one")), String
                .format(XML_STRING_FORMAT, "apple"));
@@ -245,7 +243,7 @@ public class BaseInputStreamMapIntegrationTest<A, S> extends
    }
 
    void getOneReturnsBearAndOldValueIsApple(Map<String, InputStream> map, InputStream oldValue)
-   throws IOException, InterruptedException{
+            throws IOException, InterruptedException {
       assertEquals(Utils.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "bear"));
       assertEquals(Utils.toStringAndClose(oldValue), String.format(XML_STRING_FORMAT, "apple"));
       assertConsistencyAwareMapSize(map, 1);
@@ -302,7 +300,7 @@ public class BaseInputStreamMapIntegrationTest<A, S> extends
       ((InputStreamMap) map).putString(key, value);
    }
 
-   protected Map<String, InputStream> createMap(BlobStoreContext<?, ?> context, String bucket) {
+   protected Map<String, InputStream> createMap(BlobStoreContext context, String bucket) {
       InputStreamMap map = context.createInputStreamMap(bucket);
       return (Map<String, InputStream>) map;
    }

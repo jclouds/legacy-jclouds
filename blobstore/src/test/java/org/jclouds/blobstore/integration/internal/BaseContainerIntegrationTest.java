@@ -39,7 +39,7 @@ import com.google.common.base.Throwables;
 /**
  * @author Adrian Cole
  */
-public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
+public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() {
