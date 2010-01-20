@@ -58,14 +58,7 @@
     addproperty="key"
   />
 
-  <input
-    message="What is the image you want to use (CENTOS_53, UBUNTU_90)?"
-    validargs="CENTOS_53,UBUNTU_90"
-    addproperty="image"
-  />
-
   <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}" />
-  <property name="nodename" value="testforjcloud2" />
 
   <target name="list" description="list the identity of all nodes">
     <compute action="list" provider="${jclouds.compute.url}" />
@@ -76,12 +69,24 @@
   </target>
 
   <target name="destroy" description="destroy the node ${nodename}">
+
+    <input
+      message="Which node do you wish to destroy"
+      addproperty="nodename"
+    />
+
     <compute action="destroy" provider="${jclouds.compute.url}">
       <node name="${nodename}" />
     </compute>
   </target>
 
   <target name="get" description="get the node ${nodename}">
+
+    <input
+      message="Which node do you wish to describe?"
+      addproperty="nodename"
+    />
+
     <compute action="get" provider="${jclouds.compute.url}">
       <node name="${nodename}" />
     </compute>
@@ -89,8 +94,15 @@
 
   <property name="location" value="default" />
   <target name="create" description="create the node ${nodename}">
+    <property name="image" value="UBUNTU_90" />
+
+    <input
+      message="What do you want to name your node?"
+      addproperty="nodename"
+    />
+
     <compute action="create" provider="${jclouds.compute.url}">
-      <node name="${nodename}" location="${location}" image="${image}" profile="FASTEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <node name="${nodename}" location="${location}" image="${image}" profile="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 
