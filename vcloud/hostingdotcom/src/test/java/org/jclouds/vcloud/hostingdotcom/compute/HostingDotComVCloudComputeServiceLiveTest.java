@@ -20,23 +20,28 @@
 package org.jclouds.vcloud.hostingdotcom.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.domain.OperatingSystem.CENTOS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
@@ -48,6 +53,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -59,30 +65,35 @@ import com.google.inject.Injector;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "compute.HostingDotComVCloudComputeServiceLiveTest")
 public class HostingDotComVCloudComputeServiceLiveTest {
+   private static final String service = "hostingdotcom";
+   private static final OperatingSystem testOS = CENTOS;
 
    protected SshClient.Factory sshFactory;
-   private String nodePrefix = System.getProperty("user.name");
+   private String nodeName = service;
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
    private ComputeServiceContext context;
+   private ComputeService client;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      context = HostingDotComVCloudComputeServiceContextFactory.createContext(user, password,
-               new Log4JLoggingModule());
+      context = new ComputeServiceContextFactory().createContext(service, user, password,
+               ImmutableSet.of(new Log4JLoggingModule()), new Properties());
       Injector injector = Guice.createInjector(new JschSshClientModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
+      client = context.getComputeService();
    }
 
    public void testCreate() throws Exception {
-      node = context.getComputeService().startNodeInLocation("default", nodePrefix,
-               Profile.SMALLEST, Image.UBUNTU_90);
+      Template template = client.createTemplateInLocation("default").os(testOS).smallest();
+      node = client.runNode(nodeName, template);
       assertNotNull(node.getId());
       assertEquals(node.getLoginPort(), 22);
       assertEquals(node.getLoginType(), LoginType.SSH);
@@ -97,7 +108,7 @@ public class HostingDotComVCloudComputeServiceLiveTest {
 
    @Test(dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
-      NodeMetadata metadata = context.getComputeService().getNodeMetadata(node);
+      NodeMetadata metadata = client.getNodeMetadata(node);
       assertEquals(metadata.getId(), node.getId());
       assertEquals(metadata.getLoginPort(), node.getLoginPort());
       assertEquals(metadata.getLoginType(), node.getLoginType());
@@ -107,10 +118,24 @@ public class HostingDotComVCloudComputeServiceLiveTest {
    }
 
    public void testList() throws Exception {
-      for (ComputeMetadata node : context.getComputeService().listNodes()) {
+      for (ComputeMetadata node : client.listNodes()) {
          assert node.getId() != null;
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
+      }
+   }
+
+   public void testListTemplates() throws Exception {
+      for (Template template : client.listTemplates()) {
+         assert template.getImage() != null;
+         System.out.println(template);
+      }
+   }
+
+   public void testListSizes() throws Exception {
+      for (Size size : client.listSizes()) {
+         assert size.getCores() != null;
+         System.out.println(size);
       }
    }
 
@@ -147,7 +172,7 @@ public class HostingDotComVCloudComputeServiceLiveTest {
    @AfterTest
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (node != null)
-         context.getComputeService().destroyNode(node);
+         client.destroyNode(node);
       context.close();
    }
 }

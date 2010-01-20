@@ -94,7 +94,7 @@
 
   <property name="location" value="default" />
   <target name="create" description="create the node ${nodename}">
-    <property name="image" value="UBUNTU_90" />
+    <property name="os" value="UBUNTU" />
 
     <input
       message="What do you want to name your node?"
@@ -102,7 +102,7 @@
     />
 
     <compute action="create" provider="${jclouds.compute.url}">
-      <node name="${nodename}" location="${location}" image="${image}" profile="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <node name="${nodename}" location="${location}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

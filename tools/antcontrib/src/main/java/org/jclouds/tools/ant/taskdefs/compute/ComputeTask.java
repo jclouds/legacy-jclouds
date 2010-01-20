@@ -35,9 +35,9 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.http.HttpUtils;
@@ -187,12 +187,21 @@ public class ComputeTask extends Task {
    }
 
    private void create(ComputeService computeService) {
-      log(String.format("create name: %s, profile: %s, image: %s", nodeElement.getName(),
-               nodeElement.getProfile(), nodeElement.getImage()));
-      CreateNodeResponse createdNode = computeService.startNodeInLocation(
-               nodeElement.getLocation(), nodeElement.getName(), Profile.valueOf(nodeElement
-                        .getProfile().toUpperCase()), Image.valueOf(nodeElement.getImage()
-                        .toUpperCase()));
+      log(String.format("create name: %s, size: %s, os: %s", nodeElement.getName(), nodeElement
+               .getSize(), nodeElement.getOs()));
+      Template template = computeService.createTemplateInLocation(nodeElement.getLocation());
+      template.os(OperatingSystem.valueOf(nodeElement.getOs()));
+      if (nodeElement.getSize().equalsIgnoreCase("smallest")) {
+         template.smallest();
+      } else if (nodeElement.getSize().equalsIgnoreCase("fastest")) {
+         template.fastest();
+      } else if (nodeElement.getSize().equalsIgnoreCase("biggest")) {
+         template.biggest();
+      } else {
+         throw new BuildException("size: " + nodeElement.getSize()
+                  + " not supported.  valid sizes are smallest, fastest, biggest");
+      }
+      CreateNodeResponse createdNode = computeService.runNode(nodeElement.getName(), template);
       log(String.format("   id=%s, name=%s, connection=%s://%s:%s@%s:%d", createdNode.getId(),
                createdNode.getName(), createdNode.getLoginType().toString().toLowerCase(),
                createdNode.getCredentials().account, createdNode.getCredentials().key, createdNode
@@ -221,7 +230,7 @@ public class ComputeTask extends Task {
 
    private void destroy(ComputeService computeService) {
       log(String.format("destroy name: %s", nodeElement.getName()));
-      Iterable<ComputeMetadata> nodesThatMatch = ComputeUtils.filterByName(computeService
+      Iterable<? extends ComputeMetadata> nodesThatMatch = ComputeUtils.filterByName(computeService
                .listNodes(), nodeElement.getName());
       for (ComputeMetadata node : nodesThatMatch) {
          log(String.format("   destroying id=%s, name=%s", node.getId(), node.getName()));
@@ -231,7 +240,7 @@ public class ComputeTask extends Task {
 
    private void get(ComputeService computeService) {
       log(String.format("get name: %s", nodeElement.getName()));
-      Iterable<ComputeMetadata> nodesThatMatch = ComputeUtils.filterByName(computeService
+      Iterable<? extends ComputeMetadata> nodesThatMatch = ComputeUtils.filterByName(computeService
                .listNodes(), nodeElement.getName());
       for (ComputeMetadata node : nodesThatMatch) {
          logDetails(computeService, node);

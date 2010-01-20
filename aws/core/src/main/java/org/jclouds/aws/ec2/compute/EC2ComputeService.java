@@ -24,7 +24,6 @@ import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyNam
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -32,26 +31,26 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Profile;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
@@ -62,7 +61,6 @@ import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -78,47 +76,25 @@ public class EC2ComputeService implements ComputeService {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final EC2Client ec2Client;
+   private final Set<EC2Size> sizes;
+   private final Provider<Set<EC2Template>> templates;
    private final Predicate<RunningInstance> instanceStateRunning;
    private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   private final Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap;
 
    @Inject
-   public EC2ComputeService(EC2Client tmClient, Predicate<RunningInstance> instanceStateRunning,
+   public EC2ComputeService(EC2Client client, Set<EC2Size> sizes,
+            Provider<Set<EC2Template>> templates,
+            Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap,
+            Predicate<RunningInstance> instanceStateRunning,
             RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
-      this.ec2Client = tmClient;
+      this.ec2Client = client;
+      this.sizes = sizes;
+      this.templates = templates; // delayed intentionally, as generation is slow
+      this.imageAmiIdMap = imageAmiIdMap;
       this.instanceStateRunning = instanceStateRunning;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
    }
-
-   private Map<InstanceType, Map<Image, Map<Region, String>>> imageAmiIdMap = ImmutableMap
-            .<InstanceType, Map<Image, Map<Region, String>>> of(InstanceType.M1_SMALL,//
-                     ImmutableMap.<Image, Map<Region, String>> builder().put(
-                              Image.UBUNTU_90,
-                              ImmutableMap.of(Region.DEFAULT, "ami-1515f67c", Region.US_EAST_1,
-                                       "ami-1515f67c", Region.US_WEST_1, "ami-7d3c6d38",
-                                       Region.EU_WEST_1, "ami-a62a01d2")).put(
-                              Image.RHEL_53,
-                              ImmutableMap.of(Region.DEFAULT, "ami-368b685f", Region.US_EAST_1,
-                                       "ami-368b685f")).build(),//
-                     InstanceType.C1_MEDIUM,//
-                     ImmutableMap.<Image, Map<Region, String>> builder().put(
-                              Image.UBUNTU_90,
-                              ImmutableMap.of(Region.DEFAULT, "ami-1515f67c", Region.US_EAST_1,
-                                       "ami-1515f67c", Region.US_WEST_1, "ami-7d3c6d38",
-                                       Region.EU_WEST_1, "ami-a62a01d2")).put(
-                              Image.RHEL_53,
-                              ImmutableMap.of(Region.DEFAULT, "ami-368b685f", Region.US_EAST_1,
-                                       "ami-368b685f")).build(), //
-                     InstanceType.C1_XLARGE,//
-                     ImmutableMap.<Image, Map<Region, String>> builder().put(
-                              Image.UBUNTU_90,
-                              ImmutableMap.of(Region.DEFAULT, "ami-ab15f6c2", Region.US_EAST_1,
-                                       "ami-ab15f6c2", Region.US_WEST_1, "ami-7b3c6d3e",
-                                       Region.EU_WEST_1, "ami-9a2a01ee")).build());// todo ami
-
-   private Map<Profile, InstanceType> profileInstanceTypeMap = ImmutableMap
-            .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).put(
-                     Profile.MEDIUM, InstanceType.C1_MEDIUM).put(Profile.FASTEST,
-                     InstanceType.C1_XLARGE).build();
 
    private static Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
             .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
@@ -126,19 +102,14 @@ public class EC2ComputeService implements ComputeService {
                      NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
    @Override
-   public CreateNodeResponse startNodeInLocation(String location, String name, Profile profile,
-            Image image) {
-      Region region = Region.fromValue(location);
+   public CreateNodeResponse runNode(String name, Template template) {
+      checkArgument(template instanceof EC2Template,
+               "unexpected template type. should be EC2Template, was: " + template.getClass());
+      EC2Template ec2Template = (EC2Template) template;
 
-      InstanceType type = checkNotNull(profileInstanceTypeMap.get(profile),
-               "profile not supported: " + profile);
-      String ami = checkNotNull(checkNotNull(
-               checkNotNull(imageAmiIdMap.get(type), "type not supported: " + type).get(image),
-               "image not supported: " + image).get(region), "region not supported: " + region);
-
-      KeyPair keyPair = createKeyPairInRegion(region, name);
+      KeyPair keyPair = createKeyPairInRegion(ec2Template.getRegion(), name);
       String securityGroupName = name;
-      createSecurityGroupInRegion(region, securityGroupName, 22, 80, 8080, 443);
+      createSecurityGroupInRegion(ec2Template.getRegion(), securityGroupName, 22, 80, 8080, 443);
 
       String script = new ScriptBuilder() // update and install jdk
                .addStatement(exec("apt-get update"))//
@@ -149,35 +120,45 @@ public class EC2ComputeService implements ComputeService {
                .build(OsFamily.UNIX);
 
       logger.debug(">> running instance region(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
-               region, ami, type, keyPair.getKeyName(), securityGroupName);
+               ec2Template.getRegion(), ec2Template.getImage().getId(), ec2Template.getSize()
+                        .getInstanceType(), keyPair.getKeyName(), securityGroupName);
 
       RunningInstance runningInstance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
-               .runInstancesInRegion(region, null, ami, 1, 1, withKeyName(keyPair.getKeyName())// key
-                        // I
-                        // created
-                        // above
-                        .asType(type)// instance size
-                        .withSecurityGroup(securityGroupName)// group I created above
-                        .withAdditionalInfo(name)// description
-                        .withUserData(script.getBytes()) // script to run as root
+               .runInstancesInRegion(ec2Template.getRegion(), null, ec2Template.getImage().getId(),
+                        1, 1, withKeyName(keyPair.getKeyName())// key
+                                 .asType(ec2Template.getSize().getInstanceType())// instance size
+                                 .withSecurityGroup(securityGroupName)// group I created above
+                                 .withAdditionalInfo(name)// description
+                                 .withUserData(script.getBytes()) // script to run as root
                ));
       logger.debug("<< started instance(%s)", runningInstance.getId());
       instanceStateRunning.apply(runningInstance);
       logger.debug("<< running instance(%s)", runningInstance.getId());
 
       // refresh to get IP address
-      runningInstance = getOnlyRunningInstanceInRegion(region, runningInstance.getId());
+      runningInstance = getOnlyRunningInstanceInRegion(ec2Template.getRegion(), runningInstance
+               .getId());
 
       Set<InetAddress> publicAddresses = runningInstance.getIpAddress() == null ? ImmutableSet
                .<InetAddress> of() : ImmutableSet.<InetAddress> of(runningInstance.getIpAddress());
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateNodeResponseImpl(runningInstance.getId(), name, runningInstance.getRegion()
-               .toString(), null, ImmutableMap.<String, String> of(), instanceToNodeState
-               .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses, 22,
-               LoginType.SSH, new Credentials(image == Image.UBUNTU_90 ? "ubuntu" : "root", keyPair
-                        .getKeyMaterial()), ImmutableMap.<String, String> of());
+      return new CreateNodeResponseImpl(
+               runningInstance.getId(),
+               name,
+               runningInstance.getRegion().toString(),
+               null,
+               ImmutableMap.<String, String> of(),
+               instanceToNodeState.get(runningInstance.getInstanceState()),
+               publicAddresses,
+               privateAddresses,
+               22,
+               LoginType.SSH,
+               new Credentials(
+                        ec2Template.getImage().getOperatingSystem() == OperatingSystem.UBUNTU ? "ubuntu"
+                                 : "root", keyPair.getKeyMaterial()), ImmutableMap
+                        .<String, String> of());
    }
 
    private KeyPair createKeyPairInRegion(Region region, String name) {
@@ -205,13 +186,13 @@ public class EC2ComputeService implements ComputeService {
       try {
          ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
          logger.debug("<< created securityGroup(%s)", name);
-         logger.debug(">> authorizing securityGroup region(%s) name(%s) ports(%s)", region, name,
-                  Joiner.on(',').join(Arrays.asList(ports)));
          for (int port : ports) {
+            logger.debug(">> authorizing securityGroup region(%s) name(%s) port(%s)", region, name,
+                     port);
             ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region,
                      name, IpProtocol.TCP, port, port, "0.0.0.0/0");
+            logger.debug("<< authorized securityGroup(%s)", name);
          }
-         logger.debug("<< authorized securityGroup(%s)", name);
       } catch (AWSResponseException e) {
          if (e.getError().getCode().equals("InvalidGroup.Duplicate")) {
             logger.debug("<< reused securityGroup(%s)", name);
@@ -335,7 +316,17 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public Map<String, Size> getSizes() {
-      throw new UnsupportedOperationException();
+   public Set<EC2Size> listSizes() {
+      return sizes;
+   }
+
+   @Override
+   public Set<EC2Template> listTemplates() {
+      return templates.get();
+   }
+
+   @Override
+   public Template createTemplateInLocation(String location) {
+      return new EC2Template(ec2Client, imageAmiIdMap, location);
    }
 }

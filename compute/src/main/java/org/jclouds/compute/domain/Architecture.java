@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,10 +24,18 @@
 package org.jclouds.compute.domain;
 
 /**
+ * Architecture of a node
+ * 
  * @author Adrian Cole
  */
-public interface Profile {
-   Image getImage();
+public enum Architecture {
 
-   Size getSize();
+   /**
+    * 32-bit platform
+    */
+   X86_32,
+   /**
+    * 64-bit platform
+    */
+   X86_64;
 }

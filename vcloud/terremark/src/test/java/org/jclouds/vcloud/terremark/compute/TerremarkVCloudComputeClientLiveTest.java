@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -73,18 +73,20 @@ public class TerremarkVCloudComputeClientLiveTest {
       }
    }
 
-   private Map<Image, Expectation> expectationMap = ImmutableMap.<Image, Expectation> builder()
-            .put(Image.CENTOS_53, new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)"))
-            .put(Image.RHEL_53, new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)"))
-            .put(Image.UBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
-                     Image.UBUNTU_JEOS_90, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
-
+   private Map<OperatingSystem, Expectation> expectationMap = ImmutableMap
+            .<OperatingSystem, Expectation> builder().put(OperatingSystem.CENTOS,
+                     new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)")).put(
+                     OperatingSystem.RHEL,
+                     new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)")).put(
+                     OperatingSystem.UBUNTU, new Expectation(4194304, "Ubuntu Linux (64-bit)"))
+            .build();
+   // .put(OperatingSystem.UBUNTU, new Expectation(4194304, "Ubuntu Linux (32-bit)"))
    private Predicate<InetAddress> addressTester;
 
    @Test
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      Image toTest = Image.CENTOS_53;
+      OperatingSystem toTest = OperatingSystem.CENTOS;
 
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
@@ -100,7 +102,7 @@ public class TerremarkVCloudComputeClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.ON);
    }
 
-   private String getCompatibleServerName(Image toTest) {
+   private String getCompatibleServerName(OperatingSystem toTest) {
       String serverName = CaseFormat.UPPER_UNDERSCORE
                .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
                         toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
@@ -115,9 +117,8 @@ public class TerremarkVCloudComputeClientLiveTest {
 
    @Test(dependsOnMethods = "testGetAnyPrivateAddress")
    public void testSshLoadBalanceIp() {
-       InetAddress publicIp = client.createPublicAddressMappedToPorts(tmClient.getVApp(id), 22,
-       80,
-       443, 8080); /// error 500
+      InetAddress publicIp = client.createPublicAddressMappedToPorts(tmClient.getVApp(id), 22, 80,
+               443, 8080); // / error 500
       assert addressTester.apply(publicIp);
       // client.exec(publicIp, "uname -a");
    }

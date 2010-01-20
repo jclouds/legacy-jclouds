@@ -35,12 +35,12 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -73,17 +73,18 @@ public class RimuHostingComputeService implements ComputeService {
       this.rhClient = rhClient;
    }
 
-   private Map<Image, String> imageNameMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "centos53").put(Image.UBUNTU_90, "ubuntu904").build();
-   private Map<Profile, String> profileNameMap = ImmutableMap.<Profile, String> builder().put(
-            Profile.SMALLEST, "MIRO1B").build();
+   private Map<OperatingSystem, String> imageNameMap = ImmutableMap
+            .<OperatingSystem, String> builder().put(OperatingSystem.CENTOS, "centos53").put(
+                     OperatingSystem.UBUNTU, "ubuntu904").build();
+
+   // private Map<Size, String> profileNameMap = ImmutableMap.<Profile, String> builder().put(
+   // Profile.SMALLEST, "MIRO1B").build();
 
    @Override
-   public CreateNodeResponse startNodeInLocation(String location, String name, Profile profile,
-            Image image) {
+   public CreateNodeResponse runNode(String name, Template template) {
       NewServerResponse serverResponse = rhClient.createServer(name, checkNotNull(imageNameMap
-               .get(image), "image not supported: " + image), checkNotNull(profileNameMap
-               .get(profile), "profile not supported: " + profile));
+               .get(template.getImage().getOperatingSystem()), "os not supported: "
+               + template.getImage().getOperatingSystem()), "MIRO1B");
       return new CreateNodeResponseImpl(serverResponse.getServer().getId().toString(),
                serverResponse.getServer().getName(), "default", null, ImmutableMap
                         .<String, String> of(),
@@ -138,7 +139,17 @@ public class RimuHostingComputeService implements ComputeService {
    }
 
    @Override
-   public Map<String, Size> getSizes() {
+   public Template createTemplateInLocation(String location) {
+      return null;
+   }
+
+   @Override
+   public Set<? extends Size> listSizes() {
+      return null;
+   }
+
+   @Override
+   public Set<? extends Template> listTemplates() {
       return null;
    }
 }

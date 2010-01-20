@@ -72,7 +72,7 @@
 
   <target name="create" description="create the node ${jclouds.compute.nodename}" depends="destroy" >
      <compute action="create" provider="${jclouds.compute.url}">
-        <node name="${jclouds.compute.nodename}" image="UBUNTU_JEOS_90" profile="SMALLEST"
+        <node name="${jclouds.compute.nodename}" os="UBUNTU" size="SMALLEST"
              hostproperty="host" usernameproperty="username" passwordproperty="password" />
      </compute>
                 

@@ -24,8 +24,8 @@ package org.jclouds.tools.ant.taskdefs.compute;
  */
 public class NodeElement {
    private String name;
-   private String profile;
-   private String image;
+   private String size;
+   private String os;
    private String passwordproperty;
    private String keyfi1le;
    private String hostproperty;
@@ -47,22 +47,6 @@ public class NodeElement {
 
    public void setName(String name) {
       this.name = name;
-   }
-
-   String getProfile() {
-      return profile;
-   }
-
-   public void setProfile(String profile) {
-      this.profile = profile;
-   }
-
-   String getImage() {
-      return image;
-   }
-
-   public void setImage(String image) {
-      this.image = image;
    }
 
    String getUsernameproperty() {
@@ -122,6 +106,22 @@ public class NodeElement {
 
    String getKeyfile() {
       return keyfi1le;
+   }
+
+   public void setSize(String size) {
+      this.size = size;
+   }
+
+   public String getSize() {
+      return size;
+   }
+
+   public void setOs(String os) {
+      this.os = os;
+   }
+
+   public String getOs() {
+      return os;
    }
 
 }

@@ -20,16 +20,31 @@ package org.jclouds.aws.ec2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.inject.internal.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class EC2Utils {
+   public static Image newImage(EC2Client client, Region region, OperatingSystem os,
+            Architecture architecture, String ami) {
+      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices()
+               .describeImagesInRegion(region, imageIds(ami)));
+      return new ImageImpl(ami, image.getDescription(), os, null, region.toString(), architecture);
+   }
+
    public static void indexStringArrayToFormValuesWithPrefix(GeneratedHttpRequest<?> request,
             String prefix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof String[],
@@ -62,7 +77,7 @@ public class EC2Utils {
       }
       return null;
    }
-   
+
    public static AvailabilityZone findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof AvailabilityZone) {

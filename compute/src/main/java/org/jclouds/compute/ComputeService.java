@@ -18,15 +18,13 @@
  */
 package org.jclouds.compute;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 
 /**
  * Provides portable access to launching compute instances.
@@ -35,23 +33,34 @@ import org.jclouds.compute.domain.Size;
  * @author Ivan Meredith
  */
 public interface ComputeService {
+   /**
+    * Creates a new template in the specified location.
+    * 
+    * @param location
+    *           where the template is valid for
+    */
+   Template createTemplateInLocation(String location);
 
    /**
     * List all sizes available to the current user
     */
-   Map<String, Size> getSizes();
-   
+   Set<? extends Size> listSizes();
+
+   /**
+    * List all templates available to the current user
+    */
+   Set<? extends Template> listTemplates();
+
    /**
     * List all nodes available to the current user
     */
-   Set<ComputeMetadata> listNodes();
-
+   Set<? extends ComputeMetadata> listNodes();
 
    /**
-    * Create a new node given the name, size, and Image
+    * Create a new node given the name, and template
     * 
     */
-   CreateNodeResponse startNodeInLocation(String location, String name, Profile size, Image image);
+   CreateNodeResponse runNode(String name, Template template);
 
    /**
     * destroy the node.

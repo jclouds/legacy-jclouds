@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
@@ -38,8 +39,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -65,6 +66,9 @@ public class TerremarkVCloudComputeService implements ComputeService {
    protected Logger logger = Logger.NULL;
    private final TerremarkVCloudComputeClient computeClient;
    private final TerremarkVCloudClient client;
+   private Set<? extends Image> images;
+   private Set<? extends Size> sizes;
+   private Provider<Set<TerremarkVCloudTemplate>> templates;
 
    private static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
             .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
@@ -74,21 +78,25 @@ public class TerremarkVCloudComputeService implements ComputeService {
 
    @Inject
    public TerremarkVCloudComputeService(TerremarkVCloudClient tmClient,
-            TerremarkVCloudComputeClient computeClient) {
+            TerremarkVCloudComputeClient computeClient, Set<? extends Image> images,
+            Set<? extends Size> sizes, Provider<Set<TerremarkVCloudTemplate>> templates) {
       this.client = tmClient;
       this.computeClient = computeClient;
+      this.images = images;
+      this.sizes = sizes;
+      this.templates = templates;
    }
 
    @Override
-   public CreateNodeResponse startNodeInLocation(String location, String name, Profile profile,
-            Image image) {
-      if (checkNotNull(location, "location").equalsIgnoreCase("default"))
-         location = client.getDefaultVDC().getId();
-      String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
+   public CreateNodeResponse runNode(String name, Template template) {
+      checkNotNull(template.getImage().getLocation(), "location");
+      String id = computeClient.start(template.getImage().getLocation(), name, template.getImage()
+               .getId(), (int) template.getSize().getCores(), (int) template.getSize().getRam(),
+               ImmutableMap.<String, String> of());
       VApp vApp = client.getVApp(id);
       InetAddress publicIp = computeClient
                .createPublicAddressMappedToPorts(vApp, 22, 80, 8080, 443);
-      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), location, vApp.getLocation(),
+      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), template.getImage().getLocation(), vApp.getLocation(),
                ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
                ImmutableSet.<InetAddress> of(publicIp), vApp.getNetworkToAddresses().values(), 22,
                LoginType.SSH, new Credentials("vcloud", "p4ssw0rd"), ImmutableMap
@@ -99,8 +107,8 @@ public class TerremarkVCloudComputeService implements ComputeService {
    public NodeMetadata getNodeMetadata(ComputeMetadata node) {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
                + node.getType());
-      return getNodeMetadataByIdInVDC(checkNotNull(node.getLocation(), "location"), checkNotNull(node.getId(),
-               "node.id"));
+      return getNodeMetadataByIdInVDC(checkNotNull(node.getLocation(), "location"), checkNotNull(
+               node.getId(), "node.id"));
    }
 
    private NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
@@ -133,7 +141,17 @@ public class TerremarkVCloudComputeService implements ComputeService {
    }
 
    @Override
-   public Map<String, Size> getSizes() {
-      return null;// TODO
+   public Template createTemplateInLocation(String location) {
+      return new TerremarkVCloudTemplate(client, images, sizes, location);
+   }
+
+   @Override
+   public Set<? extends Size> listSizes() {
+      return sizes;
+   }
+
+   @Override
+   public Set<? extends Template> listTemplates() {
+      return templates.get();
    }
 }

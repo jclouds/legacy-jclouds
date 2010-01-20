@@ -28,7 +28,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class ComputeUtils {
-   public static Iterable<ComputeMetadata> filterByName(Iterable<ComputeMetadata> nodes,
+   public static Iterable<? extends ComputeMetadata> filterByName(Iterable<? extends ComputeMetadata> nodes,
             final String name) {
       return Iterables.filter(nodes, new Predicate<ComputeMetadata>() {
          @Override

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -73,13 +73,9 @@ public class HostingDotComVCloudComputeClientLiveTest {
       }
    }
 
-   private Map<Image, Expectation> expectationMap = ImmutableMap.<Image, Expectation> builder()
-            .put(Image.CENTOS_53,
-                     new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.RHEL_53,
-                     new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.UBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
-                     Image.UBUNTU_JEOS_90, new Expectation(4194304, "Ubuntu Linux (32-bit)"))
+   private Map<OperatingSystem, Expectation> expectationMap = ImmutableMap
+            .<OperatingSystem, Expectation> builder().put(OperatingSystem.CENTOS,
+                     new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)"))
             .build();
 
    private Predicate<InetAddress> addressTester;
@@ -87,7 +83,7 @@ public class HostingDotComVCloudComputeClientLiveTest {
    @Test(enabled = true)
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      Image toTest = Image.CENTOS_53;
+      OperatingSystem toTest = OperatingSystem.CENTOS;
 
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
@@ -95,7 +91,8 @@ public class HostingDotComVCloudComputeClientLiveTest {
       long disk = 10 * 1025 * 1024;
       Map<String, String> properties = ImmutableMap.of("foo", "bar");
 
-      id = client.start(serverName, toTest, processorCount, memory, disk, properties).get("id");
+      id = client.start(hostingClient.getDefaultVDC().getId(), serverName, "3", processorCount,
+               memory, disk, properties).get("id");
       Expectation expectation = expectationMap.get(toTest);
 
       VApp vApp = hostingClient.getVApp(id);
@@ -104,7 +101,7 @@ public class HostingDotComVCloudComputeClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.ON);
    }
 
-   private String getCompatibleServerName(Image toTest) {
+   private String getCompatibleServerName(OperatingSystem toTest) {
       String serverName = CaseFormat.UPPER_UNDERSCORE
                .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
                         toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
@@ -148,8 +145,8 @@ public class HostingDotComVCloudComputeClientLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       Injector injector = new HostingDotComVCloudContextBuilder(
-               new HostingDotComVCloudPropertiesBuilder(account, key).build())
-               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+               new HostingDotComVCloudPropertiesBuilder(account, key).build()).withModules(
+               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(HostingDotComVCloudComputeClient.class);
       hostingClient = injector.getInstance(HostingDotComVCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {

@@ -18,15 +18,12 @@
  */
 package org.jclouds.vcloud.hostingdotcom.compute;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.net.InetAddress;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -57,34 +54,15 @@ public class HostingDotComVCloudComputeClient {
       this.taskTester = successTester;
    }
 
-   private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "3").build();
-
-//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/1"
-//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
-//        name="Plesk (Linux) 64-bit Template" />
-//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2"
-//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
-//        name="Windows 2008 Datacenter 64 Bit Template" />
-//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"
-//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
-//        name="Cent OS 64 Bit Template" />
-//    <ResourceEntity href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/4"
-//        type="application/vnd.vmware.vcloud.vAppTemplate+xml"
-//        name="cPanel (Linux) 64 Bit Template" />
-      
-   public Map<String, String> start(String name, Image image, int minCores, int minMegs,
-            long diskSize, Map<String, String> properties) {
-      checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
-      String templateId = imageCatalogIdMap.get(image);
-      String vDCId = tmClient.getDefaultVDC().getId();
+   public Map<String, String> start(String vDCId, String name, String templateId, int minCores,
+            int minMegs, long diskSize, Map<String, String> properties) {
       logger
                .debug(
                         ">> instantiating vApp vDC(%s) name(%s) template(%s)  minCores(%d) minMegs(%d) diskSize(%d) properties(%s) ",
                         vDCId, name, templateId, minCores, minMegs, diskSize, properties);
       HostingDotComVApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(vDCId, name,
-               templateId, InstantiateVAppTemplateOptions.Builder.processorCount(minCores)
-                        .memory(minMegs).disk(diskSize).productProperties(properties));
+               templateId, InstantiateVAppTemplateOptions.Builder.processorCount(minCores).memory(
+                        minMegs).disk(diskSize).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());

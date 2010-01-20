@@ -31,7 +31,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
@@ -68,17 +68,25 @@ public class TerremarkVCloudComputeClient {
       this.taskTester = successTester;
    }
 
-   private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
-            Image.UBUNTU_JEOS_90, "11").put(Image.WEBAPPVM_93, "29").build();
+   private Map<OperatingSystem, String> imageCatalogIdMap = ImmutableMap
+            .<OperatingSystem, String> builder().put(OperatingSystem.CENTOS, "6").put(
+                     OperatingSystem.RHEL, "8").put(OperatingSystem.UBUNTU, "10").build();
 
-   public String start(String name, Image image, int minCores, int minMegs,
+   // .put( OperatingSystem.UBUNTU_JEOS_90, "11").put(OperatingSystem.WEBAPPVM_93, "29")
+
+   public String start(String name, OperatingSystem image, int minCores, int minMegs,
             Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       return start(name, imageCatalogIdMap.get(image), minCores, minMegs, properties);
    }
 
    public String start(String name, String templateId, int minCores, int minMegs,
+            Map<String, String> properties) {
+      return this.start(tmClient.getDefaultVDC().getId(), name, templateId, minCores, minMegs,
+               properties);
+   }
+
+   public String start(String vdc, String name, String templateId, int minCores, int minMegs,
             Map<String, String> properties) {
       String vDCId = tmClient.getDefaultVDC().getId();
       logger

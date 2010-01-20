@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -49,17 +49,16 @@ public class VCloudComputeClient {
    private final VCloudClient tmClient;
 
    @Inject
-   public VCloudComputeClient(VCloudClient tmClient,
-            Predicate<String> successTester) {
+   public VCloudComputeClient(VCloudClient tmClient, Predicate<String> successTester) {
       this.tmClient = tmClient;
       this.taskTester = successTester;
    }
 
-   private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "1").put(Image.RHEL_53, "8").put(Image.UBUNTU_90, "10").put(
-            Image.UBUNTU_JEOS_90, "11").build();
+   private Map<OperatingSystem, String> imageCatalogIdMap = ImmutableMap
+            .<OperatingSystem, String> builder().put(OperatingSystem.CENTOS, "1").put(
+                     OperatingSystem.RHEL, "8").put(OperatingSystem.UBUNTU, "11").build();
 
-   public Map<String, String> start(String name, Image image, int minCores, int minMegs,
+   public Map<String, String> start(String name, OperatingSystem image, int minCores, int minMegs,
             long diskSize, Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
@@ -68,9 +67,9 @@ public class VCloudComputeClient {
                .debug(
                         ">> instantiating vApp vDC(%s) name(%s) template(%s)  minCores(%d) minMegs(%d) diskSize(%d) properties(%s) ",
                         vDCId, name, templateId, minCores, minMegs, diskSize, properties);
-      VApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(vDCId, name,
-               templateId, InstantiateVAppTemplateOptions.Builder.processorCount(minCores)
-                        .memory(minMegs).disk(diskSize).productProperties(properties));
+      VApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(vDCId, name, templateId,
+               InstantiateVAppTemplateOptions.Builder.processorCount(minCores).memory(minMegs)
+                        .disk(diskSize).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
@@ -85,7 +84,8 @@ public class VCloudComputeClient {
       // "powerOn", VAppStatus.ON);
       logger.debug("<< on vApp(%s)", vApp.getId());
 
-      return ImmutableMap.<String, String> of("id", vApp.getId(), "username", null, "password", null);
+      return ImmutableMap.<String, String> of("id", vApp.getId(), "username", null, "password",
+               null);
    }
 
    /**

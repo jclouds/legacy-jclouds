@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,29 +23,12 @@
  */
 package org.jclouds.compute.domain;
 
-import java.util.Map;
-
 /**
- * Configured operating system used to start nodes.
+ * Running Operating system
  * 
  * @author Adrian Cole
  */
-public interface Image {
-   /**
-    * Unique ID provided by the provider (ami-abcd1234, etc)
-    * 
-    */
-   String getId();
+public enum OperatingSystem {
 
-   /**
-    * Name provided by the provider (Ubuntu 8.1)
-    * 
-    */
-   String getName();
-
-   /**
-    * Other variables present that the provider supports
-    */
-   Map<String, String> getExtra();
-
+   CENTOS, RHEL, UBUNTU, WINDOWS, UNKNOWN;
 }

@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
@@ -38,8 +39,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -65,6 +66,9 @@ public class HostingDotComVCloudComputeService implements ComputeService {
    protected Logger logger = Logger.NULL;
    private final HostingDotComVCloudComputeClient computeClient;
    private final HostingDotComVCloudClient client;
+   private final Set<? extends Image> images;
+   private final Set<? extends Size> sizes;
+   private final Provider<Set<HostingDotComVCloudTemplate>> templates;
 
    private static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
             .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
@@ -74,25 +78,28 @@ public class HostingDotComVCloudComputeService implements ComputeService {
 
    @Inject
    public HostingDotComVCloudComputeService(HostingDotComVCloudClient client,
-            HostingDotComVCloudComputeClient computeClient) {
+            HostingDotComVCloudComputeClient computeClient, Set<? extends Image> images,
+            Set<? extends Size> sizes, Provider<Set<HostingDotComVCloudTemplate>> templates) {
       this.client = client;
       this.computeClient = computeClient;
-
+      this.images = images;
+      this.sizes = sizes;
+      this.templates = templates;
    }
 
    @Override
-   public CreateNodeResponse startNodeInLocation(String location, String name, Profile profile,
-            Image image) {
-      if (checkNotNull(location, "location").equalsIgnoreCase("default"))
-         location = client.getDefaultVDC().getId();
-      Map<String, String> metaMap = computeClient.start(name, image, 1, 512, (10l * 1025 * 1024),
-               ImmutableMap.<String, String> of());
+   public CreateNodeResponse runNode(String name, Template template) {
+      checkNotNull(template.getImage().getLocation(), "location");
+      Map<String, String> metaMap = computeClient.start(template.getImage().getLocation(), name,
+               template.getImage().getId(), template.getSize().getCores(), template.getSize()
+                        .getRam(), template.getSize().getDisk(), ImmutableMap.<String, String> of());
       VApp vApp = client.getVApp(metaMap.get("id"));
-      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), location, vApp.getLocation(),
-               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
-               vApp.getNetworkToAddresses().values(), ImmutableSet.<InetAddress> of(), 22,
-               LoginType.SSH, new Credentials(metaMap.get("username"), metaMap.get("password")),
-               ImmutableMap.<String, String> of());
+      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), template.getImage()
+               .getLocation(), vApp.getLocation(), ImmutableMap.<String, String> of(),
+               vAppStatusToNodeState.get(vApp.getStatus()), vApp.getNetworkToAddresses().values(),
+               ImmutableSet.<InetAddress> of(), 22, LoginType.SSH, new Credentials(metaMap
+                        .get("username"), metaMap.get("password")), ImmutableMap
+                        .<String, String> of());
    }
 
    @Override
@@ -105,10 +112,10 @@ public class HostingDotComVCloudComputeService implements ComputeService {
 
    private NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
       VApp vApp = client.getVApp(id);
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp
-               .getLocation(), ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp
-               .getStatus()), vApp.getNetworkToAddresses().values(), ImmutableSet
-               .<InetAddress> of(), 22, LoginType.SSH, ImmutableMap.<String, String> of());
+      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
+               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
+               vApp.getNetworkToAddresses().values(), ImmutableSet.<InetAddress> of(), 22,
+               LoginType.SSH, ImmutableMap.<String, String> of());
    }
 
    @Override
@@ -132,7 +139,17 @@ public class HostingDotComVCloudComputeService implements ComputeService {
    }
 
    @Override
-   public Map<String, Size> getSizes() {
-      return null;// TODO
+   public Template createTemplateInLocation(String location) {
+      return new HostingDotComVCloudTemplate(client, images, sizes, location);
+   }
+
+   @Override
+   public Set<? extends Size> listSizes() {
+      return sizes;
+   }
+
+   @Override
+   public Set<? extends Template> listTemplates() {
+      return templates.get();
    }
 }

@@ -19,8 +19,46 @@
 package org.jclouds.compute.domain;
 
 /**
+ * Configured operating system used to start nodes.
+ * 
  * @author Adrian Cole
  */
-public enum Profile {
-   SMALLEST, MEDIUM, FASTEST
+public interface Template extends Cloneable {
+
+   /**
+    * configure this template to the smallest size.
+    */
+   Template smallest();
+
+   /**
+    * configure this template to the fastest size.
+    */
+   Template fastest();
+
+   /**
+    * configure this template to the largest size.
+    */
+   Template biggest();
+
+   /**
+    * Configure this template to use a specific operating system image.
+    */
+   Template os(OperatingSystem os);
+
+   /**
+    * Configure this template to start in a specific location
+    */
+   Template inLocation(String location);
+
+   /**
+    * Image that suits the requirements.
+    * 
+    */
+   Image getImage();
+
+   /**
+    * Size that suits the requirements.
+    */
+   Size getSize();
+
 }
