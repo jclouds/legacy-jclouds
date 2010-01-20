@@ -66,7 +66,7 @@
                     </execution>
                 </executions>                
                 <configuration>
-                    <encoding>UTF-8</encoding>                        
+                    <encoding>${sourceEncoding}</encoding>                        
                     <quiet>true</quiet>
                     <links>
                         <link>http://java.sun.com/javase/6/docs/api/</link>
@@ -91,6 +91,7 @@ pageTracker._trackPageview();
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.5.0</version>
                 <configuration>
+                    <encoding>${sourceEncoding}</encoding>
                     <aggregate>true</aggregate>
                     <header>project/src/etc/header.txt</header>
                     <excludes>
@@ -104,6 +105,7 @@ pageTracker._trackPageview();
                     <properties>
                         <year>${project.inceptionYear}</year>
                         <email>info@cloudconscious.com</email>
+                        <copyrightHolder>Cloud Conscious, LLC</copyrightHolder>
                     </properties>
                 </configuration>
             </plugin>
