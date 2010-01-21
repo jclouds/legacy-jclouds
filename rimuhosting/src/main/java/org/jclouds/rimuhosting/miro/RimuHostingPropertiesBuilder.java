@@ -19,15 +19,17 @@
 package org.jclouds.rimuhosting.miro;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import org.jclouds.http.HttpPropertiesBuilder;
-import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.*;
+import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY;
+import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT;
 
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.http.HttpPropertiesBuilder;
+
 /**
  * Builds properties used in RimuHosting Clients
- *
+ * 
  * @author Adrian Cole
  */
 public class RimuHostingPropertiesBuilder extends HttpPropertiesBuilder {
@@ -52,9 +54,15 @@ public class RimuHostingPropertiesBuilder extends HttpPropertiesBuilder {
       return this;
    }
 
+   @Override
    public RimuHostingPropertiesBuilder withEndpoint(URI endpoint) {
       properties.setProperty(PROPERTY_RIMUHOSTING_ENDPOINT, checkNotNull(endpoint, "endpoint")
-              .toString());
+               .toString());
       return this;
+   }
+
+   @Override
+   public HttpPropertiesBuilder withCredentials(String account, String key) {
+      return withCredentials(account != null ? account : key);
    }
 }

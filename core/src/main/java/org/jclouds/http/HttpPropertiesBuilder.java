@@ -27,6 +27,7 @@ import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
 
+import java.net.URI;
 import java.util.Properties;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -36,7 +37,7 @@ import com.google.common.annotations.VisibleForTesting;
  * 
  * @author Adrian Cole, Andrew Newdigate
  */
-public class HttpPropertiesBuilder {
+public abstract class HttpPropertiesBuilder {
 
    /**
     * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME
@@ -122,9 +123,8 @@ public class HttpPropertiesBuilder {
       this.properties.putAll(properties);
    }
 
-   public HttpPropertiesBuilder withCredentials(String account, String key) {
-      return this;
-   }
+   public abstract HttpPropertiesBuilder withEndpoint(URI endpoint);
+   public abstract HttpPropertiesBuilder withCredentials(String account, String key);
 
    @VisibleForTesting
    public Properties build() {

@@ -86,9 +86,8 @@ public class TerremarkVCloudComputeClient {
                properties);
    }
 
-   public String start(String vdc, String name, String templateId, int minCores, int minMegs,
+   public String start(String vDCId, String name, String templateId, int minCores, int minMegs,
             Map<String, String> properties) {
-      String vDCId = tmClient.getDefaultVDC().getId();
       logger
                .debug(
                         ">> instantiating vApp vDC(%s) template(%s) name(%s) minCores(%d) minMegs(%d) properties(%s)",

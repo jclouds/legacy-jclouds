@@ -20,22 +20,15 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudAsyncClient;
-import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
+import org.jclouds.vcloud.compute.VCloudComputeServiceContextBuilder;
 import org.jclouds.vcloud.hostingdotcom.compute.config.HostingDotComVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudRestClientModule;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link HostingDotComVCloudComputeServiceContext} or {@link Injector} instances based on
@@ -51,23 +44,10 @@ import com.google.inject.TypeLiteral;
  * @see HostingDotComVCloudComputeServiceContext
  */
 public class HostingDotComVCloudComputeServiceContextBuilder extends
-         ComputeServiceContextBuilder<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient> {
+         VCloudComputeServiceContextBuilder {
 
    public HostingDotComVCloudComputeServiceContextBuilder(Properties props) {
-      super(new TypeLiteral<HostingDotComVCloudAsyncClient>() {
-      }, new TypeLiteral<HostingDotComVCloudClient>() {
-      }, props);
-   }
-
-   @Override
-   public HostingDotComVCloudComputeServiceContextBuilder withExecutorService(
-            ExecutorService service) {
-      return (HostingDotComVCloudComputeServiceContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public HostingDotComVCloudComputeServiceContextBuilder withModules(Module... modules) {
-      return (HostingDotComVCloudComputeServiceContextBuilder) super.withModules(modules);
+      super(props);
    }
 
    @Override
@@ -80,14 +60,4 @@ public class HostingDotComVCloudComputeServiceContextBuilder extends
       modules.add(new HostingDotComVCloudRestClientModule());
    }
 
-   @Override
-   public ComputeServiceContext buildComputeServiceContext() {
-      // need the generic type information
-      return (ComputeServiceContext) this
-               .buildInjector()
-               .getInstance(
-                        Key
-                                 .get(new TypeLiteral<ComputeServiceContextImpl<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient>>() {
-                                 }));
-   }
 }

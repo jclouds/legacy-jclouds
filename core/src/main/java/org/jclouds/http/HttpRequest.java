@@ -110,30 +110,18 @@ public class HttpRequest extends HttpMessage {
       setLength();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    public void setPayload(InputStream data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
 
-   /**
-    * {@inheritDoc}
-    */
    public void setPayload(byte[] data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
 
-   /**
-    * {@inheritDoc}
-    */
    public void setPayload(String data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
 
-   /**
-    * {@inheritDoc}
-    */
    public void setPayload(File data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }

@@ -41,12 +41,6 @@ public class InputStreamChain extends InputStream {
     */
    private InputStream current;
 
-   /**
-    * Constructor with an initial stream
-    * 
-    * @param first
-    *           Initial InputStream
-    */
    public InputStreamChain(InputStream... inputStreams) {
       for (InputStream stream : inputStreams) {
          addInputStream(stream);

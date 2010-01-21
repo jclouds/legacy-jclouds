@@ -29,10 +29,10 @@ package org.jclouds.vcloud.terremark.domain;
  */
 public class ComputeOptions implements Comparable<ComputeOptions> {
    private final int processorCount;
-   private final long memory;
+   private final int memory;
    private final float costPerHour;
 
-   public ComputeOptions(int processorCount, long memory, float costPerHour) {
+   public ComputeOptions(int processorCount, int memory, float costPerHour) {
       this.processorCount = processorCount;
       this.memory = memory;
       this.costPerHour = costPerHour;
@@ -42,7 +42,7 @@ public class ComputeOptions implements Comparable<ComputeOptions> {
       return processorCount;
    }
 
-   public long getMemory() {
+   public int getMemory() {
       return memory;
    }
 

@@ -18,6 +18,8 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
+import java.io.File;
+
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
@@ -26,12 +28,14 @@ public class NodeElement {
    private String name;
    private String size;
    private String os;
+   private String openports = "22";
    private String passwordproperty;
-   private String keyfi1le;
+   private String keyfile;
    private String hostproperty;
    private String idproperty;
    private String usernameproperty;
    private String location = "default";
+   private File runscript;
 
    public String getLocation() {
       return location;
@@ -40,7 +44,7 @@ public class NodeElement {
    public void setLocation(String location) {
       this.location = location;
    }
-   
+
    String getName() {
       return name;
    }
@@ -101,11 +105,11 @@ public class NodeElement {
     * The name of a file under which to store the DSA key of the user (if supported)
     */
    public void setKeyfile(String keyfile) {
-      this.keyfi1le = keyfile;
+      this.keyfile = keyfile;
    }
 
    String getKeyfile() {
-      return keyfi1le;
+      return keyfile;
    }
 
    public void setSize(String size) {
@@ -122,6 +126,22 @@ public class NodeElement {
 
    public String getOs() {
       return os;
+   }
+
+   public void setRunscript(File runscript) {
+      this.runscript = runscript;
+   }
+
+   public File getRunscript() {
+      return runscript;
+   }
+
+   public void setOpenports(String openports) {
+      this.openports = openports;
+   }
+
+   public String getOpenports() {
+      return openports;
    }
 
 }

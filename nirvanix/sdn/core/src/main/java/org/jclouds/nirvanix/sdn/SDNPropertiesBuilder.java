@@ -21,10 +21,14 @@ package org.jclouds.nirvanix.sdn;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.http.HttpPropertiesBuilder;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 /**
  * Builds properties used in SDN Clients
@@ -64,5 +68,14 @@ public class SDNPropertiesBuilder extends HttpPropertiesBuilder {
       properties.setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT, checkNotNull(endpoint, "endpoint")
                .toString());
       return this;
+   }
+
+   @Override
+   public SDNPropertiesBuilder withCredentials(String account, String key) {
+      List<String> parts = Lists.newArrayList(Splitter.on('/').split(account));
+      if (parts.size() != 3) {
+         throw new IllegalArgumentException("account syntax is appkey/appname/username");
+      }
+      return withCredentials(parts.get(0), parts.get(1), parts.get(2), key);
    }
 }

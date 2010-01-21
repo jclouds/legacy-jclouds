@@ -29,6 +29,5 @@ package org.jclouds.compute.domain;
  * @author Adrian Cole
  */
 public enum OperatingSystem {
-
-   CENTOS, RHEL, UBUNTU, WINDOWS, UNKNOWN;
+   CENTOS, RHEL, UBUNTU, JEOS, WINDOWS, UNKNOWN;
 }

@@ -19,6 +19,7 @@
 package org.jclouds.compute.util;
 
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.CreateNodeResponse;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -28,8 +29,8 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class ComputeUtils {
-   public static Iterable<? extends ComputeMetadata> filterByName(Iterable<? extends ComputeMetadata> nodes,
-            final String name) {
+   public static Iterable<? extends ComputeMetadata> filterByName(
+            Iterable<? extends ComputeMetadata> nodes, final String name) {
       return Iterables.filter(nodes, new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(ComputeMetadata input) {
@@ -38,4 +39,7 @@ public class ComputeUtils {
       });
    }
 
+   public static boolean isKeyAuth(CreateNodeResponse createdNode) {
+      return createdNode.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----");
+   }
 }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.blobstore.integration;
 
+import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpPropertiesBuilder;
@@ -35,6 +36,16 @@ public class StubPropertiesBuilder extends HttpPropertiesBuilder {
 
    public StubPropertiesBuilder(String id, String secret) {
       super();
+   }
+
+   @Override
+   public HttpPropertiesBuilder withCredentials(String account, String key) {
+      return this;
+   }
+
+   @Override
+   public HttpPropertiesBuilder withEndpoint(URI endpoint) {
+      return this;
    }
 
 }

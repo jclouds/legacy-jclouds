@@ -43,7 +43,7 @@ import com.google.common.io.Closeables;
 import com.google.common.io.OutputSupplier;
 
 /**
- * // TODO: Adrian: Document this!
+ * General utilities used in jclouds code.
  * 
  * @author Adrian Cole
  */
@@ -137,14 +137,16 @@ public class Utils {
     * @see {@link String#getBytes()} - used as fall-back.
     * 
     * @param str
-    * @param encoding
-    * @return
+    *           what to encode
+    * @param charsetName
+    *           the name of a supported {@link java.nio.charset.Charset </code>charset<code>}
+    * @return properly encoded String.
     */
-   public static byte[] encodeString(String str, String encoding) {
+   public static byte[] encodeString(String str, String charsetName) {
       try {
-         return str.getBytes(encoding);
+         return str.getBytes(charsetName);
       } catch (UnsupportedEncodingException e) {
-         logger.warn(e, "Failed to encode string to bytes with encoding " + encoding
+         logger.warn(e, "Failed to encode string to bytes with encoding " + charsetName
                   + ". Falling back to system's default encoding");
          return str.getBytes();
       }
@@ -156,44 +158,12 @@ public class Utils {
     * the system's default encoding.
     * 
     * @param str
-    * @return
+    *           what to encode
+    * @return properly encoded String.
     */
    public static byte[] encodeString(String str) {
       return encodeString(str, UTF8_ENCODING);
    }
-
-   /**
-    * Decode the given string with the given encoding, if possible. If the decoding fails with
-    * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
-    * encoding.
-    * 
-    * @param bytes
-    * @param encoding
-    * @return
-    */
-   public static String decodeString(byte[] bytes, String encoding) {
-      try {
-         return new String(bytes, encoding);
-      } catch (UnsupportedEncodingException e) {
-         logger.warn(e, "Failed to decode bytes to string with encoding " + encoding
-                  + ". Falling back to system's default encoding");
-         return new String(bytes);
-      }
-   }
-
-   /**
-    * Decode the given string with the UTF-8 encoding, the sane default. In the very unlikely event
-    * the encoding fails with {@link UnsupportedEncodingException}, log a warning and fall back to
-    * the system's default encoding.
-    * 
-    * @param str
-    * @return
-    */
-   public static String decodeString(byte[] bytes) {
-      return decodeString(bytes, UTF8_ENCODING);
-   }
-
-   public static final Pattern pattern = Pattern.compile("\\{(.+?)\\}");
 
    /**
     * replaces tokens that are expressed as <code>{token}</code>
@@ -209,7 +179,7 @@ public class Utils {
     *           token/value pairs
     */
    public static String replaceTokens(String input, Map<String, String> replacements) {
-      Matcher matcher = pattern.matcher(input);
+      Matcher matcher = Patterns.TOKEN_PATTERN.matcher(input);
       StringBuilder builder = new StringBuilder();
       int i = 0;
       while (matcher.find()) {

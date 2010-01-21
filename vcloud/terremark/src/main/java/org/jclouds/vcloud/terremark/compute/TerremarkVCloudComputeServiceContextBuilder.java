@@ -20,22 +20,15 @@ package org.jclouds.vcloud.terremark.compute;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.compute.VCloudComputeServiceContextBuilder;
 import org.jclouds.vcloud.terremark.compute.config.TerremarkVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudRestClientModule;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link TerremarkVCloudComputeServiceContext} or {@link Injector} instances based on the
@@ -50,23 +43,10 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see TerremarkVCloudComputeServiceContext
  */
-public class TerremarkVCloudComputeServiceContextBuilder extends
-         ComputeServiceContextBuilder<TerremarkVCloudAsyncClient, TerremarkVCloudClient> {
+public class TerremarkVCloudComputeServiceContextBuilder extends VCloudComputeServiceContextBuilder {
 
    public TerremarkVCloudComputeServiceContextBuilder(Properties props) {
-      super(new TypeLiteral<TerremarkVCloudAsyncClient>() {
-      }, new TypeLiteral<TerremarkVCloudClient>() {
-      }, props);
-   }
-
-   @Override
-   public TerremarkVCloudComputeServiceContextBuilder withExecutorService(ExecutorService service) {
-      return (TerremarkVCloudComputeServiceContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public TerremarkVCloudComputeServiceContextBuilder withModules(Module... modules) {
-      return (TerremarkVCloudComputeServiceContextBuilder) super.withModules(modules);
+      super(props);
    }
 
    @Override
@@ -79,14 +59,4 @@ public class TerremarkVCloudComputeServiceContextBuilder extends
       modules.add(new TerremarkVCloudRestClientModule());
    }
 
-   @Override
-   public ComputeServiceContext buildComputeServiceContext() {
-      // need the generic type information
-      return (ComputeServiceContext) this
-               .buildInjector()
-               .getInstance(
-                        Key
-                                 .get(new TypeLiteral<ComputeServiceContextImpl<TerremarkVCloudAsyncClient, TerremarkVCloudClient>>() {
-                                 }));
-   }
 }

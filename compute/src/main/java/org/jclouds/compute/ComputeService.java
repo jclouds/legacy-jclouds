@@ -19,12 +19,14 @@
 package org.jclouds.compute;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.RunNodeOptions;
 
 /**
  * Provides portable access to launching compute instances.
@@ -44,7 +46,12 @@ public interface ComputeService {
    /**
     * List all sizes available to the current user
     */
-   Set<? extends Size> listSizes();
+   SortedSet<? extends Size> listSizes();
+
+   /**
+    * List all images available to the current user
+    */
+//   Set<? extends Image> listImages();
 
    /**
     * List all templates available to the current user
@@ -61,6 +68,7 @@ public interface ComputeService {
     * 
     */
    CreateNodeResponse runNode(String name, Template template);
+   CreateNodeResponse runNode(String name, Template template, RunNodeOptions options);
 
    /**
     * destroy the node.

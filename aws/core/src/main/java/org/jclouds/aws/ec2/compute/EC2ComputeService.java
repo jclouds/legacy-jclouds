@@ -21,12 +21,12 @@ package org.jclouds.aws.ec2.compute;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -41,6 +41,7 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -54,11 +55,10 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.scriptbuilder.ScriptBuilder;
-import org.jclouds.scriptbuilder.domain.OsFamily;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -76,14 +76,14 @@ public class EC2ComputeService implements ComputeService {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final EC2Client ec2Client;
-   private final Set<EC2Size> sizes;
+   private final SortedSet<EC2Size> sizes;
    private final Provider<Set<EC2Template>> templates;
    private final Predicate<RunningInstance> instanceStateRunning;
    private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
    private final Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap;
 
    @Inject
-   public EC2ComputeService(EC2Client client, Set<EC2Size> sizes,
+   public EC2ComputeService(EC2Client client, SortedSet<EC2Size> sizes,
             Provider<Set<EC2Template>> templates,
             Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap,
             Predicate<RunningInstance> instanceStateRunning,
@@ -103,34 +103,34 @@ public class EC2ComputeService implements ComputeService {
 
    @Override
    public CreateNodeResponse runNode(String name, Template template) {
+      return this.runNode(name, template, RunNodeOptions.NONE);
+   }
+
+   @Override
+   public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
       checkArgument(template instanceof EC2Template,
                "unexpected template type. should be EC2Template, was: " + template.getClass());
       EC2Template ec2Template = (EC2Template) template;
 
       KeyPair keyPair = createKeyPairInRegion(ec2Template.getRegion(), name);
       String securityGroupName = name;
-      createSecurityGroupInRegion(ec2Template.getRegion(), securityGroupName, 22, 80, 8080, 443);
-
-      String script = new ScriptBuilder() // update and install jdk
-               .addStatement(exec("apt-get update"))//
-               .addStatement(exec("apt-get upgrade -y"))//
-               .addStatement(exec("apt-get install -y openjdk-6-jdk"))//
-               .addStatement(exec("wget -qO/usr/bin/runurl run.alestic.com/runurl"))//
-               .addStatement(exec("chmod 755 /usr/bin/runurl"))//
-               .build(OsFamily.UNIX);
+      createSecurityGroupInRegion(ec2Template.getRegion(), securityGroupName, options
+               .getOpenPorts());
 
       logger.debug(">> running instance region(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
                ec2Template.getRegion(), ec2Template.getImage().getId(), ec2Template.getSize()
                         .getInstanceType(), keyPair.getKeyName(), securityGroupName);
+      RunInstancesOptions instanceOptions = withKeyName(keyPair.getKeyName())// key
+               .asType(ec2Template.getSize().getInstanceType())// instance size
+               .withSecurityGroup(securityGroupName)// group I created above
+               .withAdditionalInfo(name);
+
+      if (options.getRunScript() != null)
+         instanceOptions.withUserData(options.getRunScript());
 
       RunningInstance runningInstance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
                .runInstancesInRegion(ec2Template.getRegion(), null, ec2Template.getImage().getId(),
-                        1, 1, withKeyName(keyPair.getKeyName())// key
-                                 .asType(ec2Template.getSize().getInstanceType())// instance size
-                                 .withSecurityGroup(securityGroupName)// group I created above
-                                 .withAdditionalInfo(name)// description
-                                 .withUserData(script.getBytes()) // script to run as root
-               ));
+                        1, 1, instanceOptions));
       logger.debug("<< started instance(%s)", runningInstance.getId());
       instanceStateRunning.apply(runningInstance);
       logger.debug("<< running instance(%s)", runningInstance.getId());
@@ -316,7 +316,7 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public Set<EC2Size> listSizes() {
+   public SortedSet<EC2Size> listSizes() {
       return sizes;
    }
 

@@ -18,12 +18,13 @@
  */
 package org.jclouds.vcloud.terremark.compute;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -31,127 +32,176 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.ComputeType;
-import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.LoginType;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.compute.VCloudComputeService;
+import org.jclouds.vcloud.compute.VCloudTemplate;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.inject.internal.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudComputeService implements ComputeService {
+public class TerremarkVCloudComputeService extends VCloudComputeService {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private final TerremarkVCloudComputeClient computeClient;
    private final TerremarkVCloudClient client;
-   private Set<? extends Image> images;
-   private Set<? extends Size> sizes;
-   private Provider<Set<TerremarkVCloudTemplate>> templates;
-
-   private static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
-            .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
-                     VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING)
-            .put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
-                     NodeState.PENDING).build();
 
    @Inject
-   public TerremarkVCloudComputeService(TerremarkVCloudClient tmClient,
-            TerremarkVCloudComputeClient computeClient, Set<? extends Image> images,
-            Set<? extends Size> sizes, Provider<Set<TerremarkVCloudTemplate>> templates) {
-      this.client = tmClient;
-      this.computeClient = computeClient;
-      this.images = images;
-      this.sizes = sizes;
-      this.templates = templates;
+   public TerremarkVCloudComputeService(TerremarkVCloudClient client,
+            Provider<Set<? extends Image>> images, Provider<SortedSet<? extends Size>> sizes,
+            Provider<Set<? extends VCloudTemplate>> templates, Predicate<String> successTester,
+            Predicate<InetSocketAddress> socketTester) {
+      super(client, images, sizes, templates, successTester, socketTester);
+      this.client = client;
    }
 
    @Override
-   public CreateNodeResponse runNode(String name, Template template) {
-      checkNotNull(template.getImage().getLocation(), "location");
-      String id = computeClient.start(template.getImage().getLocation(), name, template.getImage()
-               .getId(), (int) template.getSize().getCores(), (int) template.getSize().getRam(),
-               ImmutableMap.<String, String> of());
+   protected Map<String, String> parseResponse(VApp vAppResponse) {
+      return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", "vcloud",
+               "password", "p4ssw0rd");
+   }
+
+   @Override
+   public Map<String, String> start(String vDCId, String name, String templateId, int minCores,
+            int minMegs, Long diskSize, Map<String, String> properties, int... portsToOpen) {
+      Map<String, String> response = super.start(vDCId, name, templateId, minCores, minMegs, null,
+               properties, portsToOpen);// trmk does not support resizing the primary disk
+      if (portsToOpen.length > 0)
+         createPublicAddressMappedToPorts(response.get("id"), portsToOpen);
+      return response;
+   }
+
+   public InetAddress createPublicAddressMappedToPorts(String vAppId, int... ports) {
+      VApp vApp = client.getVApp(vAppId);
+      PublicIpAddress ip = null;
+      InetAddress privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
+      for (int port : ports) {
+         InternetService is = null;
+         Protocol protocol;
+         switch (port) {
+            case 22:
+               protocol = Protocol.TCP;
+               break;
+            case 80:
+            case 8080:
+               protocol = Protocol.HTTP;
+               break;
+            case 443:
+               protocol = Protocol.HTTPS;
+               break;
+            default:
+               protocol = Protocol.HTTP;
+               break;
+         }
+         if (ip == null) {
+            logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getId(),
+                     protocol, port);
+            is = client.addInternetServiceToVDC(vApp.getVDC().getId(), vApp.getName() + "-" + port,
+                     protocol, port, withDescription(String.format(
+                              "port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
+                                       .getName())));
+            ip = is.getPublicIpAddress();
+         } else {
+            logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress().getHostAddress(),
+                     protocol, port);
+            is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port,
+                     protocol, port, withDescription(String.format(
+                              "port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
+                                       .getName())));
+         }
+         logger.debug("<< created InternetService(%s) %s:%s:%d", is.getId(), is
+                  .getPublicIpAddress().getAddress().getHostAddress(), is.getProtocol(), is
+                  .getPort());
+         logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress()
+                  .getHostAddress(), is.getPort(), privateAddress.getHostAddress(), port);
+         Node node = client.addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
+         logger.debug("<< added Node(%s)", node.getId());
+      }
+      return ip != null ? ip.getAddress() : null;
+   }
+
+   @Override
+   public void stop(String id) {
       VApp vApp = client.getVApp(id);
-      InetAddress publicIp = computeClient
-               .createPublicAddressMappedToPorts(vApp, 22, 80, 8080, 443);
-      return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), template.getImage().getLocation(), vApp.getLocation(),
-               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
-               ImmutableSet.<InetAddress> of(publicIp), vApp.getNetworkToAddresses().values(), 22,
-               LoginType.SSH, new Credentials("vcloud", "p4ssw0rd"), ImmutableMap
-                        .<String, String> of());
+      Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
+      deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
+      super.stop(id);
    }
 
-   @Override
-   public NodeMetadata getNodeMetadata(ComputeMetadata node) {
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
-      return getNodeMetadataByIdInVDC(checkNotNull(node.getLocation(), "location"), checkNotNull(
-               node.getId(), "node.id"));
-   }
-
-   private NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
-      VApp vApp = client.getVApp(id);
-      Set<InetAddress> publicAddresses = computeClient.getPublicAddresses(vApp.getId());
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
-               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
-               publicAddresses, vApp.getNetworkToAddresses().values(), 22, LoginType.SSH,
-               ImmutableMap.<String, String> of());
-   }
-
-   @Override
-   public Set<ComputeMetadata> listNodes() {
-      Set<ComputeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
-            if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-               nodes.add(getNodeMetadataByIdInVDC(vdc.getId(), resource.getId()));
+   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VApp vApp) {
+      Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
+      SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC()
+               .getId())) {
+         for (Node node : client.getNodes(service.getId())) {
+            if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
+               ipAddresses.add(service.getPublicIpAddress());
+               logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getId(), service
+                        .getPublicIpAddress().getAddress().getHostAddress(), service.getPort(),
+                        node.getIpAddress().getHostAddress(), node.getPort());
+               client.deleteNode(node.getId());
+               logger.debug("<< deleted Node(%s)", node.getId());
+               SortedSet<Node> nodes = client.getNodes(service.getId());
+               if (nodes.size() == 0) {
+                  logger.debug(">> deleting InternetService(%s) %s:%d", service.getId(), service
+                           .getPublicIpAddress().getAddress().getHostAddress(), service.getPort());
+                  client.deleteInternetService(service.getId());
+                  logger.debug("<< deleted InternetService(%s)", service.getId());
+                  continue SERVICE;
+               }
             }
          }
       }
-      return nodes;
+      return ipAddresses;
    }
 
-   @Override
-   public void destroyNode(ComputeMetadata node) {
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
-      computeClient.stop(checkNotNull(node.getId(), "node.id"));
+   private void deletePublicIpAddressesWithNoServicesAttached(Set<PublicIpAddress> ipAddresses) {
+      IPADDRESS: for (PublicIpAddress address : ipAddresses) {
+         SortedSet<InternetService> services = client
+                  .getInternetServicesOnPublicIp(address.getId());
+         if (services.size() == 0) {
+            logger.debug(">> deleting PublicIpAddress(%s) %s", address.getId(), address
+                     .getAddress().getHostAddress());
+            client.deletePublicIp(address.getId());
+            logger.debug("<< deleted PublicIpAddress(%s)", address.getId());
+            continue IPADDRESS;
+         }
+      }
    }
 
-   @Override
-   public Template createTemplateInLocation(String location) {
-      return new TerremarkVCloudTemplate(client, images, sizes, location);
+   /**
+    * 
+    * @throws ElementNotFoundException
+    *            if no address is configured
+    */
+   public InetAddress getAnyPrivateAddress(String id) {
+      VApp vApp = client.getVApp(id);
+      return Iterables.getLast(vApp.getNetworkToAddresses().values());
    }
 
-   @Override
-   public Set<? extends Size> listSizes() {
-      return sizes;
-   }
-
-   @Override
-   public Set<? extends Template> listTemplates() {
-      return templates.get();
+   public Set<InetAddress> getPublicAddresses(String id) {
+      VApp vApp = client.getVApp(id);
+      Set<InetAddress> ipAddresses = Sets.newHashSet();
+      for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
+         for (Node node : client.getNodes(service.getId())) {
+            if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
+               ipAddresses.add(service.getPublicIpAddress().getAddress());
+            }
+         }
+      }
+      return ipAddresses;
    }
 }

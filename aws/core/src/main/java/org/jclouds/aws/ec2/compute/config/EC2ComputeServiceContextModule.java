@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.compute.config;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -43,7 +44,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 
@@ -69,8 +70,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   Set<EC2Size> provideSizes() {
-      return ImmutableSet.<EC2Size> of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
+   SortedSet<EC2Size> provideSizes() {
+      return ImmutableSortedSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
                EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE);
    }
 
@@ -82,7 +83,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   Set<EC2Template> provideTemplates(EC2Client client, Set<EC2Size> sizes,
+   Set<EC2Template> provideTemplates(EC2Client client, SortedSet<EC2Size> sizes,
             Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap,
             LogHolder holder) {
       Set<EC2Template> templates = Sets.newHashSet();

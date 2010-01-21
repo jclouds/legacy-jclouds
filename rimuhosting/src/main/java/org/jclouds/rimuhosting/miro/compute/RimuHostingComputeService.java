@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -43,6 +44,7 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
+import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
@@ -82,6 +84,11 @@ public class RimuHostingComputeService implements ComputeService {
 
    @Override
    public CreateNodeResponse runNode(String name, Template template) {
+      return this.runNode(name, template, RunNodeOptions.NONE);
+   }
+
+   @Override
+   public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
       NewServerResponse serverResponse = rhClient.createServer(name, checkNotNull(imageNameMap
                .get(template.getImage().getOperatingSystem()), "os not supported: "
                + template.getImage().getOperatingSystem()), "MIRO1B");
@@ -144,7 +151,7 @@ public class RimuHostingComputeService implements ComputeService {
    }
 
    @Override
-   public Set<? extends Size> listSizes() {
+   public SortedSet<? extends Size> listSizes() {
       return null;
    }
 

@@ -33,17 +33,17 @@ public interface Size extends Comparable<Size> {
    /**
     * Amount of virtual or physical cores provided
     */
-   Integer getCores();
+   int getCores();
 
    /**
     * Amount of RAM provided in MB (256M, 1740)
     */
-   Integer getRam();
+   int getRam();
 
    /**
     * Amount of boot disk provided in GB (200)
     */
-   Integer getDisk();
+   int getDisk();
 
    /**
     * Determines platforms this can support

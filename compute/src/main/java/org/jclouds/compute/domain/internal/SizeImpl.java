@@ -23,6 +23,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Size;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -31,13 +32,12 @@ import com.google.common.collect.Sets;
  */
 public class SizeImpl implements Size {
 
-   private final Integer cores;
-   private final Integer ram;
-   private final Integer disk;
+   private final int cores;
+   private final int ram;
+   private final int disk;
    private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
 
-   public SizeImpl(Integer cores, Integer ram, Integer disk,
-            Iterable<Architecture> supportedArchitectures) {
+   public SizeImpl(int cores, int ram, int disk, Iterable<Architecture> supportedArchitectures) {
       this.cores = cores;
       this.ram = ram;
       this.disk = disk;
@@ -48,7 +48,7 @@ public class SizeImpl implements Size {
     * {@inheritDoc}
     */
    @Override
-   public Integer getCores() {
+   public int getCores() {
       return cores;
    }
 
@@ -56,7 +56,7 @@ public class SizeImpl implements Size {
     * {@inheritDoc}
     */
    @Override
-   public Integer getRam() {
+   public int getRam() {
       return ram;
    }
 
@@ -64,7 +64,7 @@ public class SizeImpl implements Size {
     * {@inheritDoc}
     */
    @Override
-   public Integer getDisk() {
+   public int getDisk() {
       return disk;
    }
 
@@ -72,9 +72,9 @@ public class SizeImpl implements Size {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((cores == null) ? 0 : cores.hashCode());
-      result = prime * result + ((disk == null) ? 0 : disk.hashCode());
-      result = prime * result + ((ram == null) ? 0 : ram.hashCode());
+      result = prime * result + cores;
+      result = prime * result + disk;
+      result = prime * result + ram;
       result = prime * result
                + ((supportedArchitectures == null) ? 0 : supportedArchitectures.hashCode());
       return result;
@@ -89,20 +89,11 @@ public class SizeImpl implements Size {
       if (getClass() != obj.getClass())
          return false;
       SizeImpl other = (SizeImpl) obj;
-      if (cores == null) {
-         if (other.cores != null)
-            return false;
-      } else if (!cores.equals(other.cores))
+      if (cores != other.cores)
          return false;
-      if (disk == null) {
-         if (other.disk != null)
-            return false;
-      } else if (!disk.equals(other.disk))
+      if (disk != other.disk)
          return false;
-      if (ram == null) {
-         if (other.ram != null)
-            return false;
-      } else if (!ram.equals(other.ram))
+      if (ram != other.ram)
          return false;
       if (supportedArchitectures == null) {
          if (other.supportedArchitectures != null)
@@ -112,20 +103,17 @@ public class SizeImpl implements Size {
       return true;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String toString() {
-      return "SizeImpl [cores=" + cores + ", disk=" + disk + ", ram=" + ram + "]";
+   public int compareTo(Size that) {
+      return ComparisonChain.start().compare(this.getCores(), that.getCores()).compare(
+               this.getRam(), that.getRam()).compare(this.getDisk(), that.getDisk()).result();
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public int compareTo(Size o) {
-      return (this == o) ? 0 : getCores().compareTo(o.getCores());
+   public String toString() {
+      return "Size [cores=" + cores + ", disk=" + disk + ", ram=" + ram + "]";
    }
 
    /**

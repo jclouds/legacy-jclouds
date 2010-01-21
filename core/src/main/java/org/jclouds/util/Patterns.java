@@ -32,6 +32,7 @@ import com.google.common.collect.MapMaker;
  * @author Adrian Cole
  */
 public class Patterns {
+   public static final Pattern TOKEN_PATTERN = Pattern.compile("\\{(.+?)\\}");
    public static final Pattern TWO_SPACE_PATTERN = Pattern.compile("  ");
    public static final Pattern URL_ENCODED_PATTERN = Pattern.compile(".*%[a-fA-F0-9][a-fA-F0-9].*");
    public static final Pattern URI_PATTERN = Pattern.compile("([a-z0-9]+)://([^:]*):(.*)@(.*)");

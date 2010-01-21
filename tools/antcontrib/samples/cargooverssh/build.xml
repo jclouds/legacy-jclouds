@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-
     Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
@@ -23,6 +22,7 @@
   <property file="build.properties" />
   <property name="password" value="" />
   <property name="keyfile" value="" />
+  <property name="listenport" value="8080" />
   <property name="container.zip" value="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.zip" />
   <property name="warfile" value="build/samples-blazeds.war" />
 
@@ -60,55 +60,32 @@
   <property name="service" value="terremark"/>
   <input message="What is your account on ${service}?" addproperty="account"/>
   <input message="What is the key for ${account}?" addproperty="key"/>
-  <property name="jclouds.compute.nodename" value="terremark-blaze"/>
-  <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}"/>
+  <property name="nodename" value="terremark-blaze"/>
+  <property name="url" value="compute://${account}:${key}@${service}"/>
 
-  <target name="destroy" description="destroy the node ${jclouds.compute.nodename}">
-    <compute action="destroy" provider="${jclouds.compute.url}">
-       <node name="${jclouds.compute.nodename}" />
+  <target name="destroy" description="destroy the node ${nodename}">
+    <compute action="destroy" provider="${url}">
+       <node name="${nodename}" />
     </compute>
     <sleep seconds="2" />
   </target>
 
-  <target name="create" description="create the node ${jclouds.compute.nodename}" depends="destroy" >
-     <compute action="create" provider="${jclouds.compute.url}">
-        <node name="${jclouds.compute.nodename}" os="UBUNTU" size="SMALLEST"
-             hostproperty="host" usernameproperty="username" passwordproperty="password" />
+  <target name="create" description="create the node ${nodename}" depends="destroy" >
+     <compute action="create" provider="${url}">
+        <node name="${nodename}"  os="JEOS" size="SMALLEST"
+              runscript="runscript.sh" openports="22,${listenport}"
+              hostproperty="host" usernameproperty="username" passwordproperty="password" />
      </compute>
-                
-     <echo message="provisioning java on: ${jclouds.compute.nodename}" />
-     <property name="sudo" value="echo ${password}|sudo -S" />
-     <!-- funny game to get around sudo problems with >>. first sudo is only to prime the password -->
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-             command="${sudo} echo hello;echo nameserver 208.67.222.222 |sudo tee -a /etc/resolv.conf" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-             command="${sudo} apt-get update -qq" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-             command="${sudo} apt-get upgrade -y -qq" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-             command="${sudo} apt-get install -y -qq wget" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-             command="${sudo} apt-get install -y -qq openjdk-6-jdk" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-         command="wget -q http://www.alliedquotes.com/mirrors/apache/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.tar.gz" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-         command="tar xzf apache-tomcat-6.0.20.tar.gz" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-         command="${sudo} mkdir -p /tmp/cargo/containers/" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-         command="${sudo} chmod 1777 /tmp/cargo" />
-     <sshexec host="${host}" username="${username}" password="${password}" trust="true"
-         command="${sudo} mv apache-tomcat-6.0.20 /tmp/cargo/containers/tomcat6x" />
   </target>
 
   <target name="cargooverssh" depends="create" description="run cargo on remote node" >
-    <echo message="deploying tomcat and blaze to: ${jclouds.compute.nodename}" />
+    <echo message="deploying tomcat and blaze to: ${nodename}" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
       <zipurlinstaller installurl="${container.zip}" />
       <configuration home="build/cargo" type="standalone">
         <property name="cargo.java.home" value="/usr/lib/jvm/java-6-openjdk"/>
         <property name="cargo.hostname" value="${host}"/>
-        <property name="cargo.servlet.port" value="8080"/>
+        <property name="cargo.servlet.port" value="${listenport}"/>
         <property name="cargo.ssh.host" value="${host}"/>
         <property name="cargo.ssh.username" value="${username}"/>
         <property name="cargo.ssh.password" value="${password}"/>
@@ -125,7 +102,7 @@
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
       <zipurlinstaller installurl="${container.zip}" />
       <configuration home="build/cargo" type="standalone">
-        <property name="cargo.servlet.port" value="8080"/>
+        <property name="cargo.servlet.port" value="${listenport}"/>
         <property name="cargo.logging" value="high"/>
         <deployable type="war" file="${warfile}"/>
       </configuration>

@@ -48,10 +48,10 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
     * Initializes with the default properties built-in to jclouds. This is typically stored in the
     * classpath resource {@code filename}
     * 
-    * @parma filename name of the properties file to initialize from
+    * @param filename name of the properties file to initialize from
     * @throws IOException
     *            if the default properties file cannot be loaded
-    * @see #init
+    * @see #getPropertiesFromResource
     */
    public RestContextFactory(String filename) throws IOException {
       this(getPropertiesFromResource(filename));
@@ -82,6 +82,7 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
    static Properties getPropertiesFromResource(String filename) throws IOException {
       Properties properties = new Properties();
       properties.load(Resources.newInputStreamSupplier(Resources.getResource(filename)).getInput());
+      properties.putAll(System.getProperties());
       return properties;
    }
 
@@ -125,8 +126,7 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
    }
 
    /**
-    * 
-    * FIXME Comment this // ImmutableSet.<Module>of(new ExecutorServiceModule(myexecutor))
+    * Creates a new remote context.
     * 
     * @param hint
     * @param account
@@ -134,8 +134,11 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
     * @param key
     *           nullable, if credentials are present in the overrides
     * @param modules
+    *           Configuration you'd like to pass to the context. Ex. ImmutableSet.<Module>of(new
+    *           ExecutorServiceModule(myexecutor))
     * @param overrides
-    * @return
+    *           properties to override defaults with.
+    * @return initialized context ready for use
     */
    @SuppressWarnings("unchecked")
    public T createContext(String hint, @Nullable String account, @Nullable String key,
@@ -151,6 +154,8 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
       String contextBuilderClassName = checkNotNull(properties.getProperty(contextBuilderKey),
                contextBuilderKey);
 
+      String endpointKey = String.format("%s.endpoint", hint);
+      String endpoint = properties.getProperty(endpointKey);
       try {
          Class<HttpPropertiesBuilder> propertiesBuilderClass = (Class<HttpPropertiesBuilder>) Class
                   .forName(propertiesBuilderClassName);
@@ -159,7 +164,8 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
                   .newInstance(overrides);
          if (key != null)
             builder.withCredentials(account, key);
-
+         if (endpoint != null)
+            builder.withEndpoint(URI.create(endpoint));
          B contextBuilder = (B) contextBuilderClass.getConstructor(Properties.class).newInstance(
                   builder.build()).withModules(Iterables.toArray(modules, Module.class));
          return build(contextBuilder);
