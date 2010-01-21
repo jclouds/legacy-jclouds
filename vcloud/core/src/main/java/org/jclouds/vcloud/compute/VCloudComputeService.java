@@ -136,13 +136,16 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
          ssh.put(scriptName, new ByteArrayInputStream(script));
          ssh.exec("chmod 755 " + scriptName);
          if (node.getCredentials().account.equals("root")) {
-            logger.debug(ssh.exec("./" + scriptName).toString());
+            logger.debug(">> running %s as %s", scriptName, node.getCredentials().account);
+            logger.debug("<< complete(%d)", ssh.exec("./" + scriptName).getExitCode());
          } else if (isKeyBasedAuth(node)) {
-            logger.debug(ssh.exec("sudo ./" + scriptName).toString());
+            logger.debug(">> running sudo %s as %s", scriptName, node.getCredentials().account);
+            logger.debug("<< complete(%d)", ssh.exec("sudo ./" + scriptName).getExitCode());
          } else {
-            logger.debug(ssh.exec(
+            logger.debug(">> running sudo -S %s as %s", scriptName, node.getCredentials().account);
+            logger.debug("<< complete(%d)", ssh.exec(
                      String.format("echo %s|sudo -S ./%s", node.getCredentials().key, scriptName))
-                     .toString());
+                     .getExitCode());
          }
       } finally {
          if (ssh != null)

@@ -39,6 +39,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Function;
@@ -74,9 +75,11 @@ public class ComputeTaskUtils {
             try {
                Properties props = new Properties();
                props.putAll(projectProvider.get().getProperties());
-               return new ComputeServiceContextFactory().createContext(from, ImmutableSet
-                        .of((Module) new AntLoggingModule(projectProvider.get(),
-                                 ComputeServiceConstants.COMPUTE_LOGGER)), props);
+               return new ComputeServiceContextFactory().createContext(from, ImmutableSet.of(
+                        (Module) new AntLoggingModule(projectProvider.get(),
+                                          ComputeServiceConstants.COMPUTE_LOGGER),
+                                          new JschSshClientModule()),
+                        props);
             } catch (IOException e) {
                throw new RuntimeException(e);
             }

@@ -204,7 +204,7 @@ public class JschSshClient implements SshClient {
          try {
             executor.connect();
             return new ExecResponse(Utils.toStringAndClose(executor.getInputStream()), error
-                     .toString());
+                     .toString(), executor.getExitStatus());
          } catch (Exception e) {
             throw new SshException(String.format("%s@%s:%d: Error executing command: ", username,
                      host.getHostAddress(), port, command), e);

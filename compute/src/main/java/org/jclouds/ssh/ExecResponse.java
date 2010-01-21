@@ -25,10 +25,12 @@ public class ExecResponse {
 
    private final String error;
    private final String output;
+   private final int exitCode;
 
-   public ExecResponse(String output, String error) {
+   public ExecResponse(String output, String error, int exitCode) {
       this.output = output;
       this.error = error;
+      this.exitCode = exitCode;
    }
 
    public String getError() {
@@ -41,7 +43,7 @@ public class ExecResponse {
 
    @Override
    public String toString() {
-      return "ExecResponse [error=" + error + ", output=" + output + "]";
+      return "ExecResponse [output=" + output + ", error=" + error + ", exitCode=" + exitCode + "]";
    }
 
    @Override
@@ -49,6 +51,7 @@ public class ExecResponse {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((error == null) ? 0 : error.hashCode());
+      result = prime * result + exitCode;
       result = prime * result + ((output == null) ? 0 : output.hashCode());
       return result;
    }
@@ -67,12 +70,18 @@ public class ExecResponse {
             return false;
       } else if (!error.equals(other.error))
          return false;
+      if (exitCode != other.exitCode)
+         return false;
       if (output == null) {
          if (other.output != null)
             return false;
       } else if (!output.equals(other.output))
          return false;
       return true;
+   }
+
+   public int getExitCode() {
+      return exitCode;
    }
 
 }

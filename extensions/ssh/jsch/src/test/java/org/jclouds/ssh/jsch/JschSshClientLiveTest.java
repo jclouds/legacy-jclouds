@@ -82,7 +82,7 @@ public class JschSshClientLiveTest {
             public ExecResponse exec(String command) {
                if (command.equals("hostname")) {
                   try {
-                     return new ExecResponse(InetAddress.getLocalHost().getHostName(), "");
+                     return new ExecResponse(InetAddress.getLocalHost().getHostName(), "", 0);
                   } catch (UnknownHostException e) {
                      throw new RuntimeException(e);
                   }
