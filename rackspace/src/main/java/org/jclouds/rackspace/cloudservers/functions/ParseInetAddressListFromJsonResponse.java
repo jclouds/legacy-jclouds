@@ -49,11 +49,11 @@ public class ParseInetAddressListFromJsonResponse extends ParseJson<List<InetAdd
    Map<String, List<InetAddress>> addressMap;
 
    public List<InetAddress> apply(InputStream stream) {
-      Type type = new TypeToken<Map<String, List<InetAddress>>>() {
+      Type flavor = new TypeToken<Map<String, List<InetAddress>>>() {
       }.getType();
       try {
          Map<String, List<InetAddress>> map = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  type);
+                  flavor);
          return map.values().iterator().next();
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

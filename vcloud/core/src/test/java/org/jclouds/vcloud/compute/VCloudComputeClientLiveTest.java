@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudClient;
@@ -73,14 +73,14 @@ public class VCloudComputeClientLiveTest {
       }
    }
 
-   protected Map<OperatingSystem, Expectation> expectationMap;
+   protected Map<OsFamily, Expectation> expectationMap;
 
    protected Predicate<InetAddress> addressTester;
 
    @Test(enabled = true)
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      OperatingSystem toTest = OperatingSystem.CENTOS;
+      OsFamily toTest = OsFamily.CENTOS;
 
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
@@ -98,7 +98,7 @@ public class VCloudComputeClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.ON);
    }
 
-   private String getCompatibleServerName(OperatingSystem toTest) {
+   private String getCompatibleServerName(OsFamily toTest) {
       String serverName = CaseFormat.UPPER_UNDERSCORE
                .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
                         toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
@@ -149,8 +149,8 @@ public class VCloudComputeClientLiveTest {
       client = injector.getInstance(VCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
       }));
-      expectationMap = ImmutableMap.<OperatingSystem, Expectation> builder().put(
-               OperatingSystem.CENTOS,
+      expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(
+               OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
       service = "vcloudtest";
       templateId = "3";

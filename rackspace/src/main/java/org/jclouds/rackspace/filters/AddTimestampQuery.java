@@ -21,13 +21,15 @@ package org.jclouds.rackspace.filters;
 import java.util.Date;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.base.Supplier;
 
 /**
  * Adds a timestamp to the query line so that cache is invalidated.
@@ -37,10 +39,10 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  */
 @Singleton
 public class AddTimestampQuery implements HttpRequestFilter {
-   private final Provider<Date> dateProvider;
+   private final Supplier<Date> dateProvider;
 
    @Inject
-   public AddTimestampQuery(Provider<Date> dateProvider) {
+   public AddTimestampQuery(@TimeStamp Supplier<Date> dateProvider) {
       this.dateProvider = dateProvider;
    }
 

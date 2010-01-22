@@ -59,7 +59,7 @@ public interface CloudFilesClient {
     * Determine the number of Containers within the account and the total bytes stored. Since the
     * storage system is designed to store large amounts of data, care should be taken when
     * representing the total bytes response as an integer; when possible, convert it to a 64-bit
-    * unsigned integer if your platform supports that primitive type.
+    * unsigned integer if your platform supports that primitive flavor.
     */
    AccountMetadata getAccountStatistics();
 

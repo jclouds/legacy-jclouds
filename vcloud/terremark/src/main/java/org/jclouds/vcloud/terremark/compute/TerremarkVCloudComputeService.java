@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark.compute;
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -33,9 +32,12 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.VCloudComputeService;
 import org.jclouds.vcloud.domain.VApp;
@@ -64,8 +66,8 @@ public class TerremarkVCloudComputeService extends VCloudComputeService {
    public TerremarkVCloudComputeService(TerremarkVCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<String> successTester, Predicate<InetSocketAddress> socketTester) {
-      super(client, templateBuilderProvider, images, sizes, successTester, socketTester);
+            Predicate<String> successTester, ComputeUtils utils) {
+      super(client, templateBuilderProvider, images, sizes, utils, successTester);
       this.client = client;
    }
 
@@ -83,6 +85,15 @@ public class TerremarkVCloudComputeService extends VCloudComputeService {
       if (portsToOpen.length > 0)
          createPublicAddressMappedToPorts(response.get("id"), portsToOpen);
       return response;
+   }
+
+   @Override
+   protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
+      VApp vApp = client.getVApp(id);
+      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
+               ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
+               getPublicAddresses(id), vApp.getNetworkToAddresses().values(), ImmutableMap
+                        .<String, String> of());
    }
 
    public InetAddress createPublicAddressMappedToPorts(String vAppId, int... ports) {

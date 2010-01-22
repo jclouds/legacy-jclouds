@@ -39,6 +39,14 @@ public enum NodeState {
    /**
     * The node is available for requests
     */
-   RUNNING;
+   RUNNING,
+   /**
+    * There is an error on the node
+    */
+   ERROR,
+   /**
+    * The state of the node is unknown.
+    */
+   UNKNOWN;
 
 }

@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.hostingdotcom.compute;
 
-import static org.jclouds.compute.domain.OperatingSystem.CENTOS;
+import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Template;
@@ -42,7 +42,7 @@ public class HostingDotComVCloudComputeServiceLiveTest extends BaseComputeServic
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.os(CENTOS).smallest().build();
+      return templateBuilder.osFamily(CENTOS).smallest().build();
    }
 
    @Override

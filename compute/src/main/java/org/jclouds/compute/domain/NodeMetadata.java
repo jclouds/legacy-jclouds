@@ -32,10 +32,6 @@ public interface NodeMetadata extends ComputeMetadata {
    SortedSet<InetAddress> getPublicAddresses();
 
    SortedSet<InetAddress> getPrivateAddresses();
-
-   int getLoginPort();
-
-   LoginType getLoginType();
    
    /**
     * Other variables present that the provider supports

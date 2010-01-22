@@ -23,10 +23,10 @@ import static org.easymock.classextension.EasyMock.replay;
 
 import java.util.Date;
 
-import javax.inject.Provider;
-
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -39,7 +39,7 @@ public class AddTimestampQueryTest {
    @Test
    public void testApplySetsKey() {
       final Date date = new Date();
-      Provider<Date> dateProvider = new Provider<Date>() {
+      Supplier<Date> dateSupplier = new Supplier<Date>() {
 
          @Override
          public Date get() {
@@ -51,7 +51,7 @@ public class AddTimestampQueryTest {
       request.addQueryParam("now", date.getTime() + "");
       replay(request);
 
-      AddTimestampQuery filter = new AddTimestampQuery(dateProvider);
+      AddTimestampQuery filter = new AddTimestampQuery(dateSupplier);
       filter.filter(request);
    }
 

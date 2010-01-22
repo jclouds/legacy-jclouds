@@ -23,6 +23,7 @@ import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSP
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -30,6 +31,8 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.CloudFiles;
@@ -39,6 +42,8 @@ import org.jclouds.rackspace.RackspaceAuthentication;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 import org.jclouds.rest.RestClientFactory;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -52,6 +57,39 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
 
    @Override
    protected void configure() {
+   }
+
+   /**
+    * borrowing concurrency code to ensure that caching takes place properly
+    */
+   @Provides
+   @Singleton
+   @Authentication
+   Supplier<String> provideAuthenticationTokenCache(final RestClientFactory factory,
+            @Named(PROPERTY_RACKSPACE_USER) final String user,
+            @Named(PROPERTY_RACKSPACE_KEY) final String key) {
+      return new ExpirableSupplier<String>(new Supplier<String>() {
+         public String get() {
+            try {
+               return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
+                        TimeUnit.SECONDS).getAuthToken();
+            } catch (Exception e) {
+               Throwables.propagateIfPossible(e);
+               throw new RuntimeException("Error logging in", e);
+            }
+         }
+      }, 23, TimeUnit.HOURS);
+   }
+
+   @Provides
+   @Singleton
+   @TimeStamp
+   Supplier<Date> provideCacheBusterDate() {
+      return new ExpirableSupplier<Date>(new Supplier<Date>() {
+         public Date get() {
+            return new Date();
+         }
+      }, 1, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -68,15 +106,6 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
             throws InterruptedException, ExecutionException, TimeoutException {
       return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
                TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Authentication
-   protected String provideAuthenticationToken(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
-               TimeUnit.SECONDS).getAuthToken();
    }
 
    @Provides

@@ -23,7 +23,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.domain.CreateNodeResponse;
-import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 
@@ -41,9 +40,8 @@ public class CreateNodeResponseImpl extends NodeMetadataImpl implements CreateNo
    public CreateNodeResponseImpl(String id, String name, String location, URI uri,
             Map<String, String> userMetadata, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
-            int loginPort, LoginType loginType, Credentials credentials, Map<String, String> extra) {
-      super(id, name, location, uri, userMetadata, state, publicAddresses, privateAddresses,
-               loginPort, loginType, extra);
+            Credentials credentials, Map<String, String> extra) {
+      super(id, name, location, uri, userMetadata, state, publicAddresses, privateAddresses, extra);
       this.credentials = credentials;
    }
 

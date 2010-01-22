@@ -37,10 +37,9 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -77,9 +76,8 @@ public class RimuHostingComputeService implements ComputeService {
       this.rhClient = rhClient;
    }
 
-   private Map<OperatingSystem, String> imageNameMap = ImmutableMap
-            .<OperatingSystem, String> builder().put(OperatingSystem.CENTOS, "centos53").put(
-                     OperatingSystem.UBUNTU, "ubuntu904").build();
+   private Map<OsFamily, String> imageNameMap = ImmutableMap.<OsFamily, String> builder().put(
+            OsFamily.CENTOS, "centos53").put(OsFamily.UBUNTU, "ubuntu904").build();
 
    // private Map<Size, String> profileNameMap = ImmutableMap.<Profile, String> builder().put(
    // Profile.SMALLEST, "MIRO1B").build();
@@ -92,15 +90,15 @@ public class RimuHostingComputeService implements ComputeService {
    @Override
    public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
       NewServerResponse serverResponse = rhClient.createServer(name, checkNotNull(imageNameMap
-               .get(template.getImage().getOperatingSystem()), "os not supported: "
-               + template.getImage().getOperatingSystem()), "MIRO1B");
+               .get(template.getImage().getOsFamily()), "os not supported: "
+               + template.getImage().getOsFamily()), "MIRO1B");
       return new CreateNodeResponseImpl(serverResponse.getServer().getId().toString(),
                serverResponse.getServer().getName(), "default", null, ImmutableMap
                         .<String, String> of(),
                NodeState.RUNNING,// TODO need a real state!
                getPublicAddresses(serverResponse.getServer()), ImmutableList.<InetAddress> of(),
-               22, LoginType.SSH, new Credentials("root", serverResponse.getNewInstanceRequest()
-                        .getCreateOptions().getPassword()), ImmutableMap.<String, String> of());
+               new Credentials("root", serverResponse.getNewInstanceRequest().getCreateOptions()
+                        .getPassword()), ImmutableMap.<String, String> of());
    }
 
    @VisibleForTesting

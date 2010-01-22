@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.compute;
+package org.jclouds.aws.ec2.compute.domain;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.compute.domain.Architecture;

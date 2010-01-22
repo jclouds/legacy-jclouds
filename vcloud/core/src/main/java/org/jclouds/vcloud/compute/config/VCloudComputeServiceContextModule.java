@@ -33,7 +33,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
@@ -120,8 +120,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                responses.add(executor.submit(new Callable<Void>() {
                   @Override
                   public Void call() throws Exception {
-                     OperatingSystem myOs = null;
-                     for (OperatingSystem os : OperatingSystem.values()) {
+                     OsFamily myOs = null;
+                     for (OsFamily os : OsFamily.values()) {
                         if (resource.getName().toLowerCase().replaceAll("\\s", "").indexOf(
                                  os.toString()) != -1) {
                            myOs = os;

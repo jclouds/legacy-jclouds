@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
@@ -41,6 +40,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -74,7 +74,9 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.Executors;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -917,7 +919,7 @@ public class CloudServersClientTest {
                         + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"reboot\":{\"flavor\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOn404.class);
@@ -1007,10 +1009,25 @@ public class CloudServersClientTest {
          @SuppressWarnings("unused")
          @Provides
          @Authentication
-         public String getAuthToken() {
-            return "testtoken";
+         public Supplier<String> getAuthToken() {
+            return new Supplier<String>() {
+               public String get() {
+                  return "testtoken";
+               }
+            };
          }
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
+
+         @SuppressWarnings("unused")
+         @Provides
+         @TimeStamp
+         public Supplier<Date> getDate() {
+            return new Supplier<Date>() {
+               public Date get() {
+                  return new Date();
+               }
+            };
+         }
+      }, new RestModule(), new ExecutorServiceModule(Executors.sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {

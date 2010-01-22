@@ -9,7 +9,7 @@ import javax.inject.Named;
 
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -40,12 +40,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private final Set<? extends Image> images;
    private final Set<? extends Size> sizes;
    private String location;
-   private OperatingSystem os;
+   private OsFamily os;
    private Architecture arch;
    private String imageId;
    private String sizeId;
 
-   private String osVersion;
+   private String osDescription;
    private String imageVersion;
    private String imageDescription;
 
@@ -94,7 +94,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Image input) {
          boolean returnVal = true;
          if (os != null)
-            returnVal = os.equals(input.getOperatingSystem());
+            returnVal = os.equals(input.getOsFamily());
          return returnVal;
       }
 
@@ -110,15 +110,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
 
    };
-   private final Predicate<Image> osVersionPredicate = new Predicate<Image>() {
+   private final Predicate<Image> osDescriptionPredicate = new Predicate<Image>() {
       @Override
       public boolean apply(Image input) {
          boolean returnVal = true;
-         if (osVersion != null) {
-            if (input.getOperatingSystemVersion() == null)
+         if (osDescription != null) {
+            if (input.getOsDescription() == null)
                returnVal = false;
             else
-               returnVal = input.getOperatingSystemVersion().matches(osVersion);
+               returnVal = input.getOsDescription().matches(osDescription);
          }
          return returnVal;
       }
@@ -166,7 +166,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
 
    private final Predicate<Image> imagePredicate = Predicates.and(imageIdPredicate,
-            locationPredicate, osPredicate, imageArchPredicate, osVersionPredicate,
+            locationPredicate, osPredicate, imageArchPredicate, osDescriptionPredicate,
             imageVersionPredicate, imageDescriptionPredicate);
 
    private final Predicate<Size> sizeArchPredicate = new Predicate<Size>() {
@@ -208,8 +208,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
-         return ComparisonChain.start().compare(left.getOperatingSystemVersion(),
-                  right.getOperatingSystemVersion()).compare(left.getVersion(), right.getVersion())
+         return ComparisonChain.start().compare(left.getOsDescription(),
+                  right.getOsDescription()).compare(left.getVersion(), right.getVersion())
                   .result();
       }
    };
@@ -241,10 +241,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    public TemplateBuilder fromImage(Image image) {
       if (image.getLocation() != null)
          this.location = image.getLocation();
-      if (image.getOperatingSystem() != null)
-         this.os = image.getOperatingSystem();
-      if (image.getOperatingSystemVersion() != null)
-         this.osVersion = image.getOperatingSystemVersion();
+      if (image.getOsFamily() != null)
+         this.os = image.getOsFamily();
+      if (image.getOsDescription() != null)
+         this.osDescription = image.getOsDescription();
       if (image.getVersion() != null)
          this.imageVersion = image.getVersion();
       if (image.getArchitecture() != null)
@@ -292,7 +292,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
-   public TemplateBuilder os(OperatingSystem os) {
+   public TemplateBuilder osFamily(OsFamily os) {
       this.os = os;
       return this;
    }
@@ -387,8 +387,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
-   public TemplateBuilder osVersionMatches(String osVersionRegex) {
-      this.osVersion = osVersionRegex;
+   public TemplateBuilder osDescriptionMatches(String osDescriptionRegex) {
+      this.osDescription = osDescriptionRegex;
       return this;
    }
 
@@ -406,7 +406,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest
                + ", imageDescription=" + imageDescription + ", imageId=" + imageId
                + ", imageVersion=" + imageVersion + ", location=" + location + ", minCores="
-               + minCores + ", minRam=" + minRam + ", os=" + os + ", osVersion=" + osVersion
+               + minCores + ", minRam=" + minRam + ", os=" + os + ", osDescription=" + osDescription
                + ", sizeId=" + sizeId + "]";
    }
 

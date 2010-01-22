@@ -145,7 +145,7 @@ public class ParseObjectInfoListFromJsonResponse extends
 
       @Override
       public String toString() {
-         return "ObjectInfoImpl [bytes=" + bytes + ", content_type=" + content_type + ", hash="
+         return "ObjectInfoImpl [bytes=" + bytes + ", content_flavor=" + content_type + ", hash="
                   + hash + ", last_modified=" + last_modified.getTime() + ", name=" + name + "]";
       }
    }

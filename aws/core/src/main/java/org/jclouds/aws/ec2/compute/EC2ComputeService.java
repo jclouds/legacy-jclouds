@@ -36,6 +36,8 @@ import javax.inject.Singleton;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.compute.domain.EC2Image;
+import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -46,7 +48,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
@@ -146,9 +147,9 @@ public class EC2ComputeService implements ComputeService {
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
       return new CreateNodeResponseImpl(runningInstance.getId(), name, runningInstance.getRegion()
                .toString(), null, ImmutableMap.<String, String> of(), instanceToNodeState
-               .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses, 22,
-               LoginType.SSH,
-               new Credentials("root", keyPair.getKeyMaterial()), ImmutableMap.<String, String> of());
+               .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses,
+               new Credentials("root", keyPair.getKeyMaterial()), ImmutableMap
+                        .<String, String> of());
    }
 
    private KeyPair createKeyPairInRegion(Region region, String name) {
@@ -213,9 +214,8 @@ public class EC2ComputeService implements ComputeService {
          return new NodeMetadataImpl(from.getId(), from.getKeyName(), from.getRegion().toString(),
                   null, ImmutableMap.<String, String> of(), instanceToNodeState.get(from
                            .getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
-                           .getPrivateIpAddress()), 22, LoginType.SSH, ImmutableMap
-                           .<String, String> of("availabilityZone", from.getAvailabilityZone()
-                                    .toString()));
+                           .getPrivateIpAddress()), ImmutableMap.<String, String> of(
+                           "availabilityZone", from.getAvailabilityZone().toString()));
       }
 
       Set<InetAddress> nullSafeSet(InetAddress in) {

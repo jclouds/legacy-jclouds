@@ -44,13 +44,13 @@ public interface Image {
    /**
     * Operating System
     */
-   OperatingSystem getOperatingSystem();
+   OsFamily getOsFamily();
 
    /**
-    * Version of the operating system
+    * Description of the operating system including the version.
     */
-   String getOperatingSystemVersion();
-   
+   String getOsDescription();
+
    /**
     * Version of the image
     */

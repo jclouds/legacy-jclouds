@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import static org.jclouds.compute.domain.OperatingSystem.UBUNTU;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Template;
@@ -42,7 +42,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.os(UBUNTU).smallest().build();
+      return templateBuilder.osFamily(UBUNTU).smallest().build();
    }
 
    @Override

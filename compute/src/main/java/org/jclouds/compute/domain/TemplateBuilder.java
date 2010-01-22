@@ -67,7 +67,7 @@ public interface TemplateBuilder {
    /**
     * Configure this template to use a specific operating system image.
     */
-   TemplateBuilder os(OperatingSystem os);
+   TemplateBuilder osFamily(OsFamily os);
 
    /**
     * Configure this template to start in a specific location
@@ -92,10 +92,10 @@ public interface TemplateBuilder {
    TemplateBuilder sizeId(String sizeId);
 
    /**
-    * Configure this template to have an operating system version that matches the regular
+    * Configure this template to have an operating system description that matches the regular
     * expression
     */
-   TemplateBuilder osVersionMatches(String osVersionRegex);
+   TemplateBuilder osDescriptionMatches(String osDescriptionRegex);
 
    /**
     * Configure this template to have an image version that matches the regular expression

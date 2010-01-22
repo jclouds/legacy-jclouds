@@ -33,9 +33,8 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -45,7 +44,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.ScriptBuilder;
-import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -101,13 +99,13 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    private boolean canRunScript(Template template) {
-      return template.getImage().getOperatingSystem() == OperatingSystem.UBUNTU
-               || template.getImage().getOperatingSystem() == OperatingSystem.JEOS;
+      return template.getImage().getOsFamily() == OsFamily.UBUNTU
+               || template.getImage().getOsFamily() == OsFamily.JEOS;
    }
 
    abstract protected Module getSshModule();
 
-   @Test(enabled = false)
+   @Test(enabled = true)
    public void testCreate() throws Exception {
       try {
          client.destroyNode(Iterables.find(client.listNodes(), new Predicate<ComputeMetadata>() {
@@ -133,11 +131,9 @@ public abstract class BaseComputeServiceLiveTest {
                   .addStatement(Statements.exec("apt-get install -y openjdk-6-jdk"))//
                   .addStatement(Statements.exec("wget -qO/usr/bin/runurl run.alestic.com/runurl"))//
                   .addStatement(Statements.exec("chmod 755 /usr/bin/runurl"))//
-                  .build(OsFamily.UNIX).getBytes());
+                  .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX).getBytes());
       node = client.runNode(nodeName, template, options);
       assertNotNull(node.getId());
-      assertEquals(node.getLoginPort(), 22);
-      assertEquals(node.getLoginType(), LoginType.SSH);
       assertNotNull(node.getName());
       assertEquals(node.getPublicAddresses().size(), 1);
       assertNotNull(node.getCredentials());
@@ -148,12 +144,10 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
 
-   @Test(enabled = false, dependsOnMethods = "testCreate")
+   @Test(enabled = true, dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
       NodeMetadata metadata = client.getNodeMetadata(node);
       assertEquals(metadata.getId(), node.getId());
-      assertEquals(metadata.getLoginPort(), node.getLoginPort());
-      assertEquals(metadata.getLoginType(), node.getLoginType());
       assertEquals(metadata.getName(), node.getName());
       assertEquals(metadata.getPrivateAddresses(), node.getPrivateAddresses());
       assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());
@@ -176,7 +170,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testListSizes() throws Exception {
       for (Size size : client.listSizes()) {
-         assert size.getCores() > 0;
+         assert size.getCores() > 0 : size;
       }
    }
 
@@ -193,8 +187,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    private void doCheckKey() throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(node.getPublicAddresses().last(), node
-               .getLoginPort());
+      InetSocketAddress socket = new InetSocketAddress(node.getPublicAddresses().last(), 22);
       socketTester.apply(socket);
       SshClient ssh = node.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----") ? sshFactory
                .create(socket, node.getCredentials().account, node.getCredentials().key.getBytes())

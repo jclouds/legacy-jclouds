@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import org.jclouds.compute.domain.ComputeType;
-import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 
@@ -53,19 +52,15 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final SortedSet<InetAddress> publicAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
    private final SortedSet<InetAddress> privateAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
    private final Map<String, String> extra = Maps.newLinkedHashMap();
-   private final int loginPort;
-   private final LoginType loginType;
 
    public NodeMetadataImpl(String id, String name, String location, URI uri,
             Map<String, String> userMetadata, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
-            int loginPort, LoginType loginType, Map<String, String> extra) {
+            Map<String, String> extra) {
       super(ComputeType.NODE, id, name, location, uri, userMetadata);
       this.state = state;
       Iterables.addAll(this.publicAddresses, publicAddresses);
       Iterables.addAll(this.privateAddresses, privateAddresses);
-      this.loginPort = loginPort;
-      this.loginType = loginType;
       this.extra.putAll(extra);
    }
 
@@ -81,20 +76,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     */
    public SortedSet<InetAddress> getPrivateAddresses() {
       return privateAddresses;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public int getLoginPort() {
-      return loginPort;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public LoginType getLoginType() {
-      return loginType;
    }
 
    /**
@@ -125,8 +106,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((extra == null) ? 0 : extra.hashCode());
-      result = prime * result + loginPort;
-      result = prime * result + ((loginType == null) ? 0 : loginType.hashCode());
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
@@ -146,13 +125,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.extra != null)
             return false;
       } else if (!extra.equals(other.extra))
-         return false;
-      if (loginPort != other.loginPort)
-         return false;
-      if (loginType == null) {
-         if (other.loginType != null)
-            return false;
-      } else if (!loginType.equals(other.loginType))
          return false;
       if (privateAddresses == null) {
          if (other.privateAddresses != null)

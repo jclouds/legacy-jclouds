@@ -2,7 +2,6 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +12,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeService;
 import org.jclouds.vcloud.domain.VApp;
@@ -31,8 +31,8 @@ public class HostingDotComVCloudComputeService extends VCloudComputeService {
    HostingDotComVCloudComputeService(VCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<String> successTester, Predicate<InetSocketAddress> socketTester) {
-      super(client, templateBuilderProvider, images, sizes, successTester, socketTester);
+            Predicate<String> successTester, ComputeUtils utils) {
+      super(client, templateBuilderProvider, images, sizes, utils, successTester);
    }
 
    @Override

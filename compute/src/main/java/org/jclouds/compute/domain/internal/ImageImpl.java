@@ -25,7 +25,7 @@ package org.jclouds.compute.domain.internal;
 
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 
 /**
  * @author Adrian Cole
@@ -35,7 +35,7 @@ public class ImageImpl implements Image {
    private final String id;
    private final String description;
    private final String version;
-   private final OperatingSystem operatingSystem;
+   private final OsFamily operatingSystem;
    private final String operatingSystemVersion;
    private final String location;
    private final Architecture architecture;
@@ -56,7 +56,7 @@ public class ImageImpl implements Image {
       return result;
    }
 
-   public ImageImpl(String id, String description, String version, OperatingSystem operatingSystem,
+   public ImageImpl(String id, String description, String version, OsFamily operatingSystem,
             String operatingSystemVersion, String location, Architecture architecture) {
       this.id = id;
       this.description = description;
@@ -140,7 +140,7 @@ public class ImageImpl implements Image {
     * {@inheritDoc}
     */
    @Override
-   public OperatingSystem getOperatingSystem() {
+   public OsFamily getOsFamily() {
       return operatingSystem;
    }
 
@@ -172,7 +172,7 @@ public class ImageImpl implements Image {
     * {@inheritDoc}
     */
    @Override
-   public String getOperatingSystemVersion() {
+   public String getOsDescription() {
       return operatingSystemVersion;
    }
 

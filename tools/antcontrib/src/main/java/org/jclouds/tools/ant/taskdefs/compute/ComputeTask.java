@@ -163,10 +163,9 @@ public class ComputeTask extends Task {
    }
 
    private void logNodeDetails(CreateNodeResponse createdNode) {
-      log(String.format("   id=%s, name=%s, connection=%s://%s:%s@%s:%d", createdNode.getId(),
-               createdNode.getName(), createdNode.getLoginType().toString().toLowerCase(),
-               createdNode.getCredentials().account, createdNode.getCredentials().key, createdNode
-                        .getPublicAddresses().first().getHostAddress(), createdNode.getLoginPort()));
+      log(String.format("   id=%s, name=%s, connection=%s:%s@%s", createdNode.getId(), createdNode
+               .getName(), createdNode.getCredentials().account, createdNode.getCredentials().key,
+               createdNode.getPublicAddresses().first().getHostAddress()));
    }
 
    private void addNodeDetailsAsProjectProperties(CreateNodeResponse createdNode) {

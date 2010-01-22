@@ -37,13 +37,13 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
-import org.jclouds.aws.ec2.compute.EC2Image;
-import org.jclouds.aws.ec2.compute.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.EC2Image;
+import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -108,21 +108,21 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       for (final Region region : regionMap.keySet()) {
          for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
                   .describeImagesInRegion(region, ownedBy("063491364108"))) {
-            OperatingSystem os = null;
-            String osVersion = "";
+            OsFamily os = null;
+            String osDescription = "";
             String version = "";
 
             Matcher matcher = ALESTIC_PATTERN.matcher(from.getImageLocation());
             if (matcher.find()) {
                try {
-                  os = OperatingSystem.fromValue(matcher.group(1));
-                  osVersion = matcher.group(2);
+                  os = OsFamily.fromValue(matcher.group(1));
+                  osDescription = matcher.group(2);
                   version = matcher.group(3);
                } catch (IllegalArgumentException e) {
                   holder.logger.debug("<< didn't match os(%s)", matcher.group(1));
                }
             }
-            images.add(new EC2Image(from, os, osVersion, version));
+            images.add(new EC2Image(from, os, osDescription, version));
          }
       }
       holder.logger.debug("<< images(%d)", images.size());

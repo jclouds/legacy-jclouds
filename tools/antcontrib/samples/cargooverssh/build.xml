@@ -46,7 +46,7 @@
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.1-SNAPSHOT"/>
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.1-SNAPSHOT"/>
-    <dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT"/>
+    <dependency groupId="org.jclouds" artifactId="${driver}" version="1.0-SNAPSHOT"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT"/>
     <remoteRepository refid="jclouds-snapshot.repository"/>
     <remoteRepository refid="cargo-snapshot.repository"/>
@@ -57,7 +57,7 @@
   <taskdef name="sshexec" classname="org.apache.tools.ant.taskdefs.optional.ssh.SSHExec" classpathref="jclouds.classpath" />
   <taskdef resource="cargo.tasks" classpathref="jclouds.classpath"/>
 
-  <property name="service" value="terremark"/>
+  <property name="service" value="${service}"/>
   <input message="What is your account on ${service}?" addproperty="account"/>
   <input message="What is the key for ${account}?" addproperty="key"/>
   <property name="nodename" value="terremark-blaze"/>

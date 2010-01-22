@@ -23,9 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
-import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +37,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
@@ -49,9 +46,9 @@ import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -78,10 +75,8 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    protected final Provider<Set<? extends Image>> images;
    protected final Provider<Set<? extends Size>> sizes;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
-   private final Predicate<String> taskTester;
-   @Inject(optional = true)
-   private SshClient.Factory sshFactory;
-   private Predicate<InetSocketAddress> socketTester;
+   protected final ComputeUtils utils;
+   protected final Predicate<String> taskTester;
 
    protected static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
             .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
@@ -93,13 +88,13 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    public VCloudComputeService(VCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<String> successTester, Predicate<InetSocketAddress> socketTester) {
+            ComputeUtils utils, Predicate<String> successTester) {
       this.taskTester = successTester;
       this.client = client;
       this.images = images;
       this.sizes = sizes;
       this.templateBuilderProvider = templateBuilderProvider;
-      this.socketTester = socketTester;
+      this.utils = utils;
    }
 
    @Override
@@ -117,44 +112,9 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       VApp vApp = client.getVApp(metaMap.get("id"));
       CreateNodeResponse node = newCreateNodeResponse(template, metaMap, vApp);
       if (options.getRunScript() != null) {
-         checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
-         runScriptOnNode(node, options.getRunScript());
+         utils.runScriptOnNode(node, options.getRunScript());
       }
       return node;
-   }
-
-   private void runScriptOnNode(CreateNodeResponse node, byte[] script) {
-      InetSocketAddress socket = new InetSocketAddress(node.getPublicAddresses().last(), node
-               .getLoginPort());
-      socketTester.apply(socket);
-      SshClient ssh = isKeyBasedAuth(node) ? sshFactory.create(socket,
-               node.getCredentials().account, node.getCredentials().key.getBytes()) : sshFactory
-               .create(socket, node.getCredentials().account, node.getCredentials().key);
-      try {
-         ssh.connect();
-         String scriptName = node.getId() + ".sh";
-         ssh.put(scriptName, new ByteArrayInputStream(script));
-         ssh.exec("chmod 755 " + scriptName);
-         if (node.getCredentials().account.equals("root")) {
-            logger.debug(">> running %s as %s", scriptName, node.getCredentials().account);
-            logger.debug("<< complete(%d)", ssh.exec("./" + scriptName).getExitCode());
-         } else if (isKeyBasedAuth(node)) {
-            logger.debug(">> running sudo %s as %s", scriptName, node.getCredentials().account);
-            logger.debug("<< complete(%d)", ssh.exec("sudo ./" + scriptName).getExitCode());
-         } else {
-            logger.debug(">> running sudo -S %s as %s", scriptName, node.getCredentials().account);
-            logger.debug("<< complete(%d)", ssh.exec(
-                     String.format("echo %s|sudo -S ./%s", node.getCredentials().key, scriptName))
-                     .getExitCode());
-         }
-      } finally {
-         if (ssh != null)
-            ssh.disconnect();
-      }
-   }
-
-   private boolean isKeyBasedAuth(CreateNodeResponse node) {
-      return node.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----");
    }
 
    protected CreateNodeResponse newCreateNodeResponse(Template template,
@@ -162,9 +122,8 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       return new CreateNodeResponseImpl(vApp.getId(), vApp.getName(), template.getImage()
                .getLocation(), vApp.getLocation(), ImmutableMap.<String, String> of(),
                vAppStatusToNodeState.get(vApp.getStatus()), getPublicAddresses(vApp.getId()),
-               getPrivateAddresses(vApp.getId()), 22, LoginType.SSH, new Credentials(metaMap
-                        .get("username"), metaMap.get("password")), ImmutableMap
-                        .<String, String> of());
+               getPrivateAddresses(vApp.getId()), new Credentials(metaMap.get("username"), metaMap
+                        .get("password")), ImmutableMap.<String, String> of());
    }
 
    @Override
@@ -175,12 +134,12 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
                node.getId(), "node.id"));
    }
 
-   private NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
+   protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
       VApp vApp = client.getVApp(id);
       return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
                ImmutableMap.<String, String> of(), vAppStatusToNodeState.get(vApp.getStatus()),
-               vApp.getNetworkToAddresses().values(), ImmutableSet.<InetAddress> of(), 22,
-               LoginType.SSH, ImmutableMap.<String, String> of());
+               vApp.getNetworkToAddresses().values(), ImmutableSet.<InetAddress> of(), ImmutableMap
+                        .<String, String> of());
    }
 
    @Override

@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.compute.VCloudComputeClientLiveTest;
@@ -57,8 +57,8 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
       client = injector.getInstance(HostingDotComVCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
       }));
-      expectationMap = ImmutableMap.<OperatingSystem, Expectation> builder().put(
-               OperatingSystem.CENTOS,
+      expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(
+               OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
       service = "vcloudtest";
       templateId = "3";

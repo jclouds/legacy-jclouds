@@ -32,7 +32,7 @@ import com.google.common.base.CaseFormat;
  * 
  * @author Adrian Cole
  */
-public enum OperatingSystem {
+public enum OsFamily {
    CENTOS, RHEL, FEDORA, DEBIAN, UBUNTU, JEOS, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
@@ -43,7 +43,7 @@ public enum OperatingSystem {
       return value();
    }
 
-   public static OperatingSystem fromValue(String operatingSystem) {
+   public static OsFamily fromValue(String operatingSystem) {
       return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(
                operatingSystem, "region")));
    }

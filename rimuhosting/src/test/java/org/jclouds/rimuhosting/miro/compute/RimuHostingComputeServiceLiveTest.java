@@ -18,7 +18,7 @@
  */
 package org.jclouds.rimuhosting.miro.compute;
 
-import static org.jclouds.compute.domain.OperatingSystem.JEOS;
+import static org.jclouds.compute.domain.OsFamily.JEOS;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Template;
@@ -39,7 +39,7 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.os(JEOS).osVersionMatches(".*9.04.*").smallest().build();
+      return templateBuilder.osFamily(JEOS).osDescriptionMatches(".*9.04.*").smallest().build();
    }
 
    @Override

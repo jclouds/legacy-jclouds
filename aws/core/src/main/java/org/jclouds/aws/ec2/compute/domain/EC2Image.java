@@ -21,11 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.compute;
+package org.jclouds.aws.ec2.compute.domain;
 
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 
 /**
  * 
@@ -33,15 +33,15 @@ import org.jclouds.compute.domain.OperatingSystem;
  */
 public class EC2Image implements Image {
    private final org.jclouds.aws.ec2.domain.Image image;
-   private final OperatingSystem os;
-   private final String osVersion;
+   private final OsFamily os;
+   private final String osDescription;
    private final String version;
 
-   public EC2Image(org.jclouds.aws.ec2.domain.Image image, OperatingSystem os, String osVersion,
+   public EC2Image(org.jclouds.aws.ec2.domain.Image image, OsFamily os, String osDescription,
             String version) {
       this.image = image;
       this.os = os;
-      this.osVersion = osVersion;
+      this.osDescription = osDescription;
       this.version = version;
    }
 
@@ -67,13 +67,13 @@ public class EC2Image implements Image {
    }
 
    @Override
-   public OperatingSystem getOperatingSystem() {
+   public OsFamily getOsFamily() {
       return os;
    }
 
    @Override
-   public String getOperatingSystemVersion() {
-      return osVersion;
+   public String getOsDescription() {
+      return osDescription;
    }
 
    @Override
@@ -91,7 +91,7 @@ public class EC2Image implements Image {
       int result = 1;
       result = prime * result + ((image == null) ? 0 : image.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
-      result = prime * result + ((osVersion == null) ? 0 : osVersion.hashCode());
+      result = prime * result + ((osDescription == null) ? 0 : osDescription.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
    }
@@ -115,10 +115,10 @@ public class EC2Image implements Image {
             return false;
       } else if (!os.equals(other.os))
          return false;
-      if (osVersion == null) {
-         if (other.osVersion != null)
+      if (osDescription == null) {
+         if (other.osDescription != null)
             return false;
-      } else if (!osVersion.equals(other.osVersion))
+      } else if (!osDescription.equals(other.osDescription))
          return false;
       if (version == null) {
          if (other.version != null)
@@ -132,7 +132,7 @@ public class EC2Image implements Image {
    public String toString() {
       return "[id=" + getId() + ", version=" + version + ", location=" + getLocation()
                + ", architecture=" + getArchitecture() + ", operatingSystem="
-               + getOperatingSystem() + ", operatingSystemVersion=" + getOperatingSystemVersion()
+               + getOsFamily() + ", operatingSystemVersion=" + getOsDescription()
                + ", description=" + getDescription() + "]";
    }
 

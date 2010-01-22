@@ -35,7 +35,7 @@ import org.apache.tools.ant.Project;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunNodeOptions;
@@ -94,7 +94,7 @@ public class ComputeTaskUtils {
       TemplateBuilder templateBuilder = computeService.templateBuilder();
       if (nodeElement.getLocation() != null && !"".equals(nodeElement.getLocation()))
          templateBuilder.location(nodeElement.getLocation());
-      templateBuilder.os(OperatingSystem.valueOf(nodeElement.getOs()));
+      templateBuilder.osFamily(OsFamily.valueOf(nodeElement.getOs()));
       addSizeFromElementToTemplate(nodeElement, templateBuilder);
       return templateBuilder.build();
    }

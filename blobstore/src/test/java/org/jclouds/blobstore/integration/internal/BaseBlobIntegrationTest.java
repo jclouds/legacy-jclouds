@@ -35,6 +35,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.SortedSet;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -321,7 +323,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
       Blob object = context.getBlobStore().newBlob(key);
       object.setPayload(TEST_STRING);
-      object.getMetadata().setContentType("text/plain");
+      object.getMetadata().setContentType(MediaType.TEXT_PLAIN);
       object.getMetadata().setSize(new Long(TEST_STRING.length()));
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.

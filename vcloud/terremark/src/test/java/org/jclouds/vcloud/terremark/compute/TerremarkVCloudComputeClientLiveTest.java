@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -73,12 +73,12 @@ public class TerremarkVCloudComputeClientLiveTest {
       }
    }
 
-   private Map<OperatingSystem, Expectation> expectationMap = ImmutableMap
-            .<OperatingSystem, Expectation> builder().put(OperatingSystem.CENTOS,
+   private Map<OsFamily, Expectation> expectationMap = ImmutableMap
+            .<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                      new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     OperatingSystem.RHEL,
+                     OsFamily.RHEL,
                      new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     OperatingSystem.UBUNTU, new Expectation(4194304, "Ubuntu Linux (64-bit)"))
+                     OsFamily.UBUNTU, new Expectation(4194304, "Ubuntu Linux (64-bit)"))
             .build();
    // .put(OperatingSystem.UBUNTU, new Expectation(4194304, "Ubuntu Linux (32-bit)"))
    private Predicate<InetAddress> addressTester;
@@ -86,7 +86,7 @@ public class TerremarkVCloudComputeClientLiveTest {
    @Test
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      OperatingSystem toTest = OperatingSystem.CENTOS;
+      OsFamily toTest = OsFamily.CENTOS;
 
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
@@ -102,7 +102,7 @@ public class TerremarkVCloudComputeClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.ON);
    }
 
-   private String getCompatibleServerName(OperatingSystem toTest) {
+   private String getCompatibleServerName(OsFamily toTest) {
       String serverName = CaseFormat.UPPER_UNDERSCORE
                .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
                         toTest.toString().length() <= 15 ? toTest.toString().length() : 14);

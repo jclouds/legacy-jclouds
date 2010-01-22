@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.terremark.compute;
+package org.jclouds.rackspace.cloudservers.compute;
 
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
@@ -25,11 +25,10 @@ import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
+import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -39,17 +38,17 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkVCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+@Test(groups = "live", enabled = true, sequential = true, testName = "cloudservers.CloudServersComputeServiceLiveTest")
+public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "terremark";
+      service = "cloudservers";
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().build();
+      return templateBuilder.osFamily(UBUNTU).osDescriptionMatches(".*9.10.*").smallest().build();
    }
 
    @Override
@@ -59,13 +58,9 @@ public class TerremarkVCloudComputeServiceLiveTest extends BaseComputeServiceLiv
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
+      RestContext<CloudServersAsyncClient, CloudServersClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
 
-      TerremarkVCloudComputeService computeService = TerremarkVCloudComputeService.class
-               .cast(client);
-
-      @SuppressWarnings("unused")
-      VCloudComputeClient computeClient = VCloudComputeClient.class.cast(computeService);
+      CloudServersComputeService.class.cast(client);
    }
 }
