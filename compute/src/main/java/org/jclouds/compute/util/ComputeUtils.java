@@ -21,6 +21,7 @@ package org.jclouds.compute.util;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.ByteArrayInputStream;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
@@ -71,26 +73,43 @@ public class ComputeUtils {
       SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().account,
                node.getCredentials().key.getBytes()) : sshFactory.create(socket, node
                .getCredentials().account, node.getCredentials().key);
-      try {
-         ssh.connect();
-         String scriptName = node.getId() + ".sh";
-         ssh.put(scriptName, new ByteArrayInputStream(script));
-         ssh.exec("chmod 755 " + scriptName);
-         if (node.getCredentials().account.equals("root")) {
-            logger.debug(">> running %s as %s", scriptName, node.getCredentials().account);
-            logger.debug("<< complete(%d)", ssh.exec("./" + scriptName).getExitCode());
-         } else if (isKeyAuth(node)) {
-            logger.debug(">> running sudo %s as %s", scriptName, node.getCredentials().account);
-            logger.debug("<< complete(%d)", ssh.exec("sudo ./" + scriptName).getExitCode());
-         } else {
-            logger.debug(">> running sudo -S %s as %s", scriptName, node.getCredentials().account);
-            logger.debug("<< complete(%d)", ssh.exec(
-                     String.format("echo %s|sudo -S ./%s", node.getCredentials().key, scriptName))
-                     .getExitCode());
+      for (int i = 0; i < 3; i++) {
+         try {
+            ssh.connect();
+            runScriptOnNodeWithClient(ssh, node, script);
+         } catch (RuntimeException from) {
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
+                     ConnectException.class)) >= 1) {
+               try {
+                  Thread.sleep(100);
+               } catch (InterruptedException e) {
+                  Throwables.propagate(e);
+               }
+               continue;
+            }
+            Throwables.propagate(from);
+         } finally {
+            if (ssh != null)
+               ssh.disconnect();
          }
-      } finally {
-         if (ssh != null)
-            ssh.disconnect();
+      }
+   }
+
+   private void runScriptOnNodeWithClient(SshClient ssh, CreateNodeResponse node, byte[] script) {
+      String scriptName = node.getId() + ".sh";
+      ssh.put(scriptName, new ByteArrayInputStream(script));
+      ssh.exec("chmod 755 " + scriptName);
+      if (node.getCredentials().account.equals("root")) {
+         logger.debug(">> running %s as %s", scriptName, node.getCredentials().account);
+         logger.debug("<< complete(%d)", ssh.exec("./" + scriptName).getExitCode());
+      } else if (isKeyAuth(node)) {
+         logger.debug(">> running sudo %s as %s", scriptName, node.getCredentials().account);
+         logger.debug("<< complete(%d)", ssh.exec("sudo ./" + scriptName).getExitCode());
+      } else {
+         logger.debug(">> running sudo -S %s as %s", scriptName, node.getCredentials().account);
+         logger.debug("<< complete(%d)", ssh.exec(
+                  String.format("echo %s|sudo -S ./%s", node.getCredentials().key, scriptName))
+                  .getExitCode());
       }
    }
 

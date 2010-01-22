@@ -67,7 +67,7 @@
     <compute action="destroy" provider="${url}">
        <node name="${nodename}" />
     </compute>
-    <sleep seconds="2" />
+    <sleep seconds="5" />
   </target>
 
   <target name="create" description="create the node ${nodename}" depends="destroy" >
