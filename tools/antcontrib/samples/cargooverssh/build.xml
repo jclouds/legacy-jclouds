@@ -72,7 +72,7 @@
 
   <target name="create" description="create the node ${nodename}" depends="destroy" >
      <compute action="create" provider="${url}">
-        <node name="${nodename}"  os="JEOS" size="SMALLEST"
+        <node name="${nodename}" os="UBUNTU" size="SMALLEST"
               runscript="runscript.sh" openports="22,${listenport}"
               hostproperty="host" usernameproperty="username" passwordproperty="password" />
      </compute>

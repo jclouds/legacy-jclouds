@@ -91,8 +91,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
          sizes.add(new CloudServersSize(from, from.getId() + "", from.getDisk() / 10,
-                  from                  .getRam(), from.getDisk(), ImmutableSet.<Architecture> of(Architecture.X86_32,
-                  Architecture.X86_64)));
+                  from.getRam(), from.getDisk(), ImmutableSet.<Architecture> of(
+                           Architecture.X86_32, Architecture.X86_64)));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
@@ -121,10 +121,12 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          String version = "";
 
          Matcher matcher = RACKSPACE_PATTERN.matcher(from.getName());
-         if (matcher.find()) {
+         osDescription = from.getName();
+         if (from.getName().indexOf("Red Hat EL") != -1) {
+            os = OsFamily.RHEL;
+         } else if (matcher.find()) {
             try {
                os = OsFamily.fromValue(matcher.group(2).toLowerCase());
-               osDescription = matcher.group(1);
             } catch (IllegalArgumentException e) {
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }

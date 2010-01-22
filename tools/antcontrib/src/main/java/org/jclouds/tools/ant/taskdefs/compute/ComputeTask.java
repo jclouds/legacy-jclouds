@@ -40,7 +40,9 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.http.HttpUtils;
@@ -80,7 +82,7 @@ public class ComputeTask extends Task {
    }
 
    public static enum Action {
-      CREATE, GET, LIST, LIST_DETAILS, DESTROY
+      CREATE, GET, LIST, LIST_DETAILS, DESTROY, LIST_IMAGES, LIST_SIZES
    }
 
    /**
@@ -124,6 +126,12 @@ public class ComputeTask extends Task {
          case LIST_DETAILS:
             listDetails(computeService);
             break;
+         case LIST_IMAGES:
+            listImages(computeService);
+            break;
+         case LIST_SIZES:
+            listSizes(computeService);
+            break;
          default:
             this.log("bad action: " + action, Project.MSG_ERR);
       }
@@ -134,6 +142,23 @@ public class ComputeTask extends Task {
       for (ComputeMetadata node : computeService.listNodes()) {// TODO
          // parallel
          logDetails(computeService, node);
+      }
+   }
+
+   private void listImages(ComputeService computeService) {
+      log("list images");
+      for (Image image : computeService.listImages()) {// TODO
+         log(String.format("   image location=%s, id=%s, version=%s, arch=%s, osfam=%s, desc=%s",
+                  image.getLocation(), image.getId(), image.getVersion(), image.getArchitecture(),
+                  image.getOsFamily(), image.getOsDescription()));
+      }
+   }
+
+   private void listSizes(ComputeService computeService) {
+      log("list sizes");
+      for (Size size : computeService.listSizes()) {// TODO
+         log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getId(), size
+                  .getCores(), size.getRam(), size.getDisk()));
       }
    }
 

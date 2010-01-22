@@ -69,6 +69,14 @@
     <compute action="list-details" provider="${jclouds.compute.url}" />
   </target>
 
+  <target name="list-images" description="list the images supported">
+    <compute action="list-images" provider="${jclouds.compute.url}" />
+  </target>
+
+  <target name="list-sizes" description="list the sizes supported">
+    <compute action="list-sizes" provider="${jclouds.compute.url}" />
+  </target>
+
   <target name="destroy" description="destroy the node ${nodename}">
 
     <input
