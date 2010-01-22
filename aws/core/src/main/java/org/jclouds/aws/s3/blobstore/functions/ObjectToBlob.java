@@ -42,6 +42,8 @@ public class ObjectToBlob implements Function<S3Object, Blob> {
    }
 
    public Blob apply(S3Object from) {
+      if (from == null)
+         return null;
       Blob blob = blobFactory.create(object2BlobMd.apply(from.getMetadata()));
       if (from.getContentLength() != null)
          blob.setContentLength(from.getContentLength());

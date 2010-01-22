@@ -39,6 +39,8 @@ public class BlobToObject implements Function<Blob, AtmosObject> {
    }
 
    public AtmosObject apply(Blob from) {
+      if (from == null)
+         return null;
       AtmosObject object = blobMd2Object.apply(from.getMetadata());
       object.setPayload(from.getPayload());
       object.setAllHeaders(from.getAllHeaders());

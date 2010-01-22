@@ -25,6 +25,7 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -328,6 +329,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       object.getMetadata().setContentMD5(new JCEEncryptionService().md5(TEST_STRING.getBytes()));
       String containerName = getContainerName();
       try {
+         assertNull(context.getBlobStore().blobMetadata(containerName, "powderpuff"));
+
          addBlobToContainer(containerName, object);
          Blob newObject = validateContent(containerName, key);
 

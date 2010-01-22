@@ -49,7 +49,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -82,12 +81,10 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    public InputStream get(Object o) {
       String realKey = prefixer.apply(o.toString());
       try {
-         return connection.getBlob(containerName, realKey).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS).getContent();
+         Blob blob = connection.getBlob(containerName, realKey).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS);
+         return blob != null ? blob.getContent() : null;
       } catch (Exception e) {
-         if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
-                  KeyNotFoundException.class)) >= 1)
-            return null;
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException(String.format("Error geting blob %s:%s", containerName,
                   realKey), e);
@@ -107,8 +104,8 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error removing blob %s:%s",
-                  containerName, realKey), e);
+         throw new BlobRuntimeException(String.format("Error removing blob %s:%s", containerName,
+                  realKey), e);
       }
       return old;
    }
@@ -295,8 +292,8 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
          return returnVal;
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error adding blob %s:%s",
-                  containerName, object), e);
+         throw new BlobRuntimeException(String.format("Error adding blob %s:%s", containerName,
+                  object), e);
       }
    }
 

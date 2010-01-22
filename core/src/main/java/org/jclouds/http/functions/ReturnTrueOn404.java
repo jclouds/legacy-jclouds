@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponseException;
@@ -34,7 +36,7 @@ public class ReturnTrueOn404 implements Function<Exception, Boolean> {
             return true;
          }
       }
-      return null;
+      return Boolean.class.cast(propagateOrNull(from));
    }
 
 }

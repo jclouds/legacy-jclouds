@@ -122,7 +122,7 @@ public class JCloudsS3Service extends S3Service {
          throw new UnsupportedOperationException("Bucket ACL is not yet supported");
 
       try {
-         if (connection.putBucketInRegion(Region.fromValue(location), bucketName)) {
+         if (connection.putBucketInRegion(Region.DEFAULT, bucketName)) {
             // Bucket created.
          }
       } catch (Exception e) {

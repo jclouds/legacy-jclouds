@@ -42,6 +42,8 @@ public class ObjectToBlob implements Function<CFObject, Blob> {
    }
 
    public Blob apply(CFObject from) {
+      if (from == null)
+         return null;
       Blob blob = blobFactory.create(object2BlobMd.apply(from.getInfo()));
       if (from.getContentLength() != null)
          blob.setContentLength(from.getContentLength());

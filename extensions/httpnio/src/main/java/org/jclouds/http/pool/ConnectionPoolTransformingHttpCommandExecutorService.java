@@ -19,7 +19,7 @@
 package org.jclouds.http.pool;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.net.URI;
 import java.util.concurrent.BlockingQueue;

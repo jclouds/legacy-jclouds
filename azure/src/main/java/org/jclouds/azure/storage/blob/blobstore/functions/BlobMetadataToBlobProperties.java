@@ -31,17 +31,19 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class BlobMetadataToBlobProperties implements Function<BlobMetadata, MutableBlobProperties> {
-   public MutableBlobProperties apply(BlobMetadata base) {
+   public MutableBlobProperties apply(BlobMetadata from) {
+      if (from == null)
+         return null;
       MutableBlobProperties to = new MutableBlobPropertiesImpl();
-      to.setContentType(base.getContentType());
-      to.setETag(base.getETag());
-      to.setContentMD5(base.getContentMD5());
-      to.setName(base.getName());
-      to.setLastModified(base.getLastModified());
-      if (base.getSize() != null)
-         to.setContentLength(base.getSize());
-      if (base.getUserMetadata() != null)
-         to.setMetadata(base.getUserMetadata());
+      to.setContentType(from.getContentType());
+      to.setETag(from.getETag());
+      to.setContentMD5(from.getContentMD5());
+      to.setName(from.getName());
+      to.setLastModified(from.getLastModified());
+      if (from.getSize() != null)
+         to.setContentLength(from.getSize());
+      if (from.getUserMetadata() != null)
+         to.setMetadata(from.getUserMetadata());
       return to;
    }
 

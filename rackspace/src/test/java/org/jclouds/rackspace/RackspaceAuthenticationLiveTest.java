@@ -24,7 +24,6 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -37,6 +36,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
@@ -110,7 +110,7 @@ public class RackspaceAuthenticationLiveTest {
       assertNotNull(response.getAuthToken());
    }
 
-   @Test(expectedExceptions = ExecutionException.class)
+   @Test(expectedExceptions = AuthorizationException.class)
    public void testBadAuthentication() throws Exception {
       RackspaceAuthentication authentication = context.getAsyncApi();
       authentication.authenticate("foo", "bar").get(10, TimeUnit.SECONDS);

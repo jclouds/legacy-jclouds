@@ -20,7 +20,8 @@ package org.jclouds.azure.storage.blob.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.convertExceptionToValue;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.*;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -87,15 +88,15 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
     * This implementation uses the AzureBlob HEAD Object command to return the result
     */
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(async.getBlobProperties(container, key),
-               new Function<BlobProperties, BlobMetadata>() {
+      return compose(convertExceptionToValue(async.getBlobProperties(container, key),
+               KeyNotFoundException.class, null), new Function<BlobProperties, BlobMetadata>() {
 
-                  @Override
-                  public BlobMetadata apply(BlobProperties from) {
-                     return object2BlobMd.apply(from);
-                  }
+         @Override
+         public BlobMetadata apply(BlobProperties from) {
+            return object2BlobMd.apply(from);
+         }
 
-               }, service);
+      }, service);
    }
 
    public ListenableFuture<Void> clearContainer(final String container) {
@@ -129,7 +130,8 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions azureOptions = blob2ObjectGetOptions.apply(optionsList);
       ListenableFuture<AzureBlob> returnVal = async.getBlob(container, key, azureOptions);
-      return compose(returnVal, object2Blob, service);
+      return compose(convertExceptionToValue(returnVal, KeyNotFoundException.class, null),
+               object2Blob, service);
    }
 
    public ListenableFuture<? extends org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>> list() {

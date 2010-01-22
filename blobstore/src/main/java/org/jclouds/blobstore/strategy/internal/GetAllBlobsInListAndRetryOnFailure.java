@@ -30,7 +30,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
@@ -41,7 +40,6 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -84,7 +82,8 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
       for (BlobMetadata md : getAllBlobMetadata.execute(container, options)) {
          futureObjects.put(md.getName(), connection.getBlob(container, md.getName()));
       }
-      for (Entry<String, ListenableFuture<? extends Blob>> futureObjectEntry : futureObjects.entrySet()) {
+      for (Entry<String, ListenableFuture<? extends Blob>> futureObjectEntry : futureObjects
+               .entrySet()) {
          try {
             ifNotFoundRetryOtherwiseAddToSet(container, futureObjectEntry.getKey(),
                      futureObjectEntry.getValue(), objects);
@@ -103,20 +102,15 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
             ListenableFuture<? extends Blob> value, Set<Blob> objects) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (int i = 0; i < 3; i++) {
-         try {
-            Blob object = value.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-            object.getMetadata().setName(key);
-            objects.add(object);
-            return;
-         } catch (Exception e) {
-            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
-                     KeyNotFoundException.class)) >= 1) {
-               Thread.sleep(requestRetryMilliseconds);
-               value = connection.getBlob(container, key);
-            } else {
-               Throwables.propagate(e);
-            }
+         Blob object = value.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         if (object == null) {
+            Thread.sleep(requestRetryMilliseconds);
+            value = connection.getBlob(container, key);
+            continue;
          }
+         object.getMetadata().setName(key);
+         objects.add(object);
+         return;
       }
    }
 }

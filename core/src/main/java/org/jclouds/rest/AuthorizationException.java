@@ -16,31 +16,32 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.functions;
-
-import static org.jclouds.util.Utils.propagateOrNull;
-
-import javax.inject.Singleton;
-
-import org.jclouds.http.HttpResponseException;
-
-import com.google.common.base.Function;
+package org.jclouds.rest;
 
 /**
+ * Thrown when there is an authorization error.
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class ReturnFalseOn404 implements Function<Exception, Boolean> {
+public class AuthorizationException extends RuntimeException {
 
-   public Boolean apply(Exception from) {
-      if (from instanceof HttpResponseException) {
-         HttpResponseException responseException = (HttpResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
-            return false;
-         }
-      }
-      return Boolean.class.cast(propagateOrNull(from));
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -2272965726680821281L;
+
+   public AuthorizationException() {
+      super();
+   }
+
+   public AuthorizationException(String arg0, Throwable arg1) {
+      super(arg0, arg1);
+   }
+
+   public AuthorizationException(String arg0) {
+      super(arg0);
+   }
+
+   public AuthorizationException(Throwable arg0) {
+      super(arg0);
    }
 
 }

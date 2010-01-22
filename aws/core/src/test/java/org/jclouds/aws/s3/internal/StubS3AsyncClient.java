@@ -64,7 +64,7 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.concurrent.internal.ConcurrentUtils;
+import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.options.GetOptions;
 

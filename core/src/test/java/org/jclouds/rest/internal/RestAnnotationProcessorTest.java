@@ -69,7 +69,7 @@ import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
@@ -1530,7 +1530,7 @@ public class RestAnnotationProcessorTest {
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("test".getBytes().length + ""));
       assertEquals(processor.createResponseParser(method, request).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    @Test

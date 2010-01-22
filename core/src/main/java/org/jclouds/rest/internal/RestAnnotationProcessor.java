@@ -66,7 +66,7 @@ import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
@@ -90,7 +90,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -216,7 +216,7 @@ public class RestAnnotationProcessor<T> {
       if (annotation != null) {
          return injector.getInstance(annotation.value());
       }
-      return injector.getInstance(ThrowResourceNotFoundOn404.class);
+      return injector.getInstance(MapHttp4xxCodesToExceptions.class);
    }
 
    @SuppressWarnings("unchecked")
@@ -646,7 +646,7 @@ public class RestAnnotationProcessor<T> {
             return ReturnStringIf200.class;
          } else if (method.getReturnType().equals(void.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
-            return ReturnVoidIf2xx.class;
+            return CloseContentAndReturn.class;
          } else if (method.getReturnType().equals(URI.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureURILiteral)) {
             return ParseURIFromListOrLocationHeaderIf20x.class;

@@ -42,6 +42,8 @@ public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlo
    }
 
    public MutableBlobMetadata apply(ObjectMetadata from) {
+      if (from == null)
+         return null;
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       to.setContentMD5(from.getContentMD5());
       if (from.getContentType() != null)

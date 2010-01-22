@@ -42,6 +42,8 @@ public class ObjectToBlob implements Function<AtmosObject, Blob> {
    }
 
    public Blob apply(AtmosObject from) {
+      if (from == null)
+         return null;
       Blob blob = blobFactory.create(object2BlobMd.apply(from));
       if (from.getContentMetadata().getContentLength() != null)
          blob.setContentLength(from.getContentMetadata().getContentLength());

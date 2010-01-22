@@ -44,11 +44,13 @@ public class BlobMetadataToObject implements Function<BlobMetadata, AtmosObject>
       this.blob2SysMd = blob2SysMd;
    }
 
-   public AtmosObject apply(BlobMetadata base) {
+   public AtmosObject apply(BlobMetadata from) {
+      if (from == null)
+         return null;
       UserMetadata userMd = new UserMetadata();
-      if (base.getUserMetadata() != null)
-         userMd.getMetadata().putAll(base.getUserMetadata());
-      return factory.create(blob2ContentMd.apply(base), blob2SysMd.apply(base), userMd);
+      if (from.getUserMetadata() != null)
+         userMd.getMetadata().putAll(from.getUserMetadata());
+      return factory.create(blob2ContentMd.apply(from), blob2SysMd.apply(from), userMd);
    }
 
 }

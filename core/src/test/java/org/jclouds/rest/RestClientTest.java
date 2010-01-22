@@ -29,7 +29,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
@@ -83,7 +83,7 @@ public abstract class RestClientTest<T> {
    protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
       if (parserClass == null)
          assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
-                  method).getClass(), ThrowResourceNotFoundOn404.class);
+                  method).getClass(), MapHttp4xxCodesToExceptions.class);
       else
          assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
                   method).getClass(), parserClass);

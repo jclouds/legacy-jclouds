@@ -44,7 +44,7 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -165,7 +165,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
                "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DeregisterImage&ImageId=imageId");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -339,7 +339,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
                httpMethod,
                "Action=ModifyImageAttribute&Attribute=launchPermission&ImageId=imageId&OperationType=add&Signature=pWWwIIdcLSw0vrWFpRsCnHk93X3qYWVfcl%2FaXRhoFd8%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&UserGroup.1=all&UserId.1=bob&UserId.2=sue&Version=2009-11-30&AWSAccessKeyId=user");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -359,7 +359,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=remove&Attribute=launchPermission&ImageId=imageId&UserGroup.1=all&UserId.1=bob&UserId.2=sue");
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -378,7 +378,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
                "Content-Length: 88\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=ResetImageAttribute&Attribute=launchPermission&ImageId=imageId");
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -399,7 +399,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
                httpMethod,
                "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=add&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -420,7 +420,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
                httpMethod,
                "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=remove&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

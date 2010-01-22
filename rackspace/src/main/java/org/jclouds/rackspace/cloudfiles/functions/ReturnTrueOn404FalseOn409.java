@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
@@ -33,7 +35,6 @@ public class ReturnTrueOn404FalseOn409 implements Function<Exception, Boolean> {
             return false;
          }
       }
-      return null;
+      return Boolean.class.cast(propagateOrNull(from));
    }
-
 }

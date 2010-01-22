@@ -38,6 +38,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.OutputSupplier;
@@ -49,6 +50,12 @@ import com.google.common.io.OutputSupplier;
  */
 public class Utils {
    public static final String UTF8_ENCODING = "UTF-8";
+
+   public static Object propagateOrNull(Exception from) {
+      Throwables.propagate(from);
+      assert false : "exception should have propogated";
+      return null;
+   }
 
    public static String replaceTokens(String value, Collection<Entry<String, String>> tokenValues) {
       for (Entry<String, String> tokenValue : tokenValues) {

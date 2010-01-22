@@ -37,7 +37,7 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -73,7 +73,7 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DisassociateAddress&PublicIp=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -92,7 +92,7 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -110,7 +110,7 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
                "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

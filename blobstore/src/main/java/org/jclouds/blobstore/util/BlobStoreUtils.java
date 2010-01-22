@@ -19,15 +19,20 @@
 package org.jclouds.blobstore.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.propagateOrNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.util.Utils;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.
@@ -35,6 +40,13 @@ import org.jclouds.util.Utils;
  * @author Adrian Cole
  */
 public class BlobStoreUtils {
+   @SuppressWarnings("unchecked")
+   public static <T> T returnNullOnKeyNotFoundOrPropagate(Exception e) {
+      if (Iterables
+               .size(Iterables.filter(Throwables.getCausalChain(e), KeyNotFoundException.class)) >= 1)
+         return null;
+      return (T) propagateOrNull(e);
+   }
 
    public static Blob newBlob(BlobStore blobStore, StorageMetadata blobMeta) {
       Blob blob = blobStore.newBlob(blobMeta.getName());

@@ -40,7 +40,6 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -116,12 +115,10 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
    public Blob get(Object key) {
       String realKey = prefixer.apply(key.toString());
       try {
-         return stripPrefix(connection.getBlob(containerName, realKey).get(
-                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS));
+         Blob blob = connection.getBlob(containerName, realKey).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS);
+         return blob != null ? stripPrefix(blob) : null;
       } catch (Exception e) {
-         if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
-                  KeyNotFoundException.class)) >= 1)
-            return null;
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException(String.format("Error geting blob %s:%s", containerName,
                   realKey), e);
@@ -180,8 +177,8 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error removing blob %s:%s",
-                  containerName, realKey), e);
+         throw new BlobRuntimeException(String.format("Error removing blob %s:%s", containerName,
+                  realKey), e);
       }
       return old;
    }

@@ -41,11 +41,11 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -85,7 +85,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testListQueuesOptions() throws SecurityException, NoSuchMethodException {
@@ -107,7 +107,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testCreateQueue() throws SecurityException, NoSuchMethodException {
@@ -129,7 +129,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testCreateQueueOptions() throws SecurityException, NoSuchMethodException {
@@ -152,7 +152,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testDeleteQueue() throws SecurityException, NoSuchMethodException {
@@ -168,11 +168,11 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testPutMessage() throws SecurityException, NoSuchMethodException, IOException {
@@ -187,7 +187,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       assertPayloadEquals(httpMethod,
                "<QueueMessage><MessageText>message</MessageText></QueueMessage>");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -207,7 +207,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       assertPayloadEquals(httpMethod,
                "<QueueMessage><MessageText>message</MessageText></QueueMessage>");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -223,7 +223,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       assertHeadersEqual(httpMethod, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpMethod, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

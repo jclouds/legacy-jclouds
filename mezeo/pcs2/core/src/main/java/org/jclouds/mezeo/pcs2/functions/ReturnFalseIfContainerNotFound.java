@@ -18,6 +18,8 @@
  */
 package org.jclouds.mezeo.pcs2.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -35,7 +37,7 @@ public class ReturnFalseIfContainerNotFound implements Function<Exception, Boole
       if (from instanceof ContainerNotFoundException) {
          return false;
       }
-      return null;
+      return Boolean.class.cast(propagateOrNull(from));
    }
 
 }

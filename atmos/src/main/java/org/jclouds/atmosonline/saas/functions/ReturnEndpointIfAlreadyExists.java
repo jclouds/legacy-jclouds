@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmosonline.saas.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import java.net.URI;
 
 import org.jclouds.blobstore.KeyAlreadyExistsException;
@@ -38,11 +40,11 @@ public class ReturnEndpointIfAlreadyExists implements Function<Exception, URI>, 
       if (from instanceof KeyAlreadyExistsException) {
          return endpoint;
       }
-      return null;
+      return URI.class.cast(propagateOrNull(from));
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {
-      this.endpoint = request == null?null:request.getEndpoint();
+      this.endpoint = request == null ? null : request.getEndpoint();
    }
 
 }

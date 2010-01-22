@@ -42,6 +42,8 @@ public class AzureBlobToBlob implements Function<AzureBlob, Blob> {
    }
 
    public Blob apply(AzureBlob from) {
+      if (from == null)
+         return null;
       Blob blob = blobFactory.create(blobPr2BlobMd.apply(from.getProperties()));
       if (from.getContentLength() != null)
          blob.setContentLength(from.getContentLength());

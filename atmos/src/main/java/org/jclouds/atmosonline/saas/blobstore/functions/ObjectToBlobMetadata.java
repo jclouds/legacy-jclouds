@@ -55,6 +55,8 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
    }
 
    public MutableBlobMetadata apply(AtmosObject from) {
+      if (from == null)
+         return null;
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       to.setId(from.getSystemMetadata().getObjectID());
       to.setLastModified(from.getSystemMetadata().getLastUserDataModification());

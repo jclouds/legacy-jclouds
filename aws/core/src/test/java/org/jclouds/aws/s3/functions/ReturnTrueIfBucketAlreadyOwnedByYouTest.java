@@ -18,13 +18,8 @@
  */
 package org.jclouds.aws.s3.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
 import org.testng.annotations.Test;
 
 /**
@@ -39,19 +34,15 @@ public class ReturnTrueIfBucketAlreadyOwnedByYouTest {
       assert new ReturnTrueIfBucketAlreadyOwnedByYou().apply(e);
    }
 
-   @Test
+   @Test(expectedExceptions = AWSResponseException.class)
    void testBlahIsNotOk() throws Exception {
       Exception e = getErrorWithCode("blah");
-      assert new ReturnTrueIfBucketAlreadyOwnedByYou().apply(e) == null;
+      new ReturnTrueIfBucketAlreadyOwnedByYou().apply(e);
    }
 
    private Exception getErrorWithCode(String code) {
-      AWSResponseException inner = createMock(AWSResponseException.class);
-      AWSError error = createMock(AWSError.class);
-      expect(inner.getError()).andReturn(error);
-      expect(error.getCode()).andReturn(code);
-      replay(inner);
-      replay(error);
-      return inner;
+      AWSError error = new AWSError();
+      error.setCode(code);
+      return new AWSResponseException(null, null, null, error);
    }
 }

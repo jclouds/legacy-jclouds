@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
@@ -74,8 +73,8 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Blob object = blobProvider.create(null);
       object.getMetadata().setName("key");
       object.setPayload("goo");
-      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
-               new KeyNotFoundException());
+      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
+               null);
       context.getInstance(AsyncBlobStore.class).putBlob("container", object).get();
       replay(futureObject);
       Set<Blob> objects = new HashSet<Blob>();
@@ -99,8 +98,8 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
 
       ListenableFuture<Blob> futureObject = createMock(ListenableFuture.class);
       Blob object = createMock(Blob.class);
-      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
-               new KeyNotFoundException()).atLeastOnce();
+      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
+               null).atLeastOnce();
       replay(futureObject);
       Set<Blob> objects = new HashSet<Blob>();
       long time = System.currentTimeMillis();

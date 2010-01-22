@@ -42,6 +42,8 @@ public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, Mu
    }
 
    public MutableBlobMetadata apply(BlobProperties from) {
+      if (from == null)
+         return null;
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       if (from.getContentMD5() != null)
          to.setContentMD5(from.getContentMD5());

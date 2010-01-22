@@ -20,7 +20,8 @@ package org.jclouds.atmosonline.saas.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.convertExceptionToValue;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.net.URI;
 import java.util.concurrent.Callable;
@@ -39,6 +40,7 @@ import org.jclouds.atmosonline.saas.blobstore.internal.BaseAtmosBlobStore;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -81,13 +83,13 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
     * This implementation uses the AtmosStorage HEAD Object command to return the result
     */
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(async.headFile(container + "/" + key),
-               new Function<AtmosObject, BlobMetadata>() {
-                  @Override
-                  public BlobMetadata apply(AtmosObject from) {
-                     return object2BlobMd.apply(from);
-                  }
-               }, service);
+      return compose(convertExceptionToValue(async.headFile(container + "/" + key),
+               KeyNotFoundException.class, null), new Function<AtmosObject, BlobMetadata>() {
+         @Override
+         public BlobMetadata apply(AtmosObject from) {
+            return object2BlobMd.apply(from);
+         }
+      }, service);
    }
 
    public ListenableFuture<Void> clearContainer(final String container) {
@@ -155,7 +157,8 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
       ListenableFuture<AtmosObject> returnVal = async.readFile(container + "/" + key, httpOptions);
-      return compose(returnVal, object2Blob, service);
+      return compose(convertExceptionToValue(returnVal, KeyNotFoundException.class, null),
+               object2Blob, service);
    }
 
    public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {

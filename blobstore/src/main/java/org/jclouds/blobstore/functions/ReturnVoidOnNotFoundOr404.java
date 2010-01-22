@@ -19,8 +19,7 @@
 package org.jclouds.blobstore.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.lang.reflect.Constructor;
+import static org.jclouds.util.Utils.propagateOrNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,18 +33,6 @@ import com.google.common.base.Function;
 @Singleton
 public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
 
-   static final Void v;
-   static {
-      Constructor<Void> cv;
-      try {
-         cv = Void.class.getDeclaredConstructor();
-         cv.setAccessible(true);
-         v = cv.newInstance();
-      } catch (Exception e) {
-         throw new Error("Error setting up class", e);
-      }
-   }
-
    private final ReturnTrueOn404 rto404;
 
    @Inject
@@ -55,11 +42,12 @@ public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
 
    public Void apply(Exception from) {
       if (from instanceof KeyNotFoundException || from instanceof ContainerNotFoundException) {
-         return v;
+         return null;
       } else {
-         return rto404.apply(from) ? v : null;
+         Boolean value = rto404.apply(from);
+         if (value != null && value)
+            return null;
       }
-
+      return Void.class.cast(propagateOrNull(from));
    }
-
 }

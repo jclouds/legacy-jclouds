@@ -38,7 +38,7 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -74,7 +74,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DeleteSecurityGroup&GroupName=name");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnGroupNotFound.class);
 
@@ -94,7 +94,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=CreateSecurityGroup&GroupDescription=description&GroupName=name");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -155,7 +155,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                httpMethod,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -177,7 +177,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                httpMethod,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -199,7 +199,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                httpMethod,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -221,7 +221,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                httpMethod,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

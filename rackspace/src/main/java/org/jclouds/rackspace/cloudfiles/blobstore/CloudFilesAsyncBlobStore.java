@@ -19,8 +19,9 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.concurrent.ConcurrentUtils.convertExceptionToValue;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -89,7 +90,8 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
     */
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
 
-      return compose(async.getObjectInfo(container, key),
+      return compose(convertExceptionToValue(async.getObjectInfo(container, key),
+               KeyNotFoundException.class, null),
                new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
 
                   @Override
@@ -139,7 +141,8 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
       ListenableFuture<CFObject> returnVal = async.getObject(container, key, httpOptions);
-      return compose(returnVal, object2Blob, service);
+      return compose(convertExceptionToValue(returnVal, KeyNotFoundException.class, null),
+               object2Blob, service);
    }
 
    public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {

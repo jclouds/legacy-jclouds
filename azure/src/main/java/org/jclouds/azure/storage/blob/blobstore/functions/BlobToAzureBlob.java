@@ -41,6 +41,8 @@ public class BlobToAzureBlob implements Function<Blob, AzureBlob> {
    }
 
    public AzureBlob apply(Blob from) {
+      if (from == null)
+         return null;
       AzureBlob object = objectProvider.create(blob2ObjectMd.apply(from.getMetadata()));
       if (from.getContentLength() != null)
          object.setContentLength(from.getContentLength());

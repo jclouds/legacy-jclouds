@@ -36,7 +36,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
@@ -69,7 +69,7 @@ public class PCSCloudTest {
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    private RestAnnotationProcessor<PCSCloud> processor;

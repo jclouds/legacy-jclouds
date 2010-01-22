@@ -98,9 +98,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
             }
          } catch (RuntimeException e) {
             if (exceptionParser != null) {
-               final Object toReturn = exceptionParser.apply(e);
-               if (toReturn == null)
-                  throw e;
+               Object toReturn = exceptionParser.apply(e);
                if (method.getReturnType().isAssignableFrom(ListenableFuture.class)) {
                   ValueFuture<Object> returnVal = ValueFuture.create();
                   returnVal.set(toReturn);

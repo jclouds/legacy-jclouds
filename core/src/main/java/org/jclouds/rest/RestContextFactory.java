@@ -48,7 +48,8 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
     * Initializes with the default properties built-in to jclouds. This is typically stored in the
     * classpath resource {@code filename}
     * 
-    * @param filename name of the properties file to initialize from
+    * @param filename
+    *           name of the properties file to initialize from
     * @throws IOException
     *            if the default properties file cannot be loaded
     * @see #getPropertiesFromResource
@@ -123,6 +124,11 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
 
    public T createContext(String hint, Iterable<? extends Module> modules, Properties overrides) {
       return createContext(hint, null, null, modules, overrides);
+   }
+
+   public T createContext(String hint, @Nullable String account, @Nullable String key,
+            Iterable<? extends Module> modules) {
+      return createContext(hint, account, key, modules, new Properties());
    }
 
    /**

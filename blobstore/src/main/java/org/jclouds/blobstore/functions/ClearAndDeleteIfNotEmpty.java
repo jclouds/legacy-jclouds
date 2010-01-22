@@ -18,7 +18,8 @@
  */
 package org.jclouds.blobstore.functions;
 
-import java.lang.reflect.Constructor;
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -36,17 +37,7 @@ import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, InvocationContext {
-   static final Void v;
-   static {
-      Constructor<Void> cv;
-      try {
-         cv = Void.class.getDeclaredConstructor();
-         cv.setAccessible(true);
-         v = cv.newInstance();
-      } catch (Exception e) {
-         throw new Error("Error setting up class", e);
-      }
-   }
+
    /**
     * maximum duration of an blob Request
     */
@@ -69,13 +60,13 @@ public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, Invo
       if (from instanceof HttpResponseException) {
          HttpResponseException responseException = (HttpResponseException) from;
          if (responseException.getResponse().getStatusCode() == 404) {
-            return v;
+            return null;
          } else if (responseException.getResponse().getStatusCode() == 409) {
             clear.execute(request.getArgs()[0].toString());
             try {
                connection.deleteContainer(request.getArgs()[0].toString()).get(
                         requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-               return v;
+               return null;
             } catch (Exception e) {
                Throwables.propagateIfPossible(e, BlobRuntimeException.class);
                throw new BlobRuntimeException("Error deleting container: "
@@ -83,7 +74,7 @@ public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, Invo
             }
          }
       }
-      return null;
+      return Void.class.cast(propagateOrNull(from));
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

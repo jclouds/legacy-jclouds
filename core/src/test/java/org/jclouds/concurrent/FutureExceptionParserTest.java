@@ -18,7 +18,8 @@
  */
 package org.jclouds.concurrent;
 
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
+import static org.jclouds.util.Utils.propagateOrNull;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
@@ -30,6 +31,8 @@ import java.util.concurrent.TimeoutException;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -48,7 +51,7 @@ public class FutureExceptionParserTest {
       assertEquals(future.get(), "foo");
    }
 
-   @Test(expectedExceptions = ExecutionException.class)
+   @Test(expectedExceptions = Exception.class)
    public void testGetUnmatched() throws InterruptedException, ExecutionException {
       ListenableFuture<?> future = createListenableFuture(new Exception("foo"));
       assertEquals(future.get(), "foo");
@@ -61,7 +64,7 @@ public class FutureExceptionParserTest {
       assertEquals(future.get(1, TimeUnit.SECONDS), "foo");
    }
 
-   @Test(expectedExceptions = ExecutionException.class)
+   @Test(expectedExceptions = Exception.class)
    public void testGetLongTimeUnitUnmatched() throws InterruptedException, ExecutionException,
             TimeoutException {
       ListenableFuture<?> future = createListenableFuture(new Exception("foo"));
@@ -81,7 +84,10 @@ public class FutureExceptionParserTest {
       future = new FutureExceptionParser(future, new Function<Exception, String>() {
 
          public String apply(Exception from) {
-            return (from instanceof RuntimeException) ? from.getMessage() : null;
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
+                     RuntimeException.class)) >= 1)
+               return from.getMessage();
+            return String.class.cast(propagateOrNull(from));
          }
 
       });

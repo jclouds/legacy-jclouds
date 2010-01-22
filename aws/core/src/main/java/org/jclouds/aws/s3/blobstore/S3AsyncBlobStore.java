@@ -20,7 +20,8 @@ package org.jclouds.aws.s3.blobstore;
 
 import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.convertExceptionToValue;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -87,15 +88,15 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
     * This implementation uses the S3 HEAD Object command to return the result
     */
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(makeListenable(async.headObject(container, key), service),
-               new Function<ObjectMetadata, BlobMetadata>() {
+      return compose(convertExceptionToValue(async.headObject(container, key),
+               KeyNotFoundException.class, null), new Function<ObjectMetadata, BlobMetadata>() {
 
-                  @Override
-                  public BlobMetadata apply(ObjectMetadata from) {
-                     return object2BlobMd.apply(from);
-                  }
+         @Override
+         public BlobMetadata apply(ObjectMetadata from) {
+            return object2BlobMd.apply(from);
+         }
 
-               }, service);
+      }, service);
    }
 
    public ListenableFuture<Void> clearContainer(final String container) {
@@ -158,7 +159,8 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
    public ListenableFuture<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      return compose(async.getObject(container, key, httpOptions), object2Blob, service);
+      return compose(convertExceptionToValue(async.getObject(container, key, httpOptions),
+               KeyNotFoundException.class, null), object2Blob, service);
    }
 
    public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {

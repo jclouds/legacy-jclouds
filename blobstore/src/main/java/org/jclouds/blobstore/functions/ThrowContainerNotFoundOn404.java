@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.http.HttpResponseException;
 
@@ -40,7 +42,7 @@ public class ThrowContainerNotFoundOn404 implements Function<Exception, Object> 
             throw new ContainerNotFoundException(from);
          }
       }
-      return null;
+      return propagateOrNull(from);
    }
 
 }

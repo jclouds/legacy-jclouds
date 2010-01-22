@@ -41,7 +41,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.blobstore.functions.BlobToPCSFile;
@@ -53,7 +53,7 @@ import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 import org.jclouds.mezeo.pcs2.xml.ContainerHandler;
 import org.jclouds.mezeo.pcs2.xml.FileHandler;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
@@ -115,7 +115,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getRequestLine(), "DELETE http://localhost/container/1234 HTTP/1.1");
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), null);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
@@ -135,7 +135,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
                ContainerHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), MapHttp4xxCodesToExceptions.class);
    }
 
    public void testGetFileInfo() throws SecurityException, NoSuchMethodException {
@@ -185,7 +185,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertHeadersEqual(httpMethod, "Content-Length: 5\n");
       assertPayloadEquals(httpMethod, "hello");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -216,7 +216,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getRequestLine(), "DELETE http://localhost/contents/file HTTP/1.1");
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), null);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
@@ -238,9 +238,9 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals("bar", httpMethod.getPayload().getRawContent());
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testAddEntryToMap() throws SecurityException, NoSuchMethodException {
@@ -253,7 +253,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost/pow/metadata/newkey HTTP/1.1");
 
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                AddMetadataItemIntoMap.class);
    }

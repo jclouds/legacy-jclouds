@@ -18,6 +18,8 @@
  */
 package org.jclouds.mezeo.pcs2.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponseException;
@@ -38,7 +40,7 @@ public class ReturnTrueIfContainerAlreadyExists implements Function<Exception, B
             return true;
          }
       }
-      return null;
+      return Boolean.class.cast(propagateOrNull(from));
    }
 
 }

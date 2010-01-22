@@ -45,7 +45,7 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -199,7 +199,7 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
                + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
       assertPayloadEquals(httpMethod, "hello");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
 
@@ -252,7 +252,7 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
       assertPayloadEquals(httpMethod, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 

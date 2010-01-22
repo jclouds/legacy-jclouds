@@ -18,7 +18,10 @@
  */
 package org.jclouds.rest.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
@@ -27,16 +30,19 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class ThrowResourceNotFoundOn404 implements Function<Exception, Object> {
+public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> {
 
    public Object apply(Exception from) {
       if (from instanceof HttpResponseException) {
          HttpResponseException responseException = (HttpResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
-            throw new ResourceNotFoundException(from);
+         switch (responseException.getResponse().getStatusCode()) {
+            case 401:
+               throw new AuthorizationException(from);
+            case 404:
+               throw new ResourceNotFoundException(from);
          }
       }
-      return null;
+      return propagateOrNull(from);
    }
 
 }

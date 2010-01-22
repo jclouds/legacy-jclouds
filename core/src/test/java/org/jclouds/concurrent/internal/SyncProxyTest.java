@@ -18,7 +18,7 @@
  */
 package org.jclouds.concurrent.internal;
 
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 import static org.testng.Assert.assertEquals;
 
 import java.io.FileNotFoundException;

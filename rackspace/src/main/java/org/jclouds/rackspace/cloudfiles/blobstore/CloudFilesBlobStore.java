@@ -19,6 +19,7 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.blobstore.util.BlobStoreUtils.returnNullOnKeyNotFoundOrPropagate;
 
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -80,7 +80,11 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
     * This implementation uses the CloudFiles HEAD Object command to return the result
     */
    public BlobMetadata blobMetadata(String container, String key) {
-      return object2BlobMd.apply(sync.getObjectInfo(container, key));
+      try {
+         return object2BlobMd.apply(sync.getObjectInfo(container, key));
+      } catch (Exception e) {
+         return returnNullOnKeyNotFoundOrPropagate(e);
+      }
    }
 
    public void clearContainer(final String container) {
@@ -107,7 +111,11 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
    public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      return object2Blob.apply(sync.getObject(container, key, httpOptions));
+      try {
+         return object2Blob.apply(sync.getObject(container, key, httpOptions));
+      } catch (Exception e) {
+         return returnNullOnKeyNotFoundOrPropagate(e);
+      }
    }
 
    public ListResponse<? extends StorageMetadata> list() {
@@ -139,8 +147,8 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
       try {
          getDirectoryStrategy.execute(aBlobStore, containerName, directory);
          return true;
-      } catch (KeyNotFoundException e) {
-         return false;
+      } catch (Exception e) {
+         return (Boolean)returnNullOnKeyNotFoundOrPropagate(e);
       }
    }
 

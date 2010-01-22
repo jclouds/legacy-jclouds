@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpResponseException;
 
@@ -40,7 +42,7 @@ public class ThrowKeyNotFoundOn404 implements Function<Exception, Object> {
             throw new KeyNotFoundException(from);
          }
       }
-      return null;
+      return propagateOrNull(from);
    }
 
 }

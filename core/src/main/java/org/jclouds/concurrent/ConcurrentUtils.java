@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.concurrent.internal;
+package org.jclouds.concurrent;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -38,13 +38,21 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class ConcurrentUtils {
+   /**
+    * Converts an exception into an object, which is useful for transforming to null or false.
+    */
+   public static <T> ListenableFuture<T> convertExceptionToValue(ListenableFuture<T> future,
+            Class<? extends Exception> clazz, T toValue) {
+      return new ConvertFutureExceptionToValue<T>(future, clazz, toValue);
+   }
 
    /**
     * Just like {@code Futures#makeListenable} except that we pass in an executorService.
     * <p/>
     * Temporary hack until http://code.google.com/p/guava-libraries/issues/detail?id=317 is fixed.
     */
-   public static <T> ListenableFuture<T> makeListenable(Future<T> future, ExecutorService executorService) {
+   public static <T> ListenableFuture<T> makeListenable(Future<T> future,
+            ExecutorService executorService) {
       if (future instanceof ListenableFuture<?>) {
          return (ListenableFuture<T>) future;
       }

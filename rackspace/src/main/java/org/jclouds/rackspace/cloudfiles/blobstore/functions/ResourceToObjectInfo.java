@@ -43,22 +43,24 @@ public class ResourceToObjectInfo implements
       this.encryptionService = encryptionService;
    }
 
-   public MutableObjectInfoWithMetadata apply(StorageMetadata base) {
+   public MutableObjectInfoWithMetadata apply(StorageMetadata from) {
+      if (from == null)
+         return null;
       MutableObjectInfoWithMetadata to = new MutableObjectInfoWithMetadataImpl();
-      if (base.getType() == StorageType.BLOB) {
-         to.setContentType(((BlobMetadata) base).getContentType());
-         to.setHash(((BlobMetadata) base).getContentMD5());
-      } else if (base.getType() == StorageType.RELATIVE_PATH) {
+      if (from.getType() == StorageType.BLOB) {
+         to.setContentType(((BlobMetadata) from).getContentType());
+         to.setHash(((BlobMetadata) from).getContentMD5());
+      } else if (from.getType() == StorageType.RELATIVE_PATH) {
          to.setContentType("application/directory");
       }
-      if (base.getETag() != null && to.getHash() == null)
-         to.setHash(encryptionService.fromHexString(base.getETag()));
-      to.setName(base.getName());
-      to.setLastModified(base.getLastModified());
-      if (base.getSize() != null)
-         to.setBytes(base.getSize());
-      if (base.getUserMetadata() != null)
-         to.getMetadata().putAll(base.getUserMetadata());
+      if (from.getETag() != null && to.getHash() == null)
+         to.setHash(encryptionService.fromHexString(from.getETag()));
+      to.setName(from.getName());
+      to.setLastModified(from.getLastModified());
+      if (from.getSize() != null)
+         to.setBytes(from.getSize());
+      if (from.getUserMetadata() != null)
+         to.getMetadata().putAll(from.getUserMetadata());
       return to;
    }
 

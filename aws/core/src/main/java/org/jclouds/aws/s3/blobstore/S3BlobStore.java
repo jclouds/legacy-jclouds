@@ -19,6 +19,7 @@
 package org.jclouds.aws.s3.blobstore;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.blobstore.util.BlobStoreUtils.returnNullOnKeyNotFoundOrPropagate;
 
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
@@ -80,7 +81,11 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
     * This implementation uses the S3 HEAD Object command to return the result
     */
    public BlobMetadata blobMetadata(String container, String key) {
-      return object2BlobMd.apply(sync.headObject(container, key));
+      try {
+         return object2BlobMd.apply(sync.headObject(container, key));
+      } catch (Exception e) {
+         return returnNullOnKeyNotFoundOrPropagate(e);
+      }
    }
 
    public void clearContainer(String container) {
@@ -116,7 +121,11 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
    public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      return object2Blob.apply(sync.getObject(container, key, httpOptions));
+      try {
+         return object2Blob.apply(sync.getObject(container, key, httpOptions));
+      } catch (Exception e) {
+         return returnNullOnKeyNotFoundOrPropagate(e);
+      }
    }
 
    public ListResponse<? extends StorageMetadata> list() {

@@ -40,7 +40,6 @@ import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
@@ -48,11 +47,9 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -204,16 +201,10 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
          String container = path.substring(0, path.indexOf('/'));
          String blobName = path.substring(path.indexOf('/') + 1);
          try {
-            blobStore.blobMetadata(container, blobName).get();
-            return immediateFuture(true);
-         } catch (KeyNotFoundException e) {
-            return immediateFuture(false);
+            return immediateFuture(blobStore.blobMetadata(container, blobName).get() != null);
          } catch (InterruptedException e) {
-            return immediateFuture(false);
+            return immediateFailedFuture(e);
          } catch (ExecutionException e) {
-            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
-                     ResourceNotFoundException.class)) >= 1)
-               return immediateFuture(false);
             return immediateFailedFuture(e);
          }
       }

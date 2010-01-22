@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.s3.functions;
 
+import static org.jclouds.util.Utils.propagateOrNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
@@ -38,7 +40,6 @@ public class ReturnTrueIfBucketAlreadyOwnedByYou implements Function<Exception, 
             return true;
          }
       }
-      return null;
+      return Boolean.class.cast(propagateOrNull(from));
    }
-
 }

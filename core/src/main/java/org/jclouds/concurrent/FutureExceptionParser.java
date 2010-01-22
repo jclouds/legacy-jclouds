@@ -51,25 +51,20 @@ public class FutureExceptionParser<T> implements ListenableFuture<T> {
    public T get() throws InterruptedException, ExecutionException {
       try {
          return delegate.get();
-      } catch (ExecutionException e) {
+      } catch (Exception e) {
          return attemptConvert(e);
       }
    }
 
-   private T attemptConvert(ExecutionException e) throws ExecutionException {
-      if (e.getCause() instanceof Exception) {
-         T returnVal = function.apply((Exception) e.getCause());
-         if (returnVal != null)
-            return returnVal;
-      }
-      throw e;
+   private T attemptConvert(Exception e) {
+      return function.apply(e instanceof ExecutionException ? (Exception) e.getCause() : e);
    }
 
    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
             TimeoutException {
       try {
          return delegate.get(timeout, unit);
-      } catch (ExecutionException e) {
+      } catch (Exception e) {
          return attemptConvert(e);
       }
    }

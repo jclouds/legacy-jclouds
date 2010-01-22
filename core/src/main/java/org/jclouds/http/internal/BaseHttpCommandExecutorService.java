@@ -18,7 +18,7 @@
  */
 package org.jclouds.http.internal;
 
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;

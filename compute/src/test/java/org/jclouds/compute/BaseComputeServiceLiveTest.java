@@ -25,7 +25,6 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -102,7 +101,7 @@ public abstract class BaseComputeServiceLiveTest {
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new ComputeServiceContextFactory().createContext(service, user, password,
-               ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), new Properties());
+               ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
       Injector injector = Guice.createInjector(getSshModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

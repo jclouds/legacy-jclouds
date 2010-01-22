@@ -49,11 +49,11 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
-import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -93,7 +93,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testListContainersOptions() throws SecurityException, NoSuchMethodException {
@@ -116,7 +116,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException {
@@ -154,7 +154,7 @@ public class AzureBlobAsyncClientTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -222,7 +222,7 @@ public class AzureBlobAsyncClientTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-09-19"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -271,7 +271,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testListRootBlobs() throws SecurityException, NoSuchMethodException {
@@ -291,7 +291,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testContainerProperties() throws SecurityException, NoSuchMethodException {
@@ -310,7 +310,7 @@ public class AzureBlobAsyncClientTest {
                ParseContainerPropertiesFromHeaders.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException {
@@ -331,10 +331,10 @@ public class AzureBlobAsyncClientTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-key"), Collections.singletonList("value"));
 
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException {
@@ -354,10 +354,10 @@ public class AzureBlobAsyncClientTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-key"), Collections.singletonList("value"));
 
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnVoidIf2xx.class);
+               CloseContentAndReturn.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowResourceNotFoundOn404.class);
+               MapHttp4xxCodesToExceptions.class);
    }
 
    @BeforeClass

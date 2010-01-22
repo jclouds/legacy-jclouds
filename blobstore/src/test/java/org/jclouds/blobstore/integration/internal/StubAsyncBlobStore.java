@@ -21,7 +21,7 @@ package org.jclouds.blobstore.integration.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static org.jclouds.concurrent.internal.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -150,7 +150,6 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          throw new UnsupportedOperationException("Content not supported " + data.getClass());
       }
       return bytes;
-
    }
 
    public ListenableFuture<Blob> getBlob(final String bucketName, final String key) {
@@ -158,7 +157,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          return immediateFailedFuture(new ContainerNotFoundException(bucketName));
       Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
       if (!realContents.containsKey(key))
-         return immediateFailedFuture(new KeyNotFoundException(bucketName, key));
+         return immediateFuture(null);
       Blob object = realContents.get(key);
       Blob returnVal = blobProvider.create(copy(object.getMetadata()));
       returnVal.setPayload(object.getContent());
@@ -490,7 +489,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          return immediateFailedFuture(new ContainerNotFoundException(bucketName));
       Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
       if (!realContents.containsKey(key))
-         return immediateFailedFuture(new KeyNotFoundException(bucketName, key));
+         return immediateFuture(null);
 
       Blob object = realContents.get(key);
 
@@ -562,10 +561,12 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
-         return immediateFuture((BlobMetadata) copy(getBlob(container, key).get().getMetadata()));
+         Blob blob = getBlob(container, key).get();
+         return immediateFuture(blob != null ? (BlobMetadata) copy(blob.getMetadata()) : null);
       } catch (Exception e) {
-         Throwables.propagateIfPossible(e, ContainerNotFoundException.class);
-         Throwables.propagateIfPossible(e, KeyNotFoundException.class);
+         if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
+                  KeyNotFoundException.class)) >= 1)
+            return immediateFuture(null);
          return immediateFailedFuture(e);
       }
    }
