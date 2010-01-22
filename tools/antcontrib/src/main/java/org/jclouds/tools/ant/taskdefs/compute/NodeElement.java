@@ -28,6 +28,7 @@ public class NodeElement {
    private String name;
    private String size;
    private String os;
+   private String image;
    private String openports = "22";
    private String passwordproperty;
    private String keyfile;
@@ -142,6 +143,14 @@ public class NodeElement {
 
    public String getOpenports() {
       return openports;
+   }
+
+   public void setImage(String image) {
+      this.image = image;
+   }
+
+   public String getImage() {
+      return image;
    }
 
 }

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.SortedSet;
 
@@ -35,6 +36,7 @@ import org.apache.tools.ant.Project;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -44,6 +46,7 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -94,7 +97,25 @@ public class ComputeTaskUtils {
       TemplateBuilder templateBuilder = computeService.templateBuilder();
       if (nodeElement.getLocation() != null && !"".equals(nodeElement.getLocation()))
          templateBuilder.location(nodeElement.getLocation());
-      templateBuilder.osFamily(OsFamily.valueOf(nodeElement.getOs()));
+      if (nodeElement.getImage() != null && !"".equals(nodeElement.getImage())) {
+         final String imageId = nodeElement.getImage();
+         try {
+            Image image = Iterables.getOnlyElement(Iterables.filter(computeService.listImages(),
+                     new Predicate<Image>() {
+
+                        @Override
+                        public boolean apply(Image input) {
+                           return input.getId().equals(imageId);
+                        }
+
+                     }));
+            templateBuilder.fromImage(image);
+         } catch (NoSuchElementException e) {
+            throw new BuildException("image not found " + nodeElement.getImage());
+         }
+      } else {
+         templateBuilder.osFamily(OsFamily.valueOf(nodeElement.getOs()));
+      }
       addSizeFromElementToTemplate(nodeElement, templateBuilder);
       return templateBuilder.build();
    }

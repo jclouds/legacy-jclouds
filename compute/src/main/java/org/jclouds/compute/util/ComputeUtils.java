@@ -77,6 +77,7 @@ public class ComputeUtils {
          try {
             ssh.connect();
             runScriptOnNodeWithClient(ssh, node, script);
+            break;
          } catch (RuntimeException from) {
             if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
                      ConnectException.class)) >= 1) {
