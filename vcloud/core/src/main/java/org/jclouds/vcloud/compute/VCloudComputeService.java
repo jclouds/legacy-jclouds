@@ -28,7 +28,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -45,6 +44,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.RunNodeOptions;
@@ -76,9 +76,9 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    protected Logger logger = Logger.NULL;
    private final VCloudClient client;
    protected final Provider<Set<? extends Image>> images;
-   protected final Provider<SortedSet<? extends Size>> sizes;
-   private final Provider<Set<? extends VCloudTemplate>> templates;
-
+   protected final Provider<Set<? extends Size>> sizes;
+   protected final Provider<TemplateBuilder> templateBuilderProvider;
+   private final Predicate<String> taskTester;
    @Inject(optional = true)
    private SshClient.Factory sshFactory;
    private Predicate<InetSocketAddress> socketTester;
@@ -90,15 +90,15 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
                      NodeState.PENDING).build();
 
    @Inject
-   public VCloudComputeService(VCloudClient client, Provider<Set<? extends Image>> images,
-            Provider<SortedSet<? extends Size>> sizes,
-            Provider<Set<? extends VCloudTemplate>> templates, Predicate<String> successTester,
-            Predicate<InetSocketAddress> socketTester) {
+   public VCloudComputeService(VCloudClient client,
+            Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Predicate<String> successTester, Predicate<InetSocketAddress> socketTester) {
       this.taskTester = successTester;
       this.client = client;
       this.images = images;
       this.sizes = sizes;
-      this.templates = templates;
+      this.templateBuilderProvider = templateBuilderProvider;
       this.socketTester = socketTester;
    }
 
@@ -204,21 +204,19 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    }
 
    @Override
-   public Template createTemplateInLocation(String location) {
-      return new VCloudTemplate(client, images.get(), sizes.get(), location);
+   public TemplateBuilder templateBuilder() {
+      return templateBuilderProvider.get();
    }
 
    @Override
-   public SortedSet<? extends Size> listSizes() {
+   public Set<? extends Size> listSizes() {
       return sizes.get();
    }
 
    @Override
-   public Set<? extends Template> listTemplates() {
-      return templates.get();
+   public Set<? extends Image> listImages() {
+      return images.get();
    }
-
-   private final Predicate<String> taskTester;
 
    public Map<String, String> start(String vDCId, String name, String templateId, int minCores,
             int minMegs, Long diskSize, Map<String, String> properties, int... portsToOpen) {

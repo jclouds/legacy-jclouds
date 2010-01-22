@@ -18,15 +18,22 @@
  */
 package org.jclouds.concurrent;
 
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Singleton;
 
+import org.jclouds.logging.Logger;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.common.util.concurrent.ForwardingFuture;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -38,6 +45,37 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class ConcurrentUtils {
+
+   public static void pollResponsesAndLogWhenComplete(int total, String description, Logger logger,
+            Set<Future<Void>> responses) throws InterruptedException, TimeoutException,
+            ExecutionException {
+      int complete = 0;
+      long start = System.currentTimeMillis();
+      long timeOut = 180 * 1000;
+      do {
+         Set<Future<Void>> retries = Sets.newHashSet();
+         for (Future<Void> future : responses) {
+            try {
+               future.get(100, TimeUnit.MILLISECONDS);
+               complete++;
+            } catch (ExecutionException e) {
+               Throwables.propagate(e);
+            } catch (TimeoutException e) {
+               retries.add(future);
+            }
+         }
+         responses = Sets.newHashSet(retries);
+      } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
+      long duration = System.currentTimeMillis() - start;
+      if (duration > timeOut)
+         throw new TimeoutException(String.format("TIMEOUT: %s(%d/%d) rate: %f %s/second",
+                  description, complete, total, ((double) complete) / (duration / 1000.0),
+                  description));
+      for (Future<Void> future : responses)
+         future.get(30, TimeUnit.SECONDS);
+      logger.debug("<< %s(%d)", description, total);
+   }
+
    /**
     * Converts an exception into an object, which is useful for transforming to null or false.
     */

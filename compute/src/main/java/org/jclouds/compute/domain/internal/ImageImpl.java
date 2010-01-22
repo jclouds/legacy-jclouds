@@ -34,20 +34,11 @@ public class ImageImpl implements Image {
 
    private final String id;
    private final String description;
-   private final OperatingSystem operatingSystem;
    private final String version;
+   private final OperatingSystem operatingSystem;
+   private final String operatingSystemVersion;
    private final String location;
    private final Architecture architecture;
-
-   public ImageImpl(String id, String description, OperatingSystem operatingSystem, String version,
-            String location, Architecture architecture) {
-      this.id = id;
-      this.description = description;
-      this.operatingSystem = operatingSystem;
-      this.version = version;
-      this.location = location;
-      this.architecture = architecture;
-   }
 
    /**
     * {@inheritDoc}
@@ -63,6 +54,17 @@ public class ImageImpl implements Image {
       result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
+   }
+
+   public ImageImpl(String id, String description, String version, OperatingSystem operatingSystem,
+            String operatingSystemVersion, String location, Architecture architecture) {
+      this.id = id;
+      this.description = description;
+      this.version = version;
+      this.operatingSystem = operatingSystem;
+      this.operatingSystemVersion = operatingSystemVersion;
+      this.location = location;
+      this.architecture = architecture;
    }
 
    /**
@@ -110,14 +112,12 @@ public class ImageImpl implements Image {
       return true;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public String toString() {
-      return "ImageImpl [architecture=" + architecture + ", description=" + description + ", id="
-               + id + ", location=" + location + ", operatingSystem=" + operatingSystem
-               + ", version=" + version + "]";
+      return "[id=" + id + ", version=" + version + ", location=" + location + ", architecture="
+               + architecture + ", operatingSystem=" + operatingSystem
+               + ", operatingSystemVersion=" + operatingSystemVersion + ", description="
+               + description + "]";
    }
 
    /**
@@ -166,6 +166,14 @@ public class ImageImpl implements Image {
    @Override
    public Architecture getArchitecture() {
       return architecture;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getOperatingSystemVersion() {
+      return operatingSystemVersion;
    }
 
 }

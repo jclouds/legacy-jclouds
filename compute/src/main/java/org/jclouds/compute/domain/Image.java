@@ -47,6 +47,11 @@ public interface Image {
    OperatingSystem getOperatingSystem();
 
    /**
+    * Version of the operating system
+    */
+   String getOperatingSystemVersion();
+   
+   /**
     * Version of the image
     */
    String getVersion();

@@ -32,11 +32,13 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -70,7 +72,6 @@ public abstract class BaseComputeServiceLiveTest {
    abstract public void setServiceDefaults();
 
    protected String service;
-   protected OperatingSystem testOS;
    protected SshClient.Factory sshFactory;
    protected RunNodeOptions options = RunNodeOptions.Builder.openPorts(22);
    private String nodeName;
@@ -81,23 +82,12 @@ public abstract class BaseComputeServiceLiveTest {
    protected ComputeService client;
    protected String user;
    protected String password;
+   private Template template;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      checkNotNull(testOS, "testOS");
       nodeName = checkNotNull(service, "service");
-      if (canRunScript())
-         options.runScript(new ScriptBuilder()
-                  // update add dns and install jdk
-                  .addStatement(
-                           Statements.exec("echo nameserver 208.67.222.222 >> /etc/resolv.conf"))
-                  .addStatement(Statements.exec("apt-get update"))//
-                  .addStatement(Statements.exec("apt-get upgrade -y"))//
-                  .addStatement(Statements.exec("apt-get install -y openjdk-6-jdk"))//
-                  .addStatement(Statements.exec("wget -qO/usr/bin/runurl run.alestic.com/runurl"))//
-                  .addStatement(Statements.exec("chmod 755 /usr/bin/runurl"))//
-                  .build(OsFamily.UNIX).getBytes());
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new ComputeServiceContextFactory().createContext(service, user, password,
@@ -110,12 +100,14 @@ public abstract class BaseComputeServiceLiveTest {
       client = context.getComputeService();
    }
 
-   private boolean canRunScript() {
-      return testOS == OperatingSystem.UBUNTU || testOS == OperatingSystem.JEOS;
+   private boolean canRunScript(Template template) {
+      return template.getImage().getOperatingSystem() == OperatingSystem.UBUNTU
+               || template.getImage().getOperatingSystem() == OperatingSystem.JEOS;
    }
 
    abstract protected Module getSshModule();
 
+   @Test(enabled = false)
    public void testCreate() throws Exception {
       try {
          client.destroyNode(Iterables.find(client.listNodes(), new Predicate<ComputeMetadata>() {
@@ -129,7 +121,19 @@ public abstract class BaseComputeServiceLiveTest {
       } catch (NoSuchElementException e) {
 
       }
-      Template template = client.createTemplateInLocation("default").os(testOS).smallest();
+      template = buildTemplate(client.templateBuilder());
+
+      if (canRunScript(template))
+         options.runScript(new ScriptBuilder()
+                  // update add dns and install jdk
+                  .addStatement(
+                           Statements.exec("echo nameserver 208.67.222.222 >> /etc/resolv.conf"))
+                  .addStatement(Statements.exec("apt-get update"))//
+                  .addStatement(Statements.exec("apt-get upgrade -y"))//
+                  .addStatement(Statements.exec("apt-get install -y openjdk-6-jdk"))//
+                  .addStatement(Statements.exec("wget -qO/usr/bin/runurl run.alestic.com/runurl"))//
+                  .addStatement(Statements.exec("chmod 755 /usr/bin/runurl"))//
+                  .build(OsFamily.UNIX).getBytes());
       node = client.runNode(nodeName, template, options);
       assertNotNull(node.getId());
       assertEquals(node.getLoginPort(), 22);
@@ -142,7 +146,9 @@ public abstract class BaseComputeServiceLiveTest {
       sshPing();
    }
 
-   @Test(dependsOnMethods = "testCreate")
+   protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
+
+   @Test(enabled = false, dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
       NodeMetadata metadata = client.getNodeMetadata(node);
       assertEquals(metadata.getId(), node.getId());
@@ -153,7 +159,7 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());
    }
 
-   public void testList() throws Exception {
+   public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {
          assert node.getId() != null;
          assert node.getLocation() != null;
@@ -161,9 +167,10 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   public void testListTemplates() throws Exception {
-      for (Template template : client.listTemplates()) {
-         assert template.getImage() != null;
+   public void testListImages() throws Exception {
+      for (Image image : client.listImages()) {
+         assert image.getId() != null : image;
+         assert image.getLocation() != null : image;
       }
    }
 
@@ -197,7 +204,7 @@ public abstract class BaseComputeServiceLiveTest {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
-         if (canRunScript())
+         if (canRunScript(template))
             System.out.println(ssh.exec("java -version"));
       } finally {
          if (ssh != null)

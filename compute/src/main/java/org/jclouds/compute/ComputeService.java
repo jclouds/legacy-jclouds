@@ -19,13 +19,14 @@
 package org.jclouds.compute;
 
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.CreateNodeResponse;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunNodeOptions;
 
 /**
@@ -36,27 +37,19 @@ import org.jclouds.compute.options.RunNodeOptions;
  */
 public interface ComputeService {
    /**
-    * Creates a new template in the specified location.
-    * 
-    * @param location
-    *           where the template is valid for
+    * Makes a new template builder for this service
     */
-   Template createTemplateInLocation(String location);
+   TemplateBuilder templateBuilder();
 
    /**
     * List all sizes available to the current user
     */
-   SortedSet<? extends Size> listSizes();
+   Set<? extends Size> listSizes();
 
    /**
     * List all images available to the current user
     */
-//   Set<? extends Image> listImages();
-
-   /**
-    * List all templates available to the current user
-    */
-   Set<? extends Template> listTemplates();
+   Set<? extends Image> listImages();
 
    /**
     * List all nodes available to the current user
@@ -68,6 +61,7 @@ public interface ComputeService {
     * 
     */
    CreateNodeResponse runNode(String name, Template template);
+
    CreateNodeResponse runNode(String name, Template template, RunNodeOptions options);
 
    /**

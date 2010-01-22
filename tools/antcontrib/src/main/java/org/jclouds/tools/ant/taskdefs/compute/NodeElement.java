@@ -34,7 +34,7 @@ public class NodeElement {
    private String hostproperty;
    private String idproperty;
    private String usernameproperty;
-   private String location = "default";
+   private String location;
    private File runscript;
 
    public String getLocation() {

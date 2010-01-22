@@ -18,33 +18,40 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
+
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
+import org.jclouds.aws.ec2.compute.EC2Image;
 import org.jclouds.aws.ec2.compute.EC2Size;
-import org.jclouds.aws.ec2.compute.EC2Template;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
-import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.ResourceLocation;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 
@@ -70,9 +77,16 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   SortedSet<EC2Size> provideSizes() {
-      return ImmutableSortedSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
+   Set<? extends Size> provideSizes() {
+      return ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
                EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE);
+   }
+
+   @Provides
+   @Singleton
+   @ResourceLocation
+   String getRegion(@EC2 Region region) {
+      return region.value();
    }
 
    private static class LogHolder {
@@ -81,50 +95,37 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       protected Logger logger = Logger.NULL;
    }
 
-   @Provides
-   @Singleton
-   Set<EC2Template> provideTemplates(EC2Client client, SortedSet<EC2Size> sizes,
-            Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap,
-            LogHolder holder) {
-      Set<EC2Template> templates = Sets.newHashSet();
-      holder.logger.debug(">> generating templates");
-      for (EC2Size size : sizes) {
-         for (Architecture architecture : imageAmiIdMap.keySet()) {
-            if (size.supportsArchitecture(architecture)) {
-               for (OperatingSystem operatingSystem : imageAmiIdMap.get(architecture).keySet()) {
-                  for (Region region : imageAmiIdMap.get(architecture).get(operatingSystem)
-                           .keySet()) {
-                     String ami = imageAmiIdMap.get(architecture).get(operatingSystem).get(region);
-                     templates.add(new EC2Template(client, imageAmiIdMap, size, operatingSystem,
-                              region, EC2Utils.newImage(client, region, operatingSystem,
-                                       architecture, ami)));
-                  }
-               }
-            }
-         }
-      }
-      holder.logger.debug("<< templates(%d)", templates.size());
-      return templates;
-   }
+   // alestic-32-eu-west-1/debian-4.0-etch-base-20081130.manifest.xml
+   public static final Pattern ALESTIC_PATTERN = Pattern
+            .compile(".*/([^-]*)-([^-]*)-.*-(.*)\\.manifest\\.xml");
 
    @Provides
    @Singleton
-   Map<Architecture, Map<OperatingSystem, Map<Region, String>>> provideimageAmiIdMap() {
-      return ImmutableMap.<Architecture, Map<OperatingSystem, Map<Region, String>>> of(
-               Architecture.X86_32,//
-               ImmutableMap.<OperatingSystem, Map<Region, String>> builder().put(
-                        OperatingSystem.UBUNTU,
-                        ImmutableMap.of(Region.DEFAULT, "ami-1515f67c", Region.US_EAST_1,
-                                 "ami-1515f67c", Region.US_WEST_1, "ami-7d3c6d38",
-                                 Region.EU_WEST_1, "ami-a62a01d2")).put(
-                        OperatingSystem.RHEL,
-                        ImmutableMap.of(Region.DEFAULT, "ami-368b685f", Region.US_EAST_1,
-                                 "ami-368b685f")).build(),//
-               Architecture.X86_64,//
-               ImmutableMap.<OperatingSystem, Map<Region, String>> builder().put(
-                        OperatingSystem.UBUNTU,
-                        ImmutableMap.of(Region.DEFAULT, "ami-ab15f6c2", Region.US_EAST_1,
-                                 "ami-ab15f6c2", Region.US_WEST_1, "ami-7b3c6d3e",
-                                 Region.EU_WEST_1, "ami-9a2a01ee")).build());// todo ami
+   protected Set<? extends Image> provideImages(final EC2Client sync, Map<Region, URI> regionMap,
+            LogHolder holder) throws InterruptedException, ExecutionException, TimeoutException {
+      final Set<Image> images = Sets.newHashSet();
+      holder.logger.debug(">> providing images");
+      for (final Region region : regionMap.keySet()) {
+         for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
+                  .describeImagesInRegion(region, ownedBy("063491364108"))) {
+            OperatingSystem os = null;
+            String osVersion = "";
+            String version = "";
+
+            Matcher matcher = ALESTIC_PATTERN.matcher(from.getImageLocation());
+            if (matcher.find()) {
+               try {
+                  os = OperatingSystem.fromValue(matcher.group(1));
+                  osVersion = matcher.group(2);
+                  version = matcher.group(3);
+               } catch (IllegalArgumentException e) {
+                  holder.logger.debug("<< didn't match os(%s)", matcher.group(1));
+               }
+            }
+            images.add(new EC2Image(from, os, osVersion, version));
+         }
+      }
+      holder.logger.debug("<< images(%d)", images.size());
+      return images;
    }
 }

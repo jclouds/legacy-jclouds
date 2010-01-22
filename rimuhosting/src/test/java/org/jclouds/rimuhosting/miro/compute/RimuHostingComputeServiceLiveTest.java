@@ -18,9 +18,11 @@
  */
 package org.jclouds.rimuhosting.miro.compute;
 
-import static org.jclouds.compute.domain.OperatingSystem.UBUNTU;
+import static org.jclouds.compute.domain.OperatingSystem.JEOS;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -34,7 +36,10 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @Override
    public void setServiceDefaults() {
       service = "rimuhosting";
-      testOS = UBUNTU;
+   }
+
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      return templateBuilder.os(JEOS).osVersionMatches(".*9.04.*").smallest().build();
    }
 
    @Override

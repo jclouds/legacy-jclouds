@@ -23,13 +23,23 @@
  */
 package org.jclouds.compute.domain;
 
+import org.jclouds.compute.domain.internal.SizeImpl;
+
+import com.google.inject.ImplementedBy;
+
 /**
  * Size of a node.
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(SizeImpl.class)
 public interface Size extends Comparable<Size> {
-
+   
+   /**
+    * unique identifier of this configuration.
+    */
+   String getId();
+   
    /**
     * Amount of virtual or physical cores provided
     */

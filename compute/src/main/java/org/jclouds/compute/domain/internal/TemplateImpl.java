@@ -1,0 +1,103 @@
+/**
+ *
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
+package org.jclouds.compute.domain.internal;
+
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
+
+/**
+ * 
+ * @author Adrian Cole
+ */
+public class TemplateImpl implements Template {
+
+   private final Image image;
+   private final Size size;
+
+   protected TemplateImpl(Image image, Size size) {
+      this.image = image;
+      this.size = size;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Image getImage() {
+      return image;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Size getSize() {
+      return size;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((image == null) ? 0 : image.hashCode());
+      result = prime * result + ((size == null) ? 0 : size.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      TemplateImpl other = (TemplateImpl) obj;
+      if (image == null) {
+         if (other.image != null)
+            return false;
+      } else if (!image.equals(other.image))
+         return false;
+      if (size == null) {
+         if (other.size != null)
+            return false;
+      } else if (!size.equals(other.size))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "TemplateImpl [image=" + image + ", size=" + size + "]";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      return new TemplateImpl(image, size);
+   }
+}

@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.compute;
 import static org.jclouds.compute.domain.OperatingSystem.UBUNTU;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,7 +39,10 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    public void setServiceDefaults() {
       service = "ec2";
-      testOS = UBUNTU;
+   }
+
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      return templateBuilder.os(UBUNTU).smallest().build();
    }
 
    @Override

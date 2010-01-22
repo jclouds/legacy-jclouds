@@ -38,7 +38,7 @@ public class EC2Size extends SizeImpl {
 
    EC2Size(InstanceType instanceType, Integer cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
-      super(cores, ram, disk, supportedArchitectures);
+      super(instanceType.toString(), cores, ram, disk, supportedArchitectures);
       this.instanceType = instanceType;
    }
 
@@ -84,5 +84,30 @@ public class EC2Size extends SizeImpl {
     */
    public static final EC2Size C1_XLARGE = new EC2Size(InstanceType.C1_XLARGE, 20, 7168, 1690,
             ImmutableSet.of(Architecture.X86_64));
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      EC2Size other = (EC2Size) obj;
+      if (instanceType == null) {
+         if (other.instanceType != null)
+            return false;
+      } else if (!instanceType.equals(other.instanceType))
+         return false;
+      return true;
+   }
 
 }

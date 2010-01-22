@@ -24,32 +24,6 @@ package org.jclouds.compute.domain;
  * @author Adrian Cole
  */
 public interface Template extends Cloneable {
-
-   /**
-    * configure this template to the smallest size.
-    */
-   Template smallest();
-
-   /**
-    * configure this template to the fastest size.
-    */
-   Template fastest();
-
-   /**
-    * configure this template to the largest size.
-    */
-   Template biggest();
-
-   /**
-    * Configure this template to use a specific operating system image.
-    */
-   Template os(OperatingSystem os);
-
-   /**
-    * Configure this template to start in a specific location
-    */
-   Template inLocation(String location);
-
    /**
     * Image that suits the requirements.
     * 

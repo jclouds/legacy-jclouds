@@ -34,10 +34,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.VCloudComputeService;
-import org.jclouds.vcloud.compute.VCloudTemplate;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -62,10 +62,10 @@ public class TerremarkVCloudComputeService extends VCloudComputeService {
 
    @Inject
    public TerremarkVCloudComputeService(TerremarkVCloudClient client,
-            Provider<Set<? extends Image>> images, Provider<SortedSet<? extends Size>> sizes,
-            Provider<Set<? extends VCloudTemplate>> templates, Predicate<String> successTester,
-            Predicate<InetSocketAddress> socketTester) {
-      super(client, images, sizes, templates, successTester, socketTester);
+            Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Predicate<String> successTester, Predicate<InetSocketAddress> socketTester) {
+      super(client, templateBuilderProvider, images, sizes, successTester, socketTester);
       this.client = client;
    }
 

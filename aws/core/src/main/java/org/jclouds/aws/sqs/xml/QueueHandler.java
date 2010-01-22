@@ -46,7 +46,6 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
    @Inject
    QueueHandler(Map<Region, URI> regionMap) {
       this.regionBiMap = ImmutableBiMap.copyOf(regionMap);
-
    }
 
    public Queue getResult() {

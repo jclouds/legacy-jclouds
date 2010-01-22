@@ -23,11 +23,28 @@
  */
 package org.jclouds.compute.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.CaseFormat;
+
 /**
  * Running Operating system
  * 
  * @author Adrian Cole
  */
 public enum OperatingSystem {
-   CENTOS, RHEL, UBUNTU, JEOS, WINDOWS, UNKNOWN;
+   CENTOS, RHEL, FEDORA, DEBIAN, UBUNTU, JEOS, WINDOWS;
+   public String value() {
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
+   }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static OperatingSystem fromValue(String operatingSystem) {
+      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(
+               operatingSystem, "region")));
+   }
 }

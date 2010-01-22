@@ -19,12 +19,10 @@
 package org.jclouds.vcloud.compute.config;
 
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
@@ -41,6 +39,8 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.ResourceLocation;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -48,16 +48,13 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudComputeService;
-import org.jclouds.vcloud.compute.VCloudTemplate;
 import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -93,6 +90,13 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       return new ComputeServiceContextImpl<VCloudAsyncClient, VCloudClient>(computeService, context);
    }
 
+   @Provides
+   @Singleton
+   @ResourceLocation
+   String getVDC(VCloudClient client) {
+      return client.getDefaultVDC().getId();
+   }
+
    protected static class LogHolder {
       @Resource
       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -101,13 +105,12 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final VCloudClient client, LogHolder holder,
-            ExecutorService executor) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   protected Set<? extends Image> provideImages(final VCloudClient client,
+            final @ResourceLocation String vDC, LogHolder holder, ExecutorService executor)
+            throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       Catalog response = client.getDefaultCatalog();
-      final String vDC = client.getDefaultVDC().getId();
       Set<Future<Void>> responses = Sets.newHashSet();
 
       for (final NamedResource resource : response.values()) {
@@ -117,9 +120,9 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                responses.add(executor.submit(new Callable<Void>() {
                   @Override
                   public Void call() throws Exception {
-                     OperatingSystem myOs = OperatingSystem.UNKNOWN;
+                     OperatingSystem myOs = null;
                      for (OperatingSystem os : OperatingSystem.values()) {
-                        if (resource.getName().toUpperCase().replaceAll("\\s", "").indexOf(
+                        if (resource.getName().toLowerCase().replaceAll("\\s", "").indexOf(
                                  os.toString()) != -1) {
                            myOs = os;
                         }
@@ -127,73 +130,31 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                      Architecture arch = resource.getName().matches("64[- ]bit") ? Architecture.X86_32
                               : Architecture.X86_64;
                      VAppTemplate template = client.getVAppTemplate(item.getEntity().getId());
-                     images.add(new ImageImpl(resource.getId(), template.getDescription(), myOs,
-                              null, vDC, arch));
+                     images.add(new ImageImpl(resource.getId(), template.getName(), "", myOs,
+                              template.getName(), vDC, arch));
                      return null;
                   }
                }));
             }
          }
       }
-      pollResponsesAndLogWhenComplete(images.size(), "images", holder, responses);
+      ConcurrentUtils.pollResponsesAndLogWhenComplete(images.size(), "images", holder.logger,
+               responses);
       return images;
    }
 
-   protected void pollResponsesAndLogWhenComplete(int total, String description, LogHolder holder,
-            Set<Future<Void>> responses) throws InterruptedException, TimeoutException,
-            ExecutionException {
-      int complete = 0;
-      long start = System.currentTimeMillis();
-      long timeOut = 60 * 1000;
-      do {
-         Set<Future<Void>> retries = Sets.newHashSet();
-         for (Future<Void> future : responses) {
-            try {
-               future.get(100, TimeUnit.MILLISECONDS);
-               complete++;
-            } catch (ExecutionException e) {
-               Throwables.propagate(e);
-            } catch (TimeoutException e) {
-               retries.add(future);
-            }
-         }
-         responses = Sets.newHashSet(retries);
-      } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
-      long duration = System.currentTimeMillis() - start;
-      if (duration > timeOut)
-         throw new TimeoutException(String.format("TIMEOUT: %s(%d/%d) rate: %f %s/second%n",
-                  description, complete, total, ((double) complete) / (duration / 1000.0),
-                  description));
-      for (Future<Void> future : responses)
-         future.get(30, TimeUnit.SECONDS);
-      holder.logger.debug("<< %s(%d) rate: %f %s/second%n", description, total, ((double) complete)
-               / (duration / 1000.0), description);
-   }
-
    @Provides
    @Singleton
-   protected SortedSet<? extends Size> provideSizes(VCloudClient client,
-            Set<? extends Image> images, LogHolder holder, ExecutorService executor)
-            throws InterruptedException, TimeoutException, ExecutionException {
-      return ImmutableSortedSet.of(new SizeImpl(1, 512, 10, ImmutableSet.<Architecture> of(
-               Architecture.X86_32, Architecture.X86_64)));
-   }
-
-   @Provides
-   @Singleton
-   protected Set<? extends VCloudTemplate> provideTemplates(VCloudClient client,
-            Set<? extends Image> images, SortedSet<? extends Size> sizes, LogHolder holder) {
-      Set<VCloudTemplate> templates = Sets.newHashSet();
-      holder.logger.debug(">> generating templates");
-      String vDC = client.getDefaultVDC().getId();
-      for (Size size : sizes) {
-         for (Image image : images) {
-            templates.add(new VCloudTemplate(client, images, sizes, vDC, size, image
-                     .getOperatingSystem(), image));
-         }
-      }
-      holder.logger.debug("<< templates(%d)", templates.size());
-      return templates;
+   protected Set<? extends Size> provideSizes(VCloudClient client, Set<? extends Image> images,
+            LogHolder holder, ExecutorService executor) throws InterruptedException,
+            TimeoutException, ExecutionException {
+      Set<Size> sizes = Sets.newHashSet();
+      for (int cpus : new int[] { 1, 2, 4 })
+         for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 })
+            sizes.add(new SizeImpl(String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10), cpus,
+                     ram, 10, ImmutableSet.<Architecture> of(Architecture.X86_32,
+                              Architecture.X86_64)));
+      return sizes;
    }
 
 }

@@ -62,8 +62,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    private static class ComputeOptionsToSize implements Function<ComputeOptions, Size> {
       @Override
       public Size apply(ComputeOptions from) {
-         return new SizeImpl(from.getProcessorCount(), from.getMemory(), 10, ImmutableSet
-                  .<Architecture> of(Architecture.X86_32, Architecture.X86_64));
+         return new SizeImpl(from.toString(), from.getProcessorCount(), from.getMemory(), 10,
+                  ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64));
       }
    }
 

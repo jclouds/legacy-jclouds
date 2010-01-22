@@ -92,7 +92,7 @@
     </compute>
   </target>
 
-  <property name="location" value="default" />
+  <property name="location" value="" />
   <target name="create" description="create the node ${nodename}">
     <property name="os" value="UBUNTU" />
 

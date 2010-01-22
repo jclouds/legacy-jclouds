@@ -37,6 +37,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -75,11 +76,11 @@ public class ComputeTaskUtils {
             try {
                Properties props = new Properties();
                props.putAll(projectProvider.get().getProperties());
-               return new ComputeServiceContextFactory().createContext(from, ImmutableSet.of(
-                        (Module) new AntLoggingModule(projectProvider.get(),
+               return new ComputeServiceContextFactory().createContext(from,
+                        ImmutableSet
+                                 .of((Module) new AntLoggingModule(projectProvider.get(),
                                           ComputeServiceConstants.COMPUTE_LOGGER),
-                                          new JschSshClientModule()),
-                        props);
+                                          new JschSshClientModule()), props);
             } catch (IOException e) {
                throw new RuntimeException(e);
             }
@@ -90,13 +91,15 @@ public class ComputeTaskUtils {
    }
 
    static Template createTemplateFromElement(NodeElement nodeElement, ComputeService computeService) {
-      Template template = computeService.createTemplateInLocation(nodeElement.getLocation());
-      template.os(OperatingSystem.valueOf(nodeElement.getOs()));
-      addSizeFromElementToTemplate(nodeElement, template);
-      return template;
+      TemplateBuilder templateBuilder = computeService.templateBuilder();
+      if (nodeElement.getLocation() != null && !"".equals(nodeElement.getLocation()))
+         templateBuilder.location(nodeElement.getLocation());
+      templateBuilder.os(OperatingSystem.valueOf(nodeElement.getOs()));
+      addSizeFromElementToTemplate(nodeElement, templateBuilder);
+      return templateBuilder.build();
    }
 
-   static void addSizeFromElementToTemplate(NodeElement nodeElement, Template template) {
+   static void addSizeFromElementToTemplate(NodeElement nodeElement, TemplateBuilder template) {
       if (nodeElement.getSize().equalsIgnoreCase("smallest")) {
          template.smallest();
       } else if (nodeElement.getSize().equalsIgnoreCase("fastest")) {

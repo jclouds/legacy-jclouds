@@ -36,12 +36,14 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.options.RunNodeOptions;
@@ -146,17 +148,17 @@ public class RimuHostingComputeService implements ComputeService {
    }
 
    @Override
-   public Template createTemplateInLocation(String location) {
-      return null;
-   }
-
-   @Override
    public SortedSet<? extends Size> listSizes() {
       return null;
    }
 
    @Override
-   public Set<? extends Template> listTemplates() {
+   public Set<? extends Image> listImages() {
+      return null;
+   }
+
+   @Override
+   public TemplateBuilder templateBuilder() {
       return null;
    }
 }

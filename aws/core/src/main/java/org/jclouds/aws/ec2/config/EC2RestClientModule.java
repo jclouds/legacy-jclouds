@@ -68,6 +68,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -90,6 +91,16 @@ public class EC2RestClientModule extends AbstractModule {
    protected void configure() {
       bindErrorHandlers();
       bindRetryHandlers();
+   }
+
+   @Provides
+   @Singleton
+   @EC2
+   Region provideCurrentRegion(Map<Region, URI> regionMap, @EC2 URI currentUri) {
+      ImmutableBiMap<URI, Region> map = ImmutableBiMap.copyOf(regionMap).inverse();
+      Region region = map.get(currentUri);
+      assert region != null : currentUri + " not in " + map;
+      return region;
    }
 
    @Provides

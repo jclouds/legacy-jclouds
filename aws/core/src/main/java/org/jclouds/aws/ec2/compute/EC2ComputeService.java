@@ -26,7 +26,6 @@ import java.net.InetAddress;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -43,15 +42,16 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.CreateNodeResponse;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
@@ -76,22 +76,21 @@ public class EC2ComputeService implements ComputeService {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final EC2Client ec2Client;
-   private final SortedSet<EC2Size> sizes;
-   private final Provider<Set<EC2Template>> templates;
+   protected final Provider<Set<? extends Image>> images;
+   protected final Provider<Set<? extends Size>> sizes;
+   protected final Provider<TemplateBuilder> templateBuilderProvider;
    private final Predicate<RunningInstance> instanceStateRunning;
    private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
-   private final Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap;
 
    @Inject
-   public EC2ComputeService(EC2Client client, SortedSet<EC2Size> sizes,
-            Provider<Set<EC2Template>> templates,
-            Map<Architecture, Map<OperatingSystem, Map<Region, String>>> imageAmiIdMap,
+   public EC2ComputeService(EC2Client client, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
             Predicate<RunningInstance> instanceStateRunning,
             RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
       this.ec2Client = client;
+      this.images = images;
       this.sizes = sizes;
-      this.templates = templates; // delayed intentionally, as generation is slow
-      this.imageAmiIdMap = imageAmiIdMap;
+      this.templateBuilderProvider = templateBuilderProvider;
       this.instanceStateRunning = instanceStateRunning;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
    }
@@ -108,20 +107,23 @@ public class EC2ComputeService implements ComputeService {
 
    @Override
    public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
-      checkArgument(template instanceof EC2Template,
-               "unexpected template type. should be EC2Template, was: " + template.getClass());
-      EC2Template ec2Template = (EC2Template) template;
+      checkArgument(template.getImage() instanceof EC2Image,
+               "unexpected image type. should be EC2Image, was: " + template.getImage().getClass());
+      checkArgument(template.getSize() instanceof EC2Size,
+               "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
+      EC2Image ec2Image = EC2Image.class.cast(template.getImage());
+      EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
-      KeyPair keyPair = createKeyPairInRegion(ec2Template.getRegion(), name);
+      Region region = ec2Image.getImage().getRegion();
+      KeyPair keyPair = createKeyPairInRegion(region, name);
       String securityGroupName = name;
-      createSecurityGroupInRegion(ec2Template.getRegion(), securityGroupName, options
-               .getOpenPorts());
+      createSecurityGroupInRegion(region, securityGroupName, options.getOpenPorts());
 
       logger.debug(">> running instance region(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
-               ec2Template.getRegion(), ec2Template.getImage().getId(), ec2Template.getSize()
-                        .getInstanceType(), keyPair.getKeyName(), securityGroupName);
+               region, ec2Image.getId(), ec2Size.getInstanceType(), keyPair.getKeyName(),
+               securityGroupName);
       RunInstancesOptions instanceOptions = withKeyName(keyPair.getKeyName())// key
-               .asType(ec2Template.getSize().getInstanceType())// instance size
+               .asType(ec2Size.getInstanceType())// instance size
                .withSecurityGroup(securityGroupName)// group I created above
                .withAdditionalInfo(name);
 
@@ -129,36 +131,24 @@ public class EC2ComputeService implements ComputeService {
          instanceOptions.withUserData(options.getRunScript());
 
       RunningInstance runningInstance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
-               .runInstancesInRegion(ec2Template.getRegion(), null, ec2Template.getImage().getId(),
-                        1, 1, instanceOptions));
+               .runInstancesInRegion(region, null, ec2Image.getId(), 1, 1, instanceOptions));
       logger.debug("<< started instance(%s)", runningInstance.getId());
       instanceStateRunning.apply(runningInstance);
       logger.debug("<< running instance(%s)", runningInstance.getId());
 
       // refresh to get IP address
-      runningInstance = getOnlyRunningInstanceInRegion(ec2Template.getRegion(), runningInstance
-               .getId());
+      runningInstance = getOnlyRunningInstanceInRegion(region, runningInstance.getId());
 
       Set<InetAddress> publicAddresses = runningInstance.getIpAddress() == null ? ImmutableSet
                .<InetAddress> of() : ImmutableSet.<InetAddress> of(runningInstance.getIpAddress());
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateNodeResponseImpl(
-               runningInstance.getId(),
-               name,
-               runningInstance.getRegion().toString(),
-               null,
-               ImmutableMap.<String, String> of(),
-               instanceToNodeState.get(runningInstance.getInstanceState()),
-               publicAddresses,
-               privateAddresses,
-               22,
+      return new CreateNodeResponseImpl(runningInstance.getId(), name, runningInstance.getRegion()
+               .toString(), null, ImmutableMap.<String, String> of(), instanceToNodeState
+               .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses, 22,
                LoginType.SSH,
-               new Credentials(
-                        ec2Template.getImage().getOperatingSystem() == OperatingSystem.UBUNTU ? "ubuntu"
-                                 : "root", keyPair.getKeyMaterial()), ImmutableMap
-                        .<String, String> of());
+               new Credentials("root", keyPair.getKeyMaterial()), ImmutableMap.<String, String> of());
    }
 
    private KeyPair createKeyPairInRegion(Region region, String name) {
@@ -316,17 +306,18 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public SortedSet<EC2Size> listSizes() {
-      return sizes;
+   public Set<? extends Size> listSizes() {
+      return sizes.get();
    }
 
    @Override
-   public Set<EC2Template> listTemplates() {
-      return templates.get();
+   public Set<? extends Image> listImages() {
+      return images.get();
    }
 
    @Override
-   public Template createTemplateInLocation(String location) {
-      return new EC2Template(ec2Client, imageAmiIdMap, location);
+   public TemplateBuilder templateBuilder() {
+      return templateBuilderProvider.get();
    }
+
 }

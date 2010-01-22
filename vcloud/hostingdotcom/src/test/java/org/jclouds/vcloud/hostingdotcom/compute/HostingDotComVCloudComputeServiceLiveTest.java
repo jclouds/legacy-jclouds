@@ -22,6 +22,8 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 import static org.jclouds.compute.domain.OperatingSystem.CENTOS;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,7 +39,10 @@ public class HostingDotComVCloudComputeServiceLiveTest extends BaseComputeServic
    @Override
    public void setServiceDefaults() {
       service = "hostingdotcom";
-      testOS = CENTOS;
+   }
+
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      return templateBuilder.os(CENTOS).smallest().build();
    }
 
    @Override

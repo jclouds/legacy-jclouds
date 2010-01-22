@@ -31,13 +31,15 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class SizeImpl implements Size {
-
+   private String id;
    private final int cores;
    private final int ram;
    private final int disk;
    private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
 
-   public SizeImpl(int cores, int ram, int disk, Iterable<Architecture> supportedArchitectures) {
+   public SizeImpl(String id, int cores, int ram, int disk,
+            Iterable<Architecture> supportedArchitectures) {
+      this.id = id;
       this.cores = cores;
       this.ram = ram;
       this.disk = disk;
@@ -74,6 +76,7 @@ public class SizeImpl implements Size {
       int result = 1;
       result = prime * result + cores;
       result = prime * result + disk;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ram;
       result = prime * result
                + ((supportedArchitectures == null) ? 0 : supportedArchitectures.hashCode());
@@ -93,6 +96,11 @@ public class SizeImpl implements Size {
          return false;
       if (disk != other.disk)
          return false;
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
+         return false;
       if (ram != other.ram)
          return false;
       if (supportedArchitectures == null) {
@@ -108,12 +116,10 @@ public class SizeImpl implements Size {
                this.getRam(), that.getRam()).compare(this.getDisk(), that.getDisk()).result();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public String toString() {
-      return "Size [cores=" + cores + ", disk=" + disk + ", ram=" + ram + "]";
+      return "[id=" + id + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk
+               + ", supportedArchitectures=" + supportedArchitectures + "]";
    }
 
    /**
@@ -122,5 +128,13 @@ public class SizeImpl implements Size {
    @Override
    public boolean supportsArchitecture(Architecture architecture) {
       return supportedArchitectures.contains(architecture);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getId() {
+      return id;
    }
 }
