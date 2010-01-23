@@ -16,20 +16,17 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.predicates;
-
-import java.util.NoSuchElementException;
+package org.jclouds.vcloud.predicates;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
@@ -39,32 +36,23 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class InstanceStateTerminated implements Predicate<RunningInstance> {
+public class VAppNotFound implements Predicate<VApp> {
 
-   private final InstanceClient client;
+   private final VCloudClient client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateTerminated(InstanceClient client) {
+   public VAppNotFound(VCloudClient client) {
       this.client = client;
    }
 
-   public boolean apply(RunningInstance instance) {
-      logger.trace("looking for state on instance %s", instance);
+   public boolean apply(VApp vApp) {
       try {
-         instance = refresh(instance);
-      } catch (NoSuchElementException e) {
+         return client.getVApp(vApp.getId()) == null;
+      } catch (ResourceNotFoundException e) {
          return true;
       }
-      logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(),
-               InstanceState.TERMINATED, instance.getInstanceState());
-      return instance.getInstanceState() == InstanceState.TERMINATED;
-   }
-
-   private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.describeInstancesInRegion(
-               instance.getRegion(), instance.getId())));
    }
 }

@@ -34,6 +34,7 @@ import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.predicates.ServerActive;
+import org.jclouds.rackspace.cloudservers.predicates.ServerDeleted;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -51,8 +52,16 @@ public class CloudServersContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Predicate<Server> instanceStateRunning(ServerActive stateRunning) {
-      return new RetryablePredicate<Server>(stateRunning, 600, 2, TimeUnit.SECONDS);
+   @Named("ACTIVE")
+   protected Predicate<Server> serverRunning(ServerActive stateRunning) {
+      return new RetryablePredicate<Server>(stateRunning, 600, 1, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("DELETED")
+   protected Predicate<Server> serverDeleted(ServerDeleted stateDeleted) {
+      return new RetryablePredicate<Server>(stateDeleted, 600, 50, TimeUnit.MILLISECONDS);
    }
 
    @Provides

@@ -23,6 +23,8 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
+import static org.jclouds.rest.RestContextFactory.getPropertiesFromResource;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -77,9 +79,10 @@ public class ComputeTaskUtils {
          @Override
          public ComputeServiceContext apply(URI from) {
             try {
-               Properties props = new Properties();
+               Properties props = getPropertiesFromResource("compute.properties");
                props.putAll(projectProvider.get().getProperties());
-               return new ComputeServiceContextFactory().createContext(from,
+               // adding the properties to the factory will allow us to pass alternate endpoints
+               return new ComputeServiceContextFactory(props).createContext(from,
                         ImmutableSet
                                  .of((Module) new AntLoggingModule(projectProvider.get(),
                                           ComputeServiceConstants.COMPUTE_LOGGER),

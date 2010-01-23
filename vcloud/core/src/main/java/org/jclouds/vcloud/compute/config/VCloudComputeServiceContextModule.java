@@ -127,7 +127,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                            myOs = os;
                         }
                      }
-                     Architecture arch = resource.getName().matches("64[- ]bit") ? Architecture.X86_32
+                     Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
                               : Architecture.X86_64;
                      VAppTemplate template = client.getVAppTemplate(item.getEntity().getId());
                      images.add(new ImageImpl(resource.getId(), template.getName(), "", myOs,

@@ -1,0 +1,5 @@
+service=cloudservers
+driver=rackspace
+account=user
+key=your_key
+nodename=name_of_your_server

@@ -52,6 +52,7 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.Org;
@@ -67,6 +68,7 @@ import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.predicates.TaskSuccess;
+import org.jclouds.vcloud.predicates.VAppNotFound;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -85,7 +87,7 @@ import com.google.inject.Provides;
 public class VCloudRestClientModule extends AbstractModule {
    @Resource
    protected Logger logger = Logger.NULL;
-	
+
    @Provides
    @Singleton
    protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
@@ -102,6 +104,13 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected Predicate<String> successTester(TaskSuccess success) {
       return new RetryablePredicate<String>(success, 600, 10, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("NOT_FOUND")
+   protected Predicate<VApp> successTester(VAppNotFound notFound) {
+      return new RetryablePredicate<VApp>(notFound, 5, 1, TimeUnit.SECONDS);
    }
 
    @Override
@@ -244,7 +253,10 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected URI provideDefaultNetwork(VCloudAsyncClient client) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return Iterables.get(client.getDefaultVDC().get(180, TimeUnit.SECONDS).getAvailableNetworks().values(), 0).getLocation();
+      return Iterables
+               .get(
+                        client.getDefaultVDC().get(180, TimeUnit.SECONDS).getAvailableNetworks()
+                                 .values(), 0).getLocation();
    }
 
    @Provides

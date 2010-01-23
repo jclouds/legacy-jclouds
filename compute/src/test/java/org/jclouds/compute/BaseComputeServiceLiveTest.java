@@ -98,7 +98,7 @@ public abstract class BaseComputeServiceLiveTest {
       client = context.getComputeService();
    }
 
-   private boolean canRunScript(Template template) {
+   protected boolean canRunScript(Template template) {
       return template.getImage().getOsFamily() == OsFamily.UBUNTU
                || template.getImage().getOsFamily() == OsFamily.JEOS;
    }
@@ -137,9 +137,11 @@ public abstract class BaseComputeServiceLiveTest {
       assertNotNull(node.getName());
       assertEquals(node.getPublicAddresses().size(), 1);
       assertNotNull(node.getCredentials());
-      assertNotNull(node.getCredentials().account);
-      assertNotNull(node.getCredentials().key);
-      sshPing();
+      if (node.getCredentials().account != null) {
+         assertNotNull(node.getCredentials().account);
+         assertNotNull(node.getCredentials().key);
+         sshPing();
+      }
    }
 
    protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
@@ -206,7 +208,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    @AfterTest
-   void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
+   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (node != null)
          client.destroyNode(node);
       context.close();

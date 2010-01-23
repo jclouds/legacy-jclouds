@@ -51,13 +51,16 @@ public class ParseRimuHostingException implements Function<Exception, Object> {
    public Object apply(Exception e) {
       if (e instanceof HttpResponseException) {
          HttpResponseException responseException = (HttpResponseException) e;
-         Type setType = new TypeToken<Map<String, RimuHostingResponse>>() {
-         }.getType();
+         if (responseException.getContent() != null) {
 
-         Map<String, RimuHostingResponse> responseMap = gson.fromJson(responseException
-                  .getContent(), setType);
-         throw new RuntimeException(responseMap.values().iterator().next().getErrorInfo()
-                  .getErrorClass());
+            Type setType = new TypeToken<Map<String, RimuHostingResponse>>() {
+            }.getType();
+
+            Map<String, RimuHostingResponse> responseMap = gson.fromJson(responseException
+                     .getContent(), setType);
+            throw new RuntimeException(responseMap.values().iterator().next().getErrorInfo()
+                     .getErrorClass());
+         }
       }
       return propagateOrNull(e);
    }

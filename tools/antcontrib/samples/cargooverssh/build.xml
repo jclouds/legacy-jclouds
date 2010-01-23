@@ -34,6 +34,18 @@
   <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
   <get src="http://web-actions.googlecode.com/files/samples-blazeds.war" dest="${warfile}"/>
 -->
+  <input
+    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting, hostingdotcom)?"
+    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting,hostingdotcom"
+    addproperty="service"
+  />
+
+  <input
+    message="Which driver does ${service} use?"
+    validargs="aws,rackspace,vcloud,terremark,rimuhosting,hostingdotcom"
+    addproperty="driver"
+  />
+
   <!-- initialize maven tasks -->
   <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks-2.1.0.jar"/>
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath"/>
@@ -46,7 +58,7 @@
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.1-SNAPSHOT"/>
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.1-SNAPSHOT"/>
-    <dependency groupId="org.jclouds" artifactId="${driver}" version="1.0-SNAPSHOT"/>
+    <dependency groupId="org.jclouds" artifactId="jclouds-${driver}" version="1.0-SNAPSHOT"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT"/>
     <remoteRepository refid="jclouds-snapshot.repository"/>
     <remoteRepository refid="cargo-snapshot.repository"/>
@@ -57,10 +69,9 @@
   <taskdef name="sshexec" classname="org.apache.tools.ant.taskdefs.optional.ssh.SSHExec" classpathref="jclouds.classpath" />
   <taskdef resource="cargo.tasks" classpathref="jclouds.classpath"/>
 
-  <property name="service" value="${service}"/>
   <input message="What is your account on ${service}?" addproperty="account"/>
   <input message="What is the key for ${account}?" addproperty="key"/>
-  <property name="nodename" value="terremark-blaze"/>
+  <input message="What is the nodename for the deployment?" addproperty="nodename"/>
   <property name="url" value="compute://${account}:${key}@${service}"/>
 
   <target name="destroy" description="destroy the node ${nodename}">

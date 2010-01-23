@@ -66,8 +66,9 @@ public class TerremarkVCloudComputeService extends VCloudComputeService {
    public TerremarkVCloudComputeService(TerremarkVCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<String> successTester, ComputeUtils utils) {
-      super(client, templateBuilderProvider, images, sizes, utils, successTester);
+            ComputeUtils utils, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester) {
+      super(client, templateBuilderProvider, images, sizes, utils, successTester, notFoundTester);
       this.client = client;
    }
 

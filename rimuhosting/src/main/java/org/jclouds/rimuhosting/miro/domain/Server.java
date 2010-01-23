@@ -32,8 +32,8 @@ public class Server implements Comparable<Server> {
 
    @SerializedName("allocated_ips")
    private IpAddresses ipAddresses;
-   @SerializedName("billing_info")
-   private BillingData billingData;
+//   @SerializedName("billing_info")
+//   private BillingData billingData;
    @SerializedName("billing_oid")
    private Long billingId;
    @SerializedName("data_transfer_allowance")
@@ -69,13 +69,13 @@ public class Server implements Comparable<Server> {
       this.ipAddresses = ipAddresses;
    }
 
-   public BillingData getBillingData() {
-      return billingData;
-   }
-
-   public void setBillingData(BillingData billingData) {
-      this.billingData = billingData;
-   }
+//   public BillingData getBillingData() {
+//      return billingData;
+//   }
+//
+//   public void setBillingData(BillingData billingData) {
+//      this.billingData = billingData;
+//   }
 
    public Long getBillingId() {
       return billingId;

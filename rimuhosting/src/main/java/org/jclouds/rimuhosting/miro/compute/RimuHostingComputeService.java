@@ -23,13 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
@@ -39,15 +38,15 @@ import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.RunNodeOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.ResourceLocation;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
@@ -68,19 +67,22 @@ public class RimuHostingComputeService implements ComputeService {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
-   RimuHostingClient rhClient;
+   protected final RimuHostingClient client;
+   protected final Provider<Set<? extends Image>> images;
+   protected final Provider<Set<? extends Size>> sizes;
+   protected final Provider<TemplateBuilder> templateBuilderProvider;
+   private final String location;
 
    @Inject
-   public RimuHostingComputeService(RimuHostingClient rhClient) {
-      this.rhClient = rhClient;
+   public RimuHostingComputeService(RimuHostingClient client,
+            Provider<TemplateBuilder> templateBuilderProvider, @ResourceLocation String location,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes) {
+      this.client = client;
+      this.location = location;
+      this.images = images;
+      this.sizes = sizes;
+      this.templateBuilderProvider = templateBuilderProvider;
    }
-
-   private Map<OsFamily, String> imageNameMap = ImmutableMap.<OsFamily, String> builder().put(
-            OsFamily.CENTOS, "centos53").put(OsFamily.UBUNTU, "ubuntu904").build();
-
-   // private Map<Size, String> profileNameMap = ImmutableMap.<Profile, String> builder().put(
-   // Profile.SMALLEST, "MIRO1B").build();
 
    @Override
    public CreateNodeResponse runNode(String name, Template template) {
@@ -89,22 +91,23 @@ public class RimuHostingComputeService implements ComputeService {
 
    @Override
    public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
-      NewServerResponse serverResponse = rhClient.createServer(name, checkNotNull(imageNameMap
-               .get(template.getImage().getOsFamily()), "os not supported: "
-               + template.getImage().getOsFamily()), "MIRO1B");
-      return new CreateNodeResponseImpl(serverResponse.getServer().getId().toString(),
-               serverResponse.getServer().getName(), "default", null, ImmutableMap
-                        .<String, String> of(),
-               NodeState.RUNNING,// TODO need a real state!
-               getPublicAddresses(serverResponse.getServer()), ImmutableList.<InetAddress> of(),
-               new Credentials("root", serverResponse.getNewInstanceRequest().getCreateOptions()
-                        .getPassword()), ImmutableMap.<String, String> of());
+      NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage()
+               .getId(), "imageId"), checkNotNull(template.getSize().getId(), "sizeId"));
+      return new CreateNodeResponseImpl(null,// dunno why there is no information here....
+               name, location, null, ImmutableMap.<String, String> of(), NodeState.UNKNOWN,// TODO
+                                                                                           // need a
+                                                                                           // real
+                                                                                           // state!
+               ImmutableList.<InetAddress> of(),// no real useful data here..
+               ImmutableList.<InetAddress> of(), new Credentials("root", serverResponse
+                        .getNewInstanceRequest().getCreateOptions().getPassword()), ImmutableMap
+                        .<String, String> of());
    }
 
    @VisibleForTesting
-   static Iterable<InetAddress> getPublicAddresses(Server rhServer) {
-      Iterable<String> addresses = Iterables.concat(ImmutableList.of(rhServer.getIpAddresses()
-               .getPrimaryIp()), rhServer.getIpAddresses().getSecondaryIps());
+   static Iterable<InetAddress> getPublicAddresses(Server server) {
+      Iterable<String> addresses = Iterables.concat(ImmutableList.of(server.getIpAddresses()
+               .getPrimaryIp()), server.getIpAddresses().getSecondaryIps());
       return Iterables.transform(addresses, new Function<String, InetAddress>() {
 
          @Override
@@ -121,12 +124,18 @@ public class RimuHostingComputeService implements ComputeService {
 
    public Set<ComputeMetadata> listNodes() {
       Set<ComputeMetadata> serverSet = Sets.newLinkedHashSet();
-      Set<Server> rhNodes = rhClient.getServerList();
-      for (Server rhNode : rhNodes) {
-         serverSet.add(new ComputeMetadataImpl(ComputeType.NODE, rhNode.getId() + "", rhNode
-                  .getName(), null, null, ImmutableMap.<String, String> of()));
+      Set<Server> servers = client.getServerList();
+      for (Server server : servers) {
+         serverSet.add(toNode(server));
       }
       return serverSet;
+   }
+
+   private NodeMetadataImpl toNode(Server server) {
+      return new NodeMetadataImpl(server.getId() + "", server.getName(), location, null,
+               ImmutableMap.<String, String> of(), NodeState.UNKNOWN, getPublicAddresses(server),
+               ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of("state", server
+                        .getState()));
    }
 
    @Override
@@ -134,7 +143,7 @@ public class RimuHostingComputeService implements ComputeService {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
                + node.getType());
       checkNotNull(node.getId(), "node.id");
-      throw new UnsupportedOperationException("not yet implemented");
+      return toNode(client.getServer(Long.parseLong(node.getId())));
    }
 
    @Override
@@ -142,21 +151,21 @@ public class RimuHostingComputeService implements ComputeService {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
                + node.getType());
       checkNotNull(node.getId(), "node.id");
-      rhClient.destroyServer(new Long(node.getId()));
+      client.destroyServer(new Long(node.getId()));
    }
 
    @Override
-   public SortedSet<? extends Size> listSizes() {
-      return null;
+   public Set<? extends Size> listSizes() {
+      return sizes.get();
    }
 
    @Override
    public Set<? extends Image> listImages() {
-      return null;
+      return images.get();
    }
 
    @Override
    public TemplateBuilder templateBuilder() {
-      return null;
+      return this.templateBuilderProvider.get();
    }
 }

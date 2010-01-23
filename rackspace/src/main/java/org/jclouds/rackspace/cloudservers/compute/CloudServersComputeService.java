@@ -77,12 +77,14 @@ public class CloudServersComputeService implements ComputeService {
    private final ComputeUtils utils;
    private final Predicate<Server> serverActive;
    private final ServerToNodeMetadata serverToNodeMetadata;
+   private final Predicate<Server> serverDeleted;
 
    @Inject
    public CloudServersComputeService(CloudServersClient client,
             Provider<TemplateBuilder> templateBuilderProvider, @ResourceLocation String location,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            ComputeUtils utils, Predicate<Server> serverActive,
+            ComputeUtils utils, @Named("ACTIVE") Predicate<Server> serverActive,
+            @Named("DELETED") Predicate<Server> serverDeleted,
             ServerToNodeMetadata serverToNodeMetadata) {
       this.location = location;
       this.client = client;
@@ -91,10 +93,11 @@ public class CloudServersComputeService implements ComputeService {
       this.utils = utils;
       this.templateBuilderProvider = templateBuilderProvider;
       this.serverActive = serverActive;
+      this.serverDeleted = serverDeleted;
       this.serverToNodeMetadata = serverToNodeMetadata;
    }
 
-   private static Map<ServerStatus, NodeState> instanceToNodeState = ImmutableMap
+   private static Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap
             .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
             .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
             .put(ServerStatus.DELETED, NodeState.TERMINATED)//
@@ -135,7 +138,7 @@ public class CloudServersComputeService implements ComputeService {
                         + template.getSize().getClass());
       CloudServersSize cloudServersSize = CloudServersSize.class.cast(template.getSize());
 
-      logger.debug(">> running instance location(%s) image(%s) flavor(%s)", location,
+      logger.debug(">> running server location(%s) image(%s) flavor(%s)", location,
                cloudServersImage.getId(), template.getSize().getId());
 
       Server server = client.createServer(name, cloudServersImage.getImage().getId(),
@@ -145,9 +148,9 @@ public class CloudServersComputeService implements ComputeService {
                null, server.getMetadata(), NodeState.RUNNING, server.getAddresses()
                         .getPublicAddresses(), server.getAddresses().getPrivateAddresses(),
                new Credentials("root", server.getAdminPass()), ImmutableMap.<String, String> of());
-      logger.debug("<< started instance(%s)", server.getId());
+      logger.debug("<< started server(%s)", server.getId());
       serverActive.apply(server);
-      logger.debug("<< running instance(%s)", server.getId());
+      logger.debug("<< running server(%s)", server.getId());
       if (options.getRunScript() != null) {
          utils.runScriptOnNode(node, options.getRunScript());
       }
@@ -175,7 +178,7 @@ public class CloudServersComputeService implements ComputeService {
       @Override
       public NodeMetadata apply(Server from) {
          return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null, from
-                  .getMetadata(), instanceToNodeState.get(from.getStatus()), from.getAddresses()
+                  .getMetadata(), serverToNodeState.get(from.getStatus()), from.getAddresses()
                   .getPublicAddresses(), from.getAddresses().getPrivateAddresses(), ImmutableMap
                   .<String, String> of());
       }
@@ -197,9 +200,11 @@ public class CloudServersComputeService implements ComputeService {
                + node.getType());
       checkNotNull(node.getId(), "node.id");
 
-      logger.debug(">> terminating instance(%s)", node.getId());
-      boolean success = client.deleteServer(Integer.parseInt(node.getId()));
-      logger.debug("<< terminated instance(%s) success(%s)", node.getId(), success);
+      logger.debug(">> deleting server(%s)", node.getId());
+      int serverId = Integer.parseInt(node.getId());
+      client.deleteServer(serverId);
+      boolean successful = serverDeleted.apply(client.getServer(serverId));
+      logger.debug("<< deleted server(%s) success(%s)", node.getId(), successful);
    }
 
    @Override

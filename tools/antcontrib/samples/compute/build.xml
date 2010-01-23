@@ -19,10 +19,23 @@
 
 -->
 <project name="compute" default="list" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+  <property file="build.properties" />
   <mkdir dir="build" />
   <!--
      <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
    -->
+
+  <input
+    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting, hostingdotcom)?"
+    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting,hostingdotcom"
+    addproperty="service"
+  />
+
+  <input
+    message="Which driver does ${service} use?"
+    validargs="aws,rackspace,vcloud,terremark,rimuhosting,hostingdotcom"
+    addproperty="driver"
+  />
 
   <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks-2.1.0.jar" />
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
@@ -32,22 +45,12 @@
 
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-hostingdotcom" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-rimuhosting" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-rackspace" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-aws" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-${driver}" version="1.0-SNAPSHOT" />
     <localRepository refid="local.repository" />
     <remoteRepository refid="jclouds-snapshot.repository" />
   </artifact:dependencies>
 
   <typedef name="compute" classname="org.jclouds.tools.ant.taskdefs.compute.ComputeTask" classpathref="jclouds.classpath" />
-
-  <input
-    message="Which service would you like to use (ec2, terremark, rimuhosting, hostingdotcom)?"
-    validargs="ec2,terremark,rimuhosting,hostingdotcom"
-    addproperty="service"
-  />
 
   <input
     message="What is your account on ${service}?"

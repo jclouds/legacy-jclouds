@@ -81,18 +81,21 @@ public class EC2ComputeService implements ComputeService {
    protected final Provider<Set<? extends Size>> sizes;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
    private final Predicate<RunningInstance> instanceStateRunning;
+   private final Predicate<RunningInstance> instanceStateTerminated;
    private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
 
    @Inject
    public EC2ComputeService(EC2Client client, Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<RunningInstance> instanceStateRunning,
+            @Named("RUNNING") Predicate<RunningInstance> instanceStateRunning,
+            @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated,
             RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
       this.ec2Client = client;
       this.images = images;
       this.sizes = sizes;
       this.templateBuilderProvider = templateBuilderProvider;
       this.instanceStateRunning = instanceStateRunning;
+      this.instanceStateTerminated = instanceStateTerminated;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
    }
 
@@ -289,7 +292,8 @@ public class EC2ComputeService implements ComputeService {
          String name = runningInstance.getKeyName();
          logger.debug(">> terminating instance(%s)", node.getId());
          ec2Client.getInstanceServices().terminateInstancesInRegion(region, node.getId());
-         logger.debug("<< terminated instance(%s)", node.getId());
+         boolean success = instanceStateTerminated.apply(runningInstance);
+         logger.debug("<< terminated instance(%s) success(%s)", node.getId(), success);
          logger.debug(">> deleting keyPair(%s)", name);
          ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, name);
          logger.debug("<< deleted keyPair(%s)", name);

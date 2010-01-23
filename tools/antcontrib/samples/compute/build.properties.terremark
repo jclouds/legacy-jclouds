@@ -1,0 +1,5 @@
+service=terremark
+driver=terremark
+account=user@youregistered.com
+key=password
+nodename=name_of_your_vapp

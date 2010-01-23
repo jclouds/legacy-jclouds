@@ -109,14 +109,14 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
                   .describeImagesInRegion(region, ownedBy("063491364108"))) {
             OsFamily os = null;
-            String osDescription = "";
+            String osDescription = from.getImageLocation();
             String version = "";
 
             Matcher matcher = ALESTIC_PATTERN.matcher(from.getImageLocation());
             if (matcher.find()) {
                try {
                   os = OsFamily.fromValue(matcher.group(1));
-                  osDescription = matcher.group(2);
+                  matcher.group(2);//TODO no field for os version
                   version = matcher.group(3);
                } catch (IllegalArgumentException e) {
                   holder.logger.debug("<< didn't match os(%s)", matcher.group(1));

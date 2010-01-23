@@ -1,5 +1,0 @@
-host=localhost
-username=${user.name}
-keyfile=${user.home}/.ssh/id_dsa
-account=email@registered.with.terremark.org
-key=your_password

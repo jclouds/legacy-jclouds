@@ -80,7 +80,7 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
     * @throws IOException
     *            if {@code filename} cannot load.
     */
-   static Properties getPropertiesFromResource(String filename) throws IOException {
+   public static Properties getPropertiesFromResource(String filename) throws IOException {
       Properties properties = new Properties();
       properties.load(Resources.newInputStreamSupplier(Resources.getResource(filename)).getInput());
       properties.putAll(System.getProperties());

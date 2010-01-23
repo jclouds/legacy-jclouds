@@ -36,7 +36,7 @@ public class ImageImpl implements Image {
    private final String description;
    private final String version;
    private final OsFamily operatingSystem;
-   private final String operatingSystemVersion;
+   private final String operatingSystemDescription;
    private final String location;
    private final Architecture architecture;
 
@@ -57,12 +57,12 @@ public class ImageImpl implements Image {
    }
 
    public ImageImpl(String id, String description, String version, OsFamily operatingSystem,
-            String operatingSystemVersion, String location, Architecture architecture) {
+            String operatingSystemDescription, String location, Architecture architecture) {
       this.id = id;
       this.description = description;
       this.version = version;
       this.operatingSystem = operatingSystem;
-      this.operatingSystemVersion = operatingSystemVersion;
+      this.operatingSystemDescription = operatingSystemDescription;
       this.location = location;
       this.architecture = architecture;
    }
@@ -116,7 +116,7 @@ public class ImageImpl implements Image {
    public String toString() {
       return "[id=" + id + ", version=" + version + ", location=" + location + ", architecture="
                + architecture + ", operatingSystem=" + operatingSystem
-               + ", operatingSystemVersion=" + operatingSystemVersion + ", description="
+               + ", operatingSystemVersion=" + operatingSystemDescription + ", description="
                + description + "]";
    }
 
@@ -173,7 +173,7 @@ public class ImageImpl implements Image {
     */
    @Override
    public String getOsDescription() {
-      return operatingSystemVersion;
+      return operatingSystemDescription;
    }
 
 }

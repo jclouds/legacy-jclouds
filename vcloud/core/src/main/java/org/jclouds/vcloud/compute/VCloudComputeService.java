@@ -60,6 +60,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -77,6 +78,7 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    protected final Provider<TemplateBuilder> templateBuilderProvider;
    protected final ComputeUtils utils;
    protected final Predicate<String> taskTester;
+   protected final Predicate<VApp> notFoundTester;
 
    protected static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
             .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
@@ -88,13 +90,15 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    public VCloudComputeService(VCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            ComputeUtils utils, Predicate<String> successTester) {
+            ComputeUtils utils, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester) {
       this.taskTester = successTester;
       this.client = client;
       this.images = images;
       this.sizes = sizes;
       this.templateBuilderProvider = templateBuilderProvider;
       this.utils = utils;
+      this.notFoundTester = notFoundTester;
    }
 
    @Override
@@ -191,14 +195,21 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
-      VApp vApp = blockUntilVAppStatusOrThrowException(vAppResponse, client.deployVApp(vAppResponse
-               .getId()), "deploy", ImmutableSet.of(VAppStatus.OFF, VAppStatus.ON));
-      logger.debug("<< deployed vApp(%s)", vApp.getId());
 
-      logger.debug(">> powering vApp(%s)", vApp.getId());
-      vApp = blockUntilVAppStatusOrThrowException(vApp, client.powerOnVApp(vApp.getId()),
-               "powerOn", ImmutableSet.of(VAppStatus.ON));
-      logger.debug("<< on vApp(%s)", vApp.getId());
+      Task task = client.deployVApp(vAppResponse.getId());
+      if (!taskTester.apply(task.getId())) {
+         throw new TaskException("deploy", vAppResponse, task);
+      }
+
+      logger.debug("<< deployed vApp(%s)", vAppResponse.getId());
+
+      logger.debug(">> powering vApp(%s)", vAppResponse.getId());
+      task = client.powerOnVApp(vAppResponse.getId());
+      if (!taskTester.apply(task.getId())) {
+         throw new TaskException("powerOn", vAppResponse, task);
+      }
+      logger.debug("<< on vApp(%s)", vAppResponse.getId());
+      
       Map<String, String> response = parseResponse(vAppResponse);
       checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
       checkState(response.containsKey("username"),
@@ -209,15 +220,20 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    }
 
    protected Map<String, String> parseResponse(VApp vAppResponse) {
-      return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", "",
-               "password", "");
+      Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
+      config.put("id", vAppResponse.getId());
+      config.put("username", null);
+      config.put("password", null);
+      return config;
    }
 
    public void reboot(String id) {
       VApp vApp = client.getVApp(id);
-      logger.debug(">> rebooting vApp(%s)", vApp.getId());
-      blockUntilVAppStatusOrThrowException(vApp, client.resetVApp(vApp.getId()), "reset",
-               ImmutableSet.of(VAppStatus.ON));
+      logger.debug(">> resetting vApp(%s)", vApp.getId());
+      Task task = client.resetVApp(vApp.getId());
+      if (!taskTester.apply(task.getId())) {
+         throw new TaskException("resetVApp", vApp, task);
+      }
       logger.debug("<< on vApp(%s)", vApp.getId());
    }
 
@@ -226,27 +242,16 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       if (vApp.getStatus() != VAppStatus.OFF) {
          logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
                   .getStatus());
-         blockUntilVAppStatusOrThrowException(vApp, client.powerOffVApp(vApp.getId()), "powerOff",
-                  ImmutableSet.of(VAppStatus.OFF));
+         Task task = client.powerOffVApp(vApp.getId());
+         if (!taskTester.apply(task.getId())) {
+            throw new TaskException("powerOff", vApp, task);
+         }
          logger.debug("<< off vApp(%s)", vApp.getId());
       }
       logger.debug(">> deleting vApp(%s)", vApp.getId());
       client.deleteVApp(id);
-      logger.debug("<< deleted vApp(%s)", vApp.getId());
-   }
-
-   private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask, String taskType,
-            Set<VAppStatus> acceptableStatuses) {
-      if (!taskTester.apply(deployTask.getId())) {
-         throw new TaskException(taskType, vApp, deployTask);
-      }
-
-      vApp = client.getVApp(vApp.getId());
-      if (!acceptableStatuses.contains(vApp.getStatus())) {
-         throw new VAppException(String.format("vApp %s status %s should be %s after %s", vApp
-                  .getId(), vApp.getStatus(), acceptableStatuses, taskType), vApp);
-      }
-      return vApp;
+      boolean successful = notFoundTester.apply(vApp);
+      logger.debug("<< deleted vApp(%s) completed(%s)", vApp.getId(), successful);
    }
 
    public static class TaskException extends VAppException {

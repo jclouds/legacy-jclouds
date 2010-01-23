@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -31,8 +32,9 @@ public class HostingDotComVCloudComputeService extends VCloudComputeService {
    HostingDotComVCloudComputeService(VCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<String> successTester, ComputeUtils utils) {
-      super(client, templateBuilderProvider, images, sizes, utils, successTester);
+            Predicate<String> successTester, ComputeUtils utils,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester) {
+      super(client, templateBuilderProvider, images, sizes, utils, successTester, notFoundTester);
    }
 
    @Override

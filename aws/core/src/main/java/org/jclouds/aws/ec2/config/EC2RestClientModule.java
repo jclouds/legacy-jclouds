@@ -83,8 +83,17 @@ import com.google.inject.Provides;
 public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
+   @Named("RUNNING")
    protected Predicate<RunningInstance> instanceStateRunning(InstanceStateRunning stateRunning) {
       return new RetryablePredicate<RunningInstance>(stateRunning, 600, 3, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("TERMINATED")
+   protected Predicate<RunningInstance> instanceStateTerminated(InstanceStateRunning stateTerminated) {
+      return new RetryablePredicate<RunningInstance>(stateTerminated, 600, 50,
+               TimeUnit.MILLISECONDS);
    }
 
    @Override

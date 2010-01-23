@@ -1,0 +1,5 @@
+service=rimuhosting
+driver=rimuhosting
+account=apikey
+key=apikey
+nodename=name_of_your_server
