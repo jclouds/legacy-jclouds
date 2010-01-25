@@ -38,8 +38,6 @@ import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.lifecycle.BaseLifeCycle;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -57,12 +55,11 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
    private final ConcurrentMap<URI, HttpCommandConnectionPool<C>> poolMap;
    private final BlockingQueue<HttpCommandRendezvous<?>> commandQueue;
    private final HttpCommandConnectionPool.Factory<C> poolFactory;
-   private final LoggerFactory logFactory;
 
    @Inject
    public ConnectionPoolTransformingHttpCommandExecutorService(ExecutorService executor,
             HttpCommandConnectionPool.Factory<C> pf,
-            BlockingQueue<HttpCommandRendezvous<?>> commandQueue, LoggerFactory logFactory) {
+            BlockingQueue<HttpCommandRendezvous<?>> commandQueue) {
       super(executor);
       this.poolFactory = pf;
       // TODO inject this.
@@ -81,7 +78,6 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
          }
       });
       this.commandQueue = commandQueue;
-      this.logFactory = logFactory;
    }
 
    /**
@@ -136,22 +132,16 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
       final SynchronousQueue<?> channel = new SynchronousQueue<Object>();
       // should block and immediately parse the response on exit.
       ListenableFuture<T> future = makeListenable(executorService.submit(new Callable<T>() {
-         Logger transformerLogger = logFactory.getLogger(responseTransformer.getClass().getName());
-
          public T call() throws Exception {
             Object o = channel.take();
             if (o instanceof Exception) {
                throw (Exception) o;
             }
-            transformerLogger.debug("Processing intermediate result for: %s", o);
-            T result = responseTransformer.apply((HttpResponse) o);
-            transformerLogger.debug("Processed intermediate result for: %s", o);
-            return result;
+            return responseTransformer.apply((HttpResponse) o);
          }
       }), executorService);
 
-      HttpCommandRendezvous<T> rendezvous = new HttpCommandRendezvous<T>(command, channel,
-               makeListenable(future, executorService));
+      HttpCommandRendezvous<T> rendezvous = new HttpCommandRendezvous<T>(command, channel, future);
       commandQueue.add(rendezvous);
       return rendezvous.getListenableFuture();
    }

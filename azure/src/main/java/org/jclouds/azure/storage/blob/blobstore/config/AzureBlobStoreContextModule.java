@@ -59,7 +59,7 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
    @Singleton
    BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
             InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
+            AzureAsyncBlobStore asynchBlobStore, AzureBlobStore blobStore,
             RestContext<AzureBlobAsyncClient, AzureBlobClient> context) {
       return new BlobStoreContextImpl<AzureBlobAsyncClient, AzureBlobClient>(blobMapFactory,
                inputStreamMapFactory, asynchBlobStore, blobStore, context);

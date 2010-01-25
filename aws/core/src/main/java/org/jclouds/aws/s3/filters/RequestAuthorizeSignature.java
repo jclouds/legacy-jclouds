@@ -33,11 +33,11 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -70,7 +70,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final EncryptionService encryptionService;
 
    @Resource
-   @Named(HttpConstants.LOGGER_SIGNATURE)
+   @Named(Constants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
 
    @Inject

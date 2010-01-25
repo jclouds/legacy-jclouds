@@ -20,13 +20,11 @@ package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
-import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
@@ -78,11 +76,6 @@ public abstract class RestContextBuilder<A, S> {
       this.properties = properties;
    }
 
-   public RestContextBuilder<A, S> withExecutorService(ExecutorService service) {
-      modules.add(new ExecutorServiceModule(service));
-      return this;
-   }
-
    public RestContextBuilder<A, S> withModules(Module... modules) {
       this.modules.addAll(Arrays.asList(modules));
       return this;
@@ -99,7 +92,10 @@ public abstract class RestContextBuilder<A, S> {
       modules.add(new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(properties, "properties"));
+            Properties toBind = new Properties();
+            toBind.putAll(checkNotNull(properties, "properties"));
+            toBind.putAll(System.getProperties());
+            Jsr330.bindProperties(binder(), toBind);
          }
       });
       return Guice.createInjector(modules);
@@ -169,9 +165,9 @@ public abstract class RestContextBuilder<A, S> {
                return input.getClass().isAnnotationPresent(SingleThreaded.class);
             }
          })) {
-            modules.add(new ExecutorServiceModule(sameThreadExecutor()));
+            modules.add(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
          } else {
-            modules.add(new ExecutorServiceModule(newCachedThreadPool()));
+            modules.add(new ExecutorServiceModule());
          }
       }
    }

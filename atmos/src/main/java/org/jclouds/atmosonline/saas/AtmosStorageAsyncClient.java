@@ -45,10 +45,10 @@ import org.jclouds.atmosonline.saas.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
+import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -183,7 +183,7 @@ public interface AtmosStorageAsyncClient {
     * @see AtmosStorageClient#pathExists
     */
    @HEAD
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> pathExists(@PathParam("path") String path);

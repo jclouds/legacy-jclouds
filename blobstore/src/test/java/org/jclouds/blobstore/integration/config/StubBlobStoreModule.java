@@ -21,10 +21,13 @@ package org.jclouds.blobstore.integration.config;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
+import org.jclouds.util.Jsr330;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 public class StubBlobStoreModule extends AbstractModule {
@@ -36,6 +39,8 @@ public class StubBlobStoreModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
       }).toInstance(map);
-      bind(StubAsyncBlobStore.class).asEagerSingleton();
+      bind(StubAsyncBlobStore.class).in(Scopes.SINGLETON);
+      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to(5);
+      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(5);
    }
 }

@@ -18,24 +18,15 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_METADATA_PREFIX;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_RETRY;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_TIMEOUT;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_RETRY;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-
 import java.util.List;
 import java.util.Properties;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
 
-import org.jclouds.aws.s3.config.S3ContextModule;
+import org.jclouds.aws.s3.blobstore.config.S3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.S3RestClientModule;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContextBuilder;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -53,42 +44,21 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
  */
-public class S3ContextBuilder extends RestContextBuilder<S3AsyncClient, S3Client> {
+public class S3ContextBuilder extends BlobStoreContextBuilder<S3AsyncClient, S3Client> {
 
    public S3ContextBuilder(Properties props) {
       super(new TypeLiteral<S3AsyncClient>() {
       }, new TypeLiteral<S3Client>() {
-      }, convert(props));
-   }
-
-   private static Properties convert(Properties props) {
-      for (Entry<String, String> entry : ImmutableMap.of(PROPERTY_S3_METADATA_PREFIX,
-               PROPERTY_USER_METADATA_PREFIX, PROPERTY_S3_RETRY, PROPERTY_BLOBSTORE_RETRY,
-               PROPERTY_S3_TIMEOUT, PROPERTY_USER_METADATA_PREFIX).entrySet()) {
-         if (props.containsKey(entry.getKey()))
-            props.setProperty(entry.getValue(), props.getProperty(entry.getKey()));
-      }
-      return props;
+      }, props);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new S3ContextModule());
+      modules.add(new S3BlobStoreContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new S3RestClientModule());
    }
-
-   @Override
-   public S3ContextBuilder withExecutorService(ExecutorService service) {
-      return (S3ContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public S3ContextBuilder withModules(Module... modules) {
-      return (S3ContextBuilder) super.withModules(modules);
-   }
-
 }

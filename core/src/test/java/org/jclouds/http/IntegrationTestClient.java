@@ -29,7 +29,7 @@ import org.jclouds.http.options.HttpRequestOptions;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 40, timeUnit = TimeUnit.SECONDS)
 public interface IntegrationTestClient {
 
    boolean exists(String path);

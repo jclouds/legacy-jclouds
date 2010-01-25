@@ -126,7 +126,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       }
    }
 
-   @Test()
+   @Test(enabled=false)
    void testRegexSerialResponseTime() throws IOException {
       long now = System.currentTimeMillis();
       for (int i = 0; i < LOOP_COUNT; i++)
@@ -134,7 +134,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       System.out.println("testRegex serial: " + (System.currentTimeMillis() - now) + "");
    }
 
-   @Test()
+   @Test(enabled=false)
    void testRegexParallelResponseTime() throws Throwable {
       List<Runnable> tasks = ImmutableList.<Runnable> of(new Runnable() {
          public void run() {
@@ -144,7 +144,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       executeMultiThreadedPerformanceTest("testRegexParallelResponseTime", tasks);
    }
 
-   @Test()
+   @Test(enabled=false)
    void testSaxSerialResponseTime() throws IOException {
       long now = System.currentTimeMillis();
       for (int i = 0; i < LOOP_COUNT; i++)
@@ -152,7 +152,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       System.out.println("testSax serial: " + (System.currentTimeMillis() - now) + "");
    }
 
-   @Test()
+   @Test(enabled=false)
    void testSaxParallelResponseTime() throws Throwable {
       List<Runnable> tasks = ImmutableList.<Runnable> of(new Runnable() {
          public void run() {

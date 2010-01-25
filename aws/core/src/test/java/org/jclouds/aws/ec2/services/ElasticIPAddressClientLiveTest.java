@@ -54,7 +54,8 @@ public class ElasticIPAddressClientLiveTest {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule());
+      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
+               .getProviderSpecificContext();
       client = context.getApi().getElasticIPAddressServices();
    }
 

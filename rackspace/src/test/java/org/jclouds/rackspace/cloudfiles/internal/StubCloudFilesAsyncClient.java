@@ -69,6 +69,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final ResourceToObjectInfo blob2ObjectInfo;
    private final ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions;
    private final ResourceToObjectList resource2ObjectList;
+   private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
 
    @Inject
    private StubCloudFilesAsyncClient(StubAsyncBlobStore blobStore,
@@ -78,6 +79,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
             BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
             ResourceToObjectList resource2ContainerList) {
+      this.containerToBlobs = containerToBlobs;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -179,6 +181,11 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
 
    public CFObject newCFObject() {
       return objectProvider.create(null);
+   }
+
+   @Override
+   public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
+      return immediateFuture(containerToBlobs.get(bucketName).containsKey(key));
    }
 
 }

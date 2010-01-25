@@ -20,21 +20,21 @@ package org.jclouds.rackspace.cloudservers;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
+import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rackspace.cloudservers.config.CloudServersContextModule;
+import org.jclouds.rackspace.cloudservers.compute.config.CloudServersComputeServiceContextModule;
 import org.jclouds.rackspace.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextBuilder;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link CloudServersContext} instances based on the most commonly requested arguments.
+ * Creates {@link CloudServersComputeServiceContext} or {@link Injector} instances based on the most
+ * commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -43,36 +43,26 @@ import com.google.inject.TypeLiteral;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see RestContext
- * @see CloudServersAsyncClient
+ * @see CloudServersComputeServiceContext
  */
 public class CloudServersContextBuilder extends
-         RestContextBuilder<CloudServersAsyncClient, CloudServersClient> {
+         ComputeServiceContextBuilder<CloudServersAsyncClient, CloudServersClient> {
 
-   public CloudServersContextBuilder(Properties properties) {
+   public CloudServersContextBuilder(Properties props) {
       super(new TypeLiteral<CloudServersAsyncClient>() {
       }, new TypeLiteral<CloudServersClient>() {
-      }, properties);
+      }, props);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new CloudServersContextModule());
+      modules.add(new RackspaceAuthenticationRestModule());
+      modules.add(new CloudServersComputeServiceContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new RackspaceAuthenticationRestModule());
       modules.add(new CloudServersRestClientModule());
    }
 
-   @Override
-   public CloudServersContextBuilder withExecutorService(ExecutorService service) {
-      return (CloudServersContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public CloudServersContextBuilder withModules(Module... modules) {
-      return (CloudServersContextBuilder) super.withModules(modules);
-   }
 }

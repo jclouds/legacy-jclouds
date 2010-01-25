@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.aws.ec2.EC2ContextBuilder;
 import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -45,7 +46,7 @@ public class PropertiesTest {
 
    public void testProperties() {
       assertEquals(properties.getProperty("ec2.contextbuilder"),
-               EC2ComputeServiceContextBuilder.class.getName());
+               EC2ContextBuilder.class.getName());
       assertEquals(properties.getProperty("ec2.propertiesbuilder"),
                EC2PropertiesBuilder.class.getName());
    }

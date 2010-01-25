@@ -19,11 +19,12 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_KEY;
+import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_UID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
@@ -38,10 +39,12 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.twitter.TwitterPropertiesBuilder;
 import org.jclouds.util.Utils;
@@ -76,7 +79,9 @@ public class TweetStoreLiveTest {
                .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
 
       // WATCH THIS.. when adding a new context, you must update the string
-      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTS, "cloudfiles,s3");
+      props
+               .setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS,
+                        "cloudfiles,s3,azureblob,atmos");
 
       props = new TwitterPropertiesBuilder(props).withCredentials(
                checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
@@ -98,6 +103,10 @@ public class TweetStoreLiveTest {
                         PROPERTY_AZURESTORAGE_ACCOUNT),
                System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
 
+      props = new AtmosStoragePropertiesBuilder(props).withCredentials(
+               checkNotNull(System.getProperty(PROPERTY_EMCSAAS_UID), PROPERTY_EMCSAAS_UID),
+               System.getProperty(PROPERTY_EMCSAAS_KEY, PROPERTY_EMCSAAS_KEY)).build();
+
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
    }
@@ -115,12 +124,14 @@ public class TweetStoreLiveTest {
                .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
                PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
 
-      // BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
-      // .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
-      // .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
+      BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
+               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
+               .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
 
-      // this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
-      this.contexts = ImmutableList.of(s3Context, cfContext);
+      BlobStoreContext atContext = factory.createContext("atmos", checkNotNull(System
+               .getProperty(PROPERTY_EMCSAAS_UID), PROPERTY_EMCSAAS_UID), System.getProperty(
+               PROPERTY_EMCSAAS_KEY, PROPERTY_EMCSAAS_KEY));
+      this.contexts = ImmutableList.of(s3Context, cfContext, azContext, atContext);
       boolean deleted = false;
       for (BlobStoreContext context : contexts) {
          if (context.getBlobStore().containerExists(container)) {
@@ -162,7 +173,7 @@ public class TweetStoreLiveTest {
       URL gurl = new URL(url, "/store/do");
 
       // WATCH THIS, you need to add a context each time
-      for (String context : new String[] { "cloudfiles", "s3" }) {
+      for (String context : new String[] { "cloudfiles", "s3", "azureblob", "atmos" }) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");

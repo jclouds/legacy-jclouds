@@ -18,27 +18,44 @@
  */
 package org.jclouds.aws.s3;
 
-import org.jclouds.date.joda.config.JodaDateServiceModule;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
-import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
+import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
+import java.util.Properties;
+import java.util.concurrent.Executors;
+
+import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.testng.ITestContext;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, testName = "perftest.JCloudsNioPerformanceLiveTest", groups = { "live" })
 public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
-   @ConfiguresHttpCommandExecutorService
-   private static final class Module extends NioTransformingHttpCommandExecutorServiceModule {
-      @Override
-      protected void configure() {
-         super.configure();
-         install(new JodaDateServiceModule());
-         install(new BouncyCastleEncryptionServiceModule());
-      }
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
+      exec = Executors.newCachedThreadPool();
+      String accesskeyid = System.getProperty("jclouds.test.user");
+      String secretkey = System.getProperty("jclouds.test.key");
+      Properties overrides = new Properties();
+      overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 20 + "");
+      overrides.setProperty(PROPERTY_IO_WORKER_THREADS, 3 + "");
+      overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 12 + "");
+      overrides.setProperty(PROPERTY_USER_THREADS, 0 + "");
+      String contextName = "nio";
+      overrideWithSysPropertiesAndPrint(overrides, contextName);
+      context = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
+               new NullLoggingModule(), new EnterpriseConfigurationModule(),
+               new NioTransformingHttpCommandExecutorServiceModule());
    }
 
    @Override
-   protected Module createHttpModule() {
-      return new Module();
+   public S3AsyncClient getApi() {
+      return (S3AsyncClient) context.getProviderSpecificContext().getAsyncApi();
    }
 }

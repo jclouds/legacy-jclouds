@@ -21,15 +21,16 @@ package org.jclouds.rackspace.cloudservers;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.RackspacePropertiesBuilder;
-import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link CloudServersContext} instances based on the most commonly requested arguments.
+ * Creates {@link CloudServersComputeServiceContext} instances based on the most commonly requested
+ * arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -37,26 +38,32 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
- * @see CloudServersContext
+ * @author Adrian Cole
+ * @see CloudServersComputeServiceContext
  */
 public class CloudServersContextFactory {
-
-   public static RestContext<CloudServersAsyncClient, CloudServersClient> createContext(String user, String key,
-            Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user, key).build())
-               .withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(properties).build())
+               .withModules(modules).buildComputeServiceContext();
    }
 
-   public static RestContext<CloudServersAsyncClient, CloudServersClient> createContext(URI endpoint, String user,
-            String key, Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user, key).withEndpoint(
-               endpoint).build()).withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(String user,
+            String password, Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user,
+               password).build()).withModules(modules).buildComputeServiceContext();
    }
 
-   public static RestContext<CloudServersAsyncClient, CloudServersClient> createContext(Properties props, Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(props).build())
-               .withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(Properties properties, String user,
+            String password, Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(properties)
+               .withCredentials(user, password).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 
+   public static ComputeServiceContext createContext(URI endpoint, String user,
+            String password, Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user,
+               password).withEndpoint(endpoint).build()).withModules(modules)
+               .buildComputeServiceContext();
+   }
 }

@@ -25,9 +25,9 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.http.HttpPropertiesBuilder;
 import org.jclouds.util.Utils;
 
 /**
@@ -35,7 +35,7 @@ import org.jclouds.util.Utils;
  * 
  * @author Adrian Cole
  */
-public class AzureQueuePropertiesBuilder extends HttpPropertiesBuilder {
+public class AzureQueuePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

@@ -68,8 +68,8 @@ public class AzureBlobClientLiveTest {
    public void setupClient() {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      connection = AzureBlobContextFactory.createContext(account, key, new Log4JLoggingModule())
-               .getApi();
+      connection = (AzureBlobClient) AzureBlobContextFactory.createContext(account, key,
+               new Log4JLoggingModule()).getProviderSpecificContext().getApi();
    }
 
    @Test

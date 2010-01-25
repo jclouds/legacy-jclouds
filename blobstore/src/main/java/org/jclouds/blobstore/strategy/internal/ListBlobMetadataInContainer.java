@@ -19,19 +19,16 @@
 package org.jclouds.blobstore.strategy.internal;
 
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 
 import com.google.common.base.Throwables;
@@ -45,23 +42,17 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
-   /**
-    * maximum duration of an blob Request
-    */
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
-   protected final AsyncBlobStore connection;
+
+   protected final BlobStore connection;
 
    @Inject
-   ListBlobMetadataInContainer(AsyncBlobStore connection) {
+   ListBlobMetadataInContainer(BlobStore connection) {
       this.connection = connection;
    }
 
    public SortedSet<? extends BlobMetadata> execute(String container, ListContainerOptions options) {
       try {
-         ListResponse<? extends StorageMetadata> resources = connection.list(container, options)
-                  .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         ListResponse<? extends StorageMetadata> resources = connection.list(container, options);
          SortedSet<BlobMetadata> blobM = Sets.newTreeSet();
          for (StorageMetadata from : resources) {
             if (from.getType() == StorageType.BLOB)

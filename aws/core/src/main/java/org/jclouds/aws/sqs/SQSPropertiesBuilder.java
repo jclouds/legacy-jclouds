@@ -29,14 +29,14 @@ import static org.jclouds.aws.sqs.reference.SQSConstants.PROPERTY_SQS_ENDPOINT_U
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in SQS Clients
  * 
  * @author Adrian Cole
  */
-public class SQSPropertiesBuilder extends HttpPropertiesBuilder {
+public class SQSPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

@@ -23,12 +23,12 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.aws.s3.S3ContextBuilder;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
-import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
+import org.jclouds.azure.storage.blob.AzureBlobContextBuilder;
+import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -50,20 +50,20 @@ public class PropertiesTest {
 
    public void testAzure() {
       assertEquals(properties.getProperty("azureblob.contextbuilder"),
-               AzureBlobStoreContextBuilder.class.getName());
+               AzureBlobContextBuilder.class.getName());
       assertEquals(properties.getProperty("azureblob.propertiesbuilder"),
                AzureBlobPropertiesBuilder.class.getName());
    }
 
    public void testCloudFiles() {
       assertEquals(properties.getProperty("cloudfiles.contextbuilder"),
-               CloudFilesBlobStoreContextBuilder.class.getName());
+               CloudFilesContextBuilder.class.getName());
       assertEquals(properties.getProperty("cloudfiles.propertiesbuilder"),
                CloudFilesPropertiesBuilder.class.getName());
    }
 
    public void testBlobStore() {
-      assertEquals(properties.getProperty("s3.contextbuilder"), S3BlobStoreContextBuilder.class
+      assertEquals(properties.getProperty("s3.contextbuilder"), S3ContextBuilder.class
                .getName());
       assertEquals(properties.getProperty("s3.propertiesbuilder"), S3PropertiesBuilder.class
                .getName());

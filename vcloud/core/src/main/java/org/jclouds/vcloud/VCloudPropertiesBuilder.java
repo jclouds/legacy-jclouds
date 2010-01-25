@@ -30,14 +30,14 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_S
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in VCloud Clients
  * 
  * @author Adrian Cole
  */
-public class VCloudPropertiesBuilder extends HttpPropertiesBuilder {
+public class VCloudPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

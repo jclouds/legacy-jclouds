@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.vcloud.terremark.TerremarkVCloudContextBuilder;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -45,7 +46,7 @@ public class PropertiesTest {
 
    public void testRimu() {
       assertEquals(properties.getProperty("terremark.contextbuilder"),
-               TerremarkVCloudComputeServiceContextBuilder.class.getName());
+               TerremarkVCloudContextBuilder.class.getName());
       assertEquals(properties.getProperty("terremark.propertiesbuilder"),
                TerremarkVCloudPropertiesBuilder.class.getName());
    }

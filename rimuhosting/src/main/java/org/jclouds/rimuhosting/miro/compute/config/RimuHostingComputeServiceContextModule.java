@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
@@ -84,7 +85,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    @Provides
    @Singleton
    protected Set<? extends Size> provideSizes(RimuHostingClient sync, Set<? extends Image> images,
-            LogHolder holder, ExecutorService executor) throws InterruptedException,
+            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor) throws InterruptedException,
             TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");

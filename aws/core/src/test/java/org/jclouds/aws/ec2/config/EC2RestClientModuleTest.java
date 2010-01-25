@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
@@ -44,19 +45,24 @@ public class EC2RestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new EC2RestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT)).to(
-                     "http://localhost");
-            bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL))
-                     .to(30);
-         }
-      });
+               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(EC2Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT))
+                              .to("http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL)).to(30);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                  }
+               });
    }
 
    @Test

@@ -32,12 +32,12 @@ import java.util.Map;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
-import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
@@ -46,10 +46,10 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.config.RestModule;
@@ -376,9 +376,13 @@ public class AzureBlobAsyncClientTest {
             bindConstant().annotatedWith(
                      Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to(
                      "x-ms-meta-");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+                     .to("1");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
             bindConstant().annotatedWith(
-                     Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX)).to(
-                     "x-ms-meta-");
+                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
+                     .to("1");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
@@ -389,7 +393,8 @@ public class AzureBlobAsyncClientTest {
                      1l);
          }
       }, new AzureStorageRestClientModule(), new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule());
+               sameThreadExecutor(), sameThreadExecutor()),
+               new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
                }));

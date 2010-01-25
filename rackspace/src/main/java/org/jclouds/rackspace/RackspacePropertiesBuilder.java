@@ -26,14 +26,14 @@ import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSP
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in Rackspace Connections
  * 
  * @author Adrian Cole
  */
-public class RackspacePropertiesBuilder extends HttpPropertiesBuilder {
+public class RackspacePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

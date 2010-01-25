@@ -18,17 +18,18 @@
  */
 package org.jclouds.vcloud.hostingdotcom;
 
+import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link HostingDotComVCloudContext} instances based on the most commonly requested
- * arguments.
+ * Creates {@link HostingDotComVCloudComputeServiceContext} instances based on the most commonly
+ * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -37,20 +38,32 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see HostingDotComVCloudContext
+ * @see HostingDotComVCloudComputeServiceContext
  */
 public class HostingDotComVCloudContextFactory {
-
-   public static RestContext<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient> createContext(
-            String username, String password, Module... modules) {
-      return new HostingDotComVCloudContextBuilder(new HostingDotComVCloudPropertiesBuilder(
-               username, password).build()).withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
+      return new HostingDotComVCloudContextBuilder(
+               new HostingDotComVCloudPropertiesBuilder(properties).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 
-   public static RestContext<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient> createContext(
-            Properties props, Module... modules) {
-      return new HostingDotComVCloudContextBuilder(new HostingDotComVCloudPropertiesBuilder(props)
-               .build()).withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(String user, String key, Module... modules) {
+      return new HostingDotComVCloudContextBuilder(
+               new HostingDotComVCloudPropertiesBuilder(user, key).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 
+   public static ComputeServiceContext createContext(Properties properties, String user,
+            String key, Module... modules) {
+      return new HostingDotComVCloudContextBuilder(
+               new HostingDotComVCloudPropertiesBuilder(properties).withCredentials(user, key)
+                        .build()).withModules(modules).buildComputeServiceContext();
+   }
+
+   public static ComputeServiceContext createContext(URI endpoint, String user, String key,
+            Module... modules) {
+      return new HostingDotComVCloudContextBuilder(
+               new HostingDotComVCloudPropertiesBuilder(user, key).withEndpoint(endpoint).build())
+               .withModules(modules).buildComputeServiceContext();
+   }
 }

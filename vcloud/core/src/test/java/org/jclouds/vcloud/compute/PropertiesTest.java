@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.vcloud.VCloudContextBuilder;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -45,7 +46,7 @@ public class PropertiesTest {
 
    public void test() {
       assertEquals(properties.getProperty("vcloud.contextbuilder"),
-               VCloudComputeServiceContextBuilder.class.getName());
+               VCloudContextBuilder.class.getName());
       assertEquals(properties.getProperty("vcloud.propertiesbuilder"),
                VCloudPropertiesBuilder.class.getName());
    }

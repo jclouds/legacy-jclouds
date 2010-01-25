@@ -20,13 +20,15 @@ package org.jclouds.azure.storage.blob.blobstore;
 
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.util.BlobStoreUtils.returnNullOnKeyNotFoundOrPropagate;
+import static org.jclouds.blobstore.util.BlobStoreUtils.keyNotFoundToNullOrPropagate;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
@@ -59,77 +61,27 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
-   private final AzureAsyncBlobStore aBlobStore;
 
    @Inject
-   public AzureBlobStore(AzureAsyncBlobStore aBlobStore, AzureBlobAsyncClient async,
-            AzureBlobClient sync, Factory blobFactory, LoggerFactory logFactory,
-            ClearListStrategy clearContainerStrategy, BlobPropertiesToBlobMetadata object2BlobMd,
-            AzureBlobToBlob object2Blob, BlobToAzureBlob blob2Object,
+   public AzureBlobStore(AzureBlobAsyncClient async, AzureBlobClient sync, Factory blobFactory,
+            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
+            BlobPropertiesToBlobMetadata object2BlobMd, AzureBlobToBlob object2Blob,
+            BlobToAzureBlob blob2Object,
             ListOptionsToListBlobsOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
             MkdirStrategy mkdirStrategy, ContainerToResourceMetadata container2ResourceMd,
-            ListBlobsResponseToResourceList container2ResourceList, ExecutorService service) {
+            ListBlobsResponseToResourceList container2ResourceList,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
                getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
                service);
-      this.aBlobStore = aBlobStore;
    }
 
    /**
-    * This implementation uses the AzureBlob HEAD Object command to return the result
+    * This implementation invokes {@link AzureBlobClient#listContainers}
     */
-   public BlobMetadata blobMetadata(String container, String key) {
-      try {
-         return object2BlobMd.apply(sync.getBlobProperties(container, key));
-      } catch (Exception e) {
-         return returnNullOnKeyNotFoundOrPropagate(e);
-      }
-   }
-
-   public void clearContainer(final String container) {
-      clearContainerStrategy.execute(container, recursive());
-   }
-
-   /**
-    * Note that location is currently ignored.
-    */
-   public boolean createContainerInLocation(String location, String container) {
-      return sync.createContainer(container);
-   }
-
-   public void deleteContainer(final String container) {
-      sync.deleteContainer(container);
-   }
-
-   public boolean directoryExists(String containerName, String directory) {
-      try {
-         getDirectoryStrategy.execute(aBlobStore, containerName, directory);
-         return true;
-      } catch (KeyNotFoundException e) {
-         return false;
-      }
-   }
-
-   public void createDirectory(String containerName, String directory) {
-      mkdirStrategy.execute(aBlobStore, containerName, directory);
-   }
-
-   public boolean containerExists(String container) {
-      return sync.containerExists(container);
-   }
-
-   public Blob getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions... optionsList) {
-      GetOptions azureOptions = blob2ObjectGetOptions.apply(optionsList);
-      try {
-         return object2Blob.apply(sync.getBlob(container, key, azureOptions));
-      } catch (Exception e) {
-         return returnNullOnKeyNotFoundOrPropagate(e);
-      }
-   }
-
+   @Override
    public ListResponse<? extends StorageMetadata> list() {
       return new Function<Set<ContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
          public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
@@ -140,17 +92,195 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
       }.apply(sync.listContainers(includeMetadata()));
    }
 
+   /**
+    * This implementation invokes {@link AzureBlobClient#bucketExists}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public boolean containerExists(String container) {
+      return sync.containerExists(container);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#putBucketInRegion}
+    * 
+    * @param location
+    *           currently ignored
+    * @param container
+    *           container name
+    */
+   @Override
+   public boolean createContainerInLocation(String location, String container) {
+      return sync.createContainer(container);
+   }
+
+   /**
+    * This implementation invokes
+    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public ListContainerResponse<? extends StorageMetadata> list(String container) {
+      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#listBlobs}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
    public ListContainerResponse<? extends StorageMetadata> list(String container,
-            ListContainerOptions... optionsList) {
+            ListContainerOptions optionsList) {
       ListBlobsOptions azureOptions = container2ContainerListOptions.apply(optionsList);
       return container2ResourceList
                .apply(sync.listBlobs(container, azureOptions.includeMetadata()));
    }
 
+   /**
+    * This implementation invokes {@link ClearListStrategy#clearContainerStrategy} with the
+    * {@link ListContainerOptions#recursive} option.
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public void clearContainer(final String container) {
+      clearContainerStrategy.execute(container, recursive());
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#deleteContainer}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public void deleteContainer(final String container) {
+      sync.deleteContainer(container);
+   }
+
+   /**
+    * This implementation invokes {@link GetDirectoryStrategy#execute}
+    * 
+    * @param container
+    *           container name
+    * @param directory
+    *           virtual path
+    */
+   @Override
+   public boolean directoryExists(String containerName, String directory) {
+      try {
+         getDirectoryStrategy.execute(containerName, directory);
+         return true;
+      } catch (KeyNotFoundException e) {
+         return false;
+      }
+   }
+
+   /**
+    * This implementation invokes {@link MkdirStrategy#execute}
+    * 
+    * @param container
+    *           container name
+    * @param directory
+    *           virtual path
+    */
+   @Override
+   public void createDirectory(String containerName, String directory) {
+      mkdirStrategy.execute(containerName, directory);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#blobExists}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           blob key
+    */
+   @Override
+   public boolean blobExists(String container, String key) {
+      return sync.blobExists(container, key);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#getBlobProperties}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           blob key
+    */
+   @Override
+   public BlobMetadata blobMetadata(String container, String key) {
+      try {
+         return blob2BlobMd.apply(sync.getBlobProperties(container, key));
+      } catch (Exception e) {
+         return keyNotFoundToNullOrPropagate(e);
+      }
+   }
+
+   /**
+    * This implementation invokes
+    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           blob key
+    */
+   @Override
+   public Blob getBlob(String container, String key) {
+      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#getBlob}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           blob key
+    */
+   @Override
+   public Blob getBlob(String container, String key,
+            org.jclouds.blobstore.options.GetOptions optionsList) {
+      GetOptions azureOptions = blob2ObjectGetOptions.apply(optionsList);
+      try {
+         return blob2Blob.apply(sync.getBlob(container, key, azureOptions));
+      } catch (Exception e) {
+         return keyNotFoundToNullOrPropagate(e);
+      }
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#putObject}
+    * 
+    * @param container
+    *           container name
+    * @param blob
+    *           object
+    */
+   @Override
    public String putBlob(String container, Blob blob) {
       return sync.putBlob(container, blob2Object.apply(blob));
    }
 
+   /**
+    * This implementation invokes {@link AzureBlobClient#deleteObject}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           blob key
+    */
+   @Override
    public void removeBlob(String container, String key) {
       sync.deleteBlob(container, key);
    }

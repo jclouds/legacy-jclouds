@@ -29,23 +29,23 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class BlobToObjectGetOptions implements
-         Function<org.jclouds.blobstore.options.GetOptions[], GetOptions> {
-   public GetOptions apply(org.jclouds.blobstore.options.GetOptions[] from) {
+         Function<org.jclouds.blobstore.options.GetOptions, GetOptions> {
+   public GetOptions apply(org.jclouds.blobstore.options.GetOptions from) {
       GetOptions httpOptions = new GetOptions();
-      if (from.length != 0) {
-         if (from[0].getIfMatch() != null) {
-            httpOptions.ifETagMatches(from[0].getIfMatch());
+      if (from != null) {
+         if (from.getIfMatch() != null) {
+            httpOptions.ifETagMatches(from.getIfMatch());
          }
-         if (from[0].getIfModifiedSince() != null) {
-            httpOptions.ifModifiedSince(from[0].getIfModifiedSince());
+         if (from.getIfModifiedSince() != null) {
+            httpOptions.ifModifiedSince(from.getIfModifiedSince());
          }
-         if (from[0].getIfNoneMatch() != null) {
-            httpOptions.ifETagDoesntMatch(from[0].getIfNoneMatch());
+         if (from.getIfNoneMatch() != null) {
+            httpOptions.ifETagDoesntMatch(from.getIfNoneMatch());
          }
-         if (from[0].getIfUnmodifiedSince() != null) {
-            httpOptions.ifUnmodifiedSince(from[0].getIfUnmodifiedSince());
+         if (from.getIfUnmodifiedSince() != null) {
+            httpOptions.ifUnmodifiedSince(from.getIfUnmodifiedSince());
          }
-         for (String range : from[0].getRanges()) {
+         for (String range : from.getRanges()) {
             String[] firstLast = range.split("\\-");
             if (firstLast.length == 2)
                httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));

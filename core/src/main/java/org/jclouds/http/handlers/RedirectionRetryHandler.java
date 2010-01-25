@@ -27,8 +27,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
@@ -45,7 +45,7 @@ import com.google.inject.Inject;
  */
 public class RedirectionRetryHandler implements HttpRetryHandler {
    @Inject(optional = true)
-   @Named(HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS)
+   @Named(Constants.PROPERTY_MAX_REDIRECTS)
    protected int retryCountLimit = 5;
 
    @Resource

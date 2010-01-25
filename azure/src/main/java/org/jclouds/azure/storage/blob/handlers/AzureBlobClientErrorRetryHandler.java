@@ -23,10 +23,10 @@ import java.io.ByteArrayInputStream;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.domain.AzureStorageError;
 import org.jclouds.azure.storage.util.AzureStorageUtils;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -44,7 +44,7 @@ import com.google.inject.Inject;
 public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
 
    @Inject(optional = true)
-   @Named(HttpConstants.PROPERTY_HTTP_MAX_RETRIES)
+   @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
 
    private final AzureStorageUtils utils;

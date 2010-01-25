@@ -18,6 +18,7 @@
  */
 package org.jclouds.http;
 
+
 /**
  * Command whose endpoint is an http service.
  * 
@@ -35,7 +36,7 @@ public interface HttpCommand {
    /**
     * This displays the current number of redirect attempts for this command.
     * 
-    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS
+    * @see org.jclouds.http.Constants.PROPERTY_HTTP_MAX_REDIRECTS
     */
    int getRedirectCount();
 
@@ -70,7 +71,7 @@ public interface HttpCommand {
    /**
     * This displays the current number of error retries for this command.
     * 
-    * @see org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES
+    * @see org.jclouds.http.Constants.PROPERTY_HTTP_MAX_RETRIES
     */
    int getFailureCount();
 

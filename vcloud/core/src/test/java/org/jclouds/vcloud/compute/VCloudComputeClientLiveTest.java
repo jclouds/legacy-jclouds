@@ -32,6 +32,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudContextBuilder;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
@@ -142,7 +143,7 @@ public class VCloudComputeClientLiveTest {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint");
-      Injector injector = new VCloudComputeServiceContextBuilder(new VCloudPropertiesBuilder(
+      Injector injector = new VCloudContextBuilder(new VCloudPropertiesBuilder(
                URI.create(endpoint), account, key).build()).withModules(new Log4JLoggingModule(),
                new JschSshClientModule()).buildInjector();
       computeClient = injector.getInstance(VCloudComputeClient.class);

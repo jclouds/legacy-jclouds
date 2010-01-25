@@ -88,17 +88,17 @@
         <appender-ref ref="ASYNC" />
     </category>
 
-    <category name="jclouds.http.headers">
+    <category name="jclouds.headers">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-    <category name="jclouds.http.wire">
+    <category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
     <!--
 
-        <category name="jclouds.http.wire"> <priority value="DEBUG" />
+        <category name="jclouds.wire"> <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" /> </category> <category
         name="jclouds.signature"> <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" /> </category>

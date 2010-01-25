@@ -30,24 +30,24 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ContainerToBucketListOptions implements
-         Function<ListContainerOptions[], ListBucketOptions> {
-   public ListBucketOptions apply(ListContainerOptions[] optionsList) {
+         Function<ListContainerOptions, ListBucketOptions> {
+   public ListBucketOptions apply(ListContainerOptions from) {
       ListBucketOptions httpOptions = new ListBucketOptions();
-      if (optionsList.length != 0) {
-         if (!optionsList[0].isRecursive()) {
+      if (from != null && from != ListContainerOptions.NONE) {
+         if (!from.isRecursive()) {
             httpOptions.delimiter("/");
          }
-         if (optionsList[0].getDir() != null) {// TODO unit test
-            String path = optionsList[0].getDir();
+         if (from.getDir() != null) {// TODO unit test
+            String path = from.getDir();
             if (!path.endsWith("/"))
                path = path + "/";
             httpOptions.withPrefix(path);
          }
-         if (optionsList[0].getMarker() != null) {
-            httpOptions.afterMarker(optionsList[0].getMarker());
+         if (from.getMarker() != null) {
+            httpOptions.afterMarker(from.getMarker());
          }
-         if (optionsList[0].getMaxResults() != null) {
-            httpOptions.maxResults(optionsList[0].getMaxResults());
+         if (from.getMaxResults() != null) {
+            httpOptions.maxResults(from.getMaxResults());
          }
       }
       return httpOptions;

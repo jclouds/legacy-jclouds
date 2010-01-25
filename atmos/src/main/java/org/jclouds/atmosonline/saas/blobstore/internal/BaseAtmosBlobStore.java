@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Named;
-
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobStoreListOptionsToListOptions;
@@ -33,7 +31,6 @@ import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlob;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.logging.Logger.LoggerFactory;
 
@@ -52,10 +49,6 @@ public class BaseAtmosBlobStore {
    protected final BlobToHttpGetOptions blob2ObjectGetOptions;
    protected final DirectoryEntryListToResourceMetadataList container2ResourceList;
    protected final ExecutorService service;
-
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
 
    @Inject
    protected BaseAtmosBlobStore(AtmosStorageAsyncClient async, AtmosStorageClient sync,
@@ -84,6 +77,19 @@ public class BaseAtmosBlobStore {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName(name);
       return blob;
+   }
+
+   protected String adjustContainerIfDirOptionPresent(String container,
+            org.jclouds.blobstore.options.ListContainerOptions options) {
+      if (options != org.jclouds.blobstore.options.ListContainerOptions.NONE) {
+         if (options.isRecursive()) {
+            throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
+         }
+         if (options.getDir() != null) {
+            container = container + "/" + options.getDir();
+         }
+      }
+      return container;
    }
 
 }

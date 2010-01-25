@@ -21,20 +21,20 @@ package org.jclouds.rackspace.cloudfiles;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
+import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link CloudFilesContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link CloudFilesBlobStoreContext} or {@link Injector} instances based on the most
+ * commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -42,17 +42,21 @@ import com.google.inject.TypeLiteral;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole
- * @see CloudFilesAsyncClient
+ * @author Adrian Cole, Andrew Newdigate
+ * @see CloudFilesBlobStoreContext
  */
 public class CloudFilesContextBuilder extends
-         RestContextBuilder<CloudFilesAsyncClient, CloudFilesClient> {
+         BlobStoreContextBuilder<CloudFilesAsyncClient, CloudFilesClient> {
 
    public CloudFilesContextBuilder(Properties props) {
       super(new TypeLiteral<CloudFilesAsyncClient>() {
       }, new TypeLiteral<CloudFilesClient>() {
       }, props);
+   }
 
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new CloudFilesBlobStoreContextModule());
    }
 
    @Override
@@ -60,10 +64,4 @@ public class CloudFilesContextBuilder extends
       modules.add(new RackspaceAuthenticationRestModule());
       modules.add(new CloudFilesRestClientModule());
    }
-
-   @Override
-   public void addContextModule(List<Module> modules) {
-      modules.add(new CloudFilesContextModule());
-   }
-
 }

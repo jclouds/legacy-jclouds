@@ -20,20 +20,19 @@ package org.jclouds.azure.storage.blob;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
-import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
+import org.jclouds.azure.storage.blob.blobstore.config.AzureBlobStoreContextModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link AzureBlobContext} or {@link Injector} instances based on the most commonly
+ * Creates {@link AzureBlobStoreContext} or {@link Injector} instances based on the most commonly
  * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
@@ -42,38 +41,25 @@ import com.google.inject.TypeLiteral;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole
- * @see AzureBlobAsyncClient
+ * @author Adrian Cole, Andrew Newdigate
+ * @see AzureBlobStoreContext
  */
 public class AzureBlobContextBuilder extends
-         RestContextBuilder<AzureBlobAsyncClient, AzureBlobClient> {
+         BlobStoreContextBuilder<AzureBlobAsyncClient, AzureBlobClient> {
 
-   public AzureBlobContextBuilder(Properties properties) {
+   public AzureBlobContextBuilder(Properties props) {
       super(new TypeLiteral<AzureBlobAsyncClient>() {
       }, new TypeLiteral<AzureBlobClient>() {
-      }, properties);
+      }, props);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new AzureBlobContextModule());
+      modules.add(new AzureBlobStoreContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new AzureBlobRestClientModule());
    }
-
-   // below is to cast the builder to the correct type so that chained builder methods end correctly
-
-   @Override
-   public AzureBlobContextBuilder withExecutorService(ExecutorService service) {
-      return (AzureBlobContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withModules(Module... modules) {
-      return (AzureBlobContextBuilder) super.withModules(modules);
-   }
-
 }

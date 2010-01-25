@@ -101,7 +101,7 @@ public class PCSCloudLiveTest {
          protected PCSCloud provideCloud(RestClientFactory factory) {
             return factory.create(PCSCloud.class);
          }
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
    }
 }

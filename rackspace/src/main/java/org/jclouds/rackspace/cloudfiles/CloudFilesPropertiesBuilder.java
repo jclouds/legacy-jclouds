@@ -18,9 +18,7 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_RETRY;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_TIMEOUT;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.util.Properties;
 
@@ -35,7 +33,7 @@ public class CloudFilesPropertiesBuilder extends RackspacePropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_CLOUDFILES_METADATA_PREFIX, "X-Object-Meta-");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       return properties;
    }
 
@@ -47,24 +45,8 @@ public class CloudFilesPropertiesBuilder extends RackspacePropertiesBuilder {
       super(id, secret);
    }
 
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public CloudFilesPropertiesBuilder withRequestTimeout(long milliseconds) {
-      properties.setProperty(PROPERTY_CLOUDFILES_TIMEOUT, Long.toString(milliseconds));
-      return this;
-   }
-
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public CloudFilesPropertiesBuilder withMaxRetries(int retries) {
-      properties.setProperty(PROPERTY_CLOUDFILES_RETRY, Integer.toString(retries));
-      return this;
-   }
-
    protected CloudFilesPropertiesBuilder withMetaPrefix(String prefix) {
-      properties.setProperty(PROPERTY_CLOUDFILES_METADATA_PREFIX, prefix);
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, prefix);
       return this;
    }
 }

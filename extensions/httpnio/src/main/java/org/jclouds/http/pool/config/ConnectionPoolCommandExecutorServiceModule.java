@@ -24,11 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
-import org.jclouds.http.pool.PoolConstants;
+import org.jclouds.Constants;
 import org.jclouds.lifecycle.config.LifeCycleModule;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 
 /**
@@ -37,13 +36,6 @@ import com.google.inject.Provides;
  */
 public abstract class ConnectionPoolCommandExecutorServiceModule<C> extends AbstractModule {
 
-   @Inject(optional = true)
-   @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS)
-   protected int maxConnections = 12;
-
-   @Inject(optional = true)
-   @Named(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS)
-   protected int maxWorkerThreads = 12;
 
    protected void configure() {
       install(new LifeCycleModule());
@@ -53,7 +45,9 @@ public abstract class ConnectionPoolCommandExecutorServiceModule<C> extends Abst
 
    @Provides
    // @Singleton per uri...
-   public abstract BlockingQueue<C> provideAvailablePool() throws Exception;
+   public abstract BlockingQueue<C> provideAvailablePool(
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int maxConnectionsPerHost)
+            throws Exception;
 
    /**
     * controls production and destruction of real connections.
@@ -65,7 +59,9 @@ public abstract class ConnectionPoolCommandExecutorServiceModule<C> extends Abst
     */
    @Provides
    // @Singleton per uri...
-   public Semaphore provideTotalConnectionSemaphore() throws Exception {
-      return new Semaphore(maxConnections, true);
+   public Semaphore provideTotalConnectionSemaphore(
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int maxConnectionsPerHost)
+            throws Exception {
+      return new Semaphore(maxConnectionsPerHost, true);
    }
 }

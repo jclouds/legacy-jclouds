@@ -31,7 +31,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
@@ -55,6 +57,7 @@ import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
@@ -83,7 +86,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class StubS3AsyncClient implements S3AsyncClient {
    private final DateService dateService;
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubAsyncBlobStore blobStore;
+   private final AsyncBlobStore blobStore;
    private final S3Object.Factory objectProvider;
    private final Blob.Factory blobProvider;
    private final ObjectToBlob object2Blob;
@@ -92,6 +95,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final BucketToContainerListOptions bucket2ContainerListOptions;
    private final ResourceToBucketList resource2BucketList;
    private final ExecutorService executorService;
+   private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
 
    @Inject
    private StubS3AsyncClient(StubAsyncBlobStore blobStore,
@@ -100,7 +104,9 @@ public class StubS3AsyncClient implements S3AsyncClient {
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, BlobToObjectMetadata blob2ObjectMetadata,
             BucketToContainerListOptions bucket2ContainerListOptions,
-            ResourceToBucketList resource2BucketList, ExecutorService executorService) {
+            ResourceToBucketList resource2BucketList,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executorService) {
+      this.containerToBlobs = containerToBlobs;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.blobProvider = blobProvider;
@@ -147,31 +153,32 @@ public class StubS3AsyncClient implements S3AsyncClient {
             final String destinationObject, CopyObjectOptions... nullableOptions) {
       final CopyObjectOptions options = (nullableOptions.length == 0) ? new CopyObjectOptions()
                : nullableOptions[0];
-      ConcurrentMap<String, Blob> source = blobStore.getContainerToBlobs().get(sourceBucket);
-      ConcurrentMap<String, Blob> dest = blobStore.getContainerToBlobs().get(destinationBucket);
+      ConcurrentMap<String, Blob> source = containerToBlobs.get(sourceBucket);
+      ConcurrentMap<String, Blob> dest = containerToBlobs.get(destinationBucket);
       if (source.containsKey(sourceObject)) {
          Blob object = source.get(sourceObject);
          if (options.getIfMatch() != null) {
             if (!object.getMetadata().getETag().equals(options.getIfMatch()))
-               return immediateFailedFuture(blobStore.returnResponseException(412));
+               return immediateFailedFuture(StubAsyncBlobStore.returnResponseException(412));
          }
          if (options.getIfNoneMatch() != null) {
             if (object.getMetadata().getETag().equals(options.getIfNoneMatch()))
-               return immediateFailedFuture(blobStore.returnResponseException(412));
+               return immediateFailedFuture(StubAsyncBlobStore.returnResponseException(412));
          }
          if (options.getIfModifiedSince() != null) {
             Date modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
             if (modifiedSince.after(object.getMetadata().getLastModified()))
-               return immediateFailedFuture(blobStore.returnResponseException(412));
+               return immediateFailedFuture(StubAsyncBlobStore.returnResponseException(412));
 
          }
          if (options.getIfUnmodifiedSince() != null) {
             Date unmodifiedSince = dateService.rfc822DateParse(options.getIfUnmodifiedSince());
             if (unmodifiedSince.before(object.getMetadata().getLastModified()))
-               return immediateFailedFuture(blobStore.returnResponseException(412));
+               return immediateFailedFuture(StubAsyncBlobStore.returnResponseException(412));
          }
          Blob sourceS3 = source.get(sourceObject);
-         MutableBlobMetadata newMd = blobStore.copy(sourceS3.getMetadata(), destinationObject);
+         MutableBlobMetadata newMd = StubAsyncBlobStore.copy(sourceS3.getMetadata(),
+                  destinationObject);
          if (options.getAcl() != null)
             keyToAcl.put(destinationBucket + "/" + destinationObject, options.getAcl());
 
@@ -179,7 +186,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
          Blob newBlob = blobProvider.create(newMd);
          newBlob.setPayload(sourceS3.getContent());
          dest.put(destinationObject, newBlob);
-         return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(blobStore.copy(newMd)));
+         return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(StubAsyncBlobStore
+                  .copy(newMd)));
       }
       return immediateFailedFuture(new KeyNotFoundException(sourceBucket, sourceObject));
    }
@@ -253,11 +261,18 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    public ListenableFuture<Boolean> bucketExists(final String bucketName) {
-      return immediateFuture(blobStore.getContainerToBlobs().containsKey(bucketName));
+      return immediateFuture(containerToBlobs.containsKey(bucketName));
    }
 
    public ListenableFuture<Boolean> deleteBucketIfEmpty(String bucketName) {
-      return blobStore.deleteContainerImpl(bucketName);
+      Boolean returnVal = true;
+      if (containerToBlobs.containsKey(bucketName)) {
+         if (containerToBlobs.get(bucketName).size() == 0)
+            containerToBlobs.remove(bucketName);
+         else
+            returnVal = false;
+      }
+      return immediateFuture(returnVal);
    }
 
    public ListenableFuture<Void> deleteObject(String bucketName, String key) {
@@ -281,13 +296,13 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    public ListenableFuture<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {
-      return immediateFuture(Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs()
-               .keySet(), new Function<String, BucketMetadata>() {
-         public BucketMetadata apply(String name) {
-            return new BucketMetadata(name, null, null);
-         }
+      return immediateFuture(Sets.newTreeSet(Iterables.transform(containerToBlobs.keySet(),
+               new Function<String, BucketMetadata>() {
+                  public BucketMetadata apply(String name) {
+                     return new BucketMetadata(name, null, null);
+                  }
 
-      })));
+               })));
    }
 
    public S3Object newS3Object() {
@@ -323,6 +338,11 @@ public class StubS3AsyncClient implements S3AsyncClient {
    @Override
    public ListenableFuture<BucketLogging> getBucketLogging(String bucketName) {
       return immediateFuture(null);
+   }
+
+   @Override
+   public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
+      return immediateFuture(containerToBlobs.get(bucketName).containsKey(key));
    }
 
 }

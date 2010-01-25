@@ -21,11 +21,15 @@ package org.jclouds.atmosonline.saas.handlers;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.Constants;
+import org.jclouds.atmosonline.saas.domain.AtmosStorageError;
+import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpConstants;
+import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -36,25 +40,41 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class AtmosStorageClientErrorRetryHandler implements HttpRetryHandler {
+   private final AtmosStorageUtils utils;
+   private final BackoffLimitedRetryHandler backoffHandler;
+
+   @Inject
+   public AtmosStorageClientErrorRetryHandler(BackoffLimitedRetryHandler backoffHandler,
+            AtmosStorageUtils utils) {
+      this.backoffHandler = backoffHandler;
+      this.utils = utils;
+   }
 
    @Inject(optional = true)
-   @Named(HttpConstants.PROPERTY_HTTP_MAX_RETRIES)
+   @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
    @Resource
    protected Logger logger = Logger.NULL;
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      HttpUtils.closeClientButKeepContentStream(response);
-      command.incrementFailureCount();
-      if (!command.isReplayable()) {
-         logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);
+      if (command.getFailureCount() > retryCountLimit)
          return false;
-      } else if (command.getFailureCount() > retryCountLimit) {
-         logger.warn(
-                  "Cannot retry after server error, command has exceeded retry limit %1$d: %2$s",
-                  retryCountLimit, command);
-         return false;
-      } else if (response.getStatusCode() == 409) {
+      if (response.getStatusCode() == 404 && command.getRequest().getMethod().equals("DELETE")) {
+         command.incrementFailureCount();
+         return true;
+      } else if (response.getStatusCode() == 409 || response.getStatusCode() == 400) {
+         byte[] content = HttpUtils.closeClientButKeepContentStream(response);
+         try {
+            AtmosStorageError error = utils.parseAtmosStorageErrorFromContent(command, response,
+                     new String(content));
+            if (error.getCode() == 1016) {
+               return backoffHandler.shouldRetryRequest(command, response);
+            }
+            // don't increment count before here, since backoff handler does already
+            command.incrementFailureCount();
+         } catch (HttpException e) {
+            logger.warn(e, "error parsing response: %s", new String(content));
+         }
          return true;
       }
       return false;

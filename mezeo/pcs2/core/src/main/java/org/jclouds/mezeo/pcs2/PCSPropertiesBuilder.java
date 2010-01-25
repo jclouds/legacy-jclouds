@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 
 /**
@@ -31,7 +31,7 @@ import org.jclouds.mezeo.pcs2.reference.PCSConstants;
  * 
  * @author Adrian Cole
  */
-public class PCSPropertiesBuilder extends HttpPropertiesBuilder {
+public class PCSPropertiesBuilder extends PropertiesBuilder {
 
    public PCSPropertiesBuilder(Properties properties) {
       super(properties);

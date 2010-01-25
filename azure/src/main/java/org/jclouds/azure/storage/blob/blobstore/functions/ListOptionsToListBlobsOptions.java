@@ -29,21 +29,22 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ListOptionsToListBlobsOptions implements Function<ListContainerOptions[], ListBlobsOptions> {
-   public ListBlobsOptions apply(ListContainerOptions[] optionsList) {
+public class ListOptionsToListBlobsOptions implements
+         Function<ListContainerOptions, ListBlobsOptions> {
+   public ListBlobsOptions apply(ListContainerOptions from) {
       ListBlobsOptions httpOptions = new ListBlobsOptions();
-      if (optionsList.length != 0) {
-         if (!optionsList[0].isRecursive()) {
+      if (from != null && from != ListContainerOptions.NONE) {
+         if (!from.isRecursive()) {
             httpOptions.delimiter("/");
          }
-         if (optionsList[0].getDir() != null) {
-            httpOptions.prefix(optionsList[0].getDir());
+         if (from.getDir() != null) {
+            httpOptions.prefix(from.getDir());
          }
-         if (optionsList[0].getMarker() != null) {
-            httpOptions.marker(optionsList[0].getMarker());
+         if (from.getMarker() != null) {
+            httpOptions.marker(from.getMarker());
          }
-         if (optionsList[0].getMaxResults() != null) {
-            httpOptions.maxResults(optionsList[0].getMaxResults());
+         if (from.getMaxResults() != null) {
+            httpOptions.maxResults(from.getMaxResults());
          }
       }
       return httpOptions;

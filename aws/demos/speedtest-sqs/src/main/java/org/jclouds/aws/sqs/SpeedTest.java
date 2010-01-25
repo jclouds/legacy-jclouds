@@ -62,10 +62,9 @@ public class SpeedTest {
       int messageCount = Integer.parseInt(args[3]);
 
       RestContext<SQSAsyncClient, SQSClient> context = isEnterprise ? SQSContextFactory
-               .createContext(System.getProperties(), accesskeyid, secretkey,
-                        new NullLoggingModule(), new EnterpriseConfigurationModule())
-               : SQSContextFactory.createContext(System.getProperties(), accesskeyid, secretkey,
-                        new NullLoggingModule());
+               .createContext(accesskeyid, secretkey, new NullLoggingModule(),
+                        new EnterpriseConfigurationModule()) : SQSContextFactory.createContext(
+               accesskeyid, secretkey, new NullLoggingModule());
 
       try {
          Set<Queue> queues = Sets.newHashSet();

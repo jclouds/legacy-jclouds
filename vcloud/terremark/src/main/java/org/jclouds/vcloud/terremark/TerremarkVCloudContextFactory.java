@@ -18,16 +18,18 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link TerremarkVCloudContext} instances based on the most commonly requested arguments.
+ * Creates {@link TerremarkVCloudComputeServiceContext} instances based on the most commonly
+ * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -36,20 +38,30 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see TerremarkVCloudContext
+ * @see TerremarkVCloudComputeServiceContext
  */
 public class TerremarkVCloudContextFactory {
-
-   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(
-            String username, String password, Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(username,
-               password).build()).withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
+      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+               properties).build()).withModules(modules).buildComputeServiceContext();
    }
 
-   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(
-            Properties props, Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(props).build())
-               .withModules(modules).buildContext();
+   public static ComputeServiceContext createContext(String user, String key, Module... modules) {
+      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+               user, key).build()).withModules(modules).buildComputeServiceContext();
    }
 
+   public static ComputeServiceContext createContext(Properties properties, String user,
+            String key, Module... modules) {
+      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+               properties).withCredentials(user, key).build()).withModules(modules)
+               .buildComputeServiceContext();
+   }
+
+   public static ComputeServiceContext createContext(URI endpoint, String user, String key,
+            Module... modules) {
+      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+               user, key).withEndpoint(endpoint).build()).withModules(modules)
+               .buildComputeServiceContext();
+   }
 }

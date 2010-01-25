@@ -20,22 +20,19 @@ package org.jclouds.vcloud.hostingdotcom;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudContextModule;
+import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.hostingdotcom.compute.config.HostingDotComVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudRestClientModule;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RestContext} for {@link VCloudAsyncClient} instances based on the most commonly
- * requested arguments.
+ * Creates {@link HostingDotComVCloudComputeServiceContext} or {@link Injector} instances based on
+ * the most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -44,36 +41,23 @@ import com.google.inject.TypeLiteral;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see RestContext
- * @see VCloudAsyncClient
+ * @see HostingDotComVCloudComputeServiceContext
  */
 public class HostingDotComVCloudContextBuilder extends
-         RestContextBuilder<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient> {
+         VCloudContextBuilder {
 
    public HostingDotComVCloudContextBuilder(Properties props) {
-      super(new TypeLiteral<HostingDotComVCloudAsyncClient>() {
-      }, new TypeLiteral<HostingDotComVCloudClient>() {
-      }, props);
+      super(props);
+   }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new HostingDotComVCloudComputeServiceContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new HostingDotComVCloudRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new HostingDotComVCloudContextModule());
-   }
-
-   @Override
-   public HostingDotComVCloudContextBuilder withExecutorService(ExecutorService service) {
-      return (HostingDotComVCloudContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public HostingDotComVCloudContextBuilder withModules(Module... modules) {
-      return (HostingDotComVCloudContextBuilder) super.withModules(modules);
    }
 
 }

@@ -19,8 +19,19 @@
 package org.jclouds.concurrent.config;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.Constants;
+
+import com.google.common.util.concurrent.NamingThreadFactory;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
  * Configures {@link ExecutorService}.
@@ -31,15 +42,44 @@ import com.google.inject.AbstractModule;
  */
 @ConfiguresExecutorService
 public class ExecutorServiceModule extends AbstractModule {
-   private final ExecutorService executorService;
+   private final ExecutorService userThreads;
+   private final ExecutorService ioThreads;
 
-   public ExecutorServiceModule(ExecutorService executorService) {
-      this.executorService = executorService;
+   public ExecutorServiceModule(
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
+      this.userThreads = userThreads;
+      this.ioThreads = ioThreads;
+   }
+
+   public ExecutorServiceModule() {
+      this(null, null);
    }
 
    @Override
    protected void configure() {
-      bind(ExecutorService.class).toInstance(executorService);
    }
 
+   @Provides
+   @Singleton
+   @Named(Constants.PROPERTY_USER_THREADS)
+   ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int userThreads) {
+      return this.userThreads != null ? this.userThreads : userThreads == 0 ? Executors
+               .newCachedThreadPool(new NamingThreadFactory("user thread %d"))
+               : newNamedThreadPool("user thread %d", userThreads);
+   }
+
+   public static ExecutorService newNamedThreadPool(String name, int maxCount) {
+      return new ThreadPoolExecutor(0, maxCount, 60L, TimeUnit.SECONDS,
+               new LinkedBlockingQueue<Runnable>(), new NamingThreadFactory(name));
+   }
+
+   @Provides
+   @Singleton
+   @Named(Constants.PROPERTY_IO_WORKER_THREADS)
+   ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int ioThreads) {
+      return this.ioThreads != null ? this.ioThreads : ioThreads == 0 ? Executors
+               .newCachedThreadPool(new NamingThreadFactory("i/o thread %d"))
+               : newNamedThreadPool("i/o thread %d", ioThreads);
+   }
 }

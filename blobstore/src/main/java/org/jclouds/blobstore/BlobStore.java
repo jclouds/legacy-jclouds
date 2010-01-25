@@ -40,6 +40,10 @@ public interface BlobStore {
     */
    ListResponse<? extends StorageMetadata> list();
 
+   boolean containerExists(String container);
+
+   boolean createContainerInLocation(String location, String container);
+
    /**
     * Lists all resources available at the specified path. Note that path may be a container, or a
     * path within it delimited by {@code /} characters.
@@ -47,16 +51,17 @@ public interface BlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
+   ListContainerResponse<? extends StorageMetadata> list(String container);
+
    ListContainerResponse<? extends StorageMetadata> list(String container,
-            ListContainerOptions... options);
+            ListContainerOptions options);
 
-   boolean containerExists(String container);
-
-   boolean directoryExists(String container, String directory);
-
-   boolean createContainerInLocation(String location, String container);
-
-   void createDirectory(String container, String directory);
+   /**
+    * This will delete the contents of a container without removing it
+    * 
+    * @param container
+    */
+   void clearContainer(String container);
 
    /**
     * This will delete a container recursively.
@@ -65,13 +70,12 @@ public interface BlobStore {
     */
    void deleteContainer(String container);
 
-   /**
-    * This will delete the contents of a container without removing it
-    * 
-    * @param container
-    */
-   void clearContainer(String container);
-   
+   boolean directoryExists(String container, String directory);
+
+   void createDirectory(String container, String directory);
+
+   boolean blobExists(String container, String name);
+
    /**
     * Adds a {@code Blob} representing the data at location {@code container/blob.metadata.name}
     * 
@@ -86,6 +90,19 @@ public interface BlobStore {
     *            if the container doesn't exist
     */
    String putBlob(String container, Blob blob);
+   
+   /**
+    * Retrieves the metadata of a {@code Blob} at location {@code container/name}
+    * 
+    * @param container
+    *           container where this exists.
+    * @param name
+    *           fully qualified name relative to the container.
+    * @return null if name isn't present or the blob you intended to receive.
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
+   BlobMetadata blobMetadata(String container, String name);
 
    /**
     * Retrieves a {@code Blob} representing the data at location {@code container/name}
@@ -102,20 +119,10 @@ public interface BlobStore {
     * @throws KeyNotFoundException
     *            if the container doesn't exist
     */
-   Blob getBlob(String container, String name, GetOptions... options);
+   Blob getBlob(String container, String name);
 
-   /**
-    * Retrieves the metadata of a {@code Blob} at location {@code container/name}
-    * 
-    * @param container
-    *           container where this exists.
-    * @param name
-    *           fully qualified name relative to the container.
-    * @return null if name isn't present or the blob you intended to receive.
-    * @throws ContainerNotFoundException
-    *            if the container doesn't exist
-    */
-   BlobMetadata blobMetadata(String container, String name);
+   Blob getBlob(String container, String name, GetOptions options);
+
 
    /**
     * Deletes a {@code Blob} representing the data at location {@code container/name}

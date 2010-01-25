@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -60,16 +61,19 @@ public class MarkersGetDirectoryStrategy implements GetDirectoryStrategy {
     * maximum duration of an blob Request
     */
    @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
+   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
    protected final ResourceMetadataToRelativePathResourceMetadata resource2Directory;
+   private final AsyncBlobStore connection;
 
    @Inject
-   public MarkersGetDirectoryStrategy(ResourceMetadataToRelativePathResourceMetadata resource2Directory) {
+   public MarkersGetDirectoryStrategy(AsyncBlobStore connection, 
+            ResourceMetadataToRelativePathResourceMetadata resource2Directory) {
+      this.connection = connection;
       this.resource2Directory = resource2Directory;
    }
 
-   public StorageMetadata execute(AsyncBlobStore connection, String containerName, String directory) {
+   public StorageMetadata execute(String containerName, String directory) {
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
          try {
             return resource2Directory.apply(connection.blobMetadata(containerName,

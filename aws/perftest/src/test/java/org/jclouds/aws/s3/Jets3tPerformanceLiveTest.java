@@ -42,9 +42,11 @@ package org.jclouds.aws.s3;
  * ====================================================================
  */
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.Future;
 
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -53,6 +55,8 @@ import org.jets3t.service.security.AWSCredentials;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.appengine.repackaged.com.google.common.base.Throwables;
 
 /**
  * Runs operations that jets3t is capable of performing.
@@ -95,19 +99,6 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
 
    @Override
    @Test(enabled = false)
-   public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutBytesSerialEU() throws Exception {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
    public void testPutBytesParallel() throws InterruptedException, ExecutionException {
       throw new UnsupportedOperationException();
    }
@@ -126,35 +117,49 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
 
    @Override
    @Test(enabled = false)
-   protected boolean putByteArray(String bucket, String key, byte[] data, String contentType)
-            throws Exception {
+   protected Future<?> putByteArray(String bucket, String key, byte[] data, String contentType) {
       throw new UnsupportedOperationException();
 
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   protected boolean putFile(String bucket, String key, File data, String contentType)
-            throws Exception {
-      org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
+   protected Future<?> putFile(final String bucket, String key, File data, String contentType) {
+      final org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
       object.setContentType(contentType);
       object.setDataInputFile(data);
       object.setContentLength(data.length());
-      return jetClient.putObject(bucket, object) != null;
+      return exec.submit(new Callable() {
+         @Override
+         public Object call() throws Exception {
+            return jetClient.putObject(bucket, object);
+         }
+      });
+
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   protected boolean putInputStream(String bucket, String key, InputStream data, String contentType)
-            throws Exception {
-      org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
+   protected Future<?> putInputStream(final String bucket, String key, InputStream data,
+            String contentType) {
+      final org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
       object.setContentType(contentType);
       object.setDataInputStream(data);
-      object.setContentLength(data.available());
-      return jetClient.putObject(bucket, object) != null;
+      try {
+         object.setContentLength(data.available());
+      } catch (IOException e) {
+         Throwables.propagate(e);
+      }
+      return exec.submit(new Callable() {
+         @Override
+         public Object call() throws Exception {
+            return jetClient.putObject(bucket, object);
+         }
+      });
    }
 
    @Override
-   protected boolean putString(String bucket, String key, String data, String contentType)
-            throws Exception {
+   protected Future<?> putString(String bucket, String key, String data, String contentType) {
       throw new UnsupportedOperationException();
    }
 

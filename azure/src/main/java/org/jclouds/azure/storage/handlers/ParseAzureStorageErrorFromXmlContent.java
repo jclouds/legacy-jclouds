@@ -18,7 +18,9 @@
  */
 package org.jclouds.azure.storage.handlers;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -27,14 +29,15 @@ import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.domain.AzureStorageError;
 import org.jclouds.azure.storage.util.AzureStorageUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.util.Utils;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 
 /**
@@ -55,39 +58,50 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
       this.utils = utils;
    }
 
+   public static final Pattern CONTAINER_PATH = Pattern.compile("^[/]?([^/]+)");
+   public static final Pattern CONTAINER_KEY_PATH = Pattern.compile("^[/]?([^/]+)/(.*)");
+
    public void handleError(HttpCommand command, HttpResponse response) {
-      byte[] content;
+      Exception exception = new HttpResponseException(command, response);
       try {
-         content = response.getContent() != null ? ByteStreams.toByteArray(response.getContent())
-                  : null;
-         if (content != null) {
-            String message = new String(content);
-            try {
-               if (message.indexOf('<') >= 0) {
-                  AzureStorageError error = utils.parseAzureStorageErrorFromContent(command,
-                           response, new ByteArrayInputStream(content));
-                  AzureStorageResponseException ex = new AzureStorageResponseException(command,
-                           response, error);
-                  if (error.getCode().equals("ContainerNotFound")) {
-                     command.setException(new ContainerNotFoundException(ex));
+         switch (response.getStatusCode()) {
+            case 401:
+               exception = new AuthorizationException(command.getRequest().getRequestLine());
+               break;
+            case 404:
+               if (!command.getRequest().getMethod().equals("DELETE")) {
+                  String path = command.getRequest().getEndpoint().getPath();
+                  Matcher matcher = CONTAINER_PATH.matcher(path);
+                  if (matcher.find()) {
+                     exception = new ContainerNotFoundException(matcher.group(1));
                   } else {
-                     command.setException(ex);
+                     matcher = CONTAINER_KEY_PATH.matcher(path);
+                     if (matcher.find()) {
+                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2));
+                     }
                   }
-               } else {
-                  command.setException(new HttpResponseException(command, response, message));
                }
-            } catch (Exception he) {
-               command.setException(new HttpResponseException(command, response, message));
-               Throwables.propagateIfPossible(he);
-            }
-         } else {
-            command.setException(new HttpResponseException(command, response));
+               break;
+            default:
+               if (response.getContent() != null) {
+                  try {
+                     String content = Utils.toStringAndClose(response.getContent());
+                     if (content.indexOf('<') >= 0) {
+                        AzureStorageError error = utils.parseAzureStorageErrorFromContent(command,
+                                 response, Utils.toInputStream(content));
+                        exception = new AzureStorageResponseException(command, response, error);
+
+                     } else {
+                        exception = new HttpResponseException(command, response, content);
+                     }
+                  } catch (IOException e) {
+                     logger.warn(e, "exception reading error from response", response);
+                  }
+               }
          }
-      } catch (Exception e) {
-         command.setException(new HttpResponseException(command, response));
-         Throwables.propagateIfPossible(e);
       } finally {
          Closeables.closeQuietly(response.getContent());
+         command.setException(exception);
       }
    }
 }

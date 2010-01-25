@@ -21,9 +21,14 @@ package org.jclouds.rackspace.cloudfiles.config;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.handlers.ParseCloudFilesErrorFromHttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
@@ -39,7 +44,7 @@ import com.google.inject.Provides;
 public class CloudFilesRestClientModule extends AbstractModule {
    @Override
    protected void configure() {
-
+      bindErrorHandlers();
    }
 
    @Provides
@@ -55,4 +60,12 @@ public class CloudFilesRestClientModule extends AbstractModule {
       return SyncProxy.create(CloudFilesClient.class, client);
    }
 
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               ParseCloudFilesErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               ParseCloudFilesErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ParseCloudFilesErrorFromHttpResponse.class);
+   }
 }

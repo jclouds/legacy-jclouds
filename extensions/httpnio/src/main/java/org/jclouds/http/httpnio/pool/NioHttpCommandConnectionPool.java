@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpException;
@@ -49,6 +50,7 @@ import org.apache.http.nio.reactor.IOReactorStatus;
 import org.apache.http.nio.reactor.SessionRequest;
 import org.apache.http.nio.reactor.SessionRequestCallback;
 import org.apache.http.params.HttpParams;
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.pool.HttpCommandConnectionHandle;
@@ -83,8 +85,11 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    public NioHttpCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
             BlockingQueue<HttpCommandRendezvous<?>> commandQueue,
             BlockingQueue<NHttpConnection> available, AsyncNHttpClientHandler clientHandler,
-            DefaultConnectingIOReactor ioReactor, HttpParams params, URI endPoint) {
-      super(executor, allConnections, commandQueue, available, endPoint);
+            DefaultConnectingIOReactor ioReactor, HttpParams params, URI endPoint,
+            @Named(Constants.PROPERTY_MAX_CONNECTION_REUSE) int maxConnectionReuse,
+            @Named(Constants.PROPERTY_MAX_SESSION_FAILURES) int maxSessionFailures) {
+      super(executor, allConnections, commandQueue, available, endPoint, maxConnectionReuse,
+               maxSessionFailures);
       String host = checkNotNull(checkNotNull(endPoint, "endPoint").getHost(), String.format(
                "Host null for endpoint %s", endPoint));
       int port = endPoint.getPort();
@@ -153,8 +158,10 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
 
    @Override
    public boolean connectionValid(NHttpConnection conn) {
-      return conn.isOpen() && !conn.isStale()
-               && conn.getMetrics().getRequestCount() < maxConnectionReuse;
+      boolean isOpen = conn.isOpen();
+      boolean isStale = conn.isStale();
+      long requestCount = conn.getMetrics().getRequestCount();
+      return isOpen && !isStale && requestCount < maxConnectionReuse;
    }
 
    @Override
@@ -270,7 +277,7 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    public void connectionOpen(NHttpConnection conn) {
       conn.setSocketTimeout(0);
       available.offer(conn);
-      logger.info("Opened: %s", getTarget());
+      logger.trace("Opened: %s", getTarget());
    }
 
    public void connectionTimeout(NHttpConnection conn) {
@@ -281,7 +288,7 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    }
 
    public void connectionClosed(NHttpConnection conn) {
-      logger.info("Closed: %s", getTarget());
+      logger.trace("Closed: %s", getTarget());
    }
 
    public void fatalIOException(IOException ex, NHttpConnection conn) {

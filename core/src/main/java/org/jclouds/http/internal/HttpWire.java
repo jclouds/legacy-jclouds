@@ -21,7 +21,7 @@ package org.jclouds.http.internal;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import org.jclouds.http.HttpConstants;
+import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.internal.Wire;
 
@@ -34,7 +34,7 @@ import org.jclouds.logging.internal.Wire;
 public class HttpWire extends Wire {
 
    @Resource
-   @Named(HttpConstants.LOGGER_HTTP_WIRE)
+   @Named(Constants.LOGGER_HTTP_WIRE)
    Logger wireLog = Logger.NULL;
 
    public Logger getWireLog() {

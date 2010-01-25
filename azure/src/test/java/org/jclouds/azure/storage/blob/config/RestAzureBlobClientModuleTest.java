@@ -21,6 +21,7 @@ package org.jclouds.azure.storage.blob.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
@@ -46,22 +47,34 @@ public class RestAzureBlobClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new AzureBlobRestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");
-            bindConstant()
-                     .annotatedWith(Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_KEY)).to(
+               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
+                              "user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                               Base64.encodeBytes("secret".getBytes()));
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
-                     "http://localhost");
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
-                     1l);
-         }
-      });
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
+                              "http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
+                     bindConstant()
+                              .annotatedWith(
+                                       Jsr330
+                                                .named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
+                              .to(1l);
+                  }
+               });
    }
 
    @Test

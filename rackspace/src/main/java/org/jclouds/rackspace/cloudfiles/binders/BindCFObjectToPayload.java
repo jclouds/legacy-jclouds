@@ -25,11 +25,11 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToPayloadAndUserMetadataToHeadersWithPrefix;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 
 public class BindCFObjectToPayload extends BindBlobToPayloadAndUserMetadataToHeadersWithPrefix {
    private final ObjectToBlob object2Blob;
@@ -37,7 +37,7 @@ public class BindCFObjectToPayload extends BindBlobToPayloadAndUserMetadataToHea
 
    @Inject
    public BindCFObjectToPayload(ObjectToBlob object2Blob,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String prefix,
+            @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String prefix,
             EncryptionService encryptionService) {
       super(prefix, encryptionService);
       this.object2Blob = object2Blob;

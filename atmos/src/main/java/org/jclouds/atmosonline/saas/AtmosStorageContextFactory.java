@@ -16,21 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.compute;
+package org.jclouds.atmosonline.saas;
 
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link VCloudComputeServiceContext} instances based on the most commonly
- * requested arguments.
+ * Creates {@link AtmosBlobStoreContext} instances based on the most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -39,26 +37,22 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see VCloudComputeServiceContext
+ * @see AtmosBlobStoreContext
  */
-public class VCloudComputeServiceContextFactory {
-   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new VCloudComputeServiceContextBuilder(
-               new VCloudPropertiesBuilder(properties).build()).withModules(modules)
-               .buildComputeServiceContext();
+public class AtmosStorageContextFactory {
+   public static BlobStoreContext createContext(Properties properties, Module... modules) {
+      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(properties).build())
+               .withModules(modules).buildBlobStoreContext();
    }
 
-   public static ComputeServiceContext createContext(Properties properties, String user,
-            String key, Module... modules) {
-      return new VCloudComputeServiceContextBuilder(
-               new VCloudPropertiesBuilder(properties).withCredentials(user, key)
-                        .build()).withModules(modules).buildComputeServiceContext();
+   public static BlobStoreContext createContext(String uid, String key, Module... modules) {
+      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(uid, key).build())
+               .withModules(modules).buildBlobStoreContext();
    }
 
-   public static ComputeServiceContext createContext(URI endpoint, String user, String key,
+   public static BlobStoreContext createContext(URI endpoint, String uid, String key,
             Module... modules) {
-      return new VCloudComputeServiceContextBuilder(
-               new VCloudPropertiesBuilder(endpoint, user, key).withEndpoint(endpoint).build())
-               .withModules(modules).buildComputeServiceContext();
+      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(uid, key)
+               .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
    }
 }

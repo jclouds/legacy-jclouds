@@ -18,6 +18,10 @@
  */
 package org.jclouds.http.httpnio.pool;
 
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +38,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test
+@Test(threadPoolSize = 10, sequential = true)
 public class NioTransformingHttpCommandExecutorServiceTest extends
          BaseHttpCommandExecutorServiceTest {
 
@@ -57,7 +61,9 @@ public class NioTransformingHttpCommandExecutorServiceTest extends
 
    @Override
    protected void addConnectionProperties(Properties props) {
-
+      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 12 + "");
+      props.setProperty(PROPERTY_IO_WORKER_THREADS, 3 + "");
+      props.setProperty(PROPERTY_USER_THREADS, 0 + "");
    }
 
 }

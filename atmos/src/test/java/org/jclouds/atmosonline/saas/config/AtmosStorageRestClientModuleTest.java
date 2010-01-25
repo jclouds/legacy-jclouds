@@ -22,6 +22,7 @@ import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
@@ -48,20 +49,31 @@ public class AtmosStorageRestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new AtmosStorageRestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(
-                     Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
-                     "http://localhost");
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
-                     .to("uid");
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
-                     .to(new String(Base64.encodeBytes("key".getBytes())));
-            bindConstant().annotatedWith(
-                     Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL)).to("2");
-         }
-      });
+               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
+                              "http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID)).to("uid");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY)).to(
+                              new String(Base64.encodeBytes("key".getBytes())));
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL))
+                              .to("2");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
+                  }
+               });
    }
 
    @Test

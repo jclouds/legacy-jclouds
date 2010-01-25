@@ -20,6 +20,7 @@ package org.jclouds.concurrent;
 
 import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -27,13 +28,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.common.util.concurrent.ForwardingFuture;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -46,34 +48,66 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Singleton
 public class ConcurrentUtils {
 
-   public static void pollResponsesAndLogWhenComplete(int total, String description, Logger logger,
-            Set<Future<Void>> responses) throws InterruptedException, TimeoutException,
-            ExecutionException {
-      int complete = 0;
-      long start = System.currentTimeMillis();
-      long timeOut = 180 * 1000;
-      do {
-         Set<Future<Void>> retries = Sets.newHashSet();
-         for (Future<Void> future : responses) {
-            try {
-               future.get(100, TimeUnit.MILLISECONDS);
-               complete++;
-            } catch (ExecutionException e) {
-               Throwables.propagate(e);
-            } catch (TimeoutException e) {
-               retries.add(future);
+   public static void awaitCompletion(Set<? extends ListenableFuture<?>> responses,
+            ExecutorService executor, @Nullable Long maxTime, final Logger logger,
+            final String logPrefix) {
+      final int total = responses.size();
+      final CountDownLatch doneSignal = new CountDownLatch(total);
+      final AtomicInteger complete = new AtomicInteger(0);
+      final AtomicInteger errors = new AtomicInteger(0);
+      final long start = System.currentTimeMillis();
+
+      for (final ListenableFuture<?> future : responses) {
+         future.addListener(new Runnable() {
+            public void run() {
+               try {
+                  future.get();
+                  complete.incrementAndGet();
+               } catch (Exception e) {
+                  errors.incrementAndGet();
+                  logException(logger, logPrefix, total, complete.get(), errors.get(), start, e);
+               }
+               doneSignal.countDown();
             }
+         }, executor);
+      }
+      try {
+         if (maxTime != null)
+            doneSignal.await(maxTime, TimeUnit.MILLISECONDS);
+         else
+            doneSignal.await();
+         if (errors.get() > 0) {
+            String message = message(logPrefix, total, complete.get(), errors.get(), start);
+            RuntimeException exception = new RuntimeException(message);
+            logger.error(exception, message);
+            throw exception;
          }
-         responses = Sets.newHashSet(retries);
-      } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
-      long duration = System.currentTimeMillis() - start;
-      if (duration > timeOut)
-         throw new TimeoutException(String.format("TIMEOUT: %s(%d/%d) rate: %f %s/second",
-                  description, complete, total, ((double) complete) / (duration / 1000.0),
-                  description));
-      for (Future<Void> future : responses)
-         future.get(30, TimeUnit.SECONDS);
-      logger.debug("<< %s(%d)", description, total);
+         if (logger.isTraceEnabled()) {
+            String message = message(logPrefix, total, complete.get(), errors.get(), start);
+            logger.trace(message);
+         }
+      } catch (InterruptedException e) {
+         String message = message(logPrefix, total, complete.get(), errors.get(), start);
+         TimeoutException exception = new TimeoutException(message);
+         logger.error(exception, message);
+         Throwables.propagate(exception);
+      }
+   }
+
+   private static void logException(Logger logger, String logPrefix, int total, int complete,
+            int errors, long start, Exception e) {
+      String message = message(logPrefix, total, complete, errors, start);
+      logger.error(e, message);
+   }
+
+   private static String message(String prefix, int size, int complete, int errors, long start) {
+      return String.format("%s, completed: %d/%d, errors: %d, rate: %f ops/sec%n", prefix,
+               complete, size, errors, ((double) complete)
+                        / ((System.currentTimeMillis() - start) / 1000.0));
+   }
+
+   protected static boolean timeOut(long start, Long maxTime) {
+      return maxTime != null ? System.currentTimeMillis() < start + maxTime : false;
    }
 
    /**

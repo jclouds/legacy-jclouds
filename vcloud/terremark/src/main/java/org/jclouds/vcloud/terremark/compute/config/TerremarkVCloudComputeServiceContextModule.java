@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 
+import javax.inject.Named;
+
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
@@ -69,7 +72,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    @Override
    protected SortedSet<? extends Size> provideSizes(VCloudClient client,
-            Set<? extends Image> images, LogHolder holder, ExecutorService executor) {
+            Set<? extends Image> images, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       Image anyImage = Iterables.get(images, 0);
       holder.logger.debug(">> providing sizes");
       SortedSet<Size> sizes = Sets.newTreeSet(Iterables.transform(TerremarkVCloudClient.class.cast(

@@ -16,28 +16,26 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.functions;
+package org.jclouds.blobstore.functions;
 
 import static org.jclouds.util.Utils.propagateOrNull;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
+import org.jclouds.blobstore.KeyNotFoundException;
 
 import com.google.common.base.Function;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 @Singleton
-public class ReturnTrueOn404FalseIfNotEmpty implements Function<Exception, Boolean> {
+public class ReturnFalseOnKeyNotFound implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      if (from instanceof AWSResponseException) {
-         AWSResponseException responseException = (AWSResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
-            return true;
-         } else if ("BucketNotEmpty".equals(responseException.getError().getCode())
-                  || responseException.getResponse().getStatusCode() == 409) {
-            return false;
-         }
+      if (from instanceof KeyNotFoundException) {
+         return false;
       }
       return Boolean.class.cast(propagateOrNull(from));
    }

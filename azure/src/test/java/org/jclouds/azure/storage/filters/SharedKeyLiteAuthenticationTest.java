@@ -27,6 +27,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -137,18 +138,29 @@ public class SharedKeyLiteAuthenticationTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new AzureStorageRestClientModule(), new AbstractModule() {
+               sameThreadExecutor(), sameThreadExecutor()), new AzureStorageRestClientModule(),
+               new AbstractModule() {
 
-         protected void configure() {
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(ACCOUNT);
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(KEY);
-            bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
-                     "1");
-         }
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
+                              .to(ACCOUNT);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY))
+                              .to(KEY);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
+                  }
 
-      });
+               });
       filter = injector.getInstance(SharedKeyLiteAuthentication.class);
    }
 

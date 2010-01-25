@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.jclouds.rackspace.RackspacePropertiesBuilder;
+import org.jclouds.rackspace.cloudservers.CloudServersContextBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -45,7 +46,7 @@ public class PropertiesTest {
 
    public void testRackspace() {
       assertEquals(properties.getProperty("cloudservers.contextbuilder"),
-               CloudServersComputeServiceContextBuilder.class.getName());
+               CloudServersContextBuilder.class.getName());
       assertEquals(properties.getProperty("cloudservers.propertiesbuilder"),
                RackspacePropertiesBuilder.class.getName());
    }

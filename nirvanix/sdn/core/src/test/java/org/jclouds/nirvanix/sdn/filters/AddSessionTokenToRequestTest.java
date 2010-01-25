@@ -27,6 +27,7 @@ import java.net.URI;
 import javax.ws.rs.POST;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -38,6 +39,7 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -101,12 +103,20 @@ public class AddSessionTokenToRequestTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
-               new AbstractModule() {
+               sameThreadExecutor(), sameThreadExecutor()),
+               new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
 
                   protected void configure() {
                      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
                      bind(DateService.class);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {
                            return Logger.NULL;

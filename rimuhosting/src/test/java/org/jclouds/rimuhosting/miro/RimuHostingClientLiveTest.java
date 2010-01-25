@@ -30,7 +30,7 @@ import java.util.SortedSet;
 
 /**
  * Tests behavior of {@code RimuHostingClient}
- *
+ * 
  * @author Ivan Meredith
  */
 @Test(groups = "live", testName = "rimuhosting.RimuHostingClientLiveTest")
@@ -38,19 +38,19 @@ public class RimuHostingClientLiveTest {
 
    private RimuHostingClient connection;
 
-   @BeforeGroups(groups = {"live"})
+   @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = RimuHostingContextFactory.createContext(password, new Log4JLoggingModule())
-              .getApi();
+      connection = (RimuHostingClient) RimuHostingContextFactory.createContext(password, new Log4JLoggingModule())
+               .getProviderSpecificContext().getApi();
    }
 
    @Test
-   public void testPricingPlans(){
+   public void testPricingPlans() {
       SortedSet<PricingPlan> plans = connection.getPricingPlanList();
-      for(PricingPlan plan : plans){
-         if(plan.getId().equalsIgnoreCase("miro1")){
+      for (PricingPlan plan : plans) {
+         if (plan.getId().equalsIgnoreCase("miro1")) {
             assertTrue(true);
             return;
          }
@@ -59,28 +59,30 @@ public class RimuHostingClientLiveTest {
    }
 
    @Test
-   public void testImages(){
+   public void testImages() {
       SortedSet<Image> images = connection.getImageList();
-      for(Image image : images){
-         if(image.getId().equalsIgnoreCase("lenny")){
+      for (Image image : images) {
+         if (image.getId().equalsIgnoreCase("lenny")) {
             assertTrue(true);
             return;
          }
       }
       assertTrue(false, "lenny not found");
    }
+
    @Test
    public void testLifeCycle() {
-	   //Get the first image, we dont really care what it is in this test.
-	   NewServerResponse serverResponse = connection.createServer("test.ivan.api.com", "lenny", "MIRO1B");
+      // Get the first image, we dont really care what it is in this test.
+      NewServerResponse serverResponse = connection.createServer("test.ivan.api.com", "lenny",
+               "MIRO1B");
       Server server = serverResponse.getServer();
-      //Now we have the server, lets restart it
+      // Now we have the server, lets restart it
       assertNotNull(server.getId());
-      ServerInfo serverInfo =  connection.restartServer(server.getId());
+      ServerInfo serverInfo = connection.restartServer(server.getId());
 
-      //Should be running now.
+      // Should be running now.
       assertEquals(serverInfo.getState(), RunningState.RUNNING);
-      assertEquals(server.getName(),"test.ivan.api.com");
+      assertEquals(server.getName(), "test.ivan.api.com");
       assertEquals(server.getImageId(), "lenny");
       connection.destroyServer(server.getId());
    }

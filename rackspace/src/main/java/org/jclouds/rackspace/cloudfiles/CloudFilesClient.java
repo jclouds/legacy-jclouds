@@ -24,6 +24,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
@@ -41,13 +42,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides access to Cloud Files via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
+ * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudFilesClient {
 
    CFObject newCFObject();
@@ -116,14 +118,20 @@ public interface CloudFilesClient {
 
    boolean containerExists(String container);
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
+   @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
    String putObject(String container, CFObject object);
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
+   @Timeout(duration = 5 * 1024 * 1024 / 512, timeUnit = TimeUnit.SECONDS)
    CFObject getObject(String container, String name, GetOptions... options);
 
    MutableObjectInfoWithMetadata getObjectInfo(String container, String name);
 
    void removeObject(String container, String name);
+
+   /**
+    * @throws ContainerNotFoundException
+    *            if the container is not present.
+    */
+   boolean objectExists(String container, String name);
 
 }

@@ -18,36 +18,67 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rimuhosting.miro.config.RimuHostingContextModule;
-import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule;
-import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
-
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceContextModule;
+import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule;
+
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
+
 /**
+ * Creates {@link RimuHostingComputeServiceContext} or {@link Injector} instances based on the most
+ * commonly requested arguments.
+ * <p/>
+ * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * <p/>
+ * <p/>
+ * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * 
  * @author Adrian Cole
+ * @see RimuHostingComputeServiceContext
  */
-public class RimuHostingContextBuilder extends RestContextBuilder<RimuHostingAsyncClient, RimuHostingClient> {
+public class RimuHostingContextBuilder extends
+         ComputeServiceContextBuilder<RimuHostingAsyncClient, RimuHostingClient> {
 
    public RimuHostingContextBuilder(Properties props) {
       super(new TypeLiteral<RimuHostingAsyncClient>() {
       }, new TypeLiteral<RimuHostingClient>() {
       }, props);
-      checkNotNull(properties.getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY));
    }
 
+   @Override
+   public RimuHostingContextBuilder withModules(Module... modules) {
+      return (RimuHostingContextBuilder) super.withModules(modules);
+   }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new RimuHostingComputeServiceContextModule());
+   }
+
+   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new RimuHostingRestClientModule());
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new RimuHostingContextModule());
+   public ComputeServiceContext buildComputeServiceContext() {
+      // need the generic type information
+      return (ComputeServiceContext) this
+               .buildInjector()
+               .getInstance(
+                        Key
+                                 .get(new TypeLiteral<ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>>() {
+                                 }));
    }
-
 }

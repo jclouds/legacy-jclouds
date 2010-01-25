@@ -42,7 +42,6 @@ public class NioHttpCommandConnectionHandle extends HttpCommandConnectionHandle<
 
    public void startConnection() {
       conn.getContext().setAttribute("command", command);
-      logger.trace("invoking %1$s on connection %2$s", command, conn);
       conn.requestOutput();
    }
 

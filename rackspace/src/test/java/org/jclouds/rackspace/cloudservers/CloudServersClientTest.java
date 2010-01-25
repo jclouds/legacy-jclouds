@@ -39,6 +39,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -71,6 +72,7 @@ import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -999,10 +1001,18 @@ public class CloudServersClientTest {
          protected void configure() {
             bind(URI.class).annotatedWith(CloudServers.class).toInstance(
                      URI.create("http://localhost:8080"));
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+                     .to("1");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
+            bindConstant().annotatedWith(
+                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
+                     .to("1");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
                }
+
             });
          }
 
@@ -1027,8 +1037,8 @@ public class CloudServersClientTest {
                }
             };
          }
-      }, new RestModule(), new ExecutorServiceModule(Executors.sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      }, new RestModule(), new ExecutorServiceModule(Executors.sameThreadExecutor(), Executors
+               .sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {
                }));

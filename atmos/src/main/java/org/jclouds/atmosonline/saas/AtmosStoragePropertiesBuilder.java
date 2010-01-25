@@ -23,15 +23,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
-import org.jclouds.http.HttpPropertiesBuilder;
 
 /**
  * Builds properties used in AtmosStorage Connections
  * 
  * @author Adrian Cole
  */
-public class AtmosStoragePropertiesBuilder extends HttpPropertiesBuilder {
+public class AtmosStoragePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

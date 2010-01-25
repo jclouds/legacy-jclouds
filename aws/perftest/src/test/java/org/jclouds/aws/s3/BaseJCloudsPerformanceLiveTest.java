@@ -18,10 +18,19 @@
  */
 package org.jclouds.aws.s3;
 
+import static org.jclouds.Constants.*;
+import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
 import org.jclouds.aws.s3.domain.S3Object;
+
+import com.google.appengine.repackaged.com.google.common.base.Throwables;
 
 /**
  * // TODO: Adrian: Document this!
@@ -46,23 +55,32 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    // S3Object.NOT_FOUND;
 
    // }
-
-   @Override
-   protected boolean putByteArray(String bucket, String key, byte[] data, String contentType)
-            throws Exception {
-      S3Object object = newObject(key);
-      object.getMetadata().setContentType(contentType);
-      object.setPayload(data);
-      return getApi().putObject(bucket, object) != null;
+   protected void overrideWithSysPropertiesAndPrint(Properties overrides, String contextName) {
+      overrides.putAll(System.getProperties());
+      System.out.printf(
+               "%s: loopCount(%s), perContext(%s), perHost(%s),ioWorkers(%s), userThreads(%s)%n",
+               contextName, loopCount, overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT),
+               overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST), overrides
+                        .getProperty(PROPERTY_IO_WORKER_THREADS), overrides
+                        .getProperty(PROPERTY_USER_THREADS));
    }
 
    @Override
-   protected boolean putFile(String bucket, String key, File data, String contentType)
-            throws Exception {
+   protected Future<?> putByteArray(String bucket, String key, byte[] data, String contentType) {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
-      return getApi().putObject(bucket, object) != null;
+      return getApi().putObject(bucket, object);
+   }
+
+   public abstract S3AsyncClient getApi();
+
+   @Override
+   protected Future<?> putFile(String bucket, String key, File data, String contentType) {
+      S3Object object = newObject(key);
+      object.getMetadata().setContentType(contentType);
+      object.setPayload(data);
+      return getApi().putObject(bucket, object);
    }
 
    private S3Object newObject(String key) {
@@ -72,21 +90,24 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    }
 
    @Override
-   protected boolean putInputStream(String bucket, String key, InputStream data, String contentType)
-            throws Exception {
+   protected Future<?> putInputStream(String bucket, String key, InputStream data,
+            String contentType) {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
-      object.setContentLength(new Long(data.available()));
-      return getApi().putObject(bucket, object) != null;
+      try {
+         object.setContentLength(new Long(data.available()));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+      }
+      return getApi().putObject(bucket, object);
    }
 
    @Override
-   protected boolean putString(String bucket, String key, String data, String contentType)
-            throws Exception {
+   protected Future<?> putString(String bucket, String key, String data, String contentType) {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setPayload(data);
-      return getApi().putObject(bucket, object) != null;
+      return getApi().putObject(bucket, object);
    }
 }

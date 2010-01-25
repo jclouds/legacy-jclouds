@@ -114,7 +114,7 @@
         <appender-ref ref="ASYNC" />
     </category>
 
-    <category name="jclouds.http.headers">
+    <category name="jclouds.headers">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
@@ -129,7 +129,7 @@
         <appender-ref ref="ASYNCCOMPUTE" />
     </category>
 
-    <category name="jclouds.http.wire">
+    <category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>

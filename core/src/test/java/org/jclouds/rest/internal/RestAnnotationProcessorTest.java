@@ -56,6 +56,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -65,11 +66,11 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
@@ -823,7 +824,8 @@ public class RestAnnotationProcessorTest {
    private interface TestMapMatrixParams {
       @POST
       @Path("objects/{id}/action/{action}")
-      ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
+      ListenableFuture<String> action(@PathParam("id") String id,
+               @PathParam("action") String action,
                @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
    }
 
@@ -1171,7 +1173,8 @@ public class RestAnnotationProcessorTest {
 
       @PUT
       @Path("/{id}")
-      public ListenableFuture<String> put(@PathParam("id") @ParamParser(FirstCharacter.class) String id,
+      public ListenableFuture<String> put(
+               @PathParam("id") @ParamParser(FirstCharacter.class) String id,
                @BinderParam(BindToStringPayload.class) String payload) {
          return null;
       }
@@ -1179,7 +1182,8 @@ public class RestAnnotationProcessorTest {
       @PUT
       @Path("/{id}")
       @VirtualHost
-      public ListenableFuture<String> putOptions(@PathParam("id") String id, HttpRequestOptions options) {
+      public ListenableFuture<String> putOptions(@PathParam("id") String id,
+               HttpRequestOptions options) {
          return null;
       }
 
@@ -1383,13 +1387,15 @@ public class RestAnnotationProcessorTest {
 
       @GET
       @Path("/{id}")
-      public ListenableFuture<String> getPrefix(@PathParam("id") String id, @HostPrefixParam("") String foo) {
+      public ListenableFuture<String> getPrefix(@PathParam("id") String id,
+               @HostPrefixParam("") String foo) {
          return null;
       }
 
       @GET
       @Path("/{id}")
-      public ListenableFuture<String> getPrefixDot(@PathParam("id") String id, @HostPrefixParam String foo) {
+      public ListenableFuture<String> getPrefixDot(@PathParam("id") String id,
+               @HostPrefixParam String foo) {
          return null;
       }
    }
@@ -1663,8 +1669,21 @@ public class RestAnnotationProcessorTest {
                   return Logger.NULL;
                }
             });
+            Jsr330.bindProperties(binder(), new PropertiesBuilder() {
+
+               @Override
+               public PropertiesBuilder withCredentials(String account, String key) {
+                  return null;
+               }
+
+               @Override
+               public PropertiesBuilder withEndpoint(URI endpoint) {
+                  return null;
+               }
+            }.build());
          }
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
+
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
 
    }

@@ -27,14 +27,14 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKE
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in EC2 Clients
  * 
  * @author Adrian Cole
  */
-public class EC2PropertiesBuilder extends HttpPropertiesBuilder {
+public class EC2PropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

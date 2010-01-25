@@ -25,22 +25,33 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSI
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.testng.Assert.assertEquals;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.predicates.AddressReachable;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.predicates.TaskSuccess;
+import org.jclouds.vcloud.predicates.VAppNotFound;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -63,6 +74,34 @@ public class VCloudContextBuilderTest {
       protected void configure() {
          bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
          bind(VCloudAsyncClient.class).toInstance(connection);
+      }
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
+         return new RetryablePredicate<InetSocketAddress>(open, 130, 10, TimeUnit.SECONDS);
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      protected Predicate<InetAddress> addressTester(AddressReachable reachable) {
+         return new RetryablePredicate<InetAddress>(reachable, 60, 5, TimeUnit.SECONDS);
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      protected Predicate<String> successTester(TaskSuccess success) {
+         return new RetryablePredicate<String>(success, 600, 10, TimeUnit.SECONDS);
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      @Named("NOT_FOUND")
+      protected Predicate<VApp> successTester(VAppNotFound notFound) {
+         return new RetryablePredicate<VApp>(notFound, 5, 1, TimeUnit.SECONDS);
       }
       @SuppressWarnings("unused")
       @Provides
@@ -92,7 +131,7 @@ public class VCloudContextBuilderTest {
       assertEquals(context.getEndPoint(), URI.create("http://org"));
    }
 
-   public VCloudContextBuilder builder() {
+   public RestContextBuilder<VCloudAsyncClient, VCloudClient> builder() {
       return new VCloudContextBuilder(new VCloudPropertiesBuilder(URI.create("http://localhost"),
                "id", "secret").build()).withModules(new StubClientModule());
    }
@@ -107,7 +146,7 @@ public class VCloudContextBuilderTest {
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      VCloudContextBuilder builder = builder();
+      VCloudContextBuilder builder = (VCloudContextBuilder) builder();
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), VCloudContextModule.class);
@@ -115,7 +154,7 @@ public class VCloudContextBuilderTest {
 
    protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      VCloudContextBuilder builder = builder();
+      VCloudContextBuilder builder = (VCloudContextBuilder) builder();
       builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), VCloudRestClientModule.class);

@@ -21,13 +21,14 @@ package org.jclouds.http.handlers;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
@@ -73,7 +74,7 @@ import com.google.inject.Inject;
  */
 public class BackoffLimitedRetryHandler implements HttpRetryHandler {
    @Inject(optional = true)
-   @Named(HttpConstants.PROPERTY_HTTP_MAX_RETRIES)
+   @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
 
    @Resource
@@ -93,7 +94,8 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
                   retryCountLimit, command);
          return false;
       } else {
-         imposeBackoffExponentialDelay(command.getFailureCount(), command.toString());
+         imposeBackoffExponentialDelay(command.getFailureCount(), "server error: "
+                  + command.toString());
          return true;
       }
    }
@@ -105,12 +107,12 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
    public void imposeBackoffExponentialDelay(long period, int pow, int failureCount,
             String commandDescription) {
       long delayMs = (long) (period * Math.pow(failureCount, pow));
-      logger.debug("Retry %d/%d after server error, delaying for %d ms: %s", failureCount,
-               retryCountLimit, delayMs, commandDescription);
+      logger.debug("Retry %d/%d: delaying for %d ms: %s", failureCount, retryCountLimit, delayMs,
+               commandDescription);
       try {
          Thread.sleep(delayMs);
       } catch (InterruptedException e) {
-         logger.error(e, "Interrupted imposing delay");
+         Throwables.propagate(e);
       }
    }
 

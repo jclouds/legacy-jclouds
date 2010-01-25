@@ -21,14 +21,14 @@ package org.jclouds.azure.storage.blob;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link AzureBlobContext} instances based on the most commonly requested arguments.
+ * Creates {@link AzureBlobStoreContext} instances based on the most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -36,31 +36,23 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole
- * @see AzureBlobAsyncClient
+ * @author Adrian Cole, Andrew Newdigate
+ * @see AzureBlobStoreContext
  */
 public class AzureBlobContextFactory {
-   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
-            Properties properties, Module... modules) {
+   public static BlobStoreContext createContext(Properties properties, Module... modules) {
       return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
+               .withModules(modules).buildBlobStoreContext();
    }
 
-   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
-            Properties properties, String account, String encodedKey, Module... modules) {
-      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties)
-               .withCredentials(account, encodedKey).build()).withModules(modules).buildContext();
+   public static BlobStoreContext createContext(String user, String encodedKey, Module... modules) {
+      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
+               .build()).withModules(modules).buildBlobStoreContext();
    }
 
-   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(String account,
-            String encodedKey, Module... modules) {
-      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(account, encodedKey)
-               .build()).withModules(modules).buildContext();
-   }
-
-   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(URI endpoint,
-            String account, String encodedKey, Module... modules) {
-      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(account, encodedKey)
-               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
+   public static BlobStoreContext createContext(URI endpoint, String user, String encodedKey,
+            Module... modules) {
+      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
+               .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
    }
 }

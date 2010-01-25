@@ -18,12 +18,14 @@
  */
 package org.jclouds.aws.filters;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
@@ -64,7 +66,7 @@ public class FormSignerTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(Executors
-               .sameThreadExecutor()), new AbstractModule() {
+               .sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
 
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
@@ -73,6 +75,9 @@ public class FormSignerTest {
                      .to("bar");
             bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL))
                      .to(30);
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+                     .to("1");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
          }
 
          @SuppressWarnings("unused")

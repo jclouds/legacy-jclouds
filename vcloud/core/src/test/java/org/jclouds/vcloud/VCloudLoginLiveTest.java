@@ -17,6 +17,7 @@
  * ====================================================================
  */
 package org.jclouds.vcloud;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
@@ -56,7 +57,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-
 
 /**
  * Tests behavior of {@code VCloudLogin}
@@ -157,7 +157,8 @@ public class VCloudLoginLiveTest {
             modules.add(new VCloudLoginRestClientModule(endpoint));
          }
 
-      }.withModules(new Log4JLoggingModule(), new ExecutorServiceModule(sameThreadExecutor()))
+      }.withModules(new Log4JLoggingModule(),
+               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))
                .buildContext();
    }
 }

@@ -21,6 +21,7 @@ package org.jclouds.aws.s3.blobstore.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -40,8 +41,9 @@ import com.google.inject.Injector;
 public class S3BlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
-               new JDKLoggingModule(), new S3StubClientModule(), new S3BlobStoreContextModule() {
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
+               sameThreadExecutor()), new JDKLoggingModule(), new S3StubClientModule(),
+               new S3BlobStoreContextModule() {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(
@@ -50,6 +52,12 @@ public class S3BlobStoreModuleTest {
                               Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
                      bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
                               .to("http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
                      super.configure();
                   }
                });

@@ -32,6 +32,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 
 import com.google.common.base.Function;
+import com.google.common.io.Closeables;
 
 /**
  * This parses {@link AuthenticationResponse} from HTTP headers.
@@ -42,35 +43,49 @@ import com.google.common.base.Function;
 public class ParseAuthenticationResponseFromHeaders implements
          Function<HttpResponse, AuthenticationResponse> {
 
+   private static final class AuthenticationResponseImpl implements AuthenticationResponse {
+
+      private final String authToken;
+      private final String CDNManagementUrl;
+      private final String serverManagementUrl;
+      private final String storageUrl;
+
+      AuthenticationResponseImpl(String authToken, String CDNManagementUrl,
+               String serverManagementUrl, String storageUrl) {
+         this.authToken = authToken;
+         this.CDNManagementUrl = CDNManagementUrl;
+         this.serverManagementUrl = serverManagementUrl;
+         this.storageUrl = storageUrl;
+      }
+
+      public String getAuthToken() {
+         return authToken;
+      }
+
+      public URI getCDNManagementUrl() {
+         return URI.create(CDNManagementUrl);
+      }
+
+      public URI getServerManagementUrl() {
+         return URI.create(serverManagementUrl);
+      }
+
+      public URI getStorageUrl() {
+         return URI.create(storageUrl);
+      }
+   }
+
    /**
     * parses the http response headers to create a new {@link AuthenticationResponse} object.
     */
    public AuthenticationResponse apply(final HttpResponse from) {
-      return new AuthenticationResponse() {
-
-         public String getAuthToken() {
-            return checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN), AUTH_TOKEN);
-         }
-
-         public URI getCDNManagementUrl() {
-            String cdnManagementUrl = checkNotNull(from.getFirstHeaderOrNull(CDN_MANAGEMENT_URL),
-                     CDN_MANAGEMENT_URL);
-            return URI.create(cdnManagementUrl);
-         }
-
-         public URI getServerManagementUrl() {
-            String serverManagementUrl = checkNotNull(from
-                     .getFirstHeaderOrNull(SERVER_MANAGEMENT_URL), SERVER_MANAGEMENT_URL);
-            return URI.create(serverManagementUrl);
-         }
-
-         public URI getStorageUrl() {
-            String storageUrl = checkNotNull(from.getFirstHeaderOrNull(STORAGE_URL), STORAGE_URL
-                     + " not found in headers:" + from.getStatusLine() + " - " + from.getHeaders());
-            return URI.create(storageUrl);
-         }
-
-      };
+      Closeables.closeQuietly(from.getContent());
+      return new AuthenticationResponseImpl(checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN),
+               AUTH_TOKEN), checkNotNull(from.getFirstHeaderOrNull(CDN_MANAGEMENT_URL),
+               CDN_MANAGEMENT_URL), checkNotNull(from.getFirstHeaderOrNull(SERVER_MANAGEMENT_URL),
+               SERVER_MANAGEMENT_URL), checkNotNull(from.getFirstHeaderOrNull(STORAGE_URL),
+               STORAGE_URL + " not found in headers:" + from.getStatusLine() + " - "
+                        + from.getHeaders()));
 
    }
 }

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -41,7 +42,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
-import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -74,7 +74,7 @@ public abstract class BaseJettyTest {
 
       @Override
       protected void addContextModule(List<Module> modules) {
-         modules.add(new JettyContextModule(properties, testPort));
+         modules.add(new JettyContextModule(testPort));
       }
 
       @Override
@@ -106,17 +106,14 @@ public abstract class BaseJettyTest {
    }
 
    public static class JettyContextModule extends AbstractModule {
-      private final Properties properties;
       private final int testPort;
 
-      private JettyContextModule(Properties properties, int testPort) {
-         this.properties = properties;
+      private JettyContextModule(int testPort) {
          this.testPort = testPort;
       }
 
       @Override
       protected void configure() {
-         Jsr330.bindProperties(binder(), properties);
          bind(URI.class).annotatedWith(Localhost.class).toInstance(
                   URI.create("http://localhost:" + testPort));
       }
@@ -227,7 +224,19 @@ public abstract class BaseJettyTest {
       server2.setHandler(server2Handler);
       server2.start();
 
-      final Properties properties = new Properties();
+      final Properties properties = new PropertiesBuilder() {
+
+         @Override
+         public PropertiesBuilder withCredentials(String account, String key) {
+            return null;
+         }
+
+         @Override
+         public PropertiesBuilder withEndpoint(URI endpoint) {
+            return null;
+         }
+
+      }.build();
       addConnectionProperties(properties);
       context = newBuilder(testPort, properties, createConnectionModule()).buildContext();
       client = context.getApi();

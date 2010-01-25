@@ -41,18 +41,4 @@ public interface S3Constants extends AWSConstants, S3Headers {
     */
    public static final String PROPERTY_S3_SESSIONINTERVAL = "jclouds.s3.sessioninterval";
 
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public static final String PROPERTY_S3_TIMEOUT = "jclouds.s3.timeout";
-   /**
-    * time to pause before retrying a transient failure
-    */
-   public static final String PROPERTY_S3_RETRY = "jclouds.s3.retry";
-   /**
-    * Any header starting with this prefix is considered user metadata. It will be stored with the
-    * object and returned when you retrieve the object/
-    */
-   public static final String PROPERTY_S3_METADATA_PREFIX = "jclouds.s3.metaprefix";
-
 }

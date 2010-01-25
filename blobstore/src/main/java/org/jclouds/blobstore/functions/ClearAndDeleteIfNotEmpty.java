@@ -20,13 +20,8 @@ package org.jclouds.blobstore.functions;
 
 import static org.jclouds.util.Utils.propagateOrNull;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Named;
-
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.InvocationContext;
@@ -38,20 +33,13 @@ import com.google.inject.Inject;
 
 public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, InvocationContext {
 
-   /**
-    * maximum duration of an blob Request
-    */
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
-
    private final ClearContainerStrategy clear;
-   private final AsyncBlobStore connection;
+   private final BlobStore connection;
 
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   protected ClearAndDeleteIfNotEmpty(ClearContainerStrategy clear, AsyncBlobStore connection) {
+   protected ClearAndDeleteIfNotEmpty(ClearContainerStrategy clear, BlobStore connection) {
       this.clear = clear;
       this.connection = connection;
    }
@@ -64,8 +52,7 @@ public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, Invo
          } else if (responseException.getResponse().getStatusCode() == 409) {
             clear.execute(request.getArgs()[0].toString());
             try {
-               connection.deleteContainer(request.getArgs()[0].toString()).get(
-                        requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+               connection.deleteContainer(request.getArgs()[0].toString());
                return null;
             } catch (Exception e) {
                Throwables.propagateIfPossible(e, BlobRuntimeException.class);

@@ -27,6 +27,7 @@ import java.util.Collections;
 
 import javax.ws.rs.HttpMethod;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -36,6 +37,7 @@ import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -79,13 +81,20 @@ public class RackspaceAuthenticationTest {
          protected void configure() {
             bind(URI.class).annotatedWith(Authentication.class).toInstance(
                      URI.create("http://localhost:8080"));
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+                     .to("1");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
+            bindConstant().annotatedWith(
+                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
+                     .to("1");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
                }
             });
          }
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<RackspaceAuthentication>>() {

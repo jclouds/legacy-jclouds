@@ -446,7 +446,6 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       } finally {
          returnContainer(containerName);
          returnContainer(destinationContainer);
-
       }
    }
 

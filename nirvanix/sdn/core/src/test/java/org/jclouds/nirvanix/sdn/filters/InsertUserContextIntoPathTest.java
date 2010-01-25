@@ -30,6 +30,7 @@ import java.net.URI;
 import javax.ws.rs.POST;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
@@ -92,8 +93,8 @@ public class InsertUserContextIntoPathTest {
    @BeforeClass
    protected void createFilter() throws SecurityException, NoSuchMethodException {
       injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
-               new AbstractModule() {
+               sameThreadExecutor(), sameThreadExecutor()),
+               new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
 
                   protected void configure() {
                      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
@@ -112,6 +113,14 @@ public class InsertUserContextIntoPathTest {
                               .to("username");
                      bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_APPNAME))
                               .to("appname");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
                   }
 
                });

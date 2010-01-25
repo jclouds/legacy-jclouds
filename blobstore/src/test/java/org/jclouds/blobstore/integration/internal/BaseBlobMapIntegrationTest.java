@@ -58,7 +58,7 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          assertConsistencyAwareMapSize(map, 5);
          Set<String> valuesAsString = new HashSet<String>();
          for (Blob object : values) {
-            valuesAsString.add(BlobStoreUtils.getContentAsStringAndClose(object));
+            valuesAsString.add(BlobStoreUtils.getContentAsStringOrNullAndClose(object));
          }
          valuesAsString.removeAll(fiveStrings.values());
          assert valuesAsString.size() == 0;
@@ -89,7 +89,7 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          public void run() {
             Blob old = map.remove(key);
             try {
-               assertEquals(BlobStoreUtils.getContentAsStringAndClose(old), value);
+               assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(old), value);
             } catch (IOException e) {
                throw new RuntimeException(e);
             }
@@ -108,7 +108,7 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          assertEquals(entries.size(), 5);
          for (Entry<String, Blob> entry : entries) {
             assertEquals(fiveStrings.get(entry.getKey()), BlobStoreUtils
-                     .getContentAsStringAndClose(entry.getValue()));
+                     .getContentAsStringOrNullAndClose(entry.getValue()));
             Blob value = entry.getValue();
             value.setPayload("");
             value.generateMD5();
@@ -116,7 +116,7 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          }
          assertConsistencyAwareMapSize(map, 5);
          for (Blob value : map.values()) {
-            assertEquals(BlobStoreUtils.getContentAsStringAndClose(value), "");
+            assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(value), null);
          }
       } finally {
          returnContainer(bucketName);
@@ -141,14 +141,14 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
    void getOneReturnsAppleAndOldValueIsNull(Map<String, Blob> map, Blob old) throws IOException,
             InterruptedException {
       assert old == null;
-      assertEquals(BlobStoreUtils.getContentAsStringAndClose(map.get("one")), "apple");
+      assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(map.get("one")), "apple");
       assertConsistencyAwareMapSize(map, 1);
    }
 
    void getOneReturnsBearAndOldValueIsApple(Map<String, Blob> map, Blob oldValue)
             throws IOException, InterruptedException {
-      assertEquals(BlobStoreUtils.getContentAsStringAndClose(map.get("one")), "bear");
-      assertEquals(BlobStoreUtils.getContentAsStringAndClose(oldValue), "apple");
+      assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(map.get("one")), "bear");
+      assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(oldValue), "apple");
       assertConsistencyAwareMapSize(map, 1);
    }
 

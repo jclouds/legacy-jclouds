@@ -32,8 +32,8 @@ public class KeyAlreadyExistsException extends RuntimeException {
       super();
    }
 
-   public KeyAlreadyExistsException(String container, String key, Exception from) {
-      super(String.format("%s already exists in container %s", key, container), from);
+   public KeyAlreadyExistsException(String container, String key) {
+      super(String.format("%s already exists in container %s", key, container));
       this.container = container;
       this.key = key;
    }

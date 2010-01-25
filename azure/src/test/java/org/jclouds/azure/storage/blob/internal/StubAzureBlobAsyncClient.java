@@ -183,4 +183,9 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
    }
 
+   @Override
+   public ListenableFuture<Boolean> blobExists(String container, String name) {
+      return immediateFuture(containerToBlobs.get(container).containsKey(name));
+   }
+
 }

@@ -20,7 +20,6 @@ package org.jclouds.demo.tweetstore.config;
 
 import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.url;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 
 import java.io.IOException;
@@ -61,6 +60,7 @@ import com.google.inject.util.Jsr330;
  * @author Adrian Cole
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
+   public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
 
    private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
    private TwitterClient twitterClient;

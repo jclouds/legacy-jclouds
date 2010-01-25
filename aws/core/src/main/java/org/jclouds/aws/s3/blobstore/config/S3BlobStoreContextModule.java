@@ -56,7 +56,7 @@ public class S3BlobStoreContextModule extends S3ContextModule {
    @Singleton
    BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
             InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
+            S3AsyncBlobStore asynchBlobStore, S3BlobStore blobStore,
             RestContext<S3AsyncClient, S3Client> context) {
       return new BlobStoreContextImpl<S3AsyncClient, S3Client>(blobMapFactory,
                inputStreamMapFactory, asynchBlobStore, blobStore, context);

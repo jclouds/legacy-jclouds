@@ -24,7 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.jets3t.service.S3ServiceException;
 import org.testng.ITestContext;
@@ -88,30 +90,34 @@ public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
       throw new UnsupportedOperationException();
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   protected boolean putByteArray(String bucket, String key, byte[] data, String contentType)
-            throws Exception {
-      com.amazon.s3.S3Object object = new com.amazon.s3.S3Object(data, null);
-      Map<String, List<String>> headers = new TreeMap<String, List<String>>();
+   protected Future<?> putByteArray(final String bucket, final String key, byte[] data,
+            String contentType) {
+      final com.amazon.s3.S3Object object = new com.amazon.s3.S3Object(data, null);
+      final Map<String, List<String>> headers = new TreeMap<String, List<String>>();
       headers.put("Content-Type", Arrays.asList(new String[] { contentType }));
-      return amzClient.put(bucket, key, object, headers).connection.getResponseMessage() != null;
+      return exec.submit(new Callable() {
+         @Override
+         public Object call() throws Exception {
+            return amzClient.put(bucket, key, object, headers).connection.getResponseMessage();
+         }
+      });
    }
 
    @Override
-   protected boolean putFile(String bucket, String key, File data, String contentType)
-            throws Exception {
+   protected Future<?> putFile(String bucket, String key, File data, String contentType) {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   protected boolean putInputStream(String bucket, String key, InputStream data, String contentType)
-            throws Exception {
+   protected Future<?> putInputStream(String bucket, String key, InputStream data,
+            String contentType) {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   protected boolean putString(String bucket, String key, String data, String contentType)
-            throws Exception {
+   protected Future<?> putString(String bucket, String key, String data, String contentType) {
       throw new UnsupportedOperationException();
    }
 

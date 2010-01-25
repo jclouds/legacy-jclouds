@@ -18,26 +18,27 @@
  */
 package org.jclouds.aws.s3;
 
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Provider;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Tests relative performance of S3 functions.
@@ -49,68 +50,15 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       containerCount = 1;
    }
    protected int timeoutSeconds = 15;
-   protected int loopCount = 100;
+   protected int loopCount = 1000;
    protected ExecutorService exec;
-   protected CompletionService<Boolean> completer;
+   protected Logger logger = Logger.NULL;;
 
-   @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
-   public void setUpCallables() throws InterruptedException, ExecutionException, TimeoutException {
-      exec = Executors.newCachedThreadPool();
-      completer = new ExecutorCompletionService<Boolean>(exec);
-   }
-
-   @AfterClass(groups = { "live" })
-   public void tearDownExecutor() throws Exception {
-      exec.shutdownNow();
-      exec = null;
-   }
-
-   // too slow...
    @Test(enabled = false)
-   public void testPutBytesSerialEU() throws Exception {
-      String euContainerName = createScratchContainerInEU();
-      try {
-         doSerial(new PutBytesCallable(euContainerName), loopCount);
-      } finally {
-         destroyContainer(euContainerName);
-      }
-   }
-
-   public S3Client getApi() {
-      return (S3Client) context.getProviderSpecificContext().getApi();
-   }
-
-   /**
-    * using scratch containerName as we are changing location
-    * 
-    * @throws TimeoutException
-    * @throws ExecutionException
-    * @throws InterruptedException
-    */
-   protected String createScratchContainerInEU() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      String containerName = getScratchContainerName();
-      getApi().putBucketInRegion(Region.EU_WEST_1, containerName);
-      return containerName;
-   }
-
-   // too slow...
-   @Test(enabled = false)
-   public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      String euContainerName = createScratchContainerInEU();
-      try {
-         doParallel(new PutBytesCallable(euContainerName), loopCount);
-      } finally {
-         destroyContainer(euContainerName);
-      }
-   }
-
-   @Test
    public void testPutBytesSerial() throws Exception {
       String bucketName = getContainerName();
       try {
-         doSerial(new PutBytesCallable(bucketName), loopCount / 10);
+         doSerial(new PutBytesFuture(bucketName), loopCount / 10);
       } finally {
          returnContainer(bucketName);
       }
@@ -121,17 +69,17 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         doParallel(new PutBytesCallable(bucketName), loopCount);
+         doParallel(new PutBytesFuture(bucketName), loopCount, bucketName);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @Test
+   @Test(enabled = false)
    public void testPutFileSerial() throws Exception {
       String bucketName = getContainerName();
       try {
-         doSerial(new PutFileCallable(bucketName), loopCount / 10);
+         doSerial(new PutFileFuture(bucketName), loopCount / 10);
       } finally {
          returnContainer(bucketName);
       }
@@ -142,17 +90,17 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         doParallel(new PutFileCallable(bucketName), loopCount);
+         doParallel(new PutFileFuture(bucketName), loopCount, bucketName);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @Test
+   @Test(enabled = false)
    public void testPutInputStreamSerial() throws Exception {
       String bucketName = getContainerName();
       try {
-         doSerial(new PutInputStreamCallable(bucketName), loopCount / 10);
+         doSerial(new PutInputStreamFuture(bucketName), loopCount / 10);
       } finally {
          returnContainer(bucketName);
       }
@@ -163,17 +111,17 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         doParallel(new PutInputStreamCallable(bucketName), loopCount);
+         doParallel(new PutInputStreamFuture(bucketName), loopCount, bucketName);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @Test
+   @Test(enabled = false)
    public void testPutStringSerial() throws Exception {
       String bucketName = getContainerName();
       try {
-         doSerial(new PutStringCallable(bucketName), loopCount / 10);
+         doSerial(new PutStringFuture(bucketName), loopCount / 10);
       } finally {
          returnContainer(bucketName);
       }
@@ -184,116 +132,98 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         doParallel(new PutStringCallable(bucketName), loopCount);
+         doParallel(new PutStringFuture(bucketName), loopCount, bucketName);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   private void doSerial(Provider<Callable<Boolean>> provider, int loopCount) throws Exception,
+   private void doSerial(Provider<ListenableFuture<?>> provider, int loopCount) throws Exception,
             ExecutionException {
       for (int i = 0; i < loopCount; i++)
-         assert provider.get().call();
+         assert provider.get().get() != null;
    }
 
-   private void doParallel(Provider<Callable<Boolean>> provider, int loopCount)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   private void doParallel(Provider<ListenableFuture<?>> provider, int loopCount,
+            String containerName) throws InterruptedException, ExecutionException, TimeoutException {
+      Set<ListenableFuture<?>> responses = Sets.newHashSet();
       for (int i = 0; i < loopCount; i++)
-         completer.submit(provider.get());
-      for (int i = 0; i < loopCount; i++)
-         assert completer.take().get(timeoutSeconds, TimeUnit.SECONDS);
+         responses.add(provider.get());
+      awaitCompletion(responses, exec, null, logger, String.format(
+               "putting into containerName: %s", containerName));
    }
 
-   class PutBytesCallable implements Provider<Callable<Boolean>> {
+   class PutBytesFuture implements Provider<ListenableFuture<?>> {
       final AtomicInteger key = new AtomicInteger(0);
       protected byte[] test = new byte[1024 * 2];
       private final String bucketName;
 
-      public PutBytesCallable(String bucketName) {
+      public PutBytesFuture(String bucketName) {
          this.bucketName = bucketName;
       }
 
-      public Callable<Boolean> get() {
-         return new Callable<Boolean>() {
-            public Boolean call() throws Exception {
-               String bucketName2 = bucketName;
-               return putByteArray(bucketName2, key.getAndIncrement() + "", test,
-                        "application/octetstring");
-            }
-         };
-
+      public ListenableFuture<?> get() {
+         return Futures.makeListenable(putByteArray(bucketName, key.getAndIncrement() + "", test,
+                  "application/octetstring"));
       }
    }
 
-   class PutFileCallable implements Provider<Callable<Boolean>> {
+   class PutFileFuture implements Provider<ListenableFuture<?>> {
       final AtomicInteger key = new AtomicInteger(0);
       protected File file = new File("pom.xml");
       private final String bucketName;
 
-      public PutFileCallable(String bucketName) {
+      public PutFileFuture(String bucketName) {
          this.bucketName = bucketName;
       }
 
-      public Callable<Boolean> get() {
-         return new Callable<Boolean>() {
-            public Boolean call() throws Exception {
-               return putFile(bucketName, key.getAndIncrement() + "", file, "text/xml");
-            }
-         };
-
+      public ListenableFuture<?> get() {
+         return Futures.makeListenable(putFile(bucketName, key.getAndIncrement() + "", file,
+                  "text/xml"));
       }
    }
 
-   class PutInputStreamCallable extends PutBytesCallable {
+   class PutInputStreamFuture extends PutBytesFuture {
       final AtomicInteger key = new AtomicInteger(0);
       private final String bucketName;
 
-      public PutInputStreamCallable(String bucketName) {
+      public PutInputStreamFuture(String bucketName) {
          super(bucketName);
          this.bucketName = bucketName;
       }
 
       @Override
-      public Callable<Boolean> get() {
-         return new Callable<Boolean>() {
-            public Boolean call() throws Exception {
-               return putInputStream(bucketName, key.getAndIncrement() + "",
-                        new ByteArrayInputStream(test), "application/octetstring");
-            }
-         };
+      public ListenableFuture<?> get() {
+
+         return Futures.makeListenable(putInputStream(bucketName, key.getAndIncrement() + "",
+                  new ByteArrayInputStream(test), "application/octetstring"));
 
       }
    }
 
-   class PutStringCallable implements Provider<Callable<Boolean>> {
+   class PutStringFuture implements Provider<ListenableFuture<?>> {
       final AtomicInteger key = new AtomicInteger(0);
       protected String testString = "hello world!";
       private final String bucketName;
 
-      public PutStringCallable(String bucketName) {
+      public PutStringFuture(String bucketName) {
          this.bucketName = bucketName;
       }
 
-      public Callable<Boolean> get() {
-         return new Callable<Boolean>() {
-            public Boolean call() throws Exception {
-               return putString(bucketName, key.getAndIncrement() + "", testString, "text/plain");
-            }
-         };
-
+      public ListenableFuture<?> get() {
+         return Futures.makeListenable(putString(bucketName, key.getAndIncrement() + "",
+                  testString, "text/plain"));
       }
    }
 
-   protected abstract boolean putByteArray(String bucket, String key, byte[] data,
-            String contentType) throws Exception;
+   protected abstract Future<?> putByteArray(String bucket, String key, byte[] data,
+            String contentType);
 
-   protected abstract boolean putFile(String bucket, String key, File data, String contentType)
-            throws Exception;
+   protected abstract Future<?> putFile(String bucket, String key, File data, String contentType);
 
-   protected abstract boolean putInputStream(String bucket, String key, InputStream data,
-            String contentType) throws Exception;
+   protected abstract Future<?> putInputStream(String bucket, String key, InputStream data,
+            String contentType);
 
-   protected abstract boolean putString(String bucket, String key, String data, String contentType)
-            throws Exception;
+   protected abstract Future<?> putString(String bucket, String key, String data, String contentType);
 
 }

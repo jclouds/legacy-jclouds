@@ -20,10 +20,7 @@ package org.jclouds.azure.storage.blob;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT;
-import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX;
-import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_RETRY;
 import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_SESSIONINTERVAL;
-import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_TIMEOUT;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
@@ -33,7 +30,8 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.util.Utils;
 
 /**
@@ -41,13 +39,13 @@ import org.jclouds.util.Utils;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobPropertiesBuilder extends HttpPropertiesBuilder {
+public class AzureBlobPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties
                .setProperty(PROPERTY_AZUREBLOB_ENDPOINT, "https://{account}.blob.core.windows.net");
-      properties.setProperty(PROPERTY_AZUREBLOB_METADATA_PREFIX, "x-ms-meta-");
+      properties.setProperty(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       properties.setProperty(PROPERTY_AZURESTORAGE_SESSIONINTERVAL, 60 + "");
       return properties;
@@ -86,28 +84,6 @@ public class AzureBlobPropertiesBuilder extends HttpPropertiesBuilder {
 
    public AzureBlobPropertiesBuilder withTimeStampExpiration(long seconds) {
       properties.setProperty(PROPERTY_AZUREBLOB_SESSIONINTERVAL, seconds + "");
-      return this;
-   }
-
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public AzureBlobPropertiesBuilder withRequestTimeout(long milliseconds) {
-      properties.setProperty(PROPERTY_AZUREBLOB_TIMEOUT, Long.toString(milliseconds));
-      return this;
-   }
-
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public AzureBlobPropertiesBuilder withMaxRetries(int retries) {
-      properties.setProperty(PROPERTY_AZUREBLOB_RETRY, Integer.toString(retries));
-      return this;
-   }
-
-   protected AzureBlobPropertiesBuilder withMetaPrefix(String prefix) {
-      properties.setProperty(PROPERTY_AZUREBLOB_METADATA_PREFIX, prefix);
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, prefix);
       return this;
    }
 

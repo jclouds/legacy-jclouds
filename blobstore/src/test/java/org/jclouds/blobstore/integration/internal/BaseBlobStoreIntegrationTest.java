@@ -118,8 +118,10 @@ public class BaseBlobStoreIntegrationTest {
 
    @AfterClass(groups = { "integration", "live" })
    protected void tearDownClient() throws Exception {
-      exec.shutdown();
-      exec.awaitTermination(60, TimeUnit.SECONDS);
+      if (exec != null) {
+         exec.shutdown();
+         exec.awaitTermination(60, TimeUnit.SECONDS);
+      }
       context.close();
    }
 
@@ -157,8 +159,7 @@ public class BaseBlobStoreIntegrationTest {
       }
    }
 
-   private static void deleteContainerOrWarnIfUnable(BlobStoreContext context,
-            String containerName) {
+   private static void deleteContainerOrWarnIfUnable(BlobStoreContext context, String containerName) {
       try {
          deleteContainer(context, containerName);
       } catch (Throwable ex) {
@@ -275,7 +276,7 @@ public class BaseBlobStoreIntegrationTest {
       Blob newObject = context.getBlobStore().getBlob(sourceContainer, key);
       assert newObject != null;
       try {
-         assertEquals(BlobStoreUtils.getContentAsStringAndClose(newObject), TEST_STRING);
+         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(newObject), TEST_STRING);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }

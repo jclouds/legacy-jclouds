@@ -23,10 +23,7 @@ import java.net.URI;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
-import javax.annotation.Resource;
-
 import org.jclouds.http.HttpCommandRendezvous;
-import org.jclouds.logging.Logger;
 
 /**
  * Associates a command with an open connection to a service.
@@ -40,8 +37,6 @@ public abstract class HttpCommandConnectionHandle<C> {
    protected final URI endPoint;
    protected C conn;
    protected HttpCommandRendezvous<?> command;
-   @Resource
-   protected Logger logger = Logger.NULL;
 
    public HttpCommandConnectionHandle(Semaphore maxConnections, BlockingQueue<C> available,
             URI endPoint, HttpCommandRendezvous<?> command, C conn) throws InterruptedException {
@@ -68,7 +63,6 @@ public abstract class HttpCommandConnectionHandle<C> {
       if (isCompleted() || alreadyReleased()) {
          return;
       }
-      logger.trace("%1$s - %2$d - releasing to pool", conn, conn.hashCode());
       available.put(conn);
       conn = null;
       command = null;
@@ -84,7 +78,6 @@ public abstract class HttpCommandConnectionHandle<C> {
          return;
       }
       if (conn != null) {
-         logger.trace("%1$s - %2$d - cancelled; shutting down connection", conn, conn.hashCode());
          try {
             shutdownConnection();
          } finally {

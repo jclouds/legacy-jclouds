@@ -21,6 +21,7 @@ package org.jclouds.atmosonline.saas.blobstore.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
@@ -42,8 +43,8 @@ import com.google.inject.Injector;
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
-               new JDKLoggingModule(), new AtmosStorageStubClientModule(),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
+               sameThreadExecutor()), new JDKLoggingModule(), new AtmosStorageStubClientModule(),
                new AtmosBlobStoreContextModule() {
                   @Override
                   protected void configure() {
@@ -54,6 +55,14 @@ public class AtmosBlobStoreModuleTest {
                      bindConstant().annotatedWith(
                               Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
                               "http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
                      super.configure();
                   }
                });

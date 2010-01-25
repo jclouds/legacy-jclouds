@@ -18,15 +18,14 @@
  */
 package org.jclouds.aws.reference;
 
-import org.jclouds.http.HttpConstants;
-import org.jclouds.http.pool.PoolConstants;
+import org.jclouds.Constants;
 
 /**
  * Configuration properties and constants used in AWS connections.
  * 
  * @author Adrian Cole
  */
-public interface AWSConstants extends HttpConstants, PoolConstants {
+public interface AWSConstants extends Constants {
    public static final String ENDPOINT = "Endpoint";
    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";

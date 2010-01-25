@@ -18,6 +18,8 @@
  */
 package org.jclouds.http;
 
+import com.google.common.io.Closeables;
+
 /**
  * Responsible for setting an exception on the command relevant to the unrecoverable error in the
  * HttpResponse.
@@ -27,6 +29,8 @@ package org.jclouds.http;
 public interface HttpErrorHandler {
    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
       public void handleError(HttpCommand command, HttpResponse response) {
+         if (response.getContent() != null)
+            Closeables.closeQuietly(response.getContent());
       }
    };
 

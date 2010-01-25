@@ -24,9 +24,13 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2AsyncClient;
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -43,14 +47,16 @@ public class InstanceClientLiveTest {
 
    private InstanceClient client;
    private String user;
+   private RestContext<EC2AsyncClient, EC2Client> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
+               .getProviderSpecificContext();
+      client = context.getApi().getInstanceServices();
 
-      client = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule()).getApi()
-               .getInstanceServices();
    }
 
    @Test
@@ -61,5 +67,10 @@ public class InstanceClientLiveTest {
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
       }
+   }
+
+   @AfterTest
+   public void shutdown() {
+      context.close();
    }
 }

@@ -23,11 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Named;
 
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListResponse;
@@ -36,15 +34,14 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -60,8 +57,7 @@ import com.google.inject.Inject;
  *           value of the map
  */
 public abstract class BaseBlobMap<V> {
-
-   protected final AsyncBlobStore connection;
+   protected final BlobStore blobstore;
    protected final String containerName;
    protected final Function<String, String> prefixer;
    protected final Function<String, String> pathStripper;
@@ -71,6 +67,7 @@ public abstract class BaseBlobMap<V> {
    protected final ContainsValueInListStrategy containsValueStrategy;
    protected final ClearListStrategy deleteBlobsStrategy;
    protected final CountListStrategy countStrategy;
+   protected final PutBlobsStrategy putBlobsStrategy;
 
    static class StripPath implements Function<String, String> {
       private final String prefix;
@@ -106,27 +103,13 @@ public abstract class BaseBlobMap<V> {
       }
    }
 
-   /**
-    * maximum duration of an blob Request
-    */
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
-
-   /**
-    * time to pause before retrying a transient failure
-    */
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_RETRY)
-   protected long requestRetryMilliseconds = 10;
-
    @Inject
-   public BaseBlobMap(AsyncBlobStore connection, GetBlobsInListStrategy getAllBlobs,
+   public BaseBlobMap(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
             ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy deleteBlobsStrategy, CountListStrategy countStrategy,
-            String containerName, ListContainerOptions options) {
-      this.connection = checkNotNull(connection, "connection");
+            PutBlobsStrategy putBlobsStrategy, String containerName, ListContainerOptions options) {
+      this.blobstore = checkNotNull(blobstore, "blobstore");
       this.containerName = checkNotNull(containerName, "container");
       this.options = options;
       if (options.getDir() == null) {
@@ -136,12 +119,12 @@ public abstract class BaseBlobMap<V> {
          prefixer = new PrefixKey(options.getDir(), "/");
          pathStripper = new StripPath(options.getDir(), "/");
       }
-
       this.getAllBlobs = checkNotNull(getAllBlobs, "getAllBlobs");
       this.getAllBlobMetadata = checkNotNull(getAllBlobMetadata, "getAllBlobMetadata");
       this.containsValueStrategy = checkNotNull(containsValueStrategy, "containsValueStrategy");
       this.deleteBlobsStrategy = checkNotNull(deleteBlobsStrategy, "deleteBlobsStrategy");
       this.countStrategy = checkNotNull(countStrategy, "countStrategy");
+      this.putBlobsStrategy = checkNotNull(putBlobsStrategy, "putBlobsStrategy");
       checkArgument(!containerName.equals(""), "container name must not be a blank string!");
    }
 
@@ -162,7 +145,7 @@ public abstract class BaseBlobMap<V> {
     * @see AsyncBlobStore#getBlob(String, String)
     */
    protected Set<? extends Blob> getAllBlobs() {
-      SortedSet<? extends Blob> returnVal = getAllBlobs.execute(containerName, options);
+      Set<? extends Blob> returnVal = getAllBlobs.execute(containerName, options);
       if (options != null) {
          for (Blob from : returnVal)
             stripPrefix(from);
@@ -200,14 +183,7 @@ public abstract class BaseBlobMap<V> {
 
    public boolean containsKey(Object key) {
       String realKey = prefixer.apply(key.toString());
-      try {
-         return connection.blobMetadata(containerName, realKey).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS) != null;
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error searching for %1$s:%2$s",
-                  containerName, realKey), e);
-      }
+      return blobstore.blobExists(containerName, realKey);
    }
 
    public boolean isEmpty() {

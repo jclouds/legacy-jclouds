@@ -25,14 +25,14 @@ import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPER
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in RimuHosting Clients
  * 
  * @author Adrian Cole
  */
-public class RimuHostingPropertiesBuilder extends HttpPropertiesBuilder {
+public class RimuHostingPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
@@ -62,7 +62,7 @@ public class RimuHostingPropertiesBuilder extends HttpPropertiesBuilder {
    }
 
    @Override
-   public HttpPropertiesBuilder withCredentials(String account, String key) {
+   public PropertiesBuilder withCredentials(String account, String key) {
       return withCredentials(account != null ? account : key);
    }
 }

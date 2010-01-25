@@ -21,7 +21,7 @@ package org.jclouds.atmosonline.saas.blobstore.integration;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextFactory;
+import org.jclouds.atmosonline.saas.AtmosStorageContextFactory;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -46,7 +46,7 @@ public class AtmosStorageTestInitializer extends BaseTestInitializer {
 
    @Override
    protected BlobStoreContext createStubContext() {
-      return AtmosBlobStoreContextFactory.createContext("user", "pass",
+      return AtmosStorageContextFactory.createContext("user", "pass",
                new AtmosStorageStubClientModule());
    }
 

@@ -23,17 +23,15 @@ package org.jclouds.logging;
  * <p/>
  * Implementations of logging are optional and injected if they are configured.
  * <p/>
- * <code> @Resource Logger logger = Logger.NULL;</code> The above will get you a
- * null-safe instance of <tt>Logger</tt>. If configured, this logger will be
- * swapped with a real Logger implementation with category set to the current
- * class name. This is done post-object construction, so do not attempt to use
- * these loggers in your constructor.
+ * <code> @Resource Logger logger = Logger.NULL;</code> The above will get you a null-safe instance
+ * of <tt>Logger</tt>. If configured, this logger will be swapped with a real Logger implementation
+ * with category set to the current class name. This is done post-object construction, so do not
+ * attempt to use these loggers in your constructor.
  * <p/>
- * If you wish to initialize loggers like these yourself, do not use the @Resource
- * annotation.
+ * If you wish to initialize loggers like these yourself, do not use the @Resource annotation.
  * <p/>
- * This implementation first checks to see if the level is enabled before
- * issuing the log command. In other words, don't do the following
+ * This implementation first checks to see if the level is enabled before issuing the log command.
+ * In other words, don't do the following
  * <code>if (logger.isTraceEnabled()) logger.trace("message");.
  * <p/>
  * 
@@ -41,44 +39,49 @@ package org.jclouds.logging;
  */
 public interface Logger {
 
-    /**
-     * Assign to member to avoid NPE when no logging module is configured.
-     */
-    public static final Logger NULL = new NullLogger();
+   /**
+    * Assign to member to avoid NPE when no logging module is configured.
+    */
+   public static final Logger NULL = new NullLogger();
 
-    String getCategory();
+   /**
+    * Assign to member to avoid NPE when no logging module is configured.
+    */
+   public static final Logger CONSOLE = new ConsoleLogger();
 
-    void trace(String message, Object... args);
+   String getCategory();
 
-    boolean isTraceEnabled();
+   void trace(String message, Object... args);
 
-    void debug(String message, Object... args);
+   boolean isTraceEnabled();
 
-    boolean isDebugEnabled();
+   void debug(String message, Object... args);
 
-    void info(String message, Object... args);
+   boolean isDebugEnabled();
 
-    boolean isInfoEnabled();
+   void info(String message, Object... args);
 
-    void warn(String message, Object... args);
+   boolean isInfoEnabled();
 
-    void warn(Throwable throwable, String message, Object... args);
+   void warn(String message, Object... args);
 
-    boolean isWarnEnabled();
+   void warn(Throwable throwable, String message, Object... args);
 
-    void error(String message, Object... args);
+   boolean isWarnEnabled();
 
-    void error(Throwable throwable, String message, Object... args);
+   void error(String message, Object... args);
 
-    boolean isErrorEnabled();
+   void error(Throwable throwable, String message, Object... args);
 
-    /**
-     * Produces instances of {@link Logger} relevant to the specified category
-     * 
-     * @author Adrian Cole
-     * 
-     */
-    public static interface LoggerFactory {
-	Logger getLogger(String category);
-    }
+   boolean isErrorEnabled();
+
+   /**
+    * Produces instances of {@link Logger} relevant to the specified category
+    * 
+    * @author Adrian Cole
+    * 
+    */
+   public static interface LoggerFactory {
+      Logger getLogger(String category);
+   }
 }

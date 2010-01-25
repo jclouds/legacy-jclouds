@@ -18,7 +18,11 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CPUCOUNT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_MEMORY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.disabled;
 import static org.testng.Assert.assertEquals;
 
@@ -33,8 +37,8 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -555,9 +559,14 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
          @Override
          protected void configure() {
             Properties props = new Properties();
+            props.setProperty(PROPERTY_VCLOUD_DEFAULT_CPUCOUNT, "1");
+            props.setProperty(PROPERTY_VCLOUD_DEFAULT_MEMORY, "512");
             props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
                      "https://vcloud.safesecureweb.com/network/1990");
-            Jsr330.bindProperties(binder(), new TerremarkVCloudPropertiesBuilder(props).build());
+            props.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
+            props.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
+                     "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+            Jsr330.bindProperties(binder(), props);
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)
                      .toInstance("http://catalogItem");

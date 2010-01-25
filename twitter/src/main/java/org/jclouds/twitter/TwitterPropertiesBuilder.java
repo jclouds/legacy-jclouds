@@ -26,14 +26,14 @@ import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_US
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in Twitter Clients
  * 
  * @author Adrian Cole
  */
-public class TwitterPropertiesBuilder extends HttpPropertiesBuilder {
+public class TwitterPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

@@ -162,12 +162,12 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          addObjectAndValidateContent(containerName, key);
          Blob object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5));
-         assertEquals(BlobStoreUtils.getContentAsStringAndClose(object1), TEST_STRING.substring(0,
+         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(object1), TEST_STRING.substring(0,
                   6));
 
          Blob object2 = context.getBlobStore().getBlob(containerName, key,
                   range(6, TEST_STRING.length()));
-         assertEquals(BlobStoreUtils.getContentAsStringAndClose(object2), TEST_STRING.substring(6,
+         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(object2), TEST_STRING.substring(6,
                   TEST_STRING.length()));
       } finally {
          returnContainer(containerName);
@@ -185,7 +185,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          Blob object = context.getBlobStore().getBlob(containerName, key,
                   range(0, 5).range(6, TEST_STRING.length()));
 
-         assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING);
+         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(object), TEST_STRING);
       } finally {
          returnContainer(containerName);
       }
@@ -244,6 +244,17 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       String key = "test";
       try {
          context.getBlobStore().removeBlob(containerName, key);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+   
+   @Test(groups = { "integration", "live" })
+   public void objectNotFound() throws InterruptedException {
+      String containerName = getContainerName();
+      String key = "test";
+      try {
+         assert !context.getBlobStore().blobExists(containerName, key);
       } finally {
          returnContainer(containerName);
       }
@@ -309,7 +320,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          assertNotNull(context.getBlobStore().putBlob(containerName, object));
          object = context.getBlobStore().getBlob(containerName, object.getMetadata().getName());
-         String returnedString = BlobStoreUtils.getContentAsStringAndClose(object);
+         String returnedString = BlobStoreUtils.getContentAsStringOrNullAndClose(object);
          assertEquals(returnedString, realObject);
          assertEquals(context.getBlobStore().list(containerName).size(), 1);
       } finally {

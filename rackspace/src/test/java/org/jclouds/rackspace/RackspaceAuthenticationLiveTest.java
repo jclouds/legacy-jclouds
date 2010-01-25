@@ -131,7 +131,8 @@ public class RackspaceAuthenticationLiveTest {
          public void addContextModule(List<Module> modules) {
             modules.add(new RackspaceAuthenticationContextModule());
          }
-      }.withModules(new Log4JLoggingModule(), new ExecutorServiceModule(sameThreadExecutor()))
+      }.withModules(new Log4JLoggingModule(),
+               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))
                .buildContext();
    }
 }

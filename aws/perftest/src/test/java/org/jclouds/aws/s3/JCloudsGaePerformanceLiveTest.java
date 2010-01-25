@@ -21,17 +21,23 @@ package org.jclouds.aws.s3;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.v6.Maps;
 
 import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
-import com.google.inject.Module;
 
 /**
  * 
@@ -51,20 +57,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @Override
    @Test(enabled = false)
-   public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
    public void testPutBytesSerial() throws Exception {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutBytesSerialEU() throws Exception {
       throw new UnsupportedOperationException();
    }
 
@@ -116,29 +109,26 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
    }
 
    @Override
-   protected boolean putByteArray(String bucket, String key, byte[] data, String contentType)
-            throws Exception {
+   protected Future<?> putByteArray(String bucket, String key, byte[] data, String contentType) {
       setupApiProxy();
       return super.putByteArray(bucket, key, data, contentType);
    }
 
    @Override
-   protected boolean putFile(String bucket, String key, File data, String contentType)
-            throws Exception {
+   protected Future<?> putFile(String bucket, String key, File data, String contentType) {
       setupApiProxy();
       return super.putFile(bucket, key, data, contentType);
    }
 
    @Override
-   protected boolean putInputStream(String bucket, String key, InputStream data, String contentType)
-            throws Exception {
+   protected Future<?> putInputStream(String bucket, String key, InputStream data,
+            String contentType) {
       setupApiProxy();
       return super.putInputStream(bucket, key, data, contentType);
    }
 
    @Override
-   protected boolean putString(String bucket, String key, String data, String contentType)
-            throws Exception {
+   protected Future<?> putString(String bucket, String key, String data, String contentType) {
       setupApiProxy();
       return super.putString(bucket, key, data, contentType);
    }
@@ -191,8 +181,28 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
       }
    }
 
+   private BlobStoreContext perfContext;
+
+   @BeforeClass(groups = { "live" })
+   void setup() {
+      String accesskeyid = System.getProperty("jclouds.test.user");
+      String secretkey = System.getProperty("jclouds.test.key");
+      Properties overrides = new Properties();
+      String contextName = "gae";
+      overrideWithSysPropertiesAndPrint(overrides, contextName);
+      this.perfContext = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
+               new NullLoggingModule(), new EnterpriseConfigurationModule(),
+               new GoogleAppEngineConfigurationModule());
+   }
+
+   @AfterClass(groups = { "live" })
+   void tearDown() {
+      if (perfContext != null)
+         perfContext.close();
+   }
+
    @Override
-   protected Module createHttpModule() {
-      return new GoogleAppEngineConfigurationModule();
+   public S3AsyncClient getApi() {
+      return (S3AsyncClient) perfContext.getProviderSpecificContext().getAsyncApi();
    }
 }

@@ -48,20 +48,6 @@ public interface BlobStoreConstants {
    public static final String PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX = "jclouds.blobstore.directorysuffix";
 
    /**
-    * comma-separated hints from {@code blobstore.properties}
-    * 
-    */
-   public static final String PROPERTY_BLOBSTORE_CONTEXTS = "jclouds.blobstore.contexts";
-
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public static final String PROPERTY_BLOBSTORE_TIMEOUT = "jclouds.blobstore.timeout";
-   /**
-    * time to pause before retrying a transient failure
-    */
-   public static final String PROPERTY_BLOBSTORE_RETRY = "jclouds.blobstore.retry";
-   /**
     * Any header starting with this prefix is considered user metadata. It will be stored with the
     * object and returned when you retrieve the object/
     */

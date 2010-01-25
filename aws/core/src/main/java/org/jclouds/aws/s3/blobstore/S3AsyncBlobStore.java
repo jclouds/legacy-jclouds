@@ -28,12 +28,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
-import org.jclouds.aws.s3.blobstore.functions.BlobToObjectGetOptions;
 import org.jclouds.aws.s3.blobstore.functions.BucketToResourceList;
 import org.jclouds.aws.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.aws.s3.blobstore.functions.ContainerToBucketListOptions;
@@ -53,6 +54,7 @@ import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
@@ -75,94 +77,19 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
             ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ContainerToBucketListOptions container2BucketListOptions,
-            BlobToObjectGetOptions blob2ObjectGetOptions,
-            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
-            BucketToResourceMetadata bucket2ResourceMd, BucketToResourceList bucket2ResourceList,
-            ExecutorService service) {
+            BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
+            MkdirStrategy mkdirStrategy, BucketToResourceMetadata bucket2ResourceMd,
+            BucketToResourceList bucket2ResourceList,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2BucketListOptions, blob2ObjectGetOptions,
                getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList, service);
    }
 
    /**
-    * This implementation uses the S3 HEAD Object command to return the result
+    * This implementation invokes {@link S3AsyncClient#listOwnedBuckets}
     */
-   public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(convertExceptionToValue(async.headObject(container, key),
-               KeyNotFoundException.class, null), new Function<ObjectMetadata, BlobMetadata>() {
-
-         @Override
-         public BlobMetadata apply(ObjectMetadata from) {
-            return object2BlobMd.apply(from);
-         }
-
-      }, service);
-   }
-
-   public ListenableFuture<Void> clearContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            return null;
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Void> deleteContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            async.deleteBucketIfEmpty(container).get();
-            return null;
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
-      return async.putBucketInRegion(Region.DEFAULT, container);// TODO
-   }
-
-   public ListenableFuture<Boolean> containerExists(String container) {
-      return async.bucketExists(container);
-   }
-
-   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            mkdirStrategy.execute(S3AsyncBlobStore.this, container, directory);
-            return null;
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Boolean>() {
-
-         public Boolean call() throws Exception {
-            try {
-               getDirectoryStrategy.execute(S3AsyncBlobStore.this, container, directory);
-               return true;
-            } catch (KeyNotFoundException e) {
-               return false;
-            }
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Blob> getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions... optionsList) {
-      GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      return compose(convertExceptionToValue(async.getObject(container, key, httpOptions),
-               KeyNotFoundException.class, null), object2Blob, service);
-   }
-
+   @Override
    public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
       return compose(
                async.listOwnedBuckets(),
@@ -175,17 +102,227 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
                }, service);
    }
 
+   /**
+    * This implementation invokes {@link S3AsyncClient#bucketExists}
+    * 
+    * @param container
+    *           bucket name
+    */
+   @Override
+   public ListenableFuture<Boolean> containerExists(String container) {
+      return async.bucketExists(container);
+   }
+
+   /**
+    * This implementation invokes {@link S3AsyncClient#putBucketInRegion}
+    * 
+    * @param location
+    *           corresponds to {@link Region#fromValue}
+    * @param container
+    *           bucket name
+    */
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
+      return async.putBucketInRegion(Region.fromValue(location), container);
+   }
+
+   /**
+    * This implementation invokes
+    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
+    * 
+    * @param container
+    *           bucket name
+    */
+   @Override
    public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container, ListContainerOptions... optionsList) {
-      ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
+            String container) {
+      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link S3AsyncClient#listBucket}
+    * 
+    * @param container
+    *           bucket name
+    */
+   @Override
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container, ListContainerOptions options) {
+      ListBucketOptions httpOptions = container2BucketListOptions.apply(options);
       ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
       return compose(returnVal, bucket2ResourceList, service);
    }
 
+   /**
+    * This implementation invokes {@link ClearListStrategy#execute} with the
+    * {@link ListContainerOptions#recursive} option.
+    * 
+    * @param container
+    *           bucket name
+    */
+   @Override
+   public ListenableFuture<Void> clearContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            clearContainerStrategy.execute(container, recursive());
+            return null;
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link ClearListStrategy#execute} with the
+    * {@link ListContainerOptions#recursive} option. Then, it invokes
+    * {@link S3AsyncClient#deleteBucketIfEmpty}
+    * 
+    * @param container
+    *           bucket name
+    */
+   @Override
+   public ListenableFuture<Void> deleteContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            clearContainerStrategy.execute(container, recursive());
+            async.deleteBucketIfEmpty(container).get();
+            return null;
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link GetDirectoryStrategy#execute}
+    * 
+    * @param container
+    *           bucket name
+    * @param directory
+    *           virtual path
+    */
+   @Override
+   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Boolean>() {
+
+         public Boolean call() throws Exception {
+            try {
+               getDirectoryStrategy.execute(container, directory);
+               return true;
+            } catch (KeyNotFoundException e) {
+               return false;
+            }
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link MkdirStrategy#execute}
+    * 
+    * @param container
+    *           bucket name
+    * @param directory
+    *           virtual path
+    */
+   @Override
+   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            mkdirStrategy.execute(container, directory);
+            return null;
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link S3AsyncClient#objectExists}
+    * 
+    * @param container
+    *           bucket name
+    * @param key
+    *           object key
+    */
+   @Override
+   public ListenableFuture<Boolean> blobExists(String container, String key) {
+      return async.objectExists(container, key);
+   }
+
+   /**
+    * This implementation invokes {@link S3AsyncClient#headObject}
+    * 
+    * @param container
+    *           bucket name
+    * @param key
+    *           object key
+    */
+   @Override
+   public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
+      return compose(convertExceptionToValue(async.headObject(container, key),
+               KeyNotFoundException.class, null), new Function<ObjectMetadata, BlobMetadata>() {
+
+         @Override
+         public BlobMetadata apply(ObjectMetadata from) {
+            return object2BlobMd.apply(from);
+         }
+
+      }, service);
+   }
+
+   /**
+    * This implementation invokes
+    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
+    * 
+    * @param container
+    *           bucket name
+    * @param key
+    *           object key
+    */
+   @Override
+   public ListenableFuture<Blob> getBlob(String container, String key) {
+      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link S3AsyncClient#getObject}
+    * 
+    * @param container
+    *           bucket name
+    * @param key
+    *           object key
+    */
+   @Override
+   public ListenableFuture<Blob> getBlob(String container, String key,
+            org.jclouds.blobstore.options.GetOptions options) {
+      GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
+      return compose(convertExceptionToValue(async.getObject(container, key, httpOptions),
+               KeyNotFoundException.class, null), object2Blob, service);
+   }
+
+   /**
+    * This implementation invokes {@link S3AsyncClient#putObject}
+    * 
+    * @param container
+    *           bucket name
+    * @param blob
+    *           object
+    */
+   @Override
    public ListenableFuture<String> putBlob(String container, Blob blob) {
       return async.putObject(container, blob2Object.apply(blob));
    }
 
+   /**
+    * This implementation invokes {@link S3AsyncClient#deleteObject}
+    * 
+    * @param container
+    *           bucket name
+    * @param key
+    *           object key
+    */
+   @Override
    public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.deleteObject(container, key);
    }

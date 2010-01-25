@@ -47,8 +47,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -77,6 +79,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.options.HttpRequestOptions;
 
 import com.google.common.base.Function;
@@ -117,7 +120,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             DateService dateService, EncryptionService encryptionService,
             Blob.Factory blobProvider, GetDirectoryStrategy getDirectoryStrategy,
             MkdirStrategy mkdirStrategy, IsDirectoryStrategy isDirectoryStrategy,
-            HttpGetOptionsListToGetOptions httpGetOptionsConverter, ExecutorService service) {
+            HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
       this.dateService = checkNotNull(dateService, "dateService");
       this.encryptionService = checkNotNull(encryptionService, "encryptionService");
       this.containerToBlobs = checkNotNull(containerToBlobs, "containerToBlobs");
@@ -152,23 +156,13 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return bytes;
    }
 
-   public ListenableFuture<Blob> getBlob(final String bucketName, final String key) {
-      if (!getContainerToBlobs().containsKey(bucketName))
-         return immediateFailedFuture(new ContainerNotFoundException(bucketName));
-      Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
-      if (!realContents.containsKey(key))
-         return immediateFuture(null);
-      Blob object = realContents.get(key);
-      Blob returnVal = blobProvider.create(copy(object.getMetadata()));
-      returnVal.setPayload(object.getContent());
-      return immediateFuture(returnVal);
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            final String name) {
+      return this.list(name, ListContainerOptions.NONE);
    }
 
    public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            final String name, ListContainerOptions... optionsList) {
-      final ListContainerOptions options = (optionsList.length == 0) ? new ListContainerOptions()
-               : optionsList[0];
-
+            final String name, ListContainerOptions options) {
       final Map<String, Blob> realContents = getContainerToBlobs().get(name);
 
       if (realContents == null)
@@ -248,7 +242,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    }
 
-   public MutableBlobMetadata copy(MutableBlobMetadata in) {
+   public static MutableBlobMetadata copy(MutableBlobMetadata in) {
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       ObjectOutput os;
       try {
@@ -263,7 +257,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       }
    }
 
-   private void convertUserMetadataKeysToLowercase(MutableBlobMetadata metadata) {
+   private static void convertUserMetadataKeysToLowercase(MutableBlobMetadata metadata) {
       Map<String, String> lowerCaseUserMetadata = Maps.newHashMap();
       for (Entry<String, String> entry : metadata.getUserMetadata().entrySet()) {
          lowerCaseUserMetadata.put(entry.getKey().toLowerCase(), entry.getValue());
@@ -271,7 +265,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       metadata.setUserMetadata(lowerCaseUserMetadata);
    }
 
-   public MutableBlobMetadata copy(MutableBlobMetadata in, String newKey) {
+   public static MutableBlobMetadata copy(MutableBlobMetadata in, String newKey) {
       MutableBlobMetadata newMd = copy(in);
       newMd.setName(newKey);
       return newMd;
@@ -396,7 +390,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return Sets.newTreeSet(slices.get(0));
    }
 
-   public HttpResponseException returnResponseException(int code) {
+   public static HttpResponseException returnResponseException(int code) {
       HttpResponse response = null;
       response = new HttpResponse(); // TODO: Get real object URL?
       response.setStatusCode(code);
@@ -482,9 +476,20 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    }
 
+   @Override
+   public ListenableFuture<Boolean> blobExists(final String bucketName, final String key) {
+      if (!getContainerToBlobs().containsKey(bucketName))
+         return immediateFailedFuture(new ContainerNotFoundException(bucketName));
+      Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
+      return immediateFuture(realContents.containsKey(key));
+   }
+
+   public ListenableFuture<? extends Blob> getBlob(final String bucketName, final String key) {
+      return this.getBlob(bucketName, key, GetOptions.NONE);
+   }
+
    public ListenableFuture<? extends Blob> getBlob(final String bucketName, final String key,
-            GetOptions... optionsList) {
-      final GetOptions options = (optionsList.length == 0) ? new GetOptions() : optionsList[0];
+            GetOptions options) {
       if (!getContainerToBlobs().containsKey(bucketName))
          return immediateFailedFuture(new ContainerNotFoundException(bucketName));
       Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
@@ -555,7 +560,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          returnVal.setContentLength(out.size());
          returnVal.getMetadata().setSize(new Long(data.length));
       }
-      returnVal.setPayload(returnVal.getPayload());
+      if (returnVal.getContentLength() == 0) {
+         returnVal.setPayload(Payloads.NULL_PAYLOAD);
+         returnVal.getMetadata().setSize(0);
+      }
       return immediateFuture(returnVal);
    }
 
@@ -590,7 +598,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
-            mkdirStrategy.execute(StubAsyncBlobStore.this, container, directory);
+            mkdirStrategy.execute(container, directory);
             return null;
          }
 
@@ -602,7 +610,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
          public Boolean call() throws Exception {
             try {
-               return getDirectoryStrategy.execute(StubAsyncBlobStore.this, container, directory) != null;
+               return getDirectoryStrategy.execute(container, directory) != null;
             } catch (KeyNotFoundException e) {
                return false;
             }

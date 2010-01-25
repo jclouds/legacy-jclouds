@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
@@ -85,8 +86,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Provides
    @Singleton
    protected Set<? extends Size> provideSizes(CloudServersClient sync, Set<? extends Image> images,
-            LogHolder holder, ExecutorService executor) throws InterruptedException,
-            TimeoutException, ExecutionException {
+            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
+            throws InterruptedException, TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {

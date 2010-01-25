@@ -28,7 +28,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobStoreListOptionsToListOptions;
@@ -40,6 +42,7 @@ import org.jclouds.atmosonline.saas.blobstore.internal.BaseAtmosBlobStore;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -48,6 +51,7 @@ import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
@@ -72,7 +76,8 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
-            ExecutorService service, EncryptionService encryptionService) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            EncryptionService encryptionService) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
                container2ResourceList, service);
@@ -80,8 +85,9 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
    }
 
    /**
-    * This implementation uses the AtmosStorage HEAD Object command to return the result
+    * This implementation invokes {@link AtmosStorageAsyncClient#headFile}
     */
+   @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
       return compose(convertExceptionToValue(async.headFile(container + "/" + key),
                KeyNotFoundException.class, null), new Function<AtmosObject, BlobMetadata>() {
@@ -92,6 +98,11 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       }, service);
    }
 
+   /**
+    * This implementation invokes {@link ClearListStrategy#execute} with the
+    * {@link ListContainerOptions#recursive} option.
+    */
+   @Override
    public ListenableFuture<Void> clearContainer(final String container) {
       return makeListenable(service.submit(new Callable<Void>() {
 
@@ -104,18 +115,25 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
    }
 
    /**
-    * Note that location is currently ignored.
+    * This implementation invokes {@link AtmosStorageAsyncClient#createDirectory}
+    * <p/>
+    * Note location is ignored
     */
+   @Override
    public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
       return compose(async.createDirectory(container), new Function<URI, Boolean>() {
 
          public Boolean apply(URI from) {
-            return true;// no etag
+            return true;
          }
 
       });
    }
 
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#createDirectory}
+    */
+   @Override
    public ListenableFuture<Void> createDirectory(String container, String directory) {
       return compose(async.createDirectory(container + "/" + directory), new Function<URI, Void>() {
 
@@ -126,17 +144,23 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       });
    }
 
+   /**
+    * This implementation invokes {@link ClearListStrategy#execute} with the
+    * {@link ListContainerOptions#recursive} option. Then, it blocks until
+    * {@link AtmosStorageAsyncClient#pathExists} fails.
+    */
+   @Override
    public ListenableFuture<Void> deleteContainer(final String container) {
       return makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             clearContainerStrategy.execute(container, recursive());
-            async.deletePath(container).get();
+            sync.deletePath(container);
             if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
                public Boolean get() {
                   return !sync.pathExists(container);
                }
-            }, requestTimeoutMilliseconds)) {
+            }, 300)) {
                throw new IllegalStateException(container + " still exists after deleting!");
             }
             return null;
@@ -145,43 +169,92 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       }), service);
    }
 
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#pathExists}
+    */
+   @Override
    public ListenableFuture<Boolean> containerExists(String container) {
-      return async.pathExists(container);
+      return convertExceptionToValue(async.pathExists(container), ContainerNotFoundException.class,
+               false);
    }
 
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#pathExists}
+    */
+   @Override
    public ListenableFuture<Boolean> directoryExists(String container, String directory) {
       return async.pathExists(container + "/" + directory);
    }
 
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#pathExists}
+    * 
+    * @param container
+    *           container
+    * @param key
+    *           file name
+    */
+   @Override
+   public ListenableFuture<Boolean> blobExists(String container, String key) {
+      return async.pathExists(container + "/" + key);
+   }
+
+   /**
+    * This implementation invokes
+    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
+    */
+   @Override
+   public ListenableFuture<Blob> getBlob(String container, String key) {
+      return this.getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#readFile}
+    */
+   @Override
    public ListenableFuture<Blob> getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions... optionsList) {
-      GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
+            org.jclouds.blobstore.options.GetOptions options) {
+      GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
       ListenableFuture<AtmosObject> returnVal = async.readFile(container + "/" + key, httpOptions);
       return compose(convertExceptionToValue(returnVal, KeyNotFoundException.class, null),
                object2Blob, service);
    }
 
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#listDirectories}
+    */
+   @Override
    public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
       return compose(async.listDirectories(), container2ResourceList, service);
    }
 
+   /**
+    * This implementation invokes
+    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
+    */
+   @Override
    public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container, org.jclouds.blobstore.options.ListContainerOptions... optionsList) {
-      if (optionsList.length == 1) {
-         if (optionsList[0].isRecursive()) {
-            throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
-         }
-         if (optionsList[0].getDir() != null) {
-            container = container + "/" + optionsList[0].getDir();
-         }
-      }
-      ListOptions nativeOptions = container2ContainerListOptions.apply(optionsList);
+            String container) {
+      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#listDirectory}
+    */
+   @Override
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container, org.jclouds.blobstore.options.ListContainerOptions options) {
+      container = adjustContainerIfDirOptionPresent(container, options);
+      ListOptions nativeOptions = container2ContainerListOptions.apply(options);
       return compose(async.listDirectory(container, nativeOptions), container2ResourceList, service);
    }
 
    /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#createFile}
+    * <p/>
     * Since there is no etag support in atmos, we just return the path.
     */
+   @Override
    public ListenableFuture<String> putBlob(final String container, final Blob blob) {
       final String path = container + "/" + blob.getMetadata().getName();
       return compose(async.deletePath(path), new Function<Void, String>() {
@@ -192,7 +265,7 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
                   public Boolean get() {
                      return !sync.pathExists(path);
                   }
-               }, requestTimeoutMilliseconds)) {
+               }, 300)) {
                   throw new IllegalStateException(path + " still exists after deleting!");
                }
                if (blob.getMetadata().getContentMD5() != null)
@@ -209,6 +282,10 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
 
    }
 
+   /**
+    * This implementation invokes {@link AtmosStorageAsyncClient#deletePath}
+    */
+   @Override
    public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.deletePath(container + "/" + key);
    }

@@ -20,9 +20,9 @@ package org.jclouds.lifecycle;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This will close objects in the reverse order that they were added.
@@ -30,7 +30,7 @@ import java.util.List;
  * @author Adrian Cole
  */
 public class Closer implements Closeable {
-   List<Closeable> methodsToClose = new ArrayList<Closeable>();
+   List<Closeable> methodsToClose = new CopyOnWriteArrayList<Closeable>();
 
    public void addToClose(Closeable toClose) {
       methodsToClose.add(toClose);

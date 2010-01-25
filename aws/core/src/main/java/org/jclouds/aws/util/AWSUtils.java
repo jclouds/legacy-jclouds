@@ -27,7 +27,6 @@ import javax.inject.Provider;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
 
@@ -48,7 +47,7 @@ public class AWSUtils {
    Provider<ErrorHandler> errorHandlerProvider;
 
    public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
-            InputStream content) throws HttpException {
+            InputStream content) {
       AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).parse(content);
       if ("SignatureDoesNotMatch".equals(error.getCode())) {
          error.setStringSigned(signer.createStringToSign(command.getRequest()));
@@ -58,7 +57,7 @@ public class AWSUtils {
    }
 
    public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
-            String content) throws HttpException {
+            String content) {
       return parseAWSErrorFromContent(command, response, new ByteArrayInputStream(content
                .getBytes()));
    }

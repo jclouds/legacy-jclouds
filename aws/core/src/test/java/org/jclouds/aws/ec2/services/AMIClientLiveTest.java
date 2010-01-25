@@ -69,7 +69,8 @@ public class AMIClientLiveTest {
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule());
+      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
+               .getProviderSpecificContext();
       client = context.getApi().getAMIServices();
    }
 
@@ -92,6 +93,7 @@ public class AMIClientLiveTest {
       }
    }
 
+   @Test(enabled = false)
    public void testRegisterImageFromManifest() {
       String imageRegisteredId = client.registerImageFromManifestInRegion(Region.DEFAULT,
                "jcloudstest1", DEFAULT_MANIFEST);
@@ -105,6 +107,7 @@ public class AMIClientLiveTest {
       assertEquals(imageRegisteredFromManifest.getRootDeviceName(), "/dev/sda1");
    }
 
+   @Test(enabled = false)
    public void testRegisterImageFromManifestOptions() {
       String imageRegisteredWithOptionsId = client.registerImageFromManifestInRegion(
                Region.DEFAULT, "jcloudstest2", DEFAULT_MANIFEST, withDescription("adrian"));
@@ -137,9 +140,9 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBSOptions() {
-      String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(Region.DEFAULT,
-               "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2", "myvirtual", 1)
-                        .withDescription("adrian"));
+      String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(
+               Region.DEFAULT, "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2",
+                        "myvirtual", 1).withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredWithOptions = Iterables.getOnlyElement(client.describeImagesInRegion(
                Region.DEFAULT, imageIds(imageRegisteredWithOptionsId)));
@@ -162,7 +165,7 @@ public class AMIClientLiveTest {
    public void testAddProductCodesToImage() {
       // TODO client.addProductCodesToImageInRegion(Region.DEFAULT, productCodes, imageId);
    }
-   
+
    @Test(enabled = false)
    public void testAddLaunchPermissionsToImage() {
       // TODO client.addLaunchPermissionsToImageInRegion(Region.DEFAULT, userIds, userGroups,

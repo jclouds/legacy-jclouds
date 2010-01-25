@@ -20,21 +20,32 @@ package org.jclouds.atmosonline.saas;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
-import org.jclouds.atmosonline.saas.config.AtmosStorageContextModule;
+import org.jclouds.atmosonline.saas.blobstore.config.AtmosBlobStoreContextModule;
 import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
+ * Creates {@link AtmosBlobStoreContext} or {@link Injector} instances based on the most commonly
+ * requested arguments.
+ * <p/>
+ * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * <p/>
+ * <p/>
+ * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole
+ * @author Adrian Cole, Andrew Newdigate
+ * @see AtmosBlobStoreContext
  */
 public class AtmosStorageContextBuilder extends
-         RestContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> {
+         BlobStoreContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> {
 
    public AtmosStorageContextBuilder(Properties props) {
       super(new TypeLiteral<AtmosStorageAsyncClient>() {
@@ -43,23 +54,12 @@ public class AtmosStorageContextBuilder extends
    }
 
    @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new AtmosBlobStoreContextModule());
+   }
+
+   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new AtmosStorageRestClientModule());
    }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new AtmosStorageContextModule());
-   }
-
-   @Override
-   public AtmosStorageContextBuilder withExecutorService(ExecutorService service) {
-      return (AtmosStorageContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public AtmosStorageContextBuilder withModules(Module... modules) {
-      return (AtmosStorageContextBuilder) super.withModules(modules);
-   }
-
 }

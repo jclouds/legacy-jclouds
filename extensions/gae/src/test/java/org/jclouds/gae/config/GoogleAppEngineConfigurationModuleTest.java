@@ -18,8 +18,12 @@
  */
 package org.jclouds.gae.config;
 
+import java.net.URI;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
+import org.jclouds.Constants;
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.logging.Logger;
@@ -29,6 +33,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 
 /**
  * Tests the ability to configure a {@link GoogleAppEngineConfigurationModule}
@@ -36,10 +41,18 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test
-public class GoogleAppEngineConfigurationModuleModuleTest {
+public class GoogleAppEngineConfigurationModuleTest {
 
    public void testConfigureBindsClient() {
-      final Properties properties = new Properties();
+      final Properties properties = new PropertiesBuilder() {
+         public PropertiesBuilder withEndpoint(URI endpoint) {
+            return null;
+         }
+
+         public PropertiesBuilder withCredentials(String account, String key) {
+            return null;
+         }
+      }.build();
 
       Injector i = Guice.createInjector(new GoogleAppEngineConfigurationModule() {
          @Override
@@ -54,6 +67,8 @@ public class GoogleAppEngineConfigurationModuleModuleTest {
          }
       });
       HttpCommandExecutorService client = i.getInstance(HttpCommandExecutorService.class);
+      i.getInstance(Key.get(ExecutorService.class, Jsr330.named(Constants.PROPERTY_USER_THREADS)));
+      // TODO check single threaded;
       assert client instanceof GaeHttpCommandExecutorService;
    }
 }

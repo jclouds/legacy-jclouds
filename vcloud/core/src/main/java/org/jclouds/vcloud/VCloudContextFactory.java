@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.compute;
+package org.jclouds.vcloud;
 
 import java.net.URI;
 import java.util.Properties;
@@ -24,13 +24,12 @@ import java.util.Properties;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rackspace.RackspacePropertiesBuilder;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link CloudServersComputeServiceContext} instances based on the most commonly requested
- * arguments.
+ * Creates {@link VCloudComputeServiceContext} instances based on the most commonly
+ * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -39,31 +38,26 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see CloudServersComputeServiceContext
+ * @see VCloudComputeServiceContext
  */
-public class CloudServersComputeServiceContextFactory {
+public class VCloudContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new CloudServersComputeServiceContextBuilder(new RackspacePropertiesBuilder(properties).build())
-               .withModules(modules).buildComputeServiceContext();
-   }
-
-   public static ComputeServiceContext createContext(String user,
-            String password, Module... modules) {
-      return new CloudServersComputeServiceContextBuilder(new RackspacePropertiesBuilder(user,
-               password).build()).withModules(modules).buildComputeServiceContext();
+      return new VCloudContextBuilder(
+               new VCloudPropertiesBuilder(properties).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(Properties properties, String user,
-            String password, Module... modules) {
-      return new CloudServersComputeServiceContextBuilder(new RackspacePropertiesBuilder(properties)
-               .withCredentials(user, password).build()).withModules(modules)
-               .buildComputeServiceContext();
+            String key, Module... modules) {
+      return new VCloudContextBuilder(
+               new VCloudPropertiesBuilder(properties).withCredentials(user, key)
+                        .build()).withModules(modules).buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext createContext(URI endpoint, String user,
-            String password, Module... modules) {
-      return new CloudServersComputeServiceContextBuilder(new RackspacePropertiesBuilder(user,
-               password).withEndpoint(endpoint).build()).withModules(modules)
-               .buildComputeServiceContext();
+   public static ComputeServiceContext createContext(URI endpoint, String user, String key,
+            Module... modules) {
+      return new VCloudContextBuilder(
+               new VCloudPropertiesBuilder(endpoint, user, key).withEndpoint(endpoint).build())
+               .withModules(modules).buildComputeServiceContext();
    }
 }

@@ -45,8 +45,8 @@ public class BaseAzureBlobStore {
    protected final Blob.Factory blobFactory;
    protected final LoggerFactory logFactory;
    protected final ClearListStrategy clearContainerStrategy;
-   protected final BlobPropertiesToBlobMetadata object2BlobMd;
-   protected final AzureBlobToBlob object2Blob;
+   protected final BlobPropertiesToBlobMetadata blob2BlobMd;
+   protected final AzureBlobToBlob blob2Blob;
    protected final BlobToAzureBlob blob2Object;
    protected final ListOptionsToListBlobsOptions container2ContainerListOptions;
    protected final BlobToHttpGetOptions blob2ObjectGetOptions;
@@ -59,8 +59,8 @@ public class BaseAzureBlobStore {
    @Inject
    protected BaseAzureBlobStore(AzureBlobAsyncClient async, AzureBlobClient sync,
             Blob.Factory blobFactory, LoggerFactory logFactory,
-            ClearListStrategy clearContainerStrategy, BlobPropertiesToBlobMetadata object2BlobMd,
-            AzureBlobToBlob object2Blob, BlobToAzureBlob blob2Object,
+            ClearListStrategy clearContainerStrategy, BlobPropertiesToBlobMetadata blob2BlobMd,
+            AzureBlobToBlob blob2Blob, BlobToAzureBlob blob2Object,
             ListOptionsToListBlobsOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
             MkdirStrategy mkdirStrategy, ContainerToResourceMetadata container2ResourceMd,
@@ -70,8 +70,8 @@ public class BaseAzureBlobStore {
       this.blobFactory = checkNotNull(blobFactory, "blobFactory");
       this.logFactory = checkNotNull(logFactory, "logFactory");
       this.clearContainerStrategy = checkNotNull(clearContainerStrategy, "clearContainerStrategy");
-      this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
-      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
+      this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
+      this.blob2Blob = checkNotNull(blob2Blob, "blob2Blob");
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");

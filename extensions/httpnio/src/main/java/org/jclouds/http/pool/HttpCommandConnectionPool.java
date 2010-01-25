@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.pool;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.net.URI;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -28,10 +30,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.lifecycle.BaseLifeCycle;
-
-import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
@@ -51,13 +52,8 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
    protected volatile boolean hitBottom = false;
    protected final URI endPoint;
 
-   @Inject(optional = true)
-   @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE)
-   protected int maxConnectionReuse = 75;
-
-   @Inject(optional = true)
-   @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES)
-   protected int maxSessionFailures = 2;
+   protected int maxConnectionReuse;
+   protected int maxSessionFailures;
 
    public URI getEndPoint() {
       return endPoint;
@@ -69,8 +65,13 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
 
    public HttpCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
             BlockingQueue<HttpCommandRendezvous<?>> rendezvousQueue, BlockingQueue<C> available,
-            URI endPoint) {
+            URI endPoint, @Named(Constants.PROPERTY_MAX_CONNECTION_REUSE) int maxConnectionReuse,
+            @Named(Constants.PROPERTY_MAX_SESSION_FAILURES) int maxSessionFailures) {
       super(executor);
+      checkArgument(maxConnectionReuse >= 1, "maxConnectionReuse must be positive");
+      checkArgument(maxSessionFailures >= 1, "maxSessionFailures must be positive");
+      this.maxConnectionReuse = maxConnectionReuse;
+      this.maxSessionFailures = maxSessionFailures;
       this.allConnections = allConnections;
       this.resubmitQueue = rendezvousQueue;
       this.available = available;

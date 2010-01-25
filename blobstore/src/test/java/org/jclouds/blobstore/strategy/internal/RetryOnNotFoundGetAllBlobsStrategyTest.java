@@ -63,9 +63,12 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
    @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSet() throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
+      
       Injector context = new StubBlobStoreContextBuilder().buildInjector();
       GetAllBlobsInListAndRetryOnFailure map = context
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
+      map.maxTime=1l;
+
       context.getInstance(AsyncBlobStore.class).createContainerInLocation("default", "container")
                .get();
 
@@ -73,7 +76,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Blob object = blobProvider.create(null);
       object.getMetadata().setName("key");
       object.setPayload("goo");
-      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
+      expect(futureObject.get(map.maxTime, TimeUnit.MILLISECONDS)).andReturn(
                null);
       context.getInstance(AsyncBlobStore.class).putBlob("container", object).get();
       replay(futureObject);
@@ -81,7 +84,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       long time = System.currentTimeMillis();
       map.ifNotFoundRetryOtherwiseAddToSet("container", "key", futureObject, objects);
       // should have retried once
-      assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds;
+      assert System.currentTimeMillis() >= time + map.maxTime;
       assertEquals(Utils.toStringAndClose((InputStream) objects.iterator().next().getContent()),
                "goo");
       assert !objects.contains(null);
@@ -93,19 +96,21 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Injector context = new StubBlobStoreContextBuilder().buildInjector();
       GetAllBlobsInListAndRetryOnFailure map = context
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
+      map.maxTime=1l;
+
       context.getInstance(AsyncBlobStore.class).createContainerInLocation("default", "container")
                .get();
 
       ListenableFuture<Blob> futureObject = createMock(ListenableFuture.class);
       Blob object = createMock(Blob.class);
-      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
+      expect(futureObject.get(map.maxTime, TimeUnit.MILLISECONDS)).andReturn(
                null).atLeastOnce();
       replay(futureObject);
       Set<Blob> objects = new HashSet<Blob>();
       long time = System.currentTimeMillis();
       map.ifNotFoundRetryOtherwiseAddToSet("container", "key1", futureObject, objects);
       // should have retried thrice
-      assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds * 3;
+      assert System.currentTimeMillis() >= time + map.maxTime * 3;
       assert !objects.contains(object);
       assert !objects.contains(null);
    }

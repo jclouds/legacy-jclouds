@@ -18,7 +18,6 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.strategy.internal.MarkersGetDirectoryStrategy;
 
@@ -32,5 +31,5 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(MarkersGetDirectoryStrategy.class)
 public interface GetDirectoryStrategy {
 
-   StorageMetadata execute(AsyncBlobStore connection, String containerName, String directory);
+   StorageMetadata execute(String containerName, String directory);
 }

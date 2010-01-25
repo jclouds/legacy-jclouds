@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -79,23 +80,26 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
-               new AbstractModule() {
+      injector = Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
+               sameThreadExecutor()), new AbstractModule() {
 
-                  protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY)).to(KEY);
-                  }
+         protected void configure() {
+            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
+                     .to("user");
+            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
+                     .to(KEY);
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+                     .to("1");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
+         }
 
-                  @SuppressWarnings("unused")
-                  @Provides
-                  @TimeStamp
-                  String getDate() {
-                     return "Thu, 05 Jun 2008 16:38:19 GMT";
-                  }
-               });
+         @SuppressWarnings("unused")
+         @Provides
+         @TimeStamp
+         String getDate() {
+            return "Thu, 05 Jun 2008 16:38:19 GMT";
+         }
+      });
       filter = injector.getInstance(SignRequest.class);
 
    }

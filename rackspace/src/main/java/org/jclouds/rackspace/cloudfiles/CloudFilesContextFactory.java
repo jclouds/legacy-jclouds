@@ -21,14 +21,15 @@ package org.jclouds.rackspace.cloudfiles;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link CloudFilesContext} instances based on the most commonly requested arguments.
+ * Creates {@link CloudFilesBlobStoreContext} instances based on the most commonly requested
+ * arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -36,26 +37,23 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole
- * @see CloudFilesAsyncClient
+ * @author Adrian Cole, Andrew Newdigate
+ * @see CloudFilesBlobStoreContext
  */
 public class CloudFilesContextFactory {
-
-   public static RestContext<CloudFilesAsyncClient, CloudFilesClient> createContext(
-            Properties properties, Module... modules) {
-      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
+   public static BlobStoreContext createContext(Properties properties, Module... modules) {
+      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(properties)
+               .build()).withModules(modules).buildBlobStoreContext();
    }
 
-   public static RestContext<CloudFilesAsyncClient, CloudFilesClient> createContext(String id,
-            String key, Module... modules) {
-      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(id, key).build())
-               .withModules(modules).buildContext();
+   public static BlobStoreContext createContext(String user, String key, Module... modules) {
+      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(user, key)
+               .build()).withModules(modules).buildBlobStoreContext();
    }
 
-   public static RestContext<CloudFilesAsyncClient, CloudFilesClient> createContext(URI endpoint,
-            String id, String key, Module... modules) {
-      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(id, key).withEndpoint(
-               endpoint).build()).withModules(modules).buildContext();
+   public static BlobStoreContext createContext(URI endpoint, String user, String key,
+            Module... modules) {
+      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(user, key)
+               .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
    }
 }

@@ -18,22 +18,21 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.strategy;
 
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.logging.Logger;
@@ -41,7 +40,6 @@ import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -58,18 +56,21 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
     * maximum duration of an blob Request
     */
    @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
+   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
+   protected Long maxTime;
    protected final AtmosStorageAsyncClient async;
    protected final AtmosStorageClient sync;
+   private final ExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public RecursiveRemove(AtmosStorageAsyncClient connection, AtmosStorageClient sync) {
+   public RecursiveRemove(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            AtmosStorageAsyncClient connection, AtmosStorageClient sync) {
       this.async = connection;
       this.sync = sync;
+      this.userExecutor = userExecutor;
    }
 
    public void execute(String containerName) {
@@ -78,57 +79,45 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
       logger.trace("cleared container " + containerName);
    }
 
-   private ListenableFuture<Void> rm(final String fullPath, FileType type, boolean recursive)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
+   private ListenableFuture<Void> rm(final String fullPath, FileType type, boolean recursive) {
+      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
       if ((type == FileType.DIRECTORY) && recursive) {
-         for (DirectoryEntry child : async.listDirectory(fullPath).get(10, TimeUnit.SECONDS)) {
-            deletes.add(rm(fullPath + "/" + child.getObjectName(), child.getType(), true));
+         for (DirectoryEntry child : sync.listDirectory(fullPath)) {
+            responses.add(rm(fullPath + "/" + child.getObjectName(), child.getType(), true));
          }
       }
-      for (ListenableFuture<Void> isdeleted : deletes) {
-         isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-      }
-      return Futures.compose(async.deletePath(fullPath),
-               new Function<Void, Void>() {
+      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
+               "deleting from path: %s", fullPath));
 
-                  public Void apply(Void from) {
-                     try {
-                        if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
-                           public Boolean get() {
-                              return !sync.pathExists(fullPath);
-                           }
-                        }, requestTimeoutMilliseconds)) {
-                           throw new IllegalStateException(fullPath
-                                    + " still exists after deleting!");
-                        }
-                        return null;
-                     } catch (InterruptedException e) {
-                        throw new IllegalStateException(fullPath + " still exists after deleting!",
-                                 e);
-                     }
+      return Futures.compose(async.deletePath(fullPath), new Function<Void, Void>() {
+
+         public Void apply(Void from) {
+            try {
+               if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+                  public Boolean get() {
+                     return !sync.pathExists(fullPath);
                   }
+               }, maxTime != null ? maxTime : 1000)) {
+                  throw new IllegalStateException(fullPath + " still exists after deleting!");
+               }
+               return null;
+            } catch (InterruptedException e) {
+               throw new IllegalStateException(fullPath + " still exists after deleting!", e);
+            }
+         }
 
-               });
+      });
    }
 
-   public void execute(final String containerName, ListContainerOptions options) {
-      String path = containerName;
+   public void execute(String path, ListContainerOptions options) {
       if (options.getDir() != null)
          path += "/" + options.getDir();
-      Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
-      try {
-         for (DirectoryEntry md : async.listDirectory(path).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS)) {
-            deletes.add(rm(path + "/" + md.getObjectName(), md.getType(), options.isRecursive()));
-         }
-         for (ListenableFuture<Void> isdeleted : deletes) {
-            isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-         }
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException("Error deleting path: " + path, e);
+      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
+      for (DirectoryEntry md : sync.listDirectory(path)) {
+         responses.add(rm(path + "/" + md.getObjectName(), md.getType(), options.isRecursive()));
       }
+      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
+               "deleting from path: %s", path));
    }
 
 }

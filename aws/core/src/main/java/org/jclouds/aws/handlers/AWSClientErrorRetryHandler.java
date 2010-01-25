@@ -21,10 +21,10 @@ package org.jclouds.aws.handlers;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -41,7 +41,7 @@ import com.google.inject.Inject;
 public class AWSClientErrorRetryHandler implements HttpRetryHandler {
 
    @Inject(optional = true)
-   @Named(HttpConstants.PROPERTY_HTTP_MAX_RETRIES)
+   @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
 
    private final AWSUtils utils;

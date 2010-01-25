@@ -19,7 +19,6 @@
 package org.jclouds.compute;
 
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.rest.RestContextBuilder;
@@ -33,15 +32,6 @@ import com.google.inject.util.Types;
  * @author Adrian Cole
  */
 public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuilder<A, S> {
-   @Override
-   public ComputeServiceContextBuilder<A, S> withExecutorService(ExecutorService service) {
-      return (ComputeServiceContextBuilder<A, S>) super.withExecutorService(service);
-   }
-
-   @Override
-   public ComputeServiceContextBuilder<A, S> withModules(Module... modules) {
-      return (ComputeServiceContextBuilder<A, S>) super.withModules(modules);
-   }
 
    public ComputeServiceContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType) {
       this(asyncClientType, syncClientType, new Properties());
@@ -51,6 +41,14 @@ public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuil
             TypeLiteral<S> syncClientType, Properties properties) {
       super(asyncClientType, syncClientType, properties);
 
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ComputeServiceContextBuilder<A, S> withModules(Module... modules) {
+      return (ComputeServiceContextBuilder<A, S>) super.withModules(modules);
    }
 
    public ComputeServiceContext buildComputeServiceContext() {

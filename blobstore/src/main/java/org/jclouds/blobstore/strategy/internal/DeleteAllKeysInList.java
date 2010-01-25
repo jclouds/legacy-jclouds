@@ -18,23 +18,25 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+
+import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.logging.Logger;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
@@ -46,17 +48,23 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStrategy {
+   @Resource
+   protected Logger logger = Logger.NULL;
+   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   private final ExecutorService userExecutor;
+
+   protected final AsyncBlobStore connection;
    /**
     * maximum duration of an blob Request
     */
    @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
-   protected final AsyncBlobStore connection;
+   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
    @Inject
-   DeleteAllKeysInList(AsyncBlobStore connection, ListBlobMetadataStrategy getAllBlobMetadata) {
+   DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            AsyncBlobStore connection, ListBlobMetadataStrategy getAllBlobMetadata) {
+      this.userExecutor = userExecutor;
       this.connection = connection;
       this.getAllBlobMetadata = getAllBlobMetadata;
    }
@@ -66,19 +74,13 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    }
 
    public void execute(final String containerName, ListContainerOptions options) {
-      Set<ListenableFuture<Void>> deletes = Sets.newHashSet();
+      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
       for (StorageMetadata md : getAllBlobMetadata.execute(containerName, options)) {
          if (md.getType() == StorageType.BLOB)
-            deletes.add(connection.removeBlob(containerName, md.getName()));
+            responses.add(connection.removeBlob(containerName, md.getName()));
       }
-      for (ListenableFuture<Void> isdeleted : deletes) {
-         try {
-            isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-         } catch (Exception e) {
-            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-            throw new BlobRuntimeException("Error deleting blob in container: " + containerName, e);
-         }
-      }
+      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
+               "deleting from containerName: %s", containerName));
    }
 
 }

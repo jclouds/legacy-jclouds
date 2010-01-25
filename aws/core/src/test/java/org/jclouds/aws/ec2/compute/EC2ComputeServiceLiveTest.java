@@ -29,11 +29,9 @@ import org.testng.annotations.Test;
 
 /**
  * 
- * Generally disabled, as it incurs higher fees.
- * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
+@Test(groups = "live", sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
 public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @BeforeClass
    @Override

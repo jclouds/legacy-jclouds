@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudContextBuilder;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -45,7 +46,7 @@ public class PropertiesTest {
 
    public void test() {
       assertEquals(properties.getProperty("hostingdotcom.contextbuilder"),
-               HostingDotComVCloudComputeServiceContextBuilder.class.getName());
+               HostingDotComVCloudContextBuilder.class.getName());
       assertEquals(properties.getProperty("hostingdotcom.propertiesbuilder"),
                HostingDotComVCloudPropertiesBuilder.class.getName());
    }

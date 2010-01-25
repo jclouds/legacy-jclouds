@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
-import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -40,7 +40,7 @@ public class BindAzureBlobToPayload implements Binder {
 
    @Inject
    public BindAzureBlobToPayload(
-            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX) String prefix,
+            @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String prefix,
             EncryptionService encryptionService) {
       this.metadataPrefix = prefix;
       this.encryptionService = encryptionService;

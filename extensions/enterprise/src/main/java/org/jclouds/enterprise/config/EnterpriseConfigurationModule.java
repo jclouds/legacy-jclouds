@@ -19,7 +19,6 @@
 package org.jclouds.enterprise.config;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -35,17 +34,16 @@ import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceM
 @ConfiguresExecutorService
 public class EnterpriseConfigurationModule extends ExecutorServiceModule {
 
-   public EnterpriseConfigurationModule(ExecutorService executorService) {
-      super(executorService);
+   public EnterpriseConfigurationModule(ExecutorService userThreads, ExecutorService ioThreads) {
+      super(userThreads, ioThreads);
    }
 
    public EnterpriseConfigurationModule() {
-      this(Executors.newCachedThreadPool());
+      super();
    }
 
    @Override
    protected void configure() {
-      super.configure();
       install(new BouncyCastleEncryptionServiceModule());
       install(new JodaDateServiceModule());
    }

@@ -20,7 +20,6 @@ package org.jclouds.azure.storage.queue;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.azure.storage.queue.config.AzureQueueContextModule;
 import org.jclouds.azure.storage.queue.config.AzureQueueRestClientModule;
@@ -62,18 +61,6 @@ public class AzureQueueContextBuilder extends
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new AzureQueueRestClientModule());
-   }
-
-   // below is to cast the builder to the correct type so that chained builder methods end correctly
-
-   @Override
-   public AzureQueueContextBuilder withExecutorService(ExecutorService service) {
-      return (AzureQueueContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withModules(Module... modules) {
-      return (AzureQueueContextBuilder) super.withModules(modules);
    }
 
 }

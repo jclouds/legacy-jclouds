@@ -20,19 +20,23 @@ package org.jclouds.lifecycle.config;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import javax.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
 
 /**
  * // TODO: Adrian: Document this!
@@ -45,12 +49,35 @@ public class LifeCycleModuleTest {
    @Test
    void testBindsExecutor() {
       Injector i = createInjector();
-      assert i.getInstance(ExecutorService.class) != null;
+      assert i.getInstance(Key.get(ExecutorService.class, Jsr330
+               .named(Constants.PROPERTY_USER_THREADS))) != null;
+      assert i.getInstance(Key.get(ExecutorService.class, Jsr330
+               .named(Constants.PROPERTY_IO_WORKER_THREADS))) != null;
    }
 
    private Injector createInjector() {
-      Injector i = Guice.createInjector(new LifeCycleModule(), new ExecutorServiceModule(Executors
-               .newCachedThreadPool()));
+      Injector i = Guice.createInjector(new LifeCycleModule() {
+         @SuppressWarnings("unused")
+         @Provides
+         @Named(Constants.PROPERTY_USER_THREADS)
+         int p() {
+            return 1;
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)
+         int p2() {
+            return 1;
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS)
+         int p3() {
+            return 1;
+         }
+      }, new ExecutorServiceModule());
       return i;
    }
 
@@ -63,7 +90,8 @@ public class LifeCycleModuleTest {
    @Test
    void testCloserClosesExecutor() throws IOException {
       Injector i = createInjector();
-      ExecutorService executor = i.getInstance(ExecutorService.class);
+      ExecutorService executor = i.getInstance(Key.get(ExecutorService.class, Jsr330
+               .named(Constants.PROPERTY_USER_THREADS)));
       assert !executor.isShutdown();
       Closer closer = i.getInstance(Closer.class);
       closer.close();
@@ -72,17 +100,21 @@ public class LifeCycleModuleTest {
 
    static class PreDestroyable {
       boolean isClosed = false;
+      private final ExecutorService userThreads;
+      private final ExecutorService ioThreads;
 
       @Inject
-      PreDestroyable(ExecutorService executor) {
-         this.executor = executor;
+      PreDestroyable(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+               @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
+         this.userThreads = userThreads;
+         this.ioThreads = ioThreads;
       }
-
-      ExecutorService executor;
 
       @PreDestroy
       public void close() {
-         assert !executor.isShutdown();
+         assert !userThreads.isShutdown();
+         assert !ioThreads.isShutdown();
+
          isClosed = true;
       }
    }
@@ -94,14 +126,19 @@ public class LifeCycleModuleTest {
             bind(PreDestroyable.class);
          }
       });
-      ExecutorService executor = i.getInstance(ExecutorService.class);
-      assert !executor.isShutdown();
+      ExecutorService userThreads = i.getInstance(Key.get(ExecutorService.class, Jsr330
+               .named(Constants.PROPERTY_USER_THREADS)));
+      assert !userThreads.isShutdown();
+      ExecutorService ioThreads = i.getInstance(Key.get(ExecutorService.class, Jsr330
+               .named(Constants.PROPERTY_IO_WORKER_THREADS)));
+      assert !ioThreads.isShutdown();
       PreDestroyable preDestroyable = i.getInstance(PreDestroyable.class);
       assert !preDestroyable.isClosed;
       Closer closer = i.getInstance(Closer.class);
       closer.close();
       assert preDestroyable.isClosed;
-      assert executor.isShutdown();
+      assert userThreads.isShutdown();
+      assert ioThreads.isShutdown();
    }
 
    static class PostConstructable {

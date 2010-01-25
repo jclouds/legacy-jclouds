@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(threadPoolSize = 10)
+@Test(threadPoolSize = 10, sequential = true)
 public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
 
    @Test(invocationCount = 25, timeOut = 5000)

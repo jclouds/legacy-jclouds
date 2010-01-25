@@ -41,8 +41,8 @@ import com.google.inject.Injector;
 public class CloudFilesBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
-               new JDKLoggingModule(), new CloudFilesStubClientModule(),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
+               sameThreadExecutor()), new JDKLoggingModule(), new CloudFilesStubClientModule(),
                new StubRackspaceAuthenticationModule(), new CloudFilesBlobStoreContextModule() {
                   @Override
                   protected void configure() {
@@ -50,9 +50,6 @@ public class CloudFilesBlobStoreModuleTest {
                               Jsr330.named(RackspaceConstants.PROPERTY_RACKSPACE_USER)).to("user");
                      bindConstant().annotatedWith(
                               Jsr330.named(RackspaceConstants.PROPERTY_RACKSPACE_KEY)).to("key");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT)).to(
-                              "http://localhost");
                      super.configure();
                   }
                });

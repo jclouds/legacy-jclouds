@@ -20,6 +20,8 @@ package org.jclouds.vcloud;
 
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,8 +32,8 @@ import java.util.Properties;
 
 import javax.inject.Provider;
 
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -515,7 +517,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
             Properties props = new Properties();
             props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
                      "https://vcloud.safesecureweb.com/network/1990");
-            Jsr330.bindProperties(binder(), new VCloudPropertiesBuilder(props).build());
+            props.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
+            props.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
+                     "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+            Jsr330.bindProperties(binder(), props);
             bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)

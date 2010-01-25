@@ -18,15 +18,13 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
 
@@ -43,32 +41,28 @@ import com.google.inject.Inject;
 @Singleton
 public class MarkerFileMkdirStrategy implements MkdirStrategy {
 
-   /**
-    * maximum duration of an blob Request
-    */
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
-
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX)
    protected String directorySuffix = "";
+   private final AsyncBlobStore connection;
 
-   public void execute(AsyncBlobStore connection, String containerName, String directory) {
+   @Inject
+   MarkerFileMkdirStrategy(AsyncBlobStore connection) {
+      this.connection = connection;
+   }
+
+   public void execute(String containerName, String directory) {
       try {
-         if (!connection.directoryExists(containerName, directory).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS)) {
+         if (!connection.directoryExists(containerName, directory).get()) {
             Blob blob = connection.newBlob(directory + directorySuffix);
             blob.setPayload("");
             blob.getMetadata().setContentType("application/directory");
-            connection.putBlob(containerName, blob).get(requestTimeoutMilliseconds,
-                     TimeUnit.MILLISECONDS);
+            connection.putBlob(containerName, blob).get();
          }
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         if (!(e instanceof KeyNotFoundException))
-            throw new BlobRuntimeException("Error creating marker directory: " + containerName
-                     + "/" + directory, e);
+      } catch (InterruptedException e) {
+         Throwables.propagate(e);
+      } catch (ExecutionException e) {
+         Throwables.propagate(e.getCause());
       }
    }
 }

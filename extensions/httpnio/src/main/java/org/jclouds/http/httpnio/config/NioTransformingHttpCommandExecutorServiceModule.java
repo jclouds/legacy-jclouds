@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.httpnio.config;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +30,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.apache.http.ConnectionReuseStrategy;
@@ -52,6 +56,7 @@ import org.apache.http.protocol.RequestContent;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
@@ -127,27 +132,43 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
 
    private static class Factory implements NioHttpCommandConnectionPool.Factory {
 
-      @Inject
       Closer closer;
-      @Inject
       ExecutorService executor;
-      @Inject
-      javax.inject.Provider<Semaphore> allConnections;
-      @Inject
-      javax.inject.Provider<BlockingQueue<HttpCommandRendezvous<?>>> commandQueue;
-      @Inject
-      javax.inject.Provider<BlockingQueue<NHttpConnection>> available;
-      @Inject
-      javax.inject.Provider<AsyncNHttpClientHandler> clientHandler;
-      @Inject
-      javax.inject.Provider<DefaultConnectingIOReactor> ioReactor;
-      @Inject
+      int maxConnectionReuse;
+      int maxSessionFailures;
+      Provider<Semaphore> allConnections;
+      Provider<BlockingQueue<HttpCommandRendezvous<?>>> commandQueue;
+      Provider<BlockingQueue<NHttpConnection>> available;
+      Provider<AsyncNHttpClientHandler> clientHandler;
+      Provider<DefaultConnectingIOReactor> ioReactor;
       HttpParams params;
+
+      @SuppressWarnings("unused")
+      @Inject
+      Factory(Closer closer, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+               @Named(Constants.PROPERTY_MAX_CONNECTION_REUSE) int maxConnectionReuse,
+               @Named(Constants.PROPERTY_MAX_SESSION_FAILURES) int maxSessionFailures,
+               Provider<Semaphore> allConnections,
+               Provider<BlockingQueue<HttpCommandRendezvous<?>>> commandQueue,
+               Provider<BlockingQueue<NHttpConnection>> available,
+               Provider<AsyncNHttpClientHandler> clientHandler,
+               Provider<DefaultConnectingIOReactor> ioReactor, HttpParams params) {
+         this.closer = closer;
+         this.executor = executor;
+         this.maxConnectionReuse = maxConnectionReuse;
+         this.maxSessionFailures = maxSessionFailures;
+         this.allConnections = allConnections;
+         this.commandQueue = commandQueue;
+         this.available = available;
+         this.clientHandler = clientHandler;
+         this.ioReactor = ioReactor;
+         this.params = params;
+      }
 
       public NioHttpCommandConnectionPool create(URI endPoint) {
          NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(executor,
                   allConnections.get(), commandQueue.get(), available.get(), clientHandler.get(),
-                  ioReactor.get(), params, endPoint);
+                  ioReactor.get(), params, endPoint, maxConnectionReuse, maxSessionFailures);
          pool.start();
          closer.addToClose(new PoolCloser(pool));
          return pool;
@@ -177,14 +198,17 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
    }
 
    @Override
-   public BlockingQueue<NHttpConnection> provideAvailablePool() throws Exception {
-      return new ArrayBlockingQueue<NHttpConnection>(maxConnections, true);
+   public BlockingQueue<NHttpConnection> provideAvailablePool(
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int maxConnectionsPerHost) throws Exception {
+      return new ArrayBlockingQueue<NHttpConnection>(maxConnectionsPerHost, true);
    }
 
    @Provides
    // uri scope
-   public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(HttpParams params)
+   public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) int maxWorkerThreads, HttpParams params)
             throws IOReactorException {
+      checkState(maxWorkerThreads > 0, "io reactor needs at least 1 thread");
       return new DefaultConnectingIOReactor(maxWorkerThreads, params);
    }
 

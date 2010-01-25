@@ -27,6 +27,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.compute.VCloudComputeClientLiveTest;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
+import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudContextBuilder;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -50,7 +51,7 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new HostingDotComVCloudComputeServiceContextBuilder(
+      Injector injector = new HostingDotComVCloudContextBuilder(
                new HostingDotComVCloudPropertiesBuilder(account, key).build()).withModules(
                new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       computeClient = injector.getInstance(HostingDotComVCloudComputeService.class);

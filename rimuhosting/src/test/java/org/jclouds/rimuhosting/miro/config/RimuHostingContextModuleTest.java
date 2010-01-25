@@ -21,6 +21,7 @@ package org.jclouds.rimuhosting.miro.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -47,7 +48,8 @@ import com.google.inject.Injector;
 public class RimuHostingContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RimuHostingRestClientModule(),
+      return Guice.createInjector(
+               new RimuHostingRestClientModule(),
                new RimuHostingContextModule() {
                   @Override
                   protected void configure() {
@@ -57,6 +59,14 @@ public class RimuHostingContextModuleTest {
                      bindConstant().annotatedWith(
                               Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT)).to(
                               "http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {
                            return Logger.NULL;
@@ -65,7 +75,7 @@ public class RimuHostingContextModuleTest {
                      super.configure();
                   }
                }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(sameThreadExecutor()));
+               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
    }
 
    @Test

@@ -25,11 +25,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -45,27 +46,32 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    private final DelegatingRetryHandler retryHandler;
    private final DelegatingErrorHandler errorHandler;
-   private final ExecutorService executorService;
+   private final ExecutorService ioWorkerExecutor;
+   private final ExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
    @Resource
-   @Named(HttpConstants.LOGGER_HTTP_HEADERS)
+   @Named(Constants.LOGGER_HTTP_HEADERS)
    protected Logger headerLog = Logger.NULL;
 
    private final HttpWire wire;
 
-   protected BaseHttpCommandExecutorService(ExecutorService executorService,
+   @Inject
+   protected BaseHttpCommandExecutorService(
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.retryHandler = retryHandler;
       this.errorHandler = errorHandler;
-      this.executorService = executorService;
+      this.ioWorkerExecutor = ioWorkerExecutor;
+      this.userExecutor = userExecutor;
       this.wire = wire;
    }
 
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
-      return makeListenable(executorService.submit(new HttpResponseCallable(command)),
-               executorService);
+      return makeListenable(ioWorkerExecutor.submit(new HttpResponseCallable(command)),
+               userExecutor);
    }
 
    public class HttpResponseCallable implements Callable<HttpResponse> {
@@ -118,9 +124,19 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
       }
    }
 
-   protected abstract Q convert(HttpRequest request) throws IOException;
+   protected abstract Q convert(HttpRequest request) throws IOException, InterruptedException;
 
-   protected abstract HttpResponse invoke(Q nativeRequest) throws IOException;
+   /**
+    * 
+    * FIXME Comment this
+    * 
+    * @param nativeRequest
+    * @return
+    * @throws IOException
+    * @throws InterruptedException
+    *            if interrupted waiting for a connection.
+    */
+   protected abstract HttpResponse invoke(Q nativeRequest) throws IOException, InterruptedException;
 
    protected abstract void cleanup(Q nativeResponse);
 

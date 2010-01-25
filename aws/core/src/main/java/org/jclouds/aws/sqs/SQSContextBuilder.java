@@ -20,7 +20,6 @@ package org.jclouds.aws.sqs;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.aws.sqs.config.SQSContextModule;
 import org.jclouds.aws.sqs.config.SQSRestClientModule;
@@ -61,11 +60,6 @@ public class SQSContextBuilder extends RestContextBuilder<SQSAsyncClient, SQSCli
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new SQSRestClientModule());
-   }
-
-   @Override
-   public SQSContextBuilder withExecutorService(ExecutorService service) {
-      return (SQSContextBuilder) super.withExecutorService(service);
    }
 
    @Override

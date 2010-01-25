@@ -26,6 +26,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
@@ -35,6 +37,7 @@ import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -49,6 +52,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 
 /**
  * Tests behavior of {@code AtmosStorageClient}
@@ -103,7 +107,7 @@ public class AtmosStorageClientLiveTest {
 
    private static final int INCONSISTENCY_WINDOW = 5000;
    protected AtmosStorageClient connection;
-   private String containerPrefix = BaseBlobStoreIntegrationTest.CONTAINER_PREFIX;
+   private String containerPrefix = BaseBlobStoreIntegrationTest.CONTAINER_PREFIX+"live";
 
    URI container1;
    URI container2;
@@ -116,12 +120,19 @@ public class AtmosStorageClientLiveTest {
       RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = new AtmosStorageContextBuilder(
                new AtmosStoragePropertiesBuilder(uid, key).build()).withModules(
                new Log4JLoggingModule()).buildContext();
+      ExecutorService service = Executors.newCachedThreadPool();
       connection = context.getApi();
-      ClearContainerStrategy clearer = new RecursiveRemove(context.getAsyncApi(), connection);
+      ClearContainerStrategy clearer = new RecursiveRemove(service, context.getAsyncApi(),
+               connection);
       for (DirectoryEntry entry : connection.listDirectories()) {
-         if (entry.getObjectName().startsWith(containerPrefix)) {
-            clearer.execute(entry.getObjectName());
-            deleteConfirmed(entry.getObjectName());
+         try {
+            if (entry.getObjectName().startsWith(containerPrefix)) {
+               clearer.execute(entry.getObjectName());
+               deleteConfirmed(entry.getObjectName());
+            }
+         } catch (ContainerNotFoundException e) {
+            if (entry.getType() != FileType.DIRECTORY)
+               throw e;
          }
       }
    }
@@ -152,8 +163,7 @@ public class AtmosStorageClientLiveTest {
       }
       BoundedSet<? extends DirectoryEntry> response = connection.listDirectories();
       for (DirectoryEntry id : response) {
-         BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id
-                  .getObjectName());
+         BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id.getObjectName());
          assert r2 != null;
       }
    }
@@ -182,10 +192,13 @@ public class AtmosStorageClientLiveTest {
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testListOptions" })
    public void testFileOperations() throws Exception {
       // create the object
+      System.err.printf("creating%n");
       createOrReplaceObject("object", "here is my data!", "meta-value1");
       assertEventuallyObjectMatches("object", "here is my data!", "meta-value1");
       assertEventuallyHeadMatches("object", "meta-value1");
+
       // try overwriting the object
+      System.err.printf("overwriting%n");
       createOrReplaceObject("object", "here is my data?", "meta-value?");
       assertEventuallyObjectMatches("object", "here is my data?", "meta-value?");
 
@@ -324,8 +337,7 @@ public class AtmosStorageClientLiveTest {
                            .currentTimeMillis()
                            - time);
       } catch (Exception e) {
-         String message = (e.getCause().getCause() != null) ? e.getCause().getCause().getMessage()
-                  : e.getCause().getMessage();
+         String message = Throwables.getRootCause(e).getMessage();
          System.err.printf("failure %s %s; %dms: [%s]%n", "creating",
                   object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
                            .currentTimeMillis()
@@ -337,17 +349,21 @@ public class AtmosStorageClientLiveTest {
    private void deleteConfirmed(final String path) throws InterruptedException, ExecutionException,
             TimeoutException {
       long time = System.currentTimeMillis();
-      deleteImmediateAndVerifyWithHead(path);
+      deleteConsistencyAware(path);
       System.err.printf("confirmed deletion after %dms%n", System.currentTimeMillis() - time);
    }
 
-   private void deleteImmediateAndVerifyWithHead(final String path) throws InterruptedException,
+   protected void deleteImmediateAndVerifyWithHead(final String path) throws InterruptedException,
             ExecutionException, TimeoutException {
       try {
          connection.deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
       assert !connection.pathExists(path);
+      System.err.printf("path %s doesn't exist%n", path);
+      assert !connection.pathExists(path);
+      System.err.printf("path %s doesn't exist%n", path);
+
    }
 
    protected void deleteConsistencyAware(final String path) throws InterruptedException,
@@ -402,8 +418,7 @@ public class AtmosStorageClientLiveTest {
                            .currentTimeMillis()
                            - time);
       } catch (Exception e) {
-         String message = (e.getCause().getCause() != null) ? e.getCause().getCause().getMessage()
-                  : e.getCause().getMessage();
+         String message = Throwables.getRootCause(e).getMessage();
          System.err.printf("failure %s %s; %dms: [%s]%n", update ? "updating" : "creating", object
                   .getPayload() instanceof InputStreamPayload ? "stream" : "string", System
                   .currentTimeMillis()

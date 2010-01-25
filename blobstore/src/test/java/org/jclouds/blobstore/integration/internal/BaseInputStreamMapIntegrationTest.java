@@ -73,6 +73,7 @@ public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<In
          putStringWithMD5(map, "one", "two");
          InputStream old = map.remove("one");
          assertEquals(Utils.toStringAndClose(old), "two");
+         assertConsistencyAwareKeySize(map, 0);
          old = map.remove("one");
          assert old == null;
          old = map.get("one");
@@ -100,7 +101,7 @@ public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<In
          }
          assertConsistencyAwareMapSize(map, 5);
          for (InputStream value : map.values()) {
-            assertEquals(Utils.toStringAndClose(value), "");
+            assertEquals(value, null);
          }
       } finally {
          returnContainer(bucketName);

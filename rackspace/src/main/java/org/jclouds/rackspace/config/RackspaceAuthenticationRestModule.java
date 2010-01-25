@@ -44,6 +44,7 @@ import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -65,14 +66,26 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    @Authentication
-   Supplier<String> provideAuthenticationTokenCache(final RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) final String user,
-            @Named(PROPERTY_RACKSPACE_KEY) final String key) {
-      return new ExpirableSupplier<String>(new Supplier<String>() {
+   Supplier<String> provideAuthenticationTokenCache(final Supplier<AuthenticationResponse> supplier)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      return new Supplier<String>() {
          public String get() {
+            return supplier.get().getAuthToken();
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
+            final RestClientFactory factory, @Named(PROPERTY_RACKSPACE_USER) final String user,
+            @Named(PROPERTY_RACKSPACE_KEY) final String key) {
+      return new ExpirableSupplier<AuthenticationResponse>(new Supplier<AuthenticationResponse>() {
+         public AuthenticationResponse get() {
             try {
-               return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
-                        TimeUnit.SECONDS).getAuthToken();
+               ListenableFuture<AuthenticationResponse> response = factory.create(
+                        RackspaceAuthentication.class).authenticate(user, key);
+               return response.get(30, TimeUnit.SECONDS);
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
                throw new RuntimeException("Error logging in", e);
@@ -101,11 +114,10 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected AuthenticationResponse provideAuthenticationResponse(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
-               TimeUnit.SECONDS);
+   protected AuthenticationResponse provideAuthenticationResponse(
+            Supplier<AuthenticationResponse> supplier) throws InterruptedException,
+            ExecutionException, TimeoutException {
+      return supplier.get();
    }
 
    @Provides

@@ -62,10 +62,10 @@ public class SpeedTest {
       int messageCount = Integer.parseInt(args[3]);
 
       RestContext<AzureQueueAsyncClient, AzureQueueClient> context = isEnterprise ? AzureQueueContextFactory
-               .createContext(System.getProperties(), account, encodedKey, new NullLoggingModule(),
+               .createContext(account, encodedKey, new NullLoggingModule(),
                         new EnterpriseConfigurationModule())
-               : AzureQueueContextFactory.createContext(System.getProperties(), account,
-                        encodedKey, new NullLoggingModule());
+               : AzureQueueContextFactory.createContext(account, encodedKey,
+                        new NullLoggingModule());
 
       try {
          if (purgeQueues(queueName, context)) {

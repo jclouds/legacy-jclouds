@@ -18,39 +18,44 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import com.google.inject.Module;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
-
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
+
+import com.google.inject.Module;
+
 /**
- * Creates {@link RestContext} for {@link RimuHostingClient} instances based on the most commonly
- * requested arguments.
+ * Creates {@link RimuHostingComputeServiceContext} instances based on the most commonly requested
+ * arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
  * <p/>
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
- *
+ * 
  * @author Adrian Cole
- * @see RestContext
- * @see RimuHostingClient
- * @see RimuHostingAsyncClient
+ * @see RimuHostingComputeServiceContext
  */
 public class RimuHostingContextFactory {
-
-   public static RestContext<RimuHostingAsyncClient, RimuHostingClient> createContext(String apikey,
-                                                                                      Module... modules) {
-      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(apikey).build())
-              .withModules(modules).buildContext();
-   }
-
-   public static RestContext<RimuHostingAsyncClient, RimuHostingClient> createContext(Properties properties, Module... modules) {
+   public static ComputeServiceContext createContext(Properties properties, Module... modules) {
       return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(properties).build())
-              .withModules(modules).buildContext();
+               .withModules(modules).buildComputeServiceContext();
    }
 
+   /**
+    * redundant on apikey, but it facilitates ComputeServiceContextFactory
+    */
+   public static ComputeServiceContext createContext(String apiKey, String apiKey1,
+            Module... modules) {
+      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(apiKey).build())
+               .withModules(modules).buildComputeServiceContext();
+   }
+
+   public static ComputeServiceContext createContext(String apiKey, Module... modules) {
+      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(apiKey).build())
+               .withModules(modules).buildComputeServiceContext();
+   }
 }

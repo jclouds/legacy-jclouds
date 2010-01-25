@@ -29,7 +29,6 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -39,6 +38,7 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -60,7 +60,6 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
-   private final String toString;
    private static final List<Method> objectMethods = ImmutableList.of(Object.class.getMethods());
 
    @Inject
@@ -100,12 +99,10 @@ public class SyncProxy implements InvocationHandler {
             }
          }
       }
-      toString = "Sync Proxy for: " + declaring.getName();
    }
 
    static long convertToNanos(Timeout timeout) {
-      long methodNanos = TimeUnit.NANOSECONDS.convert(timeout.duration(),
-               timeout.timeUnit());
+      long methodNanos = TimeUnit.NANOSECONDS.convert(timeout.duration(), timeout.timeUnit());
       return methodNanos;
    }
 
@@ -120,10 +117,10 @@ public class SyncProxy implements InvocationHandler {
          return syncMethodMap.get(method).invoke(delegate, args);
       } else {
          try {
-            return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap
-                     .get(method), TimeUnit.NANOSECONDS);
-         } catch (ExecutionException e) {
-            throw e.getCause();
+            return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(
+                     timeoutMap.get(method), TimeUnit.NANOSECONDS);
+         } catch (Exception e) {
+            throw Throwables.getRootCause(e);
          }
       }
    }
@@ -146,6 +143,6 @@ public class SyncProxy implements InvocationHandler {
    }
 
    public String toString() {
-      return toString;
+      return "Sync Proxy for: " + delegate.toString();
    }
 }

@@ -123,7 +123,8 @@ public class VCloudVersionsLiveTest {
             modules.add(new VCloudVersionsRestClientModule());
          }
 
-      }.withModules(new Log4JLoggingModule(), new ExecutorServiceModule(sameThreadExecutor()))
+      }.withModules(new Log4JLoggingModule(),
+               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))
                .buildContext();
    }
 }

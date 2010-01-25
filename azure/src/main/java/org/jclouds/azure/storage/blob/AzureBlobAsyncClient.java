@@ -49,10 +49,11 @@ import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
+import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
@@ -124,7 +125,7 @@ public interface AzureBlobAsyncClient {
    @HEAD
    @Path("{container}")
    @QueryParams(keys = "restype", values = "container")
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
 
    /**
@@ -211,6 +212,15 @@ public interface AzureBlobAsyncClient {
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
    ListenableFuture<BlobProperties> getBlobProperties(@PathParam("container") String container,
+            @PathParam("name") String name);
+
+   /**
+    * @see AzureBlobClient#blobExists
+    */
+   @HEAD
+   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
+   @Path("{container}/{name}")
+   ListenableFuture<Boolean> blobExists(@PathParam("container") String container,
             @PathParam("name") String name);
 
    /**

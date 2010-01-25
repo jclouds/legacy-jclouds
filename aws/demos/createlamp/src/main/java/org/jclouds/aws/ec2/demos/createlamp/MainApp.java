@@ -74,7 +74,7 @@ public class MainApp {
 
       // Init
       RestContext<EC2AsyncClient, EC2Client> context = EC2ContextFactory.createContext(accesskeyid,
-               secretkey);
+               secretkey).getProviderSpecificContext();
 
       // Get a synchronous client
       EC2Client client = context.getApi();

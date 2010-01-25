@@ -57,9 +57,10 @@ public class CloudFilesBlobStoreContextModule extends CloudFilesContextModule {
    @Singleton
    BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
             InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
+            CloudFilesAsyncBlobStore asynchBlobStore, CloudFilesBlobStore blobStore,
             RestContext<CloudFilesAsyncClient, CloudFilesClient> context) {
       return new BlobStoreContextImpl<CloudFilesAsyncClient, CloudFilesClient>(blobMapFactory,
                inputStreamMapFactory, asynchBlobStore, blobStore, context);
    }
+
 }

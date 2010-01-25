@@ -18,6 +18,8 @@
  */
 package org.jclouds.logging;
 
+import com.google.common.base.Throwables;
+
 /**
  * <tt>Logger</tt> that doesn't do anything.
  * <p />
@@ -28,61 +30,62 @@ package org.jclouds.logging;
  */
 public class NullLogger implements Logger {
 
-    public void debug(String message, Object... args) {
+   public void debug(String message, Object... args) {
 
-    }
+   }
 
-    public void error(String message, Object... args) {
+   public void error(String message, Object... args) {
+      System.err.printf(message + "%n", args);
+   }
 
-    }
+   public void error(Throwable throwable, String message, Object... args) {
+      System.err.printf(message, args);
+      System.err.printf("%n%s", Throwables.getStackTraceAsString(throwable));
+   }
 
-    public void error(Throwable throwable, String message, Object... args) {
+   public String getCategory() {
 
-    }
+      return null;
+   }
 
-    public String getCategory() {
+   public void info(String message, Object... args) {
 
-	return null;
-    }
+   }
 
-    public void info(String message, Object... args) {
+   public boolean isDebugEnabled() {
 
-    }
+      return false;
+   }
 
-    public boolean isDebugEnabled() {
+   public boolean isErrorEnabled() {
 
-	return false;
-    }
+      return true;
+   }
 
-    public boolean isErrorEnabled() {
+   public boolean isInfoEnabled() {
 
-	return false;
-    }
+      return false;
+   }
 
-    public boolean isInfoEnabled() {
+   public boolean isTraceEnabled() {
 
-	return false;
-    }
+      return false;
+   }
 
-    public boolean isTraceEnabled() {
+   public boolean isWarnEnabled() {
 
-	return false;
-    }
+      return false;
+   }
 
-    public boolean isWarnEnabled() {
+   public void trace(String message, Object... args) {
 
-	return false;
-    }
+   }
 
-    public void trace(String message, Object... args) {
+   public void warn(String message, Object... args) {
 
-    }
+   }
 
-    public void warn(String message, Object... args) {
+   public void warn(Throwable throwable, String message, Object... args) {
 
-    }
-
-    public void warn(Throwable throwable, String message, Object... args) {
-
-    }
+   }
 }

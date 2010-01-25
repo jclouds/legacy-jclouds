@@ -19,6 +19,9 @@
 package org.jclouds.atmosonline.saas.handlers;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -26,15 +29,18 @@ import javax.inject.Inject;
 import org.jclouds.atmosonline.saas.AtmosStorageResponseException;
 import org.jclouds.atmosonline.saas.domain.AtmosStorageError;
 import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -54,39 +60,55 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
       this.utils = utils;
    }
 
+   public static final Pattern CONTAINER_PATH = Pattern.compile("^/rest/namespace/?([^/]+)[/]?$");
+   public static final Pattern CONTAINER_KEY_PATH = Pattern
+            .compile("^/rest/namespace/?([^/]+)/(.*)");
+
    public void handleError(HttpCommand command, HttpResponse response) {
-      String content;
+      Exception exception = new HttpResponseException(command, response);
       try {
-         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
-                  : null;
-         if (content != null) {
-            try {
-               if (content.indexOf('<') >= 0) {
-                  AtmosStorageError error = utils.parseAtmosStorageErrorFromContent(command,
-                           response, content);
-                  AtmosStorageResponseException exception = new AtmosStorageResponseException(
-                           command, response, error);
-                  if (error.getCode() == 1016) {
-                     File file = new File(command.getRequest().getEndpoint().getPath());
-                     command.setException(new KeyAlreadyExistsException(file.getParentFile()
-                              .getAbsolutePath(), file.getName(), exception));
+         switch (response.getStatusCode()) {
+            case 401:
+               exception = new AuthorizationException(command.getRequest().getRequestLine());
+               break;
+            case 404:
+               if (!command.getRequest().getMethod().equals("DELETE")) {
+                  String path = command.getRequest().getEndpoint().getPath();
+                  Matcher matcher = CONTAINER_PATH.matcher(path);
+                  if (matcher.find()) {
+                     exception = new ContainerNotFoundException(matcher.group(1));
                   } else {
-                     command.setException(exception);
+                     matcher = CONTAINER_KEY_PATH.matcher(path);
+                     if (matcher.find()) {
+                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2));
+                     }
                   }
-               } else {
-                  command.setException(new HttpResponseException(command, response, content));
                }
-            } catch (Exception he) {
-               command.setException(new HttpResponseException(command, response, content));
-               Throwables.propagateIfPossible(he);
-            }
-         } else {
-            command.setException(new HttpResponseException(command, response));
+               break;
+            default:
+               if (response.getContent() != null) {
+                  try {
+                     String content = Utils.toStringAndClose(response.getContent());
+                     if (content.indexOf('<') >= 0) {
+                        AtmosStorageError error = utils.parseAtmosStorageErrorFromContent(command,
+                                 response, content);
+                        if (error.getCode() == 1016) {
+                           File file = new File(command.getRequest().getEndpoint().getPath());
+                           exception = new KeyAlreadyExistsException(file.getParentFile()
+                                    .getAbsolutePath(), file.getName());
+                        } else {
+                           exception = new AtmosStorageResponseException(command, response, error);
+                        }
+                     }
+                  } catch (IOException e) {
+                     logger.warn(e, "exception reading error from response", response);
+                     exception = new HttpResponseException(command, response);
+                  }
+               }
          }
-      } catch (Exception e) {
-         command.setException(new HttpResponseException(command, response));
-         Throwables.propagateIfPossible(e);
+      } finally {
+         Closeables.closeQuietly(response.getContent());
+         command.setException(exception);
       }
    }
-
 }

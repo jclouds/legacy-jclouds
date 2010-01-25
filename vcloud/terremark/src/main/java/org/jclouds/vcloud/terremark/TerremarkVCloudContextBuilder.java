@@ -20,22 +20,19 @@ package org.jclouds.vcloud.terremark;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.terremark.config.TerremarkVCloudContextModule;
+import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.terremark.compute.config.TerremarkVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudRestClientModule;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RestContext} for {@link VCloudAsyncClient} instances based on the most commonly
- * requested arguments.
+ * Creates {@link TerremarkVCloudComputeServiceContext} or {@link Injector} instances based on the
+ * most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -44,36 +41,22 @@ import com.google.inject.TypeLiteral;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see RestContext
- * @see VCloudAsyncClient
+ * @see TerremarkVCloudComputeServiceContext
  */
-public class TerremarkVCloudContextBuilder extends
-         RestContextBuilder<TerremarkVCloudAsyncClient, TerremarkVCloudClient> {
+public class TerremarkVCloudContextBuilder extends VCloudContextBuilder {
 
    public TerremarkVCloudContextBuilder(Properties props) {
-      super(new TypeLiteral<TerremarkVCloudAsyncClient>() {
-      }, new TypeLiteral<TerremarkVCloudClient>() {
-      }, props);
+      super(props);
+   }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new TerremarkVCloudComputeServiceContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new TerremarkVCloudRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new TerremarkVCloudContextModule());
-   }
-
-   @Override
-   public TerremarkVCloudContextBuilder withExecutorService(ExecutorService service) {
-      return (TerremarkVCloudContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public TerremarkVCloudContextBuilder withModules(Module... modules) {
-      return (TerremarkVCloudContextBuilder) super.withModules(modules);
    }
 
 }

@@ -22,6 +22,7 @@ import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -47,19 +48,24 @@ public class S3RestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new S3RestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
-                     "http://localhost");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to(
-                     "2");
-         }
-      });
+               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
+                              .to("http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                  }
+               });
    }
 
    @Test

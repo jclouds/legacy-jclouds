@@ -61,7 +61,8 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
    public S3Object apply(HttpResponse from) {
       S3Object object = objectProvider.create(metadataParser.apply(from));
       addAllHeadersTo(from, object);
-      object.setPayload(from.getContent());
+      if (from.getContent() != null)
+         object.setPayload(from.getContent());
       attemptToParseSizeAndRangeFromHeaders(from, object);
       return object;
    }

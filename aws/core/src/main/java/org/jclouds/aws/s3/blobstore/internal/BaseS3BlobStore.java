@@ -27,13 +27,13 @@ import javax.inject.Inject;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
-import org.jclouds.aws.s3.blobstore.functions.BlobToObjectGetOptions;
 import org.jclouds.aws.s3.blobstore.functions.BucketToResourceList;
 import org.jclouds.aws.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.aws.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
@@ -49,7 +49,7 @@ public class BaseS3BlobStore {
    protected final ObjectToBlob object2Blob;
    protected final BlobToObject blob2Object;
    protected final ContainerToBucketListOptions container2BucketListOptions;
-   protected final BlobToObjectGetOptions blob2ObjectGetOptions;
+   protected final BlobToHttpGetOptions blob2ObjectGetOptions;
    protected final BucketToResourceMetadata bucket2ResourceMd;
    protected final BucketToResourceList bucket2ResourceList;
    protected final ExecutorService service;
@@ -61,7 +61,7 @@ public class BaseS3BlobStore {
             LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
             ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ContainerToBucketListOptions container2BucketListOptions,
-            BlobToObjectGetOptions blob2ObjectGetOptions,
+            BlobToHttpGetOptions blob2ObjectGetOptions,
             GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             BucketToResourceMetadata bucket2ResourceMd, BucketToResourceList bucket2ResourceList,
             ExecutorService service) {

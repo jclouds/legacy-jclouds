@@ -43,8 +43,8 @@ import com.google.inject.Injector;
 public class AzureBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
-               new JDKLoggingModule(), new AzureBlobStubClientModule(),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
+               sameThreadExecutor()), new JDKLoggingModule(), new AzureBlobStubClientModule(),
                new AzureBlobStoreContextModule() {
                   @Override
                   protected void configure() {

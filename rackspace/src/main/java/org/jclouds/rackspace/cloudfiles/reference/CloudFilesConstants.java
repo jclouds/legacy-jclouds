@@ -44,18 +44,5 @@ public interface CloudFilesConstants extends RackspaceConstants {
     * For a string value X, return the Object names nested in the pseudo path.
     */
    String PATH = "path";
-   
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public static final String PROPERTY_CLOUDFILES_TIMEOUT = "jclouds.cloudfiles.timeout";
-   /**
-    * time to pause before retrying a transient failure
-    */
-   public static final String PROPERTY_CLOUDFILES_RETRY = "jclouds.cloudfiles.retry";
-   /**
-    * Any header starting with this prefix is considered user metadata. It will be stored with the
-    * object and returned when you retrieve the object/
-    */
-   public static final String PROPERTY_CLOUDFILES_METADATA_PREFIX = "jclouds.cloudfiles.metaprefix";
+
 }

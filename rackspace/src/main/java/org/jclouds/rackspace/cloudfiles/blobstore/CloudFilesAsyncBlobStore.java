@@ -28,7 +28,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -78,7 +80,8 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             BlobToObjectGetOptions blob2ObjectGetOptions,
             GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             ContainerToResourceMetadata container2ResourceMd,
-            ContainerToResourceList container2ResourceList, ExecutorService service) {
+            ContainerToResourceList container2ResourceList,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
                getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
@@ -86,8 +89,175 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
    }
 
    /**
-    * This implementation uses the CloudFiles HEAD Object command to return the result
+    * This implementation invokes {@link CloudFilesAsyncClient#listContainers}
     */
+   @Override
+   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
+      return compose(
+               async.listContainers(),
+               new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
+                  public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
+                           SortedSet<ContainerMetadata> from) {
+                     return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
+                              container2ResourceMd), null, null, false);
+                  }
+               }, service);
+   }
+
+   /**
+    * This implementation invokes {@link CloudFilesAsyncClient#containerExists}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public ListenableFuture<Boolean> containerExists(String container) {
+      return async.containerExists(container);
+   }
+
+   /**
+    * Note that location is currently ignored.
+    */
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
+      return async.createContainer(container);
+   }
+
+   /**
+    * This implementation invokes
+    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container) {
+      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
+   }
+
+   /**
+    * This implementation invokes {@link CloudFilesAsyncClient#listBucket}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container, ListContainerOptions options) {
+      org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
+               .apply(options);
+      ListenableFuture<ListContainerResponse<ObjectInfo>> returnVal = async.listObjects(container,
+               httpOptions);
+      return compose(returnVal, container2ResourceList, service);
+   }
+
+   /**
+    * This implementation invokes {@link ClearListStrategy#execute} with the
+    * {@link ListContainerOptions#recursive} option.
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public ListenableFuture<Void> clearContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            clearContainerStrategy.execute(container, recursive());
+            return null;
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link ClearListStrategy#execute} with the
+    * {@link ListContainerOptions#recursive} option. Then, it invokes
+    * {@link CloudFilesAsyncClient#deleteContainerIfEmpty}
+    * 
+    * @param container
+    *           container name
+    */
+   @Override
+   public ListenableFuture<Void> deleteContainer(final String container) {
+      return makeListenable(service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            clearContainerStrategy.execute(container, recursive());
+            async.deleteContainerIfEmpty(container).get();
+            return null;
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link GetDirectoryStrategy#execute}
+    * 
+    * @param container
+    *           container name
+    * @param directory
+    *           virtual path
+    */
+   @Override
+   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Boolean>() {
+
+         public Boolean call() throws Exception {
+            try {
+               getDirectoryStrategy.execute(container, directory);
+               return true;
+            } catch (KeyNotFoundException e) {
+               return false;
+            }
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link MkdirStrategy#execute}
+    * 
+    * @param container
+    *           container name
+    * @param directory
+    *           virtual path
+    */
+   @Override
+   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
+      return makeListenable(service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            mkdirStrategy.execute(container, directory);
+            return null;
+         }
+
+      }), service);
+   }
+
+   /**
+    * This implementation invokes {@link CloudFilesAsyncClient#objectExists}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           object key
+    */
+   @Override
+   public ListenableFuture<Boolean> blobExists(String container, String key) {
+      return async.objectExists(container, key);
+   }
+
+   /**
+    * This implementation invokes {@link CloudFilesAsyncClient#headObject}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           object key
+    */
+   @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
 
       return compose(convertExceptionToValue(async.getObjectInfo(container, key),
@@ -102,101 +272,61 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
                }, service);
    }
 
-   public ListenableFuture<Void> clearContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            return null;
-         }
-
-      }), service);
+   /**
+    * This implementation invokes
+    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           object key
+    */
+   @Override
+   public ListenableFuture<Blob> getBlob(String container, String key) {
+      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
    }
 
    /**
-    * Note that location is currently ignored.
+    * This implementation invokes {@link CloudFilesAsyncClient#getObject}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           object key
     */
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
-      return async.createContainer(container);
-   }
-
-   public ListenableFuture<Void> deleteContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            async.deleteContainerIfEmpty(container).get();
-            return null;
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Boolean> containerExists(String container) {
-      return async.containerExists(container);
-   }
-
    public ListenableFuture<Blob> getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions... optionsList) {
-      GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
+            org.jclouds.blobstore.options.GetOptions options) {
+      GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
       ListenableFuture<CFObject> returnVal = async.getObject(container, key, httpOptions);
       return compose(convertExceptionToValue(returnVal, KeyNotFoundException.class, null),
                object2Blob, service);
    }
 
-   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
-      return compose(
-               async.listContainers(),
-               new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
-                  public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                           SortedSet<ContainerMetadata> from) {
-                     return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
-                              container2ResourceMd), null, null, false);
-                  }
-               }, service);
-   }
-
-   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container, ListContainerOptions... optionsList) {
-      org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
-               .apply(optionsList);
-      ListenableFuture<ListContainerResponse<ObjectInfo>> returnVal = async.listObjects(container,
-               httpOptions);
-      return compose(returnVal, container2ResourceList, service);
-   }
-
+   /**
+    * This implementation invokes {@link CloudFilesAsyncClient#putObject}
+    * 
+    * @param container
+    *           container name
+    * @param blob
+    *           object
+    */
+   @Override
    public ListenableFuture<String> putBlob(String container, Blob blob) {
       return async.putObject(container, blob2Object.apply(blob));
    }
 
+   /**
+    * This implementation invokes {@link CloudFilesAsyncClient#removeObject}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           object key
+    */
+   @Override
    public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.removeObject(container, key);
-   }
-
-   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            mkdirStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);
-            return null;
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Boolean>() {
-         public Boolean call() throws Exception {
-            try {
-               getDirectoryStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);
-               return true;
-            } catch (KeyNotFoundException e) {
-               return false;
-            }
-         }
-
-      }), service);
    }
 
 }

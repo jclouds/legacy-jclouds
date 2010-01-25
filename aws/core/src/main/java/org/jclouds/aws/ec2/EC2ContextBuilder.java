@@ -18,41 +18,54 @@
  */
 package org.jclouds.aws.ec2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
-
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.aws.ec2.config.EC2ContextModule;
+import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
-import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
+ * Creates {@link EC2ComputeServiceContext} or {@link Injector} instances based on the most commonly
+ * requested arguments.
+ * <p/>
+ * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * <p/>
+ * <p/>
+ * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
+ * @see EC2ComputeServiceContext
  */
-public class EC2ContextBuilder extends RestContextBuilder<EC2AsyncClient, EC2Client> {
+public class EC2ContextBuilder extends
+         ComputeServiceContextBuilder<EC2AsyncClient, EC2Client> {
 
    public EC2ContextBuilder(Properties props) {
       super(new TypeLiteral<EC2AsyncClient>() {
       }, new TypeLiteral<EC2Client>() {
       }, props);
-      checkNotNull(properties.getProperty(PROPERTY_AWS_ACCESSKEYID));
-      checkNotNull(properties.getProperty(PROPERTY_AWS_SECRETACCESSKEY));
    }
 
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new EC2RestClientModule());
+   @Override
+   public EC2ContextBuilder withModules(Module... modules) {
+      return (EC2ContextBuilder) super.withModules(modules);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new EC2ContextModule());
+      modules.add(new EC2ComputeServiceContextModule());
+   }
+
+   @Override
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new EC2RestClientModule());
    }
 
 }

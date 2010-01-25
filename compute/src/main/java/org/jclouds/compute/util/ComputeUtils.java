@@ -115,6 +115,7 @@ public class ComputeUtils {
    }
 
    public static boolean isKeyAuth(CreateNodeResponse createdNode) {
-      return createdNode.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----");
+      return createdNode.getCredentials().key != null
+               && createdNode.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----");
    }
 }

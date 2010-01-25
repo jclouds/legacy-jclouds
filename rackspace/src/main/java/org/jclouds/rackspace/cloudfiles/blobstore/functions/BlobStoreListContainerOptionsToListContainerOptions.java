@@ -30,29 +30,29 @@ import com.google.common.base.Function;
 @Singleton
 public class BlobStoreListContainerOptionsToListContainerOptions
          implements
-         Function<ListContainerOptions[], org.jclouds.rackspace.cloudfiles.options.ListContainerOptions> {
+         Function<ListContainerOptions, org.jclouds.rackspace.cloudfiles.options.ListContainerOptions> {
    public org.jclouds.rackspace.cloudfiles.options.ListContainerOptions apply(
-            ListContainerOptions[] optionsList) {
+            ListContainerOptions optionsList) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions options = new org.jclouds.rackspace.cloudfiles.options.ListContainerOptions();
-      if (optionsList.length != 0) {
+      if (optionsList != null) {
 
-         if ((optionsList[0].getDir() == null) && (optionsList[0].isRecursive())) {
+         if ((optionsList.getDir() == null) && (optionsList.isRecursive())) {
             options.withPrefix("");
          }
-         if ((optionsList[0].getDir() == null) && (!optionsList[0].isRecursive())) {
+         if ((optionsList.getDir() == null) && (!optionsList.isRecursive())) {
             options.underPath("");
          }
-         if ((optionsList[0].getDir() != null) && (optionsList[0].isRecursive())) {
-            options.withPrefix(optionsList[0].getDir());
+         if ((optionsList.getDir() != null) && (optionsList.isRecursive())) {
+            options.withPrefix(optionsList.getDir());
          }
-         if ((optionsList[0].getDir() != null) && (!optionsList[0].isRecursive())) {
-            options.underPath(optionsList[0].getDir());
+         if ((optionsList.getDir() != null) && (!optionsList.isRecursive())) {
+            options.underPath(optionsList.getDir());
          }
-         if (optionsList[0].getMarker() != null) {
-            options.afterMarker(optionsList[0].getMarker());
+         if (optionsList.getMarker() != null) {
+            options.afterMarker(optionsList.getMarker());
          }
-         if (optionsList[0].getMaxResults() != null) {
-            options.maxResults(optionsList[0].getMaxResults());
+         if (optionsList.getMaxResults() != null) {
+            options.maxResults(optionsList.getMaxResults());
          }
       }
       return options;

@@ -37,10 +37,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
-import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextFactory;
+import org.jclouds.aws.s3.S3ContextFactory;
+import org.jclouds.azure.storage.blob.AzureBlobContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
+import org.jclouds.rackspace.cloudfiles.CloudFilesContextFactory;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -83,7 +83,7 @@ public class GetPathLiveTest {
             TimeoutException {
       container = checkNotNull(System.getProperty(PROPERTY_GETPATH_CONTAINER));
       path = checkNotNull(System.getProperty(PROPERTY_GETPATH_PATH));
-      BlobStoreContext s3Context = S3BlobStoreContextFactory.createContext(checkNotNull(System
+      BlobStoreContext s3Context = S3ContextFactory.createContext(checkNotNull(System
                .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY),
                new Log4JLoggingModule());
@@ -91,7 +91,7 @@ public class GetPathLiveTest {
                .getProperty(PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY), "s3", container, path));
 
-      BlobStoreContext cfContext = CloudFilesBlobStoreContextFactory.createContext(checkNotNull(
+      BlobStoreContext cfContext = CloudFilesContextFactory.createContext(checkNotNull(
                System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System
                .getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY),
                new Log4JLoggingModule());
@@ -99,7 +99,7 @@ public class GetPathLiveTest {
                .getProperty(PROPERTY_RACKSPACE_USER), System.getProperty(PROPERTY_RACKSPACE_KEY),
                "cloudfiles", container, path));
 
-      BlobStoreContext azContext = AzureBlobStoreContextFactory.createContext(checkNotNull(System
+      BlobStoreContext azContext = AzureBlobContextFactory.createContext(checkNotNull(System
                .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
                .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY),
                new Log4JLoggingModule());

@@ -18,7 +18,6 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.strategy.internal.MarkerFileMkdirStrategy;
 
 import com.google.inject.ImplementedBy;
@@ -31,5 +30,5 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(MarkerFileMkdirStrategy.class)
 public interface MkdirStrategy {
 
-   void execute(AsyncBlobStore connection, String containerName, String directory);
+   void execute(String containerName, String directory);
 }

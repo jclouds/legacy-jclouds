@@ -21,7 +21,7 @@ package org.jclouds.azure.storage.blob.blobstore.integration;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextFactory;
+import org.jclouds.azure.storage.blob.AzureBlobContextFactory;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -47,7 +47,7 @@ public class AzureBlobTestInitializer extends BaseTestInitializer {
 
    @Override
    protected BlobStoreContext createStubContext() {
-      return AzureBlobStoreContextFactory.createContext("user", "pass",
+      return AzureBlobContextFactory.createContext("user", "pass",
                new AzureBlobStubClientModule());
    }
 

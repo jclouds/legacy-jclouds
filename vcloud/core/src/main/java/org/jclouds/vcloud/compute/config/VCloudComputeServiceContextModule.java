@@ -22,13 +22,13 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
@@ -56,6 +56,7 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 
@@ -106,18 +107,19 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Provides
    @Singleton
    protected Set<? extends Image> provideImages(final VCloudClient client,
-            final @ResourceLocation String vDC, LogHolder holder, ExecutorService executor)
+            final @ResourceLocation String vDC, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
             throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       Catalog response = client.getDefaultCatalog();
-      Set<Future<Void>> responses = Sets.newHashSet();
+      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
 
       for (final NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
             final CatalogItem item = client.getCatalogItem(resource.getId());
             if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-               responses.add(executor.submit(new Callable<Void>() {
+               responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
                   @Override
                   public Void call() throws Exception {
                      OsFamily myOs = null;
@@ -134,20 +136,20 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                               template.getName(), vDC, arch));
                      return null;
                   }
-               }));
+               }), executor));
             }
          }
       }
-      ConcurrentUtils.pollResponsesAndLogWhenComplete(images.size(), "images", holder.logger,
-               responses);
+
+      ConcurrentUtils.awaitCompletion(responses, executor, null, holder.logger, "images");
       return images;
    }
 
    @Provides
    @Singleton
    protected Set<? extends Size> provideSizes(VCloudClient client, Set<? extends Image> images,
-            LogHolder holder, ExecutorService executor) throws InterruptedException,
-            TimeoutException, ExecutionException {
+            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
+            throws InterruptedException, TimeoutException, ExecutionException {
       Set<Size> sizes = Sets.newHashSet();
       for (int cpus : new int[] { 1, 2, 4 })
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 })

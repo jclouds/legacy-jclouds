@@ -76,6 +76,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-atmos</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-azure</artifactId>
             <version>${project.version}</version>
         </dependency>

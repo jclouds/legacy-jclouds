@@ -18,15 +18,10 @@
  */
 package org.jclouds.concurrent;
 
-import static org.jclouds.util.Utils.propagateOrNull;
-
-import java.util.List;
-
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
+import org.jclouds.functions.ExceptionToValueOrPropagate;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -35,28 +30,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 public class ConvertFutureExceptionToValue<T> extends FutureExceptionParser<T> {
-   public static class ExceptionToValueOrPropagate<E extends Exception, T> implements
-            Function<Exception, T> {
-
-      private final Class<E> matchingClass;
-      private final T value;
-
-      public ExceptionToValueOrPropagate(Class<E> matchingClass, @Nullable T value) {
-         this.matchingClass = matchingClass;
-         this.value = value;
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public T apply(Exception from) {
-         List<Throwable> throwables = Throwables.getCausalChain(from);
-         Iterable<E> matchingThrowables = Iterables.filter(throwables, matchingClass);
-         if (Iterables.size(matchingThrowables) >= 1)
-            return value;
-         return (T)propagateOrNull(from);
-      }
-
-   }
 
    public <E extends Exception> ConvertFutureExceptionToValue(ListenableFuture<T> delegate,
             Class<E> exceptionClass, @Nullable T value) {

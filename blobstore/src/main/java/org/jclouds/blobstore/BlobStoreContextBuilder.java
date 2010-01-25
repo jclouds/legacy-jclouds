@@ -19,7 +19,6 @@
 package org.jclouds.blobstore;
 
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.rest.RestContextBuilder;
@@ -33,10 +32,6 @@ import com.google.inject.util.Types;
  * @author Adrian Cole
  */
 public abstract class BlobStoreContextBuilder<A, S> extends RestContextBuilder<A, S> {
-   @Override
-   public BlobStoreContextBuilder<A, S> withExecutorService(ExecutorService service) {
-      return (BlobStoreContextBuilder<A, S>) super.withExecutorService(service);
-   }
 
    @Override
    public BlobStoreContextBuilder<A, S> withModules(Module... modules) {

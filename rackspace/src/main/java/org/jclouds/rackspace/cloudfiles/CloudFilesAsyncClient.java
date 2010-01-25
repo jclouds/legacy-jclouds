@@ -36,11 +36,12 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.CloudFilesCDN;
@@ -80,8 +81,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to Cloud Files via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
+ * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see CloudFilesClient
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
@@ -110,7 +112,8 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseContainerListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
-   ListenableFuture<? extends SortedSet<ContainerMetadata>> listContainers(ListContainerOptions... options);
+   ListenableFuture<? extends SortedSet<ContainerMetadata>> listContainers(
+            ListContainerOptions... options);
 
    /**
     * @see CloudFilesClient#setObjectInfo
@@ -206,15 +209,15 @@ public interface CloudFilesAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
    @Path("{container}")
-   ListenableFuture<ListContainerResponse<ObjectInfo>> listObjects(@PathParam("container") String container,
-            ListContainerOptions... options);
+   ListenableFuture<ListContainerResponse<ObjectInfo>> listObjects(
+            @PathParam("container") String container, ListContainerOptions... options);
 
    /**
     * @see CloudFilesClient#containerExists
     */
    @HEAD
    @Path("{container}")
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
 
    /**
@@ -244,7 +247,16 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseObjectInfoFromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
-   ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(@PathParam("container") String container,
+   ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(
+            @PathParam("container") String container, @PathParam("name") String name);
+
+   /**
+    * @see CloudFilesClient#objectExists
+    */
+   @HEAD
+   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
+   @Path("{container}/{name}")
+   ListenableFuture<Boolean> objectExists(@PathParam("container") String container,
             @PathParam("name") String name);
 
    /**

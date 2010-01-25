@@ -24,11 +24,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -38,6 +38,7 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.payloads.ByteArrayPayload;
@@ -47,10 +48,8 @@ import org.jclouds.http.payloads.StringPayload;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.collect.Iterables;
 
 /**
  * Map representation of a live connection to S3. All put operations will result in ETag
@@ -64,13 +63,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
 
    @Inject
-   public InputStreamMapImpl(AsyncBlobStore connection, Blob.Factory blobFactory,
+   public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
             GetBlobsInListStrategy getAllBlobs, ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy clearContainerStrategy, CountListStrategy containerCountStrategy,
-            String containerName, ListContainerOptions listOptions) {
+            PutBlobsStrategy putBlobsStrategy, String containerName,
+            ListContainerOptions listOptions) {
       super(connection, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
-               clearContainerStrategy, containerCountStrategy, containerName, listOptions);
+               clearContainerStrategy, containerCountStrategy, putBlobsStrategy, containerName,
+               listOptions);
    }
 
    /**
@@ -80,15 +81,8 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     */
    public InputStream get(Object o) {
       String realKey = prefixer.apply(o.toString());
-      try {
-         Blob blob = connection.getBlob(containerName, realKey).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
-         return blob != null ? blob.getContent() : null;
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error geting blob %s:%s", containerName,
-                  realKey), e);
-      }
+      Blob blob = blobstore.getBlob(containerName, realKey);
+      return blob != null ? blob.getContent() : null;
    }
 
    /**
@@ -99,14 +93,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    public InputStream remove(Object o) {
       InputStream old = getLastValue(o);
       String realKey = prefixer.apply(o.toString());
-      try {
-         connection.removeBlob(containerName, realKey).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error removing blob %s:%s", containerName,
-                  realKey), e);
-      }
+      blobstore.removeBlob(containerName, realKey);
       return old;
    }
 
@@ -221,21 +208,16 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     */
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
-      try {
-         Set<ListenableFuture<String>> puts = Sets.newHashSet();
-         for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
-            Blob object = connection.newBlob(prefixer.apply(entry.getKey()));
-            object.setPayload(Payloads.newPayload(entry.getValue()));
-            object.generateMD5();
-            puts.add(connection.putBlob(containerName, object));
-         }
-         for (ListenableFuture<String> put : puts)
-            // this will throw an exception if there was a problem
-            put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException("Error putting into containerName" + containerName, e);
-      }
+      putBlobsStrategy.execute(containerName, Iterables.transform(map.entrySet(),
+               new Function<Map.Entry<? extends String, ? extends Object>, Blob>() {
+                  @Override
+                  public Blob apply(Map.Entry<? extends String, ? extends Object> from) {
+                     Blob blob = blobstore.newBlob(prefixer.apply(from.getKey()));
+                     blob.setPayload(Payloads.newPayload(from.getValue()));
+                     blob.generateMD5();
+                     return blob;
+                  }
+               }));
    }
 
    /**
@@ -282,19 +264,12 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     */
    @VisibleForTesting
    InputStream putInternal(String name, Payload payload) {
-      Blob object = connection.newBlob(prefixer.apply(name));
-      try {
-         InputStream returnVal = containsKey(name) ? get(name) : null;
-         object.setPayload(payload);
-         object.generateMD5();
-         connection.putBlob(containerName, object).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
-         return returnVal;
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format("Error adding blob %s:%s", containerName,
-                  object), e);
-      }
+      InputStream returnVal = containsKey(name) ? get(name) : null;
+      Blob blob = blobstore.newBlob(prefixer.apply(name));
+      blob.setPayload(payload);
+      blob.generateMD5();
+      blobstore.putBlob(containerName, blob);
+      return returnVal;
    }
 
 }

@@ -40,7 +40,7 @@ import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
-import org.jclouds.aws.s3.functions.ReturnTrueOn404FalseIfNotEmpty;
+import org.jclouds.aws.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
@@ -55,16 +55,17 @@ import org.jclouds.aws.s3.xml.LocationConstraintHandler;
 import org.jclouds.aws.s3.xml.PayerHandler;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
+import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -186,7 +187,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseOn404.class);
+      assertExceptionParserClassEquals(method, ReturnFalseOnContainerNotFound.class);
 
       checkFilters(httpMethod);
    }
@@ -223,7 +224,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnTrueOn404FalseIfNotEmpty.class);
+      assertExceptionParserClassEquals(method, ReturnTrueOn404OrNotFoundFalseIfNotEmpty.class);
 
       checkFilters(httpMethod);
    }
@@ -292,6 +293,23 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccessControlListHandler.class);
       assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testObjectExists() throws SecurityException, NoSuchMethodException, IOException {
+
+      Method method = S3AsyncClient.class.getMethod("objectExists", String.class, String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
+               "object");
+
+      assertRequestLineEquals(httpMethod, "HEAD http://bucket.stub:8080/object HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnKeyNotFound.class);
 
       checkFilters(httpMethod);
    }

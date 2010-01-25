@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -31,9 +32,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.nio.entity.ConsumingNHttpEntity;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.apache.http.protocol.HttpContext;
+import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandRendezvous;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
@@ -43,6 +44,8 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
+
+import com.google.common.io.Closeables;
 
 /**
  * // TODO: Adrian: Document this!
@@ -63,7 +66,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    @Resource
    protected Logger logger = Logger.NULL;
    @Resource
-   @Named(HttpConstants.LOGGER_HTTP_HEADERS)
+   @Named(Constants.LOGGER_HTTP_HEADERS)
    protected Logger headerLog = Logger.NULL;
 
    @Inject
@@ -129,15 +132,24 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
                   resubmitQueue.add(rendezvous);
                } else {
                   errorHandler.handleError(command, response);
+                  Closeables.closeQuietly(response.getContent());
                   assert command.getException() != null : "errorHandler should have set an exception!";
                   rendezvous.setException(command.getException());
                }
             } else {
+               // Close early, if there is no content.
+               String header = response.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
+               if (response.getStatusCode() == 204 || (header != null && header.equals("0"))) {
+                  Closeables.closeQuietly(response.getContent());
+               }
+               // TODO, the connection should be released when the input stream is closed
                rendezvous.setResponse(response);
             }
          } catch (InterruptedException e) {
             logger.error(e, "interrupted processing response task");
          } finally {
+            // This here is probably invalid, as the connection is really tied to the server
+            // response.
             releaseConnectionToPool(handle);
          }
       } else {

@@ -21,14 +21,14 @@ package org.jclouds.blobstore.integration;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in Stub Connections
  * 
  * @author Adrian Cole
  */
-public class StubPropertiesBuilder extends HttpPropertiesBuilder {
+public class StubPropertiesBuilder extends PropertiesBuilder {
 
    public StubPropertiesBuilder(Properties properties) {
       super(properties);
@@ -39,12 +39,12 @@ public class StubPropertiesBuilder extends HttpPropertiesBuilder {
    }
 
    @Override
-   public HttpPropertiesBuilder withCredentials(String account, String key) {
+   public PropertiesBuilder withCredentials(String account, String key) {
       return this;
    }
 
    @Override
-   public HttpPropertiesBuilder withEndpoint(URI endpoint) {
+   public PropertiesBuilder withEndpoint(URI endpoint) {
       return this;
    }
 

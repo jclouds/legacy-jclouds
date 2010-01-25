@@ -24,10 +24,11 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Properties;
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -91,8 +92,8 @@ public class BackoffLimitedRetryHandlerTest {
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
-               execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(),
-               new HttpWire());
+               execService, execService, new DelegatingRetryHandler(),
+               new DelegatingErrorHandler(), new HttpWire(), 1, 1);
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
    }
 
@@ -138,7 +139,18 @@ public class BackoffLimitedRetryHandlerTest {
    }
 
    private final RestAnnotationProcessor<IntegrationTestAsyncClient> processor = BaseJettyTest
-            .newBuilder(8100, new Properties(), new AbstractModule() {
+            .newBuilder(8100, new PropertiesBuilder() {
+
+               @Override
+               public PropertiesBuilder withCredentials(String account, String key) {
+                  return null;
+               }
+
+               @Override
+               public PropertiesBuilder withEndpoint(URI endpoint) {
+                  return null;
+               }
+            }.build(), new AbstractModule() {
 
                @Override
                protected void configure() {

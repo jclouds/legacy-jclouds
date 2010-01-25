@@ -33,11 +33,11 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -67,7 +67,7 @@ public class SignRequest implements HttpRequestFilter {
    Logger logger = Logger.NULL;
 
    @Resource
-   @Named(HttpConstants.LOGGER_SIGNATURE)
+   @Named(Constants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
 
    @Inject
@@ -83,10 +83,15 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      String toSign = replaceUIDHeader(request).replaceDateHeader(request).createStringToSign(
-               request);
+      String toSign = replaceUIDHeader(request).removeOldSignature(request).replaceDateHeader(
+               request).createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
       HttpUtils.logRequest(signatureLog, request, "<<");
+   }
+
+   private SignRequest removeOldSignature(HttpRequest request) {
+      request.getHeaders().removeAll(AtmosStorageHeaders.SIGNATURE);
+      return this;
    }
 
    public String createStringToSign(HttpRequest request) {

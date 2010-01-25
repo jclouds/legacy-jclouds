@@ -31,11 +31,13 @@ import java.util.concurrent.ExecutorService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
-import javax.inject.Inject;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;
@@ -55,11 +57,17 @@ public class LifeCycleModule extends AbstractModule {
 
       Closeable executorCloser = new Closeable() {
          @Inject
-         ExecutorService executor;
+         @Named(Constants.PROPERTY_USER_THREADS)
+         ExecutorService userExecutor;
+         @Inject
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS)
+         ExecutorService ioExecutor;
 
          public void close() throws IOException {
-            assert executor != null;
-            executor.shutdownNow();
+            assert userExecutor != null;
+            userExecutor.shutdownNow();
+            assert ioExecutor != null;
+            ioExecutor.shutdownNow();
          }
       };
 

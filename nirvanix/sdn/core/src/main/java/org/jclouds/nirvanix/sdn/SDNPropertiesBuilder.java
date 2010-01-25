@@ -24,7 +24,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 
 import com.google.common.base.Splitter;
@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Adrian Cole
  */
-public class SDNPropertiesBuilder extends HttpPropertiesBuilder {
+public class SDNPropertiesBuilder extends PropertiesBuilder {
 
    @Override
    protected Properties defaultProperties() {

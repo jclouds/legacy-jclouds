@@ -25,6 +25,7 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
@@ -51,26 +52,31 @@ public class SQSRestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new SQSRestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(SQSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(SQSConstants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bindConstant()
-                     .annotatedWith(Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1)).to(
+               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(SQSConstants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(SQSConstants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1)).to(
                               "http://default");
-            bindConstant()
-                     .annotatedWith(Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1)).to(
+                     bindConstant().annotatedWith(
+                              Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1)).to(
                               "http://uswest");
-            bindConstant()
-                     .annotatedWith(Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1)).to(
+                     bindConstant().annotatedWith(
+                              Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1)).to(
                               "http://euwest");
-            bindConstant().annotatedWith(Jsr330.named(SQSConstants.PROPERTY_AWS_EXPIREINTERVAL))
-                     .to(30);
-         }
-      });
+                     bindConstant().annotatedWith(
+                              Jsr330.named(SQSConstants.PROPERTY_AWS_EXPIREINTERVAL)).to(30);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
+                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+                              .to("1");
+                  }
+               });
    }
 
    @Test

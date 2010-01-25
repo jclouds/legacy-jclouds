@@ -27,9 +27,11 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -70,9 +72,10 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService,
-            ExecutorService executorService, DelegatingRetryHandler retryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire) {
-      super(executorService, retryHandler, errorHandler, wire);
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
+      super(ioExecutor, userExecutor, retryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
    }
 

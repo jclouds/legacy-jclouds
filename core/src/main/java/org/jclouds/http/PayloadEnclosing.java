@@ -45,13 +45,14 @@ public interface PayloadEnclosing {
 
    void setPayload(String data);
 
+   void setNoPayload();
+
    Payload getPayload();
 
    /**
     * @return InputStream, if downloading, or whatever was set during {@link #setPayload(Object)}
     */
    InputStream getContent();
-
 
    void setContentLength(long contentLength);
 
@@ -66,7 +67,7 @@ public interface PayloadEnclosing {
     * @see GetObjectOptions
     */
    Long getContentLength();
-   
+
    /**
     * generate an MD5 Hash for the current data.
     * <p/>

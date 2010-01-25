@@ -16,8 +16,9 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.atmosonline.saas.blobstore;
+package org.jclouds.atmosonline.saas;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.testng.Assert.assertEquals;
 
@@ -25,8 +26,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jclouds.atmosonline.saas.AtmosStorageContextBuilder;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
+import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
+import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.config.AtmosBlobStoreContextModule;
 import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
@@ -35,9 +39,11 @@ import org.jclouds.atmosonline.saas.domain.internal.AtmosObjectImpl;
 import org.jclouds.atmosonline.saas.internal.StubAtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.internal.BlobImpl;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
@@ -49,10 +55,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "emcsaas.AtmosStorageContextBuilderTest")
-public class AtmosBlobStoreContextBuilderTest {
+public class AtmosStorageContextBuilderTest {
 
    public void testNewBuilder() {
-      AtmosBlobStoreContextBuilder builder = newBuilder();
+      BlobStoreContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> builder = newBuilder();
       assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX), null);
       assertEquals(builder.getProperties().getProperty(AtmosStorageConstants.PROPERTY_EMCSAAS_UID),
                "id");
@@ -60,9 +66,10 @@ public class AtmosBlobStoreContextBuilderTest {
                "secret");
    }
 
-   private AtmosBlobStoreContextBuilder newBuilder() {
-      return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder("id", "secret")
-               .build()).withModules(new AtmosStorageStubClientModule());
+   private BlobStoreContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> newBuilder() {
+      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder("id", "secret")
+               .build()).withModules(new AtmosStorageStubClientModule(), new ExecutorServiceModule(
+               sameThreadExecutor(), sameThreadExecutor()));
    }
 
    public void testBuildContext() {
@@ -71,8 +78,8 @@ public class AtmosBlobStoreContextBuilderTest {
       assertEquals(context.getProviderSpecificContext().getAsyncApi().getClass(),
                StubAtmosStorageAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), AtmosAsyncBlobStore.class);
-      assertEquals(((AtmosStorageAsyncClient)context.getProviderSpecificContext().getAsyncApi()).newObject().getClass(),
-               AtmosObjectImpl.class);
+      assertEquals(((AtmosStorageAsyncClient) context.getProviderSpecificContext().getAsyncApi())
+               .newObject().getClass(), AtmosObjectImpl.class);
       assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
       assertEquals(context.getProviderSpecificContext().getAccount(), "id");
       assertEquals(context.getProviderSpecificContext().getEndPoint(), URI
@@ -88,7 +95,7 @@ public class AtmosBlobStoreContextBuilderTest {
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      AtmosBlobStoreContextBuilder builder = newBuilder();
+      AtmosStorageContextBuilder builder = (AtmosStorageContextBuilder) newBuilder();
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), AtmosBlobStoreContextModule.class);
@@ -96,7 +103,7 @@ public class AtmosBlobStoreContextBuilderTest {
 
    protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      AtmosBlobStoreContextBuilder builder = newBuilder();
+      AtmosStorageContextBuilder builder = (AtmosStorageContextBuilder) newBuilder();
       builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), AtmosStorageRestClientModule.class);

@@ -27,8 +27,8 @@ import java.util.Properties;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.domain.Credentials;
-import org.jclouds.http.HttpPropertiesBuilder;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -163,10 +163,10 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
       String endpointKey = String.format("%s.endpoint", hint);
       String endpoint = properties.getProperty(endpointKey);
       try {
-         Class<HttpPropertiesBuilder> propertiesBuilderClass = (Class<HttpPropertiesBuilder>) Class
+         Class<PropertiesBuilder> propertiesBuilderClass = (Class<PropertiesBuilder>) Class
                   .forName(propertiesBuilderClassName);
          Class<B> contextBuilderClass = (Class<B>) Class.forName(contextBuilderClassName);
-         HttpPropertiesBuilder builder = propertiesBuilderClass.getConstructor(Properties.class)
+         PropertiesBuilder builder = propertiesBuilderClass.getConstructor(Properties.class)
                   .newInstance(overrides);
          if (key != null)
             builder.withCredentials(account, key);

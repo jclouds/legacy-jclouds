@@ -26,7 +26,7 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
+import org.jclouds.rackspace.cloudfiles.CloudFilesContextFactory;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +48,7 @@ public class CloudFilesTestInitializer extends BaseTestInitializer {
 
    @Override
    protected BlobStoreContext createStubContext() {
-      return CloudFilesBlobStoreContextFactory.createContext("user", "pass",
+      return CloudFilesContextFactory.createContext("user", "pass",
                new StubRackspaceAuthenticationModule(), new CloudFilesStubClientModule());
    }
 

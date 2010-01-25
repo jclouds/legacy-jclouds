@@ -77,8 +77,8 @@ public class SDNAuthenticationLiveTest {
          protected SDNAuthentication provideCloud(RestClientFactory factory) {
             return factory.create(SDNAuthentication.class);
          }
-      }, new RestModule(), new Log4JLoggingModule(),
-               new ExecutorServiceModule(sameThreadExecutor()),
+      }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
+               sameThreadExecutor(), sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
    }
 }

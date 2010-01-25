@@ -71,11 +71,13 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    protected abstract void setContentMD5(byte[] md5);
 
    /**
+    * Note that if there was no content returned from the server, this will be null.
+    * 
     * @return InputStream, if downloading, or whatever was set during {@link #setPayload(Object)}
+    * 
     */
    public InputStream getContent() {
-      checkState(payload != null, "payload");
-      return payload.getContent();
+      return payload != null ? payload.getContent() : null;
    }
 
    @Override
@@ -86,6 +88,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setPayload(Payload data) {
       this.payload = checkNotNull(data, "data");
       setLength();
@@ -94,6 +97,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setPayload(InputStream data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
@@ -101,6 +105,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setPayload(byte[] data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
@@ -108,6 +113,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setPayload(String data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
@@ -115,8 +121,17 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setPayload(File data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setNoPayload() {
+      setPayload(Payloads.NULL_PAYLOAD);
    }
 
    private void setLength() {

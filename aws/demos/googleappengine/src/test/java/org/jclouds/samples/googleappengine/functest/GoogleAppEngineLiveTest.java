@@ -23,7 +23,6 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
@@ -32,12 +31,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.jclouds.aws.s3.S3ContextBuilder;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
-import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
+import org.jclouds.azure.storage.blob.AzureBlobContextBuilder;
+import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
+import org.jclouds.samples.googleappengine.config.GuiceServletConfig;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
@@ -62,9 +62,9 @@ public class GoogleAppEngineLiveTest {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
 
-      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTS, String.format("%s,%s,%s",
-               S3BlobStoreContextBuilder.class.getName(), CloudFilesBlobStoreContextBuilder.class
-                        .getName(), AzureBlobStoreContextBuilder.class.getName()));
+      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, String.format("%s,%s,%s",
+               S3ContextBuilder.class.getName(), CloudFilesContextBuilder.class.getName(),
+               AzureBlobContextBuilder.class.getName()));
 
       props = new S3PropertiesBuilder(props)
                .withCredentials(

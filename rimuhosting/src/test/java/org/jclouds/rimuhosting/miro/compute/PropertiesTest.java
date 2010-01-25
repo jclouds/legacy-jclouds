@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.rimuhosting.miro.RimuHostingContextBuilder;
 import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
-import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceContextBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -46,7 +46,7 @@ public class PropertiesTest {
 
    public void testRimu() {
       assertEquals(properties.getProperty("rimuhosting.contextbuilder"),
-               RimuHostingComputeServiceContextBuilder.class.getName());
+               RimuHostingContextBuilder.class.getName());
       assertEquals(properties.getProperty("rimuhosting.propertiesbuilder"),
                RimuHostingPropertiesBuilder.class.getName());
    }

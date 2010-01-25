@@ -25,22 +25,22 @@ package org.jclouds.rest.internal;
  */
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.FutureExceptionParser;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ValueFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
@@ -56,7 +56,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
     * maximum duration of an unwrapped http Request
     */
    @Inject(optional = true)
-   @Named(HttpConstants.PROPERTY_HTTP_REQUEST_TIMEOUT)
+   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
 
    @Resource
@@ -72,69 +72,65 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       this.commandFactory = factory;
    }
 
-   @SuppressWarnings("unchecked")
    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
       if (method.getName().equals("equals")) {
          return this.equals(o);
+      } else if (method.getName().equals("toString")) {
+         return this.toString();
       } else if (method.getName().equals("hashCode")) {
          return this.hashCode();
       } else if (method.getName().startsWith("new")) {
          return injector.getInstance(method.getReturnType());
       } else if (util.getDelegateOrNull(method) != null
                && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
-         method = util.getDelegateOrNull(method);
-         logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
-         Function<Exception, ?> exceptionParser = util
-                  .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
-         // in case there is an exception creating the request, we should at least pass in args
-         if (exceptionParser instanceof InvocationContext) {
-            ((InvocationContext) exceptionParser).setContext(null);
-         }
-         GeneratedHttpRequest<T> request;
-         try {
-            request = util.createRequest(method, args);
-            if (exceptionParser instanceof InvocationContext) {
-               ((InvocationContext) exceptionParser).setContext(request);
-            }
-         } catch (RuntimeException e) {
-            if (exceptionParser != null) {
-               Object toReturn = exceptionParser.apply(e);
-               if (method.getReturnType().isAssignableFrom(ListenableFuture.class)) {
-                  ValueFuture<Object> returnVal = ValueFuture.create();
-                  returnVal.set(toReturn);
-                  return returnVal;
-               } else {
-                  return toReturn;
-               }
-            }
-            throw e;
-         }
-         logger.debug("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request
-                  .getRequestLine());
-
-         Function<HttpResponse, ?> transformer = util.createResponseParser(method, request);
-         logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method
-                  .getName(), transformer.getClass().getSimpleName());
-
-         logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
-         ListenableFuture<?> result = commandFactory.create(request, transformer).execute();
-
-         if (exceptionParser != null) {
-            logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(),
-                     method.getName(), exceptionParser.getClass().getSimpleName());
-            result = new FutureExceptionParser(result, exceptionParser);
-         }
-
-         if (method.getReturnType().isAssignableFrom(ListenableFuture.class)) {
-            return result;
-         } else {
-            logger.debug("Blocking up to %dms for %s.%s to complete", requestTimeoutMilliseconds,
-                     declaring.getSimpleName(), method.getName());
-            return result.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-         }
+         return createFuture(method, args);
       } else {
          throw new RuntimeException("method is intended solely to set constants: " + method);
       }
+   }
+
+   @SuppressWarnings("unchecked")
+   private ListenableFuture<?> createFuture(Method method, Object[] args) throws ExecutionException {
+      method = util.getDelegateOrNull(method);
+      logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
+      Function<Exception, ?> exceptionParser = util
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
+      // in case there is an exception creating the request, we should at least pass in args
+      if (exceptionParser instanceof InvocationContext) {
+         ((InvocationContext) exceptionParser).setContext(null);
+      }
+      GeneratedHttpRequest<T> request;
+      try {
+         request = util.createRequest(method, args);
+         if (exceptionParser instanceof InvocationContext) {
+            ((InvocationContext) exceptionParser).setContext(request);
+         }
+      } catch (RuntimeException e) {
+         if (exceptionParser != null) {
+            try {
+               return Futures.immediateFuture(exceptionParser.apply(e));
+            } catch (Exception ex) {
+               return Futures.immediateFailedFuture(ex);
+            }
+         }
+         return Futures.immediateFailedFuture(e);
+      }
+      logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request
+               .getRequestLine());
+
+      Function<HttpResponse, ?> transformer = util.createResponseParser(method, request);
+      logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method
+               .getName(), transformer.getClass().getSimpleName());
+
+      logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
+      ListenableFuture<?> result = commandFactory.create(request, transformer).execute();
+
+      if (exceptionParser != null) {
+         logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method
+                  .getName(), exceptionParser.getClass().getSimpleName());
+         result = new FutureExceptionParser(result, exceptionParser);
+      }
+      return result;
    }
 
    public static interface Factory {

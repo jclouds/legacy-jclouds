@@ -30,7 +30,6 @@ import javax.servlet.ServletContextEvent;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.samples.googleappengine.GetAllContainersController;
 
@@ -50,6 +49,8 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
+   public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
+
    private Map<String, BlobStoreContext> contexts;
 
    @SuppressWarnings("unchecked")
@@ -57,8 +58,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       Properties props = loadJCloudsProperties(servletContextEvent);
       ImmutableList<String> list = ImmutableList.<String> of(checkNotNull(
-               props.getProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS),
-               BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTS).split(","));
+               props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS).split(
+               ","));
       contexts = Maps.newHashMap();
       for (String className : list) {
          try {

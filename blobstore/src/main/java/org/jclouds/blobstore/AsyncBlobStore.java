@@ -35,51 +35,86 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public interface AsyncBlobStore {
 
+   /**
+    * @see BlobStore#newBlob
+    */
    Blob newBlob(String name);
 
    /**
-    * Lists all root-level resources available to the account.
+    * @see BlobStore#list
     */
    ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list();
 
    /**
-    * Lists all resources available at the specified path. Note that path may be a container, or a
-    * path within it delimited by {@code /} characters.
-    * 
-    * @param parent
-    *           - base path to list; non-recursive
+    * @see BlobStore#containerExists
     */
-   ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container, ListContainerOptions... options);
-
    ListenableFuture<Boolean> containerExists(String container);
 
-   ListenableFuture<Boolean> directoryExists(String container, String directory);
-
+   /**
+    * @see BlobStore#createContainerInLocation(String, String)
+    */
    ListenableFuture<Boolean> createContainerInLocation(String location, String container);
 
-   ListenableFuture<Void> createDirectory(String container, String directory);
+   /**
+    * @see BlobStore#list(String)
+    */
+   ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container);
 
    /**
-    * This will delete a container recursively.
-    * 
-    * @param container
+    * @see BlobStore#list(String, ListContainerOptions)
+    */
+   ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
+            String container, ListContainerOptions options);
+
+   /**
+    * @see BlobStore#clearContainer
+    */
+   ListenableFuture<Void> clearContainer(String container);
+
+   /**
+    * @see BlobStore#deleteContainer
     */
    ListenableFuture<Void> deleteContainer(String container);
 
    /**
-    * This will delete the contents of a container without removing it
-    * 
-    * @param container
+    * @see BlobStore#directoryExists
     */
-   ListenableFuture<Void> clearContainer(String container);
+   ListenableFuture<Boolean> directoryExists(String container, String directory);
 
+   /**
+    * @see BlobStore#createDirectory
+    */
+   ListenableFuture<Void> createDirectory(String container, String directory);
+
+   /**
+    * @see BlobStore#blobExists
+    */
+   ListenableFuture<Boolean> blobExists(String container, String name);
+
+   /**
+    * @see BlobStore#putBlob
+    */
    ListenableFuture<String> putBlob(String container, Blob blob);
 
-   ListenableFuture<? extends Blob> getBlob(String container, String key, GetOptions... options);
-
+   /**
+    * @see BlobStore#blobMetadata
+    */
    ListenableFuture<BlobMetadata> blobMetadata(String container, String key);
 
+   /**
+    * @see BlobStore#newBlob(String, String)
+    */
+   ListenableFuture<? extends Blob> getBlob(String container, String key);
+
+   /**
+    * @see BlobStore#getBlob(String, String, GetOptions)
+    */
+   ListenableFuture<? extends Blob> getBlob(String container, String key, GetOptions options);
+
+   /**
+    * @see BlobStore#removeBlob
+    */
    ListenableFuture<Void> removeBlob(String container, String key);
 
 }

@@ -78,21 +78,21 @@ public class EncryptionServiceTest extends PerformanceTest {
       return base64KeyMessageDigest;
    }
 
-   @Test(dataProvider = "hmacsha1")
+   @Test(dataProvider = "hmacsha1", enabled = false)
    public void testHmacSha1Base64(byte[] key, String message, String base64Digest)
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
       String b64 = encryptionService.hmacSha1Base64(message, key);
       assertEquals(b64, base64Digest);
    }
 
-   @Test(dataProvider = "hmacsha1")
+   @Test(dataProvider = "hmacsha1", enabled = false)
    void testDigestSerialResponseTime(byte[] key, String message, String base64Digest)
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
       for (int i = 0; i < 10000; i++)
          testHmacSha1Base64(key, message, base64Digest);
    }
 
-   @Test(dataProvider = "hmacsha1")
+   @Test(dataProvider = "hmacsha1", enabled = false)
    void testDigestParallelResponseTime(final byte[] key, final String message,
             final String base64Digest) throws NoSuchProviderException, NoSuchAlgorithmException,
             InvalidKeyException, InterruptedException, ExecutionException {
@@ -121,7 +121,7 @@ public class EncryptionServiceTest extends PerformanceTest {
             { "emma", "00a809937eddc44521da9521269e75c6" } };
 
 
-   @Test(dataProvider = "eTag")
+   @Test(dataProvider = "eTag", enabled = false)
    public void testMD5Digest(String message, String base64Digest) throws NoSuchProviderException,
             NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
       String b64 = encryptionService.md5Hex(message.getBytes());

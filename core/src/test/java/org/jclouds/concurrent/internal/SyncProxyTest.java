@@ -71,6 +71,9 @@ public class SyncProxyTest {
    static ExecutorService executorService = Executors.newCachedThreadPool();
 
    public static class Async {
+      public String toString() {
+         return "async";
+      }
 
       public ListenableFuture<String> getString() {
          return makeListenable(executorService.submit(new Callable<String>() {
@@ -178,8 +181,7 @@ public class SyncProxyTest {
 
    @Test
    public void testToString() {
-      assertEquals(sync.toString(),
-               "Sync Proxy for: org.jclouds.concurrent.internal.SyncProxyTest$Sync");
+      assertEquals(sync.toString(), "Sync Proxy for: async");
    }
 
    @Test(expectedExceptions = RuntimeException.class)

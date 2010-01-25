@@ -27,7 +27,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.MutableContainerPropertiesWithMetadata;
 import org.jclouds.azure.storage.blob.domain.internal.MutableContainerPropertiesWithMetadataImpl;
-import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
@@ -38,8 +38,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 
 /**
- * This parses @{link {@link org.jclouds.azure.storage.blob.domain.ListableContainerProperties} from HTTP
- * headers.
+ * This parses @{link {@link org.jclouds.azure.storage.blob.domain.ListableContainerProperties} from
+ * HTTP headers.
  * 
  * 
  * @author Adrian Cole
@@ -53,7 +53,7 @@ public class ParseContainerPropertiesFromHeaders implements
 
    @Inject
    public ParseContainerPropertiesFromHeaders(DateService dateParser,
-            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX) String metadataPrefix) {
+            @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
    }

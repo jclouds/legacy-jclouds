@@ -21,7 +21,7 @@ package org.jclouds.blobstore.config;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
@@ -32,6 +32,7 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -55,7 +56,7 @@ public class BlobStoreMapModule extends AbstractModule {
 
    private static class BlobMapFactory implements BlobMap.Factory {
       @Inject
-      AsyncBlobStore connection;
+      BlobStore connection;
       @Inject
       GetBlobsInListStrategy getAllBlobs;
       @Inject
@@ -66,17 +67,20 @@ public class BlobStoreMapModule extends AbstractModule {
       ClearListStrategy clearContainerStrategy;
       @Inject
       CountListStrategy containerCountStrategy;
+      @Inject
+      PutBlobsStrategy putBlobsStrategy;
 
       public BlobMap create(String containerName, ListContainerOptions listOptions) {
          return new BlobMapImpl(connection, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
-                  clearContainerStrategy, containerCountStrategy, containerName, listOptions);
+                  clearContainerStrategy, containerCountStrategy, putBlobsStrategy, containerName,
+                  listOptions);
       }
 
    }
 
    private static class InputStreamMapFactory implements InputStreamMap.Factory {
       @Inject
-      AsyncBlobStore connection;
+      BlobStore connection;
       @Inject
       Blob.Factory blobFactory;
       @Inject
@@ -89,11 +93,13 @@ public class BlobStoreMapModule extends AbstractModule {
       ClearListStrategy clearContainerStrategy;
       @Inject
       CountListStrategy containerCountStrategy;
+      @Inject
+      PutBlobsStrategy putBlobsStrategy;
 
       public InputStreamMap create(String containerName, ListContainerOptions listOptions) {
          return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, getAllBlobMetadata,
                   containsValueStrategy, clearContainerStrategy, containerCountStrategy,
-                  containerName, listOptions);
+                  putBlobsStrategy, containerName, listOptions);
       }
 
    }

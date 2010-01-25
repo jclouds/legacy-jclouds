@@ -49,7 +49,7 @@ import org.jclouds.aws.s3.functions.ObjectKey;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
-import org.jclouds.aws.s3.functions.ReturnTrueOn404FalseIfNotEmpty;
+import org.jclouds.aws.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
@@ -64,11 +64,12 @@ import org.jclouds.aws.s3.xml.PayerHandler;
 import org.jclouds.blobstore.attr.BlobScope;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
+import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -131,6 +132,15 @@ public interface S3AsyncClient {
             @PathParam("key") String key);
 
    /**
+    * @see S3Client#objectExists
+    */
+   @HEAD
+   @Path("{key}")
+   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
+   ListenableFuture<Boolean> objectExists(@HostPrefixParam String bucketName,
+            @PathParam("key") String key);
+
+   /**
     * @see S3Client#deleteObject
     */
    @DELETE
@@ -166,7 +176,7 @@ public interface S3AsyncClient {
     */
    @DELETE
    @Path("/")
-   @ExceptionParser(ReturnTrueOn404FalseIfNotEmpty.class)
+   @ExceptionParser(ReturnTrueOn404OrNotFoundFalseIfNotEmpty.class)
    ListenableFuture<Boolean> deleteBucketIfEmpty(@HostPrefixParam String bucketName);
 
    /**
@@ -175,7 +185,7 @@ public interface S3AsyncClient {
    @HEAD
    @Path("/")
    @QueryParams(keys = "max-keys", values = "0")
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> bucketExists(@HostPrefixParam String bucketName);
 
    /**

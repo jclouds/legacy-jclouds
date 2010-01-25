@@ -21,6 +21,7 @@ package org.jclouds.http;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.PropertiesBuilder;
 import org.testng.annotations.Test;
 
 /**
@@ -38,23 +39,23 @@ public class HttpPropertiesBuilderTest {
       int poolMaxClients = 3382;
       int poolMaxSessionFailures = 857;
 
-      HttpPropertiesBuilder builder = new HttpPropertiesBuilder(new Properties()) {
+      PropertiesBuilder builder = new PropertiesBuilder(new Properties()) {
 
          @Override
-         public HttpPropertiesBuilder withCredentials(String account, String key) {
+         public PropertiesBuilder withCredentials(String account, String key) {
             return this;
          }
 
          @Override
-         public HttpPropertiesBuilder withEndpoint(URI endpoint) {
+         public PropertiesBuilder withEndpoint(URI endpoint) {
             return this;
          }
       };
       builder.withHttpMaxRetries(httpMaxRetries);
 
-      builder.withPoolIoWorkerThreads(poolIoWorkerThreads);
-      builder.withPoolMaxClientReuse(poolMaxClientReuse);
-      builder.withPoolMaxClients(poolMaxClients);
-      builder.withPoolMaxSessionFailures(poolMaxSessionFailures);
+      builder.limitIoWorkerThreadsTo(poolIoWorkerThreads);
+      builder.withMaxClientReuse(poolMaxClientReuse);
+      builder.limitConnectionsPerHostTo(poolMaxClients);
+      builder.withMaxSessionFailures(poolMaxSessionFailures);
    }
 }

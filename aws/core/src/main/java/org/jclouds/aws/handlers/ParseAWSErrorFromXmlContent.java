@@ -18,20 +18,25 @@
  */
 package org.jclouds.aws.handlers;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -52,28 +57,38 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      String content;
+      Exception exception = null;
       try {
-         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
-                  : null;
-         if (content != null) {
-            try {
-               if (content.indexOf('<') >= 0) {
-                  AWSError error = utils.parseAWSErrorFromContent(command, response, content);
-                  command.setException(new AWSResponseException(command, response, error));
-               } else {
-                  command.setException(new HttpResponseException(command, response, content));
+         switch (response.getStatusCode()) {
+            case 401:
+               exception = new AuthorizationException(command.getRequest().getRequestLine());
+               break;
+            case 404:
+               String container = command.getRequest().getEndpoint().getHost();
+               String key = command.getRequest().getEndpoint().getPath();
+               if (key == null || key.equals("/"))
+                  exception = new ContainerNotFoundException(container);
+               else
+                  exception = new KeyNotFoundException(container, key);
+               break;
+            default:
+               if (response.getContent() != null) {
+                  try {
+                     String content = Utils.toStringAndClose(response.getContent());
+                     if (content.indexOf('<') >= 0) {
+                        AWSError error = utils.parseAWSErrorFromContent(command, response, content);
+                        exception = new AWSResponseException(command, response, error);
+                     } else {
+                        exception = new HttpResponseException(command, response, content);
+                     }
+                  } catch (IOException e) {
+                     logger.warn(e, "exception reading error from response", response);
+                  }
                }
-            } catch (Exception he) {
-               command.setException(new HttpResponseException(command, response, content));
-               Throwables.propagateIfPossible(he);
-            }
-         } else if (response.getStatusCode() == 404) {
-            command.setException(new HttpResponseException(command, response));
          }
-      } catch (Exception e) {
-         command.setException(new HttpResponseException(command, response));
-         Throwables.propagateIfPossible(e);
+      } finally {
+         Closeables.closeQuietly(response.getContent());
+         command.setException(exception);
       }
    }
 }
