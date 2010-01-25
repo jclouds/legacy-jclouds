@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @see RimuHostingAsyncClient
  * @see <a href="TODO: insert URL of client documentation" />
  */
-@Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
+@Timeout(duration = 40, timeUnit = TimeUnit.MINUTES)
 public interface RimuHostingClient {
 
    SortedSet<Image> getImageList();

@@ -93,12 +93,12 @@ public class RimuHostingComputeService implements ComputeService {
    public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
       NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage()
                .getId(), "imageId"), checkNotNull(template.getSize().getId(), "sizeId"));
-      return new CreateNodeResponseImpl(null,// dunno why there is no information here....
+      return new CreateNodeResponseImpl(serverResponse.getServer().getId().toString(),
                name, location, null, ImmutableMap.<String, String> of(), NodeState.UNKNOWN,// TODO
                                                                                            // need a
                                                                                            // real
                                                                                            // state!
-               ImmutableList.<InetAddress> of(),// no real useful data here..
+               getPublicAddresses(serverResponse.getServer()),// no real useful data here..
                ImmutableList.<InetAddress> of(), new Credentials("root", serverResponse
                         .getNewInstanceRequest().getCreateOptions().getPassword()), ImmutableMap
                         .<String, String> of());

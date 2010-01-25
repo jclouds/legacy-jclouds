@@ -72,7 +72,7 @@ public abstract class BaseComputeServiceLiveTest {
    protected String service;
    protected SshClient.Factory sshFactory;
    protected RunNodeOptions options = RunNodeOptions.Builder.openPorts(22);
-   private String nodeName;
+   protected String nodeName;
 
    private RetryablePredicate<InetSocketAddress> socketTester;
    private CreateNodeResponse node;
@@ -85,7 +85,7 @@ public abstract class BaseComputeServiceLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      nodeName = checkNotNull(service, "service");
+      if (nodeName == null) nodeName = checkNotNull(service, "service");
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new ComputeServiceContextFactory().createContext(service, user, password,
@@ -135,7 +135,7 @@ public abstract class BaseComputeServiceLiveTest {
       node = client.runNode(nodeName, template, options);
       assertNotNull(node.getId());
       assertNotNull(node.getName());
-      assertEquals(node.getPublicAddresses().size(), 1);
+      assert node.getPublicAddresses().size() >= 1: "no public ips in" + node;
       assertNotNull(node.getCredentials());
       if (node.getCredentials().account != null) {
          assertNotNull(node.getCredentials().account);

@@ -36,10 +36,11 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @Override
    public void setServiceDefaults() {
       service = "rimuhosting";
+      nodeName = "rimuhosting.jclouds";
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().build();
+      return templateBuilder.osFamily(UBUNTU).sizeId("MIRO1B").build();
    }
 
    @Override

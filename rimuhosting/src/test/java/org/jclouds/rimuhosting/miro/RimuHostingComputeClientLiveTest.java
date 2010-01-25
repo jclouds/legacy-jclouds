@@ -58,7 +58,7 @@ public class RimuHostingComputeClientLiveTest {
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       String imageId = "lenny";
-      String serverName = "test.jclouds.org";
+      String serverName = "test.compute.jclouds.org";
       String planId = "MIRO1B";
 
       id = client.start(serverName, planId, imageId);
