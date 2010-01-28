@@ -21,39 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.compute.domain;
+package org.jclouds.domain;
 
-import java.util.Set;
-
-import org.jclouds.compute.domain.internal.SizeImpl;
-
-import com.google.inject.ImplementedBy;
 
 /**
- * Size of a node.
+ * Running Operating system
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(SizeImpl.class)
-public interface Size extends ComputeMetadata {
+public interface Location {
 
    /**
-    * Amount of virtual or physical cores provided
+    * Scope of the location, ex. region, datacenter
+    * 
     */
-   int getCores();
+   LocationScope getScope();
 
    /**
-    * Amount of RAM provided in MB (256M, 1740)
+    * Unique ID provided by the provider (us-standard, miami, etc)
+    * 
     */
-   int getRam();
+   String getId();
 
    /**
-    * Amount of boot disk provided in GB (200)
+    * Description of the location
     */
-   int getDisk();
+   String getDescription();
 
    /**
-    * Determines platforms this can support
+    * The Id of the parent, or null, if top-level
     */
-   Set<Architecture> getSupportedArchitectures();
+   String getParent();
+
+   /**
+    * Whether nodes can be assigned to this location. It is possible that a location is a container
+    * type that cannot be assigned to, or that a location is full.
+    */
+   boolean isAssignable();
+
 }

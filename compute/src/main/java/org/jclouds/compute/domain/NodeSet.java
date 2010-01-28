@@ -18,14 +18,11 @@
  */
 package org.jclouds.compute.domain;
 
-import org.jclouds.domain.Credentials;
+import java.util.Set;
 
 /**
  * @author Adrian Cole
- * @author Ivan Meredith
  */
-public interface CreateNodeResponse extends NodeMetadata {
-
-   Credentials getCredentials();
+public interface NodeSet extends Set<NodeMetadata> {
 
 }

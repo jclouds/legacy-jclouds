@@ -18,16 +18,16 @@
  */
 package org.jclouds.compute;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.options.RunNodeOptions;
+import org.jclouds.domain.Location;
 
 /**
  * Provides portable access to launching compute instances.
@@ -42,36 +42,62 @@ public interface ComputeService {
    TemplateBuilder templateBuilder();
 
    /**
-    * List all sizes available to the current user
+    * all sizes available to the current user by id
     */
-   Set<? extends Size> listSizes();
+   Map<String, ? extends Size> getSizes();
 
    /**
-    * List all images available to the current user
+    * all images available to the current user by id
     */
-   Set<? extends Image> listImages();
+   Map<String, ? extends Image> getImages();
 
    /**
-    * List all nodes available to the current user
+    * all nodes available to the current user by id. If possible, the returned set will include
+    * {@link NodeMetadata} objects.
     */
-   Set<? extends ComputeMetadata> listNodes();
+   Map<String, ? extends ComputeMetadata> getNodes();
 
    /**
-    * Create a new node given the name, and template
+    * all nodes available to the current user by id
+    */
+   Map<String, ? extends Location> getLocations();
+
+   /**
+    * create and run nodes in the specified tagset. If resources needed are currently available for
+    * this tag, they will be reused. Otherwise, they will be created. Inbound port 22 will always be
+    * opened up.
+    * 
+    * @param tag
+    *           - common identifier to group nodes by, cannot contain hyphens
+    * @param maxNodes
+    *           - how many to fire up.
+    * @param template
+    *           - how to configure the nodes
     * 
     */
-   CreateNodeResponse runNode(String name, Template template);
-
-   CreateNodeResponse runNode(String name, Template template, RunNodeOptions options);
+   NodeSet runNodes(String tag, int maxNodes, Template template);
 
    /**
-    * destroy the node.
+    * destroy the node. If it is the only node in a tag set, the dependent resources will also be
+    * destroyed.
     */
    void destroyNode(ComputeMetadata node);
+
+   /**
+    * destroy the nodes identified by this tag.
+    */
+   void destroyNodes(String tag);
 
    /**
     * Find a node by its id
     */
    NodeMetadata getNodeMetadata(ComputeMetadata node);
+
+   /**
+    * get all nodes matching the tag.
+    * 
+    * @param tag
+    */
+   NodeSet getNodes(String tag);
 
 }

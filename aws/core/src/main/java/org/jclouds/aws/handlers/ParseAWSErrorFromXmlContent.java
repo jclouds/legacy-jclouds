@@ -34,6 +34,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
 import com.google.common.io.Closeables;
@@ -78,6 +79,8 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                      if (content.indexOf('<') >= 0) {
                         AWSError error = utils.parseAWSErrorFromContent(command, response, content);
                         exception = new AWSResponseException(command, response, error);
+                        if (error.getCode().indexOf("NotFound") >= 0)
+                           exception = new ResourceNotFoundException(exception);
                      } else {
                         exception = new HttpResponseException(command, response, content);
                      }

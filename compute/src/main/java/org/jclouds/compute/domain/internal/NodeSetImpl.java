@@ -16,22 +16,25 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.reference;
+package org.jclouds.compute.domain.internal;
 
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.compute.ComputeService;
+import java.util.HashSet;
+
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeSet;
+
+import com.google.common.collect.Iterables;
 
 /**
- * Configuration properties and constants used in EC2 connections.
- * 
  * @author Adrian Cole
  */
-public interface EC2Constants extends AWSConstants {
-   public static final String PROPERTY_EC2_ENDPOINT = "jclouds.ec2.endpoint";
-   /**
-    * Listing the universe of amis is extremely expensive. set this to a comma separated value of
-    * the ami owners you wish to use in {@link ComputeService}
-    */
-   public static final String PROPERTY_EC2_AMI_OWNERS = "jclouds.ec2.ami-owners";
+public class NodeSetImpl extends HashSet<NodeMetadata> implements NodeSet {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3414239861247046054L;
+
+   public NodeSetImpl(Iterable<NodeMetadata> nodes) {
+      Iterables.addAll(this, nodes);
+   }
 
 }

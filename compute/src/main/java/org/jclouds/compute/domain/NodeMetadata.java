@@ -20,19 +20,44 @@ package org.jclouds.compute.domain;
 
 import java.net.InetAddress;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
+
+import org.jclouds.domain.Credentials;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
 public interface NodeMetadata extends ComputeMetadata {
+
+   /**
+    * Tag used for all resources that belong to the same logical group. run, destroy commands are
+    * scoped to tag.
+    * 
+    */
+   String getTag();
+
+   /**
+    * Current State of the node
+    */
    NodeState getState();
 
-   SortedSet<InetAddress> getPublicAddresses();
+   /**
+    * All public IP addresses, potentially including shared ips.
+    */
+   Set<InetAddress> getPublicAddresses();
 
-   SortedSet<InetAddress> getPrivateAddresses();
-   
+   /**
+    * All private IP addresses.
+    */
+   Set<InetAddress> getPrivateAddresses();
+
+   /**
+    * If possible, these are returned upon all detail requests. However, it is often the case that
+    * credentials are only available at "run" time.
+    */
+   Credentials getCredentials();
+
    /**
     * Other variables present that the provider supports
     */

@@ -25,10 +25,11 @@ import java.io.File;
  * @author Ivan Meredith
  */
 public class NodeElement {
-   private String name;
+   private String tag;
    private String size;
    private String os;
    private String image;
+   private int count = 1;
    private String openports = "22";
    private String passwordproperty;
    private String keyfile;
@@ -44,14 +45,6 @@ public class NodeElement {
 
    public void setLocation(String location) {
       this.location = location;
-   }
-
-   String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
    }
 
    String getUsernameproperty() {
@@ -151,6 +144,22 @@ public class NodeElement {
 
    public String getImage() {
       return image;
+   }
+
+   public void setCount(int count) {
+      this.count = count;
+   }
+
+   public int getCount() {
+      return count;
+   }
+
+   public void setTag(String tag) {
+      this.tag = tag;
+   }
+
+   public String getTag() {
+      return tag;
    }
 
 }

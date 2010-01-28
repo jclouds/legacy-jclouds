@@ -57,7 +57,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
       this.type = from.getType();
       this.id = from.getId();
       this.name = from.getName();
-      this.location = from.getLocation();
+      this.location = from.getLocationId();
       this.uri = from.getUri();
       this.userMetadata = from.getUserMetadata();
    }
@@ -156,7 +156,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
     * {@inheritDoc}
     */
    @Override
-   public void setLocation(String location) {
+   public void setLocationId(String location) {
       this.location = location;
    }
 
@@ -164,7 +164,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
     * {@inheritDoc}
     */
    @Override
-   public String getLocation() {
+   public String getLocationId() {
       return location;
    }
 

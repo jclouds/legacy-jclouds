@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.compute.config;
 
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
+import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.net.URI;
 import java.util.Map;
@@ -37,21 +38,36 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
-import org.jclouds.aws.ec2.compute.domain.EC2Image;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
+import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
+import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.compute.functions.CreateKeyPairIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.ResourceLocation;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 
@@ -70,6 +86,22 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
+   protected final Map<RegionTag, KeyPairCredentials> credentialsMap(CreateKeyPairIfNeeded in) {
+      // doesn't seem to clear when someone issues remove(key)
+      // return new MapMaker().makeComputingMap(in);
+      return Maps.newLinkedHashMap();
+   }
+
+   @Provides
+   @Singleton
+   protected final Map<PortsRegionTag, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
+      // doesn't seem to clear when someone issues remove(key)
+      // return new MapMaker().makeComputingMap(in);
+      return Maps.newLinkedHashMap();
+   }
+
+   @Provides
+   @Singleton
    ComputeServiceContext provideContext(ComputeService computeService,
             RestContext<EC2AsyncClient, EC2Client> context) {
       return new ComputeServiceContextImpl<EC2AsyncClient, EC2Client>(computeService, context);
@@ -77,16 +109,47 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   Set<? extends Size> provideSizes() {
-      return ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
-               EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE);
+   Function<ComputeMetadata, String> indexer() {
+      return new Function<ComputeMetadata, String>() {
+         @Override
+         public String apply(ComputeMetadata from) {
+            return from.getId();
+         }
+      };
    }
 
    @Provides
    @Singleton
-   @ResourceLocation
-   String getRegion(@EC2 Region region) {
-      return region.value();
+   Map<String, ? extends Size> provideSizes(Function<ComputeMetadata, String> indexer) {
+      return Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE,
+               EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_2XLARGE,
+               EC2Size.M2_4XLARGE), indexer);
+   }
+
+   @Provides
+   @Singleton
+   Map<String, ? extends Location> provideLocations(Map<AvailabilityZone, Region> map) {
+      Set<Location> locations = Sets.newHashSet();
+      for (AvailabilityZone zone : map.keySet()) {
+         locations.add(new LocationImpl(LocationScope.ZONE, zone.toString(), zone.toString(), map
+                  .get(zone).toString(), true));
+      }
+      for (Region region : map.values()) {
+         locations.add(new LocationImpl(LocationScope.REGION, region.toString(), region.toString(),
+                  null, true));
+      }
+      return Maps.uniqueIndex(locations, new Function<Location, String>() {
+         @Override
+         public String apply(Location from) {
+            return from.getId();
+         }
+      });
+   }
+
+   @Provides
+   @Singleton
+   Location getDefaultLocation(@EC2 Region region, Map<String, ? extends Location> map) {
+      return map.get(region.toString());
    }
 
    private static class LogHolder {
@@ -101,13 +164,24 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final EC2Client sync, Map<Region, URI> regionMap,
-            LogHolder holder) throws InterruptedException, ExecutionException, TimeoutException {
+   @Named(PROPERTY_EC2_AMI_OWNERS)
+   String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
+      return Iterables.toArray(Splitter.on('.').split(amiOwners), String.class);
+   }
+
+   @Provides
+   @Singleton
+   protected Map<String, ? extends Image> provideImages(final EC2Client sync,
+            Map<Region, URI> regionMap, LogHolder holder,
+            Function<ComputeMetadata, String> indexer,
+            @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners) throws InterruptedException,
+            ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
+
       for (final Region region : regionMap.keySet()) {
          for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
-                  .describeImagesInRegion(region, ownedBy("063491364108"))) {
+                  .describeImagesInRegion(region, ownedBy(amiOwners))) {
             OsFamily os = null;
             String osDescription = from.getImageLocation();
             String version = "";
@@ -116,16 +190,28 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
             if (matcher.find()) {
                try {
                   os = OsFamily.fromValue(matcher.group(1));
-                  matcher.group(2);//TODO no field for os version
+                  matcher.group(2);// TODO no field for os version
                   version = matcher.group(3);
                } catch (IllegalArgumentException e) {
                   holder.logger.debug("<< didn't match os(%s)", matcher.group(1));
                }
             }
-            images.add(new EC2Image(from, os, osDescription, version));
+            images
+                     .add(new ImageImpl(
+                              from.getId(),
+                              from.getName(),
+                              region.toString(),
+                              null,
+                              ImmutableMap.<String, String> of(),
+                              from.getDescription(),
+                              version,
+                              os,
+                              osDescription,
+                              from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
+                                       : Architecture.X86_64));
          }
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return images;
+      return Maps.uniqueIndex(images, indexer);
    }
 }

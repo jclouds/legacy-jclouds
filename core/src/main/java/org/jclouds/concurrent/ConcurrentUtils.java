@@ -101,9 +101,9 @@ public class ConcurrentUtils {
    }
 
    private static String message(String prefix, int size, int complete, int errors, long start) {
-      return String.format("%s, completed: %d/%d, errors: %d, rate: %f ops/sec%n", prefix,
-               complete, size, errors, ((double) complete)
-                        / ((System.currentTimeMillis() - start) / 1000.0));
+      return String
+               .format("%s, completed: %d/%d, errors: %d, rate: %fms/op%n", prefix, complete,
+                        size, errors, ((System.currentTimeMillis() - start) / ((double) size)));
    }
 
    protected static boolean timeOut(long start, Long maxTime) {

@@ -24,6 +24,7 @@
 package org.jclouds.compute.domain;
 
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.compute.options.TemplateOptions;
 
 import com.google.inject.ImplementedBy;
 
@@ -72,7 +73,7 @@ public interface TemplateBuilder {
    /**
     * Configure this template to start in a specific location
     */
-   TemplateBuilder location(String location);
+   TemplateBuilder locationId(String locationId);
 
    /**
     * Configure this template to require a specific architecture
@@ -121,4 +122,9 @@ public interface TemplateBuilder {
     * Generate an immutable template from the current builder.
     */
    Template build();
+
+   /**
+    * options such as inbound ports and run scripts.
+    */
+   TemplateBuilder options(TemplateOptions options);
 }

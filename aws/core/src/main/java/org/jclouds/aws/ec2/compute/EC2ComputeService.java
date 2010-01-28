@@ -21,11 +21,12 @@ package org.jclouds.aws.ec2.compute;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
+import static org.jclouds.compute.util.ComputeUtils.METADATA_TO_ID;
 
-import java.net.InetAddress;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -33,39 +34,46 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.domain.EC2Image;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
+import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
+import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.compute.functions.CreateKeyPairIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
-import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
-import org.jclouds.compute.domain.internal.CreateNodeResponseImpl;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.options.RunNodeOptions;
+import org.jclouds.compute.domain.internal.NodeSetImpl;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
+import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.ImmutableSet;
 
 /**
@@ -73,128 +81,129 @@ import com.google.inject.internal.ImmutableSet;
  */
 @Singleton
 public class EC2ComputeService implements ComputeService {
+
+   private static Function<RunningInstance, String> instanceToId = new Function<RunningInstance, String>() {
+      @Override
+      public String apply(RunningInstance from) {
+         return from.getId();
+      }
+   };
+
+   private static class NodeMatchesTag implements Predicate<NodeMetadata> {
+      private final String tag;
+
+      @Override
+      public boolean apply(NodeMetadata from) {
+         return from.getTag().equals(tag);
+      }
+
+      public NodeMatchesTag(String tag) {
+         super();
+         this.tag = tag;
+      }
+   };
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private final EC2Client ec2Client;
-   protected final Provider<Set<? extends Image>> images;
-   protected final Provider<Set<? extends Size>> sizes;
+   protected final EC2Client ec2Client;
+   protected final Map<RegionTag, KeyPairCredentials> credentialsMap;
+   protected final Map<PortsRegionTag, String> securityGroupMap;
+   protected final Provider<Map<String, ? extends Image>> images;
+   protected final Provider<Map<String, ? extends Size>> sizes;
+   protected final Provider<Map<String, ? extends Location>> locations;
+   protected final CreateKeyPairIfNeeded createKeyPairIfNeeded;
+   protected final CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
-   private final Predicate<RunningInstance> instanceStateRunning;
-   private final Predicate<RunningInstance> instanceStateTerminated;
-   private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   protected final Predicate<RunningInstance> instanceStateRunning;
+   protected final Predicate<RunningInstance> instanceStateTerminated;
+   protected final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   protected final ExecutorService executor;
 
    @Inject
    public EC2ComputeService(EC2Client client, Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Provider<Map<String, ? extends Image>> images,
+            Provider<Map<String, ? extends Size>> sizes,
+            Provider<Map<String, ? extends Location>> locations,
+            Map<RegionTag, KeyPairCredentials> credentialsMap,
+            Map<PortsRegionTag, String> securityGroupMap,
+            CreateKeyPairIfNeeded createKeyPairIfNeeded,
+            CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
             @Named("RUNNING") Predicate<RunningInstance> instanceStateRunning,
             @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated,
-            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
+            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.templateBuilderProvider = templateBuilderProvider;
       this.ec2Client = client;
       this.images = images;
       this.sizes = sizes;
-      this.templateBuilderProvider = templateBuilderProvider;
+      this.locations = locations;
+      this.credentialsMap = credentialsMap;
+      this.createKeyPairIfNeeded = createKeyPairIfNeeded;
+      this.createSecurityGroupIfNeeded = createSecurityGroupIfNeeded;
+      this.securityGroupMap = securityGroupMap;
       this.instanceStateRunning = instanceStateRunning;
       this.instanceStateTerminated = instanceStateTerminated;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
-   }
-
-   private static Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
-            .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN,
-                     NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
-
-   @Override
-   public CreateNodeResponse runNode(String name, Template template) {
-      return this.runNode(name, template, RunNodeOptions.NONE);
+      this.executor = executor;
    }
 
    @Override
-   public CreateNodeResponse runNode(String name, Template template, RunNodeOptions options) {
-      checkArgument(template.getImage() instanceof EC2Image,
-               "unexpected image type. should be EC2Image, was: " + template.getImage().getClass());
+   public NodeSet runNodes(String tag, int count, Template template) {
+      checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkArgument(template.getSize() instanceof EC2Size,
                "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
-      EC2Image ec2Image = EC2Image.class.cast(template.getImage());
       EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
-      Region region = ec2Image.getImage().getRegion();
-      KeyPair keyPair = createKeyPairInRegion(region, name);
-      String securityGroupName = name;
-      createSecurityGroupInRegion(region, securityGroupName, options.getOpenPorts());
+      // parse the availability zone of the request
+      AvailabilityZone zone = template.getLocation().getScope() == LocationScope.ZONE ? AvailabilityZone
+               .fromValue(template.getLocation().getId())
+               : null;
 
-      logger.debug(">> running instance region(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
-               region, ec2Image.getId(), ec2Size.getInstanceType(), keyPair.getKeyName(),
-               securityGroupName);
-      RunInstancesOptions instanceOptions = withKeyName(keyPair.getKeyName())// key
+      // if the location has a parent, it must be an availability zone.
+      Region region = zone == null ? Region.fromValue(template.getLocation().getId()) : Region
+               .fromValue(template.getLocation().getParent());
+
+      // get or create incidental resources
+      // TODO race condition. we were using MapMaker, but it doesn't seem to refresh properly when
+      // another thread
+      // deletes a key
+      RegionTag regionTag = new RegionTag(region, tag);
+      if (!credentialsMap.containsKey(regionTag)) {
+         credentialsMap.put(regionTag, createKeyPairIfNeeded.apply(regionTag));
+      }
+      TemplateOptions options = template.getOptions();
+      PortsRegionTag portsRegionTag = new PortsRegionTag(region, tag, options.getInboundPorts());
+      if (!securityGroupMap.containsKey(portsRegionTag)) {
+         securityGroupMap.put(portsRegionTag, createSecurityGroupIfNeeded.apply(portsRegionTag));
+      }
+
+      logger
+               .debug(
+                        ">> running %d instance region(%s) zone(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
+                        count, region, zone, template.getImage().getId(),
+                        ec2Size.getInstanceType(), tag, tag);
+      RunInstancesOptions instanceOptions = withKeyName(tag)// key
                .asType(ec2Size.getInstanceType())// instance size
-               .withSecurityGroup(securityGroupName)// group I created above
-               .withAdditionalInfo(name);
+               .withSecurityGroup(tag)// group I created above
+               .withAdditionalInfo(tag);
 
       if (options.getRunScript() != null)
          instanceOptions.withUserData(options.getRunScript());
 
-      RunningInstance runningInstance = Iterables.getOnlyElement(ec2Client.getInstanceServices()
-               .runInstancesInRegion(region, null, ec2Image.getId(), 1, 1, instanceOptions));
-      logger.debug("<< started instance(%s)", runningInstance.getId());
-      instanceStateRunning.apply(runningInstance);
-      logger.debug("<< running instance(%s)", runningInstance.getId());
+      Reservation reservation = ec2Client.getInstanceServices().runInstancesInRegion(region, zone,
+               template.getImage().getId(), 1, count, instanceOptions);
+      Iterable<String> ids = Iterables.transform(reservation, instanceToId);
+
+      String idsString = Joiner.on(',').join(ids);
+      logger.debug("<< started instances(%s)", idsString);
+      Iterables.all(reservation, instanceStateRunning);
+      logger.debug("<< running instances(%s)", idsString);
 
       // refresh to get IP address
-      runningInstance = getOnlyRunningInstanceInRegion(region, runningInstance.getId());
-
-      Set<InetAddress> publicAddresses = runningInstance.getIpAddress() == null ? ImmutableSet
-               .<InetAddress> of() : ImmutableSet.<InetAddress> of(runningInstance.getIpAddress());
-      Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
-               .<InetAddress> of()
-               : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateNodeResponseImpl(runningInstance.getId(), name, runningInstance.getRegion()
-               .toString(), null, ImmutableMap.<String, String> of(), instanceToNodeState
-               .get(runningInstance.getInstanceState()), publicAddresses, privateAddresses,
-               new Credentials("root", keyPair.getKeyMaterial()), ImmutableMap
-                        .<String, String> of());
-   }
-
-   private KeyPair createKeyPairInRegion(Region region, String name) {
-      logger.debug(">> creating keyPair region(%s) name(%s)", region, name);
-      KeyPair keyPair;
-      try {
-         keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, name);
-         logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
-
-      } catch (AWSResponseException e) {
-         if (e.getError().getCode().equals("InvalidKeyPair.Duplicate")) {
-            keyPair = Iterables.getLast(ec2Client.getKeyPairServices().describeKeyPairsInRegion(
-                     region, name));
-            logger.debug("<< reused keyPair(%s)", keyPair.getKeyName());
-
-         } else {
-            throw e;
-         }
-      }
-      return keyPair;
-   }
-
-   private void createSecurityGroupInRegion(Region region, String name, int... ports) {
-      logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
-      try {
-         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
-         logger.debug("<< created securityGroup(%s)", name);
-         for (int port : ports) {
-            logger.debug(">> authorizing securityGroup region(%s) name(%s) port(%s)", region, name,
-                     port);
-            ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region,
-                     name, IpProtocol.TCP, port, port, "0.0.0.0/0");
-            logger.debug("<< authorized securityGroup(%s)", name);
-         }
-      } catch (AWSResponseException e) {
-         if (e.getError().getCode().equals("InvalidGroup.Duplicate")) {
-            logger.debug("<< reused securityGroup(%s)", name);
-         } else {
-            throw e;
-         }
-      }
-
+      return new NodeSetImpl(Iterables.transform(Iterables.concat(ec2Client.getInstanceServices()
+               .describeInstancesInRegion(region, Iterables.toArray(ids, String.class))),
+               runningInstanceToNodeMetadata));
    }
 
    @Override
@@ -208,114 +217,132 @@ public class EC2ComputeService implements ComputeService {
       return runningInstanceToNodeMetadata.apply(runningInstance);
    }
 
-   @Singleton
-   private static class RunningInstanceToNodeMetadata implements
-            Function<RunningInstance, NodeMetadata> {
-
-      @Override
-      public NodeMetadata apply(RunningInstance from) {
-         return new NodeMetadataImpl(from.getId(), from.getKeyName(), from.getRegion().toString(),
-                  null, ImmutableMap.<String, String> of(), instanceToNodeState.get(from
-                           .getInstanceState()), nullSafeSet(from.getIpAddress()), nullSafeSet(from
-                           .getPrivateIpAddress()), ImmutableMap.<String, String> of(
-                           "availabilityZone", from.getAvailabilityZone().toString()));
-      }
-
-      Set<InetAddress> nullSafeSet(InetAddress in) {
-         if (in == null) {
-            return ImmutableSet.<InetAddress> of();
-         }
-         return ImmutableSet.<InetAddress> of(in);
-      }
-   }
-
-   private RunningInstance getOnlyRunningInstanceInRegion(Region region, String id) {
-      Iterable<RunningInstance> instances = Iterables.filter(getAllRunningInstancesInRegion(region,
-               id), new Predicate<RunningInstance>() {
-
-         @Override
-         public boolean apply(RunningInstance instance) {
-            return instance.getInstanceState() == InstanceState.PENDING
-                     || instance.getInstanceState() == InstanceState.RUNNING;
-         }
-
-      });
-      int size = Iterables.size(instances);
-      if (size == 0)
-         throw new NoSuchElementException(String.format(
-                  "%d instances in region %s have an instance with id %s running.", size, region,
-                  id));
-      if (size > 1)
-         throw new IllegalStateException(String.format(
-                  "%d instances in region %s have an instance with id %s running.  Expected 1",
-                  size, region, id));
-      return Iterables.getOnlyElement(instances);
-   }
-
    private Iterable<RunningInstance> getAllRunningInstancesInRegion(Region region, String id) {
       return Iterables
                .concat(ec2Client.getInstanceServices().describeInstancesInRegion(region, id));
    }
 
-   /**
-    * hack alert. can't find a good place to store the original servername, so we are reusing the
-    * keyname. This will break.
-    */
    @Override
-   public Set<ComputeMetadata> listNodes() {
+   public Map<String, NodeMetadata> getNodes() {
       logger.debug(">> listing servers");
-      Set<ComputeMetadata> servers = Sets.newHashSet();
+      Map<String, NodeMetadata> nodes = doGetNodes();
+      logger.debug("<< list(%d)", nodes.size());
+      return nodes;
+   }
+
+   protected Map<String, NodeMetadata> doGetNodes() {
+      Set<NodeMetadata> nodes = Sets.newHashSet();
       for (Region region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
-         Iterables.addAll(servers, Iterables.transform(Iterables.concat(ec2Client
+         Iterables.addAll(nodes, Iterables.transform(Iterables.concat(ec2Client
                   .getInstanceServices().describeInstancesInRegion(region)),
-                  new Function<RunningInstance, ComputeMetadata>() {
-                     @Override
-                     public ComputeMetadata apply(RunningInstance from) {
-                        return new ComputeMetadataImpl(ComputeType.NODE, from.getId(), from
-                                 .getKeyName(), from.getRegion().toString(), null, ImmutableMap
-                                 .<String, String> of());
-                     }
-                  }));
+                  runningInstanceToNodeMetadata));
       }
-      logger.debug("<< list(%d)", servers.size());
-      return servers;
+      return Maps.uniqueIndex(nodes, METADATA_TO_ID);
    }
 
    @Override
-   public void destroyNode(ComputeMetadata node) {
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
-      checkNotNull(node.getId(), "node.id");
+   public void destroyNode(ComputeMetadata metadata) {
+      checkArgument(metadata.getType() == ComputeType.NODE, "this is only valid for nodes, not "
+               + metadata.getType());
+      checkNotNull(metadata.getId(), "node.id");
+      NodeMetadata node = metadata instanceof NodeMetadata ? NodeMetadata.class.cast(metadata)
+               : getNodeMetadata(metadata);
+      String tag = checkNotNull(node.getTag(), "node.tag");
+
       Region region = getRegionFromNodeOrDefault(node);
-      for (RunningInstance runningInstance : getAllRunningInstancesInRegion(region, node.getId())) {
-         // grab the old keyname
-         String name = runningInstance.getKeyName();
+
+      RunningInstance instance = getInstance(node, region);
+      if (instance.getInstanceState() != InstanceState.TERMINATED) {
          logger.debug(">> terminating instance(%s)", node.getId());
-         ec2Client.getInstanceServices().terminateInstancesInRegion(region, node.getId());
-         boolean success = instanceStateTerminated.apply(runningInstance);
+         boolean success = false;
+         while (!success) {
+            ec2Client.getInstanceServices().terminateInstancesInRegion(region, node.getId());
+            success = instanceStateTerminated.apply(getInstance(node, region));
+         }
          logger.debug("<< terminated instance(%s) success(%s)", node.getId(), success);
-         logger.debug(">> deleting keyPair(%s)", name);
-         ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, name);
-         logger.debug("<< deleted keyPair(%s)", name);
-         logger.debug(">> deleting securityGroup(%s)", name);
-         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, name);
-         logger.debug("<< deleted securityGroup(%s)", name);
+      }
+      if (Iterables.all(doGetNodes(tag), new Predicate<NodeMetadata>() {
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getState() == NodeState.TERMINATED;
+         }
+      })) {
+         deleteKeyPair(region, tag);
+         deleteSecurityGroup(region, tag);
+      }
+   }
+
+   private RunningInstance getInstance(NodeMetadata node, Region region) {
+      return Iterables.getOnlyElement(getAllRunningInstancesInRegion(region, node.getId()));
+   }
+
+   private void deleteSecurityGroup(Region region, String tag) {
+      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, tag).size() > 0) {
+         logger.debug(">> deleting securityGroup(%s)", tag);
+         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, tag);
+         securityGroupMap.remove(new PortsRegionTag(region, tag, null)); // TODO: test this clear
+         // happens
+         logger.debug("<< deleted securityGroup(%s)", tag);
+      }
+   }
+
+   private void deleteKeyPair(Region region, String tag) {
+      if (ec2Client.getKeyPairServices().describeKeyPairsInRegion(region, tag).size() > 0) {
+         logger.debug(">> deleting keyPair(%s)", tag);
+         ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, tag);
+         credentialsMap.remove(new RegionTag(region, tag)); // TODO: test this clear happens
+         logger.debug("<< deleted keyPair(%s)", tag);
       }
    }
 
    private Region getRegionFromNodeOrDefault(ComputeMetadata node) {
-      Region region = node.getLocation() != null ? Region.fromValue(node.getLocation())
-               : Region.DEFAULT;
+      Location location = getLocations().get(node.getLocationId());
+      Region region = location.getScope() == LocationScope.REGION ? Region.fromValue(location
+               .getId()) : Region.fromValue(location.getParent());
       return region;
    }
 
    @Override
-   public Set<? extends Size> listSizes() {
+   public void destroyNodes(String tag) { // TODO parallel
+      logger.debug(">> terminating servers by tag(%s)", tag);
+      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
+      for (final NodeMetadata node : doGetNodes(tag)) {
+         responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               destroyNode(node);
+               return null;
+            }
+         }), executor));
+      }
+      ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");
+      logger.debug("<< destroyed");
+   }
+
+   @Override
+   public Map<String, ? extends Location> getLocations() {
+      return locations.get();
+   }
+
+   @Override
+   public NodeSet getNodes(String tag) {
+      logger.debug(">> listing servers by tag(%s)", tag);
+      NodeSet nodes = doGetNodes(tag);
+      logger.debug("<< list(%d)", nodes.size());
+      return nodes;
+   }
+
+   protected NodeSet doGetNodes(String tag) {
+      return new NodeSetImpl(Iterables.filter(doGetNodes().values(), new NodeMatchesTag(tag)));
+   }
+
+   @Override
+   public Map<String, ? extends Size> getSizes() {
       return sizes.get();
    }
 
    @Override
-   public Set<? extends Image> listImages() {
+   public Map<String, ? extends Image> getImages() {
       return images.get();
    }
 

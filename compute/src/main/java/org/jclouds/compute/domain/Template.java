@@ -18,6 +18,9 @@
  */
 package org.jclouds.compute.domain;
 
+import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.domain.Location;
+
 /**
  * Configured operating system used to start nodes.
  * 
@@ -35,4 +38,13 @@ public interface Template extends Cloneable {
     */
    Size getSize();
 
+   /**
+    * Location of the nodes.
+    */
+   Location getLocation();
+
+   /**
+    * options for launching this template, like run scripts or inbound ports
+    */
+   TemplateOptions getOptions();
 }

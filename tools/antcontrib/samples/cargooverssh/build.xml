@@ -71,26 +71,26 @@
 
   <input message="What is your account on ${service}?" addproperty="account"/>
   <input message="What is the key for ${account}?" addproperty="key"/>
-  <input message="What is the nodename for the deployment?" addproperty="nodename"/>
+  <input message="What is the nodetag for the deployment?" addproperty="nodetag"/>
   <property name="url" value="compute://${account}:${key}@${service}"/>
 
-  <target name="destroy" description="destroy the node ${nodename}">
-    <compute action="destroy" provider="${url}">
-       <node name="${nodename}" />
+  <target name="destroy" description="destroy the nodes ${nodetag}">
+    <compute actions="destroy" provider="${url}">
+       <nodes tag="${nodetag}" />
     </compute>
     <sleep seconds="5" />
   </target>
 
-  <target name="create" description="create the node ${nodename}" depends="destroy" >
-     <compute action="create" provider="${url}">
-        <node name="${nodename}" os="UBUNTU" size="SMALLEST"
+  <target name="create" description="create the nodes ${nodetag}" >
+     <compute actions="destroy,create" provider="${url}">
+        <nodes tag="${nodetag}" os="UBUNTU" size="SMALLEST"
               runscript="runscript.sh" openports="22,${listenport}"
               hostproperty="host" usernameproperty="username" passwordproperty="password" />
      </compute>
   </target>
 
-  <target name="cargooverssh" depends="create" description="run cargo on remote node" >
-    <echo message="deploying tomcat and blaze to: ${nodename}" />
+  <target name="cargooverssh" depends="create" description="run cargo on remote nodes" >
+    <echo message="deploying tomcat and blaze to: ${nodetag}" />
     <cargo containerId="tomcat6x" output="build/output.log" log="build/cargo.log" action="start" timeout="600000">
       <zipurlinstaller installurl="${container.zip}" />
       <configuration home="build/cargo" type="standalone">

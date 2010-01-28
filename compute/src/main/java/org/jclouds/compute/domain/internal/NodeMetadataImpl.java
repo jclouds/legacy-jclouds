@@ -18,15 +18,19 @@
  */
 package org.jclouds.compute.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.InetAddress;
 import java.net.URI;
-import java.util.Comparator;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.domain.Credentials;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -40,47 +44,62 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    /** The serialVersionUID */
    private static final long serialVersionUID = 7924307572338157887L;
 
-   public static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
-
-      @Override
-      public int compare(InetAddress o1, InetAddress o2) {
-         return (o1 == o2) ? 0 : o1.getHostAddress().compareTo(o2.getHostAddress());
-      }
-
-   };
    private final NodeState state;
-   private final SortedSet<InetAddress> publicAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
-   private final SortedSet<InetAddress> privateAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
+   private final Set<InetAddress> publicAddresses = Sets.newLinkedHashSet();
+   private final Set<InetAddress> privateAddresses = Sets.newLinkedHashSet();
    private final Map<String, String> extra = Maps.newLinkedHashMap();
+   private final Credentials credentials;
+   private final String tag;
 
-   public NodeMetadataImpl(String id, String name, String location, URI uri,
-            Map<String, String> userMetadata, NodeState state,
+   public NodeMetadataImpl(String id, String name, String locationId, URI uri,
+            Map<String, String> userMetadata, String tag, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
-            Map<String, String> extra) {
-      super(ComputeType.NODE, id, name, location, uri, userMetadata);
-      this.state = state;
-      Iterables.addAll(this.publicAddresses, publicAddresses);
-      Iterables.addAll(this.privateAddresses, privateAddresses);
-      this.extra.putAll(extra);
+            Map<String, String> extra, @Nullable Credentials credentials) {
+      super(ComputeType.NODE, id, name, locationId, uri, userMetadata);
+      this.tag = checkNotNull(tag, "tag");
+      this.state = checkNotNull(state, "state");
+      Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses, "publicAddresses"));
+      Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses, "privateAddresses"));
+      this.extra.putAll(checkNotNull(extra, "extra"));
+      this.credentials = credentials;
    }
 
    /**
     * {@inheritDoc}
     */
-   public SortedSet<InetAddress> getPublicAddresses() {
+   @Override
+   public String getTag() {
+      return tag;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Credentials getCredentials() {
+      return credentials;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<InetAddress> getPublicAddresses() {
       return publicAddresses;
    }
 
    /**
     * {@inheritDoc}
     */
-   public SortedSet<InetAddress> getPrivateAddresses() {
+   @Override
+   public Set<InetAddress> getPrivateAddresses() {
       return privateAddresses;
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public NodeState getState() {
       return state;
    }
@@ -95,20 +114,22 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", location=" + getLocation() + ", uri="
-               + getUri() + ", userMetadata=" + getUserMetadata() + ", state=" + getState()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
-               + "]";
+      return "[id=" + getId() + ", tag=" + getTag() + ", name=" + getName() + ", location="
+               + getLocationId() + ", uri=" + getUri() + ", userMetadata=" + getUserMetadata()
+               + ", state=" + getState() + ", privateAddresses=" + privateAddresses
+               + ", publicAddresses=" + publicAddresses + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       result = prime * result + ((extra == null) ? 0 : extra.hashCode());
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
+      result = prime * result + ((tag == null) ? 0 : tag.hashCode());
       return result;
    }
 
@@ -121,6 +142,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       if (getClass() != obj.getClass())
          return false;
       NodeMetadataImpl other = (NodeMetadataImpl) obj;
+      if (credentials == null) {
+         if (other.credentials != null)
+            return false;
+      } else if (!credentials.equals(other.credentials))
+         return false;
       if (extra == null) {
          if (other.extra != null)
             return false;
@@ -140,6 +166,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.state != null)
             return false;
       } else if (!state.equals(other.state))
+         return false;
+      if (tag == null) {
+         if (other.tag != null)
+            return false;
+      } else if (!tag.equals(other.tag))
          return false;
       return true;
    }

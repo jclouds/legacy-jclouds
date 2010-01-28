@@ -35,9 +35,9 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
    /** The serialVersionUID */
    private static final long serialVersionUID = 7374704415964898694L;
 
-   public ComputeMetadataImpl(ComputeType type, String id, String name, String location, URI uri,
+   public ComputeMetadataImpl(ComputeType type, String id, String name, String locationId, URI uri,
             Map<String, String> userMetadata) {
-      super(type, id, name, location, uri, userMetadata);
+      super(type, id, name, locationId, uri, userMetadata);
    }
 
 }

@@ -52,12 +52,12 @@ public interface ResourceMetadata<T extends Enum<T>> extends Comparable<Resource
    String getName();
 
    /**
-    * Physical location of the resource.
+    * Physical location of the resource, or null if n/a
     * 
     * ex. us-west-1
     * 
     */
-   String getLocation();
+   String getLocationId();
 
    /**
     * URI used to access this resource
@@ -68,5 +68,6 @@ public interface ResourceMetadata<T extends Enum<T>> extends Comparable<Resource
     * Any key-value pairs associated with the resource.
     */
    Map<String, String> getUserMetadata();
+
 
 }

@@ -65,56 +65,64 @@
   <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}" />
 
   <target name="list" description="list the identity of all nodes">
-    <compute action="list" provider="${jclouds.compute.url}" />
+    <compute actions="list" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="list-details" description="list the details of all nodes">
-    <compute action="list-details" provider="${jclouds.compute.url}" />
+    <compute actions="list-details" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="list-images" description="list the images supported">
-    <compute action="list-images" provider="${jclouds.compute.url}" />
+    <compute actions="list-images" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="list-sizes" description="list the sizes supported">
-    <compute action="list-sizes" provider="${jclouds.compute.url}" />
+    <compute actions="list-sizes" provider="${jclouds.compute.url}" />
   </target>
 
-  <target name="destroy" description="destroy the node ${nodename}">
+  <target name="list-locations" description="list the locations supported">
+    <compute actions="list-locations" provider="${jclouds.compute.url}" />
+  </target>
+
+  <target name="dump" description="list all information we can obtain about the cloud">
+    <compute actions="list-locations,list-sizes,list-images,list-details" provider="${jclouds.compute.url}" />
+  </target>
+
+  <target name="destroy" description="destroy the node ${nodetag}">
 
     <input
       message="Which node do you wish to destroy"
-      addproperty="nodename"
+      addproperty="nodetag"
     />
 
-    <compute action="destroy" provider="${jclouds.compute.url}">
-      <node name="${nodename}" />
+    <compute actions="destroy" provider="${jclouds.compute.url}">
+      <node tag="${nodetag}" />
     </compute>
   </target>
 
-  <target name="get" description="get the node ${nodename}">
+  <target name="get" description="get the node ${nodetag}">
 
     <input
       message="Which node do you wish to describe?"
-      addproperty="nodename"
+      addproperty="nodetag"
     />
 
-    <compute action="get" provider="${jclouds.compute.url}">
-      <node name="${nodename}" />
+    <compute actions="get" provider="${jclouds.compute.url}">
+      <node tag="${nodetag}" />
     </compute>
   </target>
 
   <property name="location" value="" />
-  <target name="create" description="create the node ${nodename}">
+  <target name="create" description="create the node ${nodetag}">
     <property name="os" value="UBUNTU" />
 
     <input
       message="What do you want to name your node?"
-      addproperty="nodename"
+      addproperty="nodetag"
     />
 
-    <compute action="create" provider="${jclouds.compute.url}">
-      <node name="${nodename}" location="${location}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+    <compute actions="create" provider="${jclouds.compute.url}">
+      <node tag="${nodetag}" location="${location}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

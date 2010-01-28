@@ -65,7 +65,7 @@ public class BlobStoreUtils {
       blob.getMetadata().setETag(blobMeta.getETag());
       blob.getMetadata().setId(blobMeta.getId());
       blob.getMetadata().setLastModified(blobMeta.getLastModified());
-      blob.getMetadata().setLocation(blobMeta.getLocation());
+      blob.getMetadata().setLocationId(blobMeta.getLocationId());
       blob.getMetadata().setUri(blobMeta.getUri());
       blob.getMetadata().setUserMetadata(blobMeta.getUserMetadata());
       return blob;

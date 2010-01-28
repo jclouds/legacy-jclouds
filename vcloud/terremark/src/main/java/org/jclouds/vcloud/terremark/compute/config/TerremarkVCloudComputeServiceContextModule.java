@@ -18,15 +18,18 @@
  */
 package org.jclouds.vcloud.terremark.compute.config;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.SizeImpl;
@@ -37,8 +40,10 @@ import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
@@ -65,21 +70,23 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    private static class ComputeOptionsToSize implements Function<ComputeOptions, Size> {
       @Override
       public Size apply(ComputeOptions from) {
-         return new SizeImpl(from.toString(), from.getProcessorCount(), from.getMemory(), 10,
+         return new SizeImpl(from.toString(), from.toString(), null, null, ImmutableMap
+                  .<String, String> of(), from.getProcessorCount(), from.getMemory(), 10,
                   ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64));
       }
    }
 
    @Override
-   protected SortedSet<? extends Size> provideSizes(VCloudClient client,
-            Set<? extends Image> images, LogHolder holder,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      Image anyImage = Iterables.get(images, 0);
+   protected Map<String, ? extends Size> provideSizes(Function<ComputeMetadata, String> indexer,
+            VCloudClient client, Map<String, ? extends Image> images, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
+            throws InterruptedException, TimeoutException, ExecutionException {
+      Image anyImage = Iterables.get(images.values(), 0);
       holder.logger.debug(">> providing sizes");
       SortedSet<Size> sizes = Sets.newTreeSet(Iterables.transform(TerremarkVCloudClient.class.cast(
                client).getComputeOptionsOfCatalogItem(anyImage.getId()), sizeConverter));
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
+      return Maps.uniqueIndex(sizes, indexer);
    }
 
 }

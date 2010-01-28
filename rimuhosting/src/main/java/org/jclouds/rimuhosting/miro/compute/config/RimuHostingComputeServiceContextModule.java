@@ -18,6 +18,7 @@
  */
 package org.jclouds.rimuhosting.miro.compute.config;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +34,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
@@ -40,7 +42,9 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.ResourceLocation;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
@@ -49,7 +53,10 @@ import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeService;
 import org.jclouds.rimuhosting.miro.config.RimuHostingContextModule;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 
@@ -77,25 +84,66 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
    @Provides
    @Singleton
-   @ResourceLocation
-   String getRegion() {
-      return "default";
+   Location getDefaultLocation(Map<String, ? extends Location> locations) {
+      return locations.get("DCDALLAS");
    }
 
    @Provides
    @Singleton
-   protected Set<? extends Size> provideSizes(RimuHostingClient sync, Set<? extends Image> images,
-            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor) throws InterruptedException,
+   Map<String, ? extends Location> getDefaultLocations(RimuHostingClient sync, LogHolder holder,
+            Function<ComputeMetadata, String> indexer) {
+      final Set<Location> locations = Sets.newHashSet();
+      holder.logger.debug(">> providing locations");
+      for (final PricingPlan from : sync.getPricingPlanList()) {
+         try {
+            locations.add(new LocationImpl(LocationScope.ZONE, from.getDataCenter().getId(), from
+                     .getDataCenter().getName(), null, true));
+         } catch (NullPointerException e) {
+            holder.logger.warn("datacenter not present in " + from.getId());
+         }
+      }
+      holder.logger.debug("<< locations(%d)", locations.size());
+      return Maps.uniqueIndex(locations, new Function<Location, String>() {
+
+         @Override
+         public String apply(Location from) {
+            return from.getId();
+         }
+      });
+   }
+
+   @Provides
+   @Singleton
+   protected Function<ComputeMetadata, String> indexer() {
+      return new Function<ComputeMetadata, String>() {
+         @Override
+         public String apply(ComputeMetadata from) {
+            return from.getId();
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   protected Map<String, ? extends Size> provideSizes(RimuHostingClient sync,
+            Map<String, ? extends Image> images, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            Function<ComputeMetadata, String> indexer) throws InterruptedException,
             TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final PricingPlan from : sync.getPricingPlanList()) {
-         sizes.add(new SizeImpl(from.getId(), from.getDiskSize(), from.getRam(),
-                  from.getDiskSize(), ImmutableSet.<Architecture> of(Architecture.X86_32,
-                           Architecture.X86_64)));
+         try {
+            sizes.add(new SizeImpl(from.getId(), from.getId(), from.getDataCenter().getId(), null,
+                     ImmutableMap.<String, String> of(), from.getDiskSize(), from.getRam(), from
+                              .getDiskSize(), ImmutableSet.<Architecture> of(Architecture.X86_32,
+                              Architecture.X86_64)));
+         } catch (NullPointerException e) {
+            holder.logger.warn("datacenter not present in " + from.getId());
+         }
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
+      return Maps.uniqueIndex(sizes, indexer);
    }
 
    private static class LogHolder {
@@ -108,9 +156,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final RimuHostingClient sync,
-            @ResourceLocation String location, LogHolder holder) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected Map<String, ? extends Image> provideImages(final RimuHostingClient sync,
+            LogHolder holder, Function<ComputeMetadata, String> indexer)
+            throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       for (final org.jclouds.rimuhosting.miro.domain.Image from : sync.getImageList()) {
@@ -130,10 +178,11 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
-         images.add(new ImageImpl(from.getId(), from.getDescription(), version, os, osDescription,
-                  location, arch));
+
+         images.add(new ImageImpl(from.getId(), from.getDescription(), null, null, ImmutableMap
+                  .<String, String> of(), from.getDescription(), version, os, osDescription, arch));
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return images;
+      return Maps.uniqueIndex(images, indexer);
    }
 }

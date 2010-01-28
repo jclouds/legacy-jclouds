@@ -3,17 +3,19 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeService;
 import org.jclouds.vcloud.domain.VApp;
@@ -29,12 +31,15 @@ import com.google.common.collect.ImmutableMap;
 public class HostingDotComVCloudComputeService extends VCloudComputeService {
 
    @Inject
-   HostingDotComVCloudComputeService(VCloudClient client,
+   public HostingDotComVCloudComputeService(VCloudClient client,
             Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Predicate<String> successTester, ComputeUtils utils,
-            @Named("NOT_FOUND") Predicate<VApp> notFoundTester) {
-      super(client, templateBuilderProvider, images, sizes, utils, successTester, notFoundTester);
+            Provider<Map<String, ? extends Image>> images,
+            Provider<Map<String, ? extends Size>> sizes,
+            Provider<Map<String, ? extends Location>> locations, ComputeUtils utils,
+            Predicate<String> successTester, @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      super(client, templateBuilderProvider, images, sizes, locations, utils, successTester,
+               notFoundTester, executor);
    }
 
    @Override

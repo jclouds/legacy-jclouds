@@ -18,10 +18,18 @@
  */
 package org.jclouds.compute.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.domain.ResourceMetadata;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
@@ -30,20 +38,24 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class SizeImpl implements Size {
-   private String id;
+public class SizeImpl extends ComputeMetadataImpl implements Size {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8994255275911717567L;
    private final int cores;
    private final int ram;
    private final int disk;
+
    private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
 
-   public SizeImpl(String id, int cores, int ram, int disk,
+   public SizeImpl(String id, String name, @Nullable String location, URI uri,
+            Map<String, String> userMetadata, int cores, int ram, int disk,
             Iterable<Architecture> supportedArchitectures) {
-      this.id = id;
+      super(ComputeType.SIZE, id, name, location, uri, userMetadata);
       this.cores = cores;
       this.ram = ram;
       this.disk = disk;
-      Iterables.addAll(this.supportedArchitectures, supportedArchitectures);
+      Iterables.addAll(this.supportedArchitectures, checkNotNull(supportedArchitectures,
+               "supportedArchitectures"));
    }
 
    /**
@@ -70,55 +82,27 @@ public class SizeImpl implements Size {
       return disk;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + cores;
-      result = prime * result + disk;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ram;
-      result = prime * result
-               + ((supportedArchitectures == null) ? 0 : supportedArchitectures.hashCode());
-      return result;
+   public int compareTo(ResourceMetadata<ComputeType> that) {
+      if (that instanceof Size) {
+         Size thatSize = Size.class.cast(that);
+         return ComparisonChain.start().compare(this.getCores(), thatSize.getCores()).compare(
+                  this.getRam(), thatSize.getRam()).compare(this.getDisk(), thatSize.getDisk())
+                  .result();
+      } else {
+         return super.compareTo(that);
+      }
    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SizeImpl other = (SizeImpl) obj;
-      if (cores != other.cores)
-         return false;
-      if (disk != other.disk)
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (ram != other.ram)
-         return false;
-      if (supportedArchitectures == null) {
-         if (other.supportedArchitectures != null)
-            return false;
-      } else if (!supportedArchitectures.equals(other.supportedArchitectures))
-         return false;
-      return true;
-   }
-
-   public int compareTo(Size that) {
-      return ComparisonChain.start().compare(this.getCores(), that.getCores()).compare(
-               this.getRam(), that.getRam()).compare(this.getDisk(), that.getDisk()).result();
-   }
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public String toString() {
-      return "[id=" + id + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk
+      return "[id=" + getId() + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk
                + ", supportedArchitectures=" + supportedArchitectures + "]";
    }
 
@@ -126,15 +110,7 @@ public class SizeImpl implements Size {
     * {@inheritDoc}
     */
    @Override
-   public boolean supportsArchitecture(Architecture architecture) {
-      return supportedArchitectures.contains(architecture);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return id;
+   public Set<Architecture> getSupportedArchitectures() {
+      return supportedArchitectures;
    }
 }

@@ -31,24 +31,22 @@ import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.options.RunNodeOptions;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -99,20 +97,11 @@ public class ComputeTaskUtils {
    static Template createTemplateFromElement(NodeElement nodeElement, ComputeService computeService) {
       TemplateBuilder templateBuilder = computeService.templateBuilder();
       if (nodeElement.getLocation() != null && !"".equals(nodeElement.getLocation()))
-         templateBuilder.location(nodeElement.getLocation());
+         templateBuilder.locationId(nodeElement.getLocation());
       if (nodeElement.getImage() != null && !"".equals(nodeElement.getImage())) {
          final String imageId = nodeElement.getImage();
          try {
-            Image image = Iterables.getOnlyElement(Iterables.filter(computeService.listImages(),
-                     new Predicate<Image>() {
-
-                        @Override
-                        public boolean apply(Image input) {
-                           return input.getId().equals(imageId);
-                        }
-
-                     }));
-            templateBuilder.fromImage(image);
+            templateBuilder.imageId(imageId);
          } catch (NoSuchElementException e) {
             throw new BuildException("image not found " + nodeElement.getImage());
          }
@@ -120,6 +109,8 @@ public class ComputeTaskUtils {
          templateBuilder.osFamily(OsFamily.valueOf(nodeElement.getOs()));
       }
       addSizeFromElementToTemplate(nodeElement, templateBuilder);
+      templateBuilder.options(getNodeOptionsFromElement(nodeElement));
+
       return templateBuilder.build();
    }
 
@@ -136,15 +127,15 @@ public class ComputeTaskUtils {
       }
    }
 
-   static RunNodeOptions getNodeOptionsFromElement(NodeElement nodeElement) {
-      RunNodeOptions options = new RunNodeOptions()
-               .openPorts(getPortsToOpenFromElement(nodeElement));
+   static TemplateOptions getNodeOptionsFromElement(NodeElement nodeElement) {
+      TemplateOptions options = new TemplateOptions()
+               .inboundPorts(getPortsToOpenFromElement(nodeElement));
       addRunScriptToOptionsIfPresentInNodeElement(nodeElement, options);
       return options;
    }
 
    static void addRunScriptToOptionsIfPresentInNodeElement(NodeElement nodeElement,
-            RunNodeOptions options) {
+            TemplateOptions options) {
       if (nodeElement.getRunscript() != null)
          try {
             options.runScript(Files.toByteArray(nodeElement.getRunscript()));
@@ -153,9 +144,9 @@ public class ComputeTaskUtils {
          }
    }
 
-   static String ipOrEmptyString(SortedSet<InetAddress> set) {
+   static String ipOrEmptyString(Set<InetAddress> set) {
       if (set.size() > 0) {
-         return set.last().getHostAddress();
+         return Iterables.get(set, 0).getHostAddress();
       } else {
          return "";
       }

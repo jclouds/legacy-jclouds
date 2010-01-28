@@ -65,6 +65,7 @@ public interface KeyPairAsyncClient {
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("KeyName") String keyName);
 
+   // map resourcenotfoundexception to empty set
    /**
     * @see KeyPairClient#describeKeyPairsInRegion
     */

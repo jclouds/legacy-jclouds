@@ -23,9 +23,13 @@
  */
 package org.jclouds.compute.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.domain.Location;
 
 /**
  * 
@@ -35,10 +39,14 @@ public class TemplateImpl implements Template {
 
    private final Image image;
    private final Size size;
+   private final Location location;
+   private final TemplateOptions options;
 
-   protected TemplateImpl(Image image, Size size) {
-      this.image = image;
-      this.size = size;
+   public TemplateImpl(Image image, Size size, Location location, TemplateOptions options) {
+      this.image = checkNotNull(image, "image");
+      this.size = checkNotNull(size, "size");
+      this.location = checkNotNull(location, "location");
+      this.options = checkNotNull(options, "options");
    }
 
    /**
@@ -57,11 +65,29 @@ public class TemplateImpl implements Template {
       return size;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Location getLocation() {
+      return location;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public TemplateOptions getOptions() {
+      return options;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((image == null) ? 0 : image.hashCode());
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((options == null) ? 0 : options.hashCode());
       result = prime * result + ((size == null) ? 0 : size.hashCode());
       return result;
    }
@@ -79,6 +105,16 @@ public class TemplateImpl implements Template {
          if (other.image != null)
             return false;
       } else if (!image.equals(other.image))
+         return false;
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
+         return false;
+      if (options == null) {
+         if (other.options != null)
+            return false;
+      } else if (!options.equals(other.options))
          return false;
       if (size == null) {
          if (other.size != null)
@@ -98,6 +134,7 @@ public class TemplateImpl implements Template {
     */
    @Override
    protected Object clone() throws CloneNotSupportedException {
-      return new TemplateImpl(image, size);
+      return new TemplateImpl(image, size, location, options);
    }
+
 }

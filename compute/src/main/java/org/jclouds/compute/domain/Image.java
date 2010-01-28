@@ -23,23 +23,22 @@
  */
 package org.jclouds.compute.domain;
 
+import org.jclouds.compute.domain.internal.ImageImpl;
+
+import com.google.inject.ImplementedBy;
+
 /**
  * Running Operating system
  * 
  * @author Adrian Cole
  */
-public interface Image {
+@ImplementedBy(ImageImpl.class)
+public interface Image extends ComputeMetadata {
 
    /**
-    * Unique ID provided by the provider (ami-abcd1234, etc)
-    * 
+    * Version of the image
     */
-   String getId();
-
-   /**
-    * Description of the image
-    */
-   String getDescription();
+   String getVersion();
 
    /**
     * Operating System
@@ -50,16 +49,6 @@ public interface Image {
     * Description of the operating system including the version.
     */
    String getOsDescription();
-
-   /**
-    * Version of the image
-    */
-   String getVersion();
-
-   /**
-    * Geographic location of the image.
-    */
-   String getLocation();
 
    /**
     * Operating System

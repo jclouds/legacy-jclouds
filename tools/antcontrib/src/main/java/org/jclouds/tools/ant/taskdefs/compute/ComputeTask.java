@@ -18,11 +18,9 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
-import static org.jclouds.compute.util.ComputeUtils.filterByName;
 import static org.jclouds.compute.util.ComputeUtils.isKeyAuth;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.buildComputeMap;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.createTemplateFromElement;
-import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.getNodeOptionsFromElement;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.ipOrEmptyString;
 
 import java.io.File;
@@ -39,15 +37,16 @@ import org.apache.tools.ant.Task;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.CreateNodeResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.RunNodeOptions;
+import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import com.google.inject.Provider;
 
@@ -59,7 +58,7 @@ public class ComputeTask extends Task {
 
    private final Map<URI, ComputeServiceContext> computeMap;
    private String provider;
-   private String action;
+   private String actions;
    private NodeElement nodeElement;
 
    /**
@@ -82,7 +81,7 @@ public class ComputeTask extends Task {
    }
 
    public static enum Action {
-      CREATE, GET, LIST, LIST_DETAILS, DESTROY, LIST_IMAGES, LIST_SIZES
+      CREATE, GET, LIST, LIST_DETAILS, DESTROY, LIST_IMAGES, LIST_SIZES, LIST_LOCATIONS
    }
 
    /**
@@ -90,10 +89,13 @@ public class ComputeTask extends Task {
     */
    public void execute() throws BuildException {
       ComputeServiceContext context = computeMap.get(HttpUtils.createUri(provider));
-      Action action = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
-               this.action));
+
       try {
-         invokeActionOnService(action, context.getComputeService());
+         for (String action : Splitter.on(',').split(actions)) {
+            Action act = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
+                     action));
+            invokeActionOnService(act, context.getComputeService());
+         }
       } finally {
          context.close();
       }
@@ -132,6 +134,9 @@ public class ComputeTask extends Task {
          case LIST_SIZES:
             listSizes(computeService);
             break;
+         case LIST_LOCATIONS:
+            listLocations(computeService);
+            break;
          default:
             this.log("bad action: " + action, Project.MSG_ERR);
       }
@@ -139,7 +144,7 @@ public class ComputeTask extends Task {
 
    private void listDetails(ComputeService computeService) {
       log("list details");
-      for (ComputeMetadata node : computeService.listNodes()) {// TODO
+      for (ComputeMetadata node : computeService.getNodes().values()) {// TODO
          // parallel
          logDetails(computeService, node);
       }
@@ -147,58 +152,67 @@ public class ComputeTask extends Task {
 
    private void listImages(ComputeService computeService) {
       log("list images");
-      for (Image image : computeService.listImages()) {// TODO
+      for (Image image : computeService.getImages().values()) {// TODO
          log(String.format("   image location=%s, id=%s, version=%s, arch=%s, osfam=%s, desc=%s",
-                  image.getLocation(), image.getId(), image.getVersion(), image.getArchitecture(),
-                  image.getOsFamily(), image.getOsDescription()));
+                  image.getLocationId(), image.getId(), image.getVersion(),
+                  image.getArchitecture(), image.getOsFamily(), image.getOsDescription()));
       }
    }
 
    private void listSizes(ComputeService computeService) {
       log("list sizes");
-      for (Size size : computeService.listSizes()) {// TODO
+      for (Size size : computeService.getSizes().values()) {// TODO
          log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getId(), size
                   .getCores(), size.getRam(), size.getDisk()));
       }
    }
 
+   private void listLocations(ComputeService computeService) {
+      log("list locations");
+      for (Location location : computeService.getLocations().values()) {// TODO
+         log(String.format("   location id=%s, scope=%s, description=%s, parent=%s, assignable=%s",
+                  location.getId(), location.getScope(), location.getDescription(), location
+                           .getParent(), location.isAssignable()));
+      }
+   }
+
    private void list(ComputeService computeService) {
       log("list");
-      for (ComputeMetadata node : computeService.listNodes()) {
-         log(String.format("   location=%s, id=%s, name=%s", node.getLocation(), node.getId(), node
-                  .getName()));
+      for (ComputeMetadata node : computeService.getNodes().values()) {
+         log(String.format("   location=%s, id=%s, tag=%s", node.getLocationId(), node.getId(),
+                  node.getName()));
       }
    }
 
    private void create(ComputeService computeService) {
-      String name = nodeElement.getName();
+      String tag = nodeElement.getTag();
 
-      log(String.format("create name: %s, size: %s, os: %s", name, nodeElement.getSize(),
-               nodeElement.getOs()));
+      log(String.format("create tag: %s, count: %d, size: %s, os: %s", tag, nodeElement.getCount(),
+               nodeElement.getSize(), nodeElement.getOs()));
 
       Template template = createTemplateFromElement(nodeElement, computeService);
 
-      RunNodeOptions options = getNodeOptionsFromElement(nodeElement);
-
-      CreateNodeResponse createdNode = computeService.runNode(name, template, options);
+      NodeMetadata createdNode = Iterables.getOnlyElement(computeService.runNodes(tag, nodeElement
+               .getCount(), template));
 
       logNodeDetails(createdNode);
 
       addNodeDetailsAsProjectProperties(createdNode);
    }
 
-   private void logNodeDetails(CreateNodeResponse createdNode) {
-      log(String.format("   id=%s, name=%s, connection=%s:%s@%s", createdNode.getId(), createdNode
-               .getName(), createdNode.getCredentials().account, createdNode.getCredentials().key,
-               createdNode.getPublicAddresses().first().getHostAddress()));
+   private void logNodeDetails(NodeMetadata createdNode) {
+      log(String.format("   id=%s, tag=%s, location=%s, tag=%s, connection=%s:%s@%s", createdNode
+               .getId(), createdNode.getTag(), createdNode.getLocationId(), createdNode.getName(),
+               createdNode.getCredentials().account, createdNode.getCredentials().key,
+               ipOrEmptyString(createdNode.getPublicAddresses())));
    }
 
-   private void addNodeDetailsAsProjectProperties(CreateNodeResponse createdNode) {
+   private void addNodeDetailsAsProjectProperties(NodeMetadata createdNode) {
       if (nodeElement.getIdproperty() != null)
          getProject().setProperty(nodeElement.getIdproperty(), createdNode.getId());
       if (nodeElement.getHostproperty() != null)
          getProject().setProperty(nodeElement.getHostproperty(),
-                  createdNode.getPublicAddresses().first().getHostAddress());
+                  ipOrEmptyString(createdNode.getPublicAddresses()));
       if (nodeElement.getKeyfile() != null && isKeyAuth(createdNode))
          try {
             Files.write(createdNode.getCredentials().key, new File(nodeElement.getKeyfile()),
@@ -215,54 +229,49 @@ public class ComputeTask extends Task {
    }
 
    private void destroy(ComputeService computeService) {
-      log(String.format("destroy name: %s", nodeElement.getName()));
-      Iterable<? extends ComputeMetadata> nodesThatMatch = filterByName(computeService.listNodes(),
-               nodeElement.getName());
-      for (ComputeMetadata node : nodesThatMatch) {
-         log(String.format("   destroying id=%s, name=%s", node.getId(), node.getName()));
-         computeService.destroyNode(node);
-      }
+      log(String.format("destroy tag: %s", nodeElement.getTag()));
+      computeService.destroyNodes(nodeElement.getTag());
    }
 
    private void get(ComputeService computeService) {
-      log(String.format("get name: %s", nodeElement.getName()));
-      Iterable<? extends ComputeMetadata> nodesThatMatch = filterByName(computeService.listNodes(),
-               nodeElement.getName());
-      for (ComputeMetadata node : nodesThatMatch) {
+      log(String.format("get tag: %s", nodeElement.getTag()));
+      for (ComputeMetadata node : computeService.getNodes(nodeElement.getTag())) {
          logDetails(computeService, node);
       }
    }
 
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
-      NodeMetadata metadata = computeService.getNodeMetadata(node);
+      NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node)
+               : computeService.getNodeMetadata(node);
       log(String
                .format(
-                        "   node id=%s, name=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
-                        metadata.getId(), node.getName(), node.getLocation(), metadata.getState(),
-                        ipOrEmptyString(metadata.getPublicAddresses()), ipOrEmptyString(metadata
-                                 .getPrivateAddresses()), metadata.getExtra()));
+                        "   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
+                        metadata.getId(), metadata.getName(), metadata.getTag(), metadata
+                                 .getLocationId(), metadata.getState(), ComputeTaskUtils
+                                 .ipOrEmptyString(metadata.getPublicAddresses()),
+                        ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getExtra()));
    }
 
    /**
     * @return the configured {@link NodeElement} element
     */
-   public final NodeElement createNode() {
-      if (getNode() == null) {
+   public final NodeElement createNodes() {
+      if (getNodes() == null) {
          this.nodeElement = new NodeElement();
       }
       return this.nodeElement;
    }
 
-   public NodeElement getNode() {
+   public NodeElement getNodes() {
       return this.nodeElement;
    }
 
-   public String getAction() {
-      return action;
+   public String getActions() {
+      return actions;
    }
 
-   public void setAction(String action) {
-      this.action = action;
+   public void setActions(String actions) {
+      this.actions = actions;
    }
 
    public NodeElement getNodeElement() {

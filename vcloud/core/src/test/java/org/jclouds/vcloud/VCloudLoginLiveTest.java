@@ -29,12 +29,12 @@ import static org.testng.Assert.assertNotNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
@@ -139,7 +139,18 @@ public class VCloudLoginLiveTest {
       context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(
                new TypeLiteral<VCloudLoginAsyncClient>() {
                }, new TypeLiteral<VCloudLoginAsyncClient>() {
-               }, new Properties()) {
+               }, new PropertiesBuilder() {
+
+                  @Override
+                  public PropertiesBuilder withCredentials(String account, String key) {
+                     return null;
+                  }
+
+                  @Override
+                  public PropertiesBuilder withEndpoint(URI endpoint) {
+                     return null;
+                  }
+               }.build()) {
 
          public void addContextModule(List<Module> modules) {
 

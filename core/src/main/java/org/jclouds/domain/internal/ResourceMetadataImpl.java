@@ -45,17 +45,17 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
    @Nullable
    private final String name;
    @Nullable
-   private final String location;
+   private final String locationId;
    @Nullable
    private final URI uri;
    private final Map<String, String> userMetadata = Maps.newLinkedHashMap();
 
    public ResourceMetadataImpl(T type, @Nullable String id, @Nullable String name,
-            @Nullable String location, @Nullable URI uri, Map<String, String> userMetadata) {
+            @Nullable String locationId, @Nullable URI uri, Map<String, String> userMetadata) {
       this.type = checkNotNull(type, "type");
       this.id = id;
       this.name = name;
-      this.location = location;
+      this.locationId = locationId;
       this.uri = uri;
       this.userMetadata.putAll(checkNotNull(userMetadata, "userMetadata"));
    }
@@ -98,8 +98,8 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
     * {@inheritDoc}
     */
    @Override
-   public String getLocation() {
-      return location;
+   public String getLocationId() {
+      return locationId;
    }
 
    /**
@@ -123,7 +123,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
       final int prime = 31;
       int result = 1;
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((locationId == null) ? 0 : locationId.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((uri == null) ? 0 : uri.hashCode());
@@ -145,10 +145,10 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
             return false;
       } else if (!id.equals(other.id))
          return false;
-      if (location == null) {
-         if (other.location != null)
+      if (locationId == null) {
+         if (other.locationId != null)
             return false;
-      } else if (!location.equals(other.location))
+      } else if (!locationId.equals(other.locationId))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -175,7 +175,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
 
    @Override
    public String toString() {
-      return "[type=" + type + ", id=" + id + ", name=" + name + ", location=" + location
+      return "[type=" + type + ", id=" + id + ", name=" + name + ", locationId=" + locationId
                + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
    }
 

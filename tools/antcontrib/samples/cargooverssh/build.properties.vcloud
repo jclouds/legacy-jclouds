@@ -4,4 +4,4 @@ driver=vcloud
 vcloud.endpoint=https://vcloud_host_you_want/api
 account=user@youregistered.com
 key=password
-nodename=name_of_your_vapp
+nodetag=name_of_your_vapp

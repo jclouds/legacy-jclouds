@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudservers.compute.config;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -33,24 +34,30 @@ import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.internal.ImageImpl;
+import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.ResourceLocation;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.compute.CloudServersComputeService;
-import org.jclouds.rackspace.cloudservers.compute.domain.CloudServersImage;
-import org.jclouds.rackspace.cloudservers.compute.domain.CloudServersSize;
 import org.jclouds.rackspace.cloudservers.config.CloudServersContextModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rest.RestContext;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 
@@ -78,25 +85,44 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
    @Provides
    @Singleton
-   @ResourceLocation
-   String getRegion() {
-      return "default";
+   Location getRegion() {
+      return new LocationImpl(LocationScope.ZONE, "DALLAS", "Dallas, TX", null, true);
    }
 
    @Provides
    @Singleton
-   protected Set<? extends Size> provideSizes(CloudServersClient sync, Set<? extends Image> images,
-            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
-            throws InterruptedException, TimeoutException, ExecutionException {
+   Map<String, ? extends Location> provideLocations(Location location) {
+      return ImmutableMap.of(location.getId(), location);
+   }
+
+   @Provides
+   @Singleton
+   protected Function<ComputeMetadata, String> indexer() {
+      return new Function<ComputeMetadata, String>() {
+         @Override
+         public String apply(ComputeMetadata from) {
+            return from.getId();
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   protected Map<String, ? extends Size> provideSizes(CloudServersClient sync,
+            Map<String, ? extends Image> images, Location location, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Function<ComputeMetadata, String> indexer) throws InterruptedException,
+            TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new CloudServersSize(from, from.getId() + "", from.getDisk() / 10,
-                  from.getRam(), from.getDisk(), ImmutableSet.<Architecture> of(
-                           Architecture.X86_32, Architecture.X86_64)));
+         sizes.add(new SizeImpl(from.getId() + "", from.getName(), location.getId(), null,
+                  ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(), from
+                           .getDisk(), ImmutableSet.<Architecture> of(Architecture.X86_32,
+                           Architecture.X86_64)));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
+      return Maps.uniqueIndex(sizes, indexer);
    }
 
    private static class LogHolder {
@@ -109,9 +135,9 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final CloudServersClient sync,
-            @ResourceLocation String location, LogHolder holder) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected Map<String, ? extends Image> provideImages(final CloudServersClient sync,
+            Location location, LogHolder holder, Function<ComputeMetadata, String> indexer)
+            throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       for (final org.jclouds.rackspace.cloudservers.domain.Image from : sync
@@ -120,7 +146,6 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          Architecture arch = Architecture.X86_64;
          String osDescription = "";
          String version = "";
-
          Matcher matcher = RACKSPACE_PATTERN.matcher(from.getName());
          osDescription = from.getName();
          if (from.getName().indexOf("Red Hat EL") != -1) {
@@ -132,9 +157,11 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
-         images.add(new CloudServersImage(from, location, arch, os, osDescription, version));
+         images.add(new ImageImpl(from.getId() + "", from.getName(), location.getId(), null,
+                  ImmutableMap.<String, String> of(), from.getName(), version, os, osDescription,
+                  arch));
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return images;
+      return Maps.uniqueIndex(images, indexer);
    }
 }

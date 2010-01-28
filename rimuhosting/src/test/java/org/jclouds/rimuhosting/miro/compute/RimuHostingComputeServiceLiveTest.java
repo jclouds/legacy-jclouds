@@ -36,7 +36,7 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @Override
    public void setServiceDefaults() {
       service = "rimuhosting";
-      nodeName = "rimuhosting.jclouds";
+      tag = "rimuhosting.jclouds";
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {

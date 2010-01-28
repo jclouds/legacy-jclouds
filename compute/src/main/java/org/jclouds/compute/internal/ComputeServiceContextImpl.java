@@ -38,7 +38,7 @@ public class ComputeServiceContextImpl<X, Y> implements ComputeServiceContext {
    public ComputeServiceContextImpl(ComputeService computeService,
             RestContext<X, Y> providerSpecificContext) {
       this.computeService = checkNotNull(computeService, "computeService");
-      this.providerSpecificContext = providerSpecificContext;
+      this.providerSpecificContext = checkNotNull(providerSpecificContext, "providerSpecificContext");;
    }
 
    public ComputeService getComputeService() {

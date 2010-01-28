@@ -41,9 +41,9 @@ public class BlobMetadataImpl extends StorageMetadataImpl implements Serializabl
    private final String contentType;
    private final byte[] contentMD5;
 
-   public BlobMetadataImpl(String id, String name, @Nullable String location, URI uri, String eTag,
-            Long size, Date lastModified, Map<String, String> userMetadata, String contentType,
-            byte[] contentMD5) {
+   public BlobMetadataImpl(String id, String name, @Nullable String location, URI uri,
+            String eTag, Long size, Date lastModified, Map<String, String> userMetadata,
+            String contentType, byte[] contentMD5) {
       super(StorageType.BLOB, id, name, location, uri, eTag, size, lastModified, userMetadata);
       this.contentType = contentType;
       this.contentMD5 = contentMD5;

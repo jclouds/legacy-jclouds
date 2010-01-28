@@ -27,6 +27,7 @@ import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.internal.SizeImpl;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -34,11 +35,14 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class EC2Size extends SizeImpl {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8605688733788974797L;
    private final InstanceType instanceType;
 
    EC2Size(InstanceType instanceType, Integer cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
-      super(instanceType.toString(), cores, ram, disk, supportedArchitectures);
+      super(instanceType.toString(), instanceType.toString(), null, null, ImmutableMap
+               .<String, String> of(),cores, ram, disk, supportedArchitectures);
       this.instanceType = instanceType;
    }
 

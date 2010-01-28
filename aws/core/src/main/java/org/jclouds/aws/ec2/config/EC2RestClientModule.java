@@ -32,6 +32,7 @@ import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
+import org.jclouds.aws.ec2.predicates.InstanceStateTerminated;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AMIClient;
@@ -91,7 +92,8 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("TERMINATED")
-   protected Predicate<RunningInstance> instanceStateTerminated(InstanceStateRunning stateTerminated) {
+   protected Predicate<RunningInstance> instanceStateTerminated(
+            InstanceStateTerminated stateTerminated) {
       return new RetryablePredicate<RunningInstance>(stateTerminated, 600, 50,
                TimeUnit.MILLISECONDS);
    }

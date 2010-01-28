@@ -113,10 +113,8 @@ public interface BlobStore {
     *           fully qualified name relative to the container.
     * @param options
     *           byte range or condition options
-    * @return the blob you intended to receive.
+    * @return the blob you intended to receive or null, if it doesn't exist.
     * @throws ContainerNotFoundException
-    *            if the container doesn't exist
-    * @throws KeyNotFoundException
     *            if the container doesn't exist
     */
    Blob getBlob(String container, String name);
