@@ -112,7 +112,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testCreate() throws Exception {
       try {
-         client.destroyNodes(tag);
+         client.destroyNodesWithTag(tag);
       } catch (HttpResponseException e) {
          // TODO hosting.com throws 400 when we try to delete a vApp
       } catch (NoSuchElementException e) {
@@ -144,7 +144,7 @@ public abstract class BaseComputeServiceLiveTest {
                                     //
                                     .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX)
                                     .getBytes());
-      nodes = Sets.newTreeSet(client.runNodes(tag, 2, template));
+      nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
       assertEquals(nodes.size(), 2);
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getId());
@@ -171,7 +171,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
-      NodeSet metadataSet = client.getNodes(tag);
+      NodeSet metadataSet = client.getNodesWithTag(tag);
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node);
@@ -267,8 +267,8 @@ public abstract class BaseComputeServiceLiveTest {
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
-         client.destroyNodes(tag);
-         for (NodeMetadata node : client.getNodes(tag)) {
+         client.destroyNodesWithTag(tag);
+         for (NodeMetadata node : client.getNodesWithTag(tag)) {
             assert node.getState() == NodeState.TERMINATED : node;
          }
       }

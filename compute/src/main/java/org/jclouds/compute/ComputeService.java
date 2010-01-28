@@ -42,7 +42,12 @@ public interface ComputeService {
    TemplateBuilder templateBuilder();
 
    /**
-    * all sizes available to the current user by id
+    * The get sizes command shows you the options including virtual cpu count, memory, and disks.
+    * cpu count is not a portable quantity across clouds, as they are measured differently. However,
+    * it is a good indicator of relative speed within a cloud. memory is measured in megabytes and
+    * disks in gigabytes.
+    * 
+    * @retun a map of sizes by ID, conceding that in some clouds the "id" is not used.
     */
    Map<String, ? extends Size> getSizes();
 
@@ -58,7 +63,10 @@ public interface ComputeService {
    Map<String, ? extends ComputeMetadata> getNodes();
 
    /**
-    * all nodes available to the current user by id
+    * The get locations command returns all the valid locations for nodes. A location has a scope,
+    * which is typically region or zone. A region is a general area, like eu-west, where a zone is
+    * similar to a datacenter. If a location has a parent, that implies it is within that location.
+    * For example a location can be a rack, whose parent is likely to be a zone.
     */
    Map<String, ? extends Location> getLocations();
 
@@ -69,13 +77,13 @@ public interface ComputeService {
     * 
     * @param tag
     *           - common identifier to group nodes by, cannot contain hyphens
-    * @param maxNodes
+    * @param count
     *           - how many to fire up.
     * @param template
     *           - how to configure the nodes
     * 
     */
-   NodeSet runNodes(String tag, int maxNodes, Template template);
+   NodeSet runNodesWithTag(String tag, int count, Template template);
 
    /**
     * destroy the node. If it is the only node in a tag set, the dependent resources will also be
@@ -86,7 +94,7 @@ public interface ComputeService {
    /**
     * destroy the nodes identified by this tag.
     */
-   void destroyNodes(String tag);
+   void destroyNodesWithTag(String tag);
 
    /**
     * Find a node by its id
@@ -98,6 +106,6 @@ public interface ComputeService {
     * 
     * @param tag
     */
-   NodeSet getNodes(String tag);
+   NodeSet getNodesWithTag(String tag);
 
 }

@@ -155,7 +155,7 @@ public class CloudServersComputeService implements ComputeService {
             .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
 
    @Override
-   public NodeSet runNodes(final String tag, int max, final Template template) {
+   public NodeSet runNodesWithTag(final String tag, int max, final Template template) {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       logger.debug(">> running server image(%s) flavor(%s)", template.getImage().getId(), template
                .getSize().getId());
@@ -251,7 +251,7 @@ public class CloudServersComputeService implements ComputeService {
    }
 
    @Override
-   public void destroyNodes(String tag) { // TODO parallel
+   public void destroyNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> terminating servers by tag(%s)", tag);
       Set<ListenableFuture<Void>> responses = Sets.newHashSet();
       for (final NodeMetadata node : doGetNodes(tag)) {
@@ -273,7 +273,7 @@ public class CloudServersComputeService implements ComputeService {
    }
 
    @Override
-   public NodeSet getNodes(String tag) {
+   public NodeSet getNodesWithTag(String tag) {
       logger.debug(">> listing servers by tag(%s)", tag);
       NodeSet nodes = doGetNodes(tag);
       logger.debug("<< list(%d)", nodes.size());

@@ -192,7 +192,7 @@ public class ComputeTask extends Task {
 
       Template template = createTemplateFromElement(nodeElement, computeService);
 
-      NodeMetadata createdNode = Iterables.getOnlyElement(computeService.runNodes(tag, nodeElement
+      NodeMetadata createdNode = Iterables.getOnlyElement(computeService.runNodesWithTag(tag, nodeElement
                .getCount(), template));
 
       logNodeDetails(createdNode);
@@ -230,12 +230,12 @@ public class ComputeTask extends Task {
 
    private void destroy(ComputeService computeService) {
       log(String.format("destroy tag: %s", nodeElement.getTag()));
-      computeService.destroyNodes(nodeElement.getTag());
+      computeService.destroyNodesWithTag(nodeElement.getTag());
    }
 
    private void get(ComputeService computeService) {
       log(String.format("get tag: %s", nodeElement.getTag()));
-      for (ComputeMetadata node : computeService.getNodes(nodeElement.getTag())) {
+      for (ComputeMetadata node : computeService.getNodesWithTag(nodeElement.getTag())) {
          logDetails(computeService, node);
       }
    }
