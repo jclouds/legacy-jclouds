@@ -46,7 +46,6 @@ import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import com.google.inject.Provider;
 
@@ -192,12 +191,11 @@ public class ComputeTask extends Task {
 
       Template template = createTemplateFromElement(nodeElement, computeService);
 
-      NodeMetadata createdNode = Iterables.getOnlyElement(computeService.runNodesWithTag(tag, nodeElement
-               .getCount(), template));
-
-      logNodeDetails(createdNode);
-
-      addNodeDetailsAsProjectProperties(createdNode);
+      for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(),
+               template)) {
+         logNodeDetails(createdNode);
+         addNodeDetailsAsProjectProperties(createdNode);
+      }
    }
 
    private void logNodeDetails(NodeMetadata createdNode) {

@@ -52,7 +52,11 @@ public interface ComputeService {
    Map<String, ? extends Size> getSizes();
 
    /**
-    * all images available to the current user by id
+    * Images define the operating system and metadata related to a node. In some clouds, Images are
+    * bound to a specific region, and their identifiers are different across these regions. For this
+    * reason, you should consider matching image requirements like operating system family with
+    * TemplateBuilder as opposed to choosing an image explicitly. The getImages() command returns a
+    * map of images by id.
     */
    Map<String, ? extends Image> getImages();
 
@@ -71,9 +75,27 @@ public interface ComputeService {
    Map<String, ? extends Location> getLocations();
 
    /**
-    * create and run nodes in the specified tagset. If resources needed are currently available for
-    * this tag, they will be reused. Otherwise, they will be created. Inbound port 22 will always be
-    * opened up.
+    * 
+    * The compute api treats nodes as a group based on a tag you specify. Using this tag, you can
+    * choose to operate one or many nodes as a logical unit without regard to the implementation
+    * details of the cloud.
+    * <p/>
+    * 
+    * The set that is returned will include credentials you can use to ssh into the nodes. The "key"
+    * part of the credentials is either a password or a private key. You have to inspect the value
+    * to determine this.
+    * 
+    * <pre>
+    * if (node.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
+    *    // it is a private key, not a password.
+    * </pre>
+    * 
+    * <p/>
+    * Note. if all you want to do is execute a script at bootup, you should consider use of the
+    * runscript option.
+    * <p/>
+    * If resources such as security groups are needed, they will be reused or created for you.
+    * Inbound port 22 will always be opened up.
     * 
     * @param tag
     *           - common identifier to group nodes by, cannot contain hyphens
@@ -81,7 +103,7 @@ public interface ComputeService {
     *           - how many to fire up.
     * @param template
     *           - how to configure the nodes
-    * 
+    * @return all of the nodes the api was able to launch in a running state.
     */
    NodeSet runNodesWithTag(String tag, int count, Template template);
 
@@ -92,7 +114,9 @@ public interface ComputeService {
    void destroyNode(ComputeMetadata node);
 
    /**
-    * destroy the nodes identified by this tag.
+    * nodes which are tagged are treated as a logical set. Using the delete command, you can save
+    * time by removing the nodes in parallel. When the last node in a set is destroyed, any indirect
+    * resources it uses, such as keypairs, are also destroyed.
     */
    void destroyNodesWithTag(String tag);
 
