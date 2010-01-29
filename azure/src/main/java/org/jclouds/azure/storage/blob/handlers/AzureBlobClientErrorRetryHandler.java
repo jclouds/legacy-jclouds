@@ -72,16 +72,19 @@ public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
                   retryCountLimit, command);
          return false;
       } else if (response.getStatusCode() == 409) {
-         try {
-            AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response,
-                     new ByteArrayInputStream(content));
-            if ("ContainerBeingDeleted".equals(error.getCode())) {
-               backoffHandler.imposeBackoffExponentialDelay(100L, 3, command.getFailureCount(),
-                        command.toString());
-               return true;
+         // Content can be null in the case of HEAD requests
+         if (content != null) {
+            try {
+               AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response,
+                        new ByteArrayInputStream(content));
+               if ("ContainerBeingDeleted".equals(error.getCode())) {
+                  backoffHandler.imposeBackoffExponentialDelay(100L, 3, command.getFailureCount(),
+                           command.toString());
+                  return true;
+               }
+            } catch (HttpException e) {
+               logger.warn(e, "error parsing response: %s", new String(content));
             }
-         } catch (HttpException e) {
-            logger.warn(e, "error parsing response: %s", new String(content));
          }
       }
       return false;

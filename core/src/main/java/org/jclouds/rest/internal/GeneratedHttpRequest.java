@@ -40,9 +40,9 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    private final Object[] args;
    private final RestAnnotationProcessor<T> processor;
 
-   GeneratedHttpRequest(String method, URI endPoint, RestAnnotationProcessor<T> processor,
+   GeneratedHttpRequest(String method, URI endpoint, RestAnnotationProcessor<T> processor,
             Class<T> declaring, Method javaMethod, Object... args) {
-      super(method, endPoint);
+      super(method, endpoint);
       this.processor = processor;
       this.declaring = declaring;
       this.javaMethod = javaMethod;

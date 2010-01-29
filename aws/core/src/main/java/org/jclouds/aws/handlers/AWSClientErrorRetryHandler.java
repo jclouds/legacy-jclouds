@@ -61,15 +61,19 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
                || response.getStatusCode() == 409) {
          byte[] content = HttpUtils.closeClientButKeepContentStream(response);
          command.incrementFailureCount();
-         try {
-            AWSError error = utils.parseAWSErrorFromContent(command, response, new String(content));
-            if ("RequestTimeout".equals(error.getCode())
-                     || "OperationAborted".equals(error.getCode())
-                     || "SignatureDoesNotMatch".equals(error.getCode())) {
-               return true;
+         // Content can be null in the case of HEAD requests
+         if (content != null) {
+            try {
+               AWSError error = utils.parseAWSErrorFromContent(command, response, new String(
+                        content));
+               if ("RequestTimeout".equals(error.getCode())
+                        || "OperationAborted".equals(error.getCode())
+                        || "SignatureDoesNotMatch".equals(error.getCode())) {
+                  return true;
+               }
+            } catch (HttpException e) {
+               logger.warn(e, "error parsing response: %s", new String(content));
             }
-         } catch (HttpException e) {
-            logger.warn(e, "error parsing response: %s", new String(content));
          }
       }
       return false;

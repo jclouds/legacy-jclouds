@@ -46,40 +46,40 @@ public class HttpRequest extends HttpMessage {
 
    /**
     * 
-    * @param endPoint
+    * @param endpoint
     *           This may change over the life of the request due to redirects.
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(String method, URI endPoint) {
+   public HttpRequest(String method, URI endpoint) {
       this.setMethod(checkNotNull(method, "method"));
-      this.setEndpoint(checkNotNull(endPoint, "endPoint"));
-      checkArgument(endPoint.getHost() != null, String.format("endPoint.getHost() is null for %s",
-               endPoint));
+      this.setEndpoint(checkNotNull(endpoint, "endpoint"));
+      checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s",
+               endpoint));
    }
 
    /**
     * 
-    * @param endPoint
+    * @param endpoint
     *           This may change over the life of the request due to redirects.
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(String method, URI endPoint, Multimap<String, String> headers) {
-      this(method, endPoint);
+   public HttpRequest(String method, URI endpoint, Multimap<String, String> headers) {
+      this(method, endpoint);
       getHeaders().putAll(checkNotNull(headers, "headers"));
    }
 
    /**
     * 
-    * @param endPoint
+    * @param endpoint
     *           This may change over the life of the request due to redirects.
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   protected HttpRequest(String method, URI endPoint, Multimap<String, String> headers,
+   protected HttpRequest(String method, URI endpoint, Multimap<String, String> headers,
             @Nullable Payload payload) {
-      this(method, endPoint);
+      this(method, endpoint);
       getHeaders().putAll(checkNotNull(headers, "headers"));
       setPayload(payload);
    }

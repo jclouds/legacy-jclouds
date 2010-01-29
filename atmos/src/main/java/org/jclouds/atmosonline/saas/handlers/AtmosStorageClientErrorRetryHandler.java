@@ -64,16 +64,21 @@ public class AtmosStorageClientErrorRetryHandler implements HttpRetryHandler {
          return true;
       } else if (response.getStatusCode() == 409 || response.getStatusCode() == 400) {
          byte[] content = HttpUtils.closeClientButKeepContentStream(response);
-         try {
-            AtmosStorageError error = utils.parseAtmosStorageErrorFromContent(command, response,
-                     new String(content));
-            if (error.getCode() == 1016) {
-               return backoffHandler.shouldRetryRequest(command, response);
+         // Content can be null in the case of HEAD requests
+         if (content != null) {
+            try {
+               AtmosStorageError error = utils.parseAtmosStorageErrorFromContent(command, response,
+                        new String(content));
+               if (error.getCode() == 1016) {
+                  return backoffHandler.shouldRetryRequest(command, response);
+               }
+               // don't increment count before here, since backoff handler does already
+               command.incrementFailureCount();
+            } catch (HttpException e) {
+               logger.warn(e, "error parsing response: %s", new String(content));
             }
-            // don't increment count before here, since backoff handler does already
+         } else {
             command.incrementFailureCount();
-         } catch (HttpException e) {
-            logger.warn(e, "error parsing response: %s", new String(content));
          }
          return true;
       }

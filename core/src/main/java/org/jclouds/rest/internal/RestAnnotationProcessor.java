@@ -61,12 +61,12 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
@@ -360,16 +360,15 @@ public class RestAnnotationProcessor<T> {
          builder.replaceQuery(makeQueryLine(queryParams, null, skips));
       }
 
-      URI endPoint;
       try {
-         endPoint = builder.buildFromEncodedMap(convertUnsafe(tokenValues));
+         endpoint = builder.buildFromEncodedMap(convertUnsafe(tokenValues));
       } catch (IllegalArgumentException e) {
          throw new IllegalStateException(e);
       } catch (UriBuilderException e) {
          throw new IllegalStateException(e);
       }
 
-      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endPoint, this,
+      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endpoint, this,
                declaring, method, args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
