@@ -20,6 +20,7 @@ package org.jclouds.ssh;
 
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -33,7 +34,13 @@ public interface SshClient {
       SshClient create(InetSocketAddress socket, String username, String password);
 
       SshClient create(InetSocketAddress socket, String username, byte[] privateKey);
+
+      Map<String, String> generateRSAKeyPair(String comment, String passphrase);
    }
+
+   String getUsername();
+
+   String getHostAddress();
 
    void put(String path, InputStream contents);
 

@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,14 +56,19 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
+import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -77,6 +83,13 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class EC2ComputeServiceContextModule extends EC2ContextModule {
+   @Provides
+   @Singleton
+   @Named("NOT_RUNNING")
+   protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
+      return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
+               TimeUnit.SECONDS);
+   }
 
    @Override
    protected void configure() {
@@ -183,6 +196,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
                   .describeImagesInRegion(region, ownedBy(amiOwners))) {
             OsFamily os = null;
+            String name = null;
             String osDescription = from.getImageLocation();
             String version = "";
 
@@ -190,7 +204,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
             if (matcher.find()) {
                try {
                   os = OsFamily.fromValue(matcher.group(1));
-                  matcher.group(2);// TODO no field for os version
+                  name = matcher.group(2);// TODO no field for os version
                   version = matcher.group(3);
                } catch (IllegalArgumentException e) {
                   holder.logger.debug("<< didn't match os(%s)", matcher.group(1));
@@ -199,10 +213,10 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
             images
                      .add(new ImageImpl(
                               from.getId(),
-                              from.getName(),
+                              name,
                               region.toString(),
                               null,
-                              ImmutableMap.<String, String> of(),
+                              ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
                               from.getDescription(),
                               version,
                               os,

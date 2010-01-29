@@ -21,6 +21,7 @@ package org.jclouds.ssh.jsch.config;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
@@ -28,6 +29,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests the ability to configure a {@link JschSshClient}
@@ -44,5 +46,10 @@ public class JschSshClientModuleTest {
       SshClient connection = factory.create(new InetSocketAddress(InetAddress.getLocalHost(), 22),
                "username", "password");
       assert connection instanceof JschSshClient;
+      Map<String, String> keyPair = factory.generateRSAKeyPair("comment", "hola");
+      assertEquals(keyPair.get("comment"), "comment");
+      assertEquals(keyPair.get("passphrase"), "hola");
+      assert keyPair.get("private").indexOf("-----BEGIN RSA PRIVATE KEY-----") == 0 : keyPair;
+      assert keyPair.get("public").indexOf("ssh-rsa ") == 0 : keyPair;
    }
 }

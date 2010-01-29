@@ -66,7 +66,7 @@ public class BindRebootTypeToJsonPayloadTest {
       injector.injectMembers(binder);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.bindToRequest(request, RebootType.HARD);
-      assertEquals("{\"reboot\":{\"flavor\":\"HARD\"}}", request.getPayload().getRawContent());
+      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", request.getPayload().getRawContent());
    }
 
    @Test
@@ -75,7 +75,7 @@ public class BindRebootTypeToJsonPayloadTest {
       injector.injectMembers(binder);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.bindToRequest(request, RebootType.SOFT);
-      assertEquals("{\"reboot\":{\"flavor\":\"SOFT\"}}", request.getPayload().getRawContent());
+      assertEquals("{\"reboot\":{\"type\":\"SOFT\"}}", request.getPayload().getRawContent());
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })

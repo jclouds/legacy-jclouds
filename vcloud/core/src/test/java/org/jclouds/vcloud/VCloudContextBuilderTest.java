@@ -119,7 +119,7 @@ public class VCloudContextBuilderTest {
                "http://localhost");
       assertEquals(builder.getProperties().getProperty(PROPERTY_VCLOUD_USER), "id");
       assertEquals(builder.getProperties().getProperty(PROPERTY_VCLOUD_KEY), "secret");
-      assertEquals(builder.getProperties().getProperty(PROPERTY_VCLOUD_SESSIONINTERVAL), "540");
+      assertEquals(builder.getProperties().getProperty(PROPERTY_VCLOUD_SESSIONINTERVAL), "480");
    }
 
    public void testBuildContext() {

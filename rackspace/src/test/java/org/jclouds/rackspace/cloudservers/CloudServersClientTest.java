@@ -921,7 +921,7 @@ public class CloudServersClientTest {
                         + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"reboot\":{\"flavor\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOn404.class);

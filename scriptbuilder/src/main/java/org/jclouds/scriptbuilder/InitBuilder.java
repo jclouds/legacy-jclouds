@@ -42,7 +42,6 @@ public class InitBuilder extends ScriptBuilder {
    @SuppressWarnings("unchecked")
    public InitBuilder(String instanceName, String instanceHome, String logDir,
             Map<String, String> variables, String... execLines) {
-      super();
       Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName,
                "instanceHome", instanceHome, "logDir", logDir);
       addEnvironmentVariableScope("default", defaultVariables)

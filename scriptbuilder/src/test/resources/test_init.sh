@@ -47,6 +47,7 @@ function forget {
       echo $INSTANCE_NAME already running pid [$FOUND_PID]
    } || {
       nohup $SCRIPT >$LOG_DIR/stdout.log 2>$LOG_DIR/stderr.log &
+      sleep 1
       findPid $INSTANCE_NAME
       [ -n "$FOUND_PID" ] || abort "$INSTANCE_NAME did not start"
    }

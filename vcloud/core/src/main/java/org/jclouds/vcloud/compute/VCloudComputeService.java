@@ -161,9 +161,8 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       VApp vApp = client.getVApp(metaMap.get("id"));
       NodeMetadata node = newCreateNodeResponse(tag, template, metaMap, vApp);
       nodes.add(node);
-      if (template.getOptions().getRunScript() != null) {
-         utils.runScriptOnNode(node, template.getOptions().getRunScript());
-      }
+      utils.runOptionsOnNode(node, template.getOptions());
+      logger.debug("<< options applied vApp(%s)", node.getId());
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template,

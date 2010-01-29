@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.config;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -65,6 +66,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
@@ -96,6 +98,12 @@ public class EC2RestClientModule extends AbstractModule {
             InstanceStateTerminated stateTerminated) {
       return new RetryablePredicate<RunningInstance>(stateTerminated, 600, 50,
                TimeUnit.MILLISECONDS);
+   }
+
+   @Provides
+   @Singleton
+   protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
+      return new RetryablePredicate<InetSocketAddress>(open, 130, 1, TimeUnit.SECONDS);
    }
 
    @Override

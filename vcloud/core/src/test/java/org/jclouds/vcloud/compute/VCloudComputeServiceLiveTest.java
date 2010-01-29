@@ -32,11 +32,6 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Override
-   protected boolean canRunScript(Template template) {
-      return false;
-   }
-
-   @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       return templateBuilder.osFamily(UBUNTU).smallest().build();
    }

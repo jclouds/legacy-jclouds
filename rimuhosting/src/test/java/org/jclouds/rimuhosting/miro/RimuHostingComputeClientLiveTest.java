@@ -19,25 +19,29 @@
 package org.jclouds.rimuhosting.miro;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import com.google.common.base.Predicate;
-import com.google.inject.*;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.AddressReachable;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import static org.testng.Assert.assertEquals;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import com.google.common.base.Predicate;
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code TerremarkVCloudClient}
@@ -83,14 +87,6 @@ public class RimuHostingComputeClientLiveTest {
 
                   @Override
                   protected void configure() {
-                  }
-
-                  @SuppressWarnings("unused")
-                  @Provides
-                  private Predicate<InetSocketAddress> socketTester(SocketOpen open) {
-                     return new RetryablePredicate<InetSocketAddress>(open, 130, 10,
-                              TimeUnit.SECONDS);// make it longer then
-                     // default internet
                   }
 
                   @SuppressWarnings("unused")

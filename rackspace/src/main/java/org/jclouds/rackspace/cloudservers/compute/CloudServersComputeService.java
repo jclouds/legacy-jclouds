@@ -177,14 +177,14 @@ public class CloudServersComputeService implements ComputeService {
                                  .<String, String> of(), new Credentials("root", server
                                  .getAdminPass()));
                nodes.add(node);
-               logger.debug("<< started server(%s)", server.getId());
+               logger.debug("<< started server(%s)", node.getId());
                serverActive.apply(server);
-               logger.debug("<< running server(%s)", server.getId());
-               if (template.getOptions().getRunScript() != null) {
-                  utils.runScriptOnNode(node, template.getOptions().getRunScript());
-               }
+               logger.debug("<< running server(%s)", node.getId());
+               utils.runOptionsOnNode(node, template.getOptions());
+               logger.debug("<< options applied server(%s)", node.getId());
                return null;
             }
+
          }), executor));
       }
       ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");

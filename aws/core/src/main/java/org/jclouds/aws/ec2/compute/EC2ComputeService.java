@@ -62,6 +62,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.NodeSetImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -94,7 +95,7 @@ public class EC2ComputeService implements ComputeService {
 
       @Override
       public boolean apply(NodeMetadata from) {
-         return from.getTag().equals(tag);
+         return from.getTag().equals(tag) && from.getState() != NodeState.TERMINATED;
       }
 
       public NodeMatchesTag(String tag) {
@@ -119,6 +120,7 @@ public class EC2ComputeService implements ComputeService {
    protected final Predicate<RunningInstance> instanceStateTerminated;
    protected final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
    protected final ExecutorService executor;
+   protected final ComputeUtils utils;
 
    @Inject
    public EC2ComputeService(EC2Client client, Provider<TemplateBuilder> templateBuilderProvider,
@@ -128,7 +130,7 @@ public class EC2ComputeService implements ComputeService {
             Map<RegionTag, KeyPairCredentials> credentialsMap,
             Map<PortsRegionTag, String> securityGroupMap,
             CreateKeyPairIfNeeded createKeyPairIfNeeded,
-            CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
+            CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded, ComputeUtils utils,
             @Named("RUNNING") Predicate<RunningInstance> instanceStateRunning,
             @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated,
             RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
@@ -136,6 +138,7 @@ public class EC2ComputeService implements ComputeService {
       this.templateBuilderProvider = templateBuilderProvider;
       this.ec2Client = client;
       this.images = images;
+      this.utils = utils;
       this.sizes = sizes;
       this.locations = locations;
       this.credentialsMap = credentialsMap;
@@ -149,7 +152,7 @@ public class EC2ComputeService implements ComputeService {
    }
 
    @Override
-   public NodeSet runNodesWithTag(String tag, int count, Template template) {
+   public NodeSet runNodesWithTag(String tag, int count, final Template template) {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkArgument(template.getSize() instanceof EC2Size,
                "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
@@ -188,9 +191,6 @@ public class EC2ComputeService implements ComputeService {
                .withSecurityGroup(tag)// group I created above
                .withAdditionalInfo(tag);
 
-      if (options.getRunScript() != null)
-         instanceOptions.withUserData(options.getRunScript());
-
       Reservation reservation = ec2Client.getInstanceServices().runInstancesInRegion(region, zone,
                template.getImage().getId(), 1, count, instanceOptions);
       Iterable<String> ids = Iterables.transform(reservation, instanceToId);
@@ -199,11 +199,30 @@ public class EC2ComputeService implements ComputeService {
       logger.debug("<< started instances(%s)", idsString);
       Iterables.all(reservation, instanceStateRunning);
       logger.debug("<< running instances(%s)", idsString);
+      final Set<NodeMetadata> nodes = Sets.newHashSet();
+      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
+      for (final NodeMetadata node : Iterables.transform(Iterables.concat(ec2Client
+               .getInstanceServices().describeInstancesInRegion(region,
+                        Iterables.toArray(ids, String.class))), runningInstanceToNodeMetadata)) {
+         responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               try {
+                  utils.runOptionsOnNode(node, template.getOptions());
+                  logger.debug("<< options applied instance(%s)", node.getId());
+                  nodes.add(node);
+               } catch (Exception e) {
+                  logger.error(e, "<< error applying instance(%s) [%s] destroying ", node.getId(),
+                           e.getMessage());
+                  destroyNode(node);
+               }
+               return null;
+            }
 
-      // refresh to get IP address
-      return new NodeSetImpl(Iterables.transform(Iterables.concat(ec2Client.getInstanceServices()
-               .describeInstancesInRegion(region, Iterables.toArray(ids, String.class))),
-               runningInstanceToNodeMetadata));
+         }), executor));
+      }
+      ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");
+      return new NodeSetImpl(nodes);
    }
 
    @Override
@@ -307,13 +326,14 @@ public class EC2ComputeService implements ComputeService {
       logger.debug(">> terminating servers by tag(%s)", tag);
       Set<ListenableFuture<Void>> responses = Sets.newHashSet();
       for (final NodeMetadata node : doGetNodes(tag)) {
-         responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               destroyNode(node);
-               return null;
-            }
-         }), executor));
+         if (node.getState() != NodeState.TERMINATED)
+            responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
+               @Override
+               public Void call() throws Exception {
+                  destroyNode(node);
+                  return null;
+               }
+            }), executor));
       }
       ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");
       logger.debug("<< destroyed");

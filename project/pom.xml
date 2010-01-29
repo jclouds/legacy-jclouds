@@ -170,6 +170,7 @@
         <jclouds.wire.httpstream.url>http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
         <jclouds.wire.httpstream.md5>e5de09672af9b386c30a311654d8541a</jclouds.wire.httpstream.md5>
         <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
+        <jclouds.test.ssh.keyfile />
     </properties>
 
     <dependencyManagement>
@@ -472,6 +473,10 @@ pageTracker._trackPageview();
                                         <property>
                                             <name>jclouds.test.appid</name>
                                             <value>${jclouds.test.appid}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.test.ssh.keyfile</name>
+                                            <value>${jclouds.test.ssh.keyfile}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.blobstore.httpstream.url</name>

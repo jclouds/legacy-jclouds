@@ -215,4 +215,14 @@ public class JschSshClient implements SshClient {
       }
    }
 
+   @Override
+   public String getHostAddress() {
+      return this.host.getHostAddress();
+   }
+
+   @Override
+   public String getUsername() {
+      return this.username;
+   }
+
 }

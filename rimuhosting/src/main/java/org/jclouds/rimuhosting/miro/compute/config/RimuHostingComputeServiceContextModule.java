@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,19 +42,24 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeService;
 import org.jclouds.rimuhosting.miro.config.RimuHostingContextModule;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
+import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -80,6 +86,14 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
             RestContext<RimuHostingAsyncClient, RimuHostingClient> context) {
       return new ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>(
                computeService, context);
+   }
+
+   @Provides
+   @Singleton
+   @Named("NOT_RUNNING")
+   protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
+      return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
+               TimeUnit.SECONDS);
    }
 
    @Provides

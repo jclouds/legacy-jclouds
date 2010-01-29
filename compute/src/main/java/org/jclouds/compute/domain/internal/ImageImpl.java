@@ -90,4 +90,54 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       return architecture;
    }
 
+   @Override
+   public String toString() {
+      return "[id=" + getId() + ", name=" + getName() + ", locationId=" + getLocationId()
+               + ", architecture=" + architecture + ", osDescription=" + osDescription
+               + ", osFamily=" + osFamily + ", version=" + version + "]";
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
+      result = prime * result + ((osDescription == null) ? 0 : osDescription.hashCode());
+      result = prime * result + ((osFamily == null) ? 0 : osFamily.hashCode());
+      result = prime * result + ((version == null) ? 0 : version.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ImageImpl other = (ImageImpl) obj;
+      if (architecture == null) {
+         if (other.architecture != null)
+            return false;
+      } else if (!architecture.equals(other.architecture))
+         return false;
+      if (osDescription == null) {
+         if (other.osDescription != null)
+            return false;
+      } else if (!osDescription.equals(other.osDescription))
+         return false;
+      if (osFamily == null) {
+         if (other.osFamily != null)
+            return false;
+      } else if (!osFamily.equals(other.osFamily))
+         return false;
+      if (version == null) {
+         if (other.version != null)
+            return false;
+      } else if (!version.equals(other.version))
+         return false;
+      return true;
+   }
+
 }

@@ -52,11 +52,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final String tag;
 
    public NodeMetadataImpl(String id, String name, String locationId, URI uri,
-            Map<String, String> userMetadata, String tag, NodeState state,
+            Map<String, String> userMetadata, @Nullable String tag, NodeState state,
             Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
             Map<String, String> extra, @Nullable Credentials credentials) {
       super(ComputeType.NODE, id, name, locationId, uri, userMetadata);
-      this.tag = checkNotNull(tag, "tag");
+      this.tag = tag;
       this.state = checkNotNull(state, "state");
       Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses, "publicAddresses"));
       Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses, "privateAddresses"));

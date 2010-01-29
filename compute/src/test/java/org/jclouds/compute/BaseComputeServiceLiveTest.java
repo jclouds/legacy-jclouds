@@ -22,8 +22,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.Map.Entry;
@@ -37,7 +39,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -46,8 +47,6 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.scriptbuilder.ScriptBuilder;
-import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -56,10 +55,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -83,7 +85,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected ComputeService client;
    protected String user;
    protected String password;
-   private Template template;
+   protected Template template;
+   protected Map<String, String> keyPair;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
@@ -92,6 +95,15 @@ public abstract class BaseComputeServiceLiveTest {
          tag = checkNotNull(service, "service");
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String secretKeyFile;
+      try {
+         secretKeyFile = checkNotNull(System.getProperty("jclouds.test.ssh.keyfile"),
+                  "jclouds.test.ssh.keyfile");
+      } catch (NullPointerException e) {
+         secretKeyFile = System.getProperty("user.home") + "/.ssh/id_rsa";
+      }
+      String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
+      assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
       context = new ComputeServiceContextFactory().createContext(service, user, password,
                ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
       Injector injector = Guice.createInjector(getSshModule());
@@ -100,11 +112,9 @@ public abstract class BaseComputeServiceLiveTest {
       socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
       client = context.getComputeService();
-   }
-
-   protected boolean canRunScript(Template template) {
-      return template.getImage().getOsFamily() == OsFamily.UBUNTU
-               || template.getImage().getOsFamily() == OsFamily.JEOS;
+      // keyPair = sshFactory.generateRSAKeyPair("", "");
+      keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
+               new File(secretKeyFile + ".pub"), Charsets.UTF_8));
    }
 
    abstract protected Module getSshModule();
@@ -120,30 +130,21 @@ public abstract class BaseComputeServiceLiveTest {
       }
       template = buildTemplate(client.templateBuilder());
 
-      if (canRunScript(template))
-         template
-                  .getOptions()
-                  .runScript(
-                           new ScriptBuilder()
-                                    // update add dns and install jdk
-                                    .addStatement(
-                                             Statements
-                                                      .exec("echo nameserver 208.67.222.222 >> /etc/resolv.conf"))
-                                    .addStatement(Statements.exec("apt-get update"))
-                                    //
-                                    .addStatement(Statements.exec("apt-get upgrade -y"))
-                                    //
-                                    .addStatement(
-                                             Statements.exec("apt-get install -y openjdk-6-jdk"))
-                                    //
-                                    .addStatement(
-                                             Statements
-                                                      .exec("wget -qO/usr/bin/runurl run.alestic.com/runurl"))
-                                    //
-                                    .addStatement(Statements.exec("chmod 755 /usr/bin/runurl"))
-                                    //
-                                    .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX)
-                                    .getBytes());
+      template
+               .getOptions()
+               .installPrivateKey(keyPair.get("private"))
+               .authorizePublicKey(keyPair.get("public"))
+               .runScript(
+                        new StringBuilder()//
+                                 .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+                                 .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+                                 .append(
+                                          "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+                                 .append("apt-get update\n")//
+                                 .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+                                 .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
+                                 .append("chmod 755 /usr/bin/runurl\n")//
+                                 .toString().getBytes());
       nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
       assertEquals(nodes.size(), 2);
       for (NodeMetadata node : nodes) {
@@ -202,7 +203,7 @@ public abstract class BaseComputeServiceLiveTest {
       for (Entry<String, ? extends Image> image : client.getImages().entrySet()) {
          assertEquals(image.getKey(), image.getValue().getId());
          assert image.getValue().getId() != null : image;
-         assert image.getValue().getLocationId() != null : image;
+         // image.getValue().getLocationId() can be null, if it is a location-free image
          assertEquals(image.getValue().getType(), ComputeType.IMAGE);
       }
    }
@@ -248,16 +249,14 @@ public abstract class BaseComputeServiceLiveTest {
                22);
       socketTester.apply(socket); // TODO add transitionTo option that accepts a socket conection
       // state.
-      SshClient ssh = node.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----") ? sshFactory
-               .create(socket, node.getCredentials().account, node.getCredentials().key.getBytes())
-               : sshFactory
-                        .create(socket, node.getCredentials().account, node.getCredentials().key);
+      SshClient ssh = sshFactory.create(socket, node.getCredentials().account, keyPair.get(
+               "private").getBytes());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
-         if (canRunScript(template))
-            System.out.println(ssh.exec("java -version"));
+         ExecResponse exec = ssh.exec("java -version");
+         assert exec.getError().indexOf("OpenJDK") != -1 : exec;
       } finally {
          if (ssh != null)
             ssh.disconnect();

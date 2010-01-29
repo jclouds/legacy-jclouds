@@ -141,8 +141,8 @@ public class RimuHostingComputeService implements ComputeService {
    @Override
    public NodeSet runNodesWithTag(final String tag, int max, final Template template) {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
-      logger.debug(">> running server image(%s) flavor(%s)", template.getImage().getId(), template
-               .getSize().getId());
+      logger.debug(">> running %d servers image(%s) flavor(%s)", max, template.getImage().getId(),
+               template.getSize().getId());
 
       final Set<NodeMetadata> nodes = Sets.newHashSet();
       Set<ListenableFuture<Void>> responses = Sets.newHashSet();
@@ -171,9 +171,8 @@ public class RimuHostingComputeService implements ComputeService {
                logger.debug("<< started server(%s)", node.getId());
                // TODO! serverActive.apply(server);
                logger.debug("<< running server(%s)", node.getId());
-               if (template.getOptions().getRunScript() != null) {
-                  utils.runScriptOnNode(node, template.getOptions().getRunScript());
-               }
+               utils.runOptionsOnNode(node, template.getOptions());
+               logger.debug("<< options applied server(%s)", node.getId());
                return null;
             }
          }), executor));

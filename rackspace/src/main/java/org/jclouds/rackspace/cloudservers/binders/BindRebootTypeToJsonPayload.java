@@ -44,7 +44,7 @@ public class BindRebootTypeToJsonPayload extends BindToJsonPayload {
    @Override
    public void bindToRequest(HttpRequest request, Object toBind) {
       checkArgument(toBind instanceof RebootType, "this binder is only valid for RebootTypes!");
-      super.bindToRequest(request, ImmutableMap.of("reboot", ImmutableMap.of("flavor",
-               checkNotNull(toBind, "flavor"))));
+      super.bindToRequest(request, ImmutableMap.of("reboot", ImmutableMap.of("type",
+               checkNotNull(toBind, "type"))));
    }
 }

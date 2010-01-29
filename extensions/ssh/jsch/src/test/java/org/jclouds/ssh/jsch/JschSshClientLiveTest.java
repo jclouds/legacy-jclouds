@@ -95,6 +95,16 @@ public class JschSshClientLiveTest {
 
             }
 
+            @Override
+            public String getHostAddress() {
+               return null;
+            }
+
+            @Override
+            public String getUsername() {
+               return null;
+            }
+
          };
       } else {
          Injector i = Guice.createInjector(new JschSshClientModule());

@@ -18,14 +18,21 @@
  */
 package org.jclouds.ssh.jsch.config;
 
+import java.io.ByteArrayOutputStream;
 import java.net.InetSocketAddress;
+import java.util.Map;
 
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPair;
 
 /**
  * 
@@ -48,5 +55,23 @@ public class JschSshClientModule extends AbstractModule {
          return new JschSshClient(socket, username, privateKey);
       }
 
+      @Override
+      public Map<String, String> generateRSAKeyPair(String comment, String passphrase) {
+         KeyPair pair = null;
+         try {
+            pair = KeyPair.genKeyPair(new JSch(), KeyPair.RSA);
+         } catch (JSchException e) {
+            Throwables.propagate(e);
+         }
+         if (passphrase != null)
+            pair.setPassphrase(passphrase);
+         ByteArrayOutputStream privateKey = new ByteArrayOutputStream();
+         pair.writePrivateKey(privateKey);
+         ByteArrayOutputStream publicKey = new ByteArrayOutputStream();
+         pair.writePublicKey(publicKey, comment);
+         return ImmutableMap.of("comment", comment, "passphrase", passphrase, "private",
+                  new String(privateKey.toByteArray()), "public", new String(publicKey
+                           .toByteArray()));
+      }
    }
 }
