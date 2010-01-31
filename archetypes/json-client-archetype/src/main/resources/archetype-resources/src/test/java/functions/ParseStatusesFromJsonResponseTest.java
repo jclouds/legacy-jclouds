@@ -54,7 +54,8 @@ import java.util.SortedSet;
 import org.jclouds.http.functions.config.ParserModule;
 import ${package}.domain.Status;
 import ${package}.domain.User;
-import org.jclouds.util.DateService;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -73,11 +74,11 @@ public class ParseStatusesFromJsonResponseTest {
    Injector i = Guice.createInjector(new ParserModule() {
       @Override
       protected void configure() {
-         bind(DateTimeAdapter.class).to(CDateTimeAdapter.class);
+         bind(DateAdapter.class).to(CDateAdapter.class);
          super.configure();
       }
    });
-   DateService dateService = new DateService();
+   DateService dateService = new SimpleDateFormatDateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/test_mentions.json");

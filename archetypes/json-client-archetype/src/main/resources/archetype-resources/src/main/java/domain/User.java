@@ -46,7 +46,7 @@ package ${package}.domain;
 
 import java.net.URI;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -56,7 +56,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class User implements Comparable<User> {
    @SerializedName("created_at")
-   private DateTime createdAt;
+   private Date createdAt;
    private String description;
    @SerializedName("favourites_count")
    private int favouritesCount;
@@ -104,7 +104,7 @@ public class User implements Comparable<User> {
 
    }
 
-   public User(DateTime createdAt, String description, int favouritesCount, int followersCount,
+   public User(Date createdAt, String description, int favouritesCount, int followersCount,
             boolean following, int friendsCount, boolean geoEnabled, long id, String location,
             String name, boolean notifications, String profileBackgroundColor,
             URI profileBackgroundImageUrl, boolean profileBackgroundTile, URI profileImageUrl,
@@ -294,11 +294,11 @@ public class User implements Comparable<User> {
       this.friendsCount = friendsCount;
    }
 
-   public DateTime getCreatedAt() {
+   public Date getCreatedAt() {
       return createdAt;
    }
 
-   public void setCreatedAt(DateTime createdAt) {
+   public void setCreatedAt(Date createdAt) {
       this.createdAt = createdAt;
    }
 

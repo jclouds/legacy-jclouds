@@ -47,14 +47,14 @@
 package ${package}.config;
 
 import static org.testng.Assert.assertEquals;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.http.functions.config.ParserModule.CDateTimeAdapter;
-import org.jclouds.http.functions.config.ParserModule.DateTimeAdapter;
+import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -63,6 +63,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import ${package}.reference.${clientName}Constants;
 import org.jclouds.util.Jsr330;
+import org.jclouds.Constants;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -84,6 +85,14 @@ public class ${clientName}ContextModuleTest {
                      .to("password");
             bindConstant().annotatedWith(Jsr330.named(${clientName}Constants.PROPERTY_${ucaseClientName}_ENDPOINT))
                      .to("http://localhost");
+            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
+				     .to("1");
+			bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT))
+				     .to("0");
+			bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+				     .to("1");
+			bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
+			      	 .to("1");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
@@ -92,7 +101,7 @@ public class ${clientName}ContextModuleTest {
             super.configure();
          }
       }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(Executors.sameThreadExecutor()));
+          new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
    }
 
    @Test
@@ -104,8 +113,8 @@ public class ${clientName}ContextModuleTest {
 
    @Test
    void testDateTimeAdapter() {
-      assertEquals(this.createInjector().getInstance(DateTimeAdapter.class).getClass(),
-               CDateTimeAdapter.class);
+      assertEquals(this.createInjector().getInstance(DateAdapter.class).getClass(),
+               CDateAdapter.class);
    }
 
    @Test

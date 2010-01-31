@@ -45,7 +45,7 @@
 package ${package};
 
 import java.util.SortedSet;
-import java.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -53,14 +53,12 @@ import static ${package}.reference.${clientName}Constants.PROPERTY_${ucaseClient
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.http.HttpPropertiesBuilder;
-
 /**
  * Builds properties used in ${clientName} Clients
  * 
  * @author ${author}
  */
-public class ${clientName}PropertiesBuilder extends HttpPropertiesBuilder {
+public class ${clientName}PropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

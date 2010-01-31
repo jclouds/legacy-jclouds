@@ -61,6 +61,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import ${package}.functions.ParseStatusesFromJsonResponse;
+import org.jclouds.encryption.EncryptionService;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;

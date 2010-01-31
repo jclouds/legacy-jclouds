@@ -53,7 +53,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.util.EncryptionService;
+import org.jclouds.encryption.EncryptionService;
 
 import ${package}.${clientName};
 import ${package}.${clientName}Client;
