@@ -40,15 +40,18 @@ public class AzureBlobTestInitializer extends BaseTestInitializer {
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
             String account, String key) throws IOException {
+      Properties properties = new Properties();
+//      properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, Integer.toString(0));
+//      properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, Integer.toString(0));
+//      properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(0));
+//      properties.setProperty(PROPERTY_IO_WORKER_THREADS, Integer.toString(20));
       return (BlobStoreContext) new BlobStoreContextFactory().createContext("azureblob", account,
-               key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
-               new Properties());
+               key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()), properties);
    }
 
    @Override
    protected BlobStoreContext createStubContext() {
-      return AzureBlobContextFactory.createContext("user", "pass",
-               new AzureBlobStubClientModule());
+      return AzureBlobContextFactory.createContext("user", "pass", new AzureBlobStubClientModule());
    }
 
 }

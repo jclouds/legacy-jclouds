@@ -18,6 +18,7 @@
  */
 package org.jclouds.blobstore.config;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
@@ -26,13 +27,10 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
 import org.jclouds.blobstore.internal.InputStreamMapImpl;
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
+import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -60,20 +58,15 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       GetBlobsInListStrategy getAllBlobs;
       @Inject
-      ListBlobMetadataStrategy getAllBlobMetadata;
-      @Inject
       ContainsValueInListStrategy containsValueStrategy;
       @Inject
-      ClearListStrategy clearContainerStrategy;
-      @Inject
-      CountListStrategy containerCountStrategy;
-      @Inject
       PutBlobsStrategy putBlobsStrategy;
+      @Inject
+      ListBlobMetadataInContainer listStrategy;
 
-      public BlobMap create(String containerName, ListContainerOptions listOptions) {
-         return new BlobMapImpl(connection, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
-                  clearContainerStrategy, containerCountStrategy, putBlobsStrategy, containerName,
-                  listOptions);
+      public BlobMap create(String containerName, @Nullable String dir) {
+         return new BlobMapImpl(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy,
+                  listStrategy, containerName, dir);
       }
 
    }
@@ -86,20 +79,15 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       GetBlobsInListStrategy getAllBlobs;
       @Inject
-      ListBlobMetadataStrategy getAllBlobMetadata;
-      @Inject
       ContainsValueInListStrategy containsValueStrategy;
       @Inject
-      ClearListStrategy clearContainerStrategy;
-      @Inject
-      CountListStrategy containerCountStrategy;
-      @Inject
       PutBlobsStrategy putBlobsStrategy;
+      @Inject
+      ListBlobMetadataInContainer listStrategy;
 
-      public InputStreamMap create(String containerName, ListContainerOptions listOptions) {
-         return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, getAllBlobMetadata,
-                  containsValueStrategy, clearContainerStrategy, containerCountStrategy,
-                  putBlobsStrategy, containerName, listOptions);
+      public InputStreamMap create(String containerName, @Nullable String dir) {
+         return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, listStrategy,
+                  containsValueStrategy, putBlobsStrategy, containerName, dir);
       }
 
    }

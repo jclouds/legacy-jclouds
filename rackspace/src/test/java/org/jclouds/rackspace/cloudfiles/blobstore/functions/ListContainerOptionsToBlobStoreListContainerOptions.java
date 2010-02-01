@@ -35,10 +35,10 @@ public class ListContainerOptionsToBlobStoreListContainerOptions
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions[] optionsList) {
       ListContainerOptions options = new ListContainerOptions();
       if (optionsList.length != 0) {
-         if (optionsList[0].getPath() != null) {
+         if (optionsList[0].getPath() != null && !optionsList[0].getPath().equals("")) {
             options.inDirectory(optionsList[0].getPath());
          }
-         if (optionsList[0].getPrefix() != null) {
+         if (optionsList[0].getPrefix() != null && !optionsList[0].getPrefix().equals("")) {
             options.inDirectory(optionsList[0].getPrefix());
             options.recursive();
          }
@@ -49,5 +49,4 @@ public class ListContainerOptionsToBlobStoreListContainerOptions
       }
       return options;
    }
-
 }

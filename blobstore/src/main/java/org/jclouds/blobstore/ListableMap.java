@@ -19,7 +19,6 @@
 package org.jclouds.blobstore;
 
 import java.util.Map;
-import java.util.SortedSet;
 
 import org.jclouds.blobstore.domain.StorageMetadata;
 
@@ -35,6 +34,6 @@ public interface ListableMap<K, V> extends Map<K, V> {
     * 
     * @return blob listing that this map represents
     */
-   SortedSet<? extends StorageMetadata> list();
+   Iterable<? extends StorageMetadata> list();
 
 }

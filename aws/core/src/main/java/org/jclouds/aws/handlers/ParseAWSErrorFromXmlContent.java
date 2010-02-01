@@ -34,7 +34,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
 import com.google.common.io.Closeables;
@@ -58,40 +57,46 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      Exception exception = null;
+      Exception exception = new HttpResponseException(command, response);
       try {
+         AWSError error = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
             case 401:
-               exception = new AuthorizationException(command.getRequest().getRequestLine());
+               exception = new AuthorizationException(command.getRequest(), error != null ? error
+                        .getMessage() : response.getStatusLine());
                break;
             case 404:
-               String container = command.getRequest().getEndpoint().getHost();
-               String key = command.getRequest().getEndpoint().getPath();
-               if (key == null || key.equals("/"))
-                  exception = new ContainerNotFoundException(container);
-               else
-                  exception = new KeyNotFoundException(container, key);
+               if (!command.getRequest().getMethod().equals("DELETE")) {
+                  String message = error != null ? error.getMessage() : String.format("%s -> %s",
+                           command.getRequest().getRequestLine(), response.getStatusLine());
+                  String container = command.getRequest().getEndpoint().getHost();
+                  String key = command.getRequest().getEndpoint().getPath();
+                  if (key == null || key.equals("/"))
+                     exception = new ContainerNotFoundException(container, message);
+                  else
+                     exception = new KeyNotFoundException(container, key, message);
+               }
                break;
             default:
-               if (response.getContent() != null) {
-                  try {
-                     String content = Utils.toStringAndClose(response.getContent());
-                     if (content.indexOf('<') >= 0) {
-                        AWSError error = utils.parseAWSErrorFromContent(command, response, content);
-                        exception = new AWSResponseException(command, response, error);
-                        if (error.getCode().indexOf("NotFound") >= 0)
-                           exception = new ResourceNotFoundException(exception);
-                     } else {
-                        exception = new HttpResponseException(command, response, content);
-                     }
-                  } catch (IOException e) {
-                     logger.warn(e, "exception reading error from response", response);
-                  }
-               }
+               exception = error != null ? new AWSResponseException(command, response, error)
+                        : new HttpResponseException(command, response);
          }
       } finally {
          Closeables.closeQuietly(response.getContent());
          command.setException(exception);
       }
+   }
+
+   AWSError parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
+      if (response.getContent() != null) {
+         try {
+            String content = Utils.toStringAndClose(response.getContent());
+            if (content != null && content.indexOf('<') >= 0)
+               return utils.parseAWSErrorFromContent(command, response, content);
+         } catch (IOException e) {
+            logger.warn(e, "exception reading error from response", response);
+         }
+      }
+      return null;
    }
 }

@@ -20,8 +20,7 @@ package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -38,7 +37,7 @@ public interface BlobStore {
    /**
     * Lists all root-level resources available to the account.
     */
-   ListResponse<? extends StorageMetadata> list();
+   PageSet<? extends StorageMetadata> list();
 
    boolean containerExists(String container);
 
@@ -51,10 +50,9 @@ public interface BlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
-   ListContainerResponse<? extends StorageMetadata> list(String container);
+   PageSet<? extends StorageMetadata> list(String container);
 
-   ListContainerResponse<? extends StorageMetadata> list(String container,
-            ListContainerOptions options);
+   PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options);
 
    /**
     * This will delete the contents of a container without removing it
@@ -62,6 +60,7 @@ public interface BlobStore {
     * @param container
     */
    void clearContainer(String container);
+   void clearContainer(String container, ListContainerOptions options);
 
    /**
     * This will delete a container recursively.
@@ -73,6 +72,8 @@ public interface BlobStore {
    boolean directoryExists(String container, String directory);
 
    void createDirectory(String container, String directory);
+
+   void deleteDirectory(String containerName, String name);
 
    boolean blobExists(String container, String name);
 
@@ -90,7 +91,7 @@ public interface BlobStore {
     *            if the container doesn't exist
     */
    String putBlob(String container, Blob blob);
-   
+
    /**
     * Retrieves the metadata of a {@code Blob} at location {@code container/name}
     * 
@@ -121,7 +122,6 @@ public interface BlobStore {
 
    Blob getBlob(String container, String name, GetOptions options);
 
-
    /**
     * Deletes a {@code Blob} representing the data at location {@code container/name}
     * 
@@ -133,5 +133,9 @@ public interface BlobStore {
     *            if the container doesn't exist
     */
    void removeBlob(String container, String name);
+
+   long countBlobs(String container);
+
+   long countBlobs(String container, ListContainerOptions options);
 
 }

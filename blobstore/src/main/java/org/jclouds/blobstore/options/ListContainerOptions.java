@@ -36,9 +36,73 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Adrian Cole
  */
-public class ListContainerOptions extends ListOptions {
+public class ListContainerOptions extends ListOptions implements Cloneable {
+   public ListContainerOptions() {
+   }
 
-   public static final ListContainerOptions NONE = new ListContainerOptions();
+   ListContainerOptions(Integer maxKeys, String marker, String dir, boolean recursive) {
+      super(maxKeys, marker);
+      this.dir = dir;
+      this.recursive = recursive;
+   }
+
+   public static class ImmutableListContainerOptions extends ListContainerOptions {
+      private final ListContainerOptions delegate;
+
+      @Override
+      public ListContainerOptions afterMarker(String marker) {
+         throw new UnsupportedOperationException();
+      }
+
+      public ImmutableListContainerOptions(ListContainerOptions delegate) {
+         this.delegate = delegate;
+      }
+
+      @Override
+      public String getDir() {
+         return delegate.getDir();
+      }
+
+      @Override
+      public ListContainerOptions inDirectory(String dir) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean isRecursive() {
+         return delegate.isRecursive();
+      }
+
+      @Override
+      public ListContainerOptions maxResults(int maxKeys) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public ListContainerOptions recursive() {
+         throw new UnsupportedOperationException();
+
+      }
+
+      @Override
+      public String getMarker() {
+         return delegate.getMarker();
+      }
+
+      @Override
+      public Integer getMaxResults() {
+         return delegate.getMaxResults();
+      }
+
+      @Override
+      public ListContainerOptions clone() {
+         return delegate.clone();
+      }
+
+   }
+
+   public static final ImmutableListContainerOptions NONE = new ImmutableListContainerOptions(
+            new ListContainerOptions());
 
    private String dir;
 
@@ -53,11 +117,10 @@ public class ListContainerOptions extends ListOptions {
    }
 
    /**
-    * Returns a pseudo-directory listing.
+    * This will list the contents of a virtual or real directory path.
     * 
     */
    public ListContainerOptions inDirectory(String dir) {
-      checkArgument(!recursive, "dir and recursive combination currently not supported");
       this.dir = checkNotNull(dir, "dir");
       checkArgument(!dir.equals("/"), "dir must not be a slash");
       return this;
@@ -120,5 +183,15 @@ public class ListContainerOptions extends ListOptions {
          return options.recursive();
       }
 
+   }
+
+   @Override
+   public ListContainerOptions clone() {
+      return new ListContainerOptions(getMaxResults(), getMarker(), dir, recursive);
+   }
+
+   @Override
+   public String toString() {
+      return "[dir=" + dir + ", recursive=" + recursive + ", maxResults=" + getMaxResults() + "]";
    }
 }

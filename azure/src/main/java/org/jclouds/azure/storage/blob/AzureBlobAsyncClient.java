@@ -37,7 +37,7 @@ import org.jclouds.azure.storage.blob.functions.BlobName;
 import org.jclouds.azure.storage.blob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azure.storage.blob.functions.ParseBlobPropertiesFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
-import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
+import org.jclouds.azure.storage.blob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
@@ -51,8 +51,9 @@ import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
@@ -104,7 +105,7 @@ public interface AzureBlobAsyncClient {
     */
    @PUT
    @Path("{container}")
-   @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
+   @ExceptionParser(ReturnFalseIfContainerAlreadyExists.class)
    @QueryParams(keys = "restype", values = "container")
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
             CreateContainerOptions... options);
@@ -116,6 +117,7 @@ public interface AzureBlobAsyncClient {
    @Path("{container}")
    @QueryParams(keys = "restype", values = "container")
    @ResponseParser(ParseContainerPropertiesFromHeaders.class)
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
    ListenableFuture<ContainerProperties> getContainerProperties(
             @PathParam("container") String container);
 
@@ -151,7 +153,7 @@ public interface AzureBlobAsyncClient {
     */
    @PUT
    @Path("$root")
-   @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
+   @ExceptionParser(ReturnFalseIfContainerAlreadyExists.class)
    @QueryParams(keys = "restype", values = "container")
    ListenableFuture<Boolean> createRootContainer(CreateContainerOptions... options);
 
@@ -198,7 +200,7 @@ public interface AzureBlobAsyncClient {
     */
    @GET
    @ResponseParser(ParseBlobFromHeadersAndHttpContent.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("{container}/{name}")
    ListenableFuture<org.jclouds.azure.storage.blob.domain.AzureBlob> getBlob(
             @PathParam("container") String container, @PathParam("name") String name,
@@ -209,7 +211,7 @@ public interface AzureBlobAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseBlobPropertiesFromHeaders.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("{container}/{name}")
    ListenableFuture<BlobProperties> getBlobProperties(@PathParam("container") String container,
             @PathParam("name") String name);

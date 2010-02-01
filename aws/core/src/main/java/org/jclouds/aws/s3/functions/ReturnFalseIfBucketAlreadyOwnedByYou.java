@@ -16,20 +16,30 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.strategy;
+package org.jclouds.aws.s3.functions;
 
-import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.strategy.internal.MarkersIsDirectoryStrategy;
+import static org.jclouds.util.Utils.propagateOrNull;
 
-import com.google.inject.ImplementedBy;
+import javax.inject.Singleton;
+
+import org.jclouds.aws.AWSResponseException;
+
+import com.google.common.base.Function;
 
 /**
- * Determines if a directory exists or not.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(MarkersIsDirectoryStrategy.class)
-public interface IsDirectoryStrategy {
+@Singleton
+public class ReturnFalseIfBucketAlreadyOwnedByYou implements Function<Exception, Boolean> {
 
-   boolean execute(StorageMetadata metadata);
+   public Boolean apply(Exception from) {
+      if (from instanceof AWSResponseException) {
+         AWSResponseException responseException = (AWSResponseException) from;
+         if ("BucketAlreadyOwnedByYou".equals(responseException.getError().getCode())) {
+            return false;
+         }
+      }
+      return Boolean.class.cast(propagateOrNull(from));
+   }
 }

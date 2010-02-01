@@ -42,8 +42,7 @@ public class BindBlobToPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       Blob object = (Blob) payload;
-
-      request.setPayload(checkNotNull(object.getContent(), "object.getContent()"));
+      request.setPayload(checkNotNull(object.getPayload(), "object.getPayload()"));
       request.getHeaders()
                .put(
                         HttpHeaders.CONTENT_TYPE,

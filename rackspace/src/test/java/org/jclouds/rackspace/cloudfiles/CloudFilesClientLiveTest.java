@@ -28,13 +28,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
@@ -120,7 +119,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          }
          // List CDN metadata for containers, and ensure all CDN info is available for enabled
          // container
-         SortedSet<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
+         Set<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
          assertTrue(cdnMetadataList.size() >= 1);
 
          assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(containerNameWithCDN, true,
@@ -180,7 +179,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
    public void testListOwnedContainers() throws Exception {
       String containerPrefix = getContainerName();
       try {
-         SortedSet<ContainerMetadata> response = getApi().listContainers();
+         Set<ContainerMetadata> response = getApi().listContainers();
          assertNotNull(response);
          long initialContainerCount = response.size();
          assertTrue(initialContainerCount >= 0);
@@ -202,12 +201,12 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
                            containerJsr330[0].substring(0, containerJsr330[0].length() - 1))
                            .maxResults(1));
          assertEquals(response.size(), 1);
-         assertEquals(response.first().getName(), containerJsr330[0]);
+         assertEquals(Iterables.get(response, 0).getName(), containerJsr330[0]);
 
          response = getApi().listContainers(
                   ListContainerOptions.Builder.afterMarker(containerJsr330[0]).maxResults(1));
          assertEquals(response.size(), 1);
-         assertEquals(response.first().getName(), containerJsr330[1]);
+         assertEquals(Iterables.get(response, 0).getName(), containerJsr330[1]);
 
          // Cleanup and test containers have been removed
          assertTrue(getApi().deleteContainerIfEmpty(containerJsr330[0]));
@@ -248,12 +247,12 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          String containerName1 = containerName + ".hello";
          assertTrue(getApi().createContainer(containerName1));
          // List only the container just created, using a marker with the container name less 1 char
-         SortedSet<ContainerMetadata> response = getApi().listContainers(
+         Set<ContainerMetadata> response = getApi().listContainers(
                   ListContainerOptions.Builder.afterMarker(
                            containerName1.substring(0, containerName1.length() - 1)).maxResults(1));
          assertNotNull(response);
          assertEquals(response.size(), 1);
-         assertEquals(response.first().getName(), containerName + ".hello");
+         assertEquals(Iterables.get(response, 0).getName(), containerName + ".hello");
 
          String containerName2 = containerName + "?should-be-illegal-question-char";
          assert getApi().createContainer(containerName2);
@@ -281,14 +280,14 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          getApi().putObject(containerName, newCFObject(data, "foo"));
          getApi().putObject(containerName, newCFObject(data, "path/bar"));
 
-         ListResponse<ObjectInfo> container = getApi().listObjects(containerName, underPath(""));
-         assert !container.isTruncated();
+         PageSet<ObjectInfo> container = getApi().listObjects(containerName, underPath(""));
+         assert container.getNextMarker() == null;
          assertEquals(container.size(), 1);
-         assertEquals(container.first().getName(), "foo");
+         assertEquals(Iterables.get(container, 0).getName(), "foo");
          container = getApi().listObjects(containerName, underPath("path"));
-         assert !container.isTruncated();
+         assert container.getNextMarker() == null;
          assertEquals(container.size(), 1);
-         assertEquals(container.first().getName(), "path/bar");
+         assertEquals(Iterables.get(container, 0).getName(), "path/bar");
       } finally {
          returnContainer(containerName);
       }
@@ -309,11 +308,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
                   .getInfo().getHash()));
 
          // Test HEAD of missing object
-         try {
-            getApi().getObjectInfo(containerName, "non-existent-object");
-            assert false;
-         } catch (KeyNotFoundException e) {
-         }
+         assert getApi().getObjectInfo(containerName, "non-existent-object") == null;
 
          // Test HEAD of object
          MutableObjectInfoWithMetadata metadata = getApi().getObjectInfo(containerName,
@@ -334,11 +329,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          assertTrue(getApi().setObjectInfo(containerName, object.getInfo().getName(), userMetadata));
 
          // Test GET of missing object
-         try {
-            getApi().getObject(containerName, "non-existent-object");
-            assert false;
-         } catch (KeyNotFoundException e) {
-         }
+         assert getApi().getObject(containerName, "non-existent-object") == null;
          // Test GET of object (including updated metadata)
          CFObject getBlob = getApi().getObject(containerName, object.getInfo().getName());
          assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);

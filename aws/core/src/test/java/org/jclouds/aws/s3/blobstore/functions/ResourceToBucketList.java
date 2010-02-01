@@ -26,9 +26,9 @@ import javax.inject.Singleton;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
+import org.jclouds.aws.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class ResourceToBucketList implements
-         Function<ListContainerResponse<? extends StorageMetadata>, ListBucketResponse> {
+         Function<PageSet<? extends StorageMetadata>, ListBucketResponse> {
    private final BlobToObjectMetadata blob2ObjectMd;
 
    @Inject
@@ -50,10 +50,10 @@ public class ResourceToBucketList implements
       this.blob2ObjectMd = blob2ObjectMd;
    }
 
-   public ListBucketResponse apply(ListContainerResponse<? extends StorageMetadata> list) {
+   public ListBucketResponse apply(PageSet<? extends StorageMetadata> list) {
 
-      Iterable<ObjectMetadata> contents = Iterables.transform(Iterables.filter(
-               list, new Predicate<StorageMetadata>() {
+      Iterable<ObjectMetadata> contents = Iterables.transform(Iterables.filter(list,
+               new Predicate<StorageMetadata>() {
 
                   public boolean apply(StorageMetadata input) {
                      return input.getType() == StorageType.BLOB;
@@ -81,7 +81,7 @@ public class ResourceToBucketList implements
          }
 
       }));
-      return new TreeSetListBucketResponse(null, contents, list.getPath(), list.getMarker(), list
-               .getMaxResults(), "/", Iterables.size(contents) == list.getMaxResults(), commonPrefixes);
+      return new ListBucketResponseImpl(null, contents, null, null, list.getNextMarker(), 0, "/",
+               list.getNextMarker() != null, commonPrefixes);
    }
 }

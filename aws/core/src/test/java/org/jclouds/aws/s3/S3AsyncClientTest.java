@@ -39,7 +39,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
+import org.jclouds.aws.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYou;
 import org.jclouds.aws.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
@@ -57,6 +57,7 @@ import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -275,7 +276,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       assertResponseParserClassEquals(method, httpMethod,
                ParseObjectFromHeadersAndHttpContent.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
 
       checkFilters(httpMethod);
    }
@@ -326,7 +327,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseObjectMetadataFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
 
       checkFilters(httpMethod);
    }
@@ -384,7 +385,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnTrueIfBucketAlreadyOwnedByYou.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYou.class);
 
       checkFilters(httpMethod);
    }
@@ -405,7 +406,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnTrueIfBucketAlreadyOwnedByYou.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYou.class);
 
       checkFilters(httpMethod);
    }

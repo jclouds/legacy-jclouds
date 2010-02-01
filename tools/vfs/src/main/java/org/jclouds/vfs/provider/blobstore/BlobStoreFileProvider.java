@@ -35,7 +35,7 @@ import org.apache.commons.vfs.UserAuthenticationData;
 import org.apache.commons.vfs.provider.AbstractOriginatingFileProvider;
 import org.apache.commons.vfs.provider.http.HttpFileSystemConfigBuilder;
 import org.apache.commons.vfs.util.UserAuthenticatorUtils;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpUtils;
@@ -72,15 +72,14 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
    protected FileSystem doCreateFileSystem(final FileName name,
             final FileSystemOptions fileSystemOptions) throws FileSystemException {
       BlobStoreFileName rootName = (BlobStoreFileName) name;
-
       UserAuthenticationData authData = null;
-      BlobStore blobStore;
+      BlobStoreContext context;
       try {
          String uriToParse = rootName.getFriendlyURI();
          authData = UserAuthenticatorUtils.authenticate(fileSystemOptions, AUTHENTICATOR_TYPES);
          URI location = HttpUtils.createUri(uriToParse);
 
-         blobStore = new BlobStoreContextFactory().createContext(
+         context = new BlobStoreContextFactory().createContext(
                   location,
                   new Credentials(UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(
                            authData, UserAuthenticationData.USERNAME, UserAuthenticatorUtils
@@ -88,14 +87,14 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
                            .toString(UserAuthenticatorUtils.getData(authData,
                                     UserAuthenticationData.PASSWORD, UserAuthenticatorUtils
                                              .toChar(rootName.getPassword())))), modules,
-                  new Properties()).getBlobStore();
+                  new Properties());
       } catch (IOException e) {
          throw new FileSystemException("vfs.provider.blobstore/properties.error", name, e);
       } finally {
          UserAuthenticatorUtils.cleanup(authData);
       }
 
-      return new BlobStoreFileSystem(rootName, blobStore, fileSystemOptions);
+      return new BlobStoreFileSystem(rootName, context, fileSystemOptions);
    }
 
    public FileSystemConfigBuilder getConfigBuilder() {

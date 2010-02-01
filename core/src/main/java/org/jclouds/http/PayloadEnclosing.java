@@ -45,8 +45,6 @@ public interface PayloadEnclosing {
 
    void setPayload(String data);
 
-   void setNoPayload();
-
    Payload getPayload();
 
    /**

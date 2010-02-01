@@ -22,13 +22,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
+import java.util.Set;
 
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -46,7 +47,7 @@ public class ParseContainerCDNMetadataListFromJsonResponseTest {
    public void testApplyInputStream() {
 
       InputStream is = getClass().getResourceAsStream("/cloudfiles/test_list_cdn.json");
-      List<ContainerCDNMetadata> expects = ImmutableList.of(
+      Set<ContainerCDNMetadata> expects = ImmutableSortedSet.of(
 
       new ContainerCDNMetadata("adriancole-blobstore.testCDNOperationsContainerWithCDN", false,
                3600, URI.create("http://c0354712.cdn.cloudfiles.rackspacecloud.com")),
@@ -57,7 +58,7 @@ public class ParseContainerCDNMetadataListFromJsonResponseTest {
                                  .create("http://c0320431.cdn.cloudfiles.rackspacecloud.com")));
       ParseContainerCDNMetadataListFromJsonResponse parser = new ParseContainerCDNMetadataListFromJsonResponse(
                i.getInstance(Gson.class));
-      assertEquals(parser.apply(is), expects);
+      assertEquals(Sets.newTreeSet(parser.apply(is)), expects);
    }
 
 }

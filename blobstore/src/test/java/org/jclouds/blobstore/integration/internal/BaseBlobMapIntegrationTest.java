@@ -26,23 +26,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests to cover @{link LiveS3ObjectMap}
  * 
  * @author Adrian Cole
  */
-public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
+public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
 
    @Override
    @Test(groups = { "integration", "live" })
@@ -58,10 +60,11 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          assertConsistencyAwareMapSize(map, 5);
          Set<String> valuesAsString = new HashSet<String>();
          for (Blob object : values) {
-            valuesAsString.add(BlobStoreUtils.getContentAsStringOrNullAndClose(object));
+            valuesAsString.add(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object));
          }
          valuesAsString.removeAll(fiveStrings.values());
-         assert valuesAsString.size() == 0;
+         assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": "
+                  + valuesAsString;
       } finally {
          returnContainer(bucketName);
       }
@@ -89,7 +92,7 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          public void run() {
             Blob old = map.remove(key);
             try {
-               assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(old), value);
+               assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(old), value);
             } catch (IOException e) {
                throw new RuntimeException(e);
             }
@@ -102,22 +105,31 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
    public void testEntrySet() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
-         Map<String, Blob> map = createMap(context, bucketName);
+         final Map<String, Blob> map = createMap(context, bucketName);
          putFiveStrings(map);
+         assertConsistencyAwareMapSize(map, 5);
          Set<Entry<String, Blob>> entries = map.entrySet();
          assertEquals(entries.size(), 5);
          for (Entry<String, Blob> entry : entries) {
-            assertEquals(fiveStrings.get(entry.getKey()), BlobStoreUtils
+            assertEquals(fiveStrings.get(entry.getKey()), BlobStoreUtilsImpl
                      .getContentAsStringOrNullAndClose(entry.getValue()));
             Blob value = entry.getValue();
             value.setPayload("");
             value.generateMD5();
             entry.setValue(value);
          }
-         assertConsistencyAwareMapSize(map, 5);
-         for (Blob value : map.values()) {
-            assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(value), null);
-         }
+         assertConsistencyAware(new Runnable() {
+            public void run() {
+               for (Blob value : map.values()) {
+                  try {
+                     assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(value), "");
+                  } catch (IOException e) {
+                     Throwables.propagate(e);
+                  }
+               }
+            }
+         });
+
       } finally {
          returnContainer(bucketName);
       }
@@ -141,14 +153,14 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
    void getOneReturnsAppleAndOldValueIsNull(Map<String, Blob> map, Blob old) throws IOException,
             InterruptedException {
       assert old == null;
-      assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(map.get("one")), "apple");
+      assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(map.get("one")), "apple");
       assertConsistencyAwareMapSize(map, 1);
    }
 
    void getOneReturnsBearAndOldValueIsApple(Map<String, Blob> map, Blob oldValue)
             throws IOException, InterruptedException {
-      assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(map.get("one")), "bear");
-      assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(oldValue), "apple");
+      assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(map.get("one")), "bear");
+      assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(oldValue), "apple");
       assertConsistencyAwareMapSize(map, 1);
    }
 
@@ -185,8 +197,41 @@ public class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<Blob> {
          }
          map.putAll(newMap);
          assertConsistencyAwareMapSize(map, 5);
-         assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
+         assertConsistencyAwareKeySetEquals(map, new HashSet<String>(fiveInputs.keySet()));
          fourLeftRemovingOne(map);
+      } finally {
+         returnContainer(bucketName);
+      }
+   }
+
+   protected abstract int maxList();
+
+   @Test(enabled = false, groups = { "integration", "live" })
+   public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      if (maxList() == 0)
+         return;
+      String bucketName = getContainerName();
+      try {
+         Map<String, Blob> map = createMap(context, bucketName);
+         Set<String> keySet = Sets.newHashSet();
+         for (int i = 0; i < maxList() + 1; i++) {
+            keySet.add(i + "");
+         }
+
+         Map<String, Blob> newMap = new HashMap<String, Blob>();
+         for (String key : keySet) {
+            Blob object = context.getBlobStore().newBlob(key);
+            object.setPayload(key);
+            newMap.put(key, object);
+         }
+         map.putAll(newMap);
+         newMap.clear();
+
+         assertConsistencyAwareMapSize(map, maxList() + 1);
+         assertConsistencyAwareKeySetEquals(map, keySet);
+         map.clear();
+         assertConsistencyAwareMapSize(map, 0);
       } finally {
          returnContainer(bucketName);
       }

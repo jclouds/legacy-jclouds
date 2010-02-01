@@ -65,5 +65,17 @@ public class AtmosStorageUtils {
       return parseAtmosStorageErrorFromContent(command, response, new ByteArrayInputStream(content
                .getBytes()));
    }
-
+   
+   public static String adjustContainerIfDirOptionPresent(String container,
+            org.jclouds.blobstore.options.ListContainerOptions options) {
+      if (options != org.jclouds.blobstore.options.ListContainerOptions.NONE) {
+         if (options.isRecursive()) {
+            throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
+         }
+         if (options.getDir() != null) {
+            container = container + "/" + options.getDir();
+         }
+      }
+      return container;
+   }
 }

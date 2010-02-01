@@ -18,15 +18,11 @@
  */
 package org.jclouds.atmosonline.saas.blobstore;
 
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.util.BlobStoreUtils.keyNotFoundToNullOrPropagate;
-
-import java.util.concurrent.ExecutorService;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobStoreListOptionsToListOptions;
@@ -34,43 +30,48 @@ import org.jclouds.atmosonline.saas.blobstore.functions.BlobToObject;
 import org.jclouds.atmosonline.saas.blobstore.functions.DirectoryEntryListToResourceMetadataList;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlob;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.atmosonline.saas.blobstore.internal.BaseAtmosBlobStore;
 import org.jclouds.atmosonline.saas.options.ListOptions;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.internal.BaseBlobStore;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.Utils;
 
-import com.google.common.base.Supplier;
-
-public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
+/**
+ * @author Adrian Cole
+ */
+@Singleton
+public class AtmosBlobStore extends BaseBlobStore {
+   private final AtmosStorageClient sync;
+   private final ObjectToBlob object2Blob;
+   private final ObjectToBlobMetadata object2BlobMd;
+   private final BlobToObject blob2Object;
+   private final BlobStoreListOptionsToListOptions container2ContainerListOptions;
+   private final DirectoryEntryListToResourceMetadataList container2ResourceList;
    private final EncryptionService encryptionService;
+   private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   public AtmosBlobStore(AtmosStorageAsyncClient async, AtmosStorageClient sync,
-            Factory blobFactory, LoggerFactory logFactory,
-            ClearListStrategy clearContainerStrategy, ObjectToBlobMetadata object2BlobMd,
-            ObjectToBlob object2Blob, BlobToObject blob2Object,
+   AtmosBlobStore(BlobStoreUtils blobUtils, AtmosStorageClient sync, ObjectToBlob object2Blob,
+            ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
-            BlobToHttpGetOptions blob2ObjectGetOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            EncryptionService encryptionService) {
-      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
-               object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
-               container2ResourceList, service);
-      this.encryptionService = encryptionService;
+            EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions) {
+      super(blobUtils);
+      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.sync = checkNotNull(sync, "sync");
+      this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
+               "container2ContainerListOptions");
+      this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
+      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
+      this.blob2Object = checkNotNull(blob2Object, "blob2Object");
+      this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
+      this.encryptionService = checkNotNull(encryptionService, "encryptionService");
    }
 
    /**
@@ -78,54 +79,16 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
     */
    @Override
    public BlobMetadata blobMetadata(String container, String key) {
-      try {
-         return object2BlobMd.apply(sync.headFile(container + "/" + key));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
+      return object2BlobMd.apply(sync.headFile(container + "/" + key));
    }
 
    /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option.
+    * This implementation invokes {@link AtmosStorageAsyncClient#deletePath} followed by
+    * {@link AtmosStorageAsyncClient#pathExists} until it is true.
     */
-   @Override
-   public void clearContainer(final String container) {
-      clearContainerStrategy.execute(container, recursive());
-   }
-
-   /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option. Then, it invokes
-    * {@link #deleteAndEnsurePathGone}
-    */
-   @Override
-   public void deleteContainer(final String container) {
-      try {
-         clearContainerStrategy.execute(container, recursive());
-         deleteAndEnsurePathGone(container);
-      } catch (ContainerNotFoundException e) {
-
-      }
-   }
-
-   /**
-    * This implementation invokes {@link AtmosStorageClient#deleteAndEnsurePathGone} then blocks
-    * until {@link AtmosStorageClient#pathExists} returns false.
-    */
-   public void deleteAndEnsurePathGone(final String path) {
-      sync.deletePath(path);
-      try {
-         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
-            public Boolean get() {
-               return !sync.pathExists(path);
-            }
-         }, 30000)) {
-            throw new IllegalStateException(path + " still exists after deleting!");
-         }
-      } catch (InterruptedException e) {
-         new IllegalStateException(path + " interrupted during deletion!", e);
-      }
+   protected boolean deleteAndVerifyContainerGone(final String container) {
+      sync.deletePath(container);
+      return !sync.pathExists(container);
    }
 
    /**
@@ -158,11 +121,7 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
     */
    @Override
    public boolean containerExists(String container) {
-      try {
-         return sync.pathExists(container);
-      } catch (ContainerNotFoundException e) {
-         return false;
-      }
+      return sync.pathExists(container);
    }
 
    /**
@@ -170,12 +129,7 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
     */
    @Override
    public boolean directoryExists(String container, String directory) {
-      try {
-         return sync.pathExists(container + "/" + directory);
-      } catch (Exception e) {
-         keyNotFoundToNullOrPropagate(e);
-         return false;
-      }
+      return sync.pathExists(container + "/" + directory + "/");
    }
 
    /**
@@ -192,52 +146,30 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes
-    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
-    */
-   @Override
-   public Blob getBlob(String container, String key) {
-      return this.getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
-   }
-
-   /**
     * This implementation invokes {@link AtmosStorageClient#readFile}
     */
    @Override
    public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions options) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
-      try {
-         return object2Blob.apply(sync.readFile(container + "/" + key, httpOptions));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
+      return object2Blob.apply(sync.readFile(container + "/" + key, httpOptions));
    }
 
    /**
     * This implementation invokes {@link AtmosStorageClient#listDirectories}
     */
    @Override
-   public ListResponse<? extends StorageMetadata> list() {
+   public PageSet<? extends StorageMetadata> list() {
       return container2ResourceList.apply(sync.listDirectories());
-   }
-
-   /**
-    * This implementation invokes
-    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
-    */
-   @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container) {
-      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
    }
 
    /**
     * This implementation invokes {@link AtmosStorageClient#listDirectory}
     */
    @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container,
+   public PageSet<? extends StorageMetadata> list(String container,
             org.jclouds.blobstore.options.ListContainerOptions options) {
-      container = adjustContainerIfDirOptionPresent(container, options);
+      container = AtmosStorageUtils.adjustContainerIfDirOptionPresent(container, options);
       ListOptions nativeOptions = container2ContainerListOptions.apply(options);
       return container2ResourceList.apply(sync.listDirectory(container, nativeOptions));
    }

@@ -100,41 +100,4 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
       this.eTag = eTag;
    }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((size == null) ? 0 : size.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      MutableStorageMetadataImpl other = (MutableStorageMetadataImpl) obj;
-      if (eTag == null) {
-         if (other.eTag != null)
-            return false;
-      } else if (!eTag.equals(other.eTag))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
-         return false;
-      if (size == null) {
-         if (other.size != null)
-            return false;
-      } else if (!size.equals(other.size))
-         return false;
-      return true;
-   }
-
 }

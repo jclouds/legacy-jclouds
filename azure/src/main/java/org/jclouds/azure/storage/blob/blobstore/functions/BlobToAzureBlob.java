@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -46,7 +48,7 @@ public class BlobToAzureBlob implements Function<Blob, AzureBlob> {
       AzureBlob object = objectProvider.create(blob2ObjectMd.apply(from.getMetadata()));
       if (from.getContentLength() != null)
          object.setContentLength(from.getContentLength());
-      object.setPayload(from.getPayload());
+      object.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
       object.setAllHeaders(from.getAllHeaders());
       return object;
    }

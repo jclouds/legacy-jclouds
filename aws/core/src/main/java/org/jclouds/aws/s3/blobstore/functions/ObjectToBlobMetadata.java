@@ -25,7 +25,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 
 import com.google.common.base.Function;
 
@@ -34,28 +34,32 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlobMetadata> {
-   private final IsDirectoryStrategy isDirectoryStrategy;
+   private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
 
    @Inject
-   public ObjectToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
-      this.isDirectoryStrategy = isDirectoryStrategy;
+   public ObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName) {
+      this.ifDirectoryReturnName = ifDirectoryReturnName;
    }
 
    public MutableBlobMetadata apply(ObjectMetadata from) {
       if (from == null)
          return null;
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
-      to.setContentMD5(from.getContentMD5());
+      if (from.getContentMD5() != null)
+         to.setContentMD5(from.getContentMD5());
       if (from.getContentType() != null)
          to.setContentType(from.getContentType());
       to.setETag(from.getETag());
       to.setName(from.getKey());
       to.setSize(from.getSize());
-      to.setType(StorageType.BLOB);
       to.setLastModified(from.getLastModified());
       to.setUserMetadata(from.getUserMetadata());
-      if (isDirectoryStrategy.execute(to)) {
+      String directoryName = ifDirectoryReturnName.execute(to);
+      if (directoryName != null) {
+         to.setName(directoryName);
          to.setType(StorageType.RELATIVE_PATH);
+      } else {
+         to.setType(StorageType.BLOB);
       }
       return to;
    }

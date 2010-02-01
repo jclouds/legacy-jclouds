@@ -35,12 +35,13 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.Constants;
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
-import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
+import org.jclouds.azure.storage.blob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -138,7 +139,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnTrueIfContainerAlreadyExists.class);
+               ReturnFalseIfContainerAlreadyExists.class);
    }
 
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
@@ -184,7 +185,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnTrueIfContainerAlreadyExists.class);
+               ReturnFalseIfContainerAlreadyExists.class);
    }
 
    public void testCreateRootContainer() throws SecurityException, NoSuchMethodException {
@@ -206,7 +207,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnTrueIfContainerAlreadyExists.class);
+               ReturnFalseIfContainerAlreadyExists.class);
    }
 
    public void testDeleteRootContainer() throws SecurityException, NoSuchMethodException {
@@ -251,7 +252,7 @@ public class AzureBlobAsyncClientTest {
       // TODO check generic type of response parser
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnTrueIfContainerAlreadyExists.class);
+               ReturnFalseIfContainerAlreadyExists.class);
    }
 
    public void testListBlobs() throws SecurityException, NoSuchMethodException {
@@ -310,7 +311,7 @@ public class AzureBlobAsyncClientTest {
                ParseContainerPropertiesFromHeaders.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+               ReturnNullOnContainerNotFound.class);
    }
 
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException {

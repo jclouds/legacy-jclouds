@@ -34,14 +34,14 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.blobstore.functions.BlobToPCSFile;
@@ -151,7 +151,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
       assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ThrowKeyNotFoundOn404.class);
+               ReturnNullOnKeyNotFound.class);
    }
 
    public void testUploadFile() throws SecurityException, NoSuchMethodException, IOException {
@@ -203,7 +203,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ReturnInputStream.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
 
       checkFilters(httpMethod);
 

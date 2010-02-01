@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,12 +37,14 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Sets;
+
 /**
  * Tests to cover @{link LiveS3ObjectMap}
  * 
  * @author Adrian Cole
  */
-public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<InputStream> {
+public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<InputStream> {
 
    @Override
    @Test(groups = { "integration", "live" })
@@ -51,7 +54,7 @@ public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<In
          Map<String, InputStream> map = createMap(context, bucketName);
          map.putAll(this.fiveInputs);
          // this will cause us to block until the bucket updates.
-         assertConsistencyAwareKeySize(map, 5);
+         assertConsistencyAwareMapSize(map, 5);
          Collection<InputStream> values = map.values();
          assertEquals(values.size(), 5);
          Set<String> valuesAsString = new HashSet<String>();
@@ -59,7 +62,37 @@ public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<In
             valuesAsString.add(Utils.toStringAndClose(stream));
          }
          valuesAsString.removeAll(fiveStrings.values());
-         assertEquals(valuesAsString.size(), 0);
+         assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": "
+                  + valuesAsString;
+      } finally {
+         returnContainer(bucketName);
+      }
+   }
+
+   protected abstract int maxList();
+
+   @Test(enabled = false, groups = { "integration", "live" })
+   public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getContainerName();
+      try {
+         InputStreamMap map = createMap(context, bucketName);
+         Set<String> keySet = Sets.newHashSet();
+         for (int i = 0; i < maxList() + 1; i++) {
+            keySet.add(i + "");
+         }
+
+         Map<String, String> newMap = new HashMap<String, String>();
+         for (String key : keySet) {
+            newMap.put(key, key);
+         }
+         map.putAllStrings(newMap);
+         newMap.clear();
+
+         assertConsistencyAwareMapSize(map, maxList() + 1);
+         assertConsistencyAwareKeySetEquals(map, keySet);
+         map.clear();
+         assertConsistencyAwareMapSize(map, 0);
       } finally {
          returnContainer(bucketName);
       }
@@ -101,7 +134,7 @@ public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<In
          }
          assertConsistencyAwareMapSize(map, 5);
          for (InputStream value : map.values()) {
-            assertEquals(value, null);
+            assertEquals(Utils.toStringAndClose(value), "");
          }
       } finally {
          returnContainer(bucketName);
@@ -301,8 +334,8 @@ public class BaseInputStreamMapIntegrationTest extends BaseMapIntegrationTest<In
       ((InputStreamMap) map).putString(key, value);
    }
 
-   protected Map<String, InputStream> createMap(BlobStoreContext context, String bucket) {
+   protected InputStreamMap createMap(BlobStoreContext context, String bucket) {
       InputStreamMap map = context.createInputStreamMap(bucket);
-      return (Map<String, InputStream>) map;
+      return map;
    }
 }

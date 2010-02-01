@@ -24,14 +24,15 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -60,6 +61,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    private final StubAsyncBlobStore blobStore;
@@ -141,14 +143,14 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
                });
    }
 
-   public ListenableFuture<? extends SortedSet<ContainerCDNMetadata>> listCDNContainers(
+   public ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(
             ListCdnContainerOptions... options) {
       throw new UnsupportedOperationException();
    }
 
-   public ListenableFuture<? extends SortedSet<ContainerMetadata>> listContainers(
+   public ListenableFuture<? extends Set<ContainerMetadata>> listContainers(
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... options) {
-      return immediateFuture(Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs()
+      return immediateFuture(Sets.newHashSet(Iterables.transform(blobStore.getContainerToBlobs()
                .keySet(), new Function<String, ContainerMetadata>() {
          public ContainerMetadata apply(String name) {
             return new ContainerMetadata(name, -1, -1);
@@ -156,7 +158,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
       })));
    }
 
-   public ListenableFuture<ListContainerResponse<ObjectInfo>> listObjects(String container,
+   public ListenableFuture<PageSet<ObjectInfo>> listObjects(String container,
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
       return compose(blobStore.list(container, options), resource2ObjectList);

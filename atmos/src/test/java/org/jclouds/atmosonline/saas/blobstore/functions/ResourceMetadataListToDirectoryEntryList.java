@@ -36,10 +36,10 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ResourceMetadataListToDirectoryEntryList
          implements
-         Function<org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>, BoundedSet<? extends DirectoryEntry>> {
+         Function<org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>, BoundedSet<? extends DirectoryEntry>> {
 
    public BoundedSet<DirectoryEntry> apply(
-            org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> from) {
+            org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> from) {
 
       return new BoundedHashSet<DirectoryEntry>(Iterables.transform(from,
                new Function<StorageMetadata, DirectoryEntry>() {
@@ -49,7 +49,7 @@ public class ResourceMetadataListToDirectoryEntryList
                      return new DirectoryEntry(from.getId(), type, from.getName());
                   }
 
-               }), from.getMarker());
+               }), from.getNextMarker());
 
    }
 }

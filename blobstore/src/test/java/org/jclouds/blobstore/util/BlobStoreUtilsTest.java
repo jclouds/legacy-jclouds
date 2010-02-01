@@ -20,6 +20,7 @@ package org.jclouds.blobstore.util;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -31,20 +32,20 @@ import org.testng.annotations.Test;
 public class BlobStoreUtilsTest {
 
    public void testGetContainer() {
-      String container = BlobStoreUtils.parseContainerFromPath("foo");
+      String container = BlobStoreUtilsImpl.parseContainerFromPath("foo");
       assertEquals(container, "foo");
-      container = BlobStoreUtils.parseContainerFromPath("foo/");
+      container = BlobStoreUtilsImpl.parseContainerFromPath("foo/");
       assertEquals(container, "foo");
-      container = BlobStoreUtils.parseContainerFromPath("foo/bar");
+      container = BlobStoreUtilsImpl.parseContainerFromPath("foo/bar");
       assertEquals(container, "foo");
    }
 
    public void testGetPrefix() {
-      String prefix = BlobStoreUtils.parsePrefixFromPath("foo");
+      String prefix = BlobStoreUtilsImpl.parsePrefixFromPath("foo");
       assertEquals(prefix, null);
-      prefix = BlobStoreUtils.parsePrefixFromPath("foo/");
+      prefix = BlobStoreUtilsImpl.parsePrefixFromPath("foo/");
       assertEquals(prefix, null);
-      prefix = BlobStoreUtils.parsePrefixFromPath("foo/bar");
+      prefix = BlobStoreUtilsImpl.parsePrefixFromPath("foo/bar");
       assertEquals(prefix, "bar");
    }
 

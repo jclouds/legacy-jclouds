@@ -20,12 +20,12 @@ package org.jclouds.rackspace.cloudfiles;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
@@ -93,11 +93,11 @@ public interface CloudFilesClient {
     * given), it can be assumed there are more container names to be listed. If the container name
     * list is exactly divisible by the limit, the last request will simply have no content.
     */
-   SortedSet<ContainerMetadata> listContainers(ListContainerOptions... options);
+   Set<ContainerMetadata> listContainers(ListContainerOptions... options);
 
    boolean setObjectInfo(String container, String name, Map<String, String> userMetadata);
 
-   SortedSet<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
+   Set<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
 
    ContainerCDNMetadata getCDNMetadata(String container);
 
@@ -114,7 +114,7 @@ public interface CloudFilesClient {
    boolean deleteContainerIfEmpty(String container);
 
    @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-   ListContainerResponse<ObjectInfo> listObjects(String container, ListContainerOptions... options);
+   PageSet<ObjectInfo> listObjects(String container, ListContainerOptions... options);
 
    boolean containerExists(String container);
 

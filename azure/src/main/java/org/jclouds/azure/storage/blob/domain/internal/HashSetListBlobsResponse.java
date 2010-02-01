@@ -56,4 +56,41 @@ public class HashSetListBlobsResponse extends BoundedHashSet<BlobProperties> imp
    public Set<String> getBlobPrefixes() {
       return blobPrefixes;
    }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((blobPrefixes == null) ? 0 : blobPrefixes.hashCode());
+      result = prime * result + ((delimiter == null) ? 0 : delimiter.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      HashSetListBlobsResponse other = (HashSetListBlobsResponse) obj;
+      if (blobPrefixes == null) {
+         if (other.blobPrefixes != null)
+            return false;
+      } else if (!blobPrefixes.equals(other.blobPrefixes))
+         return false;
+      if (delimiter == null) {
+         if (other.delimiter != null)
+            return false;
+      } else if (!delimiter.equals(other.delimiter))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[blobPrefixes=" + blobPrefixes + ", delimiter=" + delimiter
+               + "]";
+   }
 }

@@ -24,7 +24,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.Set;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
@@ -33,8 +33,8 @@ import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonRes
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
-import org.testng.collections.Lists;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -50,7 +50,7 @@ public class ParseObjectInfoListFromJsonResponseTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/cloudfiles/test_list_container.json");
-      List<ObjectInfo> expects = Lists.newArrayList();
+      Set<ObjectInfo> expects = Sets.newHashSet();
       ObjectInfoImpl one = i.getInstance(ObjectInfoImpl.class);
       one.name = "test_obj_1";
       one.hash = "4281c348eaf83e70ddce0e07221c3d28";

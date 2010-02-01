@@ -47,7 +47,6 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    private final DelegatingRetryHandler retryHandler;
    private final DelegatingErrorHandler errorHandler;
    private final ExecutorService ioWorkerExecutor;
-   private final ExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -60,18 +59,16 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    @Inject
    protected BaseHttpCommandExecutorService(
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.retryHandler = retryHandler;
       this.errorHandler = errorHandler;
       this.ioWorkerExecutor = ioWorkerExecutor;
-      this.userExecutor = userExecutor;
       this.wire = wire;
    }
 
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       return makeListenable(ioWorkerExecutor.submit(new HttpResponseCallable(command)),
-               userExecutor);
+               ioWorkerExecutor);
    }
 
    public class HttpResponseCallable implements Callable<HttpResponse> {

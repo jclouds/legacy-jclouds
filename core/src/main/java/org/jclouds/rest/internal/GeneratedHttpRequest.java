@@ -20,6 +20,7 @@ package org.jclouds.rest.internal;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map.Entry;
 
@@ -89,5 +90,45 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
       this
                .setPayload(processor.addFormParam(getPayload().getRawContent().toString(), name,
                         values));
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + Arrays.hashCode(args);
+      result = prime * result + ((declaring == null) ? 0 : declaring.hashCode());
+      result = prime * result + ((javaMethod == null) ? 0 : javaMethod.hashCode());
+      result = prime * result + ((processor == null) ? 0 : processor.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      GeneratedHttpRequest<?> other = (GeneratedHttpRequest<?>) obj;
+      if (!Arrays.equals(args, other.args))
+         return false;
+      if (declaring == null) {
+         if (other.declaring != null)
+            return false;
+      } else if (!declaring.equals(other.declaring))
+         return false;
+      if (javaMethod == null) {
+         if (other.javaMethod != null)
+            return false;
+      } else if (!javaMethod.equals(other.javaMethod))
+         return false;
+      if (processor == null) {
+         if (other.processor != null)
+            return false;
+      } else if (!processor.equals(other.processor))
+         return false;
+      return true;
    }
 }

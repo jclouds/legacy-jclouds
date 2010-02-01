@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -39,7 +38,7 @@ import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -70,7 +69,7 @@ public class BaseBlobStoreIntegrationTest {
                      XML_STRING_FORMAT, "dogma"), "path/5", String
                      .format(XML_STRING_FORMAT, "emma"));
 
-   public static long INCONSISTENCY_WINDOW = 5000;
+   public static long INCONSISTENCY_WINDOW = 10000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
    protected volatile BlobStoreContext context;
@@ -161,7 +160,7 @@ public class BaseBlobStoreIntegrationTest {
 
    private static void deleteContainerOrWarnIfUnable(BlobStoreContext context, String containerName) {
       try {
-         deleteContainer(context, containerName);
+         context.getBlobStore().deleteContainer(containerName);
       } catch (Throwable ex) {
          System.err.printf("unable to delete container %s, ignoring...%n", containerName);
          ex.printStackTrace();
@@ -184,17 +183,8 @@ public class BaseBlobStoreIntegrationTest {
                            && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
                }
             });
-            if (testContainers.iterator().hasNext()) {
-               ExecutorService executor = Executors.newCachedThreadPool();
-               for (final StorageMetadata metaDatum : testContainers) {
-                  executor.execute(new Runnable() {
-                     public void run() {
-                        deleteContainerOrWarnIfUnable(context, metaDatum.getName());
-                     }
-                  });
-               }
-               executor.shutdown();
-               executor.awaitTermination(60, TimeUnit.SECONDS);
+            for (StorageMetadata container : testContainers) {
+               deleteContainerOrWarnIfUnable(context, container.getName());
             }
          } // try twice
       } catch (CancellationException e) {
@@ -276,7 +266,7 @@ public class BaseBlobStoreIntegrationTest {
       Blob newObject = context.getBlobStore().getBlob(sourceContainer, key);
       assert newObject != null;
       try {
-         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(newObject), TEST_STRING);
+         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(newObject), TEST_STRING);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
@@ -288,11 +278,10 @@ public class BaseBlobStoreIntegrationTest {
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               SortedSet<? extends StorageMetadata> list = context.getBlobStore().list(
-                        containerName);
-               assert list.size() == count : String.format("expected only %d values in %s: %s",
-                        count, containerName, Sets.newHashSet(Iterables.transform(list,
-                                 new Function<StorageMetadata, String>() {
+               assert context.getBlobStore().countBlobs(containerName) == count : String.format(
+                        "expected only %d values in %s: %s", count, containerName, Sets
+                                 .newHashSet(Iterables.transform(context.getBlobStore().list(
+                                          containerName), new Function<StorageMetadata, String>() {
 
                                     public String apply(StorageMetadata from) {
                                        return from.getName();
@@ -383,24 +372,6 @@ public class BaseBlobStoreIntegrationTest {
 
    protected Module createHttpModule() {
       return new JavaUrlHttpCommandExecutorServiceModule();
-   }
-
-   protected static void deleteContainer(final BlobStoreContext context, final String name)
-            throws InterruptedException {
-      if (context.getBlobStore().containerExists(name)) {
-         System.err.printf("*** deleting container %s...%n", name);
-         context.getBlobStore().deleteContainer(name);
-         assertConsistencyAware(context, new Runnable() {
-            public void run() {
-               try {
-                  assert !context.getBlobStore().containerExists(name) : "container " + name
-                           + " still exists";
-               } catch (Exception e) {
-                  Throwables.propagateIfPossible(e);
-               }
-            }
-         });
-      }
    }
 
 }

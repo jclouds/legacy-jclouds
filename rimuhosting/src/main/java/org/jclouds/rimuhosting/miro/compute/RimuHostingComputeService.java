@@ -53,7 +53,6 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.NodeSetImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeUtils;
-import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -117,6 +116,7 @@ public class RimuHostingComputeService implements ComputeService {
    protected final Provider<Map<String, ? extends Size>> sizes;
    protected final Provider<Map<String, ? extends Location>> locations;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
+   protected final String nodeNamingConvention;
    private final ComputeUtils utils;
    private final ServerToNodeMetadata serverToNodeMetadata;
    protected final ExecutorService executor;
@@ -136,49 +136,67 @@ public class RimuHostingComputeService implements ComputeService {
       this.templateBuilderProvider = templateBuilderProvider;
       this.serverToNodeMetadata = serverToNodeMetadata;
       this.executor = executor;
+      this.nodeNamingConvention = "%s-%d";
    }
 
    @Override
-   public NodeSet runNodesWithTag(final String tag, int max, final Template template) {
+   public NodeSet runNodesWithTag(final String tag, int count, final Template template) {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
-      logger.debug(">> running %d servers image(%s) flavor(%s)", max, template.getImage().getId(),
-               template.getSize().getId());
-
+      checkNotNull(template.getLocation(), "location");
       final Set<NodeMetadata> nodes = Sets.newHashSet();
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (int i = 0; i < max; i++) {
-         final String name = String.format("%s-%d", tag, i + 1);
-         responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               NewServerResponse serverResponse = client.createServer(name, checkNotNull(template
-                        .getImage().getId(), "imageId"), checkNotNull(template.getSize().getId(),
-                        "sizeId"));
-               NodeMetadata node = new NodeMetadataImpl(serverResponse.getServer().getId()
-                        .toString(), name, template.getLocation().getId(),
-                        null,
-                        ImmutableMap.<String, String> of(),
-                        tag,
-                        NodeState.UNKNOWN,// TODO
-                        // need a
-                        // real
-                        // state!
-                        getPublicAddresses(serverResponse.getServer()),// no real useful data here..
-                        ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(),
-                        new Credentials("root", serverResponse.getNewInstanceRequest()
-                                 .getCreateOptions().getPassword()));
-               nodes.add(node);
-               logger.debug("<< started server(%s)", node.getId());
-               // TODO! serverActive.apply(server);
-               logger.debug("<< running server(%s)", node.getId());
-               utils.runOptionsOnNode(node, template.getOptions());
-               logger.debug("<< options applied server(%s)", node.getId());
-               return null;
-            }
-         }), executor));
+      int nodesToStart = count;
+      int i = 0;
+      while (nodesToStart > 0) {
+         int currentCount = i;
+         Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
+         for (; i < currentCount + nodesToStart; i++) {
+            final String name = String.format(nodeNamingConvention, tag, i + 1);
+            responses.put(name, makeListenable(executor.submit(new Callable<Void>() {
+               @Override
+               public Void call() throws Exception {
+                  NodeMetadata node = null;
+                  try {
+                     node = startServerAndConvertToNode(tag, name, template);
+                     logger.debug("<< running server(%s)", node.getId());
+                     utils.runOptionsOnNode(node, template.getOptions());
+                     logger.debug("<< options applied server(%s)", node.getId());
+                     nodes.add(node);
+                  } catch (Exception e) {
+                     if (node != null) {
+                        destroyNode(node);
+                        logger.error(e, "<< error applying server(%s) [%s] destroying ", name, e
+                                 .getMessage());
+                     }
+                  }
+                  return null;
+               }
+
+            }), executor));
+         }
+         nodesToStart = awaitCompletion(responses, executor, null, logger, "nodes").size();
       }
-      ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");
       return new NodeSetImpl(nodes);
+   }
+
+   private NodeMetadata startServerAndConvertToNode(final String tag, final String name,
+            final Template template) {
+      NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage()
+               .getId(), "imageId"), checkNotNull(template.getSize().getId(), "sizeId"));
+      NodeMetadata node = new NodeMetadataImpl(serverResponse.getServer().getId().toString(),
+               name,
+               template.getLocation().getId(),
+               null,
+               ImmutableMap.<String, String> of(),
+               tag,
+               NodeState.UNKNOWN,// TODO
+               // need a
+               // real
+               // state!
+               getPublicAddresses(serverResponse.getServer()),// no real useful data here..
+               ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(),
+               new Credentials("root", serverResponse.getNewInstanceRequest().getCreateOptions()
+                        .getPassword()));
+      return node;
    }
 
    @Override
@@ -239,9 +257,17 @@ public class RimuHostingComputeService implements ComputeService {
    @Override
    public void destroyNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> terminating servers by tag(%s)", tag);
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (final NodeMetadata node : doGetNodes(tag)) {
-         responses.add(makeListenable(executor.submit(new Callable<Void>() {
+      Iterable<NodeMetadata> nodesToDestroy = Iterables.filter(doGetNodes(tag),
+               new Predicate<NodeMetadata>() {
+                  @Override
+                  public boolean apply(NodeMetadata input) {
+                     return input.getState() != NodeState.TERMINATED;
+
+                  }
+               });
+      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+      for (final NodeMetadata node : nodesToDestroy) {
+         responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                destroyNode(node);

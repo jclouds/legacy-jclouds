@@ -31,13 +31,13 @@ public class ReturnTrueIfBucketAlreadyOwnedByYouTest {
    @Test
    void testBucketAlreadyOwnedByYouIsOk() throws Exception {
       Exception e = getErrorWithCode("BucketAlreadyOwnedByYou");
-      assert new ReturnTrueIfBucketAlreadyOwnedByYou().apply(e);
+      assert !new ReturnFalseIfBucketAlreadyOwnedByYou().apply(e);
    }
 
    @Test(expectedExceptions = AWSResponseException.class)
    void testBlahIsNotOk() throws Exception {
       Exception e = getErrorWithCode("blah");
-      new ReturnTrueIfBucketAlreadyOwnedByYou().apply(e);
+      new ReturnFalseIfBucketAlreadyOwnedByYou().apply(e);
    }
 
    private Exception getErrorWithCode(String code) {

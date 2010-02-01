@@ -81,4 +81,35 @@ public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
       return (this == o) ? 0 : getInfo().getName().compareTo(o.getInfo().getName());
    }
 
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((allHeaders == null) ? 0 : allHeaders.hashCode());
+      result = prime * result + ((info == null) ? 0 : info.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      CFObjectImpl other = (CFObjectImpl) obj;
+      if (allHeaders == null) {
+         if (other.allHeaders != null)
+            return false;
+      } else if (!allHeaders.equals(other.allHeaders))
+         return false;
+      if (info == null) {
+         if (other.info != null)
+            return false;
+      } else if (!info.equals(other.info))
+         return false;
+      return true;
+   }
+
 }

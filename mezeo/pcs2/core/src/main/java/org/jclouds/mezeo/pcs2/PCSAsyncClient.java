@@ -29,8 +29,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlPayload;
 import org.jclouds.mezeo.pcs2.binders.BindDataToPayload;
@@ -148,7 +148,7 @@ public interface PCSAsyncClient {
     * @see PCSAsyncClient#downloadFile
     */
    @GET
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("/content")
    ListenableFuture<InputStream> downloadFile(@EndpointParam URI file);
 
@@ -156,7 +156,7 @@ public interface PCSAsyncClient {
     * @see PCSAsyncClient#getFileInfo
     */
    @GET
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @XMLResponseParser(FileHandler.class)
    @Headers(keys = "X-Cloud-Depth", values = "2")
    ListenableFuture<FileInfoWithMetadata> getFileInfo(@EndpointParam URI file);

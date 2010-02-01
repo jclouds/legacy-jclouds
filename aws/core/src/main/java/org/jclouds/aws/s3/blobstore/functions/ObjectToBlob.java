@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.s3.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -47,8 +49,7 @@ public class ObjectToBlob implements Function<S3Object, Blob> {
       Blob blob = blobFactory.create(object2BlobMd.apply(from.getMetadata()));
       if (from.getContentLength() != null)
          blob.setContentLength(from.getContentLength());
-      if (from.getPayload() != null)
-         blob.setPayload(from.getPayload());
+      blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
       blob.setAllHeaders(from.getAllHeaders());
       return blob;
    }

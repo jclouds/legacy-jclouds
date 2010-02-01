@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -43,7 +44,9 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegrationTest {
@@ -129,11 +132,18 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       }
    }
 
-   protected void assertConsistencyAwareKeySetEquals(final Map<String, V> map, final Object toEqual)
-            throws InterruptedException {
+   protected void assertConsistencyAwareKeySetEquals(final Map<String, V> map,
+            final Set<String> expected) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
-            assertEquals(map.keySet(), toEqual);
+            Set<String> toMatch = map.keySet();
+            Set<String> shouldBeEmpty = Sets.difference(expected, toMatch);
+            assert shouldBeEmpty.size() == 0 : "toMatch has less keys than expected. missing: "
+                     + shouldBeEmpty;
+            shouldBeEmpty = Sets.difference(toMatch, expected);
+            assert shouldBeEmpty.size() == 0 : "toMatch has more keys than expected. extras: "
+                     + shouldBeEmpty;
+            assertEquals(Sets.newTreeSet(toMatch), Sets.newTreeSet(expected));
          }
       });
    }
@@ -278,7 +288,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
             final String bucketName) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
-            assertTrue(map.list().size() >= 0);
+            assertTrue(Iterables.size(map.list()) >= 0);
          }
       });
    }

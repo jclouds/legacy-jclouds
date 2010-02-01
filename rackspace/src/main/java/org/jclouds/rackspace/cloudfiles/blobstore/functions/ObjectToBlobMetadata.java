@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
@@ -36,13 +36,13 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMetadata> {
-   private final IsDirectoryStrategy isDirectoryStrategy;
+   private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    private final EncryptionService encryptionService;
 
    @Inject
-   public ObjectToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy,
+   public ObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
             EncryptionService encryptionService) {
-      this.isDirectoryStrategy = isDirectoryStrategy;
+      this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.encryptionService = encryptionService;
    }
 
@@ -60,11 +60,14 @@ public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMet
          to.setSize(from.getBytes());
       if (from.getLastModified() != null)
          to.setLastModified(from.getLastModified());
-      to.setType(StorageType.BLOB);
       if (from instanceof MutableObjectInfoWithMetadata)
          to.setUserMetadata(((MutableObjectInfoWithMetadata) from).getMetadata());
-      if (isDirectoryStrategy.execute(to)) {
+      String directoryName = ifDirectoryReturnName.execute(to);
+      if (directoryName != null) {
+         to.setName(directoryName);
          to.setType(StorageType.RELATIVE_PATH);
+      } else {
+         to.setType(StorageType.BLOB);
       }
       return to;
    }

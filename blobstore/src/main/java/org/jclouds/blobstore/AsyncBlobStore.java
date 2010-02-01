@@ -20,8 +20,7 @@ package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -43,7 +42,7 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#list
     */
-   ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list();
+   ListenableFuture<? extends PageSet<? extends StorageMetadata>> list();
 
    /**
     * @see BlobStore#containerExists
@@ -58,19 +57,23 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#list(String)
     */
-   ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container);
+   ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container);
 
    /**
     * @see BlobStore#list(String, ListContainerOptions)
     */
-   ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container, ListContainerOptions options);
+   ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container,
+            ListContainerOptions options);
 
    /**
-    * @see BlobStore#clearContainer
+    * @see BlobStore#clearContainer(String)
     */
    ListenableFuture<Void> clearContainer(String container);
+
+   /**
+    * @see BlobStore#clearDirectory(String, ListContainerOptions)
+    */
+   ListenableFuture<Void> clearContainer(String container, ListContainerOptions options);
 
    /**
     * @see BlobStore#deleteContainer
@@ -86,6 +89,11 @@ public interface AsyncBlobStore {
     * @see BlobStore#createDirectory
     */
    ListenableFuture<Void> createDirectory(String container, String directory);
+
+   /**
+    * @see BlobStore#deleteDirectory
+    */
+   ListenableFuture<Void> deleteDirectory(String containerName, String name);
 
    /**
     * @see BlobStore#blobExists
@@ -116,5 +124,15 @@ public interface AsyncBlobStore {
     * @see BlobStore#removeBlob
     */
    ListenableFuture<Void> removeBlob(String container, String key);
+
+   /**
+    * @see BlobStore#countBlobs(String)
+    */
+   ListenableFuture<Long> countBlobs(String container);
+
+   /**
+    * @see BlobStore#countBlobs(String,ListContainerOptions)
+    */
+   ListenableFuture<Long> countBlobs(String container, ListContainerOptions options);
 
 }

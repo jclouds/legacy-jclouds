@@ -18,76 +18,76 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.util.BlobStoreUtils.keyNotFoundToNullOrPropagate;
-
-import java.util.SortedSet;
-import java.util.concurrent.ExecutorService;
+import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
-import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
-import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObjectGetOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ContainerToResourceList;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.rackspace.cloudfiles.blobstore.internal.BaseCloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements BlobStore {
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
+public class CloudFilesBlobStore extends BaseBlobStore {
+   private final CloudFilesClient sync;
+   private final ContainerToResourceMetadata container2ResourceMd;
+   private final BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions;
+   private final ContainerToResourceList container2ResourceList;
+   private final ObjectToBlob object2Blob;
+   private final BlobToObject blob2Object;
+   private final ObjectToBlobMetadata object2BlobMd;
+   private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   public CloudFilesBlobStore(CloudFilesAsyncClient async, CloudFilesClient sync,
-            Factory blobFactory, LoggerFactory logFactory,
-            ClearListStrategy clearContainerStrategy, ObjectToBlobMetadata object2BlobMd,
-            ObjectToBlob object2Blob, BlobToObject blob2Object,
-            BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
-            BlobToObjectGetOptions blob2ObjectGetOptions,
-            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
+   CloudFilesBlobStore(BlobStoreUtils blobUtils, CloudFilesClient sync,
             ContainerToResourceMetadata container2ResourceMd,
-            ContainerToResourceList container2ResourceList,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
-               object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
-               getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
-               service);
+            BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
+            ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
+            BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+            BlobToHttpGetOptions blob2ObjectGetOptions) {
+      super(blobUtils);
+      this.sync = sync;
+      this.container2ResourceMd = container2ResourceMd;
+      this.container2ContainerListOptions = container2ContainerListOptions;
+      this.container2ResourceList = container2ResourceList;
+      this.object2Blob = object2Blob;
+      this.blob2Object = blob2Object;
+      this.object2BlobMd = object2BlobMd;
+      this.blob2ObjectGetOptions = blob2ObjectGetOptions;
    }
 
    /**
     * This implementation invokes {@link CloudFilesClient#listContainers}
     */
    @Override
-   public ListResponse<? extends StorageMetadata> list() {
-      return new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
-         public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                  SortedSet<ContainerMetadata> from) {
-            return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
-                     container2ResourceMd), null, null, false);
+   public PageSet<? extends StorageMetadata> list() {
+      return new Function<Set<ContainerMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+         public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
+                  Set<ContainerMetadata> from) {
+            return new PageSetImpl<StorageMetadata>(
+                     Iterables.transform(from, container2ResourceMd), null);
          }
       }.apply(sync.listContainers());
    }
@@ -99,8 +99,8 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
     *           container name
     */
    @Override
-   public boolean containerExists(String path) {
-      return sync.containerExists(BlobStoreUtils.parseContainerFromPath(path));
+   public boolean containerExists(String container) {
+      return sync.containerExists(container);
    }
 
    /**
@@ -117,86 +117,16 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
    }
 
    /**
-    * This implementation invokes
-    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
-    * 
-    * @param container
-    *           container name
-    */
-   @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container) {
-      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
-   }
-
-   /**
     * This implementation invokes {@link CloudFilesClient#listObjects}
     * 
     * @param container
     *           container name
     */
    @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container,
-            ListContainerOptions optionsList) {
+   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions optionsList) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
                .apply(optionsList);
       return container2ResourceList.apply(sync.listObjects(container, httpOptions));
-   }
-
-   /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option.
-    * 
-    * @param container
-    *           container name
-    */
-   @Override
-   public void clearContainer(final String container) {
-      clearContainerStrategy.execute(container, recursive());
-   }
-
-   /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option. Then, it invokes
-    * {@link CloudFilesClient#deleteBucketIfEmpty}
-    * 
-    * @param container
-    *           container name
-    */
-   @Override
-   public void deleteContainer(final String container) {
-      clearContainerStrategy.execute(container, recursive());
-      sync.deleteContainerIfEmpty(container);
-   }
-
-   /**
-    * This implementation invokes {@link GetDirectoryStrategy#execute}
-    * 
-    * @param container
-    *           container name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public boolean directoryExists(String containerName, String directory) {
-      try {
-         getDirectoryStrategy.execute(containerName, directory);
-         return true;
-      } catch (KeyNotFoundException e) {
-         return false;
-      }
-   }
-
-   /**
-    * This implementation invokes {@link MkdirStrategy#execute}
-    * 
-    * @param container
-    *           container name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public void createDirectory(String containerName, String directory) {
-      mkdirStrategy.execute(containerName, directory);
    }
 
    /**
@@ -222,25 +152,7 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
     */
    @Override
    public BlobMetadata blobMetadata(String container, String key) {
-      try {
-         return object2BlobMd.apply(sync.getObjectInfo(container, key));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
-   }
-
-   /**
-    * This implementation invokes
-    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
-    * 
-    * @param container
-    *           container name
-    * @param key
-    *           file name
-    */
-   @Override
-   public Blob getBlob(String container, String key) {
-      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
+      return object2BlobMd.apply(sync.getObjectInfo(container, key));
    }
 
    /**
@@ -255,11 +167,7 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
    public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      try {
-         return object2Blob.apply(sync.getObject(container, key, httpOptions));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
+      return object2Blob.apply(sync.getObject(container, key, httpOptions));
    }
 
    /**
@@ -288,4 +196,9 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
       sync.removeObject(container, key);
    }
 
+   @Override
+   protected boolean deleteAndVerifyContainerGone(String container) {
+      sync.deleteContainerIfEmpty(container);
+      return !sync.containerExists(container);
+   }
 }

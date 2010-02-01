@@ -18,38 +18,62 @@
  */
 package org.jclouds.blobstore.domain.internal;
 
-import java.util.TreeSet;
+import java.util.HashSet;
 
-import org.jclouds.blobstore.domain.ListResponse;
+import javax.annotation.Nullable;
+
+import org.jclouds.blobstore.domain.PageSet;
 
 import com.google.common.collect.Iterables;
 
-public class ListResponseImpl<T> extends TreeSet<T> implements ListResponse<T> {
+public class PageSetImpl<T> extends HashSet<T> implements PageSet<T> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -7133632087734650835L;
    protected final String marker;
-   protected final Integer maxResults;
-   protected final boolean truncated;
 
-   public ListResponseImpl(Iterable<T> contents, String marker, Integer maxResults,
-            boolean isTruncated) {
+   public PageSetImpl(Iterable<T> contents, @Nullable String nextMarker) {
       Iterables.addAll(this, contents);
-      this.marker = marker;
-      this.maxResults = maxResults;
-      this.truncated = isTruncated;
+      this.marker = nextMarker;
    }
 
-   public String getMarker() {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getNextMarker() {
       return marker;
    }
 
-   public int getMaxResults() {
-      return maxResults;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((marker == null) ? 0 : marker.hashCode());
+      return result;
    }
 
-   public boolean isTruncated() {
-      return truncated;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      PageSetImpl<?> other = (PageSetImpl<?>) obj;
+      if (marker == null) {
+         if (other.marker != null)
+            return false;
+      } else if (!marker.equals(other.marker))
+         return false;
+      return true;
    }
 
 }

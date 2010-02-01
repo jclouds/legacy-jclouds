@@ -23,32 +23,34 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class MarkersIsDirectoryStrategy implements IsDirectoryStrategy {
+public class MarkersIfDirectoryReturnNameStrategy implements IfDirectoryReturnNameStrategy {
 
-   public boolean execute(StorageMetadata metadata) {
+   public String execute(StorageMetadata metadata) {
       switch (metadata.getType()) {
          case CONTAINER:
          case FOLDER:
          case RELATIVE_PATH:
-            return true;
+            return metadata.getName();
          case BLOB:
             BlobMetadata blobMd = (BlobMetadata) metadata;
-            if (blobMd.getContentType() != null
-                     && blobMd.getContentType().equals("application/directory"))
-               return true;
             for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
                if (metadata.getName().endsWith(suffix)) {
-                  return true;
+                  return metadata.getName().substring(0, metadata.getName().lastIndexOf(suffix));
                }
             }
+            // It is important that this is last, in case there is a file with a known directory
+            // suffix who also has content type set to application/directory
+            if (blobMd.getContentType() != null
+                     && blobMd.getContentType().equals("application/directory"))
+               return metadata.getName();
       }
-      return false;
+      return null;
    }
 }

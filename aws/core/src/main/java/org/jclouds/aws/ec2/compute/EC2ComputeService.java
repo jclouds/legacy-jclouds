@@ -63,7 +63,7 @@ import org.jclouds.compute.domain.internal.NodeSetImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeUtils;
-import org.jclouds.concurrent.ConcurrentUtils;
+import static org.jclouds.concurrent.ConcurrentUtils.*;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
@@ -190,38 +190,40 @@ public class EC2ComputeService implements ComputeService {
                .asType(ec2Size.getInstanceType())// instance size
                .withSecurityGroup(tag)// group I created above
                .withAdditionalInfo(tag);
-
-      Reservation reservation = ec2Client.getInstanceServices().runInstancesInRegion(region, zone,
-               template.getImage().getId(), 1, count, instanceOptions);
-      Iterable<String> ids = Iterables.transform(reservation, instanceToId);
-
-      String idsString = Joiner.on(',').join(ids);
-      logger.debug("<< started instances(%s)", idsString);
-      Iterables.all(reservation, instanceStateRunning);
-      logger.debug("<< running instances(%s)", idsString);
       final Set<NodeMetadata> nodes = Sets.newHashSet();
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (final NodeMetadata node : Iterables.transform(Iterables.concat(ec2Client
-               .getInstanceServices().describeInstancesInRegion(region,
-                        Iterables.toArray(ids, String.class))), runningInstanceToNodeMetadata)) {
-         responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               try {
-                  utils.runOptionsOnNode(node, template.getOptions());
-                  logger.debug("<< options applied instance(%s)", node.getId());
-                  nodes.add(node);
-               } catch (Exception e) {
-                  logger.error(e, "<< error applying instance(%s) [%s] destroying ", node.getId(),
-                           e.getMessage());
-                  destroyNode(node);
-               }
-               return null;
-            }
+      int nodesToStart = count;
+      while (nodesToStart > 0) {
+         Reservation reservation = ec2Client.getInstanceServices().runInstancesInRegion(region,
+                  zone, template.getImage().getId(), 1, nodesToStart, instanceOptions);
+         Iterable<String> ids = Iterables.transform(reservation, instanceToId);
 
-         }), executor));
+         String idsString = Joiner.on(',').join(ids);
+         logger.debug("<< started instances(%s)", idsString);
+         Iterables.all(reservation, instanceStateRunning);
+         logger.debug("<< running instances(%s)", idsString);
+         Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+         for (final NodeMetadata node : Iterables.transform(Iterables.concat(ec2Client
+                  .getInstanceServices().describeInstancesInRegion(region,
+                           Iterables.toArray(ids, String.class))), runningInstanceToNodeMetadata)) {
+            responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
+               @Override
+               public Void call() throws Exception {
+                  try {
+                     utils.runOptionsOnNode(node, template.getOptions());
+                     logger.debug("<< options applied instance(%s)", node.getId());
+                     nodes.add(node);
+                  } catch (Exception e) {
+                     logger.error(e, "<< error applying instance(%s) [%s] destroying ", node
+                              .getId(), e.getMessage());
+                     destroyNode(node);
+                  }
+                  return null;
+               }
+
+            }), executor));
+         }
+         nodesToStart = awaitCompletion(responses, executor, null, logger, "nodes").size();
       }
-      ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");
       return new NodeSetImpl(nodes);
    }
 
@@ -324,18 +326,25 @@ public class EC2ComputeService implements ComputeService {
    @Override
    public void destroyNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> terminating servers by tag(%s)", tag);
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (final NodeMetadata node : doGetNodes(tag)) {
-         if (node.getState() != NodeState.TERMINATED)
-            responses.add(ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
-               @Override
-               public Void call() throws Exception {
-                  destroyNode(node);
-                  return null;
-               }
-            }), executor));
+      Iterable<NodeMetadata> nodesToDestroy = Iterables.filter(doGetNodes(tag),
+               new Predicate<NodeMetadata>() {
+                  @Override
+                  public boolean apply(NodeMetadata input) {
+                     return input.getState() != NodeState.TERMINATED;
+
+                  }
+               });
+      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+      for (final NodeMetadata node : nodesToDestroy) {
+         responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               destroyNode(node);
+               return null;
+            }
+         }), executor));
       }
-      ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "nodes");
+      awaitCompletion(responses, executor, null, logger, "nodes");
       logger.debug("<< destroyed");
    }
 

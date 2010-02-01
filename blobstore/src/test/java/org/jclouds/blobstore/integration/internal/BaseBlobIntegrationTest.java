@@ -33,15 +33,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.Payloads;
@@ -162,13 +163,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          addObjectAndValidateContent(containerName, key);
          Blob object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5));
-         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(object1), TEST_STRING.substring(0,
-                  6));
+         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object1), TEST_STRING
+                  .substring(0, 6));
 
          Blob object2 = context.getBlobStore().getBlob(containerName, key,
                   range(6, TEST_STRING.length()));
-         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(object2), TEST_STRING.substring(6,
-                  TEST_STRING.length()));
+         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object2), TEST_STRING
+                  .substring(6, TEST_STRING.length()));
       } finally {
          returnContainer(containerName);
       }
@@ -185,7 +186,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          Blob object = context.getBlobStore().getBlob(containerName, key,
                   range(0, 5).range(6, TEST_STRING.length()));
 
-         assertEquals(BlobStoreUtils.getContentAsStringOrNullAndClose(object), TEST_STRING);
+         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object), TEST_STRING);
       } finally {
          returnContainer(containerName);
       }
@@ -248,7 +249,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          returnContainer(containerName);
       }
    }
-   
+
    @Test(groups = { "integration", "live" })
    public void objectNotFound() throws InterruptedException {
       String containerName = getContainerName();
@@ -280,7 +281,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    private void assertContainerEmptyDeleting(String containerName, String key) {
-      SortedSet<? extends StorageMetadata> listing = context.getBlobStore().list(containerName);
+      Set<? extends StorageMetadata> listing = context.getBlobStore().list(containerName);
       assertEquals(listing.size(), 0, String.format(
                "deleting %s, we still have %s left in container %s, using encoding %s", key,
                listing.size(), containerName, LOCAL_ENCODING));
@@ -320,9 +321,10 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          assertNotNull(context.getBlobStore().putBlob(containerName, object));
          object = context.getBlobStore().getBlob(containerName, object.getMetadata().getName());
-         String returnedString = BlobStoreUtils.getContentAsStringOrNullAndClose(object);
+         String returnedString = BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object);
          assertEquals(returnedString, realObject);
-         assertEquals(context.getBlobStore().list(containerName).size(), 1);
+         PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
+         assert set.size() == 1 : set;
       } finally {
          returnContainer(containerName);
       }

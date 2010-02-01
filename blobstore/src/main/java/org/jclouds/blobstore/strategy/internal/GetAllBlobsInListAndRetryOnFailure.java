@@ -18,13 +18,14 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -34,14 +35,16 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.logging.Logger;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -55,8 +58,12 @@ import com.google.inject.Inject;
 public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrategy {
 
    protected final ListBlobMetadataStrategy getAllBlobMetadata;
-   protected final AsyncBlobStore connection;
    protected final BackoffLimitedRetryHandler retryHandler;
+   protected final AsyncBlobStore ablobstore;
+   protected final ExecutorService userExecutor;
+   @Resource
+   @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
+   protected Logger logger = Logger.NULL;
    /**
     * maximum duration of an blob Request
     */
@@ -65,49 +72,52 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
    protected Long maxTime;
 
    @Inject
-   GetAllBlobsInListAndRetryOnFailure(AsyncBlobStore connection,
-            ListBlobMetadataStrategy getAllBlobMetadata, BackoffLimitedRetryHandler retryHandler) {
-      this.connection = connection;
+   GetAllBlobsInListAndRetryOnFailure(
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            ListBlobMetadataStrategy getAllBlobMetadata, AsyncBlobStore ablobstore,
+            BackoffLimitedRetryHandler retryHandler) {
+      this.userExecutor = userExecutor;
+      this.ablobstore = ablobstore;
       this.getAllBlobMetadata = getAllBlobMetadata;
       this.retryHandler = retryHandler;
    }
 
    public Set<? extends Blob> execute(String container, ListContainerOptions options) {
-      Set<Blob> objects = Sets.newHashSet();
-      Map<String, ListenableFuture<? extends Blob>> futureObjects = Maps.newHashMap();
-      for (BlobMetadata md : getAllBlobMetadata.execute(container, options)) {
-         futureObjects.put(md.getName(), connection.getBlob(container, md.getName()));
-      }
-      for (Entry<String, ListenableFuture<? extends Blob>> futureObjectEntry : futureObjects
-               .entrySet()) {
-         try {
-            ifNotFoundRetryOtherwiseAddToSet(container, futureObjectEntry.getKey(),
-                     futureObjectEntry.getValue(), objects);
-         } catch (Exception e) {
-            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-            throw new BlobRuntimeException(String.format("Error getting value from blob %1$s",
-                     container), e);
-         }
-
-      }
-      return objects;
-   }
-
-   @VisibleForTesting
-   public void ifNotFoundRetryOtherwiseAddToSet(String container, String key,
-            ListenableFuture<? extends Blob> value, Set<Blob> objects) throws InterruptedException,
-            ExecutionException, TimeoutException {
+      Map<BlobMetadata, Exception> exceptions = Maps.newHashMap();
+      final Set<Blob> objects = Sets.newHashSet();
+      Iterable<? extends BlobMetadata> toGet = getAllBlobMetadata.execute(container, options);
       for (int i = 0; i < 3; i++) {
-         Blob object = (maxTime != null) ? value.get(maxTime, TimeUnit.MILLISECONDS) : value.get();
-         if (object == null) {
-            retryHandler.imposeBackoffExponentialDelay(i + 1, String.format("blob %s/%s not found",
-                     container, key));
-            value = connection.getBlob(container, key);
-            continue;
+         Map<BlobMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
+         for (BlobMetadata md : toGet) {
+            final ListenableFuture<? extends Blob> future = ablobstore.getBlob(container, md
+                     .getName());
+            future.addListener(new Runnable() {
+               @Override
+               public void run() {
+                  try {
+                     objects.add(future.get());
+                  } catch (InterruptedException e) {
+                     Throwables.propagate(e);
+                  } catch (ExecutionException e) {
+                     Throwables.propagate(e);
+                  }
+               }
+            }, Executors.sameThreadExecutor());
+            responses.put(md, ablobstore.getBlob(container, md.getName()));
          }
-         object.getMetadata().setName(key);
-         objects.add(object);
-         return;
+         exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
+                  "getting from containerName: %s", container));
+         if (exceptions.size() > 0) {
+            toGet = exceptions.keySet();
+            retryHandler.imposeBackoffExponentialDelay(i + 1, String.format("blob %s/%s not found",
+                     container, toGet));
+         } else {
+            break;
+         }
       }
+      if (exceptions.size() > 0)
+         throw new BlobRuntimeException(String.format("errors getting from container %s: %s",
+                  container, exceptions));
+      return objects;
    }
 }

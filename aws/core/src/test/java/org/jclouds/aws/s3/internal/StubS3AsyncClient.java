@@ -189,7 +189,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
          return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(StubAsyncBlobStore
                   .copy(newMd)));
       }
-      return immediateFailedFuture(new KeyNotFoundException(sourceBucket, sourceObject));
+      return immediateFailedFuture(new KeyNotFoundException(sourceBucket, sourceObject,
+               sourceBucket + "/" + sourceObject));
    }
 
    public ListenableFuture<String> putObject(final String bucketName, final S3Object object,

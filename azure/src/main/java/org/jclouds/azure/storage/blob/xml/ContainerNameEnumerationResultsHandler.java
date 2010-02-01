@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.BlobType;
+import org.jclouds.azure.storage.blob.domain.LeaseStatus;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.internal.BlobPropertiesImpl;
 import org.jclouds.azure.storage.blob.domain.internal.HashSetListBlobsResponse;
@@ -77,6 +78,7 @@ public class ContainerNameEnumerationResultsHandler extends
    private Set<String> blobPrefixes = Sets.newHashSet();
    private byte[] currentContentMD5;
    private Map<String, String> currentMetadata = Maps.newHashMap();
+   private LeaseStatus currentLeaseStatus;
 
    @Inject
    public ContainerNameEnumerationResultsHandler(EncryptionService encryptionService,
@@ -129,11 +131,13 @@ public class ContainerNameEnumerationResultsHandler extends
          nextMarker = (nextMarker.equals("")) ? null : nextMarker;
       } else if (qName.equals("BlobType")) {
          currentBlobType = BlobType.fromValue(currentText.toString().trim());
+      } else if (qName.equals("LeaseStatus")) {
+         currentLeaseStatus = LeaseStatus.fromValue(currentText.toString().trim());
       } else if (qName.equals("Blob")) {
          BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, currentUrl,
                   currentLastModified, currentETag, currentSize, currentContentType,
                   currentContentMD5, currentContentEncoding, currentContentLanguage,
-                  currentMetadata);
+                  currentLeaseStatus, currentMetadata);
          blobMetadata.add(md);
          currentBlobType = null;
          currentName = null;
@@ -145,6 +149,7 @@ public class ContainerNameEnumerationResultsHandler extends
          currentContentEncoding = null;
          currentContentLanguage = null;
          currentContentMD5 = null;
+         currentLeaseStatus = null;
          currentMetadata = Maps.newHashMap();
       } else if (qName.equals("Url")) {
          currentUrl = HttpUtils.createUri(currentText.toString().trim());
@@ -160,7 +165,8 @@ public class ContainerNameEnumerationResultsHandler extends
       } else if (qName.equals("Content-Length")) {
          currentSize = Long.parseLong(currentText.toString().trim());
       } else if (qName.equals("Content-MD5")) {
-         currentContentMD5 = encryptionService.fromBase64String(currentText.toString().trim());
+         if (!currentText.toString().trim().equals(""))
+            currentContentMD5 = encryptionService.fromBase64String(currentText.toString().trim());
       } else if (qName.equals("Content-Type")) {
          currentContentType = currentText.toString().trim();
       } else if (qName.equals("Content-Encoding")) {

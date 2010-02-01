@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.BlobType;
+import org.jclouds.azure.storage.blob.domain.LeaseStatus;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 
 import com.google.common.collect.Maps;
@@ -41,6 +42,8 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    private static final long serialVersionUID = -4648755473986695062L;
 
    private BlobType type = BlobType.BLOCK_BLOB;
+   private LeaseStatus leaseStatus = LeaseStatus.UNLOCKED;
+
    private String name;
    private URI url;
    private Date lastModified;
@@ -154,6 +157,14 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
          System.arraycopy(md5, 0, retval, 0, md5.length);
          this.contentMD5 = md5;
       }
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public LeaseStatus getLeaseStatus() {
+      return leaseStatus;
    }
 
    /**
@@ -291,6 +302,11 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
       } else if (!url.equals(other.url))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[name=" + name + ", type=" + type + ", lastModified=" + lastModified + "]";
    }
 
 }

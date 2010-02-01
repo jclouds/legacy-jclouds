@@ -18,18 +18,14 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.util.BlobStoreUtils.keyNotFoundToNullOrPropagate;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.SortedSet;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
 import org.jclouds.aws.s3.blobstore.functions.BucketToResourceList;
@@ -37,55 +33,68 @@ import org.jclouds.aws.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.aws.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.aws.s3.blobstore.internal.BaseS3BlobStore;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.options.ListBucketOptions;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
-import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
-public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
+public class S3BlobStore extends BaseBlobStore {
+   private final S3Client sync;
+   private final BucketToResourceMetadata bucket2ResourceMd;
+   private final ContainerToBucketListOptions container2BucketListOptions;
+   private final BucketToResourceList bucket2ResourceList;
+   private final ObjectToBlob object2Blob;
+   private final BlobToObject blob2Object;
+   private final ObjectToBlobMetadata object2BlobMd;
+   private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   public S3BlobStore(S3AsyncClient async, S3Client sync, Factory blobFactory,
-            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
-            ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
+   S3BlobStore(BlobStoreUtils blobUtils, S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
-            BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
-            MkdirStrategy mkdirStrategy, BucketToResourceMetadata bucket2ResourceMd,
-            BucketToResourceList bucket2ResourceList,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
-               object2Blob, blob2Object, container2BucketListOptions, blob2ObjectGetOptions,
-               getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList, service);
+            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd) {
+      super(blobUtils);
+      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.sync = checkNotNull(sync, "sync");
+      this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
+      this.container2BucketListOptions = checkNotNull(container2BucketListOptions,
+               "container2BucketListOptions");
+      this.bucket2ResourceList = checkNotNull(bucket2ResourceList, "bucket2ResourceList");
+      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
+      this.blob2Object = checkNotNull(blob2Object, "blob2Object");
+      this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
    }
 
    /**
     * This implementation invokes {@link S3Client#listOwnedBuckets}
     */
    @Override
-   public ListResponse<? extends StorageMetadata> list() {
-      return new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
-         public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
+   public PageSet<? extends StorageMetadata> list() {
+      return new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+         public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
                   SortedSet<BucketMetadata> from) {
-            return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
-                     bucket2ResourceMd), null, null, false);
+            return new PageSetImpl<StorageMetadata>(Iterables.transform(from, bucket2ResourceMd),
+                     null);
          }
       }.apply(sync.listOwnedBuckets());
    }
@@ -111,19 +120,7 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
     */
    @Override
    public boolean createContainerInLocation(String location, String container) {
-      return sync.putBucketInRegion(Region.DEFAULT, container);// TODO parameterize
-   }
-
-   /**
-    * This implementation invokes
-    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
-    * 
-    * @param container
-    *           bucket name
-    */
-   @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container) {
-      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
+      return sync.putBucketInRegion(Region.fromValue(location), container);
    }
 
    /**
@@ -133,67 +130,39 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
     *           bucket name
     */
    @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container,
-            ListContainerOptions optionsList) {
+   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions optionsList) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
       return bucket2ResourceList.apply(sync.listBucket(container, httpOptions));
    }
 
    /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option.
-    * 
-    * @param container
-    *           bucket name
-    */
-   @Override
-   public void clearContainer(String container) {
-      clearContainerStrategy.execute(container, recursive());
-   }
-
-   /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option. Then, it invokes
-    * {@link S3Client#deleteBucketIfEmpty}
+    * This implementation invokes {@link #deleteAndEnsurePathGone}
     * 
     * @param container
     *           bucket name
     */
    @Override
    public void deleteContainer(String container) {
-      clearContainer(container);
-      sync.deleteBucketIfEmpty(container);
-   }
-   
-   /**
-    * This implementation invokes {@link GetDirectoryStrategy#execute}
-    * 
-    * @param container
-    *           bucket name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public boolean directoryExists(String containerName, String directory) {
-      try {
-         getDirectoryStrategy.execute(containerName, directory);
-         return true;
-      } catch (KeyNotFoundException e) {
-         return false;
-      }
+      deleteAndEnsurePathGone(container);
    }
 
    /**
-    * This implementation invokes {@link MkdirStrategy#execute}
-    * 
-    * @param container
-    *           bucket name
-    * @param directory
-    *           virtual path
+    * This implementation invokes {@link #clearContainer} then {@link S3Client#deleteBucketIfEmpty}
+    * until it is true.
     */
-   @Override
-   public void createDirectory(String containerName, String directory) {
-      mkdirStrategy.execute(containerName, directory);
+   public void deleteAndEnsurePathGone(final String container) {
+      try {
+         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+            public Boolean get() {
+               clearContainer(container);
+               return sync.deleteBucketIfEmpty(container);
+            }
+         }, 30000)) {
+            throw new IllegalStateException(container + " still exists after deleting!");
+         }
+      } catch (InterruptedException e) {
+         new IllegalStateException(container + " interrupted during deletion!", e);
+      }
    }
 
    /**
@@ -219,25 +188,8 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
     */
    @Override
    public BlobMetadata blobMetadata(String container, String key) {
-      try {
-         return object2BlobMd.apply(sync.headObject(container, key));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
-   }
+      return object2BlobMd.apply(sync.headObject(container, key));
 
-   /**
-    * This implementation invokes
-    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
-    * 
-    * @param container
-    *           bucket name
-    * @param key
-    *           object key
-    */
-   @Override
-   public Blob getBlob(String container, String key) {
-      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
    }
 
    /**
@@ -252,11 +204,7 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
    public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      try {
-         return object2Blob.apply(sync.getObject(container, key, httpOptions));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
+      return object2Blob.apply(sync.getObject(container, key, httpOptions));
    }
 
    /**
@@ -285,4 +233,10 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
       sync.deleteObject(container, key);
    }
 
+   /**
+    * This implementation invokes {@link S3Utils#deleteAndVerifyContainerGone}
+    */
+   protected boolean deleteAndVerifyContainerGone(final String container) {
+      return S3Utils.deleteAndVerifyContainerGone(sync, container);
+   }
 }

@@ -18,18 +18,12 @@
  */
 package org.jclouds.azure.storage.blob.blobstore;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.util.BlobStoreUtils.keyNotFoundToNullOrPropagate;
-
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobPropertiesToBlobMetadata;
@@ -37,58 +31,69 @@ import org.jclouds.azure.storage.blob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azure.storage.blob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListOptionsToListBlobsOptions;
-import org.jclouds.azure.storage.blob.blobstore.internal.BaseAzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
-import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
+/**
+ * @author Adrian Cole
+ */
+@Singleton
+public class AzureBlobStore extends BaseBlobStore {
+   private final AzureBlobClient sync;
+   private final ContainerToResourceMetadata container2ResourceMd;
+   private final ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions;
+   private final ListBlobsResponseToResourceList azure2BlobStoreResourceList;
+   private final AzureBlobToBlob azureBlob2Blob;
+   private final BlobToAzureBlob blob2AzureBlob;
+   private final BlobPropertiesToBlobMetadata blob2BlobMd;
+   private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   public AzureBlobStore(AzureBlobAsyncClient async, AzureBlobClient sync, Factory blobFactory,
-            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
-            BlobPropertiesToBlobMetadata object2BlobMd, AzureBlobToBlob object2Blob,
-            BlobToAzureBlob blob2Object,
-            ListOptionsToListBlobsOptions container2ContainerListOptions,
-            BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
-            MkdirStrategy mkdirStrategy, ContainerToResourceMetadata container2ResourceMd,
-            ListBlobsResponseToResourceList container2ResourceList,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
-               object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
-               getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
-               service);
+   AzureBlobStore(BlobStoreUtils blobUtils, AzureBlobClient sync,
+            ContainerToResourceMetadata container2ResourceMd,
+            ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
+            ListBlobsResponseToResourceList azure2BlobStoreResourceList,
+            AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
+            BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
+      super(blobUtils);
+      this.sync = checkNotNull(sync, "sync");
+      this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
+      this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
+               "blobStore2AzureContainerListOptions");
+      this.azure2BlobStoreResourceList = checkNotNull(azure2BlobStoreResourceList,
+               "azure2BlobStoreResourceList");
+      this.azureBlob2Blob = checkNotNull(azureBlob2Blob, "azureBlob2Blob");
+      this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
+      this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
+      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
    }
 
    /**
     * This implementation invokes {@link AzureBlobClient#listContainers}
     */
    @Override
-   public ListResponse<? extends StorageMetadata> list() {
-      return new Function<Set<ContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
-         public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
-                  Set<ContainerProperties> from) {
-            return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
-                     container2ResourceMd), null, null, false);
+   public PageSet<? extends StorageMetadata> list() {
+      return new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+         public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
+                  BoundedSet<ContainerProperties> from) {
+            return new PageSetImpl<StorageMetadata>(
+                     Iterables.transform(from, container2ResourceMd), from.getNextMarker());
          }
+         // TODO this may be a list that isn't complete due to 1000 container limit
       }.apply(sync.listContainers(includeMetadata()));
    }
 
@@ -117,41 +122,16 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes
-    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
-    * 
-    * @param container
-    *           container name
-    */
-   @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container) {
-      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
-   }
-
-   /**
     * This implementation invokes {@link AzureBlobClient#listBlobs}
     * 
     * @param container
     *           container name
     */
    @Override
-   public ListContainerResponse<? extends StorageMetadata> list(String container,
-            ListContainerOptions optionsList) {
-      ListBlobsOptions azureOptions = container2ContainerListOptions.apply(optionsList);
-      return container2ResourceList
-               .apply(sync.listBlobs(container, azureOptions.includeMetadata()));
-   }
-
-   /**
-    * This implementation invokes {@link ClearListStrategy#clearContainerStrategy} with the
-    * {@link ListContainerOptions#recursive} option.
-    * 
-    * @param container
-    *           container name
-    */
-   @Override
-   public void clearContainer(final String container) {
-      clearContainerStrategy.execute(container, recursive());
+   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options) {
+      ListBlobsOptions azureOptions = blobStore2AzureContainerListOptions.apply(options);
+      return azure2BlobStoreResourceList.apply(sync.listBlobs(container, azureOptions
+               .includeMetadata()));
    }
 
    /**
@@ -163,37 +143,6 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
    @Override
    public void deleteContainer(final String container) {
       sync.deleteContainer(container);
-   }
-
-   /**
-    * This implementation invokes {@link GetDirectoryStrategy#execute}
-    * 
-    * @param container
-    *           container name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public boolean directoryExists(String containerName, String directory) {
-      try {
-         getDirectoryStrategy.execute(containerName, directory);
-         return true;
-      } catch (KeyNotFoundException e) {
-         return false;
-      }
-   }
-
-   /**
-    * This implementation invokes {@link MkdirStrategy#execute}
-    * 
-    * @param container
-    *           container name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public void createDirectory(String containerName, String directory) {
-      mkdirStrategy.execute(containerName, directory);
    }
 
    /**
@@ -210,37 +159,6 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes {@link AzureBlobClient#getBlobProperties}
-    * 
-    * @param container
-    *           container name
-    * @param key
-    *           blob key
-    */
-   @Override
-   public BlobMetadata blobMetadata(String container, String key) {
-      try {
-         return blob2BlobMd.apply(sync.getBlobProperties(container, key));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
-   }
-
-   /**
-    * This implementation invokes
-    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
-    * 
-    * @param container
-    *           container name
-    * @param key
-    *           blob key
-    */
-   @Override
-   public Blob getBlob(String container, String key) {
-      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
-   }
-
-   /**
     * This implementation invokes {@link AzureBlobClient#getBlob}
     * 
     * @param container
@@ -250,13 +168,10 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
     */
    @Override
    public Blob getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions optionsList) {
-      GetOptions azureOptions = blob2ObjectGetOptions.apply(optionsList);
-      try {
-         return blob2Blob.apply(sync.getBlob(container, key, azureOptions));
-      } catch (Exception e) {
-         return keyNotFoundToNullOrPropagate(e);
-      }
+            org.jclouds.blobstore.options.GetOptions options) {
+      GetOptions azureOptions = blob2ObjectGetOptions.apply(options);
+      return azureBlob2Blob.apply(sync.getBlob(container, key, azureOptions));
+
    }
 
    /**
@@ -269,7 +184,7 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
     */
    @Override
    public String putBlob(String container, Blob blob) {
-      return sync.putBlob(container, blob2Object.apply(blob));
+      return sync.putBlob(container, blob2AzureBlob.apply(blob));
    }
 
    /**
@@ -283,6 +198,24 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
    @Override
    public void removeBlob(String container, String key) {
       sync.deleteBlob(container, key);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobClient#getBlobProperties}
+    * 
+    * @param container
+    *           container name
+    * @param key
+    *           blob key
+    */
+   @Override
+   public BlobMetadata blobMetadata(String container, String key) {
+      return blob2BlobMd.apply(sync.getBlobProperties(container, key));
+   }
+
+   @Override
+   protected boolean deleteAndVerifyContainerGone(String container) {
+      throw new UnsupportedOperationException("please use deleteContainer");
    }
 
 }

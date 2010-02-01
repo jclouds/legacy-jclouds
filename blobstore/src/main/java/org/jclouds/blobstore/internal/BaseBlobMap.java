@@ -20,26 +20,24 @@ package org.jclouds.blobstore.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 
+import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
-import org.jclouds.blobstore.AsyncBlobStore;
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.options.ListContainerOptions.ImmutableListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
+import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -47,26 +45,20 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 /**
- * Implements core Map functionality with an {@link AsyncBlobStore}
- * <p/>
- * All commands will wait a maximum of ${jclouds.blobstore.timeout} milliseconds to complete before
- * throwing an exception.
+ * Implements core Map functionality with a {@link BlobStore}
+ * 
  * 
  * @author Adrian Cole
- * @param <V>
- *           value of the map
  */
-public abstract class BaseBlobMap<V> {
+public abstract class BaseBlobMap<V> implements Map<String, V> {
    protected final BlobStore blobstore;
    protected final String containerName;
    protected final Function<String, String> prefixer;
    protected final Function<String, String> pathStripper;
    protected final ListContainerOptions options;
    protected final GetBlobsInListStrategy getAllBlobs;
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
    protected final ContainsValueInListStrategy containsValueStrategy;
-   protected final ClearListStrategy deleteBlobsStrategy;
-   protected final CountListStrategy countStrategy;
+   protected final ListBlobMetadataInContainer listStrategy;
    protected final PutBlobsStrategy putBlobsStrategy;
 
    static class StripPath implements Function<String, String> {
@@ -105,45 +97,67 @@ public abstract class BaseBlobMap<V> {
 
    @Inject
    public BaseBlobMap(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
-            ListBlobMetadataStrategy getAllBlobMetadata,
-            ContainsValueInListStrategy containsValueStrategy,
-            ClearListStrategy deleteBlobsStrategy, CountListStrategy countStrategy,
-            PutBlobsStrategy putBlobsStrategy, String containerName, ListContainerOptions options) {
+            ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
+            ListBlobMetadataInContainer listStrategy, String containerName, @Nullable String dir) {
       this.blobstore = checkNotNull(blobstore, "blobstore");
       this.containerName = checkNotNull(containerName, "container");
-      this.options = options;
-      if (options.getDir() == null) {
+      this.options = new ImmutableListContainerOptions(dir != null ? inDirectory(dir)
+               : ListContainerOptions.NONE);
+      if (dir == null) {
          prefixer = new PassThrough<String>();
          pathStripper = prefixer;
       } else {
-         prefixer = new PrefixKey(options.getDir(), "/");
-         pathStripper = new StripPath(options.getDir(), "/");
+         prefixer = new PrefixKey(dir, "/");
+         pathStripper = new StripPath(dir, "/");
       }
       this.getAllBlobs = checkNotNull(getAllBlobs, "getAllBlobs");
-      this.getAllBlobMetadata = checkNotNull(getAllBlobMetadata, "getAllBlobMetadata");
+      this.listStrategy = checkNotNull(listStrategy, "listStrategy");
       this.containsValueStrategy = checkNotNull(containsValueStrategy, "containsValueStrategy");
-      this.deleteBlobsStrategy = checkNotNull(deleteBlobsStrategy, "deleteBlobsStrategy");
-      this.countStrategy = checkNotNull(countStrategy, "countStrategy");
       this.putBlobsStrategy = checkNotNull(putBlobsStrategy, "putBlobsStrategy");
       checkArgument(!containerName.equals(""), "container name must not be a blank string!");
    }
 
-   /**
-    * {@inheritDoc}
-    * <p/>
-    * This returns the number of keys in the {@link ListResponse}
-    * 
-    * @see ListResponse#getContents()
-    */
-   public int size() {
-      return (int) countStrategy.execute(containerName, options);
+   @Override
+   public Set<java.util.Map.Entry<String, V>> entrySet() {
+      return Sets.newHashSet(Iterables.transform(list(),
+               new Function<BlobMetadata, Map.Entry<String, V>>() {
+                  @Override
+                  public java.util.Map.Entry<String, V> apply(BlobMetadata from) {
+                     return new Entry(pathStripper.apply(from.getName()));
+                  }
+               }));
    }
 
-   /**
-    * attempts asynchronous gets on all objects.
-    * 
-    * @see AsyncBlobStore#getBlob(String, String)
-    */
+   public class Entry implements java.util.Map.Entry<String, V> {
+
+      private final String key;
+
+      Entry(String key) {
+         this.key = key;
+      }
+
+      @Override
+      public String getKey() {
+         return key;
+      }
+
+      @Override
+      public V getValue() {
+         return get(prefixer.apply(key));
+      }
+
+      @Override
+      public V setValue(V value) {
+         return put(prefixer.apply(key), value);
+      }
+
+   }
+
+   @Override
+   public int size() {
+      return (int) blobstore.countBlobs(containerName, options);
+   }
+
    protected Set<? extends Blob> getAllBlobs() {
       Set<? extends Blob> returnVal = getAllBlobs.execute(containerName, options);
       if (options != null) {
@@ -151,7 +165,6 @@ public abstract class BaseBlobMap<V> {
             stripPrefix(from);
       }
       return returnVal;
-
    }
 
    protected Blob stripPrefix(Blob from) {
@@ -159,53 +172,53 @@ public abstract class BaseBlobMap<V> {
       return from;
    }
 
-   /**
-    * {@inheritDoc}
-    * <p/>
-    * Note that if value is an instance of InputStream, it will be read and closed following this
-    * method. To reuse data from InputStreams, pass {@link java.io.InputStream}s inside {@link Blob}s
-    */
+   @Override
    public boolean containsValue(Object value) {
       return containsValueStrategy.execute(containerName, value, options);
    }
 
+   @Override
    public void clear() {
-      deleteBlobsStrategy.execute(containerName, options);
+      blobstore.clearContainer(containerName, options);
    }
 
+   @Override
    public Set<String> keySet() {
-      Set<String> keys = Sets.newHashSet();
-      for (StorageMetadata object : getAllBlobMetadata.execute(containerName, options))
-         if (object.getType() == StorageType.BLOB)
-            keys.add(pathStripper.apply(object.getName()));
-      return keys;
+      return Sets.newHashSet(Iterables.transform(list(), new Function<BlobMetadata, String>() {
+         @Override
+         public String apply(BlobMetadata from) {
+            return from.getName();
+         }
+      }));
    }
 
+   @Override
    public boolean containsKey(Object key) {
       String realKey = prefixer.apply(key.toString());
       return blobstore.blobExists(containerName, realKey);
    }
 
+   @Override
    public boolean isEmpty() {
       return size() == 0;
    }
 
-   public SortedSet<? extends BlobMetadata> list() {
-      SortedSet<? extends BlobMetadata> returnVal = getAllBlobMetadata.execute(containerName,
-               options);
-      if (options.getDir() != null) {
-         returnVal = Sets.newTreeSet(Iterables.transform(returnVal,
-                  new Function<BlobMetadata, BlobMetadata>() {
-
-                     public BlobMetadata apply(BlobMetadata from) {
-                        MutableBlobMetadata md = new MutableBlobMetadataImpl(from);
+   public Iterable<? extends BlobMetadata> list() {
+      return Iterables.transform(listStrategy.execute(containerName, options),
+               new Function<BlobMetadata, BlobMetadata>() {
+                  public BlobMetadata apply(BlobMetadata from) {
+                     MutableBlobMetadata md = new MutableBlobMetadataImpl(from);
+                     if (options.getDir() != null)
                         md.setName(pathStripper.apply(from.getName()));
-                        return md;
-                     }
+                     return md;
+                  }
 
-                  }));
-      }
-      return returnVal;
+               });
+   }
+
+   @Override
+   public String toString() {
+      return "BaseBlobMap [containerName=" + containerName + ", options=" + options + "]";
    }
 
 }

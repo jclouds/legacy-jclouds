@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
  * A container that provides namespace, access control and aggregation of {@link S3Object}s
@@ -43,7 +43,7 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html" />
  */
-public interface ListBucketResponse extends SortedSet<ObjectMetadata> {
+public interface ListBucketResponse extends Set<ObjectMetadata> {
 
    /**
     * Limits the response to keys which begin with the indicated prefix. You can use prefixes to
@@ -57,6 +57,8 @@ public interface ListBucketResponse extends SortedSet<ObjectMetadata> {
     * lexicographically after marker. This is convenient for pagination: To get the next page of
     * results use the last key of the current page as the marker.
     */
+   String getNextMarker();
+
    String getMarker();
 
    /**
@@ -93,12 +95,11 @@ public interface ListBucketResponse extends SortedSet<ObjectMetadata> {
     * 
     * @see org.jclouds.aws.s3.options.ListBucketOptions#getPrefix()
     */
-   SortedSet<String> getCommonPrefixes();
+   Set<String> getCommonPrefixes();
 
    /**
-    * name of the Bucket FIXME Comment this
-    * 
-    * @return
+    * name of the Bucket
     */
    String getName();
+
 }

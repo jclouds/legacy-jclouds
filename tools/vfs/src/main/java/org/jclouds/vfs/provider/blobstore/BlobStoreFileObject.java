@@ -49,18 +49,15 @@ import org.apache.commons.vfs.util.MonitorOutputStream;
 import org.apache.commons.vfs.util.RandomAccessMode;
 import org.apache.log4j.Logger;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.functions.ResourceMetadataToRelativePathResourceMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
-import org.jclouds.blobstore.strategy.internal.MarkersIsDirectoryStrategy;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.strategy.internal.ListAllMetadataInContainer;
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
@@ -72,32 +69,32 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class BlobStoreFileObject extends AbstractFileObject {
-   private final BlobStore blobStore;
+   private final BlobStoreContext context;
+   private final ListAllMetadataInContainer lister;
    private final String container;
    private StorageMetadata metadata;
-
-   private static final IsDirectoryStrategy isDirectoryStrategy = new MarkersIsDirectoryStrategy();
-   private static final ResourceMetadataToRelativePathResourceMetadata resource2Directory = new ResourceMetadataToRelativePathResourceMetadata();
    private static final Logger logger = Logger.getLogger(BlobStoreFileObject.class);
    private static final Pattern UNDESCRIBED = Pattern.compile("[^/]*//*");
 
    public BlobStoreFileObject(FileName fileName, BlobStoreFileSystem fileSystem,
-            BlobStore blobStore, String container) throws FileSystemException {
+            BlobStoreContext context, String container) throws FileSystemException {
       super(fileName, fileSystem);
-      this.blobStore = checkNotNull(blobStore, "blobStore");
+      this.context = checkNotNull(context, "context");
       this.container = checkNotNull(container, "container");
+      this.lister = checkNotNull(new ListAllMetadataInContainer(context.getBlobStore()), "lister");
+
    }
 
    private class BlobStoreOutputStream extends MonitorOutputStream {
 
-      private final BlobStore blobStore;
+      private final BlobStore context;
       private final Blob blob;
       private final File file;
 
-      public BlobStoreOutputStream(File file, BlobStore blobStore, Blob blob)
+      public BlobStoreOutputStream(File file, BlobStore context, Blob blob)
                throws FileNotFoundException {
          super(Channels.newOutputStream(new RandomAccessFile(file, "rw").getChannel()));
-         this.blobStore = blobStore;
+         this.context = context;
          this.file = file;
          this.blob = blob;
       }
@@ -108,7 +105,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
             blob.generateMD5();
             logger.info(String.format(">> put: %s/%s %d bytes", getContainer(),
                      getNameTrimLeadingSlashes(), blob.getContentLength()));
-            String tag = blobStore.putBlob(getContainer(), blob);
+            String tag = context.putBlob(getContainer(), blob);
             logger.info(String.format("<< tag %s: %s/%s", tag, getContainer(),
                      getNameTrimLeadingSlashes()));
          } finally {
@@ -170,16 +167,12 @@ public class BlobStoreFileObject extends AbstractFileObject {
       } else {
          logger.info(String.format(">> list: %s", getContainer()));
       }
-      ListContainerResponse<? extends StorageMetadata> list = getBlobStore().list(getContainer(),
-               options);
+      Iterable<? extends StorageMetadata> list = lister.execute(getContainer(), options);
       Set<BlobStoreFileObject> children = Sets.newHashSet();
       loop: for (StorageMetadata md : list) {
          if (!md.getName().equals("")) {
             if (name.equals(md.getName()) && md.getType() != StorageType.BLOB) {
                continue loop;
-            }
-            if (isDirectoryStrategy.execute(md)) {
-               md = resource2Directory.apply(md);
             }
             String childName = Utils.replaceAll(md.getName(), UNDESCRIBED, "");
             BlobStoreFileObject fo = (BlobStoreFileObject) FileObjectUtils
@@ -248,7 +241,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       File file = allocateFile();
       checkState(file != null, "file was null");
       if (metadata != null) {
-         return new BlobStoreOutputStream(file, getBlobStore(), BlobStoreUtils.newBlob(
+         return new BlobStoreOutputStream(file, getBlobStore(), BlobStoreUtilsImpl.newBlob(
                   getBlobStore(), metadata));
       } else {
          return new BlobStoreOutputStream(file, getBlobStore(), getBlobStore().newBlob(
@@ -280,23 +273,20 @@ public class BlobStoreFileObject extends AbstractFileObject {
    }
 
    private void getContainer(String name) {
-      metadata = Iterables.find(Iterables.transform(getBlobStore().list(), resource2Directory),
-               new Predicate<StorageMetadata>() {
-                  @Override
-                  public boolean apply(StorageMetadata input) {
-                     return input.getName().equals(container);
-                  }
-               });
+      metadata = Iterables.find(getBlobStore().list(), new Predicate<StorageMetadata>() {
+         @Override
+         public boolean apply(StorageMetadata input) {
+            return input.getType() == StorageType.CONTAINER && input.getName().equals(container);
+         }
+      });
       logger.info(String.format("<< container: %s/%s", container, name));
    }
 
    private void getMetadataAtPath(String name) {
-      BlobMetadata md = getBlobStore().blobMetadata(getContainer(), name);
-      if (isDirectoryStrategy.execute(md)) {
-         metadata = resource2Directory.apply(md);
+      metadata = getBlobStore().blobMetadata(getContainer(), name);
+      if (metadata.getType() != StorageType.BLOB) {
          logger.info(String.format("<< dir: %s/%s", getContainer(), name));
       } else {
-         metadata = md;
          logger.info(String.format("<< blob: %s/%s", getContainer(), name));
       }
    }
@@ -309,12 +299,11 @@ public class BlobStoreFileObject extends AbstractFileObject {
             options.inDirectory(dir);
       }
       try {
-         metadata = Iterables.find(Iterables.transform(
-                  getBlobStore().list(getContainer(), options), resource2Directory),
+         metadata = Iterables.find(lister.execute(getContainer(), options),
                   new Predicate<StorageMetadata>() {
                      @Override
                      public boolean apply(StorageMetadata input) {
-                        return input.getName().equals(name);
+                        return input.getType() != StorageType.BLOB && input.getName().equals(name);
                      }
                   });
          logger.info(String.format("<< dir: %s/%s", getContainer(), name));
@@ -369,7 +358,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
    }
 
    public BlobStore getBlobStore() {
-      return blobStore;
+      return context.getBlobStore();
    }
 
    public String getContainer() {

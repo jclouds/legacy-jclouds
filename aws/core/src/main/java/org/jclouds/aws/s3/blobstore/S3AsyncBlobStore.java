@@ -18,17 +18,15 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.concurrent.ConcurrentUtils.convertExceptionToValue;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.util.SortedSet;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
@@ -40,27 +38,21 @@ import org.jclouds.aws.s3.blobstore.functions.BucketToResourceMetadata;
 import org.jclouds.aws.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.aws.s3.blobstore.internal.BaseS3BlobStore;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.options.ListBucketOptions;
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
-import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -70,34 +62,52 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore {
+@Singleton
+public class S3AsyncBlobStore extends BaseAsyncBlobStore {
+
+   private final S3AsyncClient async;
+   private final S3Client sync;
+   private final BucketToResourceMetadata bucket2ResourceMd;
+   private final ContainerToBucketListOptions container2BucketListOptions;
+   private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final BucketToResourceList bucket2ResourceList;
+   private final ObjectToBlob object2Blob;
+   private final BlobToObject blob2Object;
+   private final ObjectToBlobMetadata object2BlobMd;
 
    @Inject
-   public S3AsyncBlobStore(S3AsyncClient async, S3Client sync, Factory blobFactory,
-            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
-            ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
+   S3AsyncBlobStore(BlobStoreUtils blobUtils,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, S3AsyncClient async,
+            S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
-            BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
-            MkdirStrategy mkdirStrategy, BucketToResourceMetadata bucket2ResourceMd,
-            BucketToResourceList bucket2ResourceList,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
-               object2Blob, blob2Object, container2BucketListOptions, blob2ObjectGetOptions,
-               getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList, service);
+            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd) {
+      super(blobUtils, service);
+      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.async = checkNotNull(async, "async");
+      this.sync = checkNotNull(sync, "sync");
+      this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
+      this.container2BucketListOptions = checkNotNull(container2BucketListOptions,
+               "container2BucketListOptions");
+      this.bucket2ResourceList = checkNotNull(bucket2ResourceList, "bucket2ResourceList");
+      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
+      this.blob2Object = checkNotNull(blob2Object, "blob2Object");
+      this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
    }
 
    /**
     * This implementation invokes {@link S3AsyncClient#listOwnedBuckets}
     */
    @Override
-   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
+   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list() {
       return compose(
                async.listOwnedBuckets(),
-               new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata>>() {
-                  public org.jclouds.blobstore.domain.ListResponse<? extends StorageMetadata> apply(
+               new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+                  public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
                            SortedSet<BucketMetadata> from) {
-                     return new ListResponseImpl<StorageMetadata>(Iterables.transform(from,
-                              bucket2ResourceMd), null, null, false);
+                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from,
+                              bucket2ResourceMd), null);
                   }
                }, service);
    }
@@ -127,114 +137,24 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
    }
 
    /**
-    * This implementation invokes
-    * {@link #list(String,org.jclouds.blobstore.options.ListContainerOptions)}
-    * 
-    * @param container
-    *           bucket name
-    */
-   @Override
-   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container) {
-      return this.list(container, org.jclouds.blobstore.options.ListContainerOptions.NONE);
-   }
-
-   /**
     * This implementation invokes {@link S3AsyncClient#listBucket}
     * 
     * @param container
     *           bucket name
     */
    @Override
-   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            String container, ListContainerOptions options) {
+   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container,
+            ListContainerOptions options) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(options);
       ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
       return compose(returnVal, bucket2ResourceList, service);
    }
 
    /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option.
-    * 
-    * @param container
-    *           bucket name
+    * This implementation invokes {@link S3Utils#deleteAndVerifyContainerGone}
     */
-   @Override
-   public ListenableFuture<Void> clearContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            return null;
-         }
-
-      }), service);
-   }
-
-   /**
-    * This implementation invokes {@link ClearListStrategy#execute} with the
-    * {@link ListContainerOptions#recursive} option. Then, it invokes
-    * {@link S3AsyncClient#deleteBucketIfEmpty}
-    * 
-    * @param container
-    *           bucket name
-    */
-   @Override
-   public ListenableFuture<Void> deleteContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            async.deleteBucketIfEmpty(container).get();
-            return null;
-         }
-
-      }), service);
-   }
-
-   /**
-    * This implementation invokes {@link GetDirectoryStrategy#execute}
-    * 
-    * @param container
-    *           bucket name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Boolean>() {
-
-         public Boolean call() throws Exception {
-            try {
-               getDirectoryStrategy.execute(container, directory);
-               return true;
-            } catch (KeyNotFoundException e) {
-               return false;
-            }
-         }
-
-      }), service);
-   }
-
-   /**
-    * This implementation invokes {@link MkdirStrategy#execute}
-    * 
-    * @param container
-    *           bucket name
-    * @param directory
-    *           virtual path
-    */
-   @Override
-   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            mkdirStrategy.execute(container, directory);
-            return null;
-         }
-
-      }), service);
+   protected boolean deleteAndVerifyContainerGone(final String container) {
+      return S3Utils.deleteAndVerifyContainerGone(sync, container);
    }
 
    /**
@@ -260,29 +180,15 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(convertExceptionToValue(async.headObject(container, key),
-               KeyNotFoundException.class, null), new Function<ObjectMetadata, BlobMetadata>() {
+      return compose(async.headObject(container, key),
+               new Function<ObjectMetadata, BlobMetadata>() {
 
-         @Override
-         public BlobMetadata apply(ObjectMetadata from) {
-            return object2BlobMd.apply(from);
-         }
+                  @Override
+                  public BlobMetadata apply(ObjectMetadata from) {
+                     return object2BlobMd.apply(from);
+                  }
 
-      }, service);
-   }
-
-   /**
-    * This implementation invokes
-    * {@link #getBlob(String,String,org.jclouds.blobstore.options.GetOptions)}
-    * 
-    * @param container
-    *           bucket name
-    * @param key
-    *           object key
-    */
-   @Override
-   public ListenableFuture<Blob> getBlob(String container, String key) {
-      return getBlob(container, key, org.jclouds.blobstore.options.GetOptions.NONE);
+               }, service);
    }
 
    /**
@@ -297,8 +203,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
    public ListenableFuture<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions options) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
-      return compose(convertExceptionToValue(async.getObject(container, key, httpOptions),
-               KeyNotFoundException.class, null), object2Blob, service);
+      return compose(async.getObject(container, key, httpOptions), object2Blob, service);
    }
 
    /**

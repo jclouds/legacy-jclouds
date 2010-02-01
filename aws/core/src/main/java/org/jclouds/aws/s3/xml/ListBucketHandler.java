@@ -28,7 +28,7 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
-import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
+import org.jclouds.aws.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.ParseSax;
@@ -72,7 +72,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    }
 
    public ListBucketResponse getResult() {
-      return new TreeSetListBucketResponse(bucketName, contents, prefix, marker, maxResults,
+      return new ListBucketResponseImpl(bucketName, contents, prefix, marker, nextMarker, maxResults,
                delimiter, isTruncated, commonPrefixes);
    }
 
@@ -83,6 +83,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    private byte[] currentMD5;
    private long currentSize;
    private StorageClass currentStorageClass;
+   private String nextMarker;
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
       if (qName.equals("CommonPrefixes")) {
@@ -124,6 +125,9 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
       } else if (qName.equals("Marker")) {
          if (!currentText.toString().equals(""))
             this.marker = currentText.toString().trim();
+      } else if (qName.equals("NextMarker")) {
+         if (!currentText.toString().equals(""))
+            this.nextMarker = currentText.toString().trim();
       } else if (qName.equals("MaxKeys")) {
          this.maxResults = Integer.parseInt(currentText.toString().trim());
       } else if (qName.equals("IsTruncated")) {

@@ -20,14 +20,10 @@ package org.jclouds.http;
 
 import static com.google.common.util.concurrent.Futures.compose;
 
-import java.util.concurrent.ExecutorService;
-
 import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.jclouds.Constants;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -39,13 +35,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class TransformingHttpCommandExecutorServiceImpl implements
          TransformingHttpCommandExecutorService {
    private final HttpCommandExecutorService client;
-   private final ExecutorService userThreads;
 
    @Inject
-   public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
+   public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client) {
       this.client = client;
-      this.userThreads = userThreads;
    }
 
    /**
@@ -53,7 +46,7 @@ public class TransformingHttpCommandExecutorServiceImpl implements
     */
    public <T> ListenableFuture<T> submit(HttpCommand command,
             Function<HttpResponse, T> responseTransformer) {
-      return compose(client.submit(command), responseTransformer, userThreads);
+      return compose(client.submit(command), responseTransformer, Executors.sameThreadExecutor());
    }
 
 }

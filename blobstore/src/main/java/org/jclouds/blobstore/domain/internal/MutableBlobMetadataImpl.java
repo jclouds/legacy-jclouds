@@ -18,8 +18,6 @@
  */
 package org.jclouds.blobstore.domain.internal;
 
-import java.util.Arrays;
-
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -52,10 +50,18 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
       this.contentMD5 = from.getContentMD5();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getContentType() {
       return contentType;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public byte[] getContentMD5() {
       if (contentMD5 != null) {
          byte[] retval = new byte[contentMD5.length];
@@ -66,12 +72,10 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
       }
    }
 
-   public int compareTo(BlobMetadata o) {
-      if (getName() == null)
-         return -1;
-      return (this == o) ? 0 : getName().compareTo(o.getName());
-   }
-
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setContentMD5(byte[] md5) {
       if (md5 != null) {
          byte[] retval = new byte[md5.length];
@@ -80,35 +84,12 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setContentType(String type) {
       this.contentType = type;
    }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      MutableBlobMetadataImpl other = (MutableBlobMetadataImpl) obj;
-      if (!Arrays.equals(contentMD5, other.contentMD5))
-         return false;
-      if (contentType == null) {
-         if (other.contentType != null)
-            return false;
-      } else if (!contentType.equals(other.contentType))
-         return false;
-      return true;
-   }
 }

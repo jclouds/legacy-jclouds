@@ -21,9 +21,9 @@ package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
 import com.google.common.base.Function;
@@ -34,7 +34,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class ResourceToObjectList implements
-         Function<ListContainerResponse<? extends StorageMetadata>, ListContainerResponse<ObjectInfo>> {
+         Function<PageSet<? extends StorageMetadata>, PageSet<ObjectInfo>> {
    private final ResourceToObjectInfo resource2ObjectMd;
 
    @Inject
@@ -42,16 +42,15 @@ public class ResourceToObjectList implements
       this.resource2ObjectMd = resource2ObjectMd;
    }
 
-   public ListContainerResponse<ObjectInfo> apply(ListContainerResponse<? extends StorageMetadata> list) {
+   public PageSet<ObjectInfo> apply(PageSet<? extends StorageMetadata> list) {
 
-      return new ListContainerResponseImpl<ObjectInfo>(Iterables.transform(list,
+      return new PageSetImpl<ObjectInfo>(Iterables.transform(list,
                new Function<StorageMetadata, ObjectInfo>() {
 
                   public ObjectInfo apply(StorageMetadata from) {
                      return resource2ObjectMd.apply(from);
                   }
 
-               }), list.getPath(), list.getMarker(), list.getMaxResults(), list.size() == list
-               .getMaxResults());
+               }), list.getNextMarker());
    }
 }

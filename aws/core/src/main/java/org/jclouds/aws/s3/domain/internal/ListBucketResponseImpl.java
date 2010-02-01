@@ -18,8 +18,8 @@
  */
 package org.jclouds.aws.s3.domain.internal;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -31,25 +31,27 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  * 
  */
-public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implements
+public class ListBucketResponseImpl extends HashSet<ObjectMetadata> implements
          ListBucketResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;
-   private final String name;
+   protected final String name;
    protected final String prefix;
    protected final int maxKeys;
-   private final String delimiter;
+   protected final String delimiter;
    protected final String marker;
-   private final SortedSet<String> commonPrefixes;
+   protected final String nextMarker;
+   protected final Set<String> commonPrefixes;
    protected final boolean truncated;
 
-   public TreeSetListBucketResponse(String name, Iterable<ObjectMetadata> contents, String prefix,
-            String marker, int maxKeys, String delimiter, boolean isTruncated,
-            SortedSet<String> commonPrefixes) {
+   public ListBucketResponseImpl(String name, Iterable<ObjectMetadata> contents, String prefix,
+            String marker, String nextMarker, int maxKeys, String delimiter, boolean isTruncated,
+            Set<String> commonPrefixes) {
       Iterables.addAll(this, contents);
       this.name = name;
       this.prefix = prefix;
       this.marker = marker;
+      this.nextMarker = nextMarker;
       this.maxKeys = maxKeys;
       this.truncated = isTruncated;
       this.delimiter = delimiter;
@@ -59,13 +61,15 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
    /**
     * {@inheritDoc}
     */
-   public SortedSet<String> getCommonPrefixes() {
+   @Override
+   public Set<String> getCommonPrefixes() {
       return commonPrefixes;
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public String getDelimiter() {
       return delimiter;
    }
@@ -73,6 +77,7 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
    /**
     * {@inheritDoc}
     */
+   @Override
    public String getMarker() {
       return marker;
    }
@@ -80,6 +85,15 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
    /**
     * {@inheritDoc}
     */
+   @Override
+   public String getNextMarker() {
+      return nextMarker;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int getMaxKeys() {
       return maxKeys;
    }
@@ -87,6 +101,7 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
    /**
     * {@inheritDoc}
     */
+   @Override
    public String getPrefix() {
       return prefix;
    }
@@ -94,6 +109,7 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
    /**
     * {@inheritDoc}
     */
+   @Override
    public boolean isTruncated() {
       return truncated;
    }
@@ -101,6 +117,7 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
    /**
     * {@inheritDoc}
     */
+   @Override
    public String getName() {
       return name;
    }
@@ -127,7 +144,7 @@ public class TreeSetListBucketResponse extends TreeSet<ObjectMetadata> implement
          return false;
       if (getClass() != obj.getClass())
          return false;
-      TreeSetListBucketResponse other = (TreeSetListBucketResponse) obj;
+      ListBucketResponseImpl other = (ListBucketResponseImpl) obj;
       if (commonPrefixes == null) {
          if (other.commonPrefixes != null)
             return false;

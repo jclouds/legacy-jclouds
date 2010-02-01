@@ -124,4 +124,9 @@ public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "[properties=" + properties + "]";
+   }
+
 }

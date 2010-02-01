@@ -24,9 +24,8 @@ import static org.jclouds.util.Utils.propagateOrNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.functions.ReturnTrueOn404;
+import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
 
@@ -41,7 +40,7 @@ public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
    }
 
    public Void apply(Exception from) {
-      if (from instanceof KeyNotFoundException || from instanceof ContainerNotFoundException) {
+      if (from instanceof ResourceNotFoundException) {
          return null;
       } else {
          Boolean value = rto404.apply(from);

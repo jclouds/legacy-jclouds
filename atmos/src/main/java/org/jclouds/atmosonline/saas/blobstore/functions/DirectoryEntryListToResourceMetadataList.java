@@ -23,11 +23,11 @@ import javax.inject.Singleton;
 import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
-import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 
 import com.google.common.base.Function;
@@ -38,14 +38,12 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Singleton
-public class DirectoryEntryListToResourceMetadataList
-         implements
-         Function<BoundedSet<? extends DirectoryEntry>, ListContainerResponse<? extends StorageMetadata>> {
+public class DirectoryEntryListToResourceMetadataList implements
+         Function<BoundedSet<? extends DirectoryEntry>, PageSet<? extends StorageMetadata>> {
 
-   public ListContainerResponse<? extends StorageMetadata> apply(
-            BoundedSet<? extends DirectoryEntry> from) {
+   public PageSet<? extends StorageMetadata> apply(BoundedSet<? extends DirectoryEntry> from) {
 
-      return new ListContainerResponseImpl<StorageMetadata>(Iterables.transform(from,
+      return new PageSetImpl<StorageMetadata>(Iterables.transform(from,
                new Function<DirectoryEntry, StorageMetadata>() {
 
                   public StorageMetadata apply(DirectoryEntry from) {
@@ -57,12 +55,11 @@ public class DirectoryEntryListToResourceMetadataList
                                  .<String, String> newHashMap());
                      else
                         return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), null,
-                                 null, null, null, null, Maps.<String, String> newHashMap(), null, null);
+                                 null, null, null, null, Maps.<String, String> newHashMap(), null,
+                                 null);
                   }
 
-               }), null, from.getToken(),
-
-      null, from.getToken() != null);
+               }), from.getToken());
 
    }
 }

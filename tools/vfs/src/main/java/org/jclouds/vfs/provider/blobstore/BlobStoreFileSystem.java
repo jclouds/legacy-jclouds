@@ -19,6 +19,7 @@
 package org.jclouds.vfs.provider.blobstore;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
 
@@ -27,21 +28,21 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemOptions;
 import org.apache.commons.vfs.provider.AbstractFileSystem;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 
 /**
  * @author Adrian Cole
  */
 public class BlobStoreFileSystem extends AbstractFileSystem {
-   final BlobStore blobStore;
+   final BlobStoreContext context;
    final String container;
 
-   public BlobStoreFileSystem(BlobStoreFileName fileName, BlobStore blobStore,
+   public BlobStoreFileSystem(BlobStoreFileName fileName, BlobStoreContext context,
             FileSystemOptions fileSystemOptions) throws FileSystemException {
       super(fileName, null, fileSystemOptions);
-      this.container = fileName.getContainer();
+      this.container = checkNotNull(fileName.getContainer(), "fileName.getContainer()");
       checkArgument(!container.equals(""), "container must not be an empty String");
-      this.blobStore = blobStore;
+      this.context = checkNotNull(context, "context");
    }
 
    @SuppressWarnings("unchecked")
@@ -50,6 +51,6 @@ public class BlobStoreFileSystem extends AbstractFileSystem {
    }
 
    protected FileObject createFile(FileName fileName) throws Exception {
-      return new BlobStoreFileObject(fileName, this, blobStore, container);
+      return new BlobStoreFileObject(fileName, this, context, container);
    }
 }

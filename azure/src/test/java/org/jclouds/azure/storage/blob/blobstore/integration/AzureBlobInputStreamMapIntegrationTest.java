@@ -27,4 +27,9 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobInputStreamMapIntegrationTest")
 public class AzureBlobInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
 
+   @Override
+   protected int maxList() {
+      return 5000;
+   }
+
 }

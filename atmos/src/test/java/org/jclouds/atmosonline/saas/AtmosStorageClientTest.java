@@ -39,13 +39,14 @@ import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.internal.Base64;
-import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -220,7 +221,7 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
       assertResponseParserClassEquals(method, httpMethod,
                ParseObjectFromHeadersAndHttpContent.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
 
       checkFilters(httpMethod);
    }
@@ -237,7 +238,7 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
 
       assertResponseParserClassEquals(method, httpMethod, ParseSystemMetadataFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
 
       checkFilters(httpMethod);
    }

@@ -19,6 +19,7 @@
 package org.jclouds.http.payloads;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import com.google.common.io.Closeables;
  */
 public class InputStreamPayload implements Payload {
    private final InputStream content;
+   private boolean written;
 
    public InputStreamPayload(InputStream content) {
       this.content = checkNotNull(content, "content");
@@ -64,6 +66,8 @@ public class InputStreamPayload implements Payload {
     */
    @Override
    public void writeTo(OutputStream outstream) throws IOException {
+      checkState(!written, "InputStreams can only be writted to an outputstream once");
+      written = true;
       InputStream in = getContent();
       try {
          ByteStreams.copy(getContent(), outstream);

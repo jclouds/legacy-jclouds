@@ -46,6 +46,7 @@ import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -133,7 +134,7 @@ public interface AtmosStorageAsyncClient {
     */
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<AtmosObject> readFile(@PathParam("path") String path, GetOptions... options);
@@ -143,7 +144,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<AtmosObject> headFile(@PathParam("path") String path);
@@ -153,7 +154,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    // currently throws 403 errors @QueryParams(keys = "metadata/system")
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
@@ -164,7 +165,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("/rest/namespace/{path}")
    @QueryParams(keys = "metadata/user")
    @Consumes(MediaType.WILDCARD)

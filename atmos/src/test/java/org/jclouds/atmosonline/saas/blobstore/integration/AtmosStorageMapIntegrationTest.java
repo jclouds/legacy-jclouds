@@ -42,4 +42,9 @@ public class AtmosStorageMapIntegrationTest extends BaseBlobMapIntegrationTest {
       // TODO not reliable KeyAlreadyExistsException@AtmosBlobStore.java:213
    }
 
+   @Override
+   protected int maxList() {
+      return 0;
+   }
+
 }

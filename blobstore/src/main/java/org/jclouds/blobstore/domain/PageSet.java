@@ -18,14 +18,21 @@
  */
 package org.jclouds.blobstore.domain;
 
+import java.util.Set;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public interface ListContainerResponse<T> extends ListResponse<T> {
+public interface PageSet<T> extends Set<T> {
 
-   String getPath();
+   /**
+    * If there is a next marker, then the set is incomplete and you should issue another command to
+    * retrieve the rest, setting the option {@code marker} to this value 
+    * 
+    * @return next marker, or null if list is complete
+    */
+   String getNextMarker();
 
 }

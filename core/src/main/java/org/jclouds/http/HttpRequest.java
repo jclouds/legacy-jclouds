@@ -29,6 +29,7 @@ import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 
 import com.google.common.collect.Multimap;
+import com.google.common.io.Closeables;
 import com.google.inject.internal.Lists;
 import com.google.inject.internal.Nullable;
 
@@ -106,6 +107,7 @@ public class HttpRequest extends HttpMessage {
     * {@inheritDoc}
     */
    public void setPayload(Payload data) {
+      closeContentIfPresent();
       this.payload = checkNotNull(data, "data");
       setLength();
    }
@@ -153,4 +155,64 @@ public class HttpRequest extends HttpMessage {
       this.endpoint = endpoint;
    }
 
+   @Override
+   protected void finalize() throws Throwable {
+      closeContentIfPresent();
+      super.finalize();
+   }
+
+   private void closeContentIfPresent() {
+      if (getPayload() != null && getPayload().getContent() != null) {
+         Closeables.closeQuietly(getPayload().getContent());
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
+      result = prime * result + ((method == null) ? 0 : method.hashCode());
+      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+      result = prime * result + ((requestFilters == null) ? 0 : requestFilters.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      HttpRequest other = (HttpRequest) obj;
+      if (endpoint == null) {
+         if (other.endpoint != null)
+            return false;
+      } else if (!endpoint.equals(other.endpoint))
+         return false;
+      if (method == null) {
+         if (other.method != null)
+            return false;
+      } else if (!method.equals(other.method))
+         return false;
+      if (payload == null) {
+         if (other.payload != null)
+            return false;
+      } else if (!payload.equals(other.payload))
+         return false;
+      if (requestFilters == null) {
+         if (other.requestFilters != null)
+            return false;
+      } else if (!requestFilters.equals(other.requestFilters))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers
+               + "]";
+   }
 }

@@ -67,8 +67,7 @@ public class GaeHttpCommandExecutorServiceTest {
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
       client = new GaeHttpCommandExecutorService(createNiceMock(URLFetchService.class),
-               createNiceMock(ExecutorService.class), createNiceMock(ExecutorService.class),
-               createNiceMock(DelegatingRetryHandler.class),
+               createNiceMock(ExecutorService.class), createNiceMock(DelegatingRetryHandler.class),
                createNiceMock(DelegatingErrorHandler.class), createNiceMock(HttpWire.class));
    }
 

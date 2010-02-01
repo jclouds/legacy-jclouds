@@ -21,7 +21,6 @@ package org.jclouds.blobstore.integration.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +40,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -51,35 +49,32 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
-import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
+import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
-import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
-import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.options.HttpRequestOptions;
 
 import com.google.common.base.Function;
@@ -95,43 +90,35 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.Nullable;
 
 /**
- * Implementation of {@link S3BlobStore} which keeps all data in a local Map object.
+ * Implementation of {@link BaseAsyncBlobStore} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  * @author James Murty
  */
 @ConsistencyModel(ConsistencyModels.STRICT)
-public class StubAsyncBlobStore implements AsyncBlobStore {
+public class StubAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
    protected final EncryptionService encryptionService;
-   private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
-   protected final Blob.Factory blobProvider;
+   protected final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   protected final GetDirectoryStrategy getDirectoryStrategy;
-   protected final MkdirStrategy mkdirStrategy;
-   private final IsDirectoryStrategy isDirectoryStrategy;
-
-   protected final ExecutorService service;
+   protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
+   protected final Factory blobFactory;
 
    @Inject
-   protected StubAsyncBlobStore(
+   protected StubAsyncBlobStore(DateService dateService, EncryptionService encryptionService,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
-            DateService dateService, EncryptionService encryptionService,
-            Blob.Factory blobProvider, GetDirectoryStrategy getDirectoryStrategy,
-            MkdirStrategy mkdirStrategy, IsDirectoryStrategy isDirectoryStrategy,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+            IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory,
+            BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      this.dateService = checkNotNull(dateService, "dateService");
-      this.encryptionService = checkNotNull(encryptionService, "encryptionService");
-      this.containerToBlobs = checkNotNull(containerToBlobs, "containerToBlobs");
-      this.blobProvider = checkNotNull(blobProvider, "blobProvider");
-      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
-      this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
-      this.isDirectoryStrategy = checkNotNull(isDirectoryStrategy, "isDirectoryStrategy");
-      this.httpGetOptionsConverter = checkNotNull(httpGetOptionsConverter,
-               "httpGetOptionsConverter");
-      this.service = checkNotNull(service, "service");
+      super(blobUtils, service);
+      this.blobFactory = blobFactory;
+      this.dateService = dateService;
+      this.encryptionService = encryptionService;
+      this.containerToBlobs = containerToBlobs;
+      this.httpGetOptionsConverter = httpGetOptionsConverter;
+      this.ifDirectoryReturnName = ifDirectoryReturnName;
       getContainerToBlobs().put("stub", new ConcurrentHashMap<String, Blob>());
    }
 
@@ -156,24 +143,26 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return bytes;
    }
 
-   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            final String name) {
-      return this.list(name, ListContainerOptions.NONE);
-   }
-
-   public ListenableFuture<? extends ListContainerResponse<? extends StorageMetadata>> list(
-            final String name, ListContainerOptions options) {
+   /**
+    * default maxResults is 1000
+    */
+   @Override
+   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(final String name,
+            ListContainerOptions options) {
       final Map<String, Blob> realContents = getContainerToBlobs().get(name);
 
       if (realContents == null)
-         return immediateFailedFuture(new ContainerNotFoundException(name));
+         return immediateFailedFuture(cnfe(name));
 
       SortedSet<StorageMetadata> contents = Sets.newTreeSet(Iterables.transform(realContents
                .keySet(), new Function<String, StorageMetadata>() {
          public StorageMetadata apply(String key) {
             MutableBlobMetadata md = copy(realContents.get(key).getMetadata());
-            if (isDirectoryStrategy.execute(md))
+            String directoryName = ifDirectoryReturnName.execute(md);
+            if (directoryName != null) {
+               md.setName(directoryName);
                md.setType(StorageType.RELATIVE_PATH);
+            }
             return md;
          }
       }));
@@ -194,21 +183,17 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       if (prefix != null) {
          contents = Sets.newTreeSet(Iterables.filter(contents, new Predicate<StorageMetadata>() {
             public boolean apply(StorageMetadata o) {
-               return (o != null && o.getName().startsWith(prefix));
+               return (o != null && o.getName().startsWith(prefix) && !o.getName().equals(prefix));
             }
          }));
       }
 
-      int maxResults = contents.size();
-      boolean truncated = false;
       String marker = null;
-      if (options.getMaxResults() != null && contents.size() > 0) {
-         SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, options
-                  .getMaxResults().intValue());
-         maxResults = options.getMaxResults();
+      Integer maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
+      if (contents.size() > 0) {
+         SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, maxResults);
          if (!contentsSlice.contains(contents.last())) {
             // Partial listing
-            truncated = true;
             marker = contentsSlice.last().getName();
          } else {
             marker = null;
@@ -237,9 +222,13 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                      }
                   }));
       }
-      return immediateFuture(new ListContainerResponseImpl<StorageMetadata>(contents, prefix,
-               marker, maxResults, truncated));
+      return immediateFuture(new PageSetImpl<StorageMetadata>(contents, marker));
 
+   }
+
+   private ContainerNotFoundException cnfe(final String name) {
+      return new ContainerNotFoundException(name, String.format("container %s not in %s", name,
+               getContainerToBlobs().keySet()));
    }
 
    public static MutableBlobMetadata copy(MutableBlobMetadata in) {
@@ -279,7 +268,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
    // return immediateFailedFuture(new KeyNotFoundException(container, key));
    // return copy(realContents.get(key).getMetadata());
    // }
-
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public ListenableFuture<Void> removeBlob(final String container, final String key) {
       if (getContainerToBlobs().containsKey(container)) {
          getContainerToBlobs().get(container).remove(key);
@@ -287,6 +279,19 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(null);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<Void> clearContainer(final String container) {
+      getContainerToBlobs().get(container).clear();
+      return immediateFuture(null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public ListenableFuture<Void> deleteContainer(final String container) {
       if (getContainerToBlobs().containsKey(container)) {
          getContainerToBlobs().remove(container);
@@ -305,12 +310,20 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return immediateFuture(returnVal);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public ListenableFuture<Boolean> containerExists(final String container) {
       return immediateFuture(getContainerToBlobs().containsKey(container));
    }
 
-   public ListenableFuture<? extends ListResponse<? extends StorageMetadata>> list() {
-      return immediateFuture(new ListResponseImpl<StorageMetadata>(Iterables.transform(
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list() {
+      return immediateFuture(new PageSetImpl<StorageMetadata>(Iterables.transform(
                getContainerToBlobs().keySet(), new Function<String, StorageMetadata>() {
                   public StorageMetadata apply(String name) {
                      MutableStorageMetadata cmd = create();
@@ -318,14 +331,17 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                      cmd.setType(StorageType.CONTAINER);
                      return cmd;
                   }
-               }), null, null, false));
-
+               }), null));
    }
 
    protected MutableStorageMetadata create() {
       return new MutableStorageMetadataImpl();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public ListenableFuture<Boolean> createContainerInLocation(final String location,
             final String name) {
       if (!getContainerToBlobs().containsKey(name)) {
@@ -341,7 +357,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;
    }
 
-   protected class DelimiterFilter implements Predicate<StorageMetadata> {
+   protected static class DelimiterFilter implements Predicate<StorageMetadata> {
       private final String prefix;
       private final String delimiter;
 
@@ -353,13 +369,21 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       public boolean apply(StorageMetadata metadata) {
          if (prefix == null)
             return metadata.getName().indexOf(delimiter) == -1;
-         if (metadata.getName().startsWith(prefix))
-            return metadata.getName().replaceFirst(prefix, "").indexOf(delimiter) == -1;
+         // ensure we don't accidentally append twice
+         String toMatch = prefix.endsWith("/") ? prefix : prefix + delimiter;
+         if (metadata.getName().startsWith(toMatch)) {
+            String unprefixedName = metadata.getName().replaceFirst(toMatch, "");
+            if (unprefixedName.equals("")) {
+               // we are the prefix in this case, return false
+               return false;
+            }
+            return unprefixedName.indexOf(delimiter) == -1;
+         }
          return false;
       }
    }
 
-   protected class CommonPrefixes implements Function<StorageMetadata, String> {
+   protected static class CommonPrefixes implements Function<StorageMetadata, String> {
       private final String prefix;
       private final String delimiter;
       public static final String NO_PREFIX = "NO_PREFIX";
@@ -371,10 +395,11 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
       public String apply(StorageMetadata metadata) {
          String working = metadata.getName();
-
          if (prefix != null) {
-            if (working.startsWith(prefix)) {
-               working = working.replaceFirst(prefix, "");
+            // ensure we don't accidentally append twice
+            String toMatch = prefix.endsWith("/") ? prefix : prefix + delimiter;
+            if (working.startsWith(toMatch)) {
+               working = working.replaceFirst(toMatch, "");
             }
          }
          if (working.contains(delimiter)) {
@@ -440,10 +465,14 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       }, response);
    }
 
-   public ListenableFuture<String> putBlob(final String bucketName, final Blob object) {
-      Map<String, Blob> container = getContainerToBlobs().get(bucketName);
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<String> putBlob(final String containerName, final Blob object) {
+      Map<String, Blob> container = getContainerToBlobs().get(containerName);
       if (container == null) {
-         new RuntimeException("bucketName not found: " + bucketName);
+         new RuntimeException("containerName not found: " + containerName);
       }
       try {
          byte[] data = toByteArray(object.getPayload().getRawContent());
@@ -456,7 +485,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          newMd.setContentMD5(md5);
          newMd.setContentType(object.getMetadata().getContentType());
 
-         Blob blob = blobProvider.create(newMd);
+         Blob blob = blobFactory.create(newMd);
          blob.setPayload(data);
          container.put(blob.getMetadata().getName(), blob);
 
@@ -476,23 +505,26 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   public ListenableFuture<Boolean> blobExists(final String bucketName, final String key) {
-      if (!getContainerToBlobs().containsKey(bucketName))
-         return immediateFailedFuture(new ContainerNotFoundException(bucketName));
-      Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
+   public ListenableFuture<Boolean> blobExists(final String containerName, final String key) {
+      if (!getContainerToBlobs().containsKey(containerName))
+         return immediateFailedFuture(cnfe(containerName));
+      Map<String, Blob> realContents = getContainerToBlobs().get(containerName);
       return immediateFuture(realContents.containsKey(key));
    }
 
-   public ListenableFuture<? extends Blob> getBlob(final String bucketName, final String key) {
-      return this.getBlob(bucketName, key, GetOptions.NONE);
-   }
-
-   public ListenableFuture<? extends Blob> getBlob(final String bucketName, final String key,
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<? extends Blob> getBlob(final String containerName, final String key,
             GetOptions options) {
-      if (!getContainerToBlobs().containsKey(bucketName))
-         return immediateFailedFuture(new ContainerNotFoundException(bucketName));
-      Map<String, Blob> realContents = getContainerToBlobs().get(bucketName);
+      if (!getContainerToBlobs().containsKey(containerName))
+         return immediateFailedFuture(cnfe(containerName));
+      Map<String, Blob> realContents = getContainerToBlobs().get(containerName);
       if (!realContents.containsKey(key))
          return immediateFuture(null);
 
@@ -560,13 +592,14 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          returnVal.setContentLength(out.size());
          returnVal.getMetadata().setSize(new Long(data.length));
       }
-      if (returnVal.getContentLength() == 0) {
-         returnVal.setPayload(Payloads.NULL_PAYLOAD);
-         returnVal.getMetadata().setSize(0);
-      }
+      checkNotNull(returnVal.getPayload(), "payload " + returnVal);
       return immediateFuture(returnVal);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public ListenableFuture<BlobMetadata> blobMetadata(final String container, final String key) {
       try {
          Blob blob = getBlob(container, key).get();
@@ -580,7 +613,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
    }
 
    private Blob copyBlob(Blob object) {
-      Blob returnVal = blobProvider.create(copy(object.getMetadata()));
+      Blob returnVal = blobFactory.create(copy(object.getMetadata()));
       returnVal.setPayload(object.getPayload());
       return returnVal;
    }
@@ -589,40 +622,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       return containerToBlobs;
    }
 
-   public ListenableFuture<Void> clearContainer(final String container) {
-      getContainerToBlobs().get(container).clear();
-      return immediateFuture(null);
-   }
-
-   public ListenableFuture<Void> createDirectory(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            mkdirStrategy.execute(container, directory);
-            return null;
-         }
-
-      }), service);
-   }
-
-   public ListenableFuture<Boolean> directoryExists(final String container, final String directory) {
-      return makeListenable(service.submit(new Callable<Boolean>() {
-
-         public Boolean call() throws Exception {
-            try {
-               return getDirectoryStrategy.execute(container, directory) != null;
-            } catch (KeyNotFoundException e) {
-               return false;
-            }
-         }
-
-      }), service);
-   }
-
-   public Blob newBlob(String name) {
-      Blob blob = blobProvider.create(null);
-      blob.getMetadata().setName(name);
-      return blob;
+   @Override
+   protected boolean deleteAndVerifyContainerGone(String container) {
+      getContainerToBlobs().remove(container);
+      return getContainerToBlobs().containsKey(container);
    }
 
 }

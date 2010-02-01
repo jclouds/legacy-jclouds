@@ -28,7 +28,7 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.HashSetListBlobsResponse;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class ResourceToListBlobsResponse implements
-         Function<ListContainerResponse<? extends StorageMetadata>, ListBlobsResponse> {
+         Function<PageSet<? extends StorageMetadata>, ListBlobsResponse> {
    private final BlobMetadataToBlobProperties blob2ObjectMd;
 
    @Inject
@@ -50,7 +50,7 @@ public class ResourceToListBlobsResponse implements
       this.blob2ObjectMd = blob2ObjectMd;
    }
 
-   public ListBlobsResponse apply(ListContainerResponse<? extends StorageMetadata> list) {
+   public ListBlobsResponse apply(PageSet<? extends StorageMetadata> list) {
 
       Iterable<BlobProperties> contents = Iterables.transform(Iterables.filter(list,
                new Predicate<StorageMetadata>() {
@@ -81,7 +81,7 @@ public class ResourceToListBlobsResponse implements
          }
 
       }));
-      return new HashSetListBlobsResponse(contents, null, list.getPath(), null, list
-               .getMaxResults(), list.getMarker(), "/", commonPrefixes);
+      return new HashSetListBlobsResponse(contents, null, null, null, null, list.getNextMarker(),
+               "/", commonPrefixes);
    }
 }

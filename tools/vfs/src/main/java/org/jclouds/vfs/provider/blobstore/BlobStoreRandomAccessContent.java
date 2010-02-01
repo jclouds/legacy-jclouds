@@ -27,21 +27,19 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.provider.AbstractRandomAccessStreamContent;
 import org.apache.commons.vfs.util.RandomAccessMode;
 import org.jclouds.blobstore.options.GetOptions;
+
 /**
  * @author Adrian Cole
  */
 public class BlobStoreRandomAccessContent extends AbstractRandomAccessStreamContent {
    private final BlobStoreFileObject fileObject;
-   private final BlobStoreFileSystem fileSystem;
 
    protected long filePointer = 0;
    private DataInputStream dis = null;
 
    BlobStoreRandomAccessContent(final BlobStoreFileObject fileObject, RandomAccessMode mode) {
       super(mode);
-
       this.fileObject = fileObject;
-      fileSystem = (BlobStoreFileSystem) this.fileObject.getFileSystem();
    }
 
    public long getFilePointer() throws IOException {
@@ -70,9 +68,9 @@ public class BlobStoreRandomAccessContent extends AbstractRandomAccessStreamCont
          return dis;
       }
 
-      dis = new DataInputStream(new FilterInputStream((InputStream) fileSystem.blobStore.getBlob(
-               fileSystem.container, fileObject.getNameTrimLeadingSlashes(),
-               new GetOptions().startAt(filePointer)).getContent()) {
+      dis = new DataInputStream(new FilterInputStream((InputStream) fileObject.getBlobStore()
+               .getBlob(fileObject.getContainer(), fileObject.getNameTrimLeadingSlashes(),
+                        new GetOptions().startAt(filePointer)).getContent()) {
          public int read() throws IOException {
             int ret = super.read();
             if (ret > -1) {

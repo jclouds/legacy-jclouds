@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.s3.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.options.ListBucketOptions;
@@ -32,23 +34,22 @@ import com.google.common.base.Function;
 public class ContainerToBucketListOptions implements
          Function<ListContainerOptions, ListBucketOptions> {
    public ListBucketOptions apply(ListContainerOptions from) {
+      checkNotNull(from, "set options to instance NONE instead of passing null");
       ListBucketOptions httpOptions = new ListBucketOptions();
-      if (from != null && from != ListContainerOptions.NONE) {
-         if (!from.isRecursive()) {
-            httpOptions.delimiter("/");
-         }
-         if (from.getDir() != null) {// TODO unit test
-            String path = from.getDir();
-            if (!path.endsWith("/"))
-               path = path + "/";
-            httpOptions.withPrefix(path);
-         }
-         if (from.getMarker() != null) {
-            httpOptions.afterMarker(from.getMarker());
-         }
-         if (from.getMaxResults() != null) {
-            httpOptions.maxResults(from.getMaxResults());
-         }
+      if (!from.isRecursive()) {
+         httpOptions.delimiter("/");
+      }
+      if (from.getDir() != null) {// TODO unit test
+         String path = from.getDir();
+         if (!path.endsWith("/"))
+            path = path + "/";
+         httpOptions.withPrefix(path);
+      }
+      if (from.getMarker() != null) {
+         httpOptions.afterMarker(from.getMarker());
+      }
+      if (from.getMaxResults() != null) {
+         httpOptions.maxResults(from.getMaxResults());
       }
       return httpOptions;
    }

@@ -19,32 +19,24 @@
 package org.jclouds.blobstore.internal;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
+import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
 
 /**
  * Map representation of a live connection to a Blob Service.
  * 
- * @see AsyncBlobStore
+ * @see BlobStore
  * @see BaseBlobMap
  * 
  * @author Adrian Cole
@@ -53,96 +45,32 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
 
    @Inject
    public BlobMapImpl(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
-            ListBlobMetadataStrategy getAllBlobMetadata,
-            ContainsValueInListStrategy containsValueStrategy,
-            ClearListStrategy clearContainerStrategy, CountListStrategy containerCountStrategy,
-            PutBlobsStrategy putBlobsStrategy, String containerName,
-            ListContainerOptions listOptions) {
-      super(blobstore, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
-               clearContainerStrategy, containerCountStrategy, putBlobsStrategy, containerName,
-               listOptions);
+            ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
+            ListBlobMetadataInContainer listStrategy, String containerName, @Nullable String dir) {
+      super(blobstore, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
+               containerName, dir);
    }
 
-   /**
-    * {@inheritDoc}
-    * 
-    * @see #values()
-    */
-   public Set<java.util.Map.Entry<String, Blob>> entrySet() {
-      Set<Map.Entry<String, Blob>> entrySet = new HashSet<Map.Entry<String, Blob>>();
-      for (Blob value : values()) {
-         Map.Entry<String, Blob> entry = new Entry(pathStripper
-                  .apply(value.getMetadata().getName()), value);
-         entrySet.add(entry);
-      }
-      return entrySet;
-   }
-
-   public class Entry implements java.util.Map.Entry<String, Blob> {
-
-      private Blob value;
-      private final String key;
-
-      Entry(String key, Blob value) {
-         this.key = key;
-         this.value = value;
-      }
-
-      public String getKey() {
-         return key;
-      }
-
-      public Blob getValue() {
-         return value;
-      }
-
-      /**
-       * {@inheritDoc}
-       * 
-       * @see LiveBMap#put(String, Blob)
-       */
-      public Blob setValue(Blob value) {
-         return put(key, value);
-      }
-
-   }
-
-   /**
-    * {@inheritDoc}
-    * 
-    * @see S3Client#getBlob(String, String)
-    */
+   @Override
    public Blob get(Object key) {
       String realKey = prefixer.apply(key.toString());
       Blob blob = blobstore.getBlob(containerName, realKey);
       return blob != null ? stripPrefix(blob) : null;
    }
 
-   /**
-    * {@inheritDoc}
-    * 
-    * @see S3Client#put(String, Blob)
-    */
+   @Override
    public Blob put(String key, Blob value) {
       Blob returnVal = getLastValue(key);
       blobstore.putBlob(containerName, value);
       return returnVal;
    }
 
-   /**
-    * {@inheritDoc} attempts to put all objects asynchronously.
-    * 
-    * @see S3Client#put(String, Blob)
-    */
+   @Override
    public void putAll(Map<? extends String, ? extends Blob> map) {
       putBlobsStrategy.execute(containerName, map.values());
    }
 
-   /**
-    * {@inheritDoc}
-    * 
-    * @see S3Client#removeBlob(String, String)
-    */
+   @Override
    public Blob remove(Object key) {
       Blob old = getLastValue(key);
       String realKey = prefixer.apply(key.toString());
@@ -160,21 +88,13 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
       return old;
    }
 
-   /**
-    * {@inheritDoc}
-    * 
-    * @see #getAllBlobs()
-    */
+   @SuppressWarnings("unchecked")
+   @Override
    public Collection<Blob> values() {
-      // convert ? extends Blob to Blob
-      return Collections2.transform(getAllBlobs.execute(containerName, options),
-               new Function<Blob, Blob>() {
-                  public Blob apply(Blob from) {
-                     return from;
-                  }
-               });
+      return (Collection<Blob>) getAllBlobs.execute(containerName, options);
    }
 
+   @Override
    public Blob newBlob(String name) {
       return blobstore.newBlob(name);
    }

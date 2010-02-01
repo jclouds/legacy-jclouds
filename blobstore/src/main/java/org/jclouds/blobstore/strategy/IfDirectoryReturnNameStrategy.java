@@ -16,56 +16,20 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.blobstore.strategy;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.strategy.internal.MarkersIfDirectoryReturnNameStrategy;
 
-import org.jclouds.http.Payload;
+import com.google.inject.ImplementedBy;
 
 /**
+ * Determines if a directory exists or not.
+ * 
  * @author Adrian Cole
  */
-public class NullPayload implements Payload {
+@ImplementedBy(MarkersIfDirectoryReturnNameStrategy.class)
+public interface IfDirectoryReturnNameStrategy {
 
-   public InputStream getRawContent() {
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public InputStream getContent() {
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isRepeatable() {
-      return true;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void writeTo(OutputStream outstream) throws IOException {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long calculateSize() {
-      return new Long(0);
-   }
-
-   @Override
-   public String toString() {
-      return null;
-   }
+   String execute(StorageMetadata metadata);
 }

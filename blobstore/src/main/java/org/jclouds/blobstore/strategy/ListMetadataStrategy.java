@@ -16,28 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.functions;
+package org.jclouds.blobstore.strategy;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.internal.ListAllMetadataInContainer;
 
-import org.jclouds.azure.storage.AzureStorageResponseException;
-
-import com.google.common.base.Function;
+import com.google.inject.ImplementedBy;
 
 /**
+ * Lists the blobstore.
  * 
  * @author Adrian Cole
  */
-public class ReturnTrueIfContainerAlreadyExists implements Function<Exception, Boolean> {
+@ImplementedBy(ListAllMetadataInContainer.class)
+public interface ListMetadataStrategy {
 
-   public Boolean apply(Exception from) {
-      if (from instanceof AzureStorageResponseException) {
-         AzureStorageResponseException responseException = (AzureStorageResponseException) from;
-         if ("ContainerAlreadyExists".equals(responseException.getError().getCode())) {
-            return true;
-         }
-      }
-      return Boolean.class.cast(propagateOrNull(from));
-   }
+   Iterable<? extends StorageMetadata> execute(String containerName, ListContainerOptions options);
 
 }

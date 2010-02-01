@@ -67,6 +67,8 @@ public interface AzureBlobClient {
     * The container resource includes metadata and properties for that container. It does not
     * include a list of the blobs contained by the container.
     * 
+    * @return true, if the bucket was created or false, if the container was already present
+    * 
     * @see CreateContainerOptions
     * 
     */
@@ -176,8 +178,10 @@ public interface AzureBlobClient {
     * <p/>
     * Blobs are listed in alphabetical order in the response body.
     */
+   @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
    ListBlobsResponse listBlobs(String container, ListBlobsOptions... options);
 
+   @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
    ListBlobsResponse listBlobs(ListBlobsOptions... options);
 
    /**

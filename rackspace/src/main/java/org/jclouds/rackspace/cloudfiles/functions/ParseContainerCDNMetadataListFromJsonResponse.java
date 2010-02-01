@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -38,15 +38,16 @@ import com.google.gson.reflect.TypeToken;
  * @author James Murty
  */
 public class ParseContainerCDNMetadataListFromJsonResponse extends
-         ParseJson<SortedSet<ContainerCDNMetadata>> {
+         ParseJson<Set<ContainerCDNMetadata>> {
 
    @Inject
    public ParseContainerCDNMetadataListFromJsonResponse(Gson gson) {
       super(gson);
    }
 
-   public SortedSet<ContainerCDNMetadata> apply(InputStream stream) {
-      Type listType = new TypeToken<SortedSet<ContainerCDNMetadata>>() {
+   @Override
+   public Set<ContainerCDNMetadata> apply(InputStream stream) {
+      Type listType = new TypeToken<Set<ContainerCDNMetadata>>() {
       }.getType();
       try {
          return gson.fromJson(new InputStreamReader(stream, "UTF-8"), listType);

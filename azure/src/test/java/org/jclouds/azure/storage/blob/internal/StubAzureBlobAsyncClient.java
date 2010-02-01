@@ -128,7 +128,6 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
 
                   @Override
                   public BlobProperties apply(BlobMetadata from) {
-
                      return blob2ObjectInfo.apply(from);
                   }
 

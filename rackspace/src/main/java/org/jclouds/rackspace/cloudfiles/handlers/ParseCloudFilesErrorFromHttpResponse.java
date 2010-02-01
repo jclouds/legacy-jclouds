@@ -34,38 +34,43 @@ public class ParseCloudFilesErrorFromHttpResponse implements HttpErrorHandler {
    public void handleError(HttpCommand command, HttpResponse response) {
       Exception exception = new HttpResponseException(command, response);
       try {
+         String content = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
             case 401:
-               exception = new AuthorizationException(command.getRequest().getRequestLine());
+               exception = new AuthorizationException(command.getRequest(), content);
                break;
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {
                   String path = command.getRequest().getEndpoint().getPath();
                   Matcher matcher = CONTAINER_PATH.matcher(path);
                   if (matcher.find()) {
-                     exception = new ContainerNotFoundException(matcher.group(1));
+                     exception = new ContainerNotFoundException(matcher.group(1), content);
                   } else {
                      matcher = CONTAINER_KEY_PATH.matcher(path);
                      if (matcher.find()) {
-                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2));
+                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2),
+                                 content);
                      }
                   }
                }
                break;
             default:
-               if (response.getContent() != null) {
-                  try {
-                     String content = Utils.toStringAndClose(response.getContent());
-                     exception = new HttpResponseException(command, response, content);
-                  } catch (IOException e) {
-                     logger.warn(e, "exception reading error from response", response);
-                     exception = new HttpResponseException(command, response);
-                  }
-               }
+               exception = new HttpResponseException(command, response, content);
          }
       } finally {
          Closeables.closeQuietly(response.getContent());
          command.setException(exception);
       }
+   }
+
+   String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
+      if (response.getContent() != null) {
+         try {
+            return Utils.toStringAndClose(response.getContent());
+         } catch (IOException e) {
+            logger.warn(e, "exception reading error from response", response);
+         }
+      }
+      return null;
    }
 }

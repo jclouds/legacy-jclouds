@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.BlobType;
+import org.jclouds.azure.storage.blob.domain.LeaseStatus;
 
 import com.google.common.collect.Maps;
 import com.google.inject.internal.Nullable;
@@ -52,12 +53,14 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    private final String contentEncoding;
    private final String contentLanguage;
    private final Map<String, String> metadata = Maps.newLinkedHashMap();
+   private final LeaseStatus leaseStatus;
 
    public BlobPropertiesImpl(BlobType type, String name, URI url, Date lastModified, String eTag,
             long size, String contentType, @Nullable byte[] contentMD5,
             @Nullable String contentEncoding, @Nullable String contentLanguage,
-            Map<String, String> metadata) {
+            LeaseStatus leaseStatus, Map<String, String> metadata) {
       this.type = checkNotNull(type, "type");
+      this.leaseStatus = checkNotNull(leaseStatus, "leaseStatus");
       this.name = checkNotNull(name, "name");
       this.url = checkNotNull(url, "url");
       this.lastModified = checkNotNull(lastModified, "lastModified");
@@ -166,6 +169,14 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       return url;
    }
 
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public LeaseStatus getLeaseStatus() {
+      return leaseStatus;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -176,6 +187,7 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
       result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+      result = prime * result + ((leaseStatus == null) ? 0 : leaseStatus.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
@@ -220,6 +232,11 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
             return false;
       } else if (!lastModified.equals(other.lastModified))
          return false;
+      if (leaseStatus == null) {
+         if (other.leaseStatus != null)
+            return false;
+      } else if (!leaseStatus.equals(other.leaseStatus))
+         return false;
       if (metadata == null) {
          if (other.metadata != null)
             return false;
@@ -243,6 +260,12 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       } else if (!url.equals(other.url))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[name=" + name + ", type=" + type + ", contentType=" + contentType
+               + ", eTag=" + eTag + ", lastModified=" + lastModified + ", size=" + size + "]";
    }
 
 }

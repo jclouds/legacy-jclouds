@@ -28,4 +28,9 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "blobstore.StubBlobMapIntegrationTest")
 public class StubBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
 
+   @Override
+   protected int maxList() {
+      return 1;
+   }
+
 }

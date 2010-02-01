@@ -33,6 +33,8 @@ import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.payloads.InputStreamPayload;
 
+import com.google.common.io.Closeables;
+
 /**
  * 
  * @author Adrian Cole
@@ -48,13 +50,9 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    }
 
    /**
-    * generate an MD5 Hash for the current data.
-    * <p/>
-    * <h2>Note</h2>
-    * <p/>
-    * If this is an InputStream, it will be converted to a byte array first.
-    * 
+    * {@inheritDoc}
     */
+   @Override
    public void generateMD5() {
       checkState(payload != null, "payload");
       if (payload instanceof InputStreamPayload) {
@@ -71,15 +69,16 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    protected abstract void setContentMD5(byte[] md5);
 
    /**
-    * Note that if there was no content returned from the server, this will be null.
-    * 
-    * @return InputStream, if downloading, or whatever was set during {@link #setPayload(Object)}
-    * 
+    * {@inheritDoc}
     */
+   @Override
    public InputStream getContent() {
       return payload != null ? payload.getContent() : null;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Payload getPayload() {
       return payload;
@@ -90,6 +89,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(Payload data) {
+      closeContentIfPresent();
       this.payload = checkNotNull(data, "data");
       setLength();
    }
@@ -126,38 +126,75 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
    }
 
+   private void setLength() {
+      Long size = payload.calculateSize();
+      if (size != null)
+         this.setContentLength(size);
+   }
+
    /**
     * {@inheritDoc}
     */
    @Override
-   public void setNoPayload() {
-      setPayload(Payloads.NULL_PAYLOAD);
-   }
-
-   private void setLength() {
-      if (getContentLength() == null) {
-         Long size = payload.calculateSize();
-         if (size != null)
-            this.setContentLength(size);
-      }
-   }
-
-   /**
-    * Returns the total size of the downloaded object, or the chunk that's available.
-    * <p/>
-    * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
-    * range, or startAt.
-    * 
-    * @return the length in bytes that can be be obtained from {@link #getContent()}
-    * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
-    * @see GetObjectOptions
-    */
    public Long getContentLength() {
       return contentLength;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setContentLength(long contentLength) {
       this.contentLength = contentLength;
+   }
+
+   @Override
+   protected void finalize() throws Throwable {
+      closeContentIfPresent();
+      super.finalize();
+   }
+
+   private void closeContentIfPresent() {
+      if (getContent() != null) {
+         Closeables.closeQuietly(getContent());
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
+      result = prime * result + ((encryptionService == null) ? 0 : encryptionService.hashCode());
+      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BasePayloadEnclosingImpl other = (BasePayloadEnclosingImpl) obj;
+      if (contentLength == null) {
+         if (other.contentLength != null)
+            return false;
+      } else if (!contentLength.equals(other.contentLength))
+         return false;
+      if (encryptionService == null) {
+         if (other.encryptionService != null)
+            return false;
+      } else if (!encryptionService.equals(other.encryptionService))
+         return false;
+      if (payload == null) {
+         if (other.payload != null)
+            return false;
+      } else if (!payload.equals(other.payload))
+         return false;
+      return true;
    }
 
 }

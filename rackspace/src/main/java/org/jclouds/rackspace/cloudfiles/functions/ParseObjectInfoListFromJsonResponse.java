@@ -30,8 +30,8 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
@@ -50,8 +50,8 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends
-         ParseJson<ListContainerResponse<ObjectInfo>> implements InvocationContext {
+public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements
+         InvocationContext {
 
    private GeneratedHttpRequest<?> request;
    private static EncryptionService encryptionService;
@@ -150,7 +150,7 @@ public class ParseObjectInfoListFromJsonResponse extends
       }
    }
 
-   public ListContainerResponse<ObjectInfo> apply(InputStream stream) {
+   public PageSet<ObjectInfo> apply(InputStream stream) {
       checkState(request != null, "request should be initialized at this point");
       checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
       checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
@@ -173,8 +173,7 @@ public class ParseObjectInfoListFromJsonResponse extends
                   }));
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
-         return new ListContainerResponseImpl<ObjectInfo>(returnVal, options.getPath(), marker,
-                  options.getMaxResults(), truncated);
+         return new PageSetImpl<ObjectInfo>(returnVal, marker);
 
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

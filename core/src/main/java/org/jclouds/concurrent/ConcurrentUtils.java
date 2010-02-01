@@ -18,7 +18,8 @@
  */
 package org.jclouds.concurrent;
 
-import java.util.Set;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -36,6 +37,8 @@ import javax.inject.Singleton;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.common.util.concurrent.ForwardingFuture;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -48,24 +51,27 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Singleton
 public class ConcurrentUtils {
 
-   public static void awaitCompletion(Set<? extends ListenableFuture<?>> responses,
-            ExecutorService executor, @Nullable Long maxTime, final Logger logger,
-            final String logPrefix) {
+   public static <T> Map<T, Exception> awaitCompletion(
+            Map<T, ? extends ListenableFuture<?>> responses, ExecutorService executor,
+            @Nullable Long maxTime, final Logger logger, final String logPrefix) {
+      if (responses.size() == 0)
+         return ImmutableMap.of();
       final int total = responses.size();
       final CountDownLatch doneSignal = new CountDownLatch(total);
       final AtomicInteger complete = new AtomicInteger(0);
       final AtomicInteger errors = new AtomicInteger(0);
       final long start = System.currentTimeMillis();
-
-      for (final ListenableFuture<?> future : responses) {
-         future.addListener(new Runnable() {
+      final Map<T, Exception> errorMap = Maps.newHashMap();
+      for (final Entry<T, ? extends ListenableFuture<?>> future : responses.entrySet()) {
+         future.getValue().addListener(new Runnable() {
             public void run() {
                try {
-                  future.get();
+                  future.getValue().get();
                   complete.incrementAndGet();
                } catch (Exception e) {
                   errors.incrementAndGet();
                   logException(logger, logPrefix, total, complete.get(), errors.get(), start, e);
+                  errorMap.put(future.getKey(), e);
                }
                doneSignal.countDown();
             }
@@ -80,7 +86,6 @@ public class ConcurrentUtils {
             String message = message(logPrefix, total, complete.get(), errors.get(), start);
             RuntimeException exception = new RuntimeException(message);
             logger.error(exception, message);
-            throw exception;
          }
          if (logger.isTraceEnabled()) {
             String message = message(logPrefix, total, complete.get(), errors.get(), start);
@@ -92,6 +97,7 @@ public class ConcurrentUtils {
          logger.error(exception, message);
          Throwables.propagate(exception);
       }
+      return errorMap;
    }
 
    private static void logException(Logger logger, String logPrefix, int total, int complete,
@@ -101,7 +107,7 @@ public class ConcurrentUtils {
    }
 
    private static String message(String prefix, int size, int complete, int errors, long start) {
-      return String.format("%s, completed: %d/%d, errors: %d, rate: %dms/op%n", prefix, complete,
+      return String.format("%s, completed: %d/%d, errors: %d, rate: %dms/op", prefix, complete,
                size, errors, (long) ((System.currentTimeMillis() - start) / ((double) size)));
    }
 

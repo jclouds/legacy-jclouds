@@ -24,13 +24,12 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResu
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.ListContainerResponse;
-import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.testng.annotations.Test;
 
@@ -71,30 +70,39 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
+   @Test(groups = { "integration", "live" })
    public void testListContainerMarker() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListResponse<? extends StorageMetadata> container = context.getBlobStore().list(
-                  containerName, afterMarker("y"));
-         assertEquals(container.getMarker(), "y");
-         assert !container.isTruncated();
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
+                  maxResults(1));
+
+         assert container.getNextMarker() != null;
          assertEquals(container.size(), 1);
+         String marker = container.getNextMarker();
+
+         container = context.getBlobStore().list(containerName, afterMarker(marker));
+         assertEquals(container.getNextMarker(), null);
+         assert container.size() == 25 : String.format("size should have been 25, but was %d: %s",
+                  container.size(), container);
+         assert container.getNextMarker() == null;
+
       } finally {
          returnContainer(containerName);
       }
    }
 
-   public void testListContainerDelimiter() throws InterruptedException,
+   @Test(groups = { "integration", "live" })
+   public void testListRootUsesDelimiter() throws InterruptedException,
             UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          String prefix = "apps";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
-         ListResponse<? extends StorageMetadata> container = context.getBlobStore().list(
-                  containerName);
-         assert !container.isTruncated();
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName);
+         assert container.getNextMarker() == null;
          assertEquals(container.size(), 16);
       } finally {
          returnContainer(containerName);
@@ -102,6 +110,78 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    }
 
+   @Test(groups = { "integration", "live" })
+   public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
+      String containerName = getContainerName();
+      try {
+         String directory = "apps";
+
+         assert !context.getBlobStore().directoryExists(containerName, directory);
+
+         context.getBlobStore().createDirectory(containerName, directory);
+
+         assert context.getBlobStore().directoryExists(containerName, directory);
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName);
+         // we should have only the directory under root
+         assert container.getNextMarker() == null;
+         assert container.size() == 1 : container;
+
+         container = context.getBlobStore().list(containerName, inDirectory(directory));
+
+         // we should have nothing in the directory
+         assert container.getNextMarker() == null;
+         assert container.size() == 0 : container;
+
+         addTenObjectsUnderPrefix(containerName, directory);
+
+         container = context.getBlobStore().list(containerName);
+         // we should still have only the directory under root
+         assert container.getNextMarker() == null;
+         assert container.size() == 1 : container;
+
+         container = context.getBlobStore().list(containerName, inDirectory(directory));
+         // we should have only the 10 items under the directory
+         assert container.getNextMarker() == null;
+         assert container.size() == 10 : container;
+
+         // try 2 level deep directory
+         assert !context.getBlobStore().directoryExists(containerName, directory + "/" + directory);
+         context.getBlobStore().createDirectory(containerName, directory + "/" + directory);
+         assert context.getBlobStore().directoryExists(containerName, directory + "/" + directory);
+
+         context.getBlobStore().clearContainer(containerName, inDirectory(directory));
+         assert context.getBlobStore().directoryExists(containerName, directory);
+         assert context.getBlobStore().directoryExists(containerName,  directory + "/" + directory);
+
+         // should have only the 2 level-deep directory above
+         container = context.getBlobStore().list(containerName, inDirectory(directory));
+         assert container.getNextMarker() == null;
+         assert container.size() == 1 : container;
+         
+         context.getBlobStore().clearContainer(containerName, inDirectory(directory).recursive());
+
+         // should no longer have the 2 level-deep directory above
+         container = context.getBlobStore().list(containerName, inDirectory(directory));
+         assert container.getNextMarker() == null;
+         assert container.size() == 0 : container;
+         
+         container = context.getBlobStore().list(containerName);
+         // should only have the directory
+         assert container.getNextMarker() == null;
+         assert container.size() == 1 : container;
+         context.getBlobStore().deleteDirectory(containerName, directory);
+
+         container = context.getBlobStore().list(containerName);
+         // now should be completely empty
+         assert container.getNextMarker() == null;
+         assert container.size() == 0 : container;
+      } finally {
+         returnContainer(containerName);
+      }
+
+   }
+
+   @Test(groups = { "integration", "live" })
    public void testListContainerPrefix() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
@@ -109,26 +189,25 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 
-         ListContainerResponse<? extends StorageMetadata> container = context.getBlobStore().list(
-                  containerName, inDirectory("apps/"));
-         assert !container.isTruncated();
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
+                  inDirectory(prefix));
+         assert container.getNextMarker() == null;
          assertEquals(container.size(), 10);
-         assertEquals(container.getPath(), "apps/");
       } finally {
          returnContainer(containerName);
       }
 
    }
 
+   @Test(groups = { "integration", "live" })
    public void testListContainerMaxResults() throws InterruptedException,
             UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListResponse<? extends StorageMetadata> container = context.getBlobStore().list(
-                  containerName, maxResults(5));
-         assertEquals(container.getMaxResults(), 5);
-         assert container.isTruncated();
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
+                  maxResults(5));
+         assert container.getNextMarker() != null;
          assertEquals(container.size(), 5);
       } finally {
          returnContainer(containerName);
@@ -188,8 +267,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         SortedSet<? extends StorageMetadata> container = context.getBlobStore()
-                  .list(containerName);
+         Set<? extends StorageMetadata> container = context.getBlobStore().list(containerName);
          assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);

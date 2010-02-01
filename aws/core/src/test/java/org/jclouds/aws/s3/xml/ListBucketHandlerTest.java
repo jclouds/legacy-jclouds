@@ -28,7 +28,7 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
-import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
+import org.jclouds.aws.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
@@ -60,7 +60,7 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/s3/list_bucket.xml");
       CanonicalUser owner = new CanonicalUser(
                "e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0", "ferncam");
-      ListBucketResponse expected = new TreeSetListBucketResponse(
+      ListBucketResponse expected = new ListBucketResponseImpl(
                "adriancole.org.jclouds.aws.s3.amazons3testdelimiter", ImmutableList.of(
                         (ObjectMetadata) new BucketListObjectMetadata("apps/0", dateService
                                  .iso8601DateParse("2009-05-07T18:27:08.000Z"),
@@ -111,8 +111,8 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
                                  .iso8601DateParse("2009-05-07T18:27:10.000Z"),
                                  "\"cd8a19b26fea8a827276df0ad11c580d\"", encryptionService
                                           .fromHexString("cd8a19b26fea8a827276df0ad11c580d"), 8,
-                                 owner, StorageClass.STANDARD)), "apps/", null, 1000, null, false,
-               new TreeSet<String>());
+                                 owner, StorageClass.STANDARD)), "apps/", null, null, 1000, null,
+               false, new TreeSet<String>());
 
       ListBucketResponse result = (ListBucketResponse) factory.create(
                injector.getInstance(ListBucketHandler.class)).parse(is);

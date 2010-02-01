@@ -18,9 +18,10 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -30,14 +31,17 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -49,8 +53,11 @@ import com.google.inject.Inject;
 @Singleton
 public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStrategy {
    @Resource
+   @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+
+   protected final ListAllMetadataInContainer getAllMetadata;
+   protected final BackoffLimitedRetryHandler retryHandler;
    private final ExecutorService userExecutor;
 
    protected final AsyncBlobStore connection;
@@ -63,24 +70,78 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
    @Inject
    DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            AsyncBlobStore connection, ListBlobMetadataStrategy getAllBlobMetadata) {
+            AsyncBlobStore connection, ListAllMetadataInContainer getAllMetadata,
+            BackoffLimitedRetryHandler retryHandler) {
+
       this.userExecutor = userExecutor;
       this.connection = connection;
-      this.getAllBlobMetadata = getAllBlobMetadata;
+      this.getAllMetadata = getAllMetadata;
+      this.retryHandler = retryHandler;
    }
 
    public void execute(String containerName) {
-      execute(containerName, null);
+      execute(containerName, recursive());
    }
 
-   public void execute(final String containerName, ListContainerOptions options) {
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (StorageMetadata md : getAllBlobMetadata.execute(containerName, options)) {
-         if (md.getType() == StorageType.BLOB)
-            responses.add(connection.removeBlob(containerName, md.getName()));
+   public void execute(final String containerName, final ListContainerOptions options) {
+      String message = options.getDir() != null ? String.format("deleting from path: %s/%s",
+               containerName, options.getDir()) : String.format("deleting from containerName: %s",
+               containerName);
+      Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
+      Iterable<? extends StorageMetadata> toDelete = getResourcesToDelete(containerName, options);
+      for (int i = 0; i < 3; i++) { // TODO parameterize
+         Map<StorageMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
+         try {
+            for (StorageMetadata md : toDelete) {
+               switch (md.getType()) {
+                  case BLOB:
+                     responses.put(md, connection.removeBlob(containerName, md.getName()));
+                     break;
+                  case FOLDER:
+                  case RELATIVE_PATH:
+                     if (options.isRecursive())
+                        responses.put(md, connection.deleteDirectory(containerName, md.getName()));
+                     break;
+                  case CONTAINER:
+                     throw new IllegalArgumentException("Container type not supported");
+               }
+            }
+         } finally {
+            exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
+            toDelete = getResourcesToDelete(containerName, options);
+            if (Iterables.size(toDelete) == 0) {
+               break;
+            }
+            if (exceptions.size() > 0) {
+               retryHandler.imposeBackoffExponentialDelay(i + 1, message);
+            }
+         }
       }
-      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-               "deleting from containerName: %s", containerName));
+      if (exceptions.size() > 0)
+         throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
+   }
+
+   private Iterable<? extends StorageMetadata> getResourcesToDelete(final String containerName,
+            final ListContainerOptions options) {
+      Iterable<? extends StorageMetadata> toDelete = Iterables.filter(getAllMetadata.execute(
+               containerName, options), new Predicate<StorageMetadata>() {
+
+         @Override
+         public boolean apply(StorageMetadata input) {
+            switch (input.getType()) {
+               case BLOB:
+                  return true;
+               case FOLDER:
+               case RELATIVE_PATH:
+                  if (options.isRecursive())
+                     return true;
+                  break;
+            }
+            return false;
+         }
+
+      });
+      return toDelete;
    }
 
 }

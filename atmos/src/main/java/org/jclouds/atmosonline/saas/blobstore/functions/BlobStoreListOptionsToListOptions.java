@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -32,14 +34,13 @@ public class BlobStoreListOptionsToListOptions implements
          Function<ListContainerOptions, org.jclouds.atmosonline.saas.options.ListOptions> {
    @Override
    public org.jclouds.atmosonline.saas.options.ListOptions apply(ListContainerOptions from) {
+      checkNotNull(from, "set options to instance NONE instead of passing null");
       org.jclouds.atmosonline.saas.options.ListOptions httpOptions = new org.jclouds.atmosonline.saas.options.ListOptions();
-      if (from != null && from != ListContainerOptions.NONE) {
-         if (from.getMarker() != null) {
-            httpOptions.token(from.getMarker());
-         }
-         if (from.getMaxResults() != null) {
-            httpOptions.limit(from.getMaxResults());
-         }
+      if (from.getMarker() != null) {
+         httpOptions.token(from.getMarker());
+      }
+      if (from.getMaxResults() != null) {
+         httpOptions.limit(from.getMaxResults());
       }
       return httpOptions;
    }

@@ -26,11 +26,12 @@ import java.io.InputStream;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.AWSError;
+import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
@@ -41,7 +42,8 @@ import org.jclouds.util.Patterns;
  * 
  * @author Adrian Cole
  */
-public class S3Utils extends BlobStoreUtils {
+@Singleton
+public class S3Utils {
 
    @Inject
    AWSUtils util;
@@ -76,4 +78,12 @@ public class S3Utils extends BlobStoreUtils {
       return bucketName;
    }
 
+   /**
+    * This implementation invokes {@link S3Client#deleteBucketIfEmpty} followed by
+    * {@link S3Client#bucketExists} until it is true.
+    */
+   public static boolean deleteAndVerifyContainerGone(S3Client sync, String container) {
+      sync.deleteBucketIfEmpty(container);
+      return sync.bucketExists(container);
+   }
 }

@@ -20,7 +20,7 @@ package org.jclouds.rackspace.cloudfiles;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
@@ -35,12 +35,12 @@ import javax.ws.rs.PathParam;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.CloudFiles;
@@ -112,7 +112,7 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseContainerListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
-   ListenableFuture<? extends SortedSet<ContainerMetadata>> listContainers(
+   ListenableFuture<? extends Set<ContainerMetadata>> listContainers(
             ListContainerOptions... options);
 
    /**
@@ -132,7 +132,7 @@ public interface CloudFilesAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    @Endpoint(CloudFilesCDN.class)
-   ListenableFuture<? extends SortedSet<ContainerCDNMetadata>> listCDNContainers(
+   ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(
             ListCdnContainerOptions... options);
 
    // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it
@@ -209,7 +209,7 @@ public interface CloudFilesAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
    @Path("{container}")
-   ListenableFuture<ListContainerResponse<ObjectInfo>> listObjects(
+   ListenableFuture<PageSet<ObjectInfo>> listObjects(
             @PathParam("container") String container, ListContainerOptions... options);
 
    /**
@@ -235,7 +235,7 @@ public interface CloudFilesAsyncClient {
     */
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("{container}/{name}")
    ListenableFuture<CFObject> getObject(@PathParam("container") String container,
             @PathParam("name") String name, GetOptions... options);
@@ -245,7 +245,7 @@ public interface CloudFilesAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseObjectInfoFromHeaders.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("{container}/{name}")
    ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(
             @PathParam("container") String container, @PathParam("name") String name);

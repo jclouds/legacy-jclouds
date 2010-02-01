@@ -62,12 +62,20 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       AtmosObject object = objectProvider.create(systemMetadataParser.apply(from),
                userMetadataParser.apply(from));
       addAllHeadersTo(from, object);
-      if (from.getContent() != null)
-         object.setPayload(from.getContent());
+
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
       if (contentLength != null) {
          object.getContentMetadata().setContentLength(Long.parseLong(contentLength));
       }
+      
+      if (from.getContent() != null) {
+         object.setPayload(from.getContent());
+      } else if (object.getContentLength() != null && object.getContentLength() == 0) {
+         object.setPayload(new byte[0]);
+      } else {
+         assert false : "no content in " + from;
+      }
+
       String contentType = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
       if (contentType != null) {
          object.getContentMetadata().setContentType(contentType);

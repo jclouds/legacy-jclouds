@@ -25,6 +25,8 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 
+import com.google.common.collect.Iterables;
+
 /**
  * counts all blobs in the blobstore at the prefix by the most efficient means possible.
  * 
@@ -40,7 +42,7 @@ public class CountBlobTypeInList implements CountListStrategy {
    }
 
    public long execute(String container, ListContainerOptions options) {
-      return getAllBlobMetadata.execute(container, options).size();
+      return Iterables.size(getAllBlobMetadata.execute(container, options));
    }
 
    public long execute(String container) {

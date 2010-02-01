@@ -16,30 +16,29 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.functions;
+package org.jclouds.azure.storage.blob.domain;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Singleton;
-
-import org.jclouds.aws.AWSResponseException;
-
-import com.google.common.base.Function;
+import com.google.common.base.CaseFormat;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class ReturnTrueIfBucketAlreadyOwnedByYou implements Function<Exception, Boolean> {
+public enum LeaseStatus {
+   LOCKED, UNLOCKED;
 
-   public Boolean apply(Exception from) {
-      if (from instanceof AWSResponseException) {
-         AWSResponseException responseException = (AWSResponseException) from;
-         if ("BucketAlreadyOwnedByYou".equals(responseException.getError().getCode())) {
-            return true;
-         }
-      }
-      return Boolean.class.cast(propagateOrNull(from));
+   public String value() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+   }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static LeaseStatus fromValue(String type) {
+      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type,
+               "type")));
    }
 }

@@ -26,24 +26,18 @@ import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class CommonPrefixesToResourceMetadata implements
-         Function<Iterable<String>, Iterable<StorageMetadata>> {
-   public Iterable<StorageMetadata> apply(
+public class CommonPrefixesToResourceMetadata implements Function<String, StorageMetadata> {
 
-   Iterable<String> prefixes) {
-      return Iterables.transform(prefixes, new Function<String, StorageMetadata>() {
-         public StorageMetadata apply(String from) {
-            MutableStorageMetadata returnVal = new MutableStorageMetadataImpl();
-            returnVal.setType(StorageType.RELATIVE_PATH);
-            returnVal.setName(from);
-            return returnVal;
-         }
-      });
+   public StorageMetadata apply(String from) {
+      MutableStorageMetadata returnVal = new MutableStorageMetadataImpl();
+      returnVal.setType(StorageType.RELATIVE_PATH);
+      returnVal.setName(from);
+      return returnVal;
    }
+
 }

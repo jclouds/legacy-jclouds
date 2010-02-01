@@ -48,7 +48,7 @@ import org.jclouds.aws.s3.functions.BindRegionToXmlPayload;
 import org.jclouds.aws.s3.functions.ObjectKey;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
+import org.jclouds.aws.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYou;
 import org.jclouds.aws.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
@@ -66,6 +66,7 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -116,7 +117,7 @@ public interface S3AsyncClient {
     */
    @GET
    @Path("{key}")
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    ListenableFuture<S3Object> getObject(@HostPrefixParam String bucketName,
             @PathParam("key") String key, GetOptions... options);
@@ -126,7 +127,7 @@ public interface S3AsyncClient {
     */
    @HEAD
    @Path("{key}")
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @ResponseParser(ParseObjectMetadataFromHeaders.class)
    ListenableFuture<ObjectMetadata> headObject(@HostPrefixParam String bucketName,
             @PathParam("key") String key);
@@ -165,7 +166,7 @@ public interface S3AsyncClient {
     */
    @PUT
    @Path("/")
-   @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
+   @ExceptionParser(ReturnFalseIfBucketAlreadyOwnedByYou.class)
    ListenableFuture<Boolean> putBucketInRegion(
             // TODO endpoint based on region
             @BinderParam(BindRegionToXmlPayload.class) Region region,

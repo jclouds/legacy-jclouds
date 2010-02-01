@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3InputStreamMapIntegrationTest")
 public class S3InputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
-
+   @Override
+   protected int maxList() {
+      return 1000;
+   }
 }

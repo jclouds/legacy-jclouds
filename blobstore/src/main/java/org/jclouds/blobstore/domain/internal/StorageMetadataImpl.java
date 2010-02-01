@@ -56,14 +56,26 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
       this.lastModified = lastModified;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getETag() {
       return eTag;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Long getSize() {
       return size;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Date getLastModified() {
       return lastModified;
    }

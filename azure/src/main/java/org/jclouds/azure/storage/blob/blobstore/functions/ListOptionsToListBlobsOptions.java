@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
@@ -32,20 +34,19 @@ import com.google.common.base.Function;
 public class ListOptionsToListBlobsOptions implements
          Function<ListContainerOptions, ListBlobsOptions> {
    public ListBlobsOptions apply(ListContainerOptions from) {
+      checkNotNull(from, "set options to instance NONE instead of passing null");
       ListBlobsOptions httpOptions = new ListBlobsOptions();
-      if (from != null && from != ListContainerOptions.NONE) {
-         if (!from.isRecursive()) {
-            httpOptions.delimiter("/");
-         }
-         if (from.getDir() != null) {
-            httpOptions.prefix(from.getDir());
-         }
-         if (from.getMarker() != null) {
-            httpOptions.marker(from.getMarker());
-         }
-         if (from.getMaxResults() != null) {
-            httpOptions.maxResults(from.getMaxResults());
-         }
+      if (!from.isRecursive()) {
+         httpOptions.delimiter("/");
+      }
+      if (from.getDir() != null) {
+         httpOptions.prefix(from.getDir().endsWith("/") ? from.getDir() : from.getDir() + "/");
+      }
+      if (from.getMarker() != null) {
+         httpOptions.marker(from.getMarker());
+      }
+      if (from.getMaxResults() != null) {
+         httpOptions.maxResults(from.getMaxResults());
       }
       return httpOptions;
    }

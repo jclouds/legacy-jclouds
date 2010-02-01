@@ -16,21 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.domain;
+package org.jclouds.blobstore.strategy;
 
-import java.util.SortedSet;
+import org.jclouds.blobstore.strategy.internal.MarkersDeleteDirectoryStrategy;
+
+import com.google.inject.ImplementedBy;
 
 /**
+ * Deletes a directory.
  * 
  * @author Adrian Cole
- * 
  */
-public interface ListResponse<T> extends SortedSet<T> {
+@ImplementedBy(MarkersDeleteDirectoryStrategy.class)
+public interface DeleteDirectoryStrategy {
 
-   String getMarker();
-
-   int getMaxResults();
-
-   boolean isTruncated();
-
+   void execute(String containerName, String directory);
 }

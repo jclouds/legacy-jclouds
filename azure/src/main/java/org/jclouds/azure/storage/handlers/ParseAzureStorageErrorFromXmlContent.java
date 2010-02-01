@@ -58,50 +58,56 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
       this.utils = utils;
    }
 
-   public static final Pattern CONTAINER_PATH = Pattern.compile("^[/]?([^/]+)");
-   public static final Pattern CONTAINER_KEY_PATH = Pattern.compile("^[/]?([^/]+)/(.*)");
+   public static final Pattern CONTAINER_PATH = Pattern.compile("^[/]?([^/]+)$");
+   public static final Pattern CONTAINER_KEY_PATH = Pattern.compile("^[/]?([^/]+)/(.*)$");
 
    public void handleError(HttpCommand command, HttpResponse response) {
       Exception exception = new HttpResponseException(command, response);
       try {
+         AzureStorageError error = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
             case 401:
-               exception = new AuthorizationException(command.getRequest().getRequestLine());
+               exception = new AuthorizationException(command.getRequest(), error != null ? error
+                        .getMessage() : response.getStatusLine());
                break;
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {
+                  String message = error != null ? error.getMessage() : String.format("%s -> %s",
+                           command.getRequest().getRequestLine(), response.getStatusLine());
                   String path = command.getRequest().getEndpoint().getPath();
                   Matcher matcher = CONTAINER_PATH.matcher(path);
                   if (matcher.find()) {
-                     exception = new ContainerNotFoundException(matcher.group(1));
+                     exception = new ContainerNotFoundException(matcher.group(1), message);
                   } else {
                      matcher = CONTAINER_KEY_PATH.matcher(path);
                      if (matcher.find()) {
-                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2));
+                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2),
+                                 message);
                      }
                   }
                }
                break;
             default:
-               if (response.getContent() != null) {
-                  try {
-                     String content = Utils.toStringAndClose(response.getContent());
-                     if (content.indexOf('<') >= 0) {
-                        AzureStorageError error = utils.parseAzureStorageErrorFromContent(command,
-                                 response, Utils.toInputStream(content));
-                        exception = new AzureStorageResponseException(command, response, error);
-
-                     } else {
-                        exception = new HttpResponseException(command, response, content);
-                     }
-                  } catch (IOException e) {
-                     logger.warn(e, "exception reading error from response", response);
-                  }
-               }
+               exception = error != null ? new AzureStorageResponseException(command, response,
+                        error) : new HttpResponseException(command, response);
          }
       } finally {
          Closeables.closeQuietly(response.getContent());
          command.setException(exception);
       }
+   }
+
+   AzureStorageError parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
+      if (response.getContent() != null) {
+         try {
+            String content = Utils.toStringAndClose(response.getContent());
+            if (content != null && content.indexOf('<') >= 0)
+               return utils.parseAzureStorageErrorFromContent(command, response, Utils
+                        .toInputStream(content));
+         } catch (IOException e) {
+            logger.warn(e, "exception reading error from response", response);
+         }
+      }
+      return null;
    }
 }

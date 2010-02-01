@@ -20,7 +20,7 @@ package org.jclouds.atmosonline.saas.blobstore.strategy;
 
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -32,6 +32,7 @@ import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
+import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
@@ -40,7 +41,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
@@ -80,14 +81,18 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
    }
 
    private ListenableFuture<Void> rm(final String fullPath, FileType type, boolean recursive) {
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
+      Map<String, ListenableFuture<?>> responses = Maps.newHashMap();
       if ((type == FileType.DIRECTORY) && recursive) {
          for (DirectoryEntry child : sync.listDirectory(fullPath)) {
-            responses.add(rm(fullPath + "/" + child.getObjectName(), child.getType(), true));
+            responses.put(fullPath + "/" + child.getObjectName(), rm(fullPath + "/"
+                     + child.getObjectName(), child.getType(), true));
          }
       }
-      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-               "deleting from path: %s", fullPath));
+      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+               String.format("deleting from path: %s", fullPath));
+      if (exceptions.size() > 0)
+         throw new BlobRuntimeException(String.format("deleting from path %s: %s", fullPath,
+                  exceptions));
 
       return Futures.compose(async.deletePath(fullPath), new Function<Void, Void>() {
 
@@ -112,12 +117,16 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
    public void execute(String path, ListContainerOptions options) {
       if (options.getDir() != null)
          path += "/" + options.getDir();
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
+      Map<String, ListenableFuture<?>> responses = Maps.newHashMap();
       for (DirectoryEntry md : sync.listDirectory(path)) {
-         responses.add(rm(path + "/" + md.getObjectName(), md.getType(), options.isRecursive()));
+         responses.put(path + "/" + md.getObjectName(), rm(path + "/" + md.getObjectName(), md
+                  .getType(), options.isRecursive()));
       }
-      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-               "deleting from path: %s", path));
+      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+               String.format("deleting from path: %s", path));
+      if (exceptions.size() > 0)
+         throw new BlobRuntimeException(String
+                  .format("deleting from path %s: %s", path, exceptions));
    }
 
 }

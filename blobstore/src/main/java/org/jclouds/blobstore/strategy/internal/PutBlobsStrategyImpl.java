@@ -20,7 +20,7 @@ package org.jclouds.blobstore.strategy.internal;
 
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -30,10 +30,12 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.internal.BlobRuntimeException;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.logging.Logger;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -47,6 +49,7 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
    private final AsyncBlobStore ablobstore;
    private final ExecutorService userExecutor;
    @Resource
+   @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
    /**
     * maximum duration of an blob Request
@@ -64,12 +67,15 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
 
    @Override
    public void execute(String containerName, Iterable<? extends Blob> blobs) {
-      Set<ListenableFuture<String>> responses = Sets.newHashSet();
+      Map<Blob, ListenableFuture<?>> responses = Maps.newHashMap();
       for (Blob blob : blobs) {
-         responses.add(ablobstore.putBlob(containerName, blob));
+         responses.put(blob, ablobstore.putBlob(containerName, blob));
       }
-      awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-               "putting into containerName: %s", containerName));
+      Map<Blob, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+               String.format("putting into containerName: %s", containerName));
+      if (exceptions.size() > 0)
+         throw new BlobRuntimeException(String.format("error putting into container %s: %s",
+                  containerName, exceptions));
    }
 
 }

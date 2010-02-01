@@ -35,10 +35,51 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Adrian Cole
  */
-public class ListOptions {
+public class ListOptions implements Cloneable {
 
-   public static final ListOptions NONE = new ListOptions();
-   
+   public static class ImmutableListOptions extends ListOptions {
+      private final ListOptions delegate;
+
+      @Override
+      public ListContainerOptions afterMarker(String marker) {
+         throw new UnsupportedOperationException();
+      }
+
+      public ImmutableListOptions(ListOptions delegate) {
+         this.delegate = delegate;
+      }
+
+      @Override
+      public ListContainerOptions maxResults(int maxKeys) {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public String getMarker() {
+         return delegate.getMarker();
+      }
+
+      @Override
+      public Integer getMaxResults() {
+         return delegate.getMaxResults();
+      }
+
+      @Override
+      public ListOptions clone() {
+         return delegate.clone();
+      }
+   }
+
+   public static final ImmutableListOptions NONE = new ImmutableListOptions(new ListOptions());
+
+   ListOptions(Integer maxKeys, String marker) {
+      this.maxKeys = maxKeys;
+      this.marker = marker;
+   }
+
+   public ListOptions() {
+   }
+
    private Integer maxKeys;
    private String marker;
 
@@ -87,5 +128,10 @@ public class ListOptions {
          return options.maxResults(maxKeys);
       }
 
+   }
+
+   @Override
+   protected ListOptions clone() {
+      return new ListOptions(maxKeys, marker);
    }
 }

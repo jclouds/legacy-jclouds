@@ -119,8 +119,14 @@ public class Utils {
    protected static Logger logger = Logger.NULL;
 
    public static String toStringAndClose(InputStream input) throws IOException {
+      checkNotNull(input, "input");
       try {
          return new String(ByteStreams.toByteArray(input), Charsets.UTF_8);
+      } catch (IOException e) {
+         logger.warn(e, "Failed to read from stream");
+         return null;
+      } catch (NullPointerException e) {
+         return null;
       } finally {
          Closeables.closeQuietly(input);
       }

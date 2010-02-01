@@ -61,8 +61,47 @@ public class HttpResponse extends HttpMessage {
       this.content = content;
    }
 
+   @Override
+   public String toString() {
+      return "[message=" + message + ", statusCode=" + statusCode + ", headers=" + headers + "]";
+   }
+
    public String getStatusLine() {
       return String.format("HTTP/1.1 %d %s", getStatusCode(), getMessage());
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((content == null) ? 0 : content.hashCode());
+      result = prime * result + ((message == null) ? 0 : message.hashCode());
+      result = prime * result + statusCode;
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      HttpResponse other = (HttpResponse) obj;
+      if (content == null) {
+         if (other.content != null)
+            return false;
+      } else if (!content.equals(other.content))
+         return false;
+      if (message == null) {
+         if (other.message != null)
+            return false;
+      } else if (!message.equals(other.message))
+         return false;
+      if (statusCode != other.statusCode)
+         return false;
+      return true;
    }
 
 }

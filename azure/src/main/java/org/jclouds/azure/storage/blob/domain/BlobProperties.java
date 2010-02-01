@@ -36,6 +36,8 @@ public interface BlobProperties extends Comparable<BlobProperties> {
     */
    BlobType getType();
 
+   LeaseStatus getLeaseStatus();
+
    URI getUrl();
 
    String getName();

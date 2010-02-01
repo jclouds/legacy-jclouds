@@ -82,4 +82,9 @@ public class AtmosStorageInputStreamMapIntegrationTest extends BaseInputStreamMa
       // TODO not reliable NPE
    }
 
+   @Override
+   protected int maxList() {
+      return 0;
+   }
+
 }

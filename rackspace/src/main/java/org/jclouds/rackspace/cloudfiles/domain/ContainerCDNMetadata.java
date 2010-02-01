@@ -109,6 +109,8 @@ public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
             return false;
       } else if (!name.equals(other.name))
          return false;
+      if (ttl != other.ttl)
+         return false;
       return true;
    }
 
@@ -122,5 +124,12 @@ public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
 
    public boolean isLogRetention() {
       return log_retention;
+   }
+
+   @Override
+   public String toString() {
+      return "ContainerCDNMetadata [cdn_enabled=" + cdn_enabled + ", cdn_uri=" + cdn_uri
+               + ", log_retention=" + log_retention + ", name=" + name + ", referrer_acl="
+               + referrer_acl + ", ttl=" + ttl + ", useragent_acl=" + useragent_acl + "]";
    }
 }

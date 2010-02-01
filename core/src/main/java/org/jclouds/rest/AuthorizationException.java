@@ -18,6 +18,8 @@
  */
 package org.jclouds.rest;
 
+import org.jclouds.http.HttpRequest;
+
 /**
  * Thrown when there is an authorization error.
  * 
@@ -36,12 +38,11 @@ public class AuthorizationException extends RuntimeException {
       super(arg0, arg1);
    }
 
-   public AuthorizationException(String arg0) {
-      super(arg0);
+   public AuthorizationException(HttpRequest resource, String error) {
+      super(String.format("%s -> %s", resource.getRequestLine(), error));
    }
 
    public AuthorizationException(Throwable arg0) {
       super(arg0);
    }
-
 }

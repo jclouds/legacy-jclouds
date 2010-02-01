@@ -26,7 +26,6 @@ import java.io.InputStream;
 import org.jclouds.http.payloads.ByteArrayPayload;
 import org.jclouds.http.payloads.FilePayload;
 import org.jclouds.http.payloads.InputStreamPayload;
-import org.jclouds.http.payloads.NullPayload;
 import org.jclouds.http.payloads.StringPayload;
 
 /**
@@ -67,7 +66,5 @@ public class Payloads {
    public static FilePayload newFilePayload(File data) {
       return new FilePayload(checkNotNull(data, "data"));
    }
-
-   public static NullPayload NULL_PAYLOAD = new NullPayload();
 
 }

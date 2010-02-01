@@ -1,68 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-
-
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
-
-    ====================================================================
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
-    ====================================================================
-
--->
 <EnumerationResults ContainerName="http://myaccount.blob.core.windows.net/mycontainer">
-  <MaxResults>4</MaxResults>
-  <Blobs>
-    <Blob>
-      <Name>blob1.txt</Name>
-      <Url>http://myaccount.blob.core.windows.net/mycontainer/blob1.txt</Url>
-      <Last-Modified>Thu, 18 Sep 2008 18:41:57 GMT</Last-Modified>
-      <Etag>0x8CAE7D55D050B8B</Etag>
-      <Content-Length>8</Content-Length>
-      <Content-Type>text/plain; charset=UTF-8</Content-Type>
-      <BlobType>BlockBlob</BlobType>
-      <Content-Encoding />
-      <Content-Language />
-    </Blob>
-    <Blob>
-      <Name>blob2.txt</Name>
-      <Url>http://myaccount.blob.core.windows.net/mycontainer/blob2.txt</Url>
-      <Last-Modified>Thu, 18 Sep 2008 18:41:57 GMT</Last-Modified>
-      <Etag>0x8CAE7D55CF6C339</Etag>
-      <Content-Length>14</Content-Length>
-      <Content-Type>text/plain; charset=UTF-8</Content-Type>
-      <BlobType>BlockBlob</BlobType>
-      <Content-Encoding />
-      <Content-Language />
-    </Blob>
-    <BlobPrefix>
-      <Name>myfolder/</Name>
-    </BlobPrefix>
-    <Blob>
-      <Name>newblob1.txt</Name>
-      <Url>http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt</Url>
-      <Last-Modified>Thu, 18 Sep 2008 18:41:57 GMT</Last-Modified>
-      <Etag>0x8CAE7D55CF6C339</Etag>
-      <Content-Length>25</Content-Length>
-      <Content-Type>text/plain; charset=UTF-8</Content-Type>
-      <BlobType>PageBlob</BlobType>
-      <Content-Encoding />
-      <Content-Language />
-    </Blob>
-  </Blobs>
-  <NextMarker>newblob2.txt</NextMarker>
+    <MaxResults>4</MaxResults>
+    <Blobs>
+        <Blob>
+            <Name>blob1.txt</Name>
+            <Url>http://myaccount.blob.core.windows.net/mycontainer/blob1.txt
+            </Url>
+            <Last-Modified>Thu, 18 Sep 2008 18:41:57 GMT</Last-Modified>
+            <Etag>0x8CAE7D55D050B8B</Etag>
+            <Content-Length>8</Content-Length>
+            <Content-Type>text/plain; charset=UTF-8</Content-Type>
+            <BlobType>BlockBlob</BlobType>
+            <LeaseStatus>unlocked</LeaseStatus>
+            <Content-Encoding />
+            <Content-Language />
+        </Blob>
+        <Blob>
+            <Name>blob2.txt</Name>
+            <Url>http://myaccount.blob.core.windows.net/mycontainer/blob2.txt
+            </Url>
+            <Last-Modified>Thu, 18 Sep 2008 18:41:57 GMT</Last-Modified>
+            <Etag>0x8CAE7D55CF6C339</Etag>
+            <Content-Length>14</Content-Length>
+            <Content-Type>text/plain; charset=UTF-8</Content-Type>
+            <BlobType>BlockBlob</BlobType>
+            <LeaseStatus>unlocked</LeaseStatus>
+            <Content-Encoding />
+            <Content-Language />
+        </Blob>
+        <BlobPrefix>
+            <Name>myfolder/</Name>
+        </BlobPrefix>
+        <Blob>
+            <Name>newblob1.txt</Name>
+            <Url>http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt
+            </Url>
+            <Last-Modified>Thu, 18 Sep 2008 18:41:57 GMT</Last-Modified>
+            <Etag>0x8CAE7D55CF6C339</Etag>
+            <Content-Length>25</Content-Length>
+            <Content-Type>text/plain; charset=UTF-8</Content-Type>
+            <BlobType>PageBlob</BlobType>
+            <LeaseStatus>unlocked</LeaseStatus>
+            <Content-Encoding />
+            <Content-Language />
+        </Blob>
+    </Blobs>
+    <NextMarker>newblob2.txt</NextMarker>
 </EnumerationResults>

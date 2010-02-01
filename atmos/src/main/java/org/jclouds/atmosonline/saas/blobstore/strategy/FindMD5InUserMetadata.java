@@ -18,10 +18,12 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.strategy;
 
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+
 import java.util.Arrays;
-import java.util.SortedSet;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
@@ -41,9 +43,8 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -81,42 +82,34 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    public boolean execute(final String containerName, Object value, ListContainerOptions options) {
       final byte[] toSearch = objectMD5.apply(value);
       final BlockingQueue<Boolean> queue = new SynchronousQueue<Boolean>();
-
-      SortedSet<? extends BlobMetadata> allMd = getAllBlobMetadata.execute(containerName, options);
-
-      final CountDownLatch doneSignal = new CountDownLatch(allMd.size());
-
-      for (final ListenableFuture<AtmosObject> future : Iterables.transform(getAllBlobMetadata
-               .execute(containerName, options),
-               new Function<BlobMetadata, ListenableFuture<AtmosObject>>() {
-                  @Override
-                  public ListenableFuture<AtmosObject> apply(BlobMetadata from) {
-                     return client.headFile(containerName + "/" + from.getName());
-                  }
-
-               })) {
+      Map<String, ListenableFuture<?>> responses = Maps.newHashMap();
+      for (BlobMetadata md : getAllBlobMetadata.execute(containerName, options)) {
+         final ListenableFuture<AtmosObject> future = client.headFile(containerName + "/"
+                  + md.getName());
          future.addListener(new Runnable() {
             public void run() {
                try {
-                  future.get();
-                  doneSignal.countDown();
                   if (Arrays.equals(toSearch, future.get().getContentMetadata().getContentMD5())) {
                      queue.put(true);
                   }
-               } catch (Exception e) {
-                  doneSignal.countDown();
+               } catch (InterruptedException e) {
+                  Throwables.propagate(e);
+               } catch (ExecutionException e) {
+                  Throwables.propagate(e);
                }
             }
          }, userExecutor);
+         responses.put(md.getName(), future);
       }
+      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+               String.format("searching for md5 in container %s", containerName));
+      if (exceptions.size() > 0)
+         throw new BlobRuntimeException(String.format("searching for md5 in container %s: %s",
+                  containerName, exceptions));
       try {
-         if (maxTime != null) {
-            return queue.poll(maxTime, TimeUnit.MILLISECONDS);
-         } else {
-            doneSignal.await();
-            return queue.poll(1, TimeUnit.MICROSECONDS);
-         }
+         return queue.poll(1, TimeUnit.MICROSECONDS);
       } catch (InterruptedException e) {
+         Throwables.propagate(e);
          return false;
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);

@@ -16,34 +16,27 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.blobstore.functions;
+package org.jclouds.blobstore.functions;
+
+import static org.jclouds.util.Utils.propagateOrNull;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.MutableStorageMetadata;
-import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
+import org.jclouds.blobstore.KeyNotFoundException;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 /**
+ * 
  * @author Adrian Cole
  */
 @Singleton
-public class CommonPrefixesToResourceMetadata implements
-         Function<Iterable<String>, Iterable<StorageMetadata>> {
-   public Iterable<StorageMetadata> apply(
+public class ReturnNullOnKeyNotFound implements Function<Exception, Object> {
 
-   Iterable<String> prefixes) {
-      return Iterables.transform(prefixes, new Function<String, StorageMetadata>() {
-         public StorageMetadata apply(String from) {
-            MutableStorageMetadata returnVal = new MutableStorageMetadataImpl();
-            returnVal.setType(StorageType.RELATIVE_PATH);
-            returnVal.setName(from);
-            return returnVal;
-         }
-      });
+   public Object apply(Exception from) {
+      if (from instanceof KeyNotFoundException) {
+         return null;
+      }
+      return propagateOrNull(from);
    }
 }

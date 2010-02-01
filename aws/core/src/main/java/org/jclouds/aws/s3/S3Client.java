@@ -185,7 +185,7 @@ public interface S3Client {
     * 
     * @param options
     *           for creating your bucket
-    * @return true, if the bucket was created or already exists
+    * @return true, if the bucket was created or false, if the container was already present
     * 
     * @see PutBucketOptions
     * @see <a

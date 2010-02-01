@@ -119,6 +119,12 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
    }
 
    @Override
+   public String toString() {
+      return "[type=" + type + ", id=" + id + ", name=" + name + ", location=" + locationId
+               + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
+   }
+
+   @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
@@ -127,7 +133,6 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
    }
 
@@ -165,18 +170,8 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
             return false;
       } else if (!uri.equals(other.uri))
          return false;
-      if (userMetadata == null) {
-         if (other.userMetadata != null)
-            return false;
-      } else if (!userMetadata.equals(other.userMetadata))
-         return false;
       return true;
    }
 
-   @Override
-   public String toString() {
-      return "[type=" + type + ", id=" + id + ", name=" + name + ", locationId=" + locationId
-               + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
-   }
 
 }

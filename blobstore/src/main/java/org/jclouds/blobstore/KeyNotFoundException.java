@@ -34,8 +34,8 @@ public class KeyNotFoundException extends ResourceNotFoundException {
       super();
    }
 
-   public KeyNotFoundException(String container, String key) {
-      super(String.format("%s not found in container %s", key, container));
+   public KeyNotFoundException(String container, String key, String message) {
+      super(String.format("%s not found in container %s: %s", key, container, message));
       this.container = container;
       this.key = key;
    }

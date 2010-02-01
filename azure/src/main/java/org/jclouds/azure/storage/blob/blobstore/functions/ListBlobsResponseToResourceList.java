@@ -18,18 +18,22 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
-import java.util.SortedSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
+import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.PageSetImpl;
+import org.jclouds.blobstore.functions.PrefixToResourceMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -37,22 +41,35 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class ListBlobsResponseToResourceList implements
-         Function<ListBlobsResponse, ListContainerResponse<? extends StorageMetadata>> {
+         Function<ListBlobsResponse, PageSet<? extends StorageMetadata>> {
    private final BlobPropertiesToBlobMetadata object2blobMd;
-   private final CommonPrefixesToResourceMetadata prefix2ResourceMd;
+   private final PrefixToResourceMetadata prefix2ResourceMd;
+
+   protected final Function<StorageMetadata, String> indexer = new Function<StorageMetadata, String>() {
+      @Override
+      public String apply(StorageMetadata from) {
+         return from.getName();
+      }
+   };
 
    @Inject
    public ListBlobsResponseToResourceList(BlobPropertiesToBlobMetadata object2blobMd,
-            CommonPrefixesToResourceMetadata prefix2ResourceMd) {
+            PrefixToResourceMetadata prefix2ResourceMd) {
       this.object2blobMd = object2blobMd;
       this.prefix2ResourceMd = prefix2ResourceMd;
    }
 
-   public ListContainerResponse<? extends StorageMetadata> apply(ListBlobsResponse from) {
-      SortedSet<StorageMetadata> contents = Sets.newTreeSet(Iterables.concat(Iterables.transform(
-               from, object2blobMd), prefix2ResourceMd.apply(from.getBlobPrefixes())));
-      return new ListContainerResponseImpl<StorageMetadata>(contents, from.getPrefix(), from
-               .getMarker(), from.getMaxResults(), from.size() == from.getMaxResults());
+   public PageSet<? extends StorageMetadata> apply(ListBlobsResponse from) {
+      Set<StorageMetadata> contents = Sets.<StorageMetadata> newHashSet(Iterables.transform(from,
+               object2blobMd));
 
+      Map<String, StorageMetadata> nameToMd = Maps.uniqueIndex(contents, indexer);
+      for (String prefix : from.getBlobPrefixes()) {
+         prefix = prefix.endsWith("/") ? prefix.substring(0, prefix.lastIndexOf('/')) : prefix;
+         if (!nameToMd.containsKey(prefix)
+                  || nameToMd.get(prefix).getType() != StorageType.RELATIVE_PATH)
+            contents.add(prefix2ResourceMd.apply(prefix));
+      }
+      return new PageSetImpl<StorageMetadata>(contents, from.getNextMarker());
    }
 }

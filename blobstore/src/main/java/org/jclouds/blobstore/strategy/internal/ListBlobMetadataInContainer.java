@@ -18,21 +18,18 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
-import java.util.SortedSet;
-
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListMetadataStrategy;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
@@ -43,27 +40,27 @@ import com.google.inject.Inject;
 @Singleton
 public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
 
-   protected final BlobStore connection;
+   protected final ListMetadataStrategy lister;
 
    @Inject
-   ListBlobMetadataInContainer(BlobStore connection) {
-      this.connection = connection;
+   ListBlobMetadataInContainer(ListMetadataStrategy lister) {
+      this.lister = lister;
    }
 
-   public SortedSet<? extends BlobMetadata> execute(String container, ListContainerOptions options) {
-      try {
-         ListResponse<? extends StorageMetadata> resources = connection.list(container, options);
-         SortedSet<BlobMetadata> blobM = Sets.newTreeSet();
-         for (StorageMetadata from : resources) {
-            if (from.getType() == StorageType.BLOB)
-               blobM.add((BlobMetadata) from);
+   @Override
+   public Iterable<? extends BlobMetadata> execute(String container, ListContainerOptions options) {
+      return Iterables.transform(Iterables.filter(lister.execute(container, options),
+               new Predicate<StorageMetadata>() {
+                  @Override
+                  public boolean apply(StorageMetadata input) {
+                     return input.getType() == StorageType.BLOB;
+                  }
+
+               }), new Function<StorageMetadata, BlobMetadata>() {
+         @Override
+         public BlobMetadata apply(StorageMetadata from) {
+            return (BlobMetadata) from;
          }
-         return blobM;
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException("Error getting resource metadata in container: "
-                  + container, e);
-      }
+      });
    }
-
 }

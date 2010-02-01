@@ -32,12 +32,15 @@ import com.google.inject.Key;
  * 
  * @author crazybob@google.com (Bob Lee) - original code taken from
  *         {@link com.google.inject.name.Names}
+ * 
+ * @see com.google.inject.util.Jsr330#named
+ * @see com.google.inject.name.Names
  * @author Adrian Cole
  */
 public class Jsr330 {
 
    /**
-    * @see org.jclouds.util.Jsr330#named
+    * @see com.google.inject.util.Jsr330#named
     */
    public static Named named(String name) {
       return com.google.inject.util.Jsr330.named(name);

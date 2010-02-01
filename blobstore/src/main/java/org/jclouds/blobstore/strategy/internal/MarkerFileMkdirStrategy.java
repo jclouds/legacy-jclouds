@@ -18,17 +18,14 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
-import java.util.concurrent.ExecutionException;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
 
-import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 /**
@@ -44,25 +41,17 @@ public class MarkerFileMkdirStrategy implements MkdirStrategy {
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX)
    protected String directorySuffix = "";
-   private final AsyncBlobStore connection;
+   private final BlobStore connection;
 
    @Inject
-   MarkerFileMkdirStrategy(AsyncBlobStore connection) {
+   MarkerFileMkdirStrategy(BlobStore connection) {
       this.connection = connection;
    }
 
    public void execute(String containerName, String directory) {
-      try {
-         if (!connection.directoryExists(containerName, directory).get()) {
-            Blob blob = connection.newBlob(directory + directorySuffix);
-            blob.setPayload("");
-            blob.getMetadata().setContentType("application/directory");
-            connection.putBlob(containerName, blob).get();
-         }
-      } catch (InterruptedException e) {
-         Throwables.propagate(e);
-      } catch (ExecutionException e) {
-         Throwables.propagate(e.getCause());
-      }
+      Blob blob = connection.newBlob(directory + directorySuffix);
+      blob.setPayload("");
+      blob.getMetadata().setContentType("application/directory");
+      connection.putBlob(containerName, blob);
    }
 }

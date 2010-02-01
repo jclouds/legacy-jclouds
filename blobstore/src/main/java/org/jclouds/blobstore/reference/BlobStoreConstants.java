@@ -52,4 +52,7 @@ public interface BlobStoreConstants {
     * object and returned when you retrieve the object/
     */
    public static final String PROPERTY_USER_METADATA_PREFIX = "jclouds.blobstore.metaprefix";
+
+   public static final String BLOBSTORE_LOGGER = "jclouds.blobstore";
+
 }

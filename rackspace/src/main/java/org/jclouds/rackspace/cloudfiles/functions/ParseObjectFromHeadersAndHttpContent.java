@@ -22,13 +22,11 @@ import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 
 /**
@@ -60,34 +58,27 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
     */
    public CFObject apply(HttpResponse from) {
       CFObject object = objectProvider.create(infoParser.apply(from));
-      addAllHeadersTo(from, object);
-      if (from.getContent() != null)
-         object.setPayload(from.getContent());
-      attemptToParseSizeAndRangeFromHeaders(from, object);
-      return object;
-   }
-
-   @VisibleForTesting
-   void attemptToParseSizeAndRangeFromHeaders(HttpResponse from, CFObject object)
-            throws HttpException {
+      object.getAllHeaders().putAll(from.getHeaders());
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
       String contentRange = from.getFirstHeaderOrNull("Content-Range");
 
       if (contentLength != null) {
          object.setContentLength(Long.parseLong(contentLength));
       }
-
+      if (from.getContent() != null) {
+         object.setPayload(from.getContent());
+      } else if (object.getContentLength() != null && object.getContentLength() == 0) {
+         object.setPayload(new byte[0]);
+      } else {
+         assert false : "no content in " + from;
+      }
       if (contentRange == null && contentLength != null) {
          object.getInfo().setBytes(object.getContentLength());
       } else if (contentRange != null) {
          object.getInfo().setBytes(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
       }
-   }
-
-   @VisibleForTesting
-   void addAllHeadersTo(HttpResponse from, CFObject object) {
-      object.getAllHeaders().putAll(from.getHeaders());
+      return object;
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

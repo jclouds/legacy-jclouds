@@ -237,12 +237,7 @@ public class AzureBlobClientLiveTest {
                .getProperties().getContentMD5()));
 
       // Test HEAD of missing object
-      try {
-         connection.getBlobProperties(privateContainer, "non-existent-object");
-         assert false;
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
+      assert connection.getBlobProperties(privateContainer, "non-existent-object") == null;
 
       // Test HEAD of object
       BlobProperties metadata = connection.getBlobProperties(privateContainer, object
@@ -270,12 +265,8 @@ public class AzureBlobClientLiveTest {
       // userMetadata));
 
       // Test GET of missing object
-      try {
-         connection.getBlob(privateContainer, "non-existent-object");
-         assert false;
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
+      assert connection.getBlob(privateContainer, "non-existent-object") == null;
+
       // Test GET of object (including updated metadata)
       AzureBlob getBlob = connection.getBlob(privateContainer, object.getProperties().getName());
       assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);

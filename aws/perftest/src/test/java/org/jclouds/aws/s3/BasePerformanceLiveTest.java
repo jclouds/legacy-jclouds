@@ -23,7 +23,7 @@ import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -36,7 +36,7 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -146,11 +146,11 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
 
    private void doParallel(Provider<ListenableFuture<?>> provider, int loopCount,
             String containerName) throws InterruptedException, ExecutionException, TimeoutException {
-      Set<ListenableFuture<?>> responses = Sets.newHashSet();
+      Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
       for (int i = 0; i < loopCount; i++)
-         responses.add(provider.get());
-      awaitCompletion(responses, exec, null, logger, String.format(
-               "putting into containerName: %s", containerName));
+         responses.put(i, provider.get());
+      assert awaitCompletion(responses, exec, null, logger,
+               String.format("putting into containerName: %s", containerName)).size() == 0;
    }
 
    class PutBytesFuture implements Provider<ListenableFuture<?>> {

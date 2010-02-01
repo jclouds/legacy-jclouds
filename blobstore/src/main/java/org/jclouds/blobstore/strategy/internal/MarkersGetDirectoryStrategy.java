@@ -18,21 +18,15 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.ResourceMetadataToRelativePathResourceMetadata;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
 
-import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 /**
@@ -57,36 +51,26 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class MarkersGetDirectoryStrategy implements GetDirectoryStrategy {
-   /**
-    * maximum duration of an blob Request
-    */
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
+
    protected final ResourceMetadataToRelativePathResourceMetadata resource2Directory;
-   private final AsyncBlobStore connection;
+   private final BlobStore connection;
 
    @Inject
-   public MarkersGetDirectoryStrategy(AsyncBlobStore connection, 
+   public MarkersGetDirectoryStrategy(BlobStore connection,
             ResourceMetadataToRelativePathResourceMetadata resource2Directory) {
       this.connection = connection;
       this.resource2Directory = resource2Directory;
    }
 
    public StorageMetadata execute(String containerName, String directory) {
+      BlobMetadata md = connection.blobMetadata(containerName, directory);
+      if (md != null && md.getContentType().equals("application/directory"))
+         return resource2Directory.apply(md);
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
-         try {
-            return resource2Directory.apply(connection.blobMetadata(containerName,
-                     directory + suffix).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS));
-         } catch (KeyNotFoundException e) {
-         } catch (Exception e) {
-            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-            if (!(e instanceof KeyNotFoundException))
-               throw new BlobRuntimeException("Error determining if a directory exists at: "
-                        + containerName + "/" + directory, e);
-         }
+         md = connection.blobMetadata(containerName, directory + suffix);
+         if (md != null)
+            return resource2Directory.apply(md);
       }
-      throw new KeyNotFoundException(containerName, directory);
+      return null;
    }
-
 }

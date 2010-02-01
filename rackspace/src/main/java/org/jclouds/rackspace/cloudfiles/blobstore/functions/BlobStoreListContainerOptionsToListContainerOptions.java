@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -32,29 +34,28 @@ public class BlobStoreListContainerOptionsToListContainerOptions
          implements
          Function<ListContainerOptions, org.jclouds.rackspace.cloudfiles.options.ListContainerOptions> {
    public org.jclouds.rackspace.cloudfiles.options.ListContainerOptions apply(
-            ListContainerOptions optionsList) {
+            ListContainerOptions from) {
+      checkNotNull(from, "set options to instance NONE instead of passing null");
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions options = new org.jclouds.rackspace.cloudfiles.options.ListContainerOptions();
-      if (optionsList != null) {
-
-         if ((optionsList.getDir() == null) && (optionsList.isRecursive())) {
-            options.withPrefix("");
-         }
-         if ((optionsList.getDir() == null) && (!optionsList.isRecursive())) {
-            options.underPath("");
-         }
-         if ((optionsList.getDir() != null) && (optionsList.isRecursive())) {
-            options.withPrefix(optionsList.getDir());
-         }
-         if ((optionsList.getDir() != null) && (!optionsList.isRecursive())) {
-            options.underPath(optionsList.getDir());
-         }
-         if (optionsList.getMarker() != null) {
-            options.afterMarker(optionsList.getMarker());
-         }
-         if (optionsList.getMaxResults() != null) {
-            options.maxResults(optionsList.getMaxResults());
-         }
+      if ((from.getDir() == null) && (from.isRecursive())) {
+         options.withPrefix("");
       }
+      if ((from.getDir() == null) && (!from.isRecursive())) {
+         options.underPath("");
+      }
+      if ((from.getDir() != null) && (from.isRecursive())) {
+         options.withPrefix(from.getDir());
+      }
+      if ((from.getDir() != null) && (!from.isRecursive())) {
+         options.underPath(from.getDir());
+      }
+      if (from.getMarker() != null) {
+         options.afterMarker(from.getMarker());
+      }
+      if (from.getMaxResults() != null) {
+         options.maxResults(from.getMaxResults());
+      }
+
       return options;
    }
 

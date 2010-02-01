@@ -20,7 +20,6 @@ package org.jclouds.domain.internal;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.domain.MutableResourceMetadata;
@@ -44,9 +43,6 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
    private String name;
    private String location;
    private URI uri;
-   private String eTag;
-   private Long size;
-   private Date lastModified;
    private Map<String, String> userMetadata;
 
    public MutableResourceMetadataImpl() {
@@ -178,15 +174,11 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((size == null) ? 0 : size.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
    }
 
@@ -199,20 +191,10 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
       if (getClass() != obj.getClass())
          return false;
       MutableResourceMetadataImpl<?> other = (MutableResourceMetadataImpl<?>) obj;
-      if (eTag == null) {
-         if (other.eTag != null)
-            return false;
-      } else if (!eTag.equals(other.eTag))
-         return false;
       if (id == null) {
          if (other.id != null)
             return false;
       } else if (!id.equals(other.id))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
          return false;
       if (location == null) {
          if (other.location != null)
@@ -224,11 +206,6 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (size == null) {
-         if (other.size != null)
-            return false;
-      } else if (!size.equals(other.size))
-         return false;
       if (type == null) {
          if (other.type != null)
             return false;
@@ -238,11 +215,6 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
          if (other.uri != null)
             return false;
       } else if (!uri.equals(other.uri))
-         return false;
-      if (userMetadata == null) {
-         if (other.userMetadata != null)
-            return false;
-      } else if (!userMetadata.equals(other.userMetadata))
          return false;
       return true;
    }

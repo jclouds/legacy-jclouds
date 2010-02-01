@@ -101,6 +101,7 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    protected final Provider<Map<String, ? extends Size>> sizes;
    protected final Provider<Map<String, ? extends Location>> locations;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
+   protected final String nodeNamingConvention;
    protected final ComputeUtils utils;
    protected final Predicate<String> taskTester;
    protected final Predicate<VApp> notFoundTester;
@@ -129,40 +130,56 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       this.utils = utils;
       this.notFoundTester = notFoundTester;
       this.executor = executor;
+      this.nodeNamingConvention = "%s-%d";
    }
 
    @Override
-   public NodeSet runNodesWithTag(final String tag, int max, final Template template) {
+   public NodeSet runNodesWithTag(final String tag, int count, final Template template) {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
-      // TODO: find next id
       final Set<NodeMetadata> nodes = Sets.newHashSet();
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (int i = 0; i < max; i++) {
-         final String name = String.format("%s-%d", tag, i + 1);
-         responses.add(makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               runVAppAndAddToSet(name, tag, template, nodes);
-               return null;
-            }
-         }), executor));
+      int nodesToStart = count;
+      int i = 0;
+      while (nodesToStart > 0) {
+         int currentCount = i;
+         Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
+         for (; i < currentCount + nodesToStart; i++) {
+            final String name = String.format(nodeNamingConvention, tag, i + 1);
+            responses.put(name, makeListenable(executor.submit(new Callable<Void>() {
+               @Override
+               public Void call() throws Exception {
+                  NodeMetadata node = null;
+                  try {
+                     node = startServerAndConvertToNode(tag, name, template);
+                     logger.debug("<< running server(%s)", node.getId());
+                     utils.runOptionsOnNode(node, template.getOptions());
+                     logger.debug("<< options applied server(%s)", node.getId());
+                     nodes.add(node);
+                  } catch (Exception e) {
+                     if (node != null) {
+                        destroyNode(node);
+                        logger.error(e, "<< error applying server(%s) [%s] destroying ", name, e
+                                 .getMessage());
+                     }
+                  }
+                  return null;
+               }
+
+            }), executor));
+         }
+         nodesToStart = awaitCompletion(responses, executor, null, logger, "nodes").size();
       }
-      awaitCompletion(responses, executor, null, logger, "nodes");
       return new NodeSetImpl(nodes);
    }
 
-   private void runVAppAndAddToSet(String name, String tag, Template template,
-            Set<NodeMetadata> nodes) {
+   private NodeMetadata startServerAndConvertToNode(final String tag, final String name,
+            final Template template) {
       Map<String, String> metaMap = start(template.getLocation().getId(), name, template.getImage()
                .getId(), template.getSize().getCores(), template.getSize().getRam(), template
                .getSize().getDisk() * 1024 * 1024l, ImmutableMap.<String, String> of(), template
                .getOptions().getInboundPorts());
       VApp vApp = client.getVApp(metaMap.get("id"));
-      NodeMetadata node = newCreateNodeResponse(tag, template, metaMap, vApp);
-      nodes.add(node);
-      utils.runOptionsOnNode(node, template.getOptions());
-      logger.debug("<< options applied vApp(%s)", node.getId());
+      return newCreateNodeResponse(tag, template, metaMap, vApp);
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template,
@@ -355,9 +372,17 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    @Override
    public void destroyNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> terminating servers by tag(%s)", tag);
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
-      for (final NodeMetadata node : doGetNodes(tag)) {
-         responses.add(makeListenable(executor.submit(new Callable<Void>() {
+      Iterable<NodeMetadata> nodesToDestroy = Iterables.filter(doGetNodes(tag),
+               new Predicate<NodeMetadata>() {
+                  @Override
+                  public boolean apply(NodeMetadata input) {
+                     return input.getState() != NodeState.TERMINATED;
+
+                  }
+               });
+      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+      for (final NodeMetadata node : nodesToDestroy) {
+         responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                destroyNode(node);

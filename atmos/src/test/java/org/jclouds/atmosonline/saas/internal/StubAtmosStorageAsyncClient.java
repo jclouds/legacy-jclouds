@@ -89,14 +89,24 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
 
    public ListenableFuture<URI> createDirectory(String directoryName) {
       final String container;
-      if (directoryName.indexOf('/') != -1)
+      final String path;
+      if (directoryName.indexOf('/') != -1) {
          container = directoryName.substring(0, directoryName.indexOf('/'));
-      else
+         path = directoryName.substring(directoryName.indexOf('/') + 1);
+      } else {
          container = directoryName;
+         path = null;
+      }
       return Futures.compose(blobStore.createContainerInLocation("default", container),
                new Function<Boolean, URI>() {
 
                   public URI apply(Boolean from) {
+                     if (path != null) {
+                        Blob blob = blobStore.newBlob(path + "/");
+                        blob.getMetadata().setContentType("application/directory");
+                        blob.setPayload("");
+                        blobStore.putBlob(container, blob);
+                     }
                      return URI.create("http://stub/containers/" + container);
                   }
 
@@ -195,7 +205,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    }
 
    public ListenableFuture<Boolean> pathExists(final String path) {
-      if (path.indexOf('/') == -1 || (path.endsWith("/")))
+      if (path.indexOf('/') == -1 )
          return blobStore.containerExists(path);
       else {
          String container = path.substring(0, path.indexOf('/'));

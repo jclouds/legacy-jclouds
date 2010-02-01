@@ -19,16 +19,15 @@
 package org.jclouds.azure.storage.blob.functions;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 
 /**
@@ -37,6 +36,7 @@ import com.google.common.base.Function;
  * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
+@Singleton
 public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse, AzureBlob>,
          InvocationContext {
 
@@ -60,21 +60,21 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
     */
    public AzureBlob apply(HttpResponse from) {
       AzureBlob object = objectProvider.create(metadataParser.apply(from));
-      addAllHeadersTo(from, object);
-      if (from.getContent() != null)
-         object.setPayload(from.getContent());
-      attemptToParseSizeAndRangeFromHeaders(from, object);
-      return object;
-   }
+      object.getAllHeaders().putAll(from.getHeaders());
 
-   @VisibleForTesting
-   void attemptToParseSizeAndRangeFromHeaders(HttpResponse from, AzureBlob object)
-            throws HttpException {
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
       String contentRange = from.getFirstHeaderOrNull("Content-Range");
 
       if (contentLength != null) {
          object.setContentLength(Long.parseLong(contentLength));
+      }
+
+      if (from.getContent() != null) {
+         object.setPayload(from.getContent());
+      } else if (object.getContentLength() != null && object.getContentLength() == 0) {
+         object.setPayload(new byte[0]);
+      } else {
+         assert false : "no content in " + from;
       }
 
       if (contentRange == null && contentLength != null) {
@@ -83,11 +83,7 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
          object.getProperties().setContentLength(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
       }
-   }
-
-   @VisibleForTesting
-   void addAllHeadersTo(HttpResponse from, AzureBlob object) {
-      object.getAllHeaders().putAll(from.getHeaders());
+      return object;
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

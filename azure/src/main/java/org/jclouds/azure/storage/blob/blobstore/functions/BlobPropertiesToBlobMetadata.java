@@ -25,7 +25,7 @@ import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 
 import com.google.common.base.Function;
 
@@ -34,11 +34,11 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, MutableBlobMetadata> {
-   private final IsDirectoryStrategy isDirectoryStrategy;
+   private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
 
    @Inject
-   public BlobPropertiesToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
-      this.isDirectoryStrategy = isDirectoryStrategy;
+   public BlobPropertiesToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName) {
+      this.ifDirectoryReturnName = ifDirectoryReturnName;
    }
 
    public MutableBlobMetadata apply(BlobProperties from) {
@@ -54,9 +54,12 @@ public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, Mu
       to.setLastModified(from.getLastModified());
       to.setName(from.getName());
       to.setSize(from.getContentLength());
-      to.setType(StorageType.BLOB);
-      if (isDirectoryStrategy.execute(to)) {
+      String directoryName = ifDirectoryReturnName.execute(to);
+      if (directoryName != null) {
+         to.setName(directoryName);
          to.setType(StorageType.RELATIVE_PATH);
+      } else {
+         to.setType(StorageType.BLOB);
       }
       return to;
    }

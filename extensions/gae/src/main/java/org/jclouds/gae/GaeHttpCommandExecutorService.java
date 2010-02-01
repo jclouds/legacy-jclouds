@@ -73,9 +73,8 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
-      super(ioExecutor, userExecutor, retryHandler, errorHandler, wire);
+      super(ioExecutor, retryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
    }
 

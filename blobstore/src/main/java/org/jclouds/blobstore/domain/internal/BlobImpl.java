@@ -49,76 +49,67 @@ public class BlobImpl extends BasePayloadEnclosingImpl implements Blob, Comparab
       this.metadata = metadata;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    protected void setContentMD5(byte[] md5) {
       getMetadata().setContentMD5(checkNotNull(md5, "md5"));
    }
 
    /**
-    * @return System and User metadata relevant to this object.
+    * {@inheritDoc}
     */
+   @Override
    public MutableBlobMetadata getMetadata() {
       return metadata;
    }
 
    /**
-    * @return all http response headers associated with this Value
+    * {@inheritDoc}
     */
+   @Override
    public Multimap<String, String> getAllHeaders() {
       return allHeaders;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setAllHeaders(Multimap<String, String> allHeaders) {
       this.allHeaders = checkNotNull(allHeaders, "allHeaders");
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int compareTo(Blob o) {
       if (getMetadata().getName() == null)
          return -1;
       return (this == o) ? 0 : getMetadata().getName().compareTo(o.getMetadata().getName());
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((allHeaders == null) ? 0 : allHeaders.hashCode());
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      return result;
+      return metadata.hashCode();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      return metadata.equals(obj);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      BlobImpl other = (BlobImpl) obj;
-      if (allHeaders == null) {
-         if (other.allHeaders != null)
-            return false;
-      } else if (!allHeaders.equals(other.allHeaders))
-         return false;
-      if (contentLength == null) {
-         if (other.contentLength != null)
-            return false;
-      } else if (!contentLength.equals(other.contentLength))
-         return false;
-      if (payload == null) {
-         if (other.payload != null)
-            return false;
-      } else if (!payload.equals(other.payload))
-         return false;
-      if (metadata == null) {
-         if (other.metadata != null)
-            return false;
-      } else if (!metadata.equals(other.metadata))
-         return false;
-      return true;
+   public String toString() {
+      return "[metadata=" + metadata + "]";
    }
 
 }

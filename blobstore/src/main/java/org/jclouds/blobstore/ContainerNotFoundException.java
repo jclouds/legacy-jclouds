@@ -31,8 +31,8 @@ public class ContainerNotFoundException extends RuntimeException {
       super();
    }
 
-   public ContainerNotFoundException(String container) {
-      super(String.format("%s not found", container));
+   public ContainerNotFoundException(String container, String message) {
+      super(String.format("%s not found: %s", container, message));
       this.container = container;
    }
 

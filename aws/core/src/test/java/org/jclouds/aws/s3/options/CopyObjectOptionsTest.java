@@ -70,7 +70,6 @@ public class CopyObjectOptionsTest {
    void testGoodMetaStatic() {
       CopyObjectOptions options = overrideMetadataWith(goodMeta);
       options.setMetadataPrefix("x-amz-meta-");
-
       assertGoodMeta(options);
    }
 

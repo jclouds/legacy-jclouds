@@ -27,7 +27,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
-import org.jclouds.logging.config.ConsoleLoggingModule;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -43,7 +43,7 @@ public class S3TestInitializer extends BaseTestInitializer {
             String account, String key) throws IOException {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
       return new BlobStoreContextFactory().createContext("s3", account, key, ImmutableSet.of(
-               configurationModule, new ConsoleLoggingModule()), new Properties());
+               configurationModule, new Log4JLoggingModule()), new Properties());
    }
 
    @Override

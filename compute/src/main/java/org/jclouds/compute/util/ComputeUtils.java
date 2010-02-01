@@ -20,6 +20,7 @@ package org.jclouds.compute.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.io.ByteArrayInputStream;
 import java.net.ConnectException;
@@ -27,7 +28,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -54,7 +55,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -148,12 +149,19 @@ public class ComputeUtils {
       for (int i = 0; i < 3; i++) {
          try {
             ssh.connect();
-            Set<ListenableFuture<?>> responses = Sets.newHashSet();
+            Map<SshCallable<?>, ListenableFuture<?>> responses = Maps.newHashMap();
+
             for (SshCallable<?> callable : parallel) {
                callable.setConnection(ssh, logger);
-               responses.add(ConcurrentUtils.makeListenable(executor.submit(callable), executor));
+               responses.put(callable, ConcurrentUtils.makeListenable(executor.submit(callable),
+                        executor));
             }
-            ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "ssh");
+
+            Map<SshCallable<?>, Exception> exceptions = awaitCompletion(responses, executor, null,
+                     logger, "ssh");
+            if (exceptions.size() > 0)
+               throw new RuntimeException(String.format("error invoking callables on host %s: %s",
+                        socket, exceptions));
             if (last != null) {
                last.setConnection(ssh, logger);
                try {

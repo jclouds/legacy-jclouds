@@ -16,24 +16,27 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.domain.internal;
+package org.jclouds.blobstore.functions;
 
-import org.jclouds.blobstore.domain.ListContainerResponse;
+import static org.jclouds.util.Utils.propagateOrNull;
 
-public class ListContainerResponseImpl<T> extends ListResponseImpl<T> implements ListContainerResponse<T> {
+import javax.inject.Singleton;
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7133632087734650835L;
-   protected final String path;
+import org.jclouds.blobstore.ContainerNotFoundException;
 
-   public ListContainerResponseImpl(Iterable<T> contents, String path, String marker,
-            Integer maxResults, boolean isTruncated) {
-      super(contents, marker, maxResults, isTruncated);
-      this.path = path;
+import com.google.common.base.Function;
+
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
+public class ReturnNullOnContainerNotFound implements Function<Exception, Object> {
+
+   public Object apply(Exception from) {
+      if (from instanceof ContainerNotFoundException) {
+         return null;
+      }
+      return propagateOrNull(from);
    }
-
-   public String getPath() {
-      return path;
-   }
-
 }

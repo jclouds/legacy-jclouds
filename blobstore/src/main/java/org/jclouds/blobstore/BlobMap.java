@@ -18,9 +18,10 @@
  */
 package org.jclouds.blobstore;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
-import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.inject.ImplementedBy;
 
@@ -33,11 +34,11 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BlobMapImpl.class)
 public interface BlobMap extends ListableMap<String, Blob> {
-   
+
    Blob newBlob(String name);
-   
+
    public static interface Factory {
-      BlobMap create(String containerName, ListContainerOptions listOptions);
+      BlobMap create(String containerName, @Nullable String dir);
    }
-   
+
 }

@@ -20,9 +20,6 @@ package org.jclouds.concurrent.config;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -70,8 +67,7 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    public static ExecutorService newNamedThreadPool(String name, int maxCount) {
-      return new ThreadPoolExecutor(0, maxCount, 60L, TimeUnit.SECONDS,
-               new LinkedBlockingQueue<Runnable>(), new NamingThreadFactory(name));
+      return Executors.newFixedThreadPool(maxCount, new NamingThreadFactory(name));
    }
 
    @Provides
@@ -79,7 +75,7 @@ public class ExecutorServiceModule extends AbstractModule {
    @Named(Constants.PROPERTY_IO_WORKER_THREADS)
    ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int ioThreads) {
       return this.ioThreads != null ? this.ioThreads : ioThreads == 0 ? Executors
-               .newCachedThreadPool(new NamingThreadFactory("i/o thread %d"))
-               : newNamedThreadPool("i/o thread %d", ioThreads);
+               .newCachedThreadPool(new NamingThreadFactory("i/o thread %d")) : newNamedThreadPool(
+               "i/o thread %d", ioThreads);
    }
 }

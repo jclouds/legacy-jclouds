@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Map.Entry;
 
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.http.HttpUtils;
 
 import com.google.common.io.ByteStreams;
@@ -66,8 +66,8 @@ public class GetPath {
       String path = uri.getPath();
       if (path.startsWith("/"))
          path = path.substring(1);
-      String container = BlobStoreUtils.parseContainerFromPath(path);
-      String directory = BlobStoreUtils.parsePrefixFromPath(path);
+      String container = BlobStoreUtilsImpl.parseContainerFromPath(path);
+      String directory = BlobStoreUtilsImpl.parsePrefixFromPath(path);
       copyDirectoryToDestination(context, container, directory, destinationDir);
    }
 

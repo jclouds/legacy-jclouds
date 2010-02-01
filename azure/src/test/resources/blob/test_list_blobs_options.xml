@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EnumerationResults
+    ContainerName="https://jclouds.blob.core.windows.net/adriancole-blobstore3">
+    <MaxResults>1</MaxResults>
+    <Delimiter>/</Delimiter>
+    <Blobs>
+        <Blob>
+            <Name>a</Name>
+            <Url>https://jclouds.blob.core.windows.net/adriancole-blobstore3/a</Url>
+            <Properties>
+                <Last-Modified>Sat, 30 Jan 2010 17:46:15 GMT</Last-Modified>
+                <Etag>0x8CC6FEB41736428</Etag>
+                <Content-Length>8</Content-Length>
+                <Content-Type>application/octet-stream</Content-Type>
+                <Content-Encoding />
+                <Content-Language />
+                <Content-MD5 />
+                <Cache-Control />
+                <BlobType>BlockBlob</BlobType>
+                <LeaseStatus>unlocked</LeaseStatus>
+            </Properties>
+            <Metadata />
+        </Blob>
+    </Blobs>
+    <NextMarker>2!68!MDAwMDA2IWFwcGxlcyEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-</NextMarker>
+</EnumerationResults>
