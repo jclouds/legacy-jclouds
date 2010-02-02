@@ -58,8 +58,8 @@
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.1-SNAPSHOT"/>
     <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.1-SNAPSHOT"/>
-    <dependency groupId="org.jclouds" artifactId="jclouds-${driver}" version="1.0-SNAPSHOT"/>
-    <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-SNAPSHOT"/>
+    <dependency groupId="org.jclouds" artifactId="jclouds-${driver}" version="1.0-beta-3"/>
+    <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="1.0-beta-3"/>
     <remoteRepository refid="jclouds-snapshot.repository"/>
     <remoteRepository refid="cargo-snapshot.repository"/>
     <localRepository refid="local.repository"/>
