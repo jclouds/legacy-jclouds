@@ -536,41 +536,6 @@ pageTracker._trackPageview();
                             </dependency>
                         </dependencies>                        
                     </plugin>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>repackage-jar-with-dependencies</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"/>
-                                        <jarjar destfile="${build.directory}/${build.finalName}-jar-with-dependencies.jar" update="true">
-                                            <!-- Replace "x.y.." with "org.jclouds.repackaged.x.y..". Note: can't deal with package-info.class files.
-                                              See http://code.google.com/p/jarjar/wiki/CommandLineDocs for more information on jarjar rules. -->
-                                            <rule pattern="javax.annotation.**" result="${project.groupId}.repackaged.@0"/>
-                                            <rule pattern="javax.inject.**" result="${project.groupId}.repackaged.@0"/>
-                                            <rule pattern="javax.ws.**" result="${project.groupId}.repackaged.@0"/>
-                                            <!-- google-guava and google-collections -->
-                                            <rule pattern="com.google.common.**" result="${project.groupId}.repackaged.@0"/>
-                                            <!-- guice -->
-                                            <rule pattern="com.google.inject.**" result="${project.groupId}.repackaged.@0"/>
-                                        </jarjar>
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.tonicsystems.jarjar</groupId>
-                                <artifactId>jarjar</artifactId>
-                                <version>1.0-rc8</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
                 </plugins>
             </build>
         </profile>        

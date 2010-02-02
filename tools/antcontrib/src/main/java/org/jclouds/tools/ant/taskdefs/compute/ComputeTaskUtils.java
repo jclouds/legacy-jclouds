@@ -46,6 +46,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
@@ -131,6 +132,8 @@ public class ComputeTaskUtils {
       TemplateOptions options = new TemplateOptions()
                .inboundPorts(getPortsToOpenFromElement(nodeElement));
       addRunScriptToOptionsIfPresentInNodeElement(nodeElement, options);
+      addPrivateKeyToOptionsIfPresentInNodeElement(nodeElement, options);
+      addPublicKeyToOptionsIfPresentInNodeElement(nodeElement, options);
       return options;
    }
 
@@ -139,6 +142,28 @@ public class ComputeTaskUtils {
       if (nodeElement.getRunscript() != null)
          try {
             options.runScript(Files.toByteArray(nodeElement.getRunscript()));
+         } catch (IOException e) {
+            throw new BuildException(e);
+         }
+   }
+
+   static void addPrivateKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement,
+            TemplateOptions options) {
+      if (nodeElement.getPrivatekeyfile() != null)
+         try {
+            options.installPrivateKey(Files.toString(nodeElement.getPrivatekeyfile(),
+                     Charsets.UTF_8));
+         } catch (IOException e) {
+            throw new BuildException(e);
+         }
+   }
+
+   static void addPublicKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement,
+            TemplateOptions options) {
+      if (nodeElement.getPrivatekeyfile() != null)
+         try {
+            options.authorizePublicKey(Files.toString(nodeElement.getPublickeyfile(),
+                     Charsets.UTF_8));
          } catch (IOException e) {
             throw new BuildException(e);
          }

@@ -26,10 +26,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.logging.internal.Wire;
 
 /**
- * Logs data to the wire LOG.
- * 
  * @author Adrian Cole
- * @see org.apache.HttpWire.impl.conn.Wire
  */
 public class SignatureWire extends Wire {
 

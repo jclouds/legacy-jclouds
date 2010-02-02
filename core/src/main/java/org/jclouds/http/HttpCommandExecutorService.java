@@ -31,8 +31,6 @@ public interface HttpCommandExecutorService {
     * Asks the command to build a request relevant for an endpoint that produces responses of
     * generic type {@code HttpResponse}. and invokes it on the endpoint, returning a future
     * 
-    * @param <T>
-    *           type of result the command extracts from the return value
     * @param command
     *           that generates requests
     * @return {@link ListenableFuture} containing the response from the {@code endpoint}

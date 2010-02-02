@@ -45,7 +45,6 @@ import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
@@ -123,7 +122,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
 
    /**
     * This is an asynchronous operation that puts the <code>command</code> onto a queue. Later, it
-    * will be processed via the {@link #invoke(TransformingHttpCommandExecutorService) invoke}
+    * will be processed via the {@link #invoke(HttpCommandRendezvous) invoke}
     * method.
     */
    public <T> ListenableFuture<T> submit(HttpCommand command,

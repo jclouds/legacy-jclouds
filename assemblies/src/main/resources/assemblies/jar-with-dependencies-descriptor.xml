@@ -31,6 +31,8 @@
             <scope>runtime</scope>
             <excludes>
                 <exclude>org.jclouds:jclouds-core</exclude>
+                <exclude>org.jclouds:jclouds-blobstore</exclude>
+                <exclude>org.jclouds:jclouds-compute</exclude>
             </excludes>
             <!-- exclude all transitive dependencies of core too -->
             <useTransitiveFiltering>true</useTransitiveFiltering>

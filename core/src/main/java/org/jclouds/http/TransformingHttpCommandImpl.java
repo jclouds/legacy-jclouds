@@ -37,7 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Executor which will invoke and transform the response of an {@code EndpointCommand} into generic
  * type <T>.
  * 
- * @see TransformingEndpointCommand
+ * @see TransformingHttpCommand
  * 
  * @author Adrian Cole
  */
@@ -83,6 +83,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * <p />
     * This also removes the Host header in order to avoid ssl problems.
     */
+   @Override
    public void changeHostAndPortTo(String host, int port) {
       UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
       builder.host(host);
@@ -92,9 +93,9 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    }
 
    /**
-    * mutable for redirects
+    * in some scenarios, HEAD commands cannot be redirected. This method changes the request to GET
+    * in such a case.
     * 
-    * @param method
     */
    public void changeToGETRequest() {
       request.setMethod(HttpMethod.GET);
@@ -120,11 +121,6 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
       return (request.getPayload() == null) ? true : request.getPayload().isRepeatable();
    }
 
-   /**
-    * public void checkCode() { int code = getResponse().getStatusCode(); if (code >= 300) {
-    * Closeables.closeQuietly(getResponse().getContent()); throw new
-    * IllegalStateException("incorrect code for this operation: " + getResponse()); } }
-    **/
    public HttpRequest getRequest() {
       return request;
    }
@@ -136,7 +132,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    @Override
    public String toString() {
-      return "TransformingHttpCommandImpl [request=" + request.getRequestLine() + "]";
+      return "[request=" + request.getRequestLine() + "]";
    }
 
 }

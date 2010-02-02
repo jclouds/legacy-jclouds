@@ -42,7 +42,7 @@ import com.google.common.annotations.VisibleForTesting;
 public abstract class PropertiesBuilder {
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_RELAX_HOSTNAME
+    * @see org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME
     */
    public PropertiesBuilder relaxSSLHostname(boolean relax) {
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, relax + "");
@@ -50,7 +50,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_PROXY_SYSTEM
+    * @see org.jclouds.Constants.PROPERTY_PROXY_SYSTEM
     */
    public PropertiesBuilder useSystemProxies(boolean useSystemProxies) {
       properties.setProperty(PROPERTY_PROXY_SYSTEM, useSystemProxies + "");
@@ -58,7 +58,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_MAX_RETRIES
+    * @see org.jclouds.Constants.PROPERTY_MAX_RETRIES
     */
    public PropertiesBuilder withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_MAX_RETRIES, Integer.toString(httpMaxRetries));
@@ -66,7 +66,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_MAX_REDIRECTS
+    * @see org.jclouds.Constants.PROPERTY_MAX_REDIRECTS
     */
    public PropertiesBuilder withHttpMaxRedirects(int httpMaxRedirects) {
       properties.setProperty(PROPERTY_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
@@ -74,7 +74,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_MAX_CONNECTION_REUSE
+    * @see org.jclouds.Constants.PROPERTY_MAX_CONNECTION_REUSE
     */
    public PropertiesBuilder withMaxClientReuse(int poolMaxClientReuse) {
       properties.setProperty(PROPERTY_MAX_CONNECTION_REUSE, Integer.toString(poolMaxClientReuse));
@@ -82,7 +82,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_MAX_SESSION_FAILURES
+    * @see org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES
     */
    public PropertiesBuilder withMaxSessionFailures(int poolMaxSessionFailures) {
       properties.setProperty(PROPERTY_MAX_SESSION_FAILURES, Integer
@@ -92,7 +92,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_IO_WORKER_THREADS
+    * @see org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS
     */
    public PropertiesBuilder limitIoWorkerThreadsTo(int poolIoWorkerThreads) {
       properties.setProperty(PROPERTY_IO_WORKER_THREADS, Integer.toString(poolIoWorkerThreads));
@@ -100,7 +100,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_IO_WORKER_THREADS
+    * @see org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS
     */
    public PropertiesBuilder limitUserThreadsTo(int poolIoWorkerThreads) {
       properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(poolIoWorkerThreads));
@@ -108,7 +108,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT
+    * @see org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT
     */
    public PropertiesBuilder limitConnectionsTo(int connectionLimit) {
       properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, Integer
@@ -117,7 +117,7 @@ public abstract class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.http.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST
+    * @see org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST
     */
    public PropertiesBuilder limitConnectionsPerHostTo(int connectionLimit) {
       properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, Integer.toString(connectionLimit));

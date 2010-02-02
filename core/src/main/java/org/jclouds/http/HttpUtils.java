@@ -131,7 +131,6 @@ public class HttpUtils {
     * breaks, if there are special characters like '/' present. Otherwise, we wouldn't need this
     * class, and we could simply use URI.create("uri").getUserData();
     * 
-    * @author Adrian Cole
     */
    public static URI createUri(String uriPath) {
       if (uriPath.indexOf('@') != 1) {

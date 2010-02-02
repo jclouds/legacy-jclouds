@@ -71,7 +71,7 @@ public interface AsyncBlobStore {
    ListenableFuture<Void> clearContainer(String container);
 
    /**
-    * @see BlobStore#clearDirectory(String, ListContainerOptions)
+    * @see BlobStore#clearContainer(String, ListContainerOptions)
     */
    ListenableFuture<Void> clearContainer(String container, ListContainerOptions options);
 
@@ -111,7 +111,7 @@ public interface AsyncBlobStore {
    ListenableFuture<BlobMetadata> blobMetadata(String container, String key);
 
    /**
-    * @see BlobStore#newBlob(String, String)
+    * @see BlobStore#getBlob(String, String)
     */
    ListenableFuture<? extends Blob> getBlob(String container, String key);
 

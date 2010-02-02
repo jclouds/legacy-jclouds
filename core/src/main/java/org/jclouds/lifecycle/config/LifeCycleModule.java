@@ -46,7 +46,7 @@ import com.google.inject.spi.TypeListener;
 
 /**
  * This associates java lifecycle annotations with guice hooks. For example, we invoke
- * {@link PostConstruct} after injection, and Associate {@link PostDestroy} with a global
+ * {@link PostConstruct} after injection, and Associate {@link PreDestroy} with a global
  * {@link Closer} object.
  * 
  * @author Adrian Cole

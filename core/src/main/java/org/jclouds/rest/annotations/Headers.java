@@ -42,7 +42,7 @@ public @interface Headers {
    /**
     * @see HttpHeaders
     */
-   String [] keys();
+   String[] keys();
 
 /**
     * can be defined literally, or with enclosed variables (ex. <code>{variable}</code>)
@@ -50,9 +50,8 @@ public @interface Headers {
     * The inputs to these variables are taken from method parameters annotated with {@code
     * @PathParam}.
     * 
-    * @see PathParam
+    * @see javax.ws.rs.PathParam
     * 
-    * @return
     */
-   String [] values();
+   String[] values();
 }

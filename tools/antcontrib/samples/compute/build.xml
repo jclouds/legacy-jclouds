@@ -114,20 +114,18 @@
 
   <property name="location" value="" />
   <target name="create" description="create the node ${nodetag}">
+    <property name="privatekeyfile" value="${user.home}/.ssh/id_rsa" />
+    <property name="publickeyfile" value="${user.home}/.ssh/id_rsa.pub" />
     <property name="os" value="UBUNTU" />
+    <property name="count" value="1" />
 
     <input
       message="What do you want to tag your nodes with?"
       addproperty="nodetag"
     />
 
-    <input
-      message="How many nodes would you like to create?"
-      addproperty="count"
-    />
-
     <compute actions="create" provider="${jclouds.compute.url}">
-      <nodes tag="${nodetag}" count="${count}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" tag="${nodetag}" count="${count}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

@@ -28,6 +28,13 @@ import org.jclouds.rest.RestContextFactory;
 /**
  * Helper class to instantiate {@code BlobStoreContext} instances.
  * 
+ * <h3>Example usage</h3>
+ * 
+ * <pre>
+ * BlobStoreContext context = new BlobStoreContextFactory()
+ *          .createContext(&quot;s3&quot;, accesskeyid, secretkey);
+ * </pre>
+ * 
  * @author Adrian Cole
  */
 public class BlobStoreContextFactory extends
@@ -54,6 +61,9 @@ public class BlobStoreContextFactory extends
       super(properties);
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    protected BlobStoreContext build(BlobStoreContextBuilder<?, ?> contextBuilder) {
       return contextBuilder.buildBlobStoreContext();

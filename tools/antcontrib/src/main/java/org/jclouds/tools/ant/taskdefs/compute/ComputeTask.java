@@ -23,10 +23,8 @@ import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.buildCompu
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.createTemplateFromElement;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.ipOrEmptyString;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -46,7 +44,6 @@ import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
-import com.google.common.io.Files;
 import com.google.inject.Provider;
 
 /**
@@ -193,16 +190,9 @@ public class ComputeTask extends Task {
 
       for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(),
                template)) {
-         logNodeDetails(createdNode);
+         logDetails(computeService, createdNode);
          addNodeDetailsAsProjectProperties(createdNode);
       }
-   }
-
-   private void logNodeDetails(NodeMetadata createdNode) {
-      log(String.format("   id=%s, tag=%s, location=%s, tag=%s, connection=%s:%s@%s", createdNode
-               .getId(), createdNode.getTag(), createdNode.getLocationId(), createdNode.getName(),
-               createdNode.getCredentials().account, createdNode.getCredentials().key,
-               ipOrEmptyString(createdNode.getPublicAddresses())));
    }
 
    private void addNodeDetailsAsProjectProperties(NodeMetadata createdNode) {
@@ -211,13 +201,6 @@ public class ComputeTask extends Task {
       if (nodeElement.getHostproperty() != null)
          getProject().setProperty(nodeElement.getHostproperty(),
                   ipOrEmptyString(createdNode.getPublicAddresses()));
-      if (nodeElement.getKeyfile() != null && isKeyAuth(createdNode))
-         try {
-            Files.write(createdNode.getCredentials().key, new File(nodeElement.getKeyfile()),
-                     Charset.defaultCharset());
-         } catch (IOException e) {
-            throw new BuildException(e);
-         }
       if (nodeElement.getPasswordproperty() != null && !isKeyAuth(createdNode))
          getProject().setProperty(nodeElement.getPasswordproperty(),
                   createdNode.getCredentials().key);

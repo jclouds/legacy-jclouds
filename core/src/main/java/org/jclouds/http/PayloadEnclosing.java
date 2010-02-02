@@ -48,7 +48,7 @@ public interface PayloadEnclosing {
    Payload getPayload();
 
    /**
-    * @return InputStream, if downloading, or whatever was set during {@link #setPayload(Object)}
+    * @return InputStream, if downloading, or whatever was set during {@link #setPayload(Payload)}
     */
    InputStream getContent();
 
@@ -61,8 +61,8 @@ public interface PayloadEnclosing {
     * range, or startAt.
     * 
     * @return the length in bytes that can be be obtained from {@link #getContent()}
-    * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
-    * @see GetObjectOptions
+    * @see javax.ws.rs.core.HttpHeaders#CONTENT_LENGTH
+    * @see org.jclouds.http.options.GetOptions
     */
    Long getContentLength();
 

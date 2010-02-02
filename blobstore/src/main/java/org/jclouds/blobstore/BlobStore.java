@@ -26,12 +26,18 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 
 /**
- * Provides hooks needed to run a blob store
+ * Synchronous access to a BlobStore such as Amazon S3
  * 
+ * @author Adrian Cole
  * @see AsyncBlobStore
+ * 
+ * @see BlobStoreContextFactory
  */
 public interface BlobStore {
 
+   /**
+    * creates a new blob with the specified name.
+    */
    Blob newBlob(String name);
 
    /**
@@ -39,42 +45,117 @@ public interface BlobStore {
     */
    PageSet<? extends StorageMetadata> list();
 
+   /**
+    * determines if a service-level container exists
+    */
    boolean containerExists(String container);
 
+   /**
+    * Creates a namespace for your blobs
+    * <p/>
+    * 
+    * A container is a namespace for your objects. Depending on the service, the scope can be
+    * global, account, or sub-account scoped. For example, in Amazon S3, containers are called
+    * buckets, and they must be uniquely named such that no-one else in the world conflicts. In
+    * other blobstores, the naming convention of the container is less strict. All blobstores allow
+    * you to list your containers and also the contents within them. These contents can either be
+    * blobs, folders, or virtual paths.
+    * 
+    * @param location
+    *           some blobstores allow you to specify a location, such as US-EAST, for where this
+    *           container will exist.
+    * @param container
+    *           namespace. Typically constrained to lowercase alpha-numeric and hyphens.
+    * @return true if the container was created, false if it already existed.
+    */
    boolean createContainerInLocation(String location, String container);
 
    /**
-    * Lists all resources available at the specified path. Note that path may be a container, or a
-    * path within it delimited by {@code /} characters.
+    * Lists all resources in a container non-recursive.
     * 
-    * @param parent
-    *           - base path to list; non-recursive
+    * @param container
+    *           what to list
+    * @return a list that may be incomplete, depending on whether PageSet#getNextMarker is set
     */
    PageSet<? extends StorageMetadata> list(String container);
 
+   /**
+    * Like {@link #list(String)} except you can control the size, recursion, and context of the list
+    * using {@link ListContainerOptions options}
+    * 
+    * @param container
+    *           what to list
+    * @param options
+    *           size, recursion, and context of the list
+    * @return a list that may be incomplete, depending on whether PageSet#getNextMarker is set
+    */
    PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options);
 
    /**
-    * This will delete the contents of a container without removing it
+    * This will delete the contents of a container at its root path without deleting the container
     * 
     * @param container
+    *           what to clear
     */
    void clearContainer(String container);
+
+   /**
+    * Like {@link #clearContainer(String)} except you can use options to do things like recursive
+    * deletes, or clear at a different path than root.
+    * 
+    * @param container
+    *           what to clear
+    * @param options
+    *           recursion and path to clear
+    */
    void clearContainer(String container, ListContainerOptions options);
 
    /**
-    * This will delete a container recursively.
+    * This will delete everything inside a container recursively.
     * 
     * @param container
+    *           what to delete
     */
    void deleteContainer(String container);
 
+   /**
+    * Determines if a directory exists
+    * 
+    * @param container
+    *           container where the directory resides
+    * @param directory
+    *           full path to the directory
+    */
    boolean directoryExists(String container, String directory);
 
+   /**
+    * Creates a folder or a directory marker depending on the service
+    * 
+    * @param container
+    *           container to create the directory in
+    * @param directory
+    *           full path to the directory
+    */
    void createDirectory(String container, String directory);
 
+   /**
+    * Deletes a folder or a directory marker depending on the service
+    * 
+    * @param container
+    *           container to delete the directory from
+    * @param directory
+    *           full path to the directory to delete
+    */
    void deleteDirectory(String containerName, String name);
 
+   /**
+    * Determines if a blob exists
+    * 
+    * @param container
+    *           container where the blob resides
+    * @param directory
+    *           full path to the blob
+    */
    boolean blobExists(String container, String name);
 
    /**
@@ -112,14 +193,25 @@ public interface BlobStore {
     *           container where this exists.
     * @param name
     *           fully qualified name relative to the container.
-    * @param options
-    *           byte range or condition options
     * @return the blob you intended to receive or null, if it doesn't exist.
     * @throws ContainerNotFoundException
     *            if the container doesn't exist
     */
    Blob getBlob(String container, String name);
 
+   /**
+    * Retrieves a {@code Blob} representing the data at location {@code container/name}
+    * 
+    * @param container
+    *           container where this exists.
+    * @param name
+    *           fully qualified name relative to the container.
+    * @param options
+    *           byte range or condition options
+    * @return the blob you intended to receive or null, if it doesn't exist.
+    * @throws ContainerNotFoundException
+    *            if the container doesn't exist
+    */
    Blob getBlob(String container, String name, GetOptions options);
 
    /**
@@ -134,8 +226,15 @@ public interface BlobStore {
     */
    void removeBlob(String container, String name);
 
+   /**
+    * @return a count of all blobs in the container, excluding directory markers
+    */
    long countBlobs(String container);
 
+   /**
+    * @return a count of all blobs that are in a listing constrained by the options specified,
+    *         excluding directory markers
+    */
    long countBlobs(String container, ListContainerOptions options);
 
 }

@@ -32,7 +32,8 @@ public class NodeElement {
    private int count = 1;
    private String openports = "22";
    private String passwordproperty;
-   private String keyfile;
+   private File privatekeyfile;
+   private File publickeyfile;
    private String hostproperty;
    private String idproperty;
    private String usernameproperty;
@@ -95,16 +96,6 @@ public class NodeElement {
       return idproperty;
    }
 
-   /**
-    * The name of a file under which to store the DSA key of the user (if supported)
-    */
-   public void setKeyfile(String keyfile) {
-      this.keyfile = keyfile;
-   }
-
-   String getKeyfile() {
-      return keyfile;
-   }
 
    public void setSize(String size) {
       this.size = size;
@@ -160,6 +151,22 @@ public class NodeElement {
 
    public String getTag() {
       return tag;
+   }
+
+   public void setPrivatekeyfile(File privatekeyfile) {
+      this.privatekeyfile = privatekeyfile;
+   }
+
+   public File getPrivatekeyfile() {
+      return privatekeyfile;
+   }
+
+   public void setPublickeyfile(File publickeyfile) {
+      this.publickeyfile = publickeyfile;
+   }
+
+   public File getPublickeyfile() {
+      return publickeyfile;
    }
 
 }

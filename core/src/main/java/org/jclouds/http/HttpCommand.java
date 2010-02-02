@@ -29,14 +29,14 @@ public interface HttpCommand {
    /**
     * increments the current number of redirect attempts for this command.
     * 
-    * @see getRedirectCount
+    * @see #getRedirectCount
     */
    int incrementRedirectCount();
 
    /**
     * This displays the current number of redirect attempts for this command.
     * 
-    * @see org.jclouds.http.Constants.PROPERTY_HTTP_MAX_REDIRECTS
+    * @see org.jclouds.Constants.PROPERTY_MAX_REDIRECTS
     */
    int getRedirectCount();
 
@@ -64,14 +64,14 @@ public interface HttpCommand {
    /**
     * increment the current failure count.
     * 
-    * @see getFailureCount
+    * @see #getFailureCount
     */
    int incrementFailureCount();
 
    /**
     * This displays the current number of error retries for this command.
     * 
-    * @see org.jclouds.http.Constants.PROPERTY_HTTP_MAX_RETRIES
+    * @see org.jclouds.Constants.PROPERTY_MAX_RETRIES
     */
    int getFailureCount();
 
@@ -86,7 +86,7 @@ public interface HttpCommand {
    void setException(Exception exception);
 
    /**
-    * @see setException
+    * @see #setException
     */
    Exception getException();
 

@@ -180,5 +180,9 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
       }
    }
 
+   /**
+    * Hook so that you can specify how to create an object using the contextBuilder produced with
+    * this factory.
+    */
    protected abstract T build(B contextBuilder);
 }

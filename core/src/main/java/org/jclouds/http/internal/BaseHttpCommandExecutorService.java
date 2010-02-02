@@ -42,6 +42,10 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
 
    private final DelegatingRetryHandler retryHandler;
@@ -123,16 +127,6 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    protected abstract Q convert(HttpRequest request) throws IOException, InterruptedException;
 
-   /**
-    * 
-    * FIXME Comment this
-    * 
-    * @param nativeRequest
-    * @return
-    * @throws IOException
-    * @throws InterruptedException
-    *            if interrupted waiting for a connection.
-    */
    protected abstract HttpResponse invoke(Q nativeRequest) throws IOException, InterruptedException;
 
    protected abstract void cleanup(Q nativeResponse);

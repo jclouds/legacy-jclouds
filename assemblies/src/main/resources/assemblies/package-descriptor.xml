@@ -28,9 +28,15 @@
       LICENSE.txt
       README.txt
       core
-         + docs <- javadoc for core
-         + lib <- core jar and dependencies for core
-         + src <- expanded or source jar for core
+         + docs <- javadoc for core, blobstore, and compute
+         + lib <- core, blobstore, and compute jars and dependencies for core
+         + src <- expanded or source jar for core, blobstore, and compute
+      profiles
+         + enterprise
+            + README.txt <- how to use the profile
+            + lib <- not core
+            + docs <- not core
+            + src <- not core
       extensions
          + log4j
             + README.txt <- how to use the extension
@@ -40,6 +46,12 @@
       providers
          + rackspace
             + README.txt <- status of this provider (what is implemented/not implemented) 
+            + lib <- not core
+            + docs <- not core
+            + src <- not core
+      tools <- integrations with other tools
+         + antcontrib
+            + README.txt <- how to use the tool
             + lib <- not core
             + docs <- not core
             + src <- not core
@@ -76,6 +88,20 @@
             <outputDirectory>core/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>blobstore/target</directory>
+            <includes>
+                <include>jclouds-blobstore-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>core/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>compute/target</directory>
+            <includes>
+                <include>jclouds-compute-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>core/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>core/target</directory>
             <includes>
                 <include>jclouds-core-${project.version}-sources.jar</include>
@@ -83,7 +109,29 @@
             <outputDirectory>core/src</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>blobstore/target</directory>
+            <includes>
+                <include>jclouds-blobstore-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>core/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>compute/target</directory>
+            <includes>
+                <include>jclouds-compute-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>core/src</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>core/target/apidocs</directory>
+            <outputDirectory>core/docs</outputDirectory>            
+        </fileSet>    
+        <fileSet>
+            <directory>blobstore/target/apidocs</directory>
+            <outputDirectory>core/docs</outputDirectory>            
+        </fileSet>    
+        <fileSet>
+            <directory>compute/target/apidocs</directory>
             <outputDirectory>core/docs</outputDirectory>            
         </fileSet>    
         
@@ -91,7 +139,7 @@
         <fileSet>
             <directory>atmos/target</directory>
             <includes>
-                <include>jclouds-atmos-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-atmos-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/atmos/lib</outputDirectory>
         </fileSet>
@@ -118,7 +166,7 @@
         <fileSet>
             <directory>aws/core/target</directory>
             <includes>
-                <include>jclouds-aws-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-aws-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/aws/lib</outputDirectory>
         </fileSet>
@@ -172,7 +220,7 @@
         <fileSet>
             <directory>azure/target</directory>
             <includes>
-                <include>jclouds-azure-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-azure-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/azure/lib</outputDirectory>
         </fileSet>
@@ -199,7 +247,7 @@
         <fileSet>
             <directory>vcloud/hostingdotcom/target</directory>
             <includes>
-                <include>jclouds-hostingdotcom-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-hostingdotcom-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/hostingdotcom/lib</outputDirectory>
         </fileSet>
@@ -226,7 +274,7 @@
         <fileSet>
             <directory>mezeo/pcs2/target</directory>
             <includes>
-                <include>jclouds-pcs2-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-pcs2-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/mezeo/lib</outputDirectory>
         </fileSet>
@@ -253,7 +301,7 @@
         <fileSet>
             <directory>nirvanix/sdn/target</directory>
             <includes>
-                <include>jclouds-sdn-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-sdn-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/nirvanix/lib</outputDirectory>
         </fileSet>
@@ -280,7 +328,7 @@
         <fileSet>
             <directory>rackspace/target</directory>
             <includes>
-                <include>jclouds-rackspace-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-rackspace-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/rackspace/lib</outputDirectory>
         </fileSet>
@@ -334,7 +382,7 @@
         <fileSet>
             <directory>vcloud/terremark/target</directory>
             <includes>
-                <include>jclouds-terremark-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-terremark-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/terremark/lib</outputDirectory>
         </fileSet>
@@ -411,6 +459,33 @@
             <outputDirectory>extensions/bouncycastle</outputDirectory>            
         </fileSet>
                 
+        <!-- profiles: enterprise -->
+        <fileSet>
+            <directory>extensions/enterprise/target</directory>
+            <includes>
+                <include>jclouds-enterprise-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>profiles/enterprise/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/enterprise/target</directory>
+            <includes>
+                <include>jclouds-enterprise-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>profiles/enterprise/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/enterprise/target/apidocs</directory>
+            <outputDirectory>profiles/enterprise/docs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/enterprise</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>profiles/enterprise</outputDirectory>
+        </fileSet>
+
         <!-- extensions: gae -->
         <fileSet>
             <directory>extensions/gae/target</directory>
@@ -469,7 +544,7 @@
         <fileSet>
             <directory>extensions/httpnio/target</directory>
             <includes>
-                <include>jclouds-httpnio-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-httpnio-${project.version}.jar</include>
             </includes>
             <outputDirectory>extensions/httpnio/lib</outputDirectory>
         </fileSet>
@@ -496,7 +571,7 @@
         <fileSet>
             <directory>extensions/jsch/target</directory>
             <includes>
-                <include>jclouds-jsch-${project.version}-jar-with-dependencies.jar</include>
+                <include>jclouds-jsch-${project.version}.jar</include>
             </includes>
             <outputDirectory>extensions/ssh/jsch/lib</outputDirectory>
         </fileSet>
@@ -545,7 +620,61 @@
             </includes>
             <outputDirectory>extensions/log4j</outputDirectory>            
         </fileSet>
+
+        <!-- tools: antcontrib -->
+        <fileSet>
+            <directory>tools/antcontrib/target</directory>
+            <includes>
+                <include>jclouds-antcontrib-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>tools/antcontrib/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>tools/antcontrib/target</directory>
+            <includes>
+                <include>jclouds-antcontrib-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>tools/antcontrib/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>tools/antcontrib/target/apidocs</directory>
+            <outputDirectory>tools/antcontrib/docs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>tools/antcontrib</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>tools/antcontrib</outputDirectory>
+        </fileSet>
         
+        <!-- tools: vfs -->
+        <fileSet>
+            <directory>tools/vfs/target</directory>
+            <includes>
+                <include>jclouds-vfs-${project.version}-jar-with-dependencies.jar</include>
+            </includes>
+            <outputDirectory>tools/vfs/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>tools/vfs/target</directory>
+            <includes>
+                <include>jclouds-vfs-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>tools/vfs/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>tools/vfs/target/apidocs</directory>
+            <outputDirectory>tools/vfs/docs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>tools/vfs</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>tools/vfs</outputDirectory>
+        </fileSet>
+
         <!-- samples -->
         <fileSet>
             <directory>demos/gae-tweetstore/target/jclouds-demo-gae-tweetstore</directory>

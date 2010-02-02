@@ -44,8 +44,8 @@ import com.google.common.collect.Multimap;
  * import static org.jclouds.http.options.GetOptions.Builder.*
  * 
  * 
- * // this will get the first megabyte of an object, provided it wasn't modified since yesterday
- * ListenableFuture<S3Object> object = client.get("objectName",range(0,1024).ifUnmodifiedSince(new Date().minusDays(1)));
+ * // this will get the first megabyte of an object.
+ * blob = client.get("objectName",range(0,1024));
  * <code>
  * 
  * @author Adrian Cole
@@ -106,7 +106,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    /**
     * Only return the object if it has changed since this time.
     * <p />
-    * Not compatible with {@link #ifETagMatches(byte[])} or {@link #ifUnmodifiedSince(Date)}
+    * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     */
    public GetOptions ifModifiedSince(Date ifModifiedSince) {
       checkArgument(getIfMatch() == null,
@@ -124,7 +124,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Return the object only if it has been modified since the specified time, otherwise return a
     * 304 (not modified).
     * 
-    * @see GetOptions#ifModifiedSince(Date)
+    * @see #ifModifiedSince(Date)
     */
    public String getIfModifiedSince() {
       return this.getFirstHeaderOrNull(HttpHeaders.IF_MODIFIED_SINCE);
@@ -133,7 +133,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    /**
     * Only return the object if it hasn't changed since this time.
     * <p />
-    * Not compatible with {@link #ifETagDoesntMatch(byte[])} or {@link #ifModifiedSince(Date)}
+    * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(Date)}
     */
    public GetOptions ifUnmodifiedSince(Date ifUnmodifiedSince) {
       checkArgument(getIfNoneMatch() == null,
@@ -151,7 +151,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Return the object only if it has not been modified since the specified time, otherwise return
     * a 412 (precondition failed).
     * 
-    * @see GetOptions#ifUnmodifiedSince(Date)
+    * @see #ifUnmodifiedSince(Date)
     */
    public String getIfUnmodifiedSince() {
       return this.getFirstHeaderOrNull(HttpHeaders.IF_UNMODIFIED_SINCE);
@@ -183,7 +183,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Return the object only if its payload tag (ETag) is the same as the eTag specified, otherwise
     * return a 412 (precondition failed).
     * 
-    * @see GetOptions#ifETagMatches(byte[])
+    * @see #ifETagMatches(String)
     */
    public String getIfMatch() {
       return this.getFirstHeaderOrNull(HttpHeaders.IF_MATCH);
@@ -215,7 +215,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Return the object only if its payload tag (ETag) is different from the one specified, otherwise
     * return a 304 (not modified).
     * 
-    * @see GetOptions#ifETagDoesntMatch(byte[])
+    * @see #ifETagDoesntMatch(String)
     */
    public String getIfNoneMatch() {
       return this.getFirstHeaderOrNull(HttpHeaders.IF_NONE_MATCH);

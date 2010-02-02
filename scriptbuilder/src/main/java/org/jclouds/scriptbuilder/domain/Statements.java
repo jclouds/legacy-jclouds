@@ -61,7 +61,7 @@ public class Statements {
 
    /**
     * 
-    * Runs the script in a way that it can be matched later with {@link findPid}
+    * Runs the script in a way that it can be matched later with {@link #findPid}
     * 
     * @param instanceName
     *           - what to match the process on

@@ -24,15 +24,21 @@ import com.google.common.collect.Multimap;
 import com.google.inject.internal.Nullable;
 
 /**
- * Value type for an HTTP Blob service. Blobs are stored in containers and consist
- * of a {@link org.jclouds.blobstore.domain.Value#getContent() value}, a {@link Blob#getKey key and
- * 
- * @link Blob.Metadata#getUserMetadata() metadata}
+ * Value type for an HTTP Blob service. Blobs are stored in containers and consist of a
+ * {@link MutableBlobMetadata#getName name}, {@link Payload payload}, and
+ * {@link MutableBlobMetadata metadata}.
  * 
  * @author Adrian Cole
  */
 public interface Blob extends PayloadEnclosing, Comparable<Blob> {
+   /**
+    * Allows you to construct blobs without knowing the implementation type
+    */
    public interface Factory {
+      /**
+       * Creates a blob, optionally setting its metadata to a known value. This is useful in making
+       * copies of blobs.
+       */
       Blob create(@Nullable MutableBlobMetadata metadata);
    }
 
@@ -41,8 +47,15 @@ public interface Blob extends PayloadEnclosing, Comparable<Blob> {
     */
    MutableBlobMetadata getMetadata();
 
+   /**
+    * @return headers returned from the services
+    */
    Multimap<String, String> getAllHeaders();
 
+   /**
+    * 
+    * @see #getAllHeaders
+    */
    void setAllHeaders(Multimap<String, String> allHeaders);
 
 }

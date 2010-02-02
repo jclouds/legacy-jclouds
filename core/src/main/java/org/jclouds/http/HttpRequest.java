@@ -93,7 +93,7 @@ public class HttpRequest extends HttpMessage {
     * We cannot return an enum, as per specification custom methods are allowed. Enums are not
     * extensible.
     * 
-    * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1
+    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1" >rfc2616</a>
     */
    public String getMethod() {
       return method;

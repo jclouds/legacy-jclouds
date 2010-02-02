@@ -39,7 +39,7 @@ public class ComputeServiceContextFactory extends
     * 
     * @throws IOException
     *            if the default properties file cannot be loaded
-    * @see RestContextFactory#getProperties
+    * @see RestContextFactory#getPropertiesFromResource
     */
    public ComputeServiceContextFactory() throws IOException {
       super("compute.properties");

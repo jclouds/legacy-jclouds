@@ -47,7 +47,7 @@ public interface ComputeService {
     * it is a good indicator of relative speed within a cloud. memory is measured in megabytes and
     * disks in gigabytes.
     * 
-    * @retun a map of sizes by ID, conceding that in some clouds the "id" is not used.
+    * @return a map of sizes by ID, conceding that in some clouds the "id" is not used.
     */
    Map<String, ? extends Size> getSizes();
 
