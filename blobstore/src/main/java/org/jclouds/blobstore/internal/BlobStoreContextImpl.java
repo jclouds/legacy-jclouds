@@ -29,7 +29,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.rest.RestContext;
 
 /**
@@ -67,18 +67,20 @@ public class BlobStoreContextImpl<X, Y> implements BlobStoreContext {
       this.blobStore = checkNotNull(blobStore, "blobStore");
    }
 
-   public BlobMap createBlobMap(String path) {
-      checkNotNull(path, "path");
-      String container = BlobStoreUtilsImpl.parseContainerFromPath(path);
-      String dir = BlobStoreUtilsImpl.parsePrefixFromPath(path);
-      return blobMapFactory.create(container, dir);
+   public BlobMap createBlobMap(String container, ListContainerOptions options) {
+      return blobMapFactory.create(container, options);
    }
 
-   public InputStreamMap createInputStreamMap(String path) {
-      checkNotNull(path, "path");
-      String container = BlobStoreUtilsImpl.parseContainerFromPath(path);
-      String dir = BlobStoreUtilsImpl.parsePrefixFromPath(path);
-      return inputStreamMapFactory.create(container, dir);
+   public BlobMap createBlobMap(String container) {
+      return blobMapFactory.create(container, ListContainerOptions.NONE);
+   }
+
+   public InputStreamMap createInputStreamMap(String container, ListContainerOptions options) {
+      return inputStreamMapFactory.create(container, options);
+   }
+
+   public InputStreamMap createInputStreamMap(String container) {
+      return inputStreamMapFactory.create(container, ListContainerOptions.NONE);
    }
 
    public BlobStore getBlobStore() {

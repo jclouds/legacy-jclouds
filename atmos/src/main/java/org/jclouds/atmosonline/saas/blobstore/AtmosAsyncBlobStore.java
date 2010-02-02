@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
 import java.net.URI;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -46,13 +47,11 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -140,8 +139,8 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     * {@link AtmosStorageAsyncClient#pathExists} until it is true.
     */
    protected boolean deleteAndVerifyContainerGone(final String container) {
-      sync.deletePath(container);
-      return !sync.pathExists(container);
+      sync.deletePath(container + "/");
+      return !sync.pathExists(container + "/");
    }
 
    /**
@@ -149,7 +148,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> containerExists(String container) {
-      return async.pathExists(container);
+      return async.pathExists(container + "/");
    }
 
    /**
@@ -158,6 +157,14 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<Boolean> directoryExists(String container, String directory) {
       return async.pathExists(container + "/" + directory + "/");
+   }
+
+   /**
+    * This implementation invokes {@link #removeBlob}
+    */
+   @Override
+   public ListenableFuture<Void> deleteDirectory(String containerName, String directory) {
+      return removeBlob(containerName, directory + "/");
    }
 
    /**
@@ -210,31 +217,15 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<String> putBlob(final String container, final Blob blob) {
-      final String path = container + "/" + blob.getMetadata().getName();
-      return compose(async.deletePath(path), new Function<Void, String>() {
+      return ConcurrentUtils.makeListenable(service.submit(new Callable<String>() {
 
-         public String apply(Void from) {
-            try {
-               if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
-                  public Boolean get() {
-                     return !sync.pathExists(path);
-                  }
-               }, 300)) {
-                  throw new IllegalStateException(path + " still exists after deleting!");
-               }
-               if (blob.getMetadata().getContentMD5() != null)
-                  blob.getMetadata().getUserMetadata().put("content-md5",
-                           encryptionService.toHexString(blob.getMetadata().getContentMD5()));
-               sync.createFile(container, blob2Object.apply(blob));
-               return path;
-            } catch (InterruptedException e) {
-               Throwables.propagate(e);
-            }
-            assert false : " should have propagated error";
-            return null;
+         @Override
+         public String call() throws Exception {
+            return AtmosStorageUtils.putBlob(sync, encryptionService, blob2Object, container, blob);
+
          }
 
-      }, service);
+      }), service);
 
    }
 

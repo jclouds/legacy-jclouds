@@ -32,6 +32,7 @@ import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -238,8 +239,12 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
       try {
          if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
-               blobUtils.clearContainer(container, recursive());
-               return deleteAndVerifyContainerGone(container);
+               try {
+                  clearContainer(container, recursive());
+                  return deleteAndVerifyContainerGone(container);
+               } catch (ContainerNotFoundException e) {
+                  return true;
+               }
             }
 
          }, 30000)) {

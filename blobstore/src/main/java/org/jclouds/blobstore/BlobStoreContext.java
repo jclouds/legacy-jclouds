@@ -20,6 +20,7 @@ package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.rest.RestContext;
 
 import com.google.inject.ImplementedBy;
@@ -39,6 +40,8 @@ public interface BlobStoreContext {
     * 
     * @param container
     */
+   InputStreamMap createInputStreamMap(String container, ListContainerOptions options);
+
    InputStreamMap createInputStreamMap(String container);
 
    /**
@@ -46,6 +49,8 @@ public interface BlobStoreContext {
     * 
     * @param container
     */
+   BlobMap createBlobMap(String container, ListContainerOptions options);
+
    BlobMap createBlobMap(String container);
 
    AsyncBlobStore getAsyncBlobStore();

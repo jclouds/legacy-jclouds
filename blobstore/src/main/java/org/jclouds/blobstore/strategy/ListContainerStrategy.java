@@ -16,15 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.atmosonline.saas.blobstore.integration;
+package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
-import org.testng.annotations.Test;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists;
+
+import com.google.inject.ImplementedBy;
 
 /**
+ * Lists the blobstore.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageMapIntegrationTest")
-public class AtmosStorageMapIntegrationTest extends BaseBlobMapIntegrationTest {
+@ImplementedBy(ConcatenateContainerLists.class)
+public interface ListContainerStrategy {
+
+   Iterable<? extends StorageMetadata> execute(String containerName, ListContainerOptions options);
 
 }

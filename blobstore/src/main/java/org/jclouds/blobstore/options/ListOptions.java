@@ -68,6 +68,11 @@ public class ListOptions implements Cloneable {
       public ListOptions clone() {
          return delegate.clone();
       }
+
+      @Override
+      public String toString() {
+         return delegate.toString();
+      }
    }
 
    public static final ImmutableListOptions NONE = new ImmutableListOptions(new ListOptions());

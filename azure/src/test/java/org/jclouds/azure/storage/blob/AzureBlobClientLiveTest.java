@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob;
 
+import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withMetadata;
+import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -33,7 +35,6 @@ import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
@@ -59,7 +60,7 @@ import com.google.inject.internal.Iterables;
 @Test(groups = "live", sequential = true, testName = "azureblob.AzureBlobClientLiveTest")
 public class AzureBlobClientLiveTest {
 
-   protected AzureBlobClient connection;
+   protected AzureBlobClient client;
 
    private String containerPrefix = System.getProperty("user.name") + "-azureblob";
    private EncryptionService encryptionService = new JCEEncryptionService();
@@ -68,13 +69,13 @@ public class AzureBlobClientLiveTest {
    public void setupClient() {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      connection = (AzureBlobClient) AzureBlobContextFactory.createContext(account, key,
+      client = (AzureBlobClient) AzureBlobContextFactory.createContext(account, key,
                new Log4JLoggingModule()).getProviderSpecificContext().getApi();
    }
 
    @Test
    public void testListContainers() throws Exception {
-      Set<ContainerProperties> response = connection.listContainers();
+      Set<ContainerProperties> response = client.listContainers();
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -91,8 +92,8 @@ public class AzureBlobClientLiveTest {
       while (!created) {
          privateContainer = containerPrefix + new SecureRandom().nextInt();
          try {
-            created = connection.createContainer(privateContainer, CreateContainerOptions.Builder
-                     .withMetadata(ImmutableMultimap.of("foo", "bar")));
+            created = client.createContainer(privateContainer, withMetadata(ImmutableMultimap
+                     .of("foo", "bar")));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 409)
@@ -100,11 +101,11 @@ public class AzureBlobClientLiveTest {
             throw e;
          }
       }
-      Set<ContainerProperties> response = connection.listContainers(includeMetadata());
+      Set<ContainerProperties> response = client.listContainers(includeMetadata());
       assert null != response;
       long containerCount = response.size();
       assertTrue(containerCount >= 1);
-      ListBlobsResponse list = connection.listBlobs(privateContainer);
+      ListBlobsResponse list = client.listBlobs(privateContainer);
       assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/%s",
                account, privateContainer)));
       // TODO ... check to see the container actually exists
@@ -116,8 +117,7 @@ public class AzureBlobClientLiveTest {
       while (!created) {
          publicContainer = containerPrefix + new SecureRandom().nextInt();
          try {
-            created = connection.createContainer(publicContainer, CreateContainerOptions.Builder
-                     .withPublicAcl());
+            created = client.createContainer(publicContainer, withPublicAcl());
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 409)
@@ -134,7 +134,7 @@ public class AzureBlobClientLiveTest {
    @Test(timeOut = 5 * 60 * 1000)
    public void testCreatePublicRootContainer() throws Exception {
       try {
-         connection.deleteRootContainer();
+         client.deleteRootContainer();
       } catch (ContainerNotFoundException e) {
          Thread.sleep(5000);
       } catch (AzureStorageResponseException htpe) {
@@ -148,7 +148,7 @@ public class AzureBlobClientLiveTest {
       boolean created = false;
       while (!created) {
          try {
-            created = connection.createRootContainer();
+            created = client.createRootContainer();
          } catch (AzureStorageResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 409) {// TODO look for specific message
                Thread.sleep(5000);
@@ -158,7 +158,7 @@ public class AzureBlobClientLiveTest {
             }
          }
       }
-      ListBlobsResponse list = connection.listBlobs();
+      ListBlobsResponse list = client.listBlobs();
       assertEquals(list.getUrl(), URI.create(String.format(
                "https://%s.blob.core.windows.net/%%24root", account)));
    }
@@ -166,7 +166,7 @@ public class AzureBlobClientLiveTest {
    @Test
    public void testListContainersWithOptions() throws Exception {
 
-      BoundedSet<ContainerProperties> response = connection.listContainers(ListOptions.Builder
+      BoundedSet<ContainerProperties> response = client.listContainers(ListOptions.Builder
                .prefix(privateContainer).maxResults(1).includeMetadata());
       assert null != response;
       long initialContainerCount = response.size();
@@ -177,7 +177,7 @@ public class AzureBlobClientLiveTest {
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreatePublicRootContainer" })
    public void testDeleteRootContainer() throws Exception {
-      connection.deleteRootContainer();
+      client.deleteRootContainer();
       // TODO loop for up to 30 seconds checking if they are really gone
    }
 
@@ -186,19 +186,19 @@ public class AzureBlobClientLiveTest {
    public void testListOwnedContainers() throws Exception {
 
       // Test default listing
-      Set<ContainerProperties> response = connection.listContainers();
+      Set<ContainerProperties> response = client.listContainers();
       // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
       // exist, this will fail
 
       // Test listing with options
-      response = connection.listContainers(ListOptions.Builder.prefix(
+      response = client.listContainers(ListOptions.Builder.prefix(
                privateContainer.substring(0, privateContainer.length() - 1)).maxResults(1)
                .includeMetadata());
       assertEquals(response.size(), 1);
       assertEquals(Iterables.getOnlyElement(response).getName(), privateContainer);
       assertEquals(Iterables.getOnlyElement(response).getMetadata(), ImmutableMap.of("foo", "bar"));
 
-      response = connection.listContainers(ListOptions.Builder.prefix(publicContainer)
+      response = client.listContainers(ListOptions.Builder.prefix(publicContainer)
                .maxResults(1));
       assertEquals(response.size(), 1);
       assertEquals(Iterables.getOnlyElement(response).getName(), publicContainer);
@@ -207,14 +207,14 @@ public class AzureBlobClientLiveTest {
 
    @Test
    public void testDeleteOneContainer() throws Exception {
-      connection.deleteContainer("does-not-exist");
+      client.deleteContainer("does-not-exist");
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testListOwnedContainers",
             "testObjectOperations" })
    public void testDeleteContainer() throws Exception {
-      connection.deleteContainer(privateContainer);
-      connection.deleteContainer(publicContainer);
+      client.deleteContainer(privateContainer);
+      client.deleteContainer(publicContainer);
       // TODO loop for up to 30 seconds checking if they are really gone
    }
 
@@ -224,7 +224,7 @@ public class AzureBlobClientLiveTest {
       String data = "Here is my data";
 
       // Test PUT with string data, ETag hash, and a piece of metadata
-      AzureBlob object = connection.newBlob();
+      AzureBlob object = client.newBlob();
       object.getProperties().setName("object");
       object.setPayload(data);
       object.setContentLength(data.length());
@@ -232,15 +232,15 @@ public class AzureBlobClientLiveTest {
       object.getProperties().setContentType("text/plain");
       object.getProperties().getMetadata().put("mykey", "metadata-value");
       byte[] md5 = object.getProperties().getContentMD5();
-      String newEtag = connection.putBlob(privateContainer, object);
+      String newEtag = client.putBlob(privateContainer, object);
       assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(object
                .getProperties().getContentMD5()));
 
       // Test HEAD of missing object
-      assert connection.getBlobProperties(privateContainer, "non-existent-object") == null;
+      assert client.getBlobProperties(privateContainer, "non-existent-object") == null;
 
       // Test HEAD of object
-      BlobProperties metadata = connection.getBlobProperties(privateContainer, object
+      BlobProperties metadata = client.getBlobProperties(privateContainer, object
                .getProperties().getName());
       // TODO assertEquals(metadata.getName(), object.getProperties().getName());
       // we can't check this while hacking around lack of content-md5, as GET of the first byte will
@@ -261,14 +261,14 @@ public class AzureBlobClientLiveTest {
       // Multimap<String, String> userMetadata = LinkedHashMultimap.create();
       // userMetadata.put("New-Metadata-1", "value-1");
       // userMetadata.put("New-Metadata-2", "value-2");
-      // assertTrue(connection.setBlobProperties(privateContainer, object.getProperties().getName(),
+      // assertTrue(client.setBlobProperties(privateContainer, object.getProperties().getName(),
       // userMetadata));
 
       // Test GET of missing object
-      assert connection.getBlob(privateContainer, "non-existent-object") == null;
+      assert client.getBlob(privateContainer, "non-existent-object") == null;
 
       // Test GET of object (including updated metadata)
-      AzureBlob getBlob = connection.getBlob(privateContainer, object.getProperties().getName());
+      AzureBlob getBlob = client.getBlob(privateContainer, object.getProperties().getName());
       assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getContentLength(), new Long(data.length()));
@@ -288,7 +288,7 @@ public class AzureBlobClientLiveTest {
       assertEquals(metadata.getMetadata().get("mykey"), "metadata-value");
 
       // test listing
-      ListBlobsResponse response = connection.listBlobs(privateContainer, ListBlobsOptions.Builder
+      ListBlobsResponse response = client.listBlobs(privateContainer, ListBlobsOptions.Builder
                .prefix(
                         object.getProperties().getName().substring(0,
                                  object.getProperties().getName().length() - 1)).maxResults(1)
@@ -303,25 +303,25 @@ public class AzureBlobClientLiveTest {
       String incorrectEtag = "0" + correctEtag.substring(1);
       object.getProperties().setETag(incorrectEtag);
       try {
-         connection.putBlob(privateContainer, object);
+         client.putBlob(privateContainer, object);
       } catch (Throwable e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 422);
       }
 
       ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
-      object = connection.newBlob();
+      object = client.newBlob();
       object.getProperties().setName("chunked-object");
       object.setPayload(bais);
       object.setContentLength(new Long(data.getBytes().length));
-      newEtag = connection.putBlob(privateContainer, object);
+      newEtag = client.putBlob(privateContainer, object);
       assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob
                .getProperties().getContentMD5()));
 
       // Test GET with options
       // Non-matching ETag
       try {
-         connection.getBlob(privateContainer, object.getProperties().getName(), GetOptions.Builder
+         client.getBlob(privateContainer, object.getProperties().getName(), GetOptions.Builder
                   .ifETagDoesntMatch(newEtag));
       } catch (Exception e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
@@ -330,7 +330,7 @@ public class AzureBlobClientLiveTest {
 
       // Matching ETag TODO this shouldn't fail!!!
       try {
-         getBlob = connection.getBlob(privateContainer, object.getProperties().getName(),
+         getBlob = client.getBlob(privateContainer, object.getProperties().getName(),
                   GetOptions.Builder.ifETagMatches(newEtag));
          assertEquals(getBlob.getProperties().getETag(), newEtag);
       } catch (HttpResponseException e) {
@@ -340,13 +340,13 @@ public class AzureBlobClientLiveTest {
       // Range
       // doesn't work per
       // http://social.msdn.microsoft.com/Forums/en-US/windowsazure/thread/479fa63f-51df-4b66-96b5-33ae362747b6
-      // getBlob = connection
+      // getBlob = client
       // .getBlob(privateContainer, object.getProperties().getName(),
       // GetOptions.Builder.startAt(8)).get(120,
       // TimeUnit.SECONDS);
       // assertEquals(Utils.toStringAndClose((InputStream) getBlob.getData()), data.substring(8));
 
-      connection.deleteBlob(privateContainer, "object");
-      connection.deleteBlob(privateContainer, "chunked-object");
+      client.deleteBlob(privateContainer, "object");
+      client.deleteBlob(privateContainer, "chunked-object");
    }
 }

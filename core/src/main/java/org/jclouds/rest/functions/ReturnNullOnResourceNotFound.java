@@ -16,15 +16,27 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.atmosonline.saas.blobstore.integration;
+package org.jclouds.rest.functions;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
-import org.testng.annotations.Test;
+import static org.jclouds.util.Utils.propagateOrNull;
+
+import javax.inject.Singleton;
+
+import org.jclouds.rest.ResourceNotFoundException;
+
+import com.google.common.base.Function;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageMapIntegrationTest")
-public class AtmosStorageMapIntegrationTest extends BaseBlobMapIntegrationTest {
+@Singleton
+public class ReturnNullOnResourceNotFound implements Function<Exception, Object> {
 
+   public Object apply(Exception from) {
+      if (from instanceof ResourceNotFoundException) {
+         return null;
+      }
+      return propagateOrNull(from);
+   }
 }

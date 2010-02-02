@@ -45,8 +45,6 @@ import org.jclouds.atmosonline.saas.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
-import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
-import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -59,6 +57,8 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnFalseOnResourceNotFound;
+import org.jclouds.rest.functions.ReturnNullOnResourceNotFound;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -75,7 +75,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding( { '/' })
 @ConsistencyModel(ConsistencyModels.EVENTUAL)
 public interface AtmosStorageAsyncClient {
-
+   /**
+    * Creates a default implementation of AtmosObject
+    */
    AtmosObject newObject();
 
    /**
@@ -134,7 +136,7 @@ public interface AtmosStorageAsyncClient {
     */
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @ExceptionParser(ReturnNullOnResourceNotFound.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<AtmosObject> readFile(@PathParam("path") String path, GetOptions... options);
@@ -144,7 +146,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @ExceptionParser(ReturnNullOnResourceNotFound.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<AtmosObject> headFile(@PathParam("path") String path);
@@ -154,7 +156,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
-   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @ExceptionParser(ReturnNullOnResourceNotFound.class)
    // currently throws 403 errors @QueryParams(keys = "metadata/system")
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
@@ -165,7 +167,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
-   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @ExceptionParser(ReturnNullOnResourceNotFound.class)
    @Path("/rest/namespace/{path}")
    @QueryParams(keys = "metadata/user")
    @Consumes(MediaType.WILDCARD)
@@ -184,7 +186,7 @@ public interface AtmosStorageAsyncClient {
     * @see AtmosStorageClient#pathExists
     */
    @HEAD
-   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
+   @ExceptionParser(ReturnFalseOnResourceNotFound.class)
    @Path("/rest/namespace/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> pathExists(@PathParam("path") String path);

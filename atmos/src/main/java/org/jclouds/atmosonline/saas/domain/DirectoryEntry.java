@@ -88,4 +88,10 @@ public class DirectoryEntry implements Comparable<DirectoryEntry> {
          return false;
       return true;
    }
+
+   @Override
+   public String toString() {
+      return "DirectoryEntry [type=" + type + ", objectid=" + objectid + ", objname=" + objname
+               + "]";
+   }
 }

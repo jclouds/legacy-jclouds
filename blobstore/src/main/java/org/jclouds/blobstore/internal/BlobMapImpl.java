@@ -21,17 +21,17 @@ package org.jclouds.blobstore.internal;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
-import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
+import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
 /**
  * Map representation of a live connection to a Blob Service.
@@ -46,9 +46,10 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
    @Inject
    public BlobMapImpl(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
             ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            ListBlobMetadataInContainer listStrategy, String containerName, @Nullable String dir) {
+            ListContainerAndRecurseThroughFolders listStrategy, String containerName,
+            ListContainerOptions options) {
       super(blobstore, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
-               containerName, dir);
+               containerName, options);
    }
 
    @Override

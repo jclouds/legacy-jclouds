@@ -18,9 +18,9 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.internal.ListAllMetadataInContainer;
+import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
 import com.google.inject.ImplementedBy;
 
@@ -29,9 +29,9 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(ListAllMetadataInContainer.class)
-public interface ListMetadataStrategy {
+@ImplementedBy(ListContainerAndRecurseThroughFolders.class)
+public interface ListBlobsInContainer {
 
-   Iterable<? extends StorageMetadata> execute(String containerName, ListContainerOptions options);
+   Iterable<? extends BlobMetadata> execute(String containerName, ListContainerOptions options);
 
 }

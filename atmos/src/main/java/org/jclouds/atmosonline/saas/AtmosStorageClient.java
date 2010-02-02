@@ -40,13 +40,14 @@ import org.jclouds.http.options.GetOptions;
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface AtmosStorageClient {
-
+   /**
+    * Creates a default implementation of AtmosObject
+    */
    AtmosObject newObject();
 
    BoundedSet<? extends DirectoryEntry> listDirectories(ListOptions... options);
 
-   BoundedSet<? extends DirectoryEntry> listDirectory(String directoryName,
-            ListOptions... options);
+   BoundedSet<? extends DirectoryEntry> listDirectory(String directoryName, ListOptions... options);
 
    URI createDirectory(String directoryName);
 
@@ -65,23 +66,8 @@ public interface AtmosStorageClient {
 
    UserMetadata getUserMetadata(String path);
 
-   /**
-    * 
-    * @param path
-    * @return
-    * @throws AtmosStorageResponseException
-    *            , if the path is a directory and not empty
-    */
    void deletePath(String path);
 
    boolean pathExists(String path);
-
-   // signature currently doesn't work
-   // @POST
-   // @QueryParams(keys = "acl")
-   // @Headers(keys = { "x-emc-useracl", "x-emc-groupacl" }, values = { "root=FULL_CONTROL",
-   // "other=READ" })
-   // @Consumes(MediaType.WILDCARD)
-   // void makePublic(@Endpoint URI url);
 
 }

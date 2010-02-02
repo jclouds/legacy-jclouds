@@ -23,17 +23,17 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
-import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
+import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.payloads.ByteArrayPayload;
@@ -60,11 +60,11 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
 
    @Inject
    public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
-            GetBlobsInListStrategy getAllBlobs, ListBlobMetadataInContainer listStrategy,
+            GetBlobsInListStrategy getAllBlobs, ListContainerAndRecurseThroughFolders listStrategy,
             ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            String containerName, @Nullable String dir) {
+            String containerName, ListContainerOptions options) {
       super(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
-               containerName, dir);
+               containerName, options);
    }
 
    @Override

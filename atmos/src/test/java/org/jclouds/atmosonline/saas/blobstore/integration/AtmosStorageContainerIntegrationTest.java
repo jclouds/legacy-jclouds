@@ -30,16 +30,9 @@ import org.testng.annotations.Test;
 public class AtmosStorageContainerIntegrationTest extends BaseContainerIntegrationTest {
 
    @Override
-   @Test(enabled = false)
-   // some reason this fails on the stub.
-   public void testClearWhenContentsUnderPath() throws InterruptedException {
-      super.testClearWhenContentsUnderPath();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
-      // TODO
+   public void testListContainerMaxResults() throws InterruptedException,
+            UnsupportedEncodingException {
+      // Not currently working
    }
 
 }

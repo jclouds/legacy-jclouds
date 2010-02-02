@@ -36,6 +36,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.ListContainerStrategy;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
@@ -56,7 +57,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final ListAllMetadataInContainer getAllMetadata;
+   protected final ListContainerStrategy listContainer;
    protected final BackoffLimitedRetryHandler retryHandler;
    private final ExecutorService userExecutor;
 
@@ -70,12 +71,12 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
    @Inject
    DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            AsyncBlobStore connection, ListAllMetadataInContainer getAllMetadata,
+            AsyncBlobStore connection, ListContainerStrategy listContainer,
             BackoffLimitedRetryHandler retryHandler) {
 
       this.userExecutor = userExecutor;
       this.connection = connection;
-      this.getAllMetadata = getAllMetadata;
+      this.listContainer = listContainer;
       this.retryHandler = retryHandler;
    }
 
@@ -84,23 +85,34 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    }
 
    public void execute(final String containerName, final ListContainerOptions options) {
-      String message = options.getDir() != null ? String.format("deleting from path: %s/%s",
-               containerName, options.getDir()) : String.format("deleting from containerName: %s",
+      String message = options.getDir() != null ? String.format("clearing path %s/%s",
+               containerName, options.getDir()) : String.format("clearing container %s",
                containerName);
+      if (options.isRecursive())
+         message = message + " recursively";
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
       Iterable<? extends StorageMetadata> toDelete = getResourcesToDelete(containerName, options);
       for (int i = 0; i < 3; i++) { // TODO parameterize
          Map<StorageMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
          try {
-            for (StorageMetadata md : toDelete) {
+            for (final StorageMetadata md : toDelete) {
+               String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
+                        + md.getName() : md.getName();
                switch (md.getType()) {
                   case BLOB:
-                     responses.put(md, connection.removeBlob(containerName, md.getName()));
+                     responses.put(md, connection.removeBlob(containerName, fullPath));
                      break;
                   case FOLDER:
+                     if (options.isRecursive() && !fullPath.equals(options.getDir())) {
+                        execute(containerName, options.clone().inDirectory(fullPath));
+                     }
+                     connection.deleteDirectory(containerName, fullPath);
+                     break;
                   case RELATIVE_PATH:
-                     if (options.isRecursive())
-                        responses.put(md, connection.deleteDirectory(containerName, md.getName()));
+                     if (options.isRecursive() && !fullPath.equals(options.getDir())) {
+                        execute(containerName, options.clone().inDirectory(fullPath));
+                     }
+                     connection.deleteDirectory(containerName, md.getName());
                      break;
                   case CONTAINER:
                      throw new IllegalArgumentException("Container type not supported");
@@ -113,17 +125,24 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
                break;
             }
             if (exceptions.size() > 0) {
+               toDelete = Iterables.concat(exceptions.keySet(), toDelete);
                retryHandler.imposeBackoffExponentialDelay(i + 1, message);
             }
          }
       }
       if (exceptions.size() > 0)
          throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
+      assert Iterables.size(toDelete) == 0 : String.format("items remaining %s: %s", message,
+               toDelete);
+   }
+
+   private boolean parentIsFolder(final ListContainerOptions options, final StorageMetadata md) {
+      return (options.getDir() != null && md.getName().indexOf('/') == -1);
    }
 
    private Iterable<? extends StorageMetadata> getResourcesToDelete(final String containerName,
             final ListContainerOptions options) {
-      Iterable<? extends StorageMetadata> toDelete = Iterables.filter(getAllMetadata.execute(
+      Iterable<? extends StorageMetadata> toDelete = Iterables.filter(listContainer.execute(
                containerName, options), new Predicate<StorageMetadata>() {
 
          @Override

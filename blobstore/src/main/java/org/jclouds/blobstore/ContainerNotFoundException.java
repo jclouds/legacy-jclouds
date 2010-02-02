@@ -18,12 +18,14 @@
  */
 package org.jclouds.blobstore;
 
+import org.jclouds.rest.ResourceNotFoundException;
+
 /**
  * Thrown when a container cannot be located.
  * 
  * @author Adrian Cole
  */
-public class ContainerNotFoundException extends RuntimeException {
+public class ContainerNotFoundException extends ResourceNotFoundException {
 
    private String container;
 

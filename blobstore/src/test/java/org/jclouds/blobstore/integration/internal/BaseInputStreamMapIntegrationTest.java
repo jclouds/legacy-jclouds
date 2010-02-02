@@ -18,6 +18,7 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -49,9 +51,9 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    @Override
    @Test(groups = { "integration", "live" })
    public void testValues() throws InterruptedException, IOException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          map.putAll(this.fiveInputs);
          // this will cause us to block until the bucket updates.
          assertConsistencyAwareMapSize(map, 5);
@@ -65,20 +67,18 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": "
                   + valuesAsString;
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
-   protected abstract int maxList();
-
-   @Test(enabled = false, groups = { "integration", "live" })
+   @Test(groups = { "integration", "live" })
    public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         InputStreamMap map = createMap(context, bucketName);
+         InputStreamMap map = createMap(context, containerName);
          Set<String> keySet = Sets.newHashSet();
-         for (int i = 0; i < maxList() + 1; i++) {
+         for (int i = 0; i < maxResultsForTestListings() + 1; i++) {
             keySet.add(i + "");
          }
 
@@ -89,20 +89,20 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          map.putAllStrings(newMap);
          newMap.clear();
 
-         assertConsistencyAwareMapSize(map, maxList() + 1);
+         assertConsistencyAwareMapSize(map, maxResultsForTestListings() + 1);
          assertConsistencyAwareKeySetEquals(map, keySet);
          map.clear();
          assertConsistencyAwareMapSize(map, 0);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testRemove() throws InterruptedException, IOException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          putStringWithMD5(map, "one", "two");
          InputStream old = map.remove("one");
          assertEquals(Utils.toStringAndClose(old), "two");
@@ -113,16 +113,16 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          assert old == null;
          assertConsistencyAwareKeySize(map, 0);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Override
    @Test(groups = { "integration", "live" })
    public void testEntrySet() throws InterruptedException, IOException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          ((InputStreamMap) map).putAllStrings(this.fiveStrings);
          // this will cause us to block until the bucket updates.
          assertConsistencyAwareKeySize(map, 5);
@@ -137,134 +137,134 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
             assertEquals(Utils.toStringAndClose(value), "");
          }
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testContainsStringValue() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, fiveStrings.get("one"));
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testContainsFileValue() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, fiveFiles.get("one"));
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testContainsInputStreamValue() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, this.fiveInputs.get("one"));
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testContainsBytesValue() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
          assertConsistencyAwareContainsValue(map, this.fiveBytes.get("one"));
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Override
    @Test(groups = { "integration", "live" })
    public void testPutAll() throws InterruptedException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
          map.putAll(this.fiveInputs);
          assertConsistencyAwareMapSize(map, 5);
          assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
          fourLeftRemovingOne(map);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutAllBytes() throws InterruptedException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          ((InputStreamMap) map).putAllBytes(this.fiveBytes);
          assertConsistencyAwareMapSize(map, 5);
          assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveBytes.keySet()));
          fourLeftRemovingOne(map);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutAllFiles() throws InterruptedException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          ((InputStreamMap) map).putAllFiles(this.fiveFiles);
          assertConsistencyAwareMapSize(map, 5);
          assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveFiles.keySet()));
          fourLeftRemovingOne(map);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutAllStrings() throws InterruptedException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          ((InputStreamMap) map).putAllStrings(this.fiveStrings);
          assertConsistencyAwareMapSize(map, 5);
          assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveStrings.keySet()));
          fourLeftRemovingOne(map);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutString() throws InterruptedException, IOException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          InputStream old = ((InputStreamMap) map).putString("one", fiveStrings.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
          InputStream apple = ((InputStreamMap) map).putString("one", fiveStrings.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
@@ -285,46 +285,46 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
 
    @Test(groups = { "integration", "live" })
    public void testPutFile() throws IOException, InterruptedException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          InputStream old = ((InputStreamMap) map).putFile("one", fiveFiles.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
          InputStream apple = ((InputStreamMap) map).putFile("one", fiveFiles.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutBytes() throws InterruptedException, IOException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          InputStream old = ((InputStreamMap) map).putBytes("one", fiveBytes.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
          InputStream apple = ((InputStreamMap) map).putBytes("one", fiveBytes.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testPut() throws InterruptedException, IOException {
-      String bucketName = getContainerName();
+      String containerName = getContainerName();
       try {
-         Map<String, InputStream> map = createMap(context, bucketName);
+         Map<String, InputStream> map = createMap(context, containerName);
 
          InputStream old = map.put("one", fiveInputs.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
          InputStream apple = map.put("one", fiveInputs.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerName);
       }
    }
 
@@ -334,8 +334,16 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
       ((InputStreamMap) map).putString(key, value);
    }
 
+   protected int maxResultsForTestListings() {
+      return 100;
+   }
+
    protected InputStreamMap createMap(BlobStoreContext context, String bucket) {
-      InputStreamMap map = context.createInputStreamMap(bucket);
-      return map;
+      return createMap(context, bucket, maxResults(maxResultsForTestListings()));
+   }
+
+   protected InputStreamMap createMap(BlobStoreContext context, String bucket,
+            ListContainerOptions options) {
+      return context.createInputStreamMap(bucket, options);
    }
 }

@@ -99,6 +99,11 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
          return delegate.clone();
       }
 
+      @Override
+      public String toString() {
+         return delegate.toString();
+      }
+
    }
 
    public static final ImmutableListContainerOptions NONE = new ImmutableListContainerOptions(

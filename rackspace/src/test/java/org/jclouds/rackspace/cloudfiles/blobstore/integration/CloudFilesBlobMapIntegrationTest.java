@@ -26,8 +26,5 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesBlobMapIntegrationTest")
 public class CloudFilesBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
-   @Override
-   protected int maxList() {
-      return 10000;
-   }
+
 }

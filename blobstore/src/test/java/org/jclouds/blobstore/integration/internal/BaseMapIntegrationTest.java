@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -25,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,6 +37,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ListableMap;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -97,20 +102,23 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       }
    }
 
-   protected abstract Map<String, V> createMap(BlobStoreContext context, String bucket);
+   protected abstract Map<String, V> createMap(BlobStoreContext context, String containerName);
+
+   protected abstract Map<String, V> createMap(BlobStoreContext context, String containerName,
+            ListContainerOptions options);
 
    @Test(groups = { "integration", "live" })
    public void testClear() throws InterruptedException, ExecutionException, TimeoutException {
-      String bucketName = getContainerName();
+      String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(context, bucketName);
+         Map<String, V> map = createMap(context, containerNameName);
          assertConsistencyAwareMapSize(map, 0);
          putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareMapSize(map, 1);
          map.clear();
          assertConsistencyAwareMapSize(map, 0);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerNameName);
       }
    }
 
@@ -120,16 +128,82 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
 
    @Test(groups = { "integration", "live" })
    public void testKeySet() throws InterruptedException, ExecutionException, TimeoutException {
-      String bucketName = getContainerName();
+      String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(context, bucketName);
+         Map<String, V> map = createMap(context, containerNameName);
          assertConsistencyAwareKeySize(map, 0);
          putStringWithMD5(map, "one", "two");
          assertConsistencyAwareKeySize(map, 1);
          assertConsistencyAwareKeySetEquals(map, ImmutableSet.of("one"));
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerNameName);
       }
+   }
+
+   protected void addTenObjectsUnderPrefix(String containerName, String prefix)
+            throws InterruptedException {
+      for (int i = 0; i < 10; i++) {
+         Blob blob = context.getBlobStore().newBlob(prefix + "/" + i);
+         blob.setPayload(i + "content");
+         context.getBlobStore().putBlob(containerName, blob);
+      }
+   }
+
+   protected void addTenObjectsUnderRoot(String containerName) throws InterruptedException {
+      for (int i = 0; i < 10; i++) {
+         Blob blob = context.getBlobStore().newBlob(i + "");
+         blob.setPayload(i + "content");
+         context.getBlobStore().putBlob(containerName, blob);
+      }
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
+      String containerName = getContainerName();
+      try {
+         String directory = "apps";
+
+         Map<String, V> rootMap = createMap(context, containerName);
+         Map<String, V> rootRecursiveMap = createMap(context, containerName, recursive());
+         Map<String, V> inDirectoryMap = createMap(context, containerName, inDirectory(directory));
+         Map<String, V> inDirectoryRecursiveMap = createMap(context, containerName, inDirectory(
+                  directory).recursive());
+
+         context.getBlobStore().createDirectory(containerName, directory);
+         addTenObjectsUnderRoot(containerName);
+         assertEquals(rootMap.size(), 10);
+         assertEquals(rootRecursiveMap.size(), 10);
+         assertEquals(inDirectoryMap.size(), 0);
+         assertEquals(inDirectoryRecursiveMap.size(), 0);
+
+         addTenObjectsUnderPrefix(containerName, directory);
+         assertEquals(rootMap.size(), 10);
+         assertEquals(rootRecursiveMap.size(), 20);
+         assertEquals(inDirectoryMap.size(), 10);
+         assertEquals(inDirectoryRecursiveMap.size(), 10);
+
+         context.getBlobStore().createDirectory(containerName, directory + "/" + directory);
+         assertEquals(rootMap.size(), 10);
+         assertEquals(rootRecursiveMap.size(), 20);
+         assertEquals(inDirectoryMap.size(), 10);
+         assertEquals(inDirectoryRecursiveMap.size(), 10);
+
+         rootMap.clear();
+         assertEquals(rootMap.size(), 0);
+         assertEquals(rootRecursiveMap.size(), 10);
+         assertEquals(inDirectoryMap.size(), 10);
+         assertEquals(inDirectoryRecursiveMap.size(), 10);
+
+         inDirectoryMap.clear();
+         assertEquals(rootMap.size(), 0);
+         assertEquals(rootRecursiveMap.size(), 0);
+         assertEquals(inDirectoryMap.size(), 0);
+         assertEquals(inDirectoryRecursiveMap.size(), 0);
+
+      } finally {
+         returnContainer(containerName);
+      }
+
    }
 
    protected void assertConsistencyAwareKeySetEquals(final Map<String, V> map,
@@ -177,20 +251,20 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
 
    @Test(groups = { "integration", "live" })
    public void testContainsKey() throws InterruptedException, ExecutionException, TimeoutException {
-      String bucketName = getContainerName();
+      String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(context, bucketName);
+         Map<String, V> map = createMap(context, containerNameName);
          assertConsistencyAwareDoesntContainKey(map);
          putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareContainsKey(map);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerNameName);
       }
    }
 
    /**
-    * containsValue() uses eTag comparison to bucket contents, so this can be subject to eventual
-    * consistency problems.
+    * containsValue() uses eTag comparison to containerName contents, so this can be subject to
+    * eventual consistency problems.
     */
    protected void assertConsistencyAwareContainsValue(final Map<String, V> map, final Object value)
             throws InterruptedException {
@@ -221,14 +295,14 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
 
    @Test(groups = { "integration", "live" })
    public void testIsEmpty() throws InterruptedException, ExecutionException, TimeoutException {
-      String bucketName = getContainerName();
+      String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(context, bucketName);
+         Map<String, V> map = createMap(context, containerNameName);
          assertConsistencyAwareEmpty(map);
          putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareNotEmpty(map);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerNameName);
       }
    }
 
@@ -275,17 +349,17 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    @Test(groups = { "integration", "live" })
    public void testListContainer() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String bucketName = getContainerName();
+      String containerNameName = getContainerName();
       try {
-         ListableMap<?, ?> map = (ListableMap<?, ?>) createMap(context, bucketName);
-         assertConsistencyAwareListContainer(map, bucketName);
+         ListableMap<?, ?> map = (ListableMap<?, ?>) createMap(context, containerNameName);
+         assertConsistencyAwareListContainer(map, containerNameName);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(containerNameName);
       }
    }
 
    protected void assertConsistencyAwareListContainer(final ListableMap<?, ?> map,
-            final String bucketName) throws InterruptedException {
+            final String containerNameName) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assertTrue(Iterables.size(map.list()) >= 0);

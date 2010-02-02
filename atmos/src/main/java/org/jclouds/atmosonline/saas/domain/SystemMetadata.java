@@ -20,6 +20,8 @@ package org.jclouds.atmosonline.saas.domain;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 /**
  * Metadata of a Atmos Online object
  * 
@@ -36,10 +38,12 @@ public class SystemMetadata extends DirectoryEntry {
    private final String policyname;
    private final long size;
    private final String uid;
+   private final byte[] contentmd5;
 
-   public SystemMetadata(Date atime, Date ctime, String gid, Date itime, Date mtime, int nlink,
+   public SystemMetadata(@Nullable byte [] contentmd5, Date atime, Date ctime, String gid, Date itime, Date mtime, int nlink,
             String objectid, String objname, String policyname, long size, FileType type, String uid) {
       super(objectid, type, objname);
+      this.contentmd5 = contentmd5;
       this.atime = atime;
       this.ctime = ctime;
       this.gid = gid;
@@ -85,6 +89,10 @@ public class SystemMetadata extends DirectoryEntry {
 
    public String getUserID() {
       return uid;
+   }
+
+   public byte[] getContentMD5() {
+      return contentmd5;
    }
 
    @Override
@@ -152,6 +160,11 @@ public class SystemMetadata extends DirectoryEntry {
       } else if (!uid.equals(other.uid))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[type=" + getType() + ", id=" + getObjectID() + ", name=" + getObjectName() + "]";
    }
 
 }

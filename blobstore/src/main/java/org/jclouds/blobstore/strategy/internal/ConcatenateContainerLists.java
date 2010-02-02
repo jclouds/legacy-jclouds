@@ -28,7 +28,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.options.ListContainerOptions.ImmutableListContainerOptions;
-import org.jclouds.blobstore.strategy.ListMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListContainerStrategy;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
@@ -41,12 +41,12 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class ListAllMetadataInContainer implements ListMetadataStrategy {
+public class ConcatenateContainerLists implements ListContainerStrategy {
 
    protected final BlobStore connection;
 
    @Inject
-   public ListAllMetadataInContainer(BlobStore connection) {
+   public ConcatenateContainerLists(BlobStore connection) {
       this.connection = connection;
    }
 

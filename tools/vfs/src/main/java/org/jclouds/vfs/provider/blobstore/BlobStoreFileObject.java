@@ -56,7 +56,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.internal.ListAllMetadataInContainer;
+import org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists;
 import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.util.Utils;
 
@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
  */
 public class BlobStoreFileObject extends AbstractFileObject {
    private final BlobStoreContext context;
-   private final ListAllMetadataInContainer lister;
+   private final ConcatenateContainerLists lister;
    private final String container;
    private StorageMetadata metadata;
    private static final Logger logger = Logger.getLogger(BlobStoreFileObject.class);
@@ -81,7 +81,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       super(fileName, fileSystem);
       this.context = checkNotNull(context, "context");
       this.container = checkNotNull(container, "container");
-      this.lister = checkNotNull(new ListAllMetadataInContainer(context.getBlobStore()), "lister");
+      this.lister = checkNotNull(new ConcatenateContainerLists(context.getBlobStore()), "lister");
 
    }
 

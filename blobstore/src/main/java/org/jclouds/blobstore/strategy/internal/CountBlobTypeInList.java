@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.CountListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListBlobsInContainer;
 
 import com.google.common.collect.Iterables;
 
@@ -34,10 +34,10 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class CountBlobTypeInList implements CountListStrategy {
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   protected final ListBlobsInContainer getAllBlobMetadata;
 
    @Inject
-   CountBlobTypeInList(ListBlobMetadataStrategy getAllBlobMetadata) {
+   CountBlobTypeInList(ListBlobsInContainer getAllBlobMetadata) {
       this.getAllBlobMetadata = getAllBlobMetadata;
    }
 

@@ -135,15 +135,17 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    }
 
    public ListenableFuture<Void> deletePath(String path) {
-      if (path.indexOf('/') == -1)
-         return compose(blobStore.deleteContainerImpl(path), new Function<Boolean, Void>() {
+      if (path.indexOf('/') == path.length() - 1) {
+         // chop off the trailing slash
+         return compose(blobStore.deleteContainerImpl(path.substring(0, path.length() - 1)),
+                  new Function<Boolean, Void>() {
 
-            public Void apply(Boolean from) {
-               return null;
-            }
+                     public Void apply(Boolean from) {
+                        return null;
+                     }
 
-         });
-      else {
+                  });
+      } else {
          String container = path.substring(0, path.indexOf('/'));
          path = path.substring(path.indexOf('/') + 1);
          return blobStore.removeBlob(container, path);
@@ -205,9 +207,10 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    }
 
    public ListenableFuture<Boolean> pathExists(final String path) {
-      if (path.indexOf('/') == -1 )
-         return blobStore.containerExists(path);
-      else {
+      if (path.indexOf('/') == path.length() - 1) {
+         // chop off the trailing slash
+         return blobStore.containerExists(path.substring(0, path.length() - 1));
+      } else {
          String container = path.substring(0, path.indexOf('/'));
          String blobName = path.substring(path.indexOf('/') + 1);
          try {

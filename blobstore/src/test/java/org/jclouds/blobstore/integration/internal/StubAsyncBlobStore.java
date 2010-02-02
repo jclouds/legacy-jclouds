@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
@@ -157,7 +158,12 @@ public class StubAsyncBlobStore extends BaseAsyncBlobStore {
       SortedSet<StorageMetadata> contents = Sets.newTreeSet(Iterables.transform(realContents
                .keySet(), new Function<String, StorageMetadata>() {
          public StorageMetadata apply(String key) {
-            MutableBlobMetadata md = copy(realContents.get(key).getMetadata());
+            Blob oldBlob = realContents.get(key);
+            checkState(oldBlob != null, "blob " + key
+                     + " is not present although it was in the list of " + name);
+            checkState(oldBlob.getMetadata() != null, "blob " + name + "/" + key
+                     + " has no metadata");
+            MutableBlobMetadata md = copy(oldBlob.getMetadata());
             String directoryName = ifDirectoryReturnName.execute(md);
             if (directoryName != null) {
                md.setName(directoryName);
@@ -242,7 +248,9 @@ public class StubAsyncBlobStore extends BaseAsyncBlobStore {
          convertUserMetadataKeysToLowercase(metadata);
          return metadata;
       } catch (Exception e) {
-         throw new RuntimeException(e);
+         Throwables.propagate(e);
+         assert false : "exception should have propagated: " + e;
+         return null;
       }
    }
 

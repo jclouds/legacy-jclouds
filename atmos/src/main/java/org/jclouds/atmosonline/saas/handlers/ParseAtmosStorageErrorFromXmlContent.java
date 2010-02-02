@@ -60,8 +60,8 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
       this.utils = utils;
    }
 
-   public static final Pattern CONTAINER_PATH = Pattern.compile("^/rest/namespace/?([^/]+)[/]?$");
-   public static final Pattern CONTAINER_KEY_PATH = Pattern
+   public static final Pattern DIRECTORY_PATH = Pattern.compile("^/rest/namespace/?([^/]+)/$");
+   public static final Pattern DIRECTORY_KEY_PATH = Pattern
             .compile("^/rest/namespace/?([^/]+)/(.*)");
 
    public void handleError(HttpCommand command, HttpResponse response) {
@@ -84,11 +84,11 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
                               "%s -> %s", command.getRequest().getRequestLine(), response
                                        .getStatusLine());
                      String path = command.getRequest().getEndpoint().getPath();
-                     Matcher matcher = CONTAINER_PATH.matcher(path);
+                     Matcher matcher = DIRECTORY_PATH.matcher(path);
                      if (matcher.find()) {
                         exception = new ContainerNotFoundException(matcher.group(1), message);
                      } else {
-                        matcher = CONTAINER_KEY_PATH.matcher(path);
+                        matcher = DIRECTORY_KEY_PATH.matcher(path);
                         if (matcher.find()) {
                            exception = new KeyNotFoundException(matcher.group(1), matcher.group(2),
                                     message);

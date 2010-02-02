@@ -24,6 +24,7 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -172,15 +173,19 @@ public abstract class BaseBlobStore implements BlobStore {
     */
    @Override
    public void deleteContainer(final String container) {
-      deleteAndEnsurePathGone(container);
+      clearAndDeleteContainer(container);
    }
 
-   protected void deleteAndEnsurePathGone(final String container) {
+   protected void clearAndDeleteContainer(final String container) {
       try {
          if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
-               clearContainer(container, recursive());
-               return deleteAndVerifyContainerGone(container);
+               try {
+                  clearContainer(container, recursive());
+                  return deleteAndVerifyContainerGone(container);
+               } catch (ContainerNotFoundException e) {
+                  return true;
+               }
             }
 
          }, 30000)) {

@@ -51,7 +51,7 @@ public class ListOptions extends BaseHttpRequestOptions {
     */
    public ListOptions limit(int maxresults) {
       checkState(maxresults >= 0, "maxresults must be >= 0");
-      checkState(maxresults <= 10000, "maxresults must be <= 5000");
+      checkState(maxresults <= 10000, "maxresults must be <= 10000");
       headers.put("x-emc-limit", Integer.toString(maxresults));
       return this;
    }

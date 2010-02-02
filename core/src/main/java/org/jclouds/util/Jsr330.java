@@ -31,10 +31,9 @@ import com.google.inject.Key;
  * Utility methods for use with {@code @}{@link Named}.
  * 
  * @author crazybob@google.com (Bob Lee) - original code taken from
- *         {@link com.google.inject.name.Names}
+ *         {@code com.google.inject.name.Names}
  * 
  * @see com.google.inject.util.Jsr330#named
- * @see com.google.inject.name.Names
  * @author Adrian Cole
  */
 public class Jsr330 {

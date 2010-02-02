@@ -29,6 +29,7 @@ import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.date.DateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
@@ -40,10 +41,13 @@ import com.google.common.collect.Maps;
 @Singleton
 public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, SystemMetadata> {
    private final DateService dateService;
+   private final EncryptionService encryptionService;
 
    @Inject
-   public ParseSystemMetadataFromHeaders(DateService dateService) {
+   public ParseSystemMetadataFromHeaders(DateService dateService,
+            EncryptionService encryptionService) {
       this.dateService = dateService;
+      this.encryptionService = encryptionService;
    }
 
    public SystemMetadata apply(HttpResponse from) {
@@ -56,8 +60,9 @@ public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, Sy
          metaMap.put(entrySplit[0], entrySplit[1]);
       }
       assert metaMap.size() >= 12 : String.format("Should be 12 entries in %s", metaMap);
-
-      return new SystemMetadata(dateService.iso8601SecondsDateParse(checkNotNull(metaMap
+      byte[] md5 = metaMap.containsKey("content-md5") ? encryptionService.fromHexString(metaMap
+               .get("content-md5")) : null;
+      return new SystemMetadata(md5, dateService.iso8601SecondsDateParse(checkNotNull(metaMap
                .get("atime"), "atime")), dateService.iso8601SecondsDateParse(checkNotNull(metaMap
                .get("ctime"), "ctime")), checkNotNull(metaMap.get("gid"), "gid"), dateService
                .iso8601SecondsDateParse(checkNotNull(metaMap.get("itime"), "itime")), dateService

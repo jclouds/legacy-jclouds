@@ -207,8 +207,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          addAlphabetUnderRoot(containerName);
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
                   maxResults(5));
-         assert container.getNextMarker() != null;
          assertEquals(container.size(), 5);
+         assert container.getNextMarker() != null;
       } finally {
          returnContainer(containerName);
       }

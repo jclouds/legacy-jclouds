@@ -18,7 +18,6 @@
  */
 package org.jclouds.blobstore.config;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
@@ -27,10 +26,11 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
 import org.jclouds.blobstore.internal.InputStreamMapImpl;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
-import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
+import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -62,11 +62,11 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       PutBlobsStrategy putBlobsStrategy;
       @Inject
-      ListBlobMetadataInContainer listStrategy;
+      ListContainerAndRecurseThroughFolders listStrategy;
 
-      public BlobMap create(String containerName, @Nullable String dir) {
+      public BlobMap create(String containerName, ListContainerOptions options) {
          return new BlobMapImpl(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy,
-                  listStrategy, containerName, dir);
+                  listStrategy, containerName, options);
       }
 
    }
@@ -83,11 +83,11 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       PutBlobsStrategy putBlobsStrategy;
       @Inject
-      ListBlobMetadataInContainer listStrategy;
+      ListContainerAndRecurseThroughFolders listStrategy;
 
-      public InputStreamMap create(String containerName, @Nullable String dir) {
+      public InputStreamMap create(String containerName, ListContainerOptions options) {
          return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, listStrategy,
-                  containsValueStrategy, putBlobsStrategy, containerName, dir);
+                  containsValueStrategy, putBlobsStrategy, containerName, options);
       }
 
    }

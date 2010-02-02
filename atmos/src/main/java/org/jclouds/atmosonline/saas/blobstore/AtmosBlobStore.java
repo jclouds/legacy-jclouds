@@ -87,8 +87,8 @@ public class AtmosBlobStore extends BaseBlobStore {
     * {@link AtmosStorageAsyncClient#pathExists} until it is true.
     */
    protected boolean deleteAndVerifyContainerGone(final String container) {
-      sync.deletePath(container);
-      return !sync.pathExists(container);
+      sync.deletePath(container + "/");
+      return !sync.pathExists(container + "/");
    }
 
    /**
@@ -117,11 +117,19 @@ public class AtmosBlobStore extends BaseBlobStore {
    }
 
    /**
+    * This implementation invokes {@link #removeBlob}
+    */
+   @Override
+   public void deleteDirectory(String containerName, String directory) {
+      removeBlob(containerName, directory + "/");
+   }
+
+   /**
     * This implementation invokes {@link AtmosStorageClient#pathExists}
     */
    @Override
    public boolean containerExists(String container) {
-      return sync.pathExists(container);
+      return sync.pathExists(container + "/");
    }
 
    /**
@@ -181,13 +189,7 @@ public class AtmosBlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(final String container, final Blob blob) {
-      final String path = container + "/" + blob.getMetadata().getName();
-      deleteAndEnsurePathGone(path);
-      if (blob.getMetadata().getContentMD5() != null)
-         blob.getMetadata().getUserMetadata().put("content-md5",
-                  encryptionService.toHexString(blob.getMetadata().getContentMD5()));
-      sync.createFile(container, blob2Object.apply(blob));
-      return path;
+      return AtmosStorageUtils.putBlob(sync, encryptionService, blob2Object, container, blob);
    }
 
    /**

@@ -16,22 +16,32 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.strategy;
+package org.jclouds.rest.functions;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
+import static org.jclouds.util.Utils.propagateOrNull;
 
-import com.google.inject.ImplementedBy;
+import java.util.List;
+
+import javax.inject.Singleton;
+
+import org.jclouds.rest.ResourceNotFoundException;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 /**
- * Lists the blobstore.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(ListBlobMetadataInContainer.class)
-public interface ListBlobMetadataStrategy {
+@Singleton
+public class ReturnFalseOnResourceNotFound implements Function<Exception, Boolean> {
 
-   Iterable<? extends BlobMetadata> execute(String containerName, ListContainerOptions options);
-
+   public Boolean apply(Exception from) {
+      List<Throwable> throwables = Throwables.getCausalChain(from);
+      if (Iterables.size(Iterables.filter(throwables, ResourceNotFoundException.class)) >= 1) {
+         return false;
+      }
+      return Boolean.class.cast(propagateOrNull(from));
+   }
 }

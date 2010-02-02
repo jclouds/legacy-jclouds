@@ -85,12 +85,8 @@ public class Utils {
    }
 
    /**
-    * Returns a factory that will supply instances of {@link OutputStream} that read from the given
-    * outputStream.
+    * converts an {@link OutputStream} to an {@link OutputSupplier}
     * 
-    * @param url
-    *           the URL to read from
-    * @return the factory
     */
    public static OutputSupplier<OutputStream> newOutputStreamSupplier(final OutputStream output) {
       checkNotNull(output, "output");
@@ -145,9 +141,6 @@ public class Utils {
     * Encode the given string with the given encoding, if possible. If the encoding fails with
     * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
     * encoding.
-    * 
-    * @see {@link String#getBytes(String)}
-    * @see {@link String#getBytes()} - used as fall-back.
     * 
     * @param str
     *           what to encode

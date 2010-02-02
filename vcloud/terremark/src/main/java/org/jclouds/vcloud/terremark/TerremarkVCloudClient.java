@@ -129,6 +129,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    void deleteNode(int nodeId);
 
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    SortedSet<Node> getNodes(int internetServiceId);
 
    SortedSet<IpAddress> getIpAddressesForNetwork(String networkId);

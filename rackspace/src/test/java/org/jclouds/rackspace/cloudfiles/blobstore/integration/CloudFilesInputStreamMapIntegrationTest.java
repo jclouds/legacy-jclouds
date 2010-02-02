@@ -26,8 +26,5 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesInputStreamMapIntegrationTest")
 public class CloudFilesInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
-   @Override
-   protected int maxList() {
-      return 10000;
-   }
+
 }

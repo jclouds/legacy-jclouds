@@ -27,9 +27,4 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "blobstore.StubInputStreamMapIntegrationTest")
 public class StubInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
 
-   @Override
-   protected int maxList() {
-      return 1;
-   }
-
 }

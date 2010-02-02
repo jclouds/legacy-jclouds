@@ -143,14 +143,14 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public void deleteContainer(String container) {
-      deleteAndEnsurePathGone(container);
+      clearAndDeleteContainer(container);
    }
 
    /**
     * This implementation invokes {@link #clearContainer} then {@link S3Client#deleteBucketIfEmpty}
     * until it is true.
     */
-   public void deleteAndEnsurePathGone(final String container) {
+   public void clearAndDeleteContainer(final String container) {
       try {
          if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {

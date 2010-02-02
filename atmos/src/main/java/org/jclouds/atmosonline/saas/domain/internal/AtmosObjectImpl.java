@@ -81,6 +81,27 @@ public class AtmosObjectImpl extends BasePayloadEnclosingImpl implements AtmosOb
    /**
     * {@inheritDoc}
     */
+   @Override
+   public int hashCode() {
+      return systemMetadata != null ? systemMetadata.hashCode() : super.hashCode();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      return systemMetadata != null ? systemMetadata.equals(obj) : super.equals(obj);
+   }
+
+   @Override
+   public String toString() {
+      return "[metadata=" + systemMetadata + "]";
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int compareTo(AtmosObject o) {
       String name = getContentMetadata().getName() != null ? getContentMetadata().getName()
                : getSystemMetadata().getObjectName();

@@ -31,7 +31,6 @@ import org.jclouds.atmosonline.saas.functions.AtmosObjectName;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.encryption.EncryptionService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -46,12 +45,10 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
    private static final Set<String> systemMetadata = ImmutableSet.of("atime", "mtime", "ctime",
             "itime", "type", "uid", "gid", "objectid", "objname", "size", "nlink", "policyname",
             "content-md5");
-   private final EncryptionService encryptionService;
 
    @Inject
-   protected ObjectToBlobMetadata(AtmosObjectName objectName, EncryptionService encryptionService) {
+   protected ObjectToBlobMetadata(AtmosObjectName objectName) {
       this.objectName = objectName;
-      this.encryptionService = encryptionService;
    }
 
    public MutableBlobMetadata apply(AtmosObject from) {
@@ -60,9 +57,7 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       to.setId(from.getSystemMetadata().getObjectID());
       to.setLastModified(from.getSystemMetadata().getLastUserDataModification());
-      String md5hex = from.getUserMetadata().getMetadata().get("content-md5");
-      if (md5hex != null)
-         to.setContentMD5(encryptionService.fromHexString(md5hex));
+      to.setContentMD5(from.getSystemMetadata().getContentMD5());
       if (from.getContentMetadata().getContentType() != null)
          to.setContentType(from.getContentMetadata().getContentType());
       to.setName(objectName.apply(from));

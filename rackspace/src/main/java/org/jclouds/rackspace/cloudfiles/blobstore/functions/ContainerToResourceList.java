@@ -24,7 +24,9 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
+import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
 import com.google.common.base.Function;
@@ -46,8 +48,13 @@ public class ContainerToResourceList implements
    public PageSet<? extends StorageMetadata> apply(PageSet<ObjectInfo> from) {
       return new PageSetImpl<StorageMetadata>(Iterables.transform(Iterables.transform(from,
                object2blobMd), new Function<BlobMetadata, StorageMetadata>() {
-         public StorageMetadata apply(BlobMetadata arg0) {
-            return arg0;
+         public StorageMetadata apply(BlobMetadata input) {
+            if (input.getContentType().equals("application/directory")) {
+               return new StorageMetadataImpl(StorageType.RELATIVE_PATH, input.getId(), input
+                        .getName(), input.getLocationId(), input.getUri(), input.getETag(), input
+                        .getSize(), input.getLastModified(), input.getUserMetadata());
+            }
+            return input;
          }
       }), from.getNextMarker());
 

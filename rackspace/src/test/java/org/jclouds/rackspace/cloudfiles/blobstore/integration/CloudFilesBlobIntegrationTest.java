@@ -18,10 +18,7 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import java.io.IOException;
-
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -38,17 +35,4 @@ public class CloudFilesBlobIntegrationTest extends BaseBlobIntegrationTest {
       // not supported in cloud files
    }
 
-   // TODO this should work, not sure why my encoding is set to Mac Roman and not UTF-8
-   @DataProvider(name = "delete")
-   public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" },
-               { "path/foo" }, { "colon:" }, { "asteri*k" }, { "quote\"" }, { "p|pe" } };
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutObject(String key, String type, Object content, Object realObject)
-            throws InterruptedException, IOException {
-      // TODO relative path keeps showing up
-   }
 }

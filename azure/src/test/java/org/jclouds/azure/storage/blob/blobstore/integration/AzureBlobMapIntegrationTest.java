@@ -27,9 +27,4 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobMapIntegrationTest")
 public class AzureBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
 
-   @Override
-   protected int maxList() {
-      return 5000;
-   }
-
 }

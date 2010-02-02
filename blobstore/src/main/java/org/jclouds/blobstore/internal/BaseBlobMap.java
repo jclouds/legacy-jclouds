@@ -20,12 +20,9 @@ package org.jclouds.blobstore.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -37,7 +34,7 @@ import org.jclouds.blobstore.options.ListContainerOptions.ImmutableListContainer
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
-import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
+import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -58,7 +55,7 @@ public abstract class BaseBlobMap<V> implements Map<String, V> {
    protected final ListContainerOptions options;
    protected final GetBlobsInListStrategy getAllBlobs;
    protected final ContainsValueInListStrategy containsValueStrategy;
-   protected final ListBlobMetadataInContainer listStrategy;
+   protected final ListContainerAndRecurseThroughFolders listStrategy;
    protected final PutBlobsStrategy putBlobsStrategy;
 
    static class StripPath implements Function<String, String> {
@@ -98,11 +95,15 @@ public abstract class BaseBlobMap<V> implements Map<String, V> {
    @Inject
    public BaseBlobMap(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
             ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            ListBlobMetadataInContainer listStrategy, String containerName, @Nullable String dir) {
+            ListContainerAndRecurseThroughFolders listStrategy, String containerName,
+            ListContainerOptions options) {
       this.blobstore = checkNotNull(blobstore, "blobstore");
       this.containerName = checkNotNull(containerName, "container");
-      this.options = new ImmutableListContainerOptions(dir != null ? inDirectory(dir)
-               : ListContainerOptions.NONE);
+      checkArgument(containerName.indexOf('/') == -1,
+               "please specify directory path using the option: inDirectory, not encoded in the container name");
+      this.options = checkNotNull(options, "options") instanceof ImmutableListContainerOptions ? options
+               : new ImmutableListContainerOptions(options);
+      String dir = options.getDir();
       if (dir == null) {
          prefixer = new PassThrough<String>();
          pathStripper = prefixer;

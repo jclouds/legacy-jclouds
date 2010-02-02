@@ -32,9 +32,9 @@ import com.google.common.base.Function;
 @Singleton
 public class BlobToSystemMetadata implements Function<BlobMetadata, SystemMetadata> {
    public SystemMetadata apply(BlobMetadata base) {
-      return new SystemMetadata(null, base.getLastModified(), null, null, null, 1, null, base
-               .getName(), null, (base.getSize() != null) ? base.getSize() : 0, FileType.REGULAR,
-               "root");
+      return new SystemMetadata(base.getContentMD5(), null, base.getLastModified(), null, null,
+               null, 1, null, base.getName(), null, (base.getSize() != null) ? base.getSize() : 0,
+               FileType.REGULAR, "root");
    }
 
 }

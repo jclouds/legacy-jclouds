@@ -30,7 +30,7 @@ import org.jclouds.blobstore.functions.ObjectMD5;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListBlobsInContainer;
 
 import com.google.common.base.Throwables;
 
@@ -43,12 +43,12 @@ import com.google.common.base.Throwables;
 public class FindMD5InBlobProperties implements ContainsValueInListStrategy {
 
    protected final ObjectMD5 objectMD5;
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   protected final ListBlobsInContainer getAllBlobMetadata;
    private final AzureBlobClient client;
 
    @Inject
    private FindMD5InBlobProperties(ObjectMD5 objectMD5,
-            ListBlobMetadataStrategy getAllBlobMetadata, AzureBlobClient client) {
+            ListBlobsInContainer getAllBlobMetadata, AzureBlobClient client) {
       this.objectMD5 = objectMD5;
       this.getAllBlobMetadata = getAllBlobMetadata;
       this.client = client;

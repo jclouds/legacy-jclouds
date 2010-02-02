@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.DeleteDirectoryStrategy;
@@ -64,6 +65,7 @@ import com.google.inject.Inject;
 public class MarkersDeleteDirectoryStrategy implements DeleteDirectoryStrategy {
 
    private final AsyncBlobStore ablobstore;
+   private final BlobStore blobstore;
    private final ExecutorService userExecutor;
    @Resource
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
@@ -78,9 +80,10 @@ public class MarkersDeleteDirectoryStrategy implements DeleteDirectoryStrategy {
    @Inject
    MarkersDeleteDirectoryStrategy(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            AsyncBlobStore ablobstore) {
+            AsyncBlobStore ablobstore, BlobStore blobstore) {
       this.userExecutor = userExecutor;
       this.ablobstore = ablobstore;
+      this.blobstore = blobstore;
    }
 
    public void execute(String containerName, String directory) {
@@ -93,10 +96,13 @@ public class MarkersDeleteDirectoryStrategy implements DeleteDirectoryStrategy {
       for (String name : names) {
          responses.put(name, ablobstore.removeBlob(containerName, name));
       }
+      String message = String.format("deleting directory %s in containerName: %s", directory,
+               containerName);
       Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
-               String.format("deleting directory in containerName: %s", containerName));
+               message);
       if (exceptions.size() > 0)
-         throw new BlobRuntimeException(String.format("error deleting from container %s: %s",
-                  containerName, exceptions));
+         throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
+      assert !blobstore.directoryExists(containerName, directory) : String.format(
+               "still exists %s: %s", message, exceptions);
    }
 }

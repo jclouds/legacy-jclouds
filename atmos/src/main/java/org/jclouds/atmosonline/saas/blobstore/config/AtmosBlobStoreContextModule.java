@@ -25,7 +25,6 @@ import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
-import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
 import org.jclouds.atmosonline.saas.config.AtmosStorageContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
@@ -34,8 +33,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.blobstore.strategy.ClearContainerStrategy;
-import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
@@ -56,8 +53,6 @@ public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
       bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(AtmosBlobStore.class).asEagerSingleton();
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
-      bind(ClearListStrategy.class).to(RecursiveRemove.class);
-      bind(ClearContainerStrategy.class).to(RecursiveRemove.class);
    }
 
    @Provides

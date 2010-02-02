@@ -37,7 +37,7 @@ import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListBlobsInContainer;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
@@ -57,7 +57,7 @@ import com.google.inject.Inject;
 @Singleton
 public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrategy {
 
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   protected final ListBlobsInContainer getAllBlobMetadata;
    protected final BackoffLimitedRetryHandler retryHandler;
    protected final AsyncBlobStore ablobstore;
    protected final ExecutorService userExecutor;
@@ -74,7 +74,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
    @Inject
    GetAllBlobsInListAndRetryOnFailure(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            ListBlobMetadataStrategy getAllBlobMetadata, AsyncBlobStore ablobstore,
+            ListBlobsInContainer getAllBlobMetadata, AsyncBlobStore ablobstore,
             BackoffLimitedRetryHandler retryHandler) {
       this.userExecutor = userExecutor;
       this.ablobstore = ablobstore;

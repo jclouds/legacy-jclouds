@@ -28,7 +28,7 @@ import org.jclouds.blobstore.functions.ObjectMD5;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListBlobsInContainer;
 
 import com.google.common.base.Throwables;
 
@@ -41,10 +41,10 @@ import com.google.common.base.Throwables;
 public class FindMD5InList implements ContainsValueInListStrategy {
 
    protected final ObjectMD5 objectMD5;
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   protected final ListBlobsInContainer getAllBlobMetadata;
 
    @Inject
-   private FindMD5InList(ObjectMD5 objectMD5, ListBlobMetadataStrategy getAllBlobMetadata) {
+   private FindMD5InList(ObjectMD5 objectMD5, ListBlobsInContainer getAllBlobMetadata) {
       this.objectMD5 = objectMD5;
       this.getAllBlobMetadata = getAllBlobMetadata;
    }

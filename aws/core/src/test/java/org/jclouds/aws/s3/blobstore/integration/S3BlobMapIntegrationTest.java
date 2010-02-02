@@ -27,9 +27,4 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "s3.S3BlobMapIntegrationTest")
 public class S3BlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
 
-   @Override
-   protected int maxList() {
-      return 1000;
-   }
-
 }

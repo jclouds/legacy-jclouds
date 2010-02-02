@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.strategy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.util.Arrays;
@@ -40,7 +41,7 @@ import org.jclouds.blobstore.functions.ObjectMD5;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.ListBlobsInContainer;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
@@ -58,7 +59,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    @Resource
    protected Logger logger = Logger.NULL;
    protected final ObjectMD5 objectMD5;
-   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   protected final ListBlobsInContainer getAllBlobMetadata;
    private final AtmosStorageAsyncClient client;
    private final ExecutorService userExecutor;
    /**
@@ -71,7 +72,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    @Inject
    private FindMD5InUserMetadata(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            ObjectMD5 objectMD5, ListBlobMetadataStrategy getAllBlobMetadata,
+            ObjectMD5 objectMD5, ListBlobsInContainer getAllBlobMetadata,
             AtmosStorageAsyncClient client) {
       this.objectMD5 = objectMD5;
       this.getAllBlobMetadata = getAllBlobMetadata;
@@ -89,8 +90,15 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          future.addListener(new Runnable() {
             public void run() {
                try {
-                  if (Arrays.equals(toSearch, future.get().getContentMetadata().getContentMD5())) {
-                     queue.put(true);
+                  AtmosObject object = future.get();
+                  checkNotNull(object.getSystemMetadata(), object + " has no content metadata");
+                  if (object.getSystemMetadata().getContentMD5() != null) {
+                     if (Arrays.equals(toSearch, object.getSystemMetadata().getContentMD5())) {
+                        queue.put(true);
+                     }
+                  } else {
+                     logger.debug("object %s has no content md5", object.getSystemMetadata()
+                              .getObjectID());
                   }
                } catch (InterruptedException e) {
                   Throwables.propagate(e);
@@ -107,7 +115,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          throw new BlobRuntimeException(String.format("searching for md5 in container %s: %s",
                   containerName, exceptions));
       try {
-         return queue.poll(1, TimeUnit.MICROSECONDS);
+         return queue.poll(1, TimeUnit.MICROSECONDS) != null;
       } catch (InterruptedException e) {
          Throwables.propagate(e);
          return false;

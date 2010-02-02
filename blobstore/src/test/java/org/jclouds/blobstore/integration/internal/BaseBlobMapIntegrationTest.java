@@ -18,6 +18,7 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,8 +31,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -204,18 +207,16 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       }
    }
 
-   protected abstract int maxList();
-
-   @Test(enabled = false, groups = { "integration", "live" })
+   @Test(groups = { "integration", "live" })
    public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException,
             TimeoutException {
-      if (maxList() == 0)
+      if (maxResultsForTestListings() == 0)
          return;
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          Set<String> keySet = Sets.newHashSet();
-         for (int i = 0; i < maxList() + 1; i++) {
+         for (int i = 0; i < maxResultsForTestListings() + 1; i++) {
             keySet.add(i + "");
          }
 
@@ -228,7 +229,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          map.putAll(newMap);
          newMap.clear();
 
-         assertConsistencyAwareMapSize(map, maxList() + 1);
+         assertConsistencyAwareMapSize(map, maxResultsForTestListings() + 1);
          assertConsistencyAwareKeySetEquals(map, keySet);
          map.clear();
          assertConsistencyAwareMapSize(map, 0);
@@ -265,8 +266,15 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       map.putAll(newMap);
    }
 
-   protected Map<String, Blob> createMap(BlobStoreContext context, String bucket) {
-      return context.createBlobMap(bucket);
+   protected int maxResultsForTestListings() {
+      return 100;
    }
 
+   protected BlobMap createMap(BlobStoreContext context, String bucket) {
+      return createMap(context, bucket, maxResults(maxResultsForTestListings()));
+   }
+
+   protected BlobMap createMap(BlobStoreContext context, String bucket, ListContainerOptions options) {
+      return context.createBlobMap(bucket, options);
+   }
 }

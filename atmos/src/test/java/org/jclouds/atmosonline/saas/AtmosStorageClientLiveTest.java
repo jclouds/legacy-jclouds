@@ -26,22 +26,18 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
-import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.payloads.InputStreamPayload;
@@ -107,7 +103,7 @@ public class AtmosStorageClientLiveTest {
 
    private static final int INCONSISTENCY_WINDOW = 5000;
    protected AtmosStorageClient connection;
-   private String containerPrefix = BaseBlobStoreIntegrationTest.CONTAINER_PREFIX+"live";
+   private String containerPrefix = BaseBlobStoreIntegrationTest.CONTAINER_PREFIX + "live";
 
    URI container1;
    URI container2;
@@ -116,23 +112,15 @@ public class AtmosStorageClientLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
       String uid = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-
-      RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = new AtmosStorageContextBuilder(
+      BlobStoreContext blobStoreContext = new AtmosStorageContextBuilder(
                new AtmosStoragePropertiesBuilder(uid, key).build()).withModules(
-               new Log4JLoggingModule()).buildContext();
-      ExecutorService service = Executors.newCachedThreadPool();
+               new Log4JLoggingModule()).buildBlobStoreContext();
+      RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = blobStoreContext
+               .getProviderSpecificContext();
       connection = context.getApi();
-      ClearContainerStrategy clearer = new RecursiveRemove(service, context.getAsyncApi(),
-               connection);
       for (DirectoryEntry entry : connection.listDirectories()) {
-         try {
-            if (entry.getObjectName().startsWith(containerPrefix)) {
-               clearer.execute(entry.getObjectName());
-               deleteConfirmed(entry.getObjectName());
-            }
-         } catch (ContainerNotFoundException e) {
-            if (entry.getType() != FileType.DIRECTORY)
-               throw e;
+         if (entry.getObjectName().startsWith(containerPrefix)) {
+            blobStoreContext.getBlobStore().deleteContainer(entry.getObjectName());
          }
       }
    }

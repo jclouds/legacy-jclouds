@@ -103,9 +103,6 @@ public class HttpRequest extends HttpMessage {
       return payload;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    public void setPayload(Payload data) {
       closeContentIfPresent();
       this.payload = checkNotNull(data, "data");
