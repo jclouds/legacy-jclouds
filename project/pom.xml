@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.0-beta-3</version>    
+    <version>1.0-SNAPSHOT</version>    
     <packaging>pom</packaging>
     <name>jclouds Project</name>
     <url>http://www.jclouds.org</url>
@@ -510,7 +510,7 @@ pageTracker._trackPageview();
                         <artifactId>maven-assembly-plugin</artifactId>
                         <!-- Can't use variables in outputDirectory in earlier versions.
                           See http://jira.codehaus.org/browse/MASSEMBLY-142. -->
-                        <version>2.2-beta-3</version>
+                        <version>2.2-SNAPSHOT</version>
                         <executions>
                             <execution>
                                 <id>generate-distribution-files</id>
@@ -519,7 +519,7 @@ pageTracker._trackPageview();
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
-                                    <!-- also default since 2.2-beta-3 -->
+                                    <!-- also default since 2.2-SNAPSHOT -->
                                     <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>                                
                                     <descriptors>
                                         <descriptor>src-descriptor.xml</descriptor>
