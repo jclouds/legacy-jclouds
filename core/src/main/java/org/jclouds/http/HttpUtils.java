@@ -58,6 +58,19 @@ import com.google.common.io.Closeables;
 public class HttpUtils {
 
    /**
+    * keys to the map are only used for socket information, not path. In this case, you should
+    * remove any path or query details from the URI.
+    */
+   public static URI createBaseEndpointFor(URI endpoint) {
+      if (endpoint.getPort() == -1) {
+         return URI.create(String.format("%s://%s", endpoint.getScheme(), endpoint.getHost()));
+      } else {
+         return URI.create(String.format("%s://%s:%d", endpoint.getScheme(), endpoint.getHost(),
+                  endpoint.getPort()));
+      }
+   }
+
+   /**
     * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
     */
    public static String urlEncode(String in, char... skipEncode) {
