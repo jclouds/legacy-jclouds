@@ -137,7 +137,7 @@ public abstract class BaseJettyTest {
    protected Injector injector;
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
-   private RestContext<IntegrationTestAsyncClient, IntegrationTestClient> context;
+   protected RestContext<IntegrationTestAsyncClient, IntegrationTestClient> context;
    private int testPort;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 

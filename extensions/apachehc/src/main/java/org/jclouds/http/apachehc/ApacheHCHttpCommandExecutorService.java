@@ -19,20 +19,20 @@
 
 package org.jclouds.http.apachehc;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Named;
 
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRoute;
 import org.apache.http.conn.params.ConnPerRouteBean;
@@ -43,19 +43,16 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.jclouds.Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 /**
@@ -66,8 +63,11 @@ import com.google.inject.Inject;
  */
 public class ApacheHCHttpCommandExecutorService extends
          BaseHttpCommandExecutorService<HttpEntityEnclosingRequest> {
-
-   private final ConcurrentMap<URI, HttpClient> poolMap;
+   @VisibleForTesting
+   boolean isOpen = true;
+   private final BasicHttpParams params;
+   private final ThreadSafeClientConnManager cm;
+   private final ApacheHCUtils utils;
 
    @Inject
    ApacheHCHttpCommandExecutorService(
@@ -76,58 +76,64 @@ public class ApacheHCHttpCommandExecutorService extends
             DelegatingErrorHandler errorHandler,
             HttpWire wire,
             @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT) final int globalMaxConnections,
-            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) final int globalMaxConnectionsPerHost) {
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) final int globalMaxConnectionsPerHost,
+            ApacheHCUtils utils) {
       super(ioWorkerExecutor, retryHandler, errorHandler, wire);
-      checkArgument(globalMaxConnections > 0, Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT
-               + " must be greater than zero");
-      checkArgument(globalMaxConnectionsPerHost > 0, Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST
-               + " must be greater than zero");
-      poolMap = new MapMaker().makeComputingMap(new Function<URI, HttpClient>() {
-         public HttpClient apply(URI endPoint) {
-            checkArgument(endPoint.getHost() != null, String.format(
-                     "endPoint.getHost() is null for %s", endPoint));
-            HttpParams params = new BasicHttpParams();
-            try {
-               // TODO: have this use our executor service
-               // TODO: implement wire logging
-               ConnManagerParams.setMaxTotalConnections(params, globalMaxConnections);
-               ConnPerRoute connectionsPerRoute = new ConnPerRouteBean(globalMaxConnectionsPerHost);
-               ConnManagerParams.setMaxConnectionsPerRoute(params, connectionsPerRoute);
-               HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-               SchemeRegistry schemeRegistry = new SchemeRegistry();
-               if (endPoint.getScheme().equals("http"))
-                  schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(),
-                           80));
-               else
-                  schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(),
-                           443));
-               ClientConnectionManager cm = new ThreadSafeClientConnManager(params, schemeRegistry);
-               return new DefaultHttpClient(cm, params);
-            } catch (RuntimeException e) {
-               logger.error(e, "error creating entry for %s", endPoint);
-               throw e;
-            }
-         }
-      });
+      this.utils = utils;
+      params = new BasicHttpParams();
+      // TODO: have this use our executor service, if possible
+      if (globalMaxConnections > 0)
+         ConnManagerParams.setMaxTotalConnections(params, globalMaxConnections);
+      if (globalMaxConnectionsPerHost > 0) {
+         ConnPerRoute connectionsPerRoute = new ConnPerRouteBean(globalMaxConnectionsPerHost);
+         ConnManagerParams.setMaxConnectionsPerRoute(params, connectionsPerRoute);
+      }
+      HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+      SchemeRegistry schemeRegistry = new SchemeRegistry();
+      schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+      schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+      cm = new ThreadSafeClientConnManager(params, schemeRegistry);
    }
 
    @Override
    protected HttpEntityEnclosingRequest convert(HttpRequest request) throws IOException {
-      return ApacheHCUtils.convertToApacheRequest(request);
+      return utils.convertToApacheRequest(request);
    }
 
    @Override
    protected HttpResponse invoke(HttpEntityEnclosingRequest nativeRequest) throws IOException {
+      checkState(isOpen, "http executor not open");
+      org.apache.http.HttpResponse nativeResponse = executeRequest(nativeRequest);
+      return utils.convertToJCloudsResponse(nativeResponse);
+   }
+
+   private org.apache.http.HttpResponse executeRequest(HttpEntityEnclosingRequest nativeRequest)
+            throws IOException, ClientProtocolException {
       URI endpoint = URI.create(nativeRequest.getRequestLine().getUri());
-      HttpClient client = poolMap.get(HttpUtils.createBaseEndpointFor(endpoint));
-      assert (client != null) : "pool for endpoint null " + endpoint;
+      HttpClient client = new DefaultHttpClient(cm, params);
       HttpHost host = new HttpHost(endpoint.getHost(), endpoint.getPort(), endpoint.getScheme());
       org.apache.http.HttpResponse nativeResponse = client.execute(host, nativeRequest);
-      return ApacheHCUtils.convertToJCloudsResponse(nativeResponse);
+      return nativeResponse;
+   }
+
+   @PreDestroy
+   public void close() {
+      // TODO test
+      isOpen = false;
+      cm.shutdown();
+   }
+
+   @Override
+   protected void finalize() throws Throwable {
+      try {
+         close();
+      } finally {
+         super.finalize();
+      }
    }
 
    @Override
    protected void cleanup(HttpEntityEnclosingRequest nativeResponse) {
-      // TODO
+      // No cleanup necessary
    }
 }

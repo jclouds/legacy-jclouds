@@ -5,6 +5,7 @@ and reuse your java development skills. Our api allows you to freedom to use
 portable abstractions or cloud-specific features.
  
 our current version is 1.0-beta-3
+our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, rackspace, rimuhosting, vcloud, terremark, 
                           hosting.com

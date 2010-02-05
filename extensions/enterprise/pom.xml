@@ -47,13 +47,11 @@
             <artifactId>jclouds-bouncycastle</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--  not reliable enough yet
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-httpnio</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <scope>test</scope>
         </dependency>
-         -->
     </dependencies>
     
     <build>

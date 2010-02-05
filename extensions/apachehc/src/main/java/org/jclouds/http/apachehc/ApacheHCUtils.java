@@ -19,10 +19,13 @@
 package org.jclouds.http.apachehc;
 
 import java.io.File;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import javax.annotation.Resource;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.http.Header;
@@ -36,15 +39,20 @@ import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payload;
+import org.jclouds.logging.Logger;
 
 /**
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ApacheHCUtils {
    public static final String USER_AGENT = "jclouds/1.0 httpclient/4.0.1";
 
-   public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest request) {
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   public HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest request) {
 
       String uri = request.getEndpoint().toASCIIString();
       if (request.getEndpoint().getQuery() != null)
@@ -77,7 +85,7 @@ public class ApacheHCUtils {
       return apacheRequest;
    }
 
-   public static void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Object content,
+   public void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Object content,
             String contentType, long length) {
       if (content instanceof InputStream) {
          InputStream inputStream = (InputStream) content;
@@ -109,11 +117,12 @@ public class ApacheHCUtils {
       assert (apacheRequest.getEntity() != null);
    }
 
-   public static HttpResponse convertToJCloudsResponse(org.apache.http.HttpResponse apacheResponse)
+   public HttpResponse convertToJCloudsResponse(org.apache.http.HttpResponse apacheResponse)
             throws IOException {
       HttpResponse response = new HttpResponse();
       if (apacheResponse.getEntity() != null) {
-         response.setContent(apacheResponse.getEntity().getContent());
+         response
+                  .setContent(new ConsumeOnCloseInputStream(apacheResponse.getEntity().getContent()));
       }
       for (Header header : apacheResponse.getAllHeaders()) {
          response.getHeaders().put(header.getName(), header.getValue());
@@ -122,4 +131,32 @@ public class ApacheHCUtils {
       response.setMessage(apacheResponse.getStatusLine().getReasonPhrase());
       return response;
    }
+
+   class ConsumeOnCloseInputStream extends FilterInputStream {
+
+      protected ConsumeOnCloseInputStream(InputStream in) {
+         super(in);
+      }
+
+      boolean closed;
+
+      @Override
+      public void close() throws IOException {
+         try {
+            if (!closed) {
+               int result = 0;
+               while (result != -1) {
+                  result = read();
+               }
+            }
+         } catch (IOException e) {
+            logger.warn(e, "error reading stream");
+         } finally {
+            closed = true;
+            super.close();
+         }
+      }
+
+   }
+
 }
