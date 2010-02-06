@@ -21,10 +21,9 @@ package org.jclouds.aws.ec2.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.reference.EC2Constants;
+import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -52,22 +51,8 @@ public class EC2ContextModuleTest {
                new EC2ContextModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT))
-                              .to("http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL)).to(30);
+                     Jsr330.bindProperties(this.binder(), new EC2PropertiesBuilder("user", "key")
+                              .build());
                      super.configure();
                   }
                });

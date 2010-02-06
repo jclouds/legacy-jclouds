@@ -27,7 +27,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
+import org.jclouds.date.joda.config.JodaDateServiceModule;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.testng.annotations.AfterClass;
@@ -191,8 +192,8 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
       String contextName = "gae";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
       this.perfContext = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
-               new NullLoggingModule(), new EnterpriseConfigurationModule(),
-               new GoogleAppEngineConfigurationModule());
+               new NullLoggingModule(), new BouncyCastleEncryptionServiceModule(),
+               new JodaDateServiceModule(), new GoogleAppEngineConfigurationModule());
    }
 
    @AfterClass(groups = { "live" })

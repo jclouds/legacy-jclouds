@@ -27,7 +27,6 @@ import java.net.URI;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -84,13 +83,8 @@ public class PCSCloudTest {
          protected void configure() {
             bind(URI.class).annotatedWith(PCS.class)
                      .toInstance(URI.create("http://localhost:8080"));
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
-                     .to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
-            bindConstant().annotatedWith(
-                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
-                     .to("1");
+            Jsr330.bindProperties(this.binder(), new PCSPropertiesBuilder(URI
+                     .create("http://localhost:8080"), "user", "key").build());
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
+import javax.inject.Named;
+
+import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -51,11 +54,61 @@ import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
  */
 public class HttpUtils {
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_RELAX_HOSTNAME)
+   private boolean relaxHostname = false;
+
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_PROXY_SYSTEM)
+   private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? Boolean
+            .parseBoolean(System.getProperty("java.net.useSystemProxies"))
+            : false;
+
+   private final int globalMaxConnections;
+   private final int globalMaxConnectionsPerHost;
+   private final int connectionTimeout;
+   private final int soTimeout;
+
+   @Inject
+   public HttpUtils(@Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
+            @Named(Constants.PROPERTY_SO_TIMEOUT) int soTimeout,
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT) int globalMaxConnections,
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int globalMaxConnectionsPerHost) {
+      this.soTimeout = soTimeout;
+      this.connectionTimeout = connectionTimeout;
+      this.globalMaxConnections = globalMaxConnections;
+      this.globalMaxConnectionsPerHost = globalMaxConnectionsPerHost;
+   }
+
+   public int getSocketOpenTimeout() {
+      return soTimeout;
+   }
+
+   public int getConnectionTimeout() {
+      return connectionTimeout;
+   }
+
+   public boolean relaxHostname() {
+      return relaxHostname;
+   }
+
+   public boolean useSystemProxies() {
+      return systemProxies;
+   }
+
+   public int getMaxConnections() {
+      return globalMaxConnections;
+   }
+
+   public int getMaxConnectionsPerHost() {
+      return globalMaxConnectionsPerHost;
+   }
 
    /**
     * keys to the map are only used for socket information, not path. In this case, you should

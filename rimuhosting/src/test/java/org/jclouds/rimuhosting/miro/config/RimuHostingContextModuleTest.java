@@ -21,7 +21,6 @@ package org.jclouds.rimuhosting.miro.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -34,7 +33,7 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
+import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
@@ -48,25 +47,12 @@ import com.google.inject.Injector;
 public class RimuHostingContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(
-               new RimuHostingRestClientModule(),
+      return Guice.createInjector(new RimuHostingRestClientModule(),
                new RimuHostingContextModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY)).to(
-                              "apikey");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT)).to(
-                              "http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
+                     Jsr330.bindProperties(this.binder(),
+                              new RimuHostingPropertiesBuilder("apikey").build());
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {
                            return Logger.NULL;

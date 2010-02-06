@@ -18,11 +18,20 @@
  */
 package org.jclouds.http.config;
 
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.jclouds.logging.Logger;
 
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
@@ -44,9 +53,27 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
    protected void bindClient() {
       bind(HttpCommandExecutorService.class).to(JavaUrlHttpCommandExecutorService.class).in(
                Scopes.SINGLETON);
-
+      bind(HostnameVerifier.class).to(LogToMapHostnameVerifier.class);
       bind(TransformingHttpCommandExecutorService.class).to(
                TransformingHttpCommandExecutorServiceImpl.class).in(Scopes.SINGLETON);
    }
 
+   /**
+    * 
+    * Used to get more information about HTTPS hostname wrong errors.
+    * 
+    * @author Adrian Cole
+    */
+   @Singleton
+   static class LogToMapHostnameVerifier implements HostnameVerifier {
+      @Resource
+      private Logger logger = Logger.NULL;
+      private final Map<String, String> sslMap = Maps.newHashMap();;
+
+      public boolean verify(String hostname, SSLSession session) {
+         logger.warn("hostname was %s while session was %s", hostname, session.getPeerHost());
+         sslMap.put(hostname, session.getPeerHost());
+         return true;
+      }
+   }
 }

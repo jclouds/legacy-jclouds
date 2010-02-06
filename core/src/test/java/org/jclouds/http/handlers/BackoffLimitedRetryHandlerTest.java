@@ -32,6 +32,7 @@ import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.TransformingHttpCommandImpl;
@@ -93,7 +94,7 @@ public class BackoffLimitedRetryHandlerTest {
       ExecutorService execService = Executors.newCachedThreadPool();
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
                execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(),
-               new HttpWire(), 1, 1);
+               new HttpWire(), new HttpUtils(0, 500, 1, 1), null);
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService);
    }
 

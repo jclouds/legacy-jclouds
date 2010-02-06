@@ -18,7 +18,7 @@
  */
 package org.jclouds.http.httpnio.config;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -36,6 +36,7 @@ import javax.inject.Singleton;
 
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpVersion;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.nio.NHttpConnection;
@@ -50,6 +51,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.RequestConnControl;
 import org.apache.http.protocol.RequestContent;
@@ -58,6 +60,7 @@ import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommandRendezvous;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.httpnio.pool.NioHttpCommandConnectionPool;
@@ -101,15 +104,26 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
       return httpproc;
    }
 
-   @Provides
    @Singleton
-   public HttpParams provideHttpParams() {
-      HttpParams params = new BasicHttpParams();
-      params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000).setIntParameter(
-               CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024).setBooleanParameter(
-               CoreConnectionPNames.STALE_CONNECTION_CHECK, false).setBooleanParameter(
-               CoreConnectionPNames.TCP_NODELAY, true).setParameter(
-               CoreProtocolPNames.ORIGIN_SERVER, "jclouds/1.0");
+   @Provides
+   HttpParams newBasicHttpParams(HttpUtils utils) {
+      BasicHttpParams params = new BasicHttpParams();
+
+      params.setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
+               .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, true)
+               .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true).setParameter(
+                        CoreProtocolPNames.ORIGIN_SERVER, "jclouds/1.0");
+
+      if (utils.getConnectionTimeout() > 0) {
+         params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, utils
+                  .getConnectionTimeout());
+      }
+
+      if (utils.getSocketOpenTimeout() > 0) {
+         params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, utils.getSocketOpenTimeout());
+      }
+
+      HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
       return params;
    }
 
@@ -198,9 +212,9 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
    }
 
    @Override
-   public BlockingQueue<NHttpConnection> provideAvailablePool(
-            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int maxConnectionsPerHost) throws Exception {
-      return new ArrayBlockingQueue<NHttpConnection>(maxConnectionsPerHost, true);
+   public BlockingQueue<NHttpConnection> provideAvailablePool(HttpUtils utils) throws Exception {
+      return new ArrayBlockingQueue<NHttpConnection>(utils.getMaxConnectionsPerHost() != 0 ? utils
+               .getMaxConnectionsPerHost() : utils.getMaxConnections(), true);
    }
 
    @Provides

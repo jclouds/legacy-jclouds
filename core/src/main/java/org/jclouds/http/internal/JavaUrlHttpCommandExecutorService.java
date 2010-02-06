@@ -27,26 +27,26 @@ import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URL;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
@@ -61,44 +61,54 @@ public class JavaUrlHttpCommandExecutorService extends
          BaseHttpCommandExecutorService<HttpURLConnection> {
 
    public static final String USER_AGENT = "jclouds/1.0 java/" + System.getProperty("java.version");
-
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_RELAX_HOSTNAME)
-   private boolean relaxHostname = false;
-   private final Map<String, String> sslMap;
-
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_PROXY_SYSTEM)
-   private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? Boolean
-            .parseBoolean(System.getProperty("java.net.useSystemProxies"))
-            : false;
+   @Resource
+   protected Logger logger = Logger.NULL;
+   private final HostnameVerifier verifier;
+   private final HttpUtils utils;
 
    @Inject
    public JavaUrlHttpCommandExecutorService(
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler,
-            DelegatingErrorHandler errorHandler,
-            HttpWire wire,
-            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT) final int globalMaxConnections,
-            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) final int globalMaxConnectionsPerHost) {
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler,
+            HttpWire wire, HttpUtils utils, HostnameVerifier verifier) {
       super(ioWorkerExecutor, retryHandler, errorHandler, wire);
-      sslMap = Maps.newHashMap();
-      if (globalMaxConnections > 0)
-         System.setProperty("http.maxConnections", String.valueOf(globalMaxConnections));
+      if (utils.getMaxConnections() > 0)
+         System.setProperty("http.maxConnections", String.valueOf(utils.getMaxConnections()));
+      this.utils = utils;
+      this.verifier = verifier;
    }
 
-   /**
-    * 
-    * Used to get more information about HTTPS hostname wrong errors.
-    * 
-    * @author Adrian Cole
-    */
-   class LogToMapHostnameVerifier implements HostnameVerifier {
-      public boolean verify(String hostname, SSLSession session) {
-         logger.warn("hostname was %s while session was %s", hostname, session.getPeerHost());
-         sslMap.put(hostname, session.getPeerHost());
-         return true;
+   @Override
+   protected HttpResponse invoke(HttpURLConnection connection) throws IOException,
+            InterruptedException {
+      HttpResponse response = new HttpResponse();
+      InputStream in = null;
+      try {
+         in = consumeOnClose(connection.getInputStream());
+      } catch (IOException e) {
+         in = bufferAndCloseStream(connection.getErrorStream());
+      } catch (RuntimeException e) {
+         Closeables.closeQuietly(in);
+         Throwables.propagate(e);
+         assert false : "should have propagated exception";
       }
+      for (String header : connection.getHeaderFields().keySet()) {
+         response.getHeaders().putAll(header, connection.getHeaderFields().get(header));
+      }
+      if (connection.getResponseCode() == 204) {
+         Closeables.closeQuietly(in);
+         in = null;
+      } else if (in != null) {
+         response.setContent(in);
+      }
+      response.setStatusCode(connection.getResponseCode());
+      response.setMessage(connection.getResponseMessage());
+      return response;
+   }
+   
+
+   public InputStream consumeOnClose(InputStream in) {
+      return new ConsumeOnCloseInputStream(in);
    }
 
    class ConsumeOnCloseInputStream extends FilterInputStream {
@@ -128,33 +138,6 @@ public class JavaUrlHttpCommandExecutorService extends
 
    }
 
-   @Override
-   protected HttpResponse invoke(HttpURLConnection connection) throws IOException,
-            InterruptedException {
-      HttpResponse response = new HttpResponse();
-      InputStream in = null;
-      try {
-         in = new ConsumeOnCloseInputStream(connection.getInputStream());
-      } catch (IOException e) {
-         in = bufferAndCloseStream(connection.getErrorStream());
-      } catch (RuntimeException e) {
-         Closeables.closeQuietly(in);
-         Throwables.propagate(e);
-         assert false : "should have propagated exception";
-      }
-      for (String header : connection.getHeaderFields().keySet()) {
-         response.getHeaders().putAll(header, connection.getHeaderFields().get(header));
-      }
-      if (connection.getResponseCode() == 204) {
-         Closeables.closeQuietly(in);
-         in = null;
-      } else if (in != null) {
-         response.setContent(in);
-      }
-      response.setStatusCode(connection.getResponseCode());
-      response.setMessage(connection.getResponseMessage());
-      return response;
-   }
 
    private InputStream bufferAndCloseStream(InputStream inputStream) throws IOException {
       InputStream in = null;
@@ -173,7 +156,7 @@ public class JavaUrlHttpCommandExecutorService extends
             InterruptedException {
       URL url = request.getEndpoint().toURL();
       HttpURLConnection connection;
-      if (systemProxies) {
+      if (utils.useSystemProxies()) {
          System.setProperty("java.net.useSystemProxies", "true");
          Iterable<Proxy> proxies = ProxySelector.getDefault().select(request.getEndpoint());
          Proxy proxy = Iterables.getLast(proxies);
@@ -181,9 +164,9 @@ public class JavaUrlHttpCommandExecutorService extends
       } else {
          connection = (HttpURLConnection) url.openConnection();
       }
-      if (relaxHostname && connection instanceof HttpsURLConnection) {
+      if (utils.relaxHostname() && connection instanceof HttpsURLConnection) {
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;
-         sslCon.setHostnameVerifier(new LogToMapHostnameVerifier());
+         sslCon.setHostnameVerifier(verifier);
       }
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);

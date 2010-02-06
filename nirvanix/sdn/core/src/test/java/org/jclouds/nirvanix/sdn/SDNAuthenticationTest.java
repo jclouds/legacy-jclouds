@@ -26,7 +26,6 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -77,13 +76,8 @@ public class SDNAuthenticationTest {
          protected void configure() {
             bind(URI.class).annotatedWith(SDN.class)
                      .toInstance(URI.create("http://localhost:8080"));
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
-                     .to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
-            bindConstant().annotatedWith(
-                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
-                     .to("1");
+            Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("user", "key", "key",
+                     "key").build());
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
@@ -96,5 +90,4 @@ public class SDNAuthenticationTest {
                .get(new TypeLiteral<RestAnnotationProcessor<SDNAuthentication>>() {
                }));
    }
-
 }

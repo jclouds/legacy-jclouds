@@ -37,7 +37,7 @@ public interface Constants {
     * Amount of threads servicing the I/O of http connections.
     */
    public static final String PROPERTY_IO_WORKER_THREADS = "jclouds.io_worker_threads";
-   
+
    /**
     * Integer property. default (20)
     * <p/>
@@ -46,9 +46,10 @@ public interface Constants {
    public static final String PROPERTY_MAX_CONNECTIONS_PER_CONTEXT = "jclouds.max_connections_per_context";
 
    /**
-    * Integer property. default (12)
+    * Integer property. default (0)
     * <p/>
-    * Limits the amount of connections per host.
+    * Limits the amount of connections per host. 0 means indirectly limited by
+    * {@link #PROPERTY_MAX_CONNECTIONS_PER_CONTEXT}.
     */
    public static final String PROPERTY_MAX_CONNECTIONS_PER_HOST = "jclouds.max_connections_per_host";
 
@@ -65,6 +66,20 @@ public interface Constants {
     * connections are reused too many times.
     */
    public static final String PROPERTY_MAX_CONNECTION_REUSE = "jclouds.max_connection_reuse";
+
+   /**
+    * int property. default (60000)
+    * <p/>
+    * How many milliseconds to wait before a socket connection times out. 0 means infinity.
+    */
+   public static final String PROPERTY_SO_TIMEOUT = "jclouds.so_timeout";
+
+   /**
+    * Long property. default (60000)
+    * <p/>
+    * How many milliseconds to wait before a connection times out. 0 means infinity.
+    */
+   public static final String PROPERTY_CONNECTION_TIMEOUT = "jclouds.connection_timeout";
 
    /**
     * Boolean property.

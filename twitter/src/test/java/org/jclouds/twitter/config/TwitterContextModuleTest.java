@@ -21,7 +21,6 @@ package org.jclouds.twitter.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -34,7 +33,7 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.twitter.reference.TwitterConstants;
+import org.jclouds.twitter.TwitterPropertiesBuilder;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
@@ -51,19 +50,8 @@ public class TwitterContextModuleTest {
       return Guice.createInjector(new TwitterRestClientModule(), new TwitterContextModule() {
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(TwitterConstants.PROPERTY_TWITTER_USER)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(TwitterConstants.PROPERTY_TWITTER_PASSWORD))
-                     .to("password");
-            bindConstant().annotatedWith(Jsr330.named(TwitterConstants.PROPERTY_TWITTER_ENDPOINT))
-                     .to("http://localhost");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
-                     .to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
-            bindConstant().annotatedWith(
-                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
-                     .to("1");
+            Jsr330.bindProperties(this.binder(), new TwitterPropertiesBuilder("user", "pass")
+                     .build());
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

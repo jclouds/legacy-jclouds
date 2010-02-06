@@ -51,7 +51,7 @@ public class HttpPropertiesBuilderTest {
             return this;
          }
       };
-      builder.withHttpMaxRetries(httpMaxRetries);
+      builder.withMaxRetries(httpMaxRetries);
 
       builder.limitIoWorkerThreadsTo(poolIoWorkerThreads);
       builder.withMaxClientReuse(poolMaxClientReuse);

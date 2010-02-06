@@ -18,6 +18,11 @@
  */
 package org.jclouds.http.apachehc;
 
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.*;
+import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
 import java.util.Properties;
 
 import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
@@ -33,13 +38,21 @@ import com.google.inject.Module;
  */
 @Test
 public class ApacheHCHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceTest {
+   static {
+      System.setProperty("http.conn-manager.timeout", 1000 + "");
+   }
 
    protected Module createConnectionModule() {
       return new ApacheHCHttpCommandExecutorServiceModule();
    }
 
    protected void addConnectionProperties(Properties props) {
-
+      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 20 + "");
+      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 0 + "");
+      props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 100 + "");
+      props.setProperty(PROPERTY_SO_TIMEOUT, 100 + "");
+      props.setProperty(PROPERTY_IO_WORKER_THREADS, 3 + "");
+      props.setProperty(PROPERTY_USER_THREADS, 0 + "");
    }
 
 }

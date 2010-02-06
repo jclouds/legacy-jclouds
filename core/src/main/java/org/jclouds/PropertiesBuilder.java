@@ -18,6 +18,7 @@
  */
 package org.jclouds;
 
+import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
@@ -27,6 +28,7 @@ import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
 import static org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES;
 import static org.jclouds.Constants.PROPERTY_PROXY_SYSTEM;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.net.URI;
@@ -58,9 +60,25 @@ public abstract class PropertiesBuilder {
    }
 
    /**
+    * @see org.jclouds.Constants.PROPERTY_SO_TIMEOUT
+    */
+   public PropertiesBuilder withSOTimeout(long soTimeout) {
+      properties.setProperty(PROPERTY_SO_TIMEOUT, Long.toString(soTimeout));
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT
+    */
+   public PropertiesBuilder withConnectionTimeout(long connectionTimeout) {
+      properties.setProperty(PROPERTY_CONNECTION_TIMEOUT, Long.toString(connectionTimeout));
+      return this;
+   }
+
+   /**
     * @see org.jclouds.Constants.PROPERTY_MAX_RETRIES
     */
-   public PropertiesBuilder withHttpMaxRetries(int httpMaxRetries) {
+   public PropertiesBuilder withMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
    }
@@ -68,7 +86,7 @@ public abstract class PropertiesBuilder {
    /**
     * @see org.jclouds.Constants.PROPERTY_MAX_REDIRECTS
     */
-   public PropertiesBuilder withHttpMaxRedirects(int httpMaxRedirects) {
+   public PropertiesBuilder withMaxRedirects(int httpMaxRedirects) {
       properties.setProperty(PROPERTY_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
       return this;
    }
@@ -133,7 +151,9 @@ public abstract class PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties props = new Properties();
       props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 20 + "");
-      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 12 + "");
+      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 0 + "");
+      props.setProperty(PROPERTY_SO_TIMEOUT, 60000 + "");
+      props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 60000 + "");
       props.setProperty(PROPERTY_IO_WORKER_THREADS, 20 + "");
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
       props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");

@@ -68,6 +68,11 @@
         </dependency>    
     		<dependency>
       			<groupId>${project.groupId}</groupId>
+      			<artifactId>jclouds-enterprise</artifactId>
+      			<version>${project.version}</version>
+    		</dependency>
+    		<dependency>
+      			<groupId>${project.groupId}</groupId>
       			<artifactId>jclouds-httpnio</artifactId>
       			<version>${project.version}</version>
     		</dependency>
