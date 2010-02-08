@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,9 +38,12 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.ImageImpl;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
@@ -54,6 +58,8 @@ import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.compute.CloudServersComputeService;
 import org.jclouds.rackspace.cloudservers.config.CloudServersContextModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
+import org.jclouds.rackspace.cloudservers.domain.Server;
+import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
@@ -66,6 +72,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link CloudServersComputeServiceContext}; requires
@@ -79,6 +86,59 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    protected void configure() {
       super.configure();
       bind(ComputeService.class).to(CloudServersComputeService.class).asEagerSingleton();
+      bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
+      }).to(ServerToNodeMetadata.class);
+   }
+
+   @Singleton
+   @Provides
+   Map<ServerStatus, NodeState> provideServerToNodeState() {
+      return ImmutableMap.<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE,
+               NodeState.RUNNING)//
+               .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
+               .put(ServerStatus.DELETED, NodeState.TERMINATED)//
+               .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
+               .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
+               .put(ServerStatus.RESIZE, NodeState.PENDING)//
+               .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
+               .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
+               .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
+               .put(ServerStatus.MOVE, NodeState.PENDING)//
+               .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
+               .put(ServerStatus.RESCUE, NodeState.PENDING)//
+               .put(ServerStatus.ERROR, NodeState.ERROR)//
+               .put(ServerStatus.BUILD, NodeState.PENDING)//
+               .put(ServerStatus.RESTORING, NodeState.PENDING)//
+               .put(ServerStatus.PASSWORD, NodeState.PENDING)//
+               .put(ServerStatus.REBUILD, NodeState.PENDING)//
+               .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
+               .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
+               .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
+               .put(ServerStatus.REBOOT, NodeState.PENDING)//
+               .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
+               .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
+   }
+
+   protected static class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
+      public static final Pattern TAG_PATTERN = Pattern.compile("[^-]+-([^-]+)-[0-9]+");
+      private final Location location;
+      private final Map<ServerStatus, NodeState> serverToNodeState;
+
+      @Inject
+      ServerToNodeMetadata(Location location, Map<ServerStatus, NodeState> serverToNodeState) {
+         this.location = location;
+         this.serverToNodeState = serverToNodeState;
+      }
+
+      @Override
+      public NodeMetadata apply(Server from) {
+         Matcher matcher = TAG_PATTERN.matcher(from.getName());
+         final String tag = matcher.find() ? matcher.group(1) : null;
+         return new NodeMetadataImpl(from.getId() + "", from.getName(), location.getId(), null,
+                  from.getMetadata(), tag, serverToNodeState.get(from.getStatus()), from
+                           .getAddresses().getPublicAddresses(), from.getAddresses()
+                           .getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
+      }
    }
 
    @Provides

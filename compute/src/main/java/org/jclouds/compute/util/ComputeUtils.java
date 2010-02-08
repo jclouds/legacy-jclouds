@@ -48,7 +48,6 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -72,13 +71,6 @@ public class ComputeUtils {
    protected final Predicate<SshClient> runScriptNotRunning;
    private final Predicate<InetSocketAddress> socketTester;
    private final ExecutorService executor;
-
-   public static Function<ComputeMetadata, String> METADATA_TO_ID = new Function<ComputeMetadata, String>() {
-      @Override
-      public String apply(ComputeMetadata from) {
-         return from.getId();
-      }
-   };
 
    @Inject
    public ComputeUtils(Predicate<InetSocketAddress> socketTester,
@@ -113,7 +105,6 @@ public class ComputeUtils {
       if (options.getRunScript() != null) {
          callables.add(runScriptOnNode(node, "runscript.sh", options.getRunScript()));
       }
-
       if (options.getPublicKey() != null) {
          callables.add(authorizeKeyOnNode(node, options.getPublicKey()));
       }

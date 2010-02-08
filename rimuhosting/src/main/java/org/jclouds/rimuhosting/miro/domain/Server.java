@@ -20,6 +20,7 @@ package org.jclouds.rimuhosting.miro.domain;
 
 import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.data.NewServerData;
+import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
 /**
  * Instance Object.
@@ -50,7 +51,7 @@ public class Server implements Comparable<Server> {
    @SerializedName("order_oid")
    private Long id;
    @SerializedName("running_state")
-   private String state;
+   private RunningState state;
    @SerializedName("server_type")
    private String type;
    private String slug;
@@ -133,11 +134,11 @@ public class Server implements Comparable<Server> {
       this.id = id;
    }
 
-   public String getState() {
+   public RunningState getState() {
       return state;
    }
 
-   public void setState(String state) {
+   public void setState(RunningState state) {
       this.state = state;
    }
 

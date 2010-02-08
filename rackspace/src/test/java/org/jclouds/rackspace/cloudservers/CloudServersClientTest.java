@@ -42,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.logging.Logger;
@@ -70,6 +71,9 @@ import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -196,7 +200,7 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               ReturnFalseOnNotFoundOr404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
@@ -272,7 +276,7 @@ public class CloudServersClientTest {
                ParseServerFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+               ReturnNullOnNotFoundOr404.class);
    }
 
    public void testListFlavors() throws SecurityException, NoSuchMethodException {
@@ -363,7 +367,7 @@ public class CloudServersClientTest {
                ParseFlavorFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+               ReturnNullOnNotFoundOr404.class);
    }
 
    public void testListImages() throws SecurityException, NoSuchMethodException {
@@ -454,7 +458,7 @@ public class CloudServersClientTest {
                ParseImageFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+               ReturnNullOnNotFoundOr404.class);
    }
 
    public void testDeleteServer() throws SecurityException, NoSuchMethodException {
@@ -468,7 +472,7 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               ReturnFalseOnNotFoundOr404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
@@ -492,9 +496,9 @@ public class CloudServersClientTest {
       assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testShareIpConfig() throws SecurityException, NoSuchMethodException,
@@ -517,9 +521,9 @@ public class CloudServersClientTest {
                .getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testUnshareIpNoConfig() throws SecurityException, NoSuchMethodException,
@@ -535,9 +539,9 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               ReturnVoidOnNotFoundOr404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testReplaceBackupSchedule() throws SecurityException, NoSuchMethodException {
@@ -562,7 +566,7 @@ public class CloudServersClientTest {
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testDeleteBackupSchedule() throws SecurityException, NoSuchMethodException {
@@ -576,7 +580,7 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               ReturnFalseOnNotFoundOr404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
@@ -599,9 +603,9 @@ public class CloudServersClientTest {
       assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testChangeServerName() throws SecurityException, NoSuchMethodException {
@@ -622,9 +626,9 @@ public class CloudServersClientTest {
       assertEquals("{\"server\":{\"name\":\"foo\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testListSharedIpGroups() throws SecurityException, NoSuchMethodException {
@@ -716,7 +720,7 @@ public class CloudServersClientTest {
                ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+               ReturnNullOnNotFoundOr404.class);
    }
 
    private static final Class<? extends CreateSharedIpGroupOptions[]> createSharedIpGroupOptionsVarargsClass = new CreateSharedIpGroupOptions[] {}
@@ -776,13 +780,13 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               ReturnFalseOnNotFoundOr404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testListAddresses() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listAddresses", int.class);
+      Method method = CloudServersAsyncClient.class.getMethod("getAddresses", int.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
@@ -824,7 +828,7 @@ public class CloudServersClientTest {
    }
 
    public void testListBackupSchedule() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listBackupSchedule", int.class);
+      Method method = CloudServersAsyncClient.class.getMethod("getBackupSchedule", int.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
@@ -899,9 +903,9 @@ public class CloudServersClientTest {
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
       assertNotNull(processor.getMapPayloadBinderOrNull(method, new Object[] { "",
                new RebuildServerOptions[] { withImage(2) } }));
    }
@@ -924,9 +928,9 @@ public class CloudServersClientTest {
       assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testResize() throws SecurityException, NoSuchMethodException {
@@ -946,9 +950,9 @@ public class CloudServersClientTest {
       assertEquals("{\"resize\":{\"flavorId\":3}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testConfirmResize() throws SecurityException, NoSuchMethodException {
@@ -968,9 +972,9 @@ public class CloudServersClientTest {
       assertEquals("{\"confirmResize\":null}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    public void testRevertResize() throws SecurityException, NoSuchMethodException {
@@ -989,9 +993,9 @@ public class CloudServersClientTest {
       assertEquals("{\"revertResize\":null}", httpMethod.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               ReturnFalseOn404.class);
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
+               CloseContentAndReturn.class);
    }
 
    @BeforeClass
@@ -1000,7 +1004,7 @@ public class CloudServersClientTest {
          @Override
          protected void configure() {
             Jsr330.bindProperties(this.binder(), new RackspacePropertiesBuilder("user", "key")
-            .build());
+                     .build());
             bind(URI.class).annotatedWith(CloudServers.class).toInstance(
                      URI.create("http://localhost:8080"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

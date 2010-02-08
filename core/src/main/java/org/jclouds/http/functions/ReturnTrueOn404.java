@@ -25,16 +25,18 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 @Singleton
 public class ReturnTrueOn404 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      if (from instanceof HttpResponseException) {
-         HttpResponseException responseException = (HttpResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
-            return true;
-         }
+      Iterable<HttpResponseException> throwables = Iterables.filter(
+               Throwables.getCausalChain(from), HttpResponseException.class);
+      if (Iterables.size(throwables) >= 1
+               && Iterables.get(throwables, 0).getResponse().getStatusCode() == 404) {
+         return true;
       }
       return Boolean.class.cast(propagateOrNull(from));
    }

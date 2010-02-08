@@ -1,5 +1,7 @@
 package org.jclouds.rackspace.cloudservers.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -7,7 +9,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
-import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
@@ -32,15 +33,13 @@ public class ServerDeleted implements Predicate<Server> {
    }
 
    public boolean apply(Server server) {
-      logger.trace("looking for state on server %s", server);
-      try {
-         server = refresh(server);
-         logger.trace("%s: looking for server state %s: currently: %s", server.getId(),
-                  ServerStatus.DELETED, server.getStatus());
-         return server.getStatus() == ServerStatus.DELETED;
-      } catch (ResourceNotFoundException e) {
+      logger.trace("looking for state on server %s", checkNotNull(server, "server"));
+      server = refresh(server);
+      if (server == null)
          return true;
-      }
+      logger.trace("%s: looking for server state %s: currently: %s", server.getId(),
+               ServerStatus.DELETED, server.getStatus());
+      return server.getStatus() == ServerStatus.DELETED;
    }
 
    private Server refresh(Server server) {

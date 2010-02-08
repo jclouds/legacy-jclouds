@@ -126,7 +126,8 @@ public class TemplateImpl implements Template {
 
    @Override
    public String toString() {
-      return "TemplateImpl [image=" + image + ", size=" + size + "]";
+      return "[location=" + location + ", image=" + image + ", size=" + size + ", options="
+               + options + "]";
    }
 
    /**

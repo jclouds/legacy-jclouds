@@ -30,7 +30,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
-import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlPayload;
 import org.jclouds.mezeo.pcs2.binders.BindDataToPayload;
@@ -54,6 +53,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

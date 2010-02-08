@@ -18,9 +18,14 @@
  */
 package org.jclouds.rimuhosting.miro.config;
 
-import com.google.common.base.Predicate;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.predicates.RetryablePredicate;
@@ -30,15 +35,15 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rimuhosting.miro.RimuHosting;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.filters.RimuHostingAuthentication;
+import org.jclouds.rimuhosting.miro.predicates.ServerDestroyed;
+import org.jclouds.rimuhosting.miro.predicates.ServerRunning;
 import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import com.google.common.base.Predicate;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
  * Configures the RimuHosting connection.
@@ -48,6 +53,20 @@ import java.util.concurrent.TimeUnit;
 @RequiresHttp
 @ConfiguresRestClient
 public class RimuHostingRestClientModule extends AbstractModule {
+
+   @Provides
+   @Singleton
+   @Named("RUNNING")
+   protected Predicate<Server> serverRunning(ServerRunning stateRunning) {
+      return new RetryablePredicate<Server>(stateRunning, 600, 1, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("DESTROYED")
+   protected Predicate<Server> serverDeleted(ServerDestroyed stateDeleted) {
+      return new RetryablePredicate<Server>(stateDeleted, 600, 50, TimeUnit.MILLISECONDS);
+   }
 
    @Provides
    @Singleton

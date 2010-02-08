@@ -71,8 +71,7 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified server.
     * 
-    * @throws ResourceNotFoundException
-    *            if the server is not found
+    * @return null, if the server is not found
     * @see Server
     */
    Server getServer(@PathParam("id") int id);
@@ -102,7 +101,7 @@ public interface CloudServersClient {
     *           graceful shutdown of all processes. A hard reboot is the equivalent of power cycling
     *           the server.
     */
-   boolean rebootServer(int id, RebootType rebootType);
+   void rebootServer(int id, RebootType rebootType);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -117,7 +116,7 @@ public interface CloudServersClient {
     * <p/>
     * ACTIVE - QUEUE_RESIZE - ACTIVE (on error)
     */
-   boolean resizeServer(int id, int flavorId);
+   void resizeServer(int id, int flavorId);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -130,7 +129,7 @@ public interface CloudServersClient {
     * <p/>
     * VERIFY_RESIZE - ACTIVE
     */
-   boolean confirmResizeServer(int id);
+   void confirmResizeServer(int id);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -143,7 +142,7 @@ public interface CloudServersClient {
     * <p/>
     * VERIFY_RESIZE - ACTIVE
     */
-   boolean revertResizeServer(int id);
+   void revertResizeServer(int id);
 
    /**
     * This operation asynchronously provisions a new server. The progress of this operation depends
@@ -173,7 +172,7 @@ public interface CloudServersClient {
     *           - imageId is an optional argument. If it is not specified, the server is rebuilt
     *           with the original imageId.
     */
-   boolean rebuildServer(int id, RebuildServerOptions... options);
+   void rebuildServer(int id, RebuildServerOptions... options);
 
    /**
     * /** This operation allows you share an IP address to the specified server
@@ -194,9 +193,8 @@ public interface CloudServersClient {
     *           If set to false, does not bind the IP to the server itself. A heartbeat facility
     *           (e.g. keepalived) can then be used within the servers to perform health checks and
     *           manage IP failover.
-    * @return false if the server is not found
     */
-   boolean shareIp(InetAddress addressToShare, int serverToTosignBindressTo, int sharedIpGroup,
+   void shareIp(InetAddress addressToShare, int serverToTosignBindressTo, int sharedIpGroup,
             boolean configureServer);
 
    /**
@@ -208,16 +206,15 @@ public interface CloudServersClient {
     * @param serverToTosignBindressTo
     * @return
     */
-   boolean unshareIp(InetAddress addressToShare, int serverToTosignBindressTo);
+   void unshareIp(InetAddress addressToShare, int serverToTosignBindressTo);
 
    /**
     * This operation allows you to change the administrative password.
     * <p/>
     * Status Transition: ACTIVE - PASSWORD - ACTIVE
     * 
-    * @return false if the server is not found
     */
-   boolean changeAdminPass(int id, String adminPass);
+   void changeAdminPass(int id, String adminPass);
 
    /**
     * This operation allows you to update the name of the server. This operation changes the name of
@@ -225,9 +222,8 @@ public interface CloudServersClient {
     * <p/>
     * Status Transition: ACTIVE - PASSWORD - ACTIVE
     * 
-    * @return false if the server is not found
     */
-   boolean renameServer(int id, String newName);
+   void renameServer(int id, String newName);
 
    /**
     * 
@@ -242,8 +238,7 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified flavor.
     * 
-    * @throws ResourceNotFoundException
-    *            if the flavor is not found
+    * @return null, if the flavor is not found
     * @see Flavor
     */
    Flavor getFlavor(int id);
@@ -261,8 +256,8 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified image.
     * 
-    * @throws ResourceNotFoundException
-    *            if the image is not found
+    * @return null, if the image is not found
+    * 
     * @see Image
     */
    Image getImage(int id);
@@ -314,8 +309,8 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified shared IP group.
     * 
-    * @throws ResourceNotFoundException
-    *            if the shared IP group is not found
+    * @return null, if the shared ip group is not found
+    * 
     * @see SharedIpGroup
     */
    SharedIpGroup getSharedIpGroup(int id);
@@ -340,37 +335,48 @@ public interface CloudServersClient {
 
    /**
     * List the backup schedule for the specified server
+    * 
+    * @throws ResourceNotFoundException
+    *            , if the server doesn't exist
     */
-   BackupSchedule listBackupSchedule(int serverId);
+   BackupSchedule getBackupSchedule(int serverId);
 
    /**
     * Delete backup schedule for the specified server.
     * <p/>
     * Web Hosting #119571 currently disables the schedule, not deletes it.
     * 
-    * @return false if the server is not found
+    * @return false if the schedule is not found
     */
    boolean deleteBackupSchedule(int serverId);
 
    /**
     * Enable/update the backup schedule for the specified server
     * 
-    * @return false if the server is not found
     */
-   boolean replaceBackupSchedule(int id, BackupSchedule backupSchedule);
+   void replaceBackupSchedule(int id, BackupSchedule backupSchedule);
 
    /**
     * List all server addresses
+    * 
+    * @throws ResourceNotFoundException
+    *            , if the server doesn't exist
     */
-   Addresses listAddresses(int serverId);
+   Addresses getAddresses(int serverId);
 
    /**
     * List all public server addresses
+    * 
+    * @throws ResourceNotFoundException
+    *            , if the server doesn't exist
     */
    List<InetAddress> listPublicAddresses(int serverId);
 
    /**
     * List all private server addresses
+    * 
+    * @throws ResourceNotFoundException
+    *            , if the server doesn't exist
     */
    List<InetAddress> listPrivateAddresses(int serverId);
 

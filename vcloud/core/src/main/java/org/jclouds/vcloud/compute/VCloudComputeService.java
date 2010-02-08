@@ -21,18 +21,13 @@ package org.jclouds.vcloud.compute;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.compute.util.ComputeUtils.METADATA_TO_ID;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -43,18 +38,15 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.domain.internal.NodeSetImpl;
-import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -63,117 +55,43 @@ import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudComputeService implements ComputeService, VCloudComputeClient {
+public class VCloudComputeService extends BaseComputeService implements ComputeService,
+         VCloudComputeClient {
 
-   private static class NodeMatchesTag implements Predicate<NodeMetadata> {
-      private final String tag;
-
-      @Override
-      public boolean apply(NodeMetadata from) {
-         return from.getTag().equals(tag);
-      }
-
-      public NodeMatchesTag(String tag) {
-         super();
-         this.tag = tag;
-      }
-   };
-
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
-   private final VCloudClient client;
-   protected final Provider<Map<String, ? extends Image>> images;
-   protected final Provider<Map<String, ? extends Size>> sizes;
-   protected final Provider<Map<String, ? extends Location>> locations;
-   protected final Provider<TemplateBuilder> templateBuilderProvider;
-   protected final String nodeNamingConvention;
-   protected final ComputeUtils utils;
+   protected final VCloudClient client;
    protected final Predicate<String> taskTester;
    protected final Predicate<VApp> notFoundTester;
-   protected final ExecutorService executor;
-
-   protected static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap
-            .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
-                     VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING)
-            .put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
-                     NodeState.PENDING).build();
+   protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   public VCloudComputeService(VCloudClient client,
-            Provider<TemplateBuilder> templateBuilderProvider,
+   public VCloudComputeService(Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Map<String, ? extends Image>> images,
             Provider<Map<String, ? extends Size>> sizes,
             Provider<Map<String, ? extends Location>> locations, ComputeUtils utils,
-            Predicate<String> successTester, @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            VCloudClient client, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            Map<VAppStatus, NodeState> vAppStatusToNodeState,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.taskTester = successTester;
+      super(images, sizes, locations, templateBuilderProvider, "%s-%d", utils, executor);
       this.client = client;
-      this.images = images;
-      this.sizes = sizes;
-      this.locations = locations;
-      this.templateBuilderProvider = templateBuilderProvider;
-      this.utils = utils;
+      this.taskTester = successTester;
       this.notFoundTester = notFoundTester;
-      this.executor = executor;
-      this.nodeNamingConvention = "%s-%d";
+      this.vAppStatusToNodeState = vAppStatusToNodeState;
    }
 
    @Override
-   public NodeSet runNodesWithTag(final String tag, int count, final Template template) {
-      checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
-      checkNotNull(template.getLocation(), "location");
-      final Set<NodeMetadata> nodes = Sets.newHashSet();
-      int nodesToStart = count;
-      int i = 0;
-      while (nodesToStart > 0) {
-         int currentCount = i;
-         Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
-         for (; i < currentCount + nodesToStart; i++) {
-            final String name = String.format(nodeNamingConvention, tag, i + 1);
-            responses.put(name, makeListenable(executor.submit(new Callable<Void>() {
-               @Override
-               public Void call() throws Exception {
-                  NodeMetadata node = null;
-                  try {
-                     node = startServerAndConvertToNode(tag, name, template);
-                     logger.debug("<< running server(%s)", node.getId());
-                     utils.runOptionsOnNode(node, template.getOptions());
-                     logger.debug("<< options applied server(%s)", node.getId());
-                     nodes.add(node);
-                  } catch (Exception e) {
-                     if (node != null) {
-                        destroyNode(node);
-                        logger.error(e, "<< error applying server(%s) [%s] destroying ", name, e
-                                 .getMessage());
-                     }
-                  }
-                  return null;
-               }
-
-            }), executor));
-         }
-         nodesToStart = awaitCompletion(responses, executor, null, logger, "nodes").size();
-      }
-      return new NodeSetImpl(nodes);
-   }
-
-   private NodeMetadata startServerAndConvertToNode(final String tag, final String name,
-            final Template template) {
+   protected NodeMetadata startNode(final String tag, final String name, final Template template) {
       Map<String, String> metaMap = start(template.getLocation().getId(), name, template.getImage()
                .getId(), template.getSize().getCores(), template.getSize().getRam(), template
                .getSize().getDisk() * 1024 * 1024l, ImmutableMap.<String, String> of(), template
@@ -186,8 +104,8 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
             Map<String, String> metaMap, VApp vApp) {
       return new NodeMetadataImpl(vApp.getId(), vApp.getName(), template.getLocation().getId(),
                vApp.getLocation(), ImmutableMap.<String, String> of(), tag, vAppStatusToNodeState
-                        .get(vApp.getStatus()), getPublicAddresses(vApp.getId()),
-               getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(),
+                        .get(vApp.getStatus()), getPublicAddresses(vApp.getId()), vApp
+                        .getNetworkToAddresses().values(), ImmutableMap.<String, String> of(),
                new Credentials(metaMap.get("username"), metaMap.get("password")));
    }
 
@@ -209,14 +127,7 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
    }
 
    @Override
-   public Map<String, ? extends ComputeMetadata> getNodes() {
-      logger.debug(">> listing vApps");
-      Map<String, ? extends ComputeMetadata> nodes = doGetNodes();
-      logger.debug("<< list(%d)", nodes.size());
-      return nodes;
-   }
-
-   private Map<String, ? extends ComputeMetadata> doGetNodes() {
+   protected Iterable<? extends ComputeMetadata> doGetNodes() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
          for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
@@ -225,29 +136,13 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
             }
          }
       }
-      return Maps.uniqueIndex(nodes, METADATA_TO_ID);
+      return nodes;
    }
 
    @Override
-   public void destroyNode(ComputeMetadata node) {
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
+   protected boolean doDestroyNode(ComputeMetadata node) {
       stop(checkNotNull(node.getId(), "node.id"));
-   }
-
-   @Override
-   public TemplateBuilder templateBuilder() {
-      return templateBuilderProvider.get();
-   }
-
-   @Override
-   public Map<String, ? extends Size> getSizes() {
-      return sizes.get();
-   }
-
-   @Override
-   public Map<String, ? extends Image> getImages() {
-      return images.get();
+      return true;
    }
 
    public Map<String, String> start(String vDCId, String name, String templateId, int minCores,
@@ -369,61 +264,4 @@ public class VCloudComputeService implements ComputeService, VCloudComputeClient
       return Sets.newHashSet(vApp.getNetworkToAddresses().values());
    }
 
-   @Override
-   public void destroyNodesWithTag(String tag) { // TODO parallel
-      logger.debug(">> terminating servers by tag(%s)", tag);
-      Iterable<NodeMetadata> nodesToDestroy = Iterables.filter(doGetNodes(tag),
-               new Predicate<NodeMetadata>() {
-                  @Override
-                  public boolean apply(NodeMetadata input) {
-                     return input.getState() != NodeState.TERMINATED;
-
-                  }
-               });
-      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
-      for (final NodeMetadata node : nodesToDestroy) {
-         responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               destroyNode(node);
-               return null;
-            }
-         }), executor));
-      }
-      awaitCompletion(responses, executor, null, logger, "nodes");
-      logger.debug("<< destroyed");
-   }
-
-   @Override
-   public Map<String, ? extends Location> getLocations() {
-      return locations.get();
-   }
-
-   @Override
-   public NodeSet getNodesWithTag(String tag) {
-      logger.debug(">> listing servers by tag(%s)", tag);
-      NodeSet nodes = doGetNodes(tag);
-      logger.debug("<< list(%d)", nodes.size());
-      return nodes;
-   }
-
-   protected NodeSet doGetNodes(final String tag) {
-      Iterable<NodeMetadata> nodes = Iterables.filter(Iterables.transform(doGetNodes().values(),
-               new Function<ComputeMetadata, NodeMetadata>() {
-
-                  @Override
-                  public NodeMetadata apply(ComputeMetadata from) {
-                     return getNodeMetadata(from);
-                  }
-
-               }), new Predicate<NodeMetadata>() {
-
-         @Override
-         public boolean apply(NodeMetadata input) {
-            return tag.equals(input.getTag());
-         }
-
-      });
-      return new NodeSetImpl(Iterables.filter(nodes, new NodeMatchesTag(tag)));
-   }
 }

@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.util.ComputeUtils;
@@ -19,6 +20,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeService;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.hostingdotcom.domain.HostingDotComVApp;
 
 import com.google.common.base.Predicate;
@@ -29,17 +31,17 @@ import com.google.common.collect.ImmutableMap;
  */
 @Singleton
 public class HostingDotComVCloudComputeService extends VCloudComputeService {
-
    @Inject
-   public HostingDotComVCloudComputeService(VCloudClient client,
-            Provider<TemplateBuilder> templateBuilderProvider,
+   HostingDotComVCloudComputeService(Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Map<String, ? extends Image>> images,
             Provider<Map<String, ? extends Size>> sizes,
             Provider<Map<String, ? extends Location>> locations, ComputeUtils utils,
-            Predicate<String> successTester, @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            VCloudClient client, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            Map<VAppStatus, NodeState> vAppStatusToNodeState,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      super(client, templateBuilderProvider, images, sizes, locations, utils, successTester,
-               notFoundTester, executor);
+      super(templateBuilderProvider, images, sizes, locations, utils, client, successTester,
+               notFoundTester, vAppStatusToNodeState, executor);
    }
 
    @Override
@@ -51,4 +53,5 @@ public class HostingDotComVCloudComputeService extends VCloudComputeService {
       return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", hVApp
                .getUsername(), "password", hVApp.getPassword());
    }
+
 }

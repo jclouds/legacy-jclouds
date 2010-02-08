@@ -37,11 +37,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
@@ -86,46 +89,53 @@ public interface VCloudAsyncClient {
    @Consumes(ORG_XML)
    @XMLResponseParser(OrgHandler.class)
    ListenableFuture<? extends Organization> getDefaultOrganization();
-   
+
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/org/{orgId}")
    @XMLResponseParser(OrgHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<? extends Organization> getOrganization(@PathParam("orgId") String orgId);
-   
+
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @Consumes(CATALOG_XML)
    @XMLResponseParser(CatalogHandler.class)
    ListenableFuture<? extends Catalog> getDefaultCatalog();
-   
+
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/catalog/{catalogId}")
    @XMLResponseParser(CatalogHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
    ListenableFuture<? extends Catalog> getCatalog(@PathParam("catalogId") String catalogId);
-   
+
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vAppTemplate/{vAppTemplateId}")
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
-   ListenableFuture<? extends VAppTemplate> getVAppTemplate(@PathParam("vAppTemplateId") String vAppTemplateId);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VAppTemplate> getVAppTemplate(
+            @PathParam("vAppTemplateId") String vAppTemplateId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/catalogItem/{catalogItemId}")
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
-   ListenableFuture<? extends CatalogItem> getCatalogItem(@PathParam("catalogItemId") String catalogItemId);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends CatalogItem> getCatalogItem(
+            @PathParam("catalogItemId") String catalogItemId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/network/{networkId}")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(NetworkHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Network> getNetwork(@PathParam("networkId") String networkId);
 
    @GET
@@ -139,6 +149,7 @@ public interface VCloudAsyncClient {
    @Path("/vdc/{vDCId}")
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
 
    @GET
@@ -146,6 +157,7 @@ public interface VCloudAsyncClient {
    @Path("/tasksList/{tasksListId}")
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends TasksList> getTasksList(@PathParam("tasksListId") String tasksListId);
 
    @GET
@@ -163,6 +175,7 @@ public interface VCloudAsyncClient {
 
    @DELETE
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/vApp/{vAppId}")
    ListenableFuture<Void> deleteVApp(@PathParam("vAppId") String vAppId);
 
@@ -226,6 +239,7 @@ public interface VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/task/{taskId}")
    @XMLResponseParser(TaskHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Task> getTask(@PathParam("taskId") String taskId);
 
    @POST
@@ -238,6 +252,7 @@ public interface VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vApp/{vAppId}")
    @XMLResponseParser(VAppHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VApp> getVApp(@PathParam("vAppId") String appId);
 
    @POST

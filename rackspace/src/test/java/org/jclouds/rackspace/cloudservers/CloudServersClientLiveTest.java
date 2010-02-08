@@ -52,7 +52,6 @@ import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -148,19 +147,14 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
+   @Test
    public void testGetImageDetailsNotFound() throws Exception {
-      try {
-         client.getImage(12312987);
-      } catch (HttpResponseException e) {// Ticket #9867
-         if (e.getResponse().getStatusCode() != 400)
-            throw e;
-      }
+      assert client.getImage(12312987) == null;
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
+   @Test
    public void testGetServerDetailsNotFound() throws Exception {
-      client.getServer(12312987);
+      assert client.getServer(12312987) == null;
    }
 
    public void testGetServersDetail() throws Exception {
@@ -210,9 +204,9 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
+   @Test
    public void testGetFlavorDetailsNotFound() throws Exception {
-      client.getFlavor(12312987);
+      assert client.getFlavor(12312987) == null;
    }
 
    public void testListSharedIpGroups() throws Exception {
@@ -250,9 +244,9 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
+   @Test
    public void testGetSharedIpGroupDetailsNotFound() throws Exception {
-      client.getSharedIpGroup(12312987);
+      assert client.getSharedIpGroup(12312987) == null;
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
@@ -349,7 +343,7 @@ public class CloudServersClientLiveTest {
       assertEquals(new Integer(1), server.getFlavorId());
       assertNotNull(server.getAddresses());
       // listAddresses tests..
-      assertEquals(client.listAddresses(serverId), server.getAddresses());
+      assertEquals(client.getAddresses(serverId), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
       assertEquals(client.listPublicAddresses(serverId), server.getAddresses().getPublicAddresses());
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
@@ -412,14 +406,14 @@ public class CloudServersClientLiveTest {
    public void testRenameServer() throws Exception {
       Server server = client.getServer(serverId);
       String oldName = server.getName();
-      assertTrue(client.renameServer(serverId, oldName + "new"));
+      client.renameServer(serverId, oldName + "new");
       blockUntilServerActive(serverId);
       assertEquals(oldName + "new", client.getServer(serverId).getName());
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testChangePassword() throws Exception {
-      assertTrue(client.changeAdminPass(serverId, "elmo"));
+      client.changeAdminPass(serverId, "elmo");
       blockUntilServerActive(serverId);
       checkPassOk(client.getServer(serverId), "elmo");
       this.adminPass = "elmo";
@@ -508,15 +502,15 @@ public class CloudServersClientLiveTest {
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
    public void testBackup() throws Exception {
-      assertEquals(new BackupSchedule(), client.listBackupSchedule(serverId));
+      assertEquals(new BackupSchedule(), client.getBackupSchedule(serverId));
       BackupSchedule dailyWeekly = new BackupSchedule();
       dailyWeekly.setEnabled(true);
       dailyWeekly.setWeekly(WeeklyBackup.FRIDAY);
       dailyWeekly.setDaily(DailyBackup.H_0400_0600);
-      assertEquals(true, client.replaceBackupSchedule(serverId, dailyWeekly));
+      client.replaceBackupSchedule(serverId, dailyWeekly);
       client.deleteBackupSchedule(serverId);
       // disables, doesn't delete: Web Hosting #119571
-      assertEquals(client.listBackupSchedule(serverId).isEnabled(), false);
+      assertEquals(client.getBackupSchedule(serverId).isEnabled(), false);
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
@@ -530,7 +524,7 @@ public class CloudServersClientLiveTest {
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
    public void testRebuildServer() throws Exception {
-      assertTrue(client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId)));
+      client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
       blockUntilServerActive(serverId);
       // issue Web Hosting #119580 imageId comes back incorrect after rebuild
       // assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
@@ -538,64 +532,64 @@ public class CloudServersClientLiveTest {
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
    public void testRebootHard() throws Exception {
-      assertTrue(client.rebootServer(serverId, RebootType.HARD));
+      client.rebootServer(serverId, RebootType.HARD);
       blockUntilServerActive(serverId);
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
    public void testRebootSoft() throws Exception {
-      assertTrue(client.rebootServer(serverId, RebootType.SOFT));
+      client.rebootServer(serverId, RebootType.SOFT);
       blockUntilServerActive(serverId);
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    public void testRevertResize() throws Exception {
-      assertTrue(client.resizeServer(serverId, 2));
+      client.resizeServer(serverId, 2);
       blockUntilServerVerifyResize(serverId);
-      assertTrue(client.revertResizeServer(serverId));
+      client.revertResizeServer(serverId);
       blockUntilServerActive(serverId);
       assertEquals(new Integer(1), client.getServer(serverId).getFlavorId());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    public void testConfirmResize() throws Exception {
-      assertTrue(client.resizeServer(serverId2, 2));
+      client.resizeServer(serverId2, 2);
       blockUntilServerVerifyResize(serverId2);
-      assertTrue(client.confirmResizeServer(serverId2));
+      client.confirmResizeServer(serverId2);
       blockUntilServerActive(serverId2);
       assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
-            "testConfirmResize" }, expectedExceptions = ResourceNotFoundException.class)
+            "testConfirmResize" })
    void deleteServer2() {
       if (serverId2 > 0) {
          client.deleteServer(serverId2);
-         client.getServer(serverId2);
+         assert client.getServer(serverId2) == null;
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2", expectedExceptions = ResourceNotFoundException.class)
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2")
    void testDeleteImage() {
       if (imageId > 0) {
          client.deleteImage(imageId);
-         client.getImage(imageId);
+         assert client.getImage(imageId) == null;
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage", expectedExceptions = ResourceNotFoundException.class)
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage")
    void deleteServer1() {
       if (serverId > 0) {
          client.deleteServer(serverId);
-         client.getServer(serverId);
+         assert client.getServer(serverId) == null;
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" }, expectedExceptions = ResourceNotFoundException.class)
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" })
    void testDeleteSharedIpGroup() {
       if (sharedIpGroupId > 0) {
          client.deleteSharedIpGroup(sharedIpGroupId);
-         client.getSharedIpGroup(sharedIpGroupId);
+         assert client.getSharedIpGroup(sharedIpGroupId) == null;
       }
    }
 

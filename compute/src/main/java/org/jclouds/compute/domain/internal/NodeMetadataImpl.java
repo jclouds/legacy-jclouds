@@ -124,11 +124,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
-      result = prime * result + ((extra == null) ? 0 : extra.hashCode());
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((tag == null) ? 0 : tag.hashCode());
       return result;
    }
@@ -142,16 +139,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       if (getClass() != obj.getClass())
          return false;
       NodeMetadataImpl other = (NodeMetadataImpl) obj;
-      if (credentials == null) {
-         if (other.credentials != null)
-            return false;
-      } else if (!credentials.equals(other.credentials))
-         return false;
-      if (extra == null) {
-         if (other.extra != null)
-            return false;
-      } else if (!extra.equals(other.extra))
-         return false;
       if (privateAddresses == null) {
          if (other.privateAddresses != null)
             return false;
@@ -161,11 +148,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.publicAddresses != null)
             return false;
       } else if (!publicAddresses.equals(other.publicAddresses))
-         return false;
-      if (state == null) {
-         if (other.state != null)
-            return false;
-      } else if (!state.equals(other.state))
          return false;
       if (tag == null) {
          if (other.tag != null)

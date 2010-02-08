@@ -1,4 +1,4 @@
-package org.jclouds.rackspace.cloudservers.predicates;
+package org.jclouds.rimuhosting.miro.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,9 +6,9 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.rackspace.cloudservers.CloudServersClient;
-import org.jclouds.rackspace.cloudservers.domain.Server;
-import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
+import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
@@ -20,15 +20,15 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class ServerActive implements Predicate<Server> {
+public class ServerRunning implements Predicate<Server> {
 
-   private final CloudServersClient client;
+   private final RimuHostingClient client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public ServerActive(CloudServersClient client) {
+   public ServerRunning(RimuHostingClient client) {
       this.client = client;
    }
 
@@ -38,8 +38,8 @@ public class ServerActive implements Predicate<Server> {
       if (server == null)
          return false;
       logger.trace("%s: looking for server state %s: currently: %s", server.getId(),
-               ServerStatus.ACTIVE, server.getStatus());
-      return server.getStatus() == ServerStatus.ACTIVE;
+               RunningState.RUNNING, server.getState());
+      return server.getState() == RunningState.RUNNING;
    }
 
    private Server refresh(Server server) {

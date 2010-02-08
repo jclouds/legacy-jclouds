@@ -20,179 +20,84 @@ package org.jclouds.rimuhosting.miro.compute;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeUtils.METADATA_TO_ID;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.domain.internal.NodeSetImpl;
-import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @author Ivan Meredith
  */
 @Singleton
-public class RimuHostingComputeService implements ComputeService {
+public class RimuHostingComputeService extends BaseComputeService {
 
-   @VisibleForTesting
-   static Iterable<InetAddress> getPublicAddresses(Server server) {
-      Iterable<String> addresses = Iterables.concat(ImmutableList.of(server.getIpAddresses()
-               .getPrimaryIp()), server.getIpAddresses().getSecondaryIps());
-      return Iterables.transform(addresses, new Function<String, InetAddress>() {
-
-         @Override
-         public InetAddress apply(String from) {
-            try {
-               return InetAddress.getByName(from);
-            } catch (UnknownHostException e) {
-               // TODO: log the failure.
-               return null;
-            }
-         }
-      });
-   }
-
-   private static class NodeMatchesTag implements Predicate<NodeMetadata> {
-      private final String tag;
-
-      @Override
-      public boolean apply(NodeMetadata from) {
-         return from.getTag().equals(tag);
-      }
-
-      public NodeMatchesTag(String tag) {
-         super();
-         this.tag = tag;
-      }
-   };
-
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
    private final RimuHostingClient client;
-   protected final Provider<Map<String, ? extends Image>> images;
-   protected final Provider<Map<String, ? extends Size>> sizes;
-   protected final Provider<Map<String, ? extends Location>> locations;
-   protected final Provider<TemplateBuilder> templateBuilderProvider;
-   protected final String nodeNamingConvention;
-   private final ComputeUtils utils;
-   private final ServerToNodeMetadata serverToNodeMetadata;
-   protected final ExecutorService executor;
+   private final Function<Server, NodeMetadata> serverToNodeMetadata;
+   private final Map<RunningState, NodeState> runningStateToNodeState;
+   private final Predicate<Server> serverRunning;
+   private final Predicate<Server> serverDestroyed;
+   private final Function<Server, Iterable<InetAddress>> getPublicAddresses;
 
    @Inject
-   public RimuHostingComputeService(RimuHostingClient client,
-            Provider<TemplateBuilder> templateBuilderProvider,
+   public RimuHostingComputeService(Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Map<String, ? extends Image>> images,
-            Provider<Map<String, ? extends Size>> sizes, ServerToNodeMetadata serverToNodeMetadata,
+            Provider<Map<String, ? extends Size>> sizes,
             Provider<Map<String, ? extends Location>> locations, ComputeUtils utils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            RimuHostingClient client, Map<RunningState, NodeState> runningStateToNodeState,
+            @Named("RUNNING") Predicate<Server> serverRunning,
+            @Named("DESTROYED") Predicate<Server> serverDestroyed,
+            Function<Server, NodeMetadata> serverToNodeMetadata,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Function<Server, Iterable<InetAddress>> getPublicAddresses) {
+      super(images, sizes, locations, templateBuilderProvider, "%s-%d", utils, executor);
       this.client = client;
-      this.images = images;
-      this.sizes = sizes;
-      this.locations = locations;
-      this.utils = utils;
-      this.templateBuilderProvider = templateBuilderProvider;
+      this.runningStateToNodeState = runningStateToNodeState;
+      this.serverRunning = serverRunning;
+      this.serverDestroyed = serverDestroyed;
       this.serverToNodeMetadata = serverToNodeMetadata;
-      this.executor = executor;
-      this.nodeNamingConvention = "%s-%d";
+      this.getPublicAddresses = getPublicAddresses;
    }
 
    @Override
-   public NodeSet runNodesWithTag(final String tag, int count, final Template template) {
-      checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
-      checkNotNull(template.getLocation(), "location");
-      final Set<NodeMetadata> nodes = Sets.newHashSet();
-      int nodesToStart = count;
-      int i = 0;
-      while (nodesToStart > 0) {
-         int currentCount = i;
-         Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
-         for (; i < currentCount + nodesToStart; i++) {
-            final String name = String.format(nodeNamingConvention, tag, i + 1);
-            responses.put(name, makeListenable(executor.submit(new Callable<Void>() {
-               @Override
-               public Void call() throws Exception {
-                  NodeMetadata node = null;
-                  try {
-                     node = startServerAndConvertToNode(tag, name, template);
-                     logger.debug("<< running server(%s)", node.getId());
-                     utils.runOptionsOnNode(node, template.getOptions());
-                     logger.debug("<< options applied server(%s)", node.getId());
-                     nodes.add(node);
-                  } catch (Exception e) {
-                     if (node != null) {
-                        destroyNode(node);
-                        logger.error(e, "<< error applying server(%s) [%s] destroying ", name, e
-                                 .getMessage());
-                     }
-                  }
-                  return null;
-               }
-
-            }), executor));
-         }
-         nodesToStart = awaitCompletion(responses, executor, null, logger, "nodes").size();
-      }
-      return new NodeSetImpl(nodes);
-   }
-
-   private NodeMetadata startServerAndConvertToNode(final String tag, final String name,
-            final Template template) {
+   protected NodeMetadata startNode(final String tag, final String name, final Template template) {
       NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage()
                .getId(), "imageId"), checkNotNull(template.getSize().getId(), "sizeId"));
-      NodeMetadata node = new NodeMetadataImpl(serverResponse.getServer().getId().toString(),
-               name,
-               template.getLocation().getId(),
-               null,
-               ImmutableMap.<String, String> of(),
-               tag,
-               NodeState.UNKNOWN,// TODO
-               // need a
-               // real
-               // state!
-               getPublicAddresses(serverResponse.getServer()),// no real useful data here..
+      serverRunning.apply(serverResponse.getServer());
+      Server server = client.getServer(serverResponse.getServer().getId());
+      // we have to lookup the new details in order to retrieve the currently assigned ip address.
+      NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, template
+               .getLocation().getId(), null, ImmutableMap.<String, String> of(), tag,
+               runningStateToNodeState.get(server.getState()), getPublicAddresses.apply(server),
                ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(),
                new Credentials("root", serverResponse.getNewInstanceRequest().getCreateOptions()
                         .getPassword()));
@@ -204,126 +109,21 @@ public class RimuHostingComputeService implements ComputeService {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
                + node.getType());
       checkNotNull(node.getId(), "node.id");
-      return serverToNodeMetadata.apply(client.getServer(Long.parseLong(node.getId())));
+      long serverId = Long.parseLong(node.getId());
+      Server server = client.getServer(serverId);
+      return server == null ? null : serverToNodeMetadata.apply(server);
    }
 
    @Override
-   public void destroyNode(ComputeMetadata node) {
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
-      checkNotNull(node.getId(), "node.id");
-
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
-      checkNotNull(node.getId(), "node.id");
-
-      logger.debug(">> deleting server(%s)", node.getId());
-      client.destroyServer(new Long(node.getId()));
-      logger.debug("<< deleted server(%s)", node.getId());
-   }
-
-   public static final Pattern TAG_PATTERN = Pattern.compile("[^-]+-([^-]+)-[0-9]+");
-
-   @Singleton
-   private static class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
-
-      @Override
-      public NodeMetadata apply(Server from) {
-         String locationId = "//TODO";
-         String tag = from.getName().replaceAll("-[0-9]+", "");
-         Credentials creds = null;
-         NodeState state = NodeState.UNKNOWN;
-         return new NodeMetadataImpl(from.getId() + "", from.getName(), locationId, null,
-                  ImmutableMap.<String, String> of(), tag, state, getPublicAddresses(from),
-                  ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of("state", from
-                           .getState()), creds);
-      }
+   protected Iterable<NodeMetadata> doGetNodes() {
+      return Iterables.transform(client.getServerList(), serverToNodeMetadata);
    }
 
    @Override
-   public Map<String, ? extends ComputeMetadata> getNodes() {
-      logger.debug(">> listing servers");
-      ImmutableMap<String, NodeMetadata> map = doGetNodes();
-      logger.debug("<< list(%d)", map.size());
-      return map;
+   protected boolean doDestroyNode(ComputeMetadata node) {
+      long serverId = Long.parseLong(node.getId());
+      client.destroyServer(serverId);
+      return serverDestroyed.apply(client.getServer(serverId));
    }
 
-   private ImmutableMap<String, NodeMetadata> doGetNodes() {
-      ImmutableMap<String, NodeMetadata> map = Maps.uniqueIndex(Iterables.transform(client
-               .getServerList(), serverToNodeMetadata), METADATA_TO_ID);
-      return map;
-   }
-
-   @Override
-   public void destroyNodesWithTag(String tag) { // TODO parallel
-      logger.debug(">> terminating servers by tag(%s)", tag);
-      Iterable<NodeMetadata> nodesToDestroy = Iterables.filter(doGetNodes(tag),
-               new Predicate<NodeMetadata>() {
-                  @Override
-                  public boolean apply(NodeMetadata input) {
-                     return input.getState() != NodeState.TERMINATED;
-
-                  }
-               });
-      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
-      for (final NodeMetadata node : nodesToDestroy) {
-         responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               destroyNode(node);
-               return null;
-            }
-         }), executor));
-      }
-      awaitCompletion(responses, executor, null, logger, "nodes");
-      logger.debug("<< destroyed");
-   }
-
-   @Override
-   public Map<String, ? extends Location> getLocations() {
-      return locations.get();
-   }
-
-   @Override
-   public NodeSet getNodesWithTag(String tag) {
-      logger.debug(">> listing servers by tag(%s)", tag);
-      NodeSet nodes = doGetNodes(tag);
-      logger.debug("<< list(%d)", nodes.size());
-      return nodes;
-   }
-
-   protected NodeSet doGetNodes(final String tag) {
-      Iterable<NodeMetadata> nodes = Iterables.filter(Iterables.transform(doGetNodes().values(),
-               new Function<ComputeMetadata, NodeMetadata>() {
-
-                  @Override
-                  public NodeMetadata apply(ComputeMetadata from) {
-                     return getNodeMetadata(from);
-                  }
-
-               }), new Predicate<NodeMetadata>() {
-
-         @Override
-         public boolean apply(NodeMetadata input) {
-            return tag.equals(input.getTag());
-         }
-
-      });
-      return new NodeSetImpl(Iterables.filter(nodes, new NodeMatchesTag(tag)));
-   }
-
-   @Override
-   public Map<String, ? extends Size> getSizes() {
-      return sizes.get();
-   }
-
-   @Override
-   public Map<String, ? extends Image> getImages() {
-      return images.get();
-   }
-
-   @Override
-   public TemplateBuilder templateBuilder() {
-      return templateBuilderProvider.get();
-   }
 }

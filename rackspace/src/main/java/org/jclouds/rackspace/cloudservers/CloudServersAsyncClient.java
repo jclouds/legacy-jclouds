@@ -75,6 +75,9 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -109,6 +112,7 @@ public interface CloudServersAsyncClient {
    @GET
    @ResponseParser(ParseServerFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/servers/{id}")
    ListenableFuture<Server> getServer(@PathParam("id") int id);
 
@@ -116,7 +120,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteServer
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Path("/servers/{id}")
    ListenableFuture<Boolean> deleteServer(@PathParam("id") int id);
 
@@ -126,8 +130,7 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   ListenableFuture<Boolean> rebootServer(@PathParam("id") int id,
+   ListenableFuture<Void> rebootServer(@PathParam("id") int id,
             @BinderParam(BindRebootTypeToJsonPayload.class) RebootType rebootType);
 
    /**
@@ -136,8 +139,7 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   ListenableFuture<Boolean> resizeServer(@PathParam("id") int id,
+   ListenableFuture<Void> resizeServer(@PathParam("id") int id,
             @BinderParam(BindResizeFlavorToJsonPayload.class) int flavorId);
 
    /**
@@ -146,8 +148,7 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   ListenableFuture<Boolean> confirmResizeServer(
+   ListenableFuture<Void> confirmResizeServer(
             @PathParam("id") @BinderParam(BindConfirmResizeToJsonPayload.class) int id);
 
    /**
@@ -156,8 +157,7 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   ListenableFuture<Boolean> revertResizeServer(
+   ListenableFuture<Void> revertResizeServer(
             @PathParam("id") @BinderParam(BindRevertResizeToJsonPayload.class) int id);
 
    /**
@@ -178,18 +178,16 @@ public interface CloudServersAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
    @MapBinder(RebuildServerOptions.class)
-   ListenableFuture<Boolean> rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
+   ListenableFuture<Void> rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
 
    /**
     * @see CloudServersClient#shareIp
     */
    @PUT
-   @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
    @MapBinder(BindSharedIpGroupToJsonPayload.class)
-   ListenableFuture<Boolean> shareIp(
+   ListenableFuture<Void> shareIp(
             @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
             @PathParam("id") int serverToTosignBindressTo,
             @MapPayloadParam("sharedIpGroupId") int sharedIpGroup,
@@ -199,9 +197,9 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#unshareIp
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
-   ListenableFuture<Boolean> unshareIp(
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> unshareIp(
             @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
             @PathParam("id") int serverToTosignBindressTo);
 
@@ -209,18 +207,16 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#changeAdminPass
     */
    @PUT
-   @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
-   ListenableFuture<Boolean> changeAdminPass(@PathParam("id") int id,
+   ListenableFuture<Void> changeAdminPass(@PathParam("id") int id,
             @BinderParam(BindAdminPassToJsonPayload.class) String adminPass);
 
    /**
     * @see CloudServersClient#renameServer
     */
    @PUT
-   @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
-   ListenableFuture<Boolean> renameServer(@PathParam("id") int id,
+   ListenableFuture<Void> renameServer(@PathParam("id") int id,
             @BinderParam(BindServerNameToJsonPayload.class) String newName);
 
    /**
@@ -239,6 +235,7 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseFlavorFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors/{id}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Flavor> getFlavor(@PathParam("id") int id);
 
    /**
@@ -255,6 +252,7 @@ public interface CloudServersAsyncClient {
     */
    @GET
    @ResponseParser(ParseImageFromJsonResponse.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/images/{id}")
    ListenableFuture<Image> getImage(@PathParam("id") int id);
@@ -263,7 +261,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteImage
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Path("/images/{id}")
    ListenableFuture<Boolean> deleteImage(@PathParam("id") int id);
 
@@ -294,6 +292,7 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseSharedIpGroupFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups/{id}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<SharedIpGroup> getSharedIpGroup(@PathParam("id") int id);
 
    /**
@@ -311,7 +310,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteSharedIpGroup
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Path("/shared_ip_groups/{id}")
    ListenableFuture<Boolean> deleteSharedIpGroup(@PathParam("id") int id);
 
@@ -322,13 +321,13 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseBackupScheduleFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<BackupSchedule> listBackupSchedule(@PathParam("id") int serverId);
+   ListenableFuture<BackupSchedule> getBackupSchedule(@PathParam("id") int serverId);
 
    /**
     * @see CloudServersClient#deleteBackupSchedule
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Path("/servers/{id}/backup_schedule")
    ListenableFuture<Boolean> deleteBackupSchedule(@PathParam("id") int serverId);
 
@@ -338,7 +337,7 @@ public interface CloudServersAsyncClient {
    @POST
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/backup_schedule")
-   ListenableFuture<Boolean> replaceBackupSchedule(@PathParam("id") int id,
+   ListenableFuture<Void> replaceBackupSchedule(@PathParam("id") int id,
             @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
 
    /**
@@ -348,7 +347,7 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseAddressesFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips")
-   ListenableFuture<Addresses> listAddresses(@PathParam("id") int serverId);
+   ListenableFuture<Addresses> getAddresses(@PathParam("id") int serverId);
 
    /**
     * @see CloudServersClient#listPublicAddresses

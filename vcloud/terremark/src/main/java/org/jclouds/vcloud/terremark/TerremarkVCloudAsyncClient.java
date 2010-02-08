@@ -45,6 +45,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.InetAddressToHostAddress;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
@@ -113,6 +115,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @XMLResponseParser(CatalogHandler.class)
    @Consumes(CATALOG_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Override
    ListenableFuture<? extends Catalog> getCatalog(String catalogId);
 
    /**
@@ -123,6 +127,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/vdc/{vDCId}")
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Override
    ListenableFuture<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
 
@@ -137,8 +142,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
-   ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(
-            @PathParam("vDCId") String vDCId, @MapPayloadParam("name") String appName,
+   ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@PathParam("vDCId") String vDCId,
+            @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
@@ -211,6 +216,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/publicIps/{ipId}")
    @Consumes(APPLICATION_XML)
    @XMLResponseParser(InternetServicesHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends SortedSet<InternetService>> getPublicIp(@PathParam("ipId") int ipId);
 
    /**
@@ -230,6 +236,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @DELETE
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteInternetService(
             @PathParam("internetServiceId") int internetServiceId);
 
@@ -254,6 +261,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/internetServices/{internetServiceId}")
    @Consumes(APPLICATION_XML)
    @XMLResponseParser(InternetServiceHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends InternetService> getInternetService(
             @PathParam("internetServiceId") int internetServiceId);
 
@@ -292,6 +300,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/nodeServices/{nodeId}")
    @XMLResponseParser(NodeHandler.class)
    @Consumes(APPLICATION_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Node> getNode(@PathParam("nodeId") int nodeId);
 
    /**
@@ -313,6 +322,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @DELETE
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/nodeServices/{nodeId}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteNode(@PathParam("nodeId") int nodeId);
 
    /**

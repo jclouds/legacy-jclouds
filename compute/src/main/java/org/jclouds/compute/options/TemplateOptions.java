@@ -3,6 +3,8 @@ package org.jclouds.compute.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
+
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation. <h2>
  * Usage</h2> The recommended way to instantiate a TemplateOptions object is to statically import
@@ -30,6 +32,8 @@ public class TemplateOptions {
 
    private String publicKey;
 
+   private boolean destroyOnError;
+
    public int[] getInboundPorts() {
       return inboundPorts;
    }
@@ -44,6 +48,18 @@ public class TemplateOptions {
 
    public String getPublicKey() {
       return publicKey;
+   }
+
+   public boolean shouldDestroyOnError() {
+      return destroyOnError;
+   }
+
+   /**
+    * If there is an error applying options after creating the node, destroy it.
+    */
+   public TemplateOptions destroyOnError() {
+      this.destroyOnError = true;
+      return this;
    }
 
    /**
@@ -86,6 +102,13 @@ public class TemplateOptions {
    }
 
    public static class Builder {
+      /**
+       * @see TemplateOptions#destroyOnError
+       */
+      public static TemplateOptions destroyOnError() {
+         TemplateOptions options = new TemplateOptions();
+         return options.destroyOnError();
+      }
 
       /**
        * @see TemplateOptions#inboundPorts
@@ -119,5 +142,12 @@ public class TemplateOptions {
          return options.authorizePublicKey(rsaKey);
       }
 
+   }
+
+   @Override
+   public String toString() {
+      return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
+               + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
+               + (script != null) + ", destroyOnError=" + destroyOnError + "]";
    }
 }

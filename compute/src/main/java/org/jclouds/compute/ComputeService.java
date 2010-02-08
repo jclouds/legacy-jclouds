@@ -23,7 +23,6 @@ import java.util.Map;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -105,7 +104,7 @@ public interface ComputeService {
     *           - how to configure the nodes
     * @return all of the nodes the api was able to launch in a running state.
     */
-   NodeSet runNodesWithTag(String tag, int count, Template template);
+   Map<String, ? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template);
 
    /**
     * destroy the node. If it is the only node in a tag set, the dependent resources will also be
@@ -130,6 +129,6 @@ public interface ComputeService {
     * 
     * @param tag
     */
-   NodeSet getNodesWithTag(String tag);
+   Map<String, ? extends NodeMetadata> getNodesWithTag(String tag);
 
 }

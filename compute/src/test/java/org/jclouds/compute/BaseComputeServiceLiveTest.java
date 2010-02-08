@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -37,7 +38,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeSet;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
@@ -79,8 +79,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected SshClient.Factory sshFactory;
    protected String tag;
 
-   private RetryablePredicate<InetSocketAddress> socketTester;
-   private SortedSet<NodeMetadata> nodes;
+   protected RetryablePredicate<InetSocketAddress> socketTester;
+   protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
    protected String user;
@@ -145,8 +145,22 @@ public abstract class BaseComputeServiceLiveTest {
                                  .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
                                  .append("chmod 755 /usr/bin/runurl\n")//
                                  .toString().getBytes());
-      nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
+      nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template).values());
       assertEquals(nodes.size(), 2);
+      checkNodes();
+      NodeMetadata node1 = nodes.first();
+      NodeMetadata node2 = nodes.last();
+      // credentials aren't always the same
+      // assertEquals(node1.getCredentials(), node2.getCredentials());
+      assert !node1.getId().equals(node2.getId());
+      
+      // run one more
+      nodes.addAll(client.runNodesWithTag(tag, 1, template).values());
+      assertEquals(nodes.size(), 3);
+      checkNodes();
+   }
+
+   private void checkNodes() throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getId());
          assertNotNull(node.getTag());
@@ -160,19 +174,14 @@ public abstract class BaseComputeServiceLiveTest {
             sshPing(node);
          }
       }
-
-      NodeMetadata node1 = nodes.first();
-      NodeMetadata node2 = nodes.last();
-      // credentials aren't always the same
-      // assertEquals(node1.getCredentials(), node2.getCredentials());
-      assert !node1.getId().equals(node2.getId());
    }
 
    protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
 
    @Test(enabled = true, dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
-      NodeSet metadataSet = client.getNodesWithTag(tag);
+      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(client.getNodesWithTag(tag)
+               .values());
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node);
@@ -267,7 +276,7 @@ public abstract class BaseComputeServiceLiveTest {
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
          client.destroyNodesWithTag(tag);
-         for (NodeMetadata node : client.getNodesWithTag(tag)) {
+         for (NodeMetadata node : client.getNodesWithTag(tag).values()) {
             assert node.getState() == NodeState.TERMINATED : node;
          }
       }

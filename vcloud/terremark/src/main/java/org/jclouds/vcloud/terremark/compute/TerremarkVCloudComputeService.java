@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -35,15 +34,15 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
-import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.VCloudComputeService;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -60,21 +59,20 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class TerremarkVCloudComputeService extends VCloudComputeService {
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
+
    private final TerremarkVCloudClient client;
 
    @Inject
-   public TerremarkVCloudComputeService(TerremarkVCloudClient client,
-            Provider<TemplateBuilder> templateBuilderProvider,
+   TerremarkVCloudComputeService(Provider<TemplateBuilder> templateBuilderProvider,
             Provider<Map<String, ? extends Image>> images,
             Provider<Map<String, ? extends Size>> sizes,
             Provider<Map<String, ? extends Location>> locations, ComputeUtils utils,
-            Predicate<String> successTester, @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            TerremarkVCloudClient client, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            Map<VAppStatus, NodeState> vAppStatusToNodeState,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      super(client, templateBuilderProvider, images, sizes, locations, utils, successTester,
-               notFoundTester, executor);
+      super(templateBuilderProvider, images, sizes, locations, utils, client, successTester,
+               notFoundTester, vAppStatusToNodeState, executor);
       this.client = client;
    }
 
@@ -201,16 +199,13 @@ public class TerremarkVCloudComputeService extends VCloudComputeService {
       }
    }
 
-   /**
-    * 
-    * @throws ElementNotFoundException
-    *            if no address is configured
-    */
-   public InetAddress getAnyPrivateAddress(String id) {
+   @Override
+   public Set<InetAddress> getPrivateAddresses(String id) {
       VApp vApp = client.getVApp(id);
-      return Iterables.getLast(vApp.getNetworkToAddresses().values());
+      return Sets.newHashSet(vApp.getNetworkToAddresses().values());
    }
 
+   @Override
    public Set<InetAddress> getPublicAddresses(String id) {
       VApp vApp = client.getVApp(id);
       Set<InetAddress> ipAddresses = Sets.newHashSet();

@@ -36,6 +36,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.ImageImpl;
@@ -60,6 +61,7 @@ import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 
@@ -81,6 +83,16 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class VCloudComputeServiceContextModule extends VCloudContextModule {
+
+   @Singleton
+   @Provides
+   Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
+      return ImmutableMap
+      .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
+               VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING).put(
+               VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
+               NodeState.PENDING).build();
+   }
 
    @Override
    protected void configure() {

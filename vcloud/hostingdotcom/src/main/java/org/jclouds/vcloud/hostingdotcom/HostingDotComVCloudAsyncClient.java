@@ -29,11 +29,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
@@ -70,6 +72,7 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
    @XMLResponseParser(HostingDotComVAppHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Override
    ListenableFuture<? extends HostingDotComVApp> getVApp(@PathParam("vAppId") String appId);
 

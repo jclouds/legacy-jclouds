@@ -18,25 +18,41 @@
  */
 package org.jclouds.rest.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnNullOnResourceNotFound implements Function<Exception, Object> {
+public class ReturnFalseOnNotFoundOr404 implements Function<Exception, Boolean> {
 
-   public Object apply(Exception from) {
-      if (from instanceof ResourceNotFoundException) {
-         return null;
-      }
-      return propagateOrNull(from);
+   private final ReturnTrueOn404 rto404;
+
+   @Inject
+   private ReturnFalseOnNotFoundOr404(ReturnTrueOn404 rto404) {
+      this.rto404 = checkNotNull(rto404, "rto404");
    }
+
+   public Boolean apply(Exception from) {
+      Iterable<HttpResponseException> throwables = Iterables.filter(
+               Throwables.getCausalChain(from), HttpResponseException.class);
+      if (Iterables.size(Iterables.filter(throwables, ResourceNotFoundException.class)) >= 1) {
+         return false;
+      } else {
+         return !rto404.apply(from);
+      }
+   }
+
 }

@@ -189,7 +189,7 @@ public class ComputeTask extends Task {
       Template template = createTemplateFromElement(nodeElement, computeService);
 
       for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(),
-               template)) {
+               template).values()) {
          logDetails(computeService, createdNode);
          addNodeDetailsAsProjectProperties(createdNode);
       }
@@ -216,7 +216,7 @@ public class ComputeTask extends Task {
 
    private void get(ComputeService computeService) {
       log(String.format("get tag: %s", nodeElement.getTag()));
-      for (ComputeMetadata node : computeService.getNodesWithTag(nodeElement.getTag())) {
+      for (ComputeMetadata node : computeService.getNodesWithTag(nodeElement.getTag()).values()) {
          logDetails(computeService, node);
       }
    }
