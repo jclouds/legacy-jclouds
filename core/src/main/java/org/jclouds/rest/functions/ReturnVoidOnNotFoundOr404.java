@@ -24,7 +24,6 @@ import static org.jclouds.util.Utils.propagateOrNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.rest.ResourceNotFoundException;
 
@@ -47,9 +46,9 @@ public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
    }
 
    public Void apply(Exception from) {
-      Iterable<HttpResponseException> throwables = Iterables.filter(
-               Throwables.getCausalChain(from), HttpResponseException.class);
-      if (Iterables.size(Iterables.filter(throwables, ResourceNotFoundException.class)) >= 1) {
+      Iterable<ResourceNotFoundException> throwables = Iterables.filter(
+               Throwables.getCausalChain(from), ResourceNotFoundException.class);
+      if (Iterables.size(throwables) >= 1) {
          return null;
       } else {
          Boolean value = rto404.apply(from);
