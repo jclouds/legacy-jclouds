@@ -72,6 +72,7 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.InputParamValidator;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -193,6 +194,9 @@ public class RestAnnotationProcessor<T> {
 
    private char[] skips;
 
+   @Inject
+   private InputParamValidator inputParamValidator;
+
    @VisibleForTesting
    public Function<HttpResponse, ?> createResponseParser(Method method,
             GeneratedHttpRequest<T> request) {
@@ -312,6 +316,8 @@ public class RestAnnotationProcessor<T> {
    final Injector injector;
 
    public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
+      inputParamValidator.validateMethodParametersOrThrow(method, args);
+
       URI endpoint = getEndpointFor(method, args);
 
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
