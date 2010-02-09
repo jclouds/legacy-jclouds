@@ -112,7 +112,7 @@ public class InputParamValidator {
     */
    private boolean passesParameterValidation(Annotation[][] annotations, Object... args) {
       boolean allPreducatesTrue = true;
-      for (int currentParameterIndex = 0; currentParameterIndex < args.length; currentParameterIndex++) {
+      for (int currentParameterIndex = 0; currentParameterIndex < annotations.length; currentParameterIndex++) {
          ParamValidators annotation = findParamValidatorsAnnotationOrReturnNull(annotations[currentParameterIndex]);
          if (annotation == null)
             continue;
