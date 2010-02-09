@@ -16,25 +16,18 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.hostingdotcom.compute.config;
 
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
+package org.jclouds.compute.strategy;
+
+import org.jclouds.compute.domain.ComputeMetadata;
 
 /**
- * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
- * {@link HostingDotComVCloudComputeClient} bound.
+ * Reboots a node unless it is in the state TERMINATED.
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+public interface RebootNodeStrategy {
 
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
-   }
+   boolean execute(ComputeMetadata node);
 
 }

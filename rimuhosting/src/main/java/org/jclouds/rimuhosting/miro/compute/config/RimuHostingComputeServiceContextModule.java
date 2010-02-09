@@ -18,6 +18,8 @@
  */
 package org.jclouds.rimuhosting.miro.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -44,12 +46,18 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -59,8 +67,8 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import org.jclouds.rimuhosting.miro.compute.RimuHostingComputeService;
 import org.jclouds.rimuhosting.miro.config.RimuHostingContextModule;
+import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
@@ -89,11 +97,139 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    @Override
    protected void configure() {
       super.configure();
-      bind(ComputeService.class).to(RimuHostingComputeService.class).asEagerSingleton();
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
       bind(new TypeLiteral<Function<Server, Iterable<InetAddress>>>() {
       }).to(ServerToPublicAddresses.class);
+      bind(AddNodeWithTagStrategy.class).to(RimuHostingAddNodeWithTagStrategy.class);
+      bind(ListNodesStrategy.class).to(RimuHostingListNodesStrategy.class);
+      bind(GetNodeMetadataStrategy.class).to(RimuHostingGetNodeMetadataStrategy.class);
+      bind(RebootNodeStrategy.class).to(RimuHostingRebootNodeStrategy.class);
+      bind(DestroyNodeStrategy.class).to(RimuHostingDestroyNodeStrategy.class);
+   }
+
+   @Provides
+   @Named("NAMING_CONVENTION")
+   @Singleton
+   String provideNamingConvention() {
+      return "%s-%d";
+   }
+
+   @Singleton
+   public static class RimuHostingRebootNodeStrategy implements RebootNodeStrategy {
+      private final RimuHostingClient client;
+
+      @Inject
+      protected RimuHostingRebootNodeStrategy(RimuHostingClient client) {
+         this.client = client;
+      }
+
+      @Override
+      public boolean execute(ComputeMetadata node) {
+         Long serverId = Long.parseLong(node.getId());
+         // if false server wasn't around in the first place
+         return client.restartServer(serverId).getState() == RunningState.RUNNING;
+      }
+
+   }
+
+   @Singleton
+   public static class RimuHostingDestroyNodeStrategy implements DestroyNodeStrategy {
+      private final RimuHostingClient client;
+      private final Predicate<Server> serverDestroyed;
+
+      @Inject
+      protected RimuHostingDestroyNodeStrategy(RimuHostingClient client,
+               @Named("DESTROYED") Predicate<Server> serverDestroyed) {
+         this.client = client;
+         this.serverDestroyed = serverDestroyed;
+      }
+
+      @Override
+      public boolean execute(ComputeMetadata node) {
+         long serverId = Long.parseLong(node.getId());
+         client.destroyServer(serverId);
+         return serverDestroyed.apply(client.getServer(serverId));
+      }
+
+   }
+
+   @Singleton
+   public static class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+      private final RimuHostingClient client;
+      private final Predicate<Server> serverRunning;
+      private final Function<Server, Iterable<InetAddress>> getPublicAddresses;
+      private final Map<RunningState, NodeState> runningStateToNodeState;
+
+      @Inject
+      protected RimuHostingAddNodeWithTagStrategy(RimuHostingClient client,
+               @Named("RUNNING") Predicate<Server> serverRunning,
+               Function<Server, Iterable<InetAddress>> getPublicAddresses,
+               Map<RunningState, NodeState> runningStateToNodeState) {
+         this.client = client;
+         this.serverRunning = serverRunning;
+         this.getPublicAddresses = getPublicAddresses;
+         this.runningStateToNodeState = runningStateToNodeState;
+      }
+
+      @Override
+      public NodeMetadata execute(String tag, String name, Template template) {
+         NewServerResponse serverResponse = client.createServer(name, checkNotNull(template
+                  .getImage().getId(), "imageId"), checkNotNull(template.getSize().getId(),
+                  "sizeId"));
+         serverRunning.apply(serverResponse.getServer());
+         Server server = client.getServer(serverResponse.getServer().getId());
+         // we have to lookup the new details in order to retrieve the currently assigned ip
+         // address.
+         NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, template
+                  .getLocation().getId(), null, ImmutableMap.<String, String> of(), tag,
+                  runningStateToNodeState.get(server.getState()), getPublicAddresses.apply(server),
+                  ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(),
+                  new Credentials("root", serverResponse.getNewInstanceRequest().getCreateOptions()
+                           .getPassword()));
+         return node;
+      }
+
+   }
+
+   @Singleton
+   public static class RimuHostingListNodesStrategy implements ListNodesStrategy {
+      private final RimuHostingClient client;
+      private final Function<Server, NodeMetadata> serverToNodeMetadata;
+
+      @Inject
+      protected RimuHostingListNodesStrategy(RimuHostingClient client,
+               Function<Server, NodeMetadata> serverToNodeMetadata) {
+         this.client = client;
+         this.serverToNodeMetadata = serverToNodeMetadata;
+      }
+
+      @Override
+      public Iterable<? extends ComputeMetadata> execute() {
+         return Iterables.transform(client.getServerList(), serverToNodeMetadata);
+      }
+
+   }
+
+   @Singleton
+   public static class RimuHostingGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+
+      private final RimuHostingClient client;
+      private final Function<Server, NodeMetadata> serverToNodeMetadata;
+
+      @Inject
+      protected RimuHostingGetNodeMetadataStrategy(RimuHostingClient client,
+               Function<Server, NodeMetadata> serverToNodeMetadata) {
+         this.client = client;
+         this.serverToNodeMetadata = serverToNodeMetadata;
+      }
+
+      @Override
+      public NodeMetadata execute(ComputeMetadata node) {
+         long serverId = Long.parseLong(node.getId());
+         Server server = client.getServer(serverId);
+         return server == null ? null : serverToNodeMetadata.apply(server);
+      }
    }
 
    @Singleton

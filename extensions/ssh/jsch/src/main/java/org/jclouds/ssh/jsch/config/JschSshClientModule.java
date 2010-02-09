@@ -22,6 +22,9 @@ import java.io.ByteArrayOutputStream;
 import java.net.InetSocketAddress;
 import java.util.Map;
 
+import javax.inject.Named;
+
+import org.jclouds.Constants;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
@@ -29,6 +32,7 @@ import org.jclouds.ssh.jsch.JschSshClient;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Scopes;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -46,13 +50,16 @@ public class JschSshClientModule extends AbstractModule {
    }
 
    private static class Factory implements SshClient.Factory {
-
+      @Named(Constants.PROPERTY_CONNECTION_TIMEOUT)
+      @Inject(optional=true)
+      int timeout = 60000;
+      
       public SshClient create(InetSocketAddress socket, String username, String password) {
-         return new JschSshClient(socket, username, password);
+         return new JschSshClient(socket, timeout, username, password);
       }
 
       public SshClient create(InetSocketAddress socket, String username, byte[] privateKey) {
-         return new JschSshClient(socket, username, privateKey);
+         return new JschSshClient(socket, timeout, username, privateKey);
       }
 
       @Override

@@ -24,10 +24,13 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(BaseVCloudComputeClient.class)
 public interface VCloudComputeClient {
    /**
     * Runs through all commands necessary to startup a vApp, opening at least one ip address to the

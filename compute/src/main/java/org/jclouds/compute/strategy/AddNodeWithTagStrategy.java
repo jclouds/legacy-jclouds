@@ -16,25 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.hostingdotcom.compute.config;
 
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
+package org.jclouds.compute.strategy;
+
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 
 /**
- * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
- * {@link HostingDotComVCloudComputeClient} bound.
+ * Adds a node into an existing tag set, or creates one new.
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+public interface AddNodeWithTagStrategy {
 
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
-   }
+   NodeMetadata execute(String tag, String name, Template template);
 
 }

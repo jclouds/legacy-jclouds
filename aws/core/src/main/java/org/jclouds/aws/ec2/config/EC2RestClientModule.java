@@ -96,7 +96,7 @@ public class EC2RestClientModule extends AbstractModule {
    @Named("TERMINATED")
    protected Predicate<RunningInstance> instanceStateTerminated(
             InstanceStateTerminated stateTerminated) {
-      return new RetryablePredicate<RunningInstance>(stateTerminated, 600, 50,
+      return new RetryablePredicate<RunningInstance>(stateTerminated, 20000, 500,
                TimeUnit.MILLISECONDS);
    }
 

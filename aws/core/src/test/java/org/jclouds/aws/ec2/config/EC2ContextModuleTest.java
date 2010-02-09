@@ -59,6 +59,11 @@ public class EC2ContextModuleTest {
    }
 
    @Test
+   void testM1SMALLIsSmallest() {
+      // TODO
+   }
+   
+   @Test
    void testContextImpl() {
       RestContext<EC2AsyncClient, EC2Client> handler = createInjector().getInstance(
                Key.get(new TypeLiteral<RestContext<EC2AsyncClient, EC2Client>>() {

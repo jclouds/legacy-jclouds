@@ -27,16 +27,16 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
+import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 
 import com.google.common.base.Function;
@@ -45,11 +45,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.Injector;
 
 /**
  * Configures the {@link TerremarkVCloudComputeServiceContext}; requires
- * {@link TerremarkVCloudComputeService} bound.
+ * {@link TerremarkVCloudComputeClientImpl} bound.
  * 
  * @author Adrian Cole
  */
@@ -58,11 +57,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    @Override
    protected void configure() {
       super.configure();
-   }
-
-   @Override
-   protected ComputeService provideComputeService(Injector injector) {
-      return injector.getInstance(TerremarkVCloudComputeService.class);
+      bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
    }
 
    private static final ComputeOptionsToSize sizeConverter = new ComputeOptionsToSize();

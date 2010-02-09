@@ -81,23 +81,26 @@ public class JschSshClient implements SshClient {
    private Session session;
    private final byte[] privateKey;
    final byte[] emptyPassPhrase = new byte[0];
+   private final int timeout;
 
    @Inject
-   public JschSshClient(InetSocketAddress socket, String username, String password) {
+   public JschSshClient(InetSocketAddress socket, int timeout, String username, String password) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       this.port = socket.getPort();
       this.username = checkNotNull(username, "username");
       this.password = checkNotNull(password, "password");
+      this.timeout = timeout;
       this.privateKey = null;
    }
 
    @Inject
-   public JschSshClient(InetSocketAddress socket, String username, byte[] privateKey) {
+   public JschSshClient(InetSocketAddress socket, int timeout, String username, byte[] privateKey) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       this.port = socket.getPort();
       this.username = checkNotNull(username, "username");
+      this.timeout = timeout;
       this.password = null;
       this.privateKey = checkNotNull(privateKey, "privateKey");
    }
@@ -159,7 +162,8 @@ public class JschSshClient implements SshClient {
       session = null;
       try {
          session = jsch.getSession(username, host.getHostAddress(), port);
-         session.setTimeout(120 * 1000);
+         if (timeout != 0)
+            session.setTimeout(timeout);
          logger.debug("%s@%s:%d: Session created.", username, host.getHostAddress(), port);
          if (password != null) {
             session.setPassword(password);

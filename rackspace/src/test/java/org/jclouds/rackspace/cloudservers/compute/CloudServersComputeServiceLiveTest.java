@@ -60,6 +60,5 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       @SuppressWarnings("unused")
       RestContext<CloudServersAsyncClient, CloudServersClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
-      CloudServersComputeService.class.cast(client);
    }
 }

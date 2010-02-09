@@ -18,45 +18,27 @@
  */
 package org.jclouds.vcloud.compute;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.ComputeType;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.internal.BaseComputeService;
-import org.jclouds.compute.util.ComputeUtils;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -66,8 +48,10 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudComputeService extends BaseComputeService implements ComputeService,
-         VCloudComputeClient {
+public class BaseVCloudComputeClient implements VCloudComputeClient {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
    protected final VCloudClient client;
    protected final Predicate<String> taskTester;
@@ -75,74 +59,13 @@ public class VCloudComputeService extends BaseComputeService implements ComputeS
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   public VCloudComputeService(Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<Map<String, ? extends Image>> images,
-            Provider<Map<String, ? extends Size>> sizes,
-            Provider<Map<String, ? extends Location>> locations, ComputeUtils utils,
-            VCloudClient client, Predicate<String> successTester,
+   public BaseVCloudComputeClient(VCloudClient client, Predicate<String> successTester,
             @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      super(images, sizes, locations, templateBuilderProvider, "%s-%d", utils, executor);
+            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.taskTester = successTester;
       this.notFoundTester = notFoundTester;
       this.vAppStatusToNodeState = vAppStatusToNodeState;
-   }
-
-   @Override
-   protected NodeMetadata startNode(final String tag, final String name, final Template template) {
-      Map<String, String> metaMap = start(template.getLocation().getId(), name, template.getImage()
-               .getId(), template.getSize().getCores(), template.getSize().getRam(), template
-               .getSize().getDisk() * 1024 * 1024l, ImmutableMap.<String, String> of(), template
-               .getOptions().getInboundPorts());
-      VApp vApp = client.getVApp(metaMap.get("id"));
-      return newCreateNodeResponse(tag, template, metaMap, vApp);
-   }
-
-   protected NodeMetadata newCreateNodeResponse(String tag, Template template,
-            Map<String, String> metaMap, VApp vApp) {
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), template.getLocation().getId(),
-               vApp.getLocation(), ImmutableMap.<String, String> of(), tag, vAppStatusToNodeState
-                        .get(vApp.getStatus()), getPublicAddresses(vApp.getId()), vApp
-                        .getNetworkToAddresses().values(), ImmutableMap.<String, String> of(),
-               new Credentials(metaMap.get("username"), metaMap.get("password")));
-   }
-
-   @Override
-   public NodeMetadata getNodeMetadata(ComputeMetadata node) {
-      checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-               + node.getType());
-      return getNodeMetadataByIdInVDC(checkNotNull(node.getLocationId(), "location"), checkNotNull(
-               node.getId(), "node.id"));
-   }
-
-   protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
-      VApp vApp = client.getVApp(id);
-      String tag = vApp.getName().replaceAll("-[0-9]+", "");
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
-               ImmutableMap.<String, String> of(), tag,
-               vAppStatusToNodeState.get(vApp.getStatus()), vApp.getNetworkToAddresses().values(),
-               ImmutableSet.<InetAddress> of(), ImmutableMap.<String, String> of(), null);
-   }
-
-   @Override
-   protected Iterable<? extends ComputeMetadata> doGetNodes() {
-      Set<ComputeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
-            if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-               nodes.add(getNodeMetadataByIdInVDC(vdc.getId(), resource.getId()));
-            }
-         }
-      }
-      return nodes;
-   }
-
-   @Override
-   protected boolean doDestroyNode(ComputeMetadata node) {
-      stop(checkNotNull(node.getId(), "node.id"));
-      return true;
    }
 
    public Map<String, String> start(String vDCId, String name, String templateId, int minCores,

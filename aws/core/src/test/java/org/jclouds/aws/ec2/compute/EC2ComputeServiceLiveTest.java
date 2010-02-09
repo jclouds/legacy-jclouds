@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -40,7 +41,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().build();
+      return templateBuilder.osFamily(UBUNTU).smallest().architecture(Architecture.X86_32).build();
    }
 
    @Override

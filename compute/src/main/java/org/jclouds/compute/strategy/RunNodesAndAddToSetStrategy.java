@@ -16,25 +16,27 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.hostingdotcom.compute.config;
 
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
+package org.jclouds.compute.strategy;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.strategy.impl.OneByOneRunNodesAndAddToSetStrategy;
+
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.ImplementedBy;
 
 /**
- * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
- * {@link HostingDotComVCloudComputeClient} bound.
+ * creates futures that correlate to
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+@ImplementedBy(OneByOneRunNodesAndAddToSetStrategy.class)
+public interface RunNodesAndAddToSetStrategy {
 
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
-   }
-
+   Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template,
+            Set<NodeMetadata> nodes);
 }

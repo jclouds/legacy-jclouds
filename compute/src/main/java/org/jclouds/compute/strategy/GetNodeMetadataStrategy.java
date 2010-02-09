@@ -16,25 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.hostingdotcom.compute.config;
 
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
+package org.jclouds.compute.strategy;
+
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.NodeMetadata;
 
 /**
- * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
- * {@link HostingDotComVCloudComputeClient} bound.
+ * returns all details associated to the node below.
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+public interface GetNodeMetadataStrategy {
 
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
-   }
+   NodeMetadata execute(ComputeMetadata node);
 
 }

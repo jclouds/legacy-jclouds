@@ -153,7 +153,7 @@ public abstract class BaseComputeServiceLiveTest {
       // credentials aren't always the same
       // assertEquals(node1.getCredentials(), node2.getCredentials());
       assert !node1.getId().equals(node2.getId());
-      
+
       // run one more
       nodes.addAll(client.runNodesWithTag(tag, 1, template).values());
       assertEquals(nodes.size(), 3);
@@ -165,6 +165,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertNotNull(node.getId());
          assertNotNull(node.getTag());
          assertEquals(node.getTag(), tag);
+         assertEquals(node.getState(), NodeState.RUNNING);
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in"
                   + node;
          assertNotNull(node.getCredentials());
@@ -187,6 +188,7 @@ public abstract class BaseComputeServiceLiveTest {
          NodeMetadata metadata = client.getNodeMetadata(node);
          assertEquals(metadata.getId(), node.getId());
          assertEquals(metadata.getName(), node.getName());
+         assertEquals(metadata.getState(), NodeState.RUNNING);
          assertEquals(metadata.getPrivateAddresses(), node.getPrivateAddresses());
          assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());
       }
@@ -197,6 +199,12 @@ public abstract class BaseComputeServiceLiveTest {
          }
       }) : metadataSet;
 
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testGet")
+   public void testReboot() throws Exception {
+      client.rebootNodesWithTag(tag);
+      testGet();
    }
 
    public void testListNodes() throws Exception {

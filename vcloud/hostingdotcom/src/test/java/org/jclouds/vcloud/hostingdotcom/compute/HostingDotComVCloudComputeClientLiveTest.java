@@ -54,7 +54,7 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
       Injector injector = new HostingDotComVCloudContextBuilder(
                new HostingDotComVCloudPropertiesBuilder(account, key).build()).withModules(
                new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
-      computeClient = injector.getInstance(HostingDotComVCloudComputeService.class);
+      computeClient = injector.getInstance(HostingDotComVCloudComputeClient.class);
       client = injector.getInstance(HostingDotComVCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
       }));

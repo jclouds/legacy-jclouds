@@ -217,10 +217,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
-         return ComparisonChain.start().compare(left.getArchitecture(), right.getArchitecture()).compare(left.getName(), right.getName(),
+         return ComparisonChain.start().compare(left.getName(), right.getName(),
                   Ordering.<String> natural().nullsLast()).compare(left.getVersion(),
-                  right.getVersion(), Ordering.<String> natural().nullsLast()).compare(left.getOsDescription(),
-                           right.getOsDescription(), Ordering.<String> natural().nullsLast()).result();
+                  right.getVersion(), Ordering.<String> natural().nullsLast()).compare(
+                  left.getOsDescription(), right.getOsDescription(),
+                  Ordering.<String> natural().nullsLast()).compare(left.getArchitecture(),
+                  right.getArchitecture()).result();
       }
    };
 

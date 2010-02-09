@@ -26,7 +26,10 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Provides portable access to launching compute instances.
@@ -34,6 +37,7 @@ import org.jclouds.domain.Location;
  * @author Adrian Cole
  * @author Ivan Meredith
  */
+@ImplementedBy(BaseComputeService.class)
 public interface ComputeService {
    /**
     * Makes a new template builder for this service
@@ -118,6 +122,17 @@ public interface ComputeService {
     * resources it uses, such as keypairs, are also destroyed.
     */
    void destroyNodesWithTag(String tag);
+
+   /**
+    * reboot the node.
+    */
+   void rebootNode(ComputeMetadata node);
+
+   /**
+    * nodes which are tagged are treated as a logical set. Using this command, you can save time by
+    * rebooting the nodes in parallel.
+    */
+   void rebootNodesWithTag(String tag);
 
    /**
     * Find a node by its id

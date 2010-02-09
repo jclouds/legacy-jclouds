@@ -18,6 +18,9 @@
  */
 package org.jclouds.vcloud.compute.config;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -27,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -35,16 +39,26 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ImageImpl;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -55,12 +69,14 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.VCloudComputeService;
 import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
@@ -74,11 +90,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link VCloudComputeService} bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
+ * bound.
  * 
  * @author Adrian Cole
  */
@@ -87,28 +103,172 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Singleton
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
-      return ImmutableMap
-      .<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.TERMINATED).put(
-               VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING).put(
-               VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
-               NodeState.PENDING).build();
+      return ImmutableMap.<VAppStatus, NodeState> builder().put(VAppStatus.OFF,
+               NodeState.TERMINATED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
+               NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(
+               VAppStatus.UNRESOLVED, NodeState.PENDING).build();
    }
 
    @Override
    protected void configure() {
       super.configure();
+      bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
+      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
+      bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
+      bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
+      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
    }
 
    @Provides
+   @Named("NAMING_CONVENTION")
    @Singleton
-   protected ComputeService provideComputeService(Injector injector) {
-      return injector.getInstance(VCloudComputeService.class);
+   String provideNamingConvention() {
+      return "%s-%d";
    }
 
-   @Provides
    @Singleton
-   protected VCloudComputeClient provideComputeClient(VCloudComputeService in) {
-      return in;
+   public static class VCloudRebootNodeStrategy implements RebootNodeStrategy {
+      private final VCloudClient client;
+      protected final Predicate<String> taskTester;
+
+      @Inject
+      protected VCloudRebootNodeStrategy(VCloudClient client, Predicate<String> taskTester) {
+         this.client = client;
+         this.taskTester = taskTester;
+      }
+
+      @Override
+      public boolean execute(ComputeMetadata node) {
+         Task task = client.resetVApp(node.getId());
+         return taskTester.apply(task.getId());
+      }
+
+   }
+
+   @Singleton
+   public static class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
+      protected final VCloudComputeClient computeClient;
+
+      @Inject
+      protected VCloudDestroyNodeStrategy(VCloudComputeClient computeClient) {
+         this.computeClient = computeClient;
+      }
+
+      @Override
+      public boolean execute(ComputeMetadata node) {
+         computeClient.stop(checkNotNull(node.getId(), "node.id"));
+         return true;
+      }
+
+   }
+
+   @Singleton
+   public static class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+      protected final VCloudClient client;
+      protected final VCloudComputeClient computeClient;
+      protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
+
+      @Inject
+      protected VCloudAddNodeWithTagStrategy(VCloudClient client,
+               VCloudComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         super();
+         this.client = client;
+         this.computeClient = computeClient;
+         this.vAppStatusToNodeState = vAppStatusToNodeState;
+      }
+
+      @Override
+      public NodeMetadata execute(String tag, String name, Template template) {
+         Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
+                  template.getImage().getId(), template.getSize().getCores(), template.getSize()
+                           .getRam(), template.getSize().getDisk() * 1024 * 1024l, ImmutableMap
+                           .<String, String> of(), template.getOptions().getInboundPorts());
+         VApp vApp = client.getVApp(metaMap.get("id"));
+         return newCreateNodeResponse(tag, template, metaMap, vApp);
+      }
+
+      protected NodeMetadata newCreateNodeResponse(String tag, Template template,
+               Map<String, String> metaMap, VApp vApp) {
+         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), template.getLocation().getId(),
+                  vApp.getLocation(), ImmutableMap.<String, String> of(), tag,
+                  vAppStatusToNodeState.get(vApp.getStatus()), computeClient
+                           .getPublicAddresses(vApp.getId()), computeClient
+                           .getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(),
+                  new Credentials(metaMap.get("username"), metaMap.get("password")));
+      }
+
+   }
+
+   @Singleton
+   public static class VCloudListNodesStrategy extends VCloudGetNodeMetadata implements
+            ListNodesStrategy {
+
+      @Inject
+      protected VCloudListNodesStrategy(VCloudClient client, VCloudComputeClient computeClient,
+               Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         super(client, computeClient, vAppStatusToNodeState);
+      }
+
+      @Override
+      public Iterable<? extends ComputeMetadata> execute() {
+         Set<ComputeMetadata> nodes = Sets.newHashSet();
+         for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
+            for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+               if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
+                  nodes.add(getNodeMetadataByIdInVDC(vdc.getId(), resource.getId()));
+               }
+            }
+         }
+         return nodes;
+      }
+
+   }
+
+   @Singleton
+   public static class VCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadata implements
+            GetNodeMetadataStrategy {
+
+      @Inject
+      protected VCloudGetNodeMetadataStrategy(VCloudClient client,
+               VCloudComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         super(client, computeClient, vAppStatusToNodeState);
+      }
+
+      @Override
+      public NodeMetadata execute(ComputeMetadata node) {
+         checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
+                  + node.getType());
+         return getNodeMetadataByIdInVDC(checkNotNull(node.getLocationId(), "location"),
+                  checkNotNull(node.getId(), "node.id"));
+      }
+
+   }
+
+   @Singleton
+   public static class VCloudGetNodeMetadata {
+
+      protected final VCloudClient client;
+      protected final VCloudComputeClient computeClient;
+
+      protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
+
+      @Inject
+      protected VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
+               Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         this.client = client;
+         this.computeClient = computeClient;
+         this.vAppStatusToNodeState = vAppStatusToNodeState;
+      }
+
+      protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
+         VApp vApp = client.getVApp(id);
+         String tag = vApp.getName().replaceAll("-[0-9]+", "");
+         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
+                  ImmutableMap.<String, String> of(), tag, vAppStatusToNodeState.get(vApp
+                           .getStatus()), computeClient.getPublicAddresses(id), computeClient
+                           .getPrivateAddresses(id), ImmutableMap.<String, String> of(), null);
+      }
+
    }
 
    @Provides

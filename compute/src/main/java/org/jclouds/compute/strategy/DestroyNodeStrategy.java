@@ -16,25 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.hostingdotcom.compute.config;
 
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
+package org.jclouds.compute.strategy;
+
+import org.jclouds.compute.domain.ComputeMetadata;
 
 /**
- * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
- * {@link HostingDotComVCloudComputeClient} bound.
+ * terminates the node and blocks until it is no longer visible or in the state TERMINATED. If this
+ * is the last node in a tagset, incidental resources are also destroyed.
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+public interface DestroyNodeStrategy {
 
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
-   }
+   boolean execute(ComputeMetadata node);
 
 }

@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -45,19 +46,30 @@ import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.compute.functions.CreateKeyPairIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
+import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -83,18 +95,117 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class EC2ComputeServiceContextModule extends EC2ContextModule {
+
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(ComputeService.class).to(EC2ComputeService.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(EC2RunNodesAndAddToSetStrategy.class);
+      bind(ListNodesStrategy.class).to(EC2ListNodesStrategy.class);
+      bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
+      bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
+      bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
+   }
+
+   @Singleton
+   public static class EC2ListNodesStrategy implements ListNodesStrategy {
+      private final InstanceClient client;
+      private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+
+      @Inject
+      protected EC2ListNodesStrategy(InstanceClient client,
+               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
+         this.client = client;
+         this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
+      }
+
+      @Override
+      public Iterable<? extends ComputeMetadata> execute() {
+         Set<NodeMetadata> nodes = Sets.newHashSet();
+         for (Region region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
+            Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
+                     .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
+         }
+         return nodes;
+      }
+
+   }
+
+   @Singleton
+   public static class GetRegionFromNodeOrDefault implements Function<ComputeMetadata, Region> {
+      private final Map<String, ? extends Location> locations;
+
+      @Inject
+      protected GetRegionFromNodeOrDefault(Map<String, ? extends Location> locations) {
+         this.locations = locations;
+      }
+
+      public Region apply(ComputeMetadata node) {
+         Location location = locations.get(node.getLocationId());
+         Region region = location.getScope() == LocationScope.REGION ? Region.fromValue(location
+                  .getId()) : Region.fromValue(location.getParent());
+         return region;
+      }
+   }
+
+   @Singleton
+   public static class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+
+      private final InstanceClient client;
+      private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+      private final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+
+      @Inject
+      protected EC2GetNodeMetadataStrategy(InstanceClient client,
+               GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
+               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
+         this.client = client;
+         this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
+         this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
+      }
+
+      @Override
+      public NodeMetadata execute(ComputeMetadata node) {
+         Region region = getRegionFromNodeOrDefault.apply(node);
+         RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
+                  client, region, node.getId()));
+         return runningInstanceToNodeMetadata.apply(runningInstance);
+      }
+
+   }
+
+   public static Iterable<RunningInstance> getAllRunningInstancesInRegion(InstanceClient client,
+            Region region, String id) {
+      return Iterables.concat(client.describeInstancesInRegion(region, id));
+   }
+
+   @Singleton
+   public static class EC2RebootNodeStrategy implements RebootNodeStrategy {
+      private final InstanceClient client;
+      private final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+
+      @Inject
+      protected EC2RebootNodeStrategy(InstanceClient client,
+               GetRegionFromNodeOrDefault getRegionFromNodeOrDefault) {
+         this.client = client;
+         this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
+      }
+
+      @Override
+      public boolean execute(ComputeMetadata node) {
+         Region region = getRegionFromNodeOrDefault.apply(node);
+         client.rebootInstancesInRegion(region, node.getId());
+         return true;
+      }
+
+   }
+
    @Provides
    @Singleton
    @Named("NOT_RUNNING")
    protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
       return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
-   }
-
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(ComputeService.class).to(EC2ComputeService.class).asEagerSingleton();
    }
 
    @Provides

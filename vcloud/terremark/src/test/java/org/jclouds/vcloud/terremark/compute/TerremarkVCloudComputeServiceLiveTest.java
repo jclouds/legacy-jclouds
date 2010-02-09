@@ -27,7 +27,6 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.BeforeClass;
@@ -61,11 +60,5 @@ public class TerremarkVCloudComputeServiceLiveTest extends BaseComputeServiceLiv
       @SuppressWarnings("unused")
       RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
-
-      TerremarkVCloudComputeService computeService = TerremarkVCloudComputeService.class
-               .cast(client);
-
-      @SuppressWarnings("unused")
-      VCloudComputeClient computeClient = VCloudComputeClient.class.cast(computeService);
    }
 }
