@@ -29,13 +29,14 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
+import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, testName = "perftest.JCloudsNioPerformanceLiveTest", groups = { "live" })
-public class JCloudsEnterprisePerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
+public class JCloudsApacheHCPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
@@ -53,7 +54,8 @@ public class JCloudsEnterprisePerformanceLiveTest extends BaseJCloudsPerformance
       String contextName = "enterprise";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
       context = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
-               new NullLoggingModule(), new EnterpriseConfigurationModule());
+               new NullLoggingModule(), new ApacheHCHttpCommandExecutorServiceModule(),
+               new EnterpriseConfigurationModule());
    }
 
    @Override

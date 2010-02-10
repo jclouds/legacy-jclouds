@@ -26,8 +26,7 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 
-import org.jclouds.date.joda.config.JodaDateServiceModule;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
+import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.testng.ITestContext;
@@ -51,8 +50,8 @@ public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
       String contextName = "nio";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
       context = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
-               new NullLoggingModule(), new BouncyCastleEncryptionServiceModule(),
-               new JodaDateServiceModule(), new NioTransformingHttpCommandExecutorServiceModule());
+               new NullLoggingModule(), new EnterpriseConfigurationModule(),
+               new NioTransformingHttpCommandExecutorServiceModule());
    }
 
    @Override

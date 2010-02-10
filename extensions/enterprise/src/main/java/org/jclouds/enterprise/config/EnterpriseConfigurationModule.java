@@ -24,8 +24,6 @@ import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.joda.config.JodaDateServiceModule;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
-import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
-import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
 /**
  * Configures Enterprise-grade components
@@ -34,7 +32,6 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
  * 
  */
 @ConfiguresExecutorService
-@ConfiguresHttpCommandExecutorService
 public class EnterpriseConfigurationModule extends ExecutorServiceModule {
 
    public EnterpriseConfigurationModule(ExecutorService userThreads, ExecutorService ioThreads) {
@@ -49,7 +46,6 @@ public class EnterpriseConfigurationModule extends ExecutorServiceModule {
    protected void configure() {
       install(new BouncyCastleEncryptionServiceModule());
       install(new JodaDateServiceModule());
-      install(new ApacheHCHttpCommandExecutorServiceModule());
    }
 
 }
