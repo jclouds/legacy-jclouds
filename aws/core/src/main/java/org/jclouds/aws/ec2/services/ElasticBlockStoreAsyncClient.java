@@ -82,6 +82,17 @@ public interface ElasticBlockStoreAsyncClient {
             @FormParam("SnapshotId") String snapshotId);
 
    /**
+    * @see ElasticBlockStoreClient#createVolumeFromSnapshotInAvailabilityZone
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateVolume")
+   @XMLResponseParser(CreateVolumeResponseHandler.class)
+   ListenableFuture<Volume> createVolumeFromSnapshotInAvailabilityZone(
+            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
+            @FormParam("Size") int size, @FormParam("SnapshotId") String snapshotId);
+
+   /**
     * @see ElasticBlockStoreClient#createVolumeInAvailabilityZone
     */
    @POST
@@ -183,7 +194,7 @@ public interface ElasticBlockStoreAsyncClient {
             @FormParam("SnapshotId") String snapshotId);
 
    /**
-    * @see ElasticBlockStoreClient#removeCreateVolumePermissionsToSnapshotInRegion
+    * @see ElasticBlockStoreClient#removeCreateVolumePermissionsFromSnapshotInRegion 
     */
    @POST
    @Path("/")

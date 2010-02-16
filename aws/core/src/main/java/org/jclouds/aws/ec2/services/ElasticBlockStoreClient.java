@@ -68,6 +68,36 @@ public interface ElasticBlockStoreClient {
 
    /**
     * Creates a new Amazon EBS volume to which any Amazon EC2 instance can attach within the same
+    * Availability Zone. This is overloaded {@link #createVolumeFromSnapshotInAvailabilityZone},
+    * which creates a volume with a specific size.
+    * For more information about Amazon EBS, go to the Amazon Elastic Compute
+    * Cloud Developer Guide or Amazon Elastic Compute Cloud User Guide.
+    *
+    * @param availabilityZone
+    *           An Amazon EBS volume must be located within the same Availability Zone as the
+    *           instance to which it attaches.
+    * @param size
+    *           Size of volume to be created
+    * @param snapshotId
+    *           The snapshot from which to create the new volume.
+    *
+    * @see #createVolumeFromSnapshotInAvailabilityZone
+    * @see #describeVolumesInRegion
+    * @see #deleteVolumeInRegion
+    * @see #attachVolumeInRegion
+    * @see #detachVolumeInRegion
+    * @see AvailabilityZoneAndRegionClient#describeAvailabilityZonesInRegion
+    *
+    *
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
+    *      />
+    */
+   Volume createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone availabilityZone,
+            int size, String snapshotId);
+
+   /**
+    * Creates a new Amazon EBS volume to which any Amazon EC2 instance can attach within the same
     * Availability Zone. For more information about Amazon EBS, go to the Amazon Elastic Compute
     * Cloud Developer Guide or Amazon Elastic Compute Cloud User Guide.
     * 

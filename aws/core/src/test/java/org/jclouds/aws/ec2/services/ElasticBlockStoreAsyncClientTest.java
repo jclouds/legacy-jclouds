@@ -110,6 +110,27 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       checkFilters(httpMethod);
    }
 
+   public void testCreateVolumeFromSnapShotWithSize() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
+               "createVolumeFromSnapshotInAvailabilityZone", AvailabilityZone.class,
+                                                                     int.class, String.class);
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, AvailabilityZone.US_EAST_1A, 15, "snapshotId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 96\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId&Size=15");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("deleteVolumeInRegion",
                Region.class, String.class);

@@ -138,6 +138,27 @@ public class ElasticBlockStoreClientLiveTest {
       client.deleteVolumeInRegion(snapshot.getRegion(), volume.getId());
    }
 
+   @Test(dependsOnMethods = "testCreateSnapshotInRegion")
+   void testCreateVolumeFromSnapshotInAvailabilityZoneWithSize() {
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(
+               AvailabilityZone.US_EAST_1B, 2, snapshot.getId());
+      assertNotNull(volume);
+
+      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client),
+               600, 10, TimeUnit.SECONDS);
+      assert availabile.apply(volume);
+
+      Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(),
+               volume.getId()));
+      assertEquals(volume.getId(), result.getId());
+      assertEquals(volume.getSnapshotId(), snapshot.getId());
+      assertEquals(volume.getAvailabilityZone(), AvailabilityZone.US_EAST_1B);
+      assertEquals(volume.getSize(), 2);
+      assertEquals(result.getStatus(), Volume.Status.AVAILABLE);
+
+      client.deleteVolumeInRegion(snapshot.getRegion(), volume.getId());
+   }
+
    @Test
    void testAttachVolumeInRegion() {
       // TODO: need an instance
