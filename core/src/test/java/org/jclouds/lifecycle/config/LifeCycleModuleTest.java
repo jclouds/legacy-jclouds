@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
@@ -39,7 +37,6 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
@@ -98,45 +95,17 @@ public class LifeCycleModuleTest {
       assert executor.isShutdown();
    }
 
-   static class PreDestroyable {
-      boolean isClosed = false;
-      private final ExecutorService userThreads;
-      private final ExecutorService ioThreads;
-
-      @Inject
-      PreDestroyable(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-               @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
-         this.userThreads = userThreads;
-         this.ioThreads = ioThreads;
-      }
-
-      @PreDestroy
-      public void close() {
-         assert !userThreads.isShutdown();
-         assert !ioThreads.isShutdown();
-
-         isClosed = true;
-      }
-   }
-
    @Test
    void testCloserPreDestroyOrder() throws IOException {
-      Injector i = createInjector().createChildInjector(new AbstractModule() {
-         protected void configure() {
-            bind(PreDestroyable.class);
-         }
-      });
+      Injector i = createInjector();
       ExecutorService userThreads = i.getInstance(Key.get(ExecutorService.class, Jsr330
                .named(Constants.PROPERTY_USER_THREADS)));
       assert !userThreads.isShutdown();
       ExecutorService ioThreads = i.getInstance(Key.get(ExecutorService.class, Jsr330
                .named(Constants.PROPERTY_IO_WORKER_THREADS)));
       assert !ioThreads.isShutdown();
-      PreDestroyable preDestroyable = i.getInstance(PreDestroyable.class);
-      assert !preDestroyable.isClosed;
       Closer closer = i.getInstance(Closer.class);
       closer.close();
-      assert preDestroyable.isClosed;
       assert userThreads.isShutdown();
       assert ioThreads.isShutdown();
    }
