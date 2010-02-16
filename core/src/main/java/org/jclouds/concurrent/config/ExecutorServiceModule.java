@@ -18,14 +18,24 @@
  */
 package org.jclouds.concurrent.config;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.NamingThreadFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -39,14 +49,35 @@ import com.google.inject.Provides;
  */
 @ConfiguresExecutorService
 public class ExecutorServiceModule extends AbstractModule {
-   private final ExecutorService userThreads;
-   private final ExecutorService ioThreads;
+
+   @VisibleForTesting
+   static final class ShutdownExecutorOnClose implements Closeable {
+      @Resource
+      protected Logger logger = Logger.NULL;
+
+      private final ExecutorService service;
+
+      private ShutdownExecutorOnClose(ExecutorService service) {
+         this.service = service;
+      }
+
+      @Override
+      public void close() throws IOException {
+         List<Runnable> runnables = service.shutdownNow();
+         if (runnables.size() > 0)
+            logger.warn("when shutting down executor %s, runnables outstanding: %s", service,
+                     runnables);
+      }
+   }
+
+   private final ExecutorService userExecutorFromConstructor;
+   private final ExecutorService ioExecutorFromConstructor;
 
    public ExecutorServiceModule(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
-      this.userThreads = userThreads;
-      this.ioThreads = ioThreads;
+      this.userExecutorFromConstructor = userThreads;
+      this.ioExecutorFromConstructor = ioThreads;
    }
 
    public ExecutorServiceModule() {
@@ -60,22 +91,43 @@ public class ExecutorServiceModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_USER_THREADS)
-   ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int userThreads) {
-      return this.userThreads != null ? this.userThreads : userThreads == 0 ? Executors
-               .newCachedThreadPool(new NamingThreadFactory("user thread %d"))
-               : newNamedThreadPool("user thread %d", userThreads);
-   }
-
-   public static ExecutorService newNamedThreadPool(String name, int maxCount) {
-      return Executors.newFixedThreadPool(maxCount, new NamingThreadFactory(name));
+   ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count,
+            Closer closer) {
+      if (userExecutorFromConstructor != null)
+         return shutdownOnClose(userExecutorFromConstructor, closer);
+      return shutdownOnClose(newThreadPoolNamed("user thread %d", count), closer);
    }
 
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_IO_WORKER_THREADS)
-   ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int ioThreads) {
-      return this.ioThreads != null ? this.ioThreads : ioThreads == 0 ? Executors
-               .newCachedThreadPool(new NamingThreadFactory("i/o thread %d")) : newNamedThreadPool(
-               "i/o thread %d", ioThreads);
+   ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int count,
+            Closer closer) {
+      if (ioExecutorFromConstructor != null)
+         return shutdownOnClose(ioExecutorFromConstructor, closer);
+      return shutdownOnClose(newThreadPoolNamed("i/o thread %d", count), closer);
    }
+
+   @VisibleForTesting
+   static ExecutorService shutdownOnClose(final ExecutorService service, Closer closer) {
+      closer.addToClose(new ShutdownExecutorOnClose(service));
+      return service;
+   }
+
+   @VisibleForTesting
+   static ExecutorService newCachedThreadPoolNamed(String name) {
+      return Executors.newCachedThreadPool(new NamingThreadFactory(name));
+   }
+
+   @VisibleForTesting
+   static ExecutorService newThreadPoolNamed(String name, int count) {
+      return count == 0 ? newCachedThreadPoolNamed(name) : newFixedThreadPoolNamed(name, count);
+   }
+
+   @VisibleForTesting
+   static ExecutorService newFixedThreadPoolNamed(String name, int maxCount) {
+      return new ThreadPoolExecutor(0, maxCount, 60L, TimeUnit.SECONDS,
+               new LinkedBlockingQueue<Runnable>(), new NamingThreadFactory(name));
+   }
+
 }
