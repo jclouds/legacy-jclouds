@@ -40,7 +40,7 @@ public class StubBlobStoreModule extends AbstractModule {
       bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
       }).toInstance(map);
       bind(StubAsyncBlobStore.class).in(Scopes.SINGLETON);
-      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to(5);
-      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(5);
+      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to(0);
+      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(0);
    }
 }
