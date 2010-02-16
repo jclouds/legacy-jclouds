@@ -86,6 +86,7 @@ public class BaseBlobStoreIntegrationTest {
     */
    @BeforeSuite
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
+      // TODO: close this context
       createContainersSharedByAllThreads(getCloudResources(testContext), testContext);
    }
 
