@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+		<groupId>org.jclouds</groupId>
+		<artifactId>jclouds-aws-demos-project</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>jclouds-aws-demo-ebsresize</artifactId>
+	<groupId>org.jclouds</groupId>
+
+    <name>jclouds EC2 example, to change volume size for EBS-based instances</name>
+	<description>For a given running instance, resizes the volume (with several minutes of downtime)</description>
+
+    <repositories>
+        <repository>
+            <id>jclouds</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+        </repository>
+        <repository>
+            <id>jclouds-snapshot.repository</id>
+            <url>http://jclouds.rimuhosting.com/maven2/snapshots</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+       <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+	  	<plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<source>1.6</source>
+				<target>1.6</target>
+			</configuration>
+		</plugin>
+	   </plugins>
+    </build>
+</project>
