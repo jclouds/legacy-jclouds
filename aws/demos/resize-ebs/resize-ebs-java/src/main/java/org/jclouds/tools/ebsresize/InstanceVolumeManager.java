@@ -19,6 +19,10 @@
 
 package org.jclouds.tools.ebsresize;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
@@ -30,13 +34,17 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
 import org.jclouds.tools.ebsresize.facade.ElasticBlockStoreFacade;
 import org.jclouds.tools.ebsresize.facade.InstanceFacade;
 import org.jclouds.tools.ebsresize.util.SshExecutor;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Launches a sequence of commands to change the size of
@@ -59,6 +67,8 @@ public class InstanceVolumeManager {
     private final EC2Client api;
     private final ElasticBlockStoreFacade ebsApi;
     private final InstanceFacade instanceApi;
+    private final Predicate<InetSocketAddress> socketOpen =
+                new RetryablePredicate<InetSocketAddress>(new SocketOpen(), 180, 5, TimeUnit.SECONDS);
 
     public InstanceVolumeManager(String accessKeyId, String secretKey) {
 
@@ -92,14 +102,6 @@ public class InstanceVolumeManager {
 
         api.getElasticBlockStoreServices().deleteVolumeInRegion(instance.getRegion(), volume.getId());
 
-        //TODO: how to know that an instance is available for SSH for certain?
-        // sometimes 20 seconds is enough after it started, sometimes it isn't
-        try {
-            Thread.sleep(20000);
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
-
         runRemoteResizeCommands(instance, instanceCredentials, pathToKeyPair);
     }
 
@@ -112,8 +114,14 @@ public class InstanceVolumeManager {
         NodeMetadata nodeMetadata = addCredentials((NodeMetadata) nodes.get(instance.getId()),
                 instanceCredentials);
 
+        InetSocketAddress socket =
+                new InetSocketAddress(Iterables.getLast(nodeMetadata.getPublicAddresses()), 22);
+
         SshExecutor sshExecutor = new SshExecutor(nodeMetadata, instanceCredentials,
-                                                    keyPair, instance);
+                                                    keyPair, socket);
+
+        waitForSocket(socket);
+
         sshExecutor.connect();
         sshExecutor.execute("sudo resize2fs " + instance.getRootDeviceName());
     }
@@ -127,6 +135,11 @@ public class InstanceVolumeManager {
                 nodeMetadata.getState(), nodeMetadata.getPublicAddresses(),
                 nodeMetadata.getPrivateAddresses(), nodeMetadata.getExtra(),
                 credentials);
+    }
+
+    public void waitForSocket(InetSocketAddress socket) {
+        checkState(socketOpen.apply(socket),
+                            /*or throw*/ "Couldn't connect to instance");
     }
 
     public ElasticBlockStoreFacade getEbsApi() {

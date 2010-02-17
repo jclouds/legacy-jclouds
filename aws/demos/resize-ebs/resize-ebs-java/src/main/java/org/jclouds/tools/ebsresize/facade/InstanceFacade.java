@@ -69,7 +69,8 @@ public class InstanceFacade {
      */
     public void startInstance(RunningInstance instance) {
         instanceServices.startInstancesInRegion(instance.getRegion(), instance.getId());
-        assertTrue(instanceRunning.apply(instance));
+        checkState(instanceRunning.apply(instance),
+                /*or throw*/ "Couldn't start the instance");
     }
 
      /**
@@ -84,7 +85,8 @@ public class InstanceFacade {
      */
     public void stopInstance(RunningInstance instance) {
         instanceServices.stopInstancesInRegion(instance.getRegion(), false, instance.getId());
-        assertTrue(instanceStopped.apply(instance));
+        checkState(instanceStopped.apply(instance),
+                            /*or throw*/ "Couldn't stop the instance");
     }
 
     /**
@@ -98,10 +100,6 @@ public class InstanceFacade {
         Set<Reservation> reservations = instanceServices.describeInstancesInRegion(region, instanceId);
         Reservation reservation = checkNotNull(Iterables.getOnlyElement(reservations));
         return Iterables.getOnlyElement(reservation);
-    }
-
-    public void assertTrue(boolean value) {
-        if(!value) throw new RuntimeException("Found false, expected true");
     }
     
 }

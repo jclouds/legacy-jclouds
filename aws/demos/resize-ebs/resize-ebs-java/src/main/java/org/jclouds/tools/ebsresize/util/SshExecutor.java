@@ -35,6 +35,15 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Allows remote command execution on instance.
+ *
+ * This is based on {@link org.jclouds.ssh.SshClient} and
+ * {@link org.jclouds.compute.util.ComputeUtils}, with
+ * some convenience methods.
+ *
+ * @see org.jclouds.ssh.SshClient
+ * @see org.jclouds.compute.util.ComputeUtils 
+ *
  * @author Oleksiy Yarmula
  */
 public class SshExecutor {
@@ -46,21 +55,19 @@ public class SshExecutor {
     private final NodeMetadata nodeMetadata;
     private final Credentials instanceCredentials;
     private final String keyPair;
-    private final RunningInstance instance;
     private final SshClient sshClient;
     private final ComputeUtils utils;
 
     public SshExecutor(NodeMetadata nodeMetadata,
                        Credentials instanceCredentials,
                        String keyPair,
-                       RunningInstance instance) {
+                       InetSocketAddress socket) {
         this.nodeMetadata = nodeMetadata;
         this.instanceCredentials = instanceCredentials;
         this.keyPair = keyPair;
-        this.instance = instance;
 
         this.sshClient =
-                new JschSshClient(new InetSocketAddress(instance.getDnsName(), 22), 60000,
+                new JschSshClient(socket, 60000,
                                 instanceCredentials.account, keyPair.getBytes());
 
         this.utils = new ComputeUtils(null, runScriptRunning, null);

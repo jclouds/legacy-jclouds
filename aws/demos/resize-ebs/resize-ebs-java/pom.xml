@@ -30,7 +30,7 @@
 	<artifactId>jclouds-aws-demo-ebsresize</artifactId>
 	<groupId>org.jclouds</groupId>
 
-    <name>jclouds EC2 example, to change volume size for EBS-based instances</name>
+    <name>jclouds EC2 demo, to change volume size for EBS-based instances</name>
 	<description>For a given running instance, resizes the volume (with several minutes of downtime)</description>
 
     <repositories>

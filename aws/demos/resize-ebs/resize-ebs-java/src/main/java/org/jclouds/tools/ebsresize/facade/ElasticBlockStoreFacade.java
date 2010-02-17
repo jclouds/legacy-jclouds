@@ -99,7 +99,8 @@ public class ElasticBlockStoreFacade {
     public void detachVolumeFromStoppedInstance(Volume volume, RunningInstance stoppedInstance) {
         elasticBlockStoreServices.detachVolumeInRegion(stoppedInstance.getRegion(), volume.getId(), false,
                 DetachVolumeOptions.Builder.fromInstance(stoppedInstance.getId()));
-        assertTrue(volumeAvailable.apply(volume));
+        checkState(volumeAvailable.apply(volume),
+                                /*or throw*/ "Couldn't detach the volume from instance");
     }
 
     /**
@@ -117,12 +118,14 @@ public class ElasticBlockStoreFacade {
         Snapshot createdSnapshot =
                 elasticBlockStoreServices.createSnapshotInRegion(volume.getRegion(), volume.getId(),
                 CreateSnapshotOptions.Builder.withDescription("snapshot to test extending volumes"));
-        assertTrue(snapshotCompleted.apply(createdSnapshot));
+        checkState(snapshotCompleted.apply(createdSnapshot),
+                                            /*or throw*/ "Couldn't create a snapshot");
 
         Volume newVolume = elasticBlockStoreServices.createVolumeFromSnapshotInAvailabilityZone(
                 volume.getAvailabilityZone(), newSize,
                 createdSnapshot.getId());
-        assertTrue(volumeAvailable.apply(newVolume));
+        checkState(volumeAvailable.apply(newVolume),
+                                /*or throw*/ "Couldn't create a volume from the snapshot");
 
         return newVolume;
     }
@@ -141,10 +144,7 @@ public class ElasticBlockStoreFacade {
         Attachment volumeAttachment = elasticBlockStoreServices.
                         attachVolumeInRegion(instance.getRegion(), volume.getId(), instance.getId(),
                                         instance.getRootDeviceName());
-        assertTrue(volumeAttached.apply(volumeAttachment));
-    }
-
-    public void assertTrue(boolean value) {
-        if(!value) throw new RuntimeException("Found false, expected true");
+        checkState(volumeAttached.apply(volumeAttachment),
+                                    /*or throw*/ "Couldn't attach volume back to the instance");
     }
 }
