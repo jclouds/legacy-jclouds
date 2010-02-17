@@ -37,6 +37,9 @@
        <module>createlamp</module>
        <module>speedtest-sqs</module>
        <module>createandlistbuckets</module>
+       <module>resize-ebs/jruby-client</module>
+       <module>resize-ebs/resize-ebs-java</module>
+
     </modules>
     <dependencies>
         <dependency>

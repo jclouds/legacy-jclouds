@@ -30,7 +30,7 @@ import java.io.*;
  *
  * @author Oleksiy Yarmula
  */
-public class EbsImages {
+public class EbsResizeMain {
 
     String accessKeyId = "YOUR_ACCESS_KEY_ID";
     String secretKey = "YOUR_SECRET_KEY";
@@ -42,7 +42,7 @@ public class EbsImages {
     String remotePassword = "";
 
     public static void main(String[] args) throws Exception {
-        new EbsImages().launch();
+        new EbsResizeMain().launch();
     }
 
     public void launch() throws Exception {
