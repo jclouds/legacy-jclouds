@@ -37,7 +37,7 @@ public class EbsResizeMain {
     String instanceId = "AMAZON_INSTANCE_ID (i-xxxxxx)";
     Region region = Region.US_EAST_1;
     int newSize = 6;
-    String pathToKeyPair = "/Users/alex/miscdev/aws/security/alexpair.pem";
+    String pathToKeyPair = "";
     String remoteLogin = "ubuntu";
     String remotePassword = "";
 
