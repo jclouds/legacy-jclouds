@@ -21,7 +21,6 @@ package org.jclouds.tools.ebsresize.util;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.util.ComputeUtils;
@@ -53,8 +52,6 @@ public class SshExecutor {
                         600, 3, TimeUnit.SECONDS);
 
     private final NodeMetadata nodeMetadata;
-    private final Credentials instanceCredentials;
-    private final String keyPair;
     private final SshClient sshClient;
     private final ComputeUtils utils;
 
@@ -63,8 +60,6 @@ public class SshExecutor {
                        String keyPair,
                        InetSocketAddress socket) {
         this.nodeMetadata = nodeMetadata;
-        this.instanceCredentials = instanceCredentials;
-        this.keyPair = keyPair;
 
         this.sshClient =
                 new JschSshClient(socket, 60000,
