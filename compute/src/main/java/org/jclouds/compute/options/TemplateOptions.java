@@ -63,7 +63,8 @@ public class TemplateOptions {
    }
 
    /**
-    * This script will be executed as the root user upon system startup.
+    * This script will be executed as the root user upon system startup. This script gets a
+    * prologue, so no #!/bin/bash required, path set up, etc
     */
    public TemplateOptions runScript(byte[] script) {
       checkArgument(checkNotNull(script, "script").length <= 16 * 1024,
