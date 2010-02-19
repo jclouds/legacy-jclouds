@@ -29,6 +29,7 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.*;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
+import org.jclouds.aws.ec2.predicates.InstanceStateTerminated;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.*;
@@ -64,7 +65,9 @@ public class InstanceVolumeManagerLiveTest {
     private ComputeService client;
     private Template template;
     private Predicate<RunningInstance> instanceRunning;
+    private Predicate<RunningInstance> instanceTerminated;
     private RunningInstance instanceCreated;
+    private Volume volumeAttached;
 
     @BeforeTest
     public void setupClient() throws IOException {
@@ -98,6 +101,10 @@ public class InstanceVolumeManagerLiveTest {
                 new RetryablePredicate<RunningInstance>(new InstanceStateRunning(manager.getApi().
                         getInstanceServices()),
                         600, 10, TimeUnit.SECONDS);
+        instanceTerminated =
+                new RetryablePredicate<RunningInstance>(new InstanceStateTerminated(manager.getApi().
+                        getInstanceServices()),
+                        600, 10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -123,16 +130,22 @@ public class InstanceVolumeManagerLiveTest {
         // NOTE: this step is essential
         instanceCreated = getOnlyInstance(launchedNode.getId(), region);
 
-        Volume volumeAttached = manager.getEbsApi().getRootVolumeForInstance(instanceCreated);
+        volumeAttached = manager.getEbsApi().getRootVolumeForInstance(instanceCreated);
         checkState(volumeAttached.getSize() == NEW_SIZE,
                 String.format("The size of the new volume expected: " +
-                              "%d. Found: %d", NEW_SIZE, volumeAttached.getSize()));
+                        "%d. Found: %d", NEW_SIZE, volumeAttached.getSize()));
     }
 
     @AfterTest
     public void close() {
         manager.getApi().getInstanceServices().terminateInstancesInRegion
                 (instanceCreated.getRegion(), instanceCreated.getId());
+        checkState(instanceTerminated.apply(instanceCreated), "" +
+                /*or throw*/ "Couldn't terminate the instance");
+        if(volumeAttached != null) {
+            manager.getApi().getElasticBlockStoreServices().deleteVolumeInRegion
+                    (volumeAttached.getRegion(), volumeAttached.getId());
+        }
         manager.closeContext();
     }
 
@@ -182,13 +195,13 @@ public class InstanceVolumeManagerLiveTest {
      */
     private RunningInstance getOnlyInstance(String instanceId, Region region) {
         return Iterables.getOnlyElement(
-                        Iterables.getOnlyElement(
-                                manager.getApi().
-                                        getInstanceServices().
-                                        describeInstancesInRegion(region, instanceId
-                                )
+                Iterables.getOnlyElement(
+                        manager.getApi().
+                                getInstanceServices().
+                                describeInstancesInRegion(region, instanceId
                         )
-                );
+                )
+        );
     }
 
 }
