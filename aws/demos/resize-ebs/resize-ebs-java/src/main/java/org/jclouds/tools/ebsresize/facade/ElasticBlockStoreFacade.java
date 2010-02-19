@@ -72,7 +72,6 @@ public class ElasticBlockStoreFacade {
                 "Only storage for instances with EBS type of root device can be resized.");
 
         String rootDevice = checkNotNull(runningInstance.getRootDeviceName());
-        runningInstance.getRootDeviceType();
 
         //get volume id
         String volumeId = null;
@@ -127,6 +126,7 @@ public class ElasticBlockStoreFacade {
         checkState(volumeAvailable.apply(newVolume),
                                 /*or throw*/ "Couldn't create a volume from the snapshot");
 
+        elasticBlockStoreServices.deleteSnapshotInRegion(volume.getRegion(), createdSnapshot.getId());
         return newVolume;
     }
 

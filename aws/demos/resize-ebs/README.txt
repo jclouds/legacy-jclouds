@@ -12,3 +12,5 @@ Pre-requisites:
 - running EBS-backed instance at Amazon EC2
 - Ubuntu image
 - proper settings in place (EbsResizeMain or launcher.rb)
+- file system is ext3 (otherwise, change is needed in org.jclouds.tools.ebsresize.InstanceVolumeManager)
+- the demo doesn't take care of freezing the database, filesystem and application data

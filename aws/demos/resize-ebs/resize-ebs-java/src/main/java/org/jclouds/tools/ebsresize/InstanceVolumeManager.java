@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.inject.Module;
+import com.google.inject.internal.ImmutableSet;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
@@ -44,6 +46,7 @@ import org.jclouds.tools.ebsresize.util.SshExecutor;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,10 +74,14 @@ public class InstanceVolumeManager {
                 new RetryablePredicate<InetSocketAddress>(new SocketOpen(), 180, 5, TimeUnit.SECONDS);
 
     public InstanceVolumeManager(String accessKeyId, String secretKey) {
+        this(accessKeyId, secretKey, new Properties());
+    }
 
+    public InstanceVolumeManager(String accessKeyId, String secretKey, Properties overridesForContext) {
         try {
             context = new ComputeServiceContextFactory()
-                    .createContext("ec2", accessKeyId, secretKey);
+                    .createContext("ec2", accessKeyId, secretKey,
+                            ImmutableSet.<Module> of(), overridesForContext);
         } catch(IOException e) { throw new RuntimeException(e); }
 
         ec2context = context.getProviderSpecificContext();
@@ -142,6 +149,10 @@ public class InstanceVolumeManager {
                             /*or throw*/ "Couldn't connect to instance");
     }
 
+    public void closeContext() {
+        context.close();
+    }
+
     public ElasticBlockStoreFacade getEbsApi() {
         return ebsApi;
     }
@@ -152,5 +163,9 @@ public class InstanceVolumeManager {
 
     public EC2Client getApi() {
         return api;
+    }
+
+    public ComputeServiceContext getContext() {
+        return context;
     }
 }
