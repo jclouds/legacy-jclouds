@@ -44,8 +44,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.easymock.classextension.EasyMock.*;
-
 
 /**
  * Tests the resizing of instance's root EBS device.
@@ -55,8 +53,10 @@ import static org.easymock.classextension.EasyMock.*;
  *
  * @author Oleksiy Yarmula
  */
-@Test(groups = {"live" }, enabled = false, testName = "ec2.InstanceVolumeManagerLiveTest")
+@Test(groups = {"live" }, enabled = true, testName = "ec2.demo.InstanceVolumeManagerLiveTest")
 public class InstanceVolumeManagerLiveTest {
+
+    private final int NEW_SIZE = 6;
 
     private String tag;
     private String secret;
@@ -112,22 +112,21 @@ public class InstanceVolumeManagerLiveTest {
         AvailabilityZone availabilityZone = AvailabilityZone.fromValue(launchedNode.getLocationId());
         Region region = getRegionNameForAvailabilityZone(availabilityZone);
 
-        waitForInstanceInRunningState(launchedNode.getId(), region);
+        instanceCreated = getOnlyInstance(launchedNode.getId(), region);
+
+        waitForInstanceInRunningState();
 
         manager.resizeVolume(launchedNode.getId(), region, new Credentials("ubuntu", ""),
-                secret, 6);
+                secret, NEW_SIZE);
 
-        instanceCreated =
-                Iterables.getOnlyElement(
-                        Iterables.getOnlyElement(
-                                manager.getApi().
-                                        getInstanceServices().
-                                        describeInstancesInRegion(region, launchedNode.getId()
-                                )
-                        )
-                );
+        // re-fetch the instance after the resize
+        // NOTE: this step is essential
+        instanceCreated = getOnlyInstance(launchedNode.getId(), region);
+
         Volume volumeAttached = manager.getEbsApi().getRootVolumeForInstance(instanceCreated);
-        assert volumeAttached.getSize() == 6;
+        checkState(volumeAttached.getSize() == NEW_SIZE,
+                String.format("The size of the new volume expected: " +
+                              "%d. Found: %d", NEW_SIZE, volumeAttached.getSize()));
     }
 
     @AfterTest
@@ -162,38 +161,34 @@ public class InstanceVolumeManagerLiveTest {
     }
 
     /**
-     * Blocks until the instance with given id and region is
-     *      in 'running' state.
-     *
-     * @param id
-     *          id of the instance being run
-     * @param region
-     *              region where the instance is launched
+     * Blocks until {@link #instanceCreated} transitions
+     *      into 'running' state.
+     * NOTE: {@link #instanceCreated} can not be null.
      */
-    private void waitForInstanceInRunningState(String id, Region region) {
-        RunningInstance instanceMock =
-                createInstanceFromIdAndRegion(id, region);
-
-        checkState(instanceRunning.apply(instanceMock),
+    private void waitForInstanceInRunningState() {
+        checkState(instanceRunning.apply(instanceCreated),
                 /*or throw*/ "Couldn't run the instance");
     }
 
     /**
-     * Uses EasyMock to create a mock {@link RunningInstance}.
+     * Retrieves a {@link RunningInstance} object by instanceId and
+     *          region.
      *
-     * @param id
-     *          id of the instance
+     * @param instanceId
+     *                  id of launched instance
      * @param region
-     *          region where it's launched
-     * @return
-     *        instance of mock {@link org.jclouds.aws.ec2.domain.RunningInstance}
+     *                  region where the instance was launched
+     * @return corresponding {@link RunningInstance} object
      */
-    private RunningInstance createInstanceFromIdAndRegion(String id, Region region) {
-        RunningInstance instanceMock = createMock(RunningInstance.class);
-        expect(instanceMock.getId()).andStubReturn(id);
-        expect(instanceMock.getRegion()).andStubReturn(region);
-        replay(instanceMock);
-        return instanceMock;
+    private RunningInstance getOnlyInstance(String instanceId, Region region) {
+        return Iterables.getOnlyElement(
+                        Iterables.getOnlyElement(
+                                manager.getApi().
+                                        getInstanceServices().
+                                        describeInstancesInRegion(region, instanceId
+                                )
+                        )
+                );
     }
 
 }

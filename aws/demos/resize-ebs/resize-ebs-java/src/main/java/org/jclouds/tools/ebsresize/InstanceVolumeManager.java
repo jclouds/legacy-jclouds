@@ -21,6 +21,7 @@ package org.jclouds.tools.ebsresize;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
@@ -77,7 +78,8 @@ public class InstanceVolumeManager {
         this(accessKeyId, secretKey, new Properties());
     }
 
-    public InstanceVolumeManager(String accessKeyId, String secretKey, Properties overridesForContext) {
+    @VisibleForTesting
+    InstanceVolumeManager(String accessKeyId, String secretKey, Properties overridesForContext) {
         try {
             context = new ComputeServiceContextFactory()
                     .createContext("ec2", accessKeyId, secretKey,
