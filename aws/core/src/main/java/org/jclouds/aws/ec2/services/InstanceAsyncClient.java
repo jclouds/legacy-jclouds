@@ -226,7 +226,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
             "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
-   ListenableFuture<? extends Map<String, Image.EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
+   ListenableFuture<? extends Map<String, RunningInstance.EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId") String instanceId);
 
