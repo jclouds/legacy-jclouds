@@ -18,14 +18,10 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 import com.google.inject.internal.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Defines the mapping of volumes for
@@ -35,7 +31,8 @@ import java.util.List;
  */
 public class BlockDeviceMapping {
 
-    private final List<RunningInstance.EbsBlockDevice> ebsBlockDevices = Lists.newArrayList();
+    private final Multimap<String, RunningInstance.EbsBlockDevice> ebsBlockDevices =
+                            LinkedHashMultimap.create();
 
     public BlockDeviceMapping() {
     }
@@ -45,26 +42,27 @@ public class BlockDeviceMapping {
      *
      * This method copies the values of the list.
      * @param ebsBlockDevices
-     *                      devices to be changed for the volume
+     *                      devices to be changed for the volume. This cannot be null.
      */
-    public BlockDeviceMapping(List<RunningInstance.EbsBlockDevice> ebsBlockDevices) {
-        this.ebsBlockDevices.addAll(checkNotNull(ebsBlockDevices,
+    public BlockDeviceMapping(Multimap<String, RunningInstance.EbsBlockDevice> ebsBlockDevices) {
+        this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices,
                 /*or throw*/ "EbsBlockDevices can't be null"));
     }
 
     /**
      * Adds a {@link RunningInstance.EbsBlockDevice} to the mapping.
+     * @param deviceName name of the device to apply the mapping. Can be null.
      * @param ebsBlockDevice
-     *                      ebsBlockDevice to be added
+     *                      ebsBlockDevice to be added. This cannot be null.
      * @return the same instance for method chaining purposes
      */
-    public BlockDeviceMapping addEbsBlockDevice(RunningInstance.EbsBlockDevice ebsBlockDevice) {
-        this.ebsBlockDevices.add(checkNotNull(ebsBlockDevice,
+    public BlockDeviceMapping addEbsBlockDevice(@Nullable String deviceName, RunningInstance.EbsBlockDevice ebsBlockDevice) {
+        this.ebsBlockDevices.put(deviceName, checkNotNull(ebsBlockDevice,
                 /*or throw*/ "EbsBlockDevice can't be null"));
         return this;
     }
 
-    public List<RunningInstance.EbsBlockDevice> getEbsBlockDevices() {
-        return ImmutableList.copyOf(ebsBlockDevices);
+    public Multimap<String, RunningInstance.EbsBlockDevice> getEbsBlockDevices() {
+        return ImmutableMultimap.copyOf(ebsBlockDevices);
     }
 }

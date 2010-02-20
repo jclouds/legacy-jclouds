@@ -72,9 +72,9 @@ import com.google.inject.internal.ImmutableMap;
  * Adapted from the following sources: {@link http://gist.github.com/249915}, {@link http
  * ://www.capsunlock.net/2009/12/create-ebs-boot-ami.html}
  * <p/>
- * 
+ *
  * Generally disabled, as it incurs higher fees.
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = false, sequential = true, testName = "ec2.EBSBootEC2ClientLiveTest")
@@ -448,9 +448,11 @@ public class EBSBootEC2ClientLiveTest {
    }
 
    private void setBlockDeviceMappingForInstanceInRegion() {
+      String volumeId = ebsInstance.getEbsBlockDevices().get("/dev/sda1").getVolumeId();
+
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
       blockDeviceMapping.addEbsBlockDevice
-                        (new RunningInstance.EbsBlockDevice(volume.getId(), "/dev/sda1", false));
+                        ("/dev/sda1", new RunningInstance.EbsBlockDevice(volumeId, false));
       try {
          client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
                   ebsInstance.getId(), blockDeviceMapping);
@@ -459,10 +461,11 @@ public class EBSBootEC2ClientLiveTest {
                   .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
                            ebsInstance.getId());
           assertEquals(devices.size(), 1);
+          String deviceName = Iterables.getOnlyElement(devices.keySet());
           RunningInstance.EbsBlockDevice device = Iterables.getOnlyElement(devices.values());
 
-          assertEquals(device.getVolumeId(), volume.getId());
-          assertEquals(device.getDeviceName(), "/dev/sda1");
+          assertEquals(device.getVolumeId(), volumeId);
+          assertEquals(deviceName, "/dev/sda1");
           assertEquals(device.isDeleteOnTermination(), false);
 
          System.out.println("OK: setBlockDeviceMappingForInstanceInRegion");
@@ -497,7 +500,7 @@ public class EBSBootEC2ClientLiveTest {
 
    /**
     * this tests "personality" as the file looked up was sent during instance creation
-    * 
+    *
     * @throws UnknownHostException
     */
    private void sshPing(RunningInstance newDetails) throws UnknownHostException {
