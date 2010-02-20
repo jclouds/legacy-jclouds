@@ -92,6 +92,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
                return false;
          } else if (!attachTime.equals(other.attachTime))
             return false;
+         if (deviceName == null) {
+            if (other.deviceName != null)
+               return false;
+         } else if (!deviceName.equals(other.deviceName))
+            return false;
          if (attachmentStatus == null) {
             if (other.attachmentStatus != null)
                return false;
