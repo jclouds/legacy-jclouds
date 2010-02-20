@@ -25,12 +25,8 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.InstanceStateChange;
-import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
+import org.jclouds.aws.ec2.domain.*;
+import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.concurrent.Timeout;
@@ -499,7 +495,7 @@ public interface InstanceClient {
             InstanceInitiatedShutdownBehavior instanceInitiatedShutdownBehavior);
 
    /**
-    * Sets the blockDeviceMapping used for starting the instance.
+    * Sets the blockDeviceMapping used for an instance.
     * <p/>
     * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
     * <ol>
@@ -508,20 +504,16 @@ public interface InstanceClient {
     * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
     * </ol>
     * 
-    * The {@code blockDeviceMapping} option takes a value in the following format:
-    * <device-name>=<snapshot-id>[:<volume-size>[:<deleteOnTermination>]]
+    * To create the instances of {@link RunningInstance.EbsBlockDevice},
+    * the constructor can be used with the following parameters:
+    * {@link RunningInstance.EbsBlockDevice#EbsBlockDevice(String, String, boolean)},
+    * that are:
     * <ol>
-    * <li>device-name - this is the device name as it should be exposed to the instance, for example
-    * /dev/sdb. This is the same as the device field specified in the AttachVolume call today. This
-    * field also serves as the key for the structure.</li>
-    * <li>snapshot-id - the ID of the EBS snapshot to be used when creating the volume. This field
-    * is optional. If it is not specified, the volume-size field must be present to create a blank
-    * volume of the specified size.</li>
-    * <li>volume-size - the size (GiBs) of the volume. This field is optional unless no snapshot-id
-    * is present. If a snapshot-id is present, the size must be equal to or larger than the
-    * snapshot's volume size.</li>
-    * <li>delete-on-termination - this indicates whether the volume should be deleted on
-    * termination. It defaults to ' true '.</li>
+    * <li>Volume id (required), for instance, "vol-blah"</li>
+    * <li>Device name (optional), for instance, "/dev/sda1". To find out more about
+    *           device names, read the next paragraph.</li>
+    * <li>Delete on termination flag (optional), which defines whether the volume will be
+    *           deleted upon instance's termination.</li>
     * </ol>
     * <p/>
     * Note that the device names between Linux and Windows differ. For Linux, ensure that your
@@ -532,31 +524,10 @@ public interface InstanceClient {
     * that they are in the form /xvd[c-p] . For example, /xvde , /xvdf and /xvdp are all valid
     * Windows device names.
     * <p/>
-    * Here are a few extra examples on how this functionality can be used.
-    * 
-    * <ol>
-    * <li>
-    * resize the root volume: @{code /dev/sda1=:100}</li>
-    * <li>
-    * don't delete the root volume: {@code /dev/sda1=:100:false}</li>
-    * <li>
-    * TODO: unverified: create and attach an additional volume at launch: {@code
-    * /dev/sdb=snap-e8a23d81,/dev/sdc=:200}
-    * <p/>
-    * The above example will create and attach the following EBS volumes at launch time:
-    * <ol>
-    * <li>
-    * /dev/sdb - a 10 GiBs EBS volume containing an ext3 file system; this is an Amazon shared
-    * snapshot.</li>
-    * <li>
-    * /dev/sdc - an empty 200 GiB EBS volume.</li>
-    * </ol>
-    * </li>
-    * <li>
-    * TODO: unverified: cresize the root partition of a Windows 2008 image and add an additional 100
-    * GiB device: {@code /dev/sda1=:100,/dev/xvdc=:100}</li>
-    * </ol>
-    * 
+    * <b>NOTE</b>: As of now 02/20/2010, this command only works to change the
+    * DeleteOnTermination property of the device. The volume must be <i>attached</i> to a
+    * stopped instance.
+    *
     * @param region
     *           Instances are tied to Availability Zones. However, the instance ID is tied to the
     *           Region.
@@ -568,5 +539,5 @@ public interface InstanceClient {
     *      />
     */
    void setBlockDeviceMappingForInstanceInRegion(Region region, String instanceId,
-            String blockDeviceMapping);
+                                                    BlockDeviceMapping blockDeviceMapping);
 }

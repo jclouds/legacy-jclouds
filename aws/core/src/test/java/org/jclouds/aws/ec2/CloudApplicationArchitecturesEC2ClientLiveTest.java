@@ -36,13 +36,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
-import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.domain.*;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.predicates.InstanceHasIpAddress;
@@ -276,9 +270,10 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private void setBlockDeviceMappingForInstanceInRegion() {
+      BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
       try {
          client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
-                  instanceId, "whoopie");
+                  instanceId, blockDeviceMapping);
          assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
       } catch (AWSResponseException e) {
          assertEquals("InvalidParameterCombination", e.getError().getCode());

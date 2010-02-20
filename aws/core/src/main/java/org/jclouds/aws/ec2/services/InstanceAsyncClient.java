@@ -30,13 +30,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.binders.BindBlockDeviceMappingToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.IfNotNullBindAvailabilityZoneToFormParam;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.InstanceStateChange;
-import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
+import org.jclouds.aws.ec2.domain.*;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.functions.ConvertUnencodedBytesToBase64EncodedString;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
@@ -222,14 +219,14 @@ public interface InstanceAsyncClient {
             @FormParam("InstanceId") String instanceId);
 
    /**
-    * @see AMIClient#getBlockDeviceMappingForInstanceInRegion
+    * @see InstanceClient#getBlockDeviceMappingForInstanceInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
             "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
-   ListenableFuture<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
+   ListenableFuture<? extends Map<String, Image.EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId") String instanceId);
 
@@ -320,15 +317,14 @@ public interface InstanceAsyncClient {
             @FormParam("Value") InstanceInitiatedShutdownBehavior instanceInitiatedShutdownBehavior);
 
    /**
-    * @see AMIClient#setBlockDeviceMappingForInstanceInRegion
+    * @see InstanceClient#setBlockDeviceMappingForInstanceInRegion
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute",
-            "blockDeviceMapping" })
+   @FormParams(keys = { ACTION }, values = { "ModifyInstanceAttribute" })
    ListenableFuture<Void> setBlockDeviceMappingForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId") String instanceId,
-            @FormParam("Value") String blockDeviceMapping);
+            @BinderParam(BindBlockDeviceMappingToIndexedFormParams.class) BlockDeviceMapping blockDeviceMapping);
 
 }

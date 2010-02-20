@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -37,19 +38,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.RootDeviceType;
-import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.domain.Snapshot;
-import org.jclouds.aws.ec2.domain.Volume;
+import org.jclouds.aws.ec2.domain.*;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
-import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
@@ -457,15 +447,24 @@ public class EBSBootEC2ClientLiveTest {
                .getInstanceTypeForInstanceInRegion(Region.DEFAULT, ebsInstance.getId()));
    }
 
-   private void setBlockDeviceMappingForInstanceInRegion() { // TODO: determine the correct
-      // blockDeviceMapping format
+   private void setBlockDeviceMappingForInstanceInRegion() {
+      BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
+      blockDeviceMapping.addEbsBlockDevice
+                        (new RunningInstance.EbsBlockDevice(volume.getId(), "/dev/sda1", false));
       try {
          client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
-                  ebsInstance.getId(), "whoopie");
+                  ebsInstance.getId(), blockDeviceMapping);
 
-         assertEquals(ImmutableMap.<String, EbsBlockDevice> of("whoopie", null), client
+          Map<String, RunningInstance.EbsBlockDevice> devices = client
                   .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
-                           ebsInstance.getId()));
+                           ebsInstance.getId());
+          assertEquals(devices.size(), 1);
+          RunningInstance.EbsBlockDevice device = Iterables.getOnlyElement(devices.values());
+
+          assertEquals(device.getVolumeId(), volume.getId());
+          assertEquals(device.getDeviceName(), "/dev/sda1");
+          assertEquals(device.isDeleteOnTermination(), false);
+
          System.out.println("OK: setBlockDeviceMappingForInstanceInRegion");
       } catch (Exception e) {
          System.err.println("setBlockDeviceMappingForInstanceInRegion");

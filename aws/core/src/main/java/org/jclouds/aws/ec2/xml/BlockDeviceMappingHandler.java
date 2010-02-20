@@ -18,16 +18,19 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
+import com.google.inject.Inject;
+import org.jclouds.aws.ec2.domain.Attachment;
+import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.collect.Maps;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 public class BlockDeviceMappingHandler extends
@@ -36,9 +39,17 @@ public class BlockDeviceMappingHandler extends
 
    private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
    private String deviceName;
-   private String snapshotId;
-   private int volumeSize;
+   private String volumeId;
    private boolean deleteOnTermination = true;// correct default is true.
+   private Attachment.Status attachmentStatus;
+   private Date attachTime;
+
+   protected final DateService dateService;
+
+   @Inject 
+   public BlockDeviceMappingHandler(DateService dateService) {
+      this.dateService = dateService;
+   }
 
    public Map<String, EbsBlockDevice> getResult() {
       return ebsBlockDevices;
@@ -47,18 +58,22 @@ public class BlockDeviceMappingHandler extends
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("deviceName")) {
          deviceName = currentText.toString().trim();
-      } else if (qName.equals("snapshotId")) {
-         snapshotId = currentText.toString().trim();
-      } else if (qName.equals("volumeSize")) {
-         volumeSize = Integer.parseInt(currentText.toString().trim());
+      } else if (qName.equals("volumeId")) {
+         volumeId = currentText.toString().trim();
       } else if (qName.equals("deleteOnTermination")) {
          deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
+      } else if (qName.equals("status")) {
+         attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
+      } else if (qName.equals("attachTime")) {
+         attachTime = dateService.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("item")) {
-         ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize,
-                  deleteOnTermination));
-         this.snapshotId = null;
-         this.volumeSize = 0;
-         this.deleteOnTermination = true;
+         ebsBlockDevices.put(deviceName, new EbsBlockDevice(volumeId, deviceName,
+                  attachmentStatus, attachTime, deleteOnTermination));
+          this.volumeId = null;
+          this.deviceName = null;
+          this.deleteOnTermination = true;
+          this.attachmentStatus = null;
+          this.attachTime = null;
       }
       currentText = new StringBuilder();
    }

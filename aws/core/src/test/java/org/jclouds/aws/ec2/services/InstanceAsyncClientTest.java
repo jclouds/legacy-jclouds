@@ -31,7 +31,9 @@ import javax.inject.Singleton;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
 import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.BlockDeviceMappingHandler;
@@ -523,20 +525,24 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class
                .getMethod("setBlockDeviceMappingForInstanceInRegion", Region.class, String.class,
-                        String.class);
+                        BlockDeviceMapping.class);
+
+      BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
+      blockDeviceMapping.addEbsBlockDevice
+                        (new RunningInstance.EbsBlockDevice("/dev/sda1", "vol-test1", true));
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "test");
+               Region.DEFAULT, "1", blockDeviceMapping);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 102\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 62\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
-               "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=blockDeviceMapping&Value=test&InstanceId=1");
+               "Version=2009-11-30&Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=%2Fdev%2Fsda1&BlockDeviceMapping.1.DeviceName=vol-test1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true");
       filter.filter(httpMethod);// ensure encoding worked properly
       assertPayloadEquals(
                httpMethod,
-               "Action=ModifyInstanceAttribute&Attribute=blockDeviceMapping&InstanceId=1&Signature=KNCKfLATSmpXGuIBpXOx3lBmHv9tyu17Cxrfi%2FTzQHE%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Value=test&Version=2009-11-30&AWSAccessKeyId=user");
+               "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=vol-test1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=%2Fdev%2Fsda1&InstanceId=1&Signature=Htpx4bm6v0O%2FcYxrsGb74NbTzCJfPtKWeuB8l2TpL%2B0%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-11-30&AWSAccessKeyId=user");
 
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
