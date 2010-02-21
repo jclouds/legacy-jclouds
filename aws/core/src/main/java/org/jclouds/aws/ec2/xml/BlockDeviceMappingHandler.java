@@ -67,8 +67,7 @@ public class BlockDeviceMappingHandler extends
       } else if (qName.equals("attachTime")) {
          attachTime = dateService.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("item")) {
-         ebsBlockDevices.put(deviceName, new EbsBlockDevice(volumeId, deviceName,
-                  attachmentStatus, attachTime, deleteOnTermination));
+         ebsBlockDevices.put(deviceName, new EbsBlockDevice(volumeId, attachmentStatus, attachTime, deleteOnTermination));
           this.volumeId = null;
           this.deviceName = null;
           this.deleteOnTermination = true;

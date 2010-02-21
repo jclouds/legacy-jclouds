@@ -2,7 +2,6 @@ package org.jclouds.aws.ec2.binders;
 
 import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -30,22 +29,23 @@ public class BindBlockDeviceMappingToIndexedFormParams implements Binder {
         GeneratedHttpRequest generatedRequest = (GeneratedHttpRequest) request;
 
         int amazonOneBasedIndex = 1; //according to docs, counters must start with 1
-        for(RunningInstance.EbsBlockDevice ebsBlockDevice : blockDeviceMapping.getEbsBlockDevices()) {
+        for(String ebsBlockDeviceName  : blockDeviceMapping.getEbsBlockDevices().keySet()) {
+            for(RunningInstance.EbsBlockDevice ebsBlockDevice : blockDeviceMapping.getEbsBlockDevices().get(ebsBlockDeviceName)) {
 
-            //not null by contract
-            generatedRequest.addFormParam(format(volumeIdPattern, amazonOneBasedIndex),
+                //not null by contract
+                generatedRequest.addFormParam(format(volumeIdPattern, amazonOneBasedIndex),
                         ebsBlockDevice.getVolumeId());
 
-            if(ebsBlockDevice.getDeviceName() != null) {
-                generatedRequest.addFormParam(format(deviceNamePattern, amazonOneBasedIndex),
-                        ebsBlockDevice.getDeviceName());
-            }
-
-            generatedRequest.addFormParam(format(deleteOnTerminationPattern, amazonOneBasedIndex),
+                if(ebsBlockDeviceName != null) {
+                    generatedRequest.addFormParam(format(deviceNamePattern, amazonOneBasedIndex),
+                            ebsBlockDeviceName);
+                }
+                generatedRequest.addFormParam(format(deleteOnTerminationPattern, amazonOneBasedIndex),
                         String.valueOf(ebsBlockDevice.isDeleteOnTermination()));
 
 
-            amazonOneBasedIndex++;
+                amazonOneBasedIndex++;
+            }
         }
 
     }

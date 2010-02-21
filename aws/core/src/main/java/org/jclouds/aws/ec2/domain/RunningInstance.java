@@ -41,30 +41,21 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
    public static class EbsBlockDevice {
       private final String volumeId;
-      private final String deviceName;
       private final Attachment.Status attachmentStatus;
       private final Date attachTime;
       private final boolean deleteOnTermination;
 
       public EbsBlockDevice(String volumeId, Status attachmentStatus, Date attachTime,
-               boolean deleteOnTermination) {
-         this(volumeId, null, attachmentStatus, attachTime, deleteOnTermination);
-      }
-
-      public EbsBlockDevice(String volumeId, String deviceName,
-                            Status attachmentStatus, Date attachTime,
                             boolean deleteOnTermination) {
          super();
          this.volumeId = volumeId;
          this.attachmentStatus = attachmentStatus;
          this.attachTime = attachTime;
          this.deleteOnTermination = deleteOnTermination;
-         this.deviceName = deviceName;
       }
 
-      public EbsBlockDevice(String volumeId, String deviceName,
-               boolean deleteOnTermination) {
-         this(volumeId, deviceName, null, null, deleteOnTermination);
+      public EbsBlockDevice(String volumeId, boolean deleteOnTermination) {
+         this(volumeId, null, null, deleteOnTermination);
       }
 
       @Override
@@ -92,11 +83,6 @@ public class RunningInstance implements Comparable<RunningInstance> {
                return false;
          } else if (!attachTime.equals(other.attachTime))
             return false;
-         if (deviceName == null) {
-            if (other.deviceName != null)
-               return false;
-         } else if (!deviceName.equals(other.deviceName))
-            return false;
          if (attachmentStatus == null) {
             if (other.attachmentStatus != null)
                return false;
@@ -114,10 +100,6 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
       public String getVolumeId() {
          return volumeId;
-      }
-
-      public String getDeviceName() {
-         return deviceName;
       }
 
       public Attachment.Status getAttachmentStatus() {

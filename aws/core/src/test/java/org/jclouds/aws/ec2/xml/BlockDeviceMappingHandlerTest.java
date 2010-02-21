@@ -46,12 +46,10 @@ public class BlockDeviceMappingHandlerTest extends BaseHandlerTest {
 
       DateService dateService = injector.getInstance(DateService.class);
       Map<String, EbsBlockDevice> expected = ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1",
-              new EbsBlockDevice("vol-d74b82be", "/dev/sda1",
-                                     Attachment.Status.ATTACHED,
+              new EbsBlockDevice("vol-d74b82be", Attachment.Status.ATTACHED,
                                      dateService.iso8601DateParse("2010-02-20T18:25:26.000Z"), true),
               "/dev/sdf",
-              new EbsBlockDevice("vol-another", "/dev/sdf",
-                                     Attachment.Status.DETACHED,
+              new EbsBlockDevice("vol-another", Attachment.Status.DETACHED,
                                      dateService.iso8601DateParse("2010-02-20T19:26:26.000Z"), false)
       );
 
