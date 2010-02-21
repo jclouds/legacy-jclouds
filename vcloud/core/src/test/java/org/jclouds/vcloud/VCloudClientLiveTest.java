@@ -66,7 +66,6 @@ public class VCloudClientLiveTest {
       assertNotNull(response.getId());
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
-      assert response.size() > 0;
       assertEquals(connection.getCatalog(response.getId()), response);
    }
 

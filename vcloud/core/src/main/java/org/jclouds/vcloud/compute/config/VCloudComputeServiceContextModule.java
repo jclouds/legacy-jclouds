@@ -72,8 +72,6 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.config.VCloudContextModule;
-import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -302,36 +300,33 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       // TODO multi-VDC
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
-      Catalog response = client.getDefaultCatalog();
+      Map<String, NamedResource> resources = client.getDefaultVDC().getResourceEntities();
       Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
 
-      for (final NamedResource resource : response.values()) {
-         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-            final CatalogItem item = client.getCatalogItem(resource.getId());
-            if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-               responses.put(item.getName(), ConcurrentUtils.makeListenable(executor
-                        .submit(new Callable<Void>() {
-                           @Override
-                           public Void call() throws Exception {
-                              OsFamily myOs = null;
-                              for (OsFamily os : OsFamily.values()) {
-                                 if (resource.getName().toLowerCase().replaceAll("\\s", "")
-                                          .indexOf(os.toString()) != -1) {
-                                    myOs = os;
-                                 }
+      for (final NamedResource resource : resources.values()) {
+         if (resource.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+            responses.put(resource.getName(), ConcurrentUtils.makeListenable(executor
+                     .submit(new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                           OsFamily myOs = null;
+                           for (OsFamily os : OsFamily.values()) {
+                              if (resource.getName().toLowerCase().replaceAll("\\s", "").indexOf(
+                                       os.toString()) != -1) {
+                                 myOs = os;
                               }
-                              Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
-                                       : Architecture.X86_64;
-                              VAppTemplate template = client.getVAppTemplate(item.getEntity()
-                                       .getId());
-                              images.add(new ImageImpl(resource.getId(), template.getName(), vDC
-                                       .getId(), template.getLocation(), ImmutableMap
-                                       .<String, String> of(), template.getDescription(), "", myOs,
-                                       template.getName(), arch));
-                              return null;
                            }
-                        }), executor));
-            }
+                           Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
+                                    : Architecture.X86_64;
+                           VAppTemplate template = client.getVAppTemplate(resource.getId());
+                           images.add(new ImageImpl(resource.getId(), template.getName(), vDC
+                                    .getId(), template.getLocation(), ImmutableMap
+                                    .<String, String> of(), template.getDescription(), "", myOs,
+                                    template.getName(), arch));
+                           return null;
+                        }
+                     }), executor));
+
          }
       }
 

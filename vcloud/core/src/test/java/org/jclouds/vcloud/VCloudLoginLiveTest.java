@@ -20,10 +20,9 @@ package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
@@ -34,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
@@ -49,7 +47,6 @@ import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
-import org.jclouds.vcloud.reference.VCloudConstants;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -69,11 +66,6 @@ public class VCloudLoginLiveTest {
    @RequiresHttp
    @ConfiguresRestClient
    private static final class VCloudLoginRestClientModule extends AbstractModule {
-      final String endpoint;
-
-      public VCloudLoginRestClientModule(String endpoint) {
-         this.endpoint = endpoint;
-      }
 
       @SuppressWarnings("unused")
       @Provides
@@ -91,10 +83,19 @@ public class VCloudLoginLiveTest {
          return new BasicAuthentication(user, key, encryptionService);
       }
 
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      @VCloudLogin
+      URI provideUri(@Named(PROPERTY_VCLOUD_ENDPOINT) String endpoint) {
+         return URI.create(endpoint);
+      }
+
       @Override
       protected void configure() {
-         bind(URI.class).annotatedWith(VCloudLogin.class).toInstance(URI.create(endpoint));
+
       }
+
    }
 
    private final class VCloudLoginContextModule extends AbstractModule {
@@ -129,43 +130,23 @@ public class VCloudLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      final String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint")
                + "/v0.8/login";
-      final String account = checkNotNull(System.getProperty("jclouds.test.user"),
-               "jclouds.test.user");
-      final String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-
+      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(
                new TypeLiteral<VCloudLoginAsyncClient>() {
                }, new TypeLiteral<VCloudLoginAsyncClient>() {
-               }, new PropertiesBuilder() {
-
-                  @Override
-                  public PropertiesBuilder withCredentials(String account, String key) {
-                     return null;
-                  }
-
-                  @Override
-                  public PropertiesBuilder withEndpoint(URI endpoint) {
-                     return null;
-                  }
-               }.build()) {
+               }, new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
 
          public void addContextModule(List<Module> modules) {
-
             modules.add(new VCloudLoginContextModule());
          }
 
          @Override
          protected void addClientModule(List<Module> modules) {
-            properties.setProperty(VCloudConstants.PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint,
-                     "endpoint").toString());
-            properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
-            properties.setProperty(PROPERTY_VCLOUD_USER, checkNotNull(account, "user"));
-            properties.setProperty(PROPERTY_VCLOUD_KEY, checkNotNull(key, "key"));
-            properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, "4");
-            modules.add(new VCloudLoginRestClientModule(endpoint));
+            modules.add(new VCloudLoginRestClientModule());
          }
 
       }.withModules(new Log4JLoggingModule(),

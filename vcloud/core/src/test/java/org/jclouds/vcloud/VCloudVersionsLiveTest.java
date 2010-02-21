@@ -20,14 +20,15 @@ package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Properties;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -67,9 +68,16 @@ public class VCloudVersionsLiveTest {
          return factory.create(VCloudVersionsAsyncClient.class);
       }
 
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      @VCloud
+      URI provideUri(@Named(PROPERTY_VCLOUD_ENDPOINT) String endpoint) {
+         return URI.create(endpoint);
+      }
+
       @Override
       protected void configure() {
-         bind(URI.class).annotatedWith(VCloud.class).toInstance(URI.create(endpoint));
       }
    }
 
@@ -90,9 +98,6 @@ public class VCloudVersionsLiveTest {
       }
    }
 
-   static String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-            "jclouds.test.endpoint");
-
    private RestContext<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient> context;
 
    @Test
@@ -108,10 +113,14 @@ public class VCloudVersionsLiveTest {
 
    @BeforeClass
    void setupFactory() {
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+               "jclouds.test.endpoint");
+      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new RestContextBuilder<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(
                new TypeLiteral<VCloudVersionsAsyncClient>() {
                }, new TypeLiteral<VCloudVersionsAsyncClient>() {
-               }, new Properties()) {
+               }, new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
 
          public void addContextModule(List<Module> modules) {
 

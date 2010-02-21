@@ -45,10 +45,5 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       @SuppressWarnings("unused")
       RestContext<VCloudAsyncClient, VCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
-
-      BaseVCloudComputeClient computeService = BaseVCloudComputeClient.class.cast(client);
-
-      @SuppressWarnings("unused")
-      VCloudComputeClient computeClient = VCloudComputeClient.class.cast(computeService);
    }
 }

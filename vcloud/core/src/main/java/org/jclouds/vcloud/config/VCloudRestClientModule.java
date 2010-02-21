@@ -244,7 +244,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @Provides
    @Catalog
    @Singleton
-   protected URI provideCatalog(Organization org) {
+   protected URI provideCatalog(Organization org, @Named(PROPERTY_VCLOUD_USER) String user) {
       return Iterables.get(org.getCatalogs().values(), 0).getLocation();
    }
 

@@ -16,15 +16,15 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.compute;
+package org.jclouds.vcloud.bluelock.compute;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.bluelock.BlueLockVCloudContextBuilder;
+import org.jclouds.vcloud.bluelock.BlueLockVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -45,10 +45,10 @@ public class PropertiesTest {
    }
 
    public void test() {
-      assertEquals(properties.getProperty("vcloud.contextbuilder"), VCloudContextBuilder.class
-               .getName());
-      assertEquals(properties.getProperty("vcloud.propertiesbuilder"),
-               VCloudPropertiesBuilder.class.getName());
+      assertEquals(properties.getProperty("bluelock.contextbuilder"),
+               BlueLockVCloudContextBuilder.class.getName());
+      assertEquals(properties.getProperty("bluelock.propertiesbuilder"),
+               BlueLockVCloudPropertiesBuilder.class.getName());
    }
 
 }
