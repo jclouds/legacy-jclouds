@@ -66,7 +66,8 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
                      // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
                      return backoffHandler.shouldRetryRequest(command, response);
                   } else {
-                     command.changeHostAndPortTo(host, command.getRequest().getEndpoint().getPort());
+                     command.changeSchemeHostAndPortTo(command.getRequest().getEndpoint()
+                              .getScheme(), host, command.getRequest().getEndpoint().getPort());
                   }
                   return true;
                } else {

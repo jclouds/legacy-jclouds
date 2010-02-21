@@ -64,7 +64,8 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
       if (hostHeader != null && command.incrementRedirectCount() < retryCountLimit) {
          URI redirectionUrl = UriBuilder.fromUri(hostHeader).build();
-         if (redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
+         if (redirectionUrl.getScheme().equals(command.getRequest().getEndpoint().getScheme())
+                  && redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
                   && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {
             if (!redirectionUrl.getPath().equals(command.getRequest().getEndpoint().getPath())) {
                command.changePathTo(redirectionUrl.getPath());
@@ -72,7 +73,8 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
                return backoffHandler.shouldRetryRequest(command, response);
             }
          } else {
-            command.changeHostAndPortTo(redirectionUrl.getHost(), redirectionUrl.getPort());
+            command.changeSchemeHostAndPortTo(redirectionUrl.getScheme(), redirectionUrl.getHost(),
+                     redirectionUrl.getPort());
          }
          return true;
       } else {

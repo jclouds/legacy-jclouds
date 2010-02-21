@@ -84,8 +84,9 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * This also removes the Host header in order to avoid ssl problems.
     */
    @Override
-   public void changeHostAndPortTo(String host, int port) {
+   public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
       UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
+      builder.scheme(scheme);
       builder.host(host);
       builder.port(port);
       request.setEndpoint(builder.build());

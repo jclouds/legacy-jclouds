@@ -18,7 +18,6 @@
  */
 package org.jclouds.http;
 
-
 /**
  * Command whose endpoint is an http service.
  * 
@@ -48,8 +47,10 @@ public interface HttpCommand {
 
    /**
     * change the destination of the current http command. typically used in handling redirects.
+    * 
+    * @param string
     */
-   void changeHostAndPortTo(String host, int port);
+   void changeSchemeHostAndPortTo(String scheme, String host, int port);
 
    /**
     * change method from GET to HEAD. typically used in handling redirects.

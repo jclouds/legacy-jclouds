@@ -441,7 +441,7 @@ public class StubAsyncBlobStore extends BaseAsyncBlobStore {
             return false;
          }
 
-         public void changeHostAndPortTo(String host, int port) {
+         public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
          }
 
          public void changeToGETRequest() {

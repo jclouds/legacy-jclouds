@@ -160,7 +160,8 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
       HttpRequest request = command.getRequest();
       String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
       if (hostHeader != null) {
-         command.changeHostAndPortTo(hostHeader, request.getEndpoint().getPort());
+         command.changeSchemeHostAndPortTo(request.getEndpoint().getScheme(), hostHeader, request
+                  .getEndpoint().getPort());
       }
    }
 
