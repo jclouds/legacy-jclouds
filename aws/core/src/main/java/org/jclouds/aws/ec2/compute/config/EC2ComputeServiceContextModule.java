@@ -90,7 +90,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link EC2ComputeServiceContext}; requires {@link EC2ComputeService} bound.
+ * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
  * 
  * @author Adrian Cole
  */
@@ -246,8 +246,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Singleton
    Map<String, ? extends Size> provideSizes(Function<ComputeMetadata, String> indexer) {
       return Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE,
-               EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_2XLARGE,
-               EC2Size.M2_4XLARGE), indexer);
+               EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE,
+               EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE), indexer);
    }
 
    @Provides

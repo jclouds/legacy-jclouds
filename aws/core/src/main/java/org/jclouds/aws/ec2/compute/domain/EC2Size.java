@@ -69,6 +69,11 @@ public class EC2Size extends SizeImpl {
    public static final EC2Size M1_XLARGE = new EC2Size(InstanceType.M1_XLARGE, 8, 15360, 1690,
             ImmutableSet.of(Architecture.X86_64));
    /**
+    * @see InstanceType#M2_XLARGE
+    */
+   public static final EC2Size M2_XLARGE = new EC2Size(InstanceType.M2_XLARGE, 6 /*TODO: 6.5*/, 17510, 420,
+            ImmutableSet.of(Architecture.X86_64));
+   /**
     * @see InstanceType#M2_2XLARGE
     */
    public static final EC2Size M2_2XLARGE = new EC2Size(InstanceType.M2_2XLARGE, 13, 35020, 850,

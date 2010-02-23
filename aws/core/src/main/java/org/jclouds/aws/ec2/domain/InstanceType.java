@@ -67,6 +67,17 @@ public enum InstanceType {
     */
    M1_XLARGE,
    /**
+    * High-Memory Extra Large Instance
+    * <ul>
+    * <li>17.1 GB of memory</li>
+    * <li>6.5 EC2 Compute Units (2 virtual cores with 3.25 EC2 Compute Units each)</li>
+    * <li>420 GB of instance storage</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: Moderate</li>
+    * </ul>
+    */
+   M2_XLARGE,
+   /**
     * High-Memory Double Extra Large Instance
     * <ul>
     * <li>34.2 GB of memory</li>
