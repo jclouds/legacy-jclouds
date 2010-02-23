@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.primitives.Doubles;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -54,7 +55,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private String imageVersion;
    private String imageName;
 
-   private int minCores;
+   private double minCores;
    private int minRam;
 
    private boolean biggest;
@@ -212,7 +213,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
    static final Ordering<Size> BY_CORES_ORDERING = new Ordering<Size>() {
       public int compare(Size left, Size right) {
-         return Ints.compare(left.getCores(), right.getCores());
+         return Doubles.compare(left.getCores(), right.getCores());
       }
    };
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
@@ -386,7 +387,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
-   public TemplateBuilder minCores(int minCores) {
+   public TemplateBuilder minCores(double minCores) {
       this.minCores = minCores;
       return this;
    }

@@ -39,11 +39,16 @@ public class EC2Size extends SizeImpl {
    private static final long serialVersionUID = 8605688733788974797L;
    private final InstanceType instanceType;
 
-   EC2Size(InstanceType instanceType, Integer cores, Integer ram, Integer disk,
+   EC2Size(InstanceType instanceType, Double cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
       super(instanceType.toString(), instanceType.toString(), null, null, ImmutableMap
                .<String, String> of(),cores, ram, disk, supportedArchitectures);
       this.instanceType = instanceType;
+   }
+
+   EC2Size(InstanceType instanceType, Integer cores, Integer ram, Integer disk,
+            Iterable<Architecture> supportedArchitectures) {
+      this(instanceType, cores.doubleValue(), ram, disk, supportedArchitectures);
    }
 
    /**
@@ -71,7 +76,7 @@ public class EC2Size extends SizeImpl {
    /**
     * @see InstanceType#M2_XLARGE
     */
-   public static final EC2Size M2_XLARGE = new EC2Size(InstanceType.M2_XLARGE, 6 /*TODO: 6.5*/, 17510, 420,
+   public static final EC2Size M2_XLARGE = new EC2Size(InstanceType.M2_XLARGE, 6.5, 17510, 420,
             ImmutableSet.of(Architecture.X86_64));
    /**
     * @see InstanceType#M2_2XLARGE

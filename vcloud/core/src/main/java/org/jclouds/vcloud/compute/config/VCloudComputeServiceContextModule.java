@@ -180,7 +180,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
-                  template.getImage().getId(), template.getSize().getCores(), template.getSize()
+                  template.getImage().getId(), Double.valueOf(template.getSize().getCores()).intValue(), template.getSize()
                            .getRam(), template.getSize().getDisk() * 1024 * 1024l, ImmutableMap
                            .<String, String> of(), template.getOptions().getInboundPorts());
          VApp vApp = client.getVApp(metaMap.get("id"));

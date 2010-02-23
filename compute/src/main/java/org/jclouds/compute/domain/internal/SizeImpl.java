@@ -41,14 +41,14 @@ import com.google.common.collect.Sets;
 public class SizeImpl extends ComputeMetadataImpl implements Size {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8994255275911717567L;
-   private final int cores;
+   private final double cores;
    private final int ram;
    private final int disk;
 
    private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
 
    public SizeImpl(String id, String name, @Nullable String location, URI uri,
-            Map<String, String> userMetadata, int cores, int ram, int disk,
+            Map<String, String> userMetadata, double cores, int ram, int disk,
             Iterable<Architecture> supportedArchitectures) {
       super(ComputeType.SIZE, id, name, location, uri, userMetadata);
       this.cores = cores;
@@ -62,7 +62,7 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
     * {@inheritDoc}
     */
    @Override
-   public int getCores() {
+   public double getCores() {
       return cores;
    }
 

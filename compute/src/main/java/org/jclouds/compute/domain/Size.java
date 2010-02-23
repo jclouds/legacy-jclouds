@@ -40,7 +40,7 @@ public interface Size extends ComputeMetadata {
    /**
     * Amount of virtual or physical cores provided
     */
-   int getCores();
+   double getCores();
 
    /**
     * Amount of RAM provided in MB (256M, 1740)

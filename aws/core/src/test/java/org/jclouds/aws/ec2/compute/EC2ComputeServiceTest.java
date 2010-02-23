@@ -60,80 +60,82 @@ public class EC2ComputeServiceTest {
      * {@link org.jclouds.compute.domain.Size} from {@link EC2Size}.
      *
      * Expected size: m2.xlarge
-     *
-     * @throws Exception if non-test-related exception arises
      */
     @Test
     public void testTemplateChoiceForInstanceBySizeId() throws Exception {
-
-        //create an instance of TemplateBuilderImpl
-        Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null, true);
-        Image image = new ImageImpl("ami-image", "image", "us-east-1", new URI("http"),
-                Maps.<String,String>newHashMap(), "description", "1.0",
-                null, "ubuntu", Architecture.X86_64);
-
-        TemplateBuilderImpl templateBuilder =
-                new TemplateBuilderImpl(ImmutableMap.of("us-east-1", location),
-                        ImmutableMap.of("ami-image", image),
-                        ImmutableMap.of("m2.xlarge", EC2Size.M2_XLARGE,
-                                "m2.2xlarge", EC2Size.M2_2XLARGE,
-                                "m2.4xlarge", EC2Size.M2_4XLARGE),
-                        location);
-
-        //find the matching template
-        Template template = templateBuilder.
+        Template template = newTemplateBuilder().
                 architecture(Architecture.X86_64).sizeId("m2.xlarge").
                 locationId("us-east-1").
                 build();
 
-        //assert the template is correct
         assert template != null : "The returned template was null, but it should have a value.";
         assert EC2Size.M2_XLARGE.equals(template.getSize()) :
                 format("Incorrect image determined by the template. Expected: %s. Found: %s.",
                         "m2.xlarge", String.valueOf(template.getSize()));
     }
 
-    
+
     /**
      * Verifies that {@link TemplateBuilderImpl} would
      * choose the correct size of the instance, based on
      * physical attributes (# of cores, ram, etc).
+     * 
      * Expected size: m2.xlarge
-     *
-     * @throws Exception if non-test-related exception arises
      */
     @Test
     public void testTemplateChoiceForInstanceByAttributes() throws Exception {
+        Template template = newTemplateBuilder().
+                architecture(Architecture.X86_64).
+                minRam(17510).minCores(6.5).smallest().
+                locationId("us-east-1").
+                build();
 
-        //create an instance of TemplateBuilderImpl                
+        assert template != null : "The returned template was null, but it should have a value.";
+        assert EC2Size.M2_XLARGE.equals(template.getSize()) :
+                format("Incorrect image determined by the template. Expected: %s. Found: %s.",
+                        "m2.xlarge", String.valueOf(template.getSize()));
+    }
+
+
+
+    /**
+     * Negative test version of {@link #testTemplateChoiceForInstanceByAttributes}.
+     *
+     * Verifies that {@link TemplateBuilderImpl} would
+     * not choose the insufficient size of the instance, based on
+     * physical attributes (# of cores, ram, etc).
+     *
+     * Expected size: anything but m2.xlarge
+     */
+    @Test
+    public void testNegativeTemplateChoiceForInstanceByAttributes() throws Exception {
+        Template template = newTemplateBuilder().
+                architecture(Architecture.X86_64).
+                minRam(17510).minCores(6.7).smallest().
+                locationId("us-east-1").
+                build();
+
+        assert template != null : "The returned template was null, but it should have a value.";
+        assert ! EC2Size.M2_XLARGE.equals(template.getSize()) :
+                format("Incorrect image determined by the template. Expected: not %s. Found: %s.",
+                        "m2.xlarge", String.valueOf(template.getSize()));
+    }
+
+
+    private TemplateBuilder newTemplateBuilder() {
         Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null, true);
-        Image image = new ImageImpl("ami-image", "image", "us-east-1", new URI("http"),
+        Image image = new ImageImpl("ami-image", "image", "us-east-1", null,
                 Maps.<String,String>newHashMap(), "description", "1.0",
                 null, "ubuntu", Architecture.X86_64);
 
-        TemplateBuilderImpl templateBuilder =
-                new TemplateBuilderImpl(ImmutableMap.of("us-east-1", location),
+        return new TemplateBuilderImpl(ImmutableMap.of("us-east-1", location),
                         ImmutableMap.of("ami-image", image),
                         Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE,
                                 EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE,
                                 EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE), indexer()),
                         location);
-
-        //find the matching template
-        Template template = templateBuilder.
-                architecture(Architecture.X86_64).
-                minRam(17510).minCores(6).smallest().
-                locationId("us-east-1").
-                build();
-
-        //assert the template is correct
-        assert template != null : "The returned template was null, but it should have a value.";
-        assert EC2Size.M2_XLARGE.equals(template.getSize()) :
-                format("Incorrect image determined by the template. Expected: %s. Found: %s.",
-                        "m2.xlarge", String.valueOf(template.getSize()));
     }
 
-    
     Function<ComputeMetadata, String> indexer() {
         return new Function<ComputeMetadata, String>() {
             @Override

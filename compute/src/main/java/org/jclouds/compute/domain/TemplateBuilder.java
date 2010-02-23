@@ -111,7 +111,7 @@ public interface TemplateBuilder {
    /**
     * Configure this template to require the minimum cores below
     */
-   TemplateBuilder minCores(int minCores);
+   TemplateBuilder minCores(double minCores);
 
    /**
     * Configure this template to require the minimum ram in megabytes below
