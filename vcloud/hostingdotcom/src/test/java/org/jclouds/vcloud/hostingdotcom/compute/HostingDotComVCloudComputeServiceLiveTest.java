@@ -21,10 +21,9 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -34,39 +33,35 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "compute.HostingDotComVCloudComputeServiceLiveTest")
-public class HostingDotComVCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
    @BeforeClass
    @Override
    public void setServiceDefaults() {
       service = "hostingdotcom";
    }
 
+   @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       return templateBuilder.osFamily(CENTOS).smallest().build();
    }
 
+   // Takes too long
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   @Test(enabled = false)
+   public void testCreate() throws Exception {
+      super.testCreate();
    }
-   
-//   //Takes too long
-//   @Override
-//   @Test(enabled = false)
-//   public void testCreate() throws Exception {
-//      super.testCreate();
-//   }
-//
-//   @Override
-//   @Test(enabled = false)
-//   public void testGet() throws Exception {
-//      super.testGet();
-//   }
-//
-//   @Override
-//   @Test(enabled = false)
-//   public void testReboot() throws Exception {
-//      super.testReboot();
-//   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGet() throws Exception {
+      super.testGet();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testReboot() throws Exception {
+      super.testReboot();
+   }
 
 }

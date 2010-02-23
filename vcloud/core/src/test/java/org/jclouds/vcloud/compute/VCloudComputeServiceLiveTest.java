@@ -2,9 +2,15 @@ package org.jclouds.vcloud.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.testng.Assert.assertEquals;
+
+import java.util.Map.Entry;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
@@ -16,7 +22,6 @@ import org.testng.annotations.Test;
 
 /**
  * 
- * Generally disabled, as it incurs higher fees.
  * 
  * @author Adrian Cole
  */
@@ -45,5 +50,19 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       @SuppressWarnings("unused")
       RestContext<VCloudAsyncClient, VCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
+   }
+
+   @Override
+   public void testListNodes() throws Exception {
+      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes().entrySet()) {
+         assertEquals(node.getKey(), node.getValue().getId());
+         assert node.getValue().getId() != null;
+         assert node.getValue().getLocationId() != null;
+         assertEquals(node.getValue().getType(), ComputeType.NODE);
+         NodeMetadata allData = client.getNodeMetadata(node.getValue());
+         assert allData.getExtra().get("processor/count") != null;
+         assert allData.getExtra().get("disk_drive/1/kb") != null;
+         assert allData.getExtra().get("memory/mb") != null;
+      }
    }
 }

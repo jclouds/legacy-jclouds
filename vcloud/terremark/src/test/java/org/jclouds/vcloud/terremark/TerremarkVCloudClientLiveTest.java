@@ -168,7 +168,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       String vDCId = tmClient.getDefaultVDC().getId();
 
       // lookup the id of the item in the catalog you wish to deploy by name
-      String itemId = tmClient.getDefaultCatalog().get("Ubuntu JeOS 9.04 (32-bit)").getId();
+      Catalog catalog = tmClient.getDefaultCatalog();
+      String itemId = catalog.get("Ubuntu JeOS 9.10 (32-bit)").getId();
 
       // determine the cheapest configuration size
       SortedSet<ComputeOptions> sizeOptions = tmClient.getComputeOptionsOfCatalogItem(itemId);

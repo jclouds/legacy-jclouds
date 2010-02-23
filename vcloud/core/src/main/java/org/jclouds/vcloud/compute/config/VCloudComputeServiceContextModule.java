@@ -73,6 +73,8 @@ import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ResourceAllocation;
+import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -264,9 +266,23 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
                   ImmutableMap.<String, String> of(), tag, vAppStatusToNodeState.get(vApp
                            .getStatus()), computeClient.getPublicAddresses(id), computeClient
-                           .getPrivateAddresses(id), ImmutableMap.<String, String> of(), null);
+                           .getPrivateAddresses(id), getExtra(vApp), null);
       }
+   }
 
+   private static Map<String, String> getExtra(VApp vApp) {
+      Map<String, String> extra = Maps.newHashMap();
+      extra.put("memory/mb", Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity()
+               + "");
+      extra.put("processor/count", Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)).getVirtualQuantity()
+               + "");
+
+      for (ResourceAllocation disk : vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)) {
+         extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity() + "");
+      }
+      return extra;
    }
 
    @Provides

@@ -19,14 +19,9 @@
 
 package org.jclouds.vcloud.terremark.compute;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.BeforeClass;
@@ -34,12 +29,11 @@ import org.testng.annotations.Test;
 
 /**
  * 
- * Generally disabled, as it incurs higher fees.
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkVCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
 
    @BeforeClass
    @Override
@@ -47,18 +41,10 @@ public class TerremarkVCloudComputeServiceLiveTest extends BaseComputeServiceLiv
       service = "terremark";
    }
 
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().build();
-   }
-
-   @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
-   }
-
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
    }
+
 }

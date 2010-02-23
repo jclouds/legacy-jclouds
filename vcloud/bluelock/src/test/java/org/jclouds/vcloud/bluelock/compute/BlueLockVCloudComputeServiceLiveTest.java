@@ -19,18 +19,14 @@
 
 package org.jclouds.vcloud.bluelock.compute;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -44,22 +40,13 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "compute.BlueLockVCloudComputeServiceLiveTest")
-public class BlueLockVCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
    @BeforeClass
    @Override
    public void setServiceDefaults() {
       service = "bluelock";
    }
-
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().build();
-   }
-
-   @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
-   }
-
+   
    @Override
    public void testListImages() throws Exception {
       super.testListImages();
