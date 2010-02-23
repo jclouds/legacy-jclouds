@@ -136,7 +136,7 @@ public class VCloudComputeClientLiveTest {
       if (id != null)
          computeClient.stop(id);
    }
-
+   
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");

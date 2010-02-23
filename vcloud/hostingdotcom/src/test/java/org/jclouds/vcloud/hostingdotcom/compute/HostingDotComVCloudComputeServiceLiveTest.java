@@ -49,5 +49,24 @@ public class HostingDotComVCloudComputeServiceLiveTest extends BaseComputeServic
    protected JschSshClientModule getSshModule() {
       return new JschSshClientModule();
    }
+   
+//   //Takes too long
+//   @Override
+//   @Test(enabled = false)
+//   public void testCreate() throws Exception {
+//      super.testCreate();
+//   }
+//
+//   @Override
+//   @Test(enabled = false)
+//   public void testGet() throws Exception {
+//      super.testGet();
+//   }
+//
+//   @Override
+//   @Test(enabled = false)
+//   public void testReboot() throws Exception {
+//      super.testReboot();
+//   }
 
 }

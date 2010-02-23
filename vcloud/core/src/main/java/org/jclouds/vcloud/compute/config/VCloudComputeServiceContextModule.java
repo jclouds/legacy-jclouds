@@ -293,44 +293,44 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Provides
    @Singleton
    protected Map<String, ? extends Image> provideImages(final VCloudClient client,
-            final Location vDC, LogHolder holder,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {
-      // TODO multi-VDC
       final Set<Image> images = Sets.newHashSet();
-      holder.logger.debug(">> providing images");
-      Map<String, NamedResource> resources = client.getDefaultVDC().getResourceEntities();
-      Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
+      holder.logger.debug(">> providing vAppTemplates");
+      for (final NamedResource vDC : client.getDefaultOrganization().getVDCs().values()) {
+         Map<String, NamedResource> resources = client.getVDC(vDC.getId()).getResourceEntities();
+         Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
 
-      for (final NamedResource resource : resources.values()) {
-         if (resource.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-            responses.put(resource.getName(), ConcurrentUtils.makeListenable(executor
-                     .submit(new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                           OsFamily myOs = null;
-                           for (OsFamily os : OsFamily.values()) {
-                              if (resource.getName().toLowerCase().replaceAll("\\s", "").indexOf(
-                                       os.toString()) != -1) {
-                                 myOs = os;
+         for (final NamedResource resource : resources.values()) {
+            if (resource.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+               responses.put(resource.getName(), ConcurrentUtils.makeListenable(executor
+                        .submit(new Callable<Void>() {
+                           @Override
+                           public Void call() throws Exception {
+                              OsFamily myOs = null;
+                              for (OsFamily os : OsFamily.values()) {
+                                 if (resource.getName().toLowerCase().replaceAll("\\s", "")
+                                          .indexOf(os.toString()) != -1) {
+                                    myOs = os;
+                                 }
                               }
+                              Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
+                                       : Architecture.X86_64;
+                              VAppTemplate template = client.getVAppTemplate(resource.getId());
+                              images.add(new ImageImpl(resource.getId(), template.getName(), vDC
+                                       .getId(), template.getLocation(), ImmutableMap
+                                       .<String, String> of(), template.getDescription(), "", myOs,
+                                       template.getName(), arch));
+                              return null;
                            }
-                           Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
-                                    : Architecture.X86_64;
-                           VAppTemplate template = client.getVAppTemplate(resource.getId());
-                           images.add(new ImageImpl(resource.getId(), template.getName(), vDC
-                                    .getId(), template.getLocation(), ImmutableMap
-                                    .<String, String> of(), template.getDescription(), "", myOs,
-                                    template.getName(), arch));
-                           return null;
-                        }
-                     }), executor));
+                        }), executor));
 
+            }
          }
+         ConcurrentUtils.awaitCompletion(responses, executor, null, holder.logger,
+                  "vAppTemplates in " + vDC);
       }
-
-      ConcurrentUtils.awaitCompletion(responses, executor, null, holder.logger, "images");
       return Maps.uniqueIndex(images, indexer);
    }
 

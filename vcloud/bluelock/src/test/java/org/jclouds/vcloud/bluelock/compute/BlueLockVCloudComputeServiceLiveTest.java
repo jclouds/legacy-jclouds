@@ -29,8 +29,14 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -79,5 +85,29 @@ public class BlueLockVCloudComputeServiceLiveTest extends BaseComputeServiceLive
    @Test(enabled = false)
    public void testReboot() throws Exception {
       super.testReboot();
+   }
+
+   @Test
+   public void testExample() throws Exception {
+
+      // get a synchronous object to use for manipulating vcloud objects in BlueLock
+      VCloudClient bluelockClient = VCloudClient.class.cast(context.getProviderSpecificContext()
+               .getApi());
+
+      // look at only vApp templates in my default vDC
+      Map<String, NamedResource> vAppTemplatesByName = Maps.filterValues(bluelockClient
+               .getDefaultVDC().getResourceEntities(), new Predicate<NamedResource>() {
+
+         @Override
+         public boolean apply(NamedResource input) {
+            return input.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
+         }
+
+      });
+
+      // get details on a specific template I know by name
+      bluelockClient.getVAppTemplate(vAppTemplatesByName
+               .get("Ubuntu904Serverx64 1CPUx1GBx20GB a01").getId());
+
    }
 }
