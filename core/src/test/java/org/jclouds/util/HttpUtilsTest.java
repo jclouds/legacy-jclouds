@@ -77,6 +77,12 @@ public class HttpUtilsTest extends PerformanceTest {
       assertEquals(creds, URI.create("compute://user%40domain:passw%40rd@terremark"));
    }
 
+   public void testTerremark3() {
+      URI creds = HttpUtils.createUri("compute://user@domain:AbC!@943!@terremark");
+      assertEquals(creds.getUserInfo(), "user@domain:AbC!@943!");
+      assertEquals(creds, URI.create("compute://user%40domain:AbC%21%40943%21@terremark"));
+   }
+
    public void testCloudFiles() {
       URI creds = HttpUtils.createUri("compute://account:h3c@cloudfiles/container-hyphen/prefix");
       assertEquals(creds, URI.create("compute://account:h3c@cloudfiles/container-hyphen/prefix"));

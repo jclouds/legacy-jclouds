@@ -51,6 +51,27 @@ public class CredentialsTest {
       assertEquals(creds.key, "pa$sword");
    }
 
+   public void testTerremark() {
+      Credentials creds = Credentials.parse(URI
+               .create("compute://user%40domain:password@terremark"));
+      assertEquals(creds.account, "user@domain");
+      assertEquals(creds.key, "password");
+   }
+
+   public void testTerremark2() {
+      Credentials creds = Credentials.parse(URI
+               .create("compute://user%40domain:passw%40rd@terremark"));
+      assertEquals(creds.account, "user@domain");
+      assertEquals(creds.key, "passw@rd");
+   }
+
+   public void testTerremark3() {
+      Credentials creds = Credentials.parse(URI
+               .create("compute://user%40domain:AbC%21%40943%21@terremark"));
+      assertEquals(creds.account, "user@domain");
+      assertEquals(creds.key, "AbC!@943!");
+   }
+
    public void testCloudFiles() {
       Credentials creds = Credentials.parse(URI
                .create("compute://account:h3c@cloudfiles/container-hyphen/prefix"));
@@ -61,8 +82,8 @@ public class CredentialsTest {
 
    public void testS3() {
 
-      Credentials creds = Credentials.parse(URI
-               .create("compute://0AB:aA%2B%2F0@s3/buck-et/prefix"));
+      Credentials creds = Credentials
+               .parse(URI.create("compute://0AB:aA%2B%2F0@s3/buck-et/prefix"));
       assertEquals(creds.account, "0AB");
       assertEquals(creds.key, "aA+/0");
    }
