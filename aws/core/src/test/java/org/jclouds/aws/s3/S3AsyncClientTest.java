@@ -100,6 +100,13 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
       assertPayloadEquals(httpMethod, null);
 
+      filter.filter(httpMethod);
+
+      assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/?location HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Authorization: AWS user:mlDjMMEYSR8md0v9S0JOZSoqWSA=\nDate: timestamp\nHost: bucket.stub\n");
+      assertPayloadEquals(httpMethod, null);
+
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationConstraintHandler.class);
       assertExceptionParserClassEquals(method, null);
@@ -506,6 +513,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
    }
 
    BlobToObject blobToS3Object;
+   RequestAuthorizeSignature filter;
 
    @Override
    protected void checkFilters(GeneratedHttpRequest<S3AsyncClient> httpMethod) {
@@ -524,6 +532,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
    protected void setupFactory() {
       super.setupFactory();
       blobToS3Object = injector.getInstance(BlobToObject.class);
+      filter = injector.getInstance(RequestAuthorizeSignature.class);
    }
 
    @Override
