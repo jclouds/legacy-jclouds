@@ -44,17 +44,25 @@ public interface GridServerClient {
 
     Set<Server> getServerList();
 
-    //Set<Server> getServersByName(String... names);
+    /**
+     * Retrieves the server(s) by unique name(s).
+     *
+     * Given a name or a set of names, finds one or
+     * multiple servers.
+     * @param names to get the servers
+     * @return server(s) matching the name(s)
+     */
+    Set<Server> getServersByName(String... names);
 
     /**
      * Retrieves the server(s) by unique id(s).
      *
      * Given an id or a set of ids, finds one or
      * multiple servers. 
-     * @param id
-     * @return
+     * @param ids to get the servers
+     * @return server(s) matching the ids
      */
-  //  Set<Server> getServersById(Long... ids);
+    Set<Server> getServersById(Long... ids);
 
 
 }

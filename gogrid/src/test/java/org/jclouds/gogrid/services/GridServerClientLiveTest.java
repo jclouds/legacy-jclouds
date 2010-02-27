@@ -21,10 +21,12 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid;
+package org.jclouds.gogrid.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridContextFactory;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
@@ -38,7 +40,7 @@ import java.util.Set;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "gogrid.GoGridClientLiveTest")
-public class GoGridClientLiveTest {
+public class GridServerClientLiveTest {
 
     private GoGridClient client;
 
@@ -54,6 +56,18 @@ public class GoGridClientLiveTest {
     @Test
     public void testGetServerList() {
         Set<Server> response = client.getServerClient().getServerList();
+        assert (response.size() > 0);
+    }
+
+    @Test
+    public void testGetServerByName() {
+        Set<Server> response = client.getServerClient().getServersByName("PowerServer", "AnotherTestServer");
+        assert (response.size() > 0);
+    }
+
+    @Test
+    public void testGetServerById() {
+        Set<Server> response = client.getServerClient().getServersById(75245L, 75523L);
         assert (response.size() > 0);
     }
 

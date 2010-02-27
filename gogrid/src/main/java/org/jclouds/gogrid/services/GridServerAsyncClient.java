@@ -47,6 +47,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.binders.BindIdsToQueryParams;
+import org.jclouds.gogrid.binders.BindNamesToQueryParams;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
@@ -70,9 +72,18 @@ import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 @QueryParams(keys = VERSION, values = "1.3")
 public interface GridServerAsyncClient {
 
-   @GET
-   @ResponseParser(ParseServerListFromJsonResponse.class)
-   @Path("/grid/server/list")
-   ListenableFuture<Set<Server>> getServerList();
+    @GET
+    @ResponseParser(ParseServerListFromJsonResponse.class)
+    @Path("/grid/server/list")
+    ListenableFuture<Set<Server>> getServerList();
 
+    @GET
+    @ResponseParser(ParseServerListFromJsonResponse.class)
+    @Path("/grid/server/get")
+    ListenableFuture<Set<Server>> getServersByName(@BinderParam(BindNamesToQueryParams.class) String... names);
+
+    @GET
+    @ResponseParser(ParseServerListFromJsonResponse.class)
+    @Path("/grid/server/get")
+    ListenableFuture<Set<Server>> getServersById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
 }

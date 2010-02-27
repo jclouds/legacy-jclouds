@@ -39,7 +39,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid;
+package org.jclouds.gogrid.services;
 
 import static org.testng.Assert.assertEquals;
 
@@ -51,6 +51,7 @@ import java.net.URI;
 import javax.inject.Singleton;
 
 import com.google.common.collect.Iterables;
+import org.jclouds.gogrid.GoGrid;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.services.GridServerAsyncClient;
 import org.jclouds.logging.Logger;
@@ -74,10 +75,10 @@ import com.google.inject.TypeLiteral;
  * @author Oleksiy Yarmula
  */
 @Test(groups = "unit", testName = "gogrid.GoGridAsyncClientTest")
-public class GoGridAsyncClientTest extends RestClientTest<GridServerAsyncClient> {
+public class GridServerAsyncClientTest extends RestClientTest<GridServerAsyncClient> {
 
     @Test
-    public void testGetServerList() throws SecurityException, NoSuchMethodException, IOException {
+    public void testGetServerList() throws NoSuchMethodException, IOException {
         Method method = GridServerAsyncClient.class.getMethod("getServerList");
         GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method);
 
@@ -96,6 +97,60 @@ public class GoGridAsyncClientTest extends RestClientTest<GridServerAsyncClient>
                     "GET https://api.gogrid.com/api/grid/server/list?" +
                             "v=1.3&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
                             "HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+    }
+
+
+    @Test
+    public void testGetServersByName() throws NoSuchMethodException, IOException {
+        Method method = GridServerAsyncClient.class.getMethod("getServersByName", String[].class);
+        GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method, "server1");
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/server/get?v=1.3&name=server1 HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+
+        assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
+        assertSaxResponseParserClassEquals(method, null);
+        assertExceptionParserClassEquals(method, null);
+
+        checkFilters(httpRequest);
+        Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/server/get?" +
+                        "v=1.3&name=server1&" +
+                        "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
+                        "HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+    }
+
+
+    @Test
+    public void testGetServersById() throws NoSuchMethodException, IOException {
+        Method method = GridServerAsyncClient.class.getMethod("getServersById", Long[].class);
+        GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method, 123L);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/server/get?v=1.3&id=123 HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+
+        assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
+        assertSaxResponseParserClassEquals(method, null);
+        assertExceptionParserClassEquals(method, null);
+
+        checkFilters(httpRequest);
+        Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/server/get?" +
+                        "v=1.3&id=123&" +
+                        "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
+                        "HTTP/1.1");
         assertHeadersEqual(httpRequest, "");
         assertPayloadEquals(httpRequest, null);
     }
