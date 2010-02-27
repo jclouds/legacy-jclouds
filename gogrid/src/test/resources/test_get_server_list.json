@@ -1,0 +1,104 @@
+{
+    "list": [
+        {
+            "object": "server",
+            "isSandbox": false,
+            "type": {
+                "object": "option",
+                "description": "Web or Application Server",
+                "name": "Web Server",
+                "id": 1
+            },
+            "os": {
+                "object": "option",
+                "description": "CentOS 5.2 (32-bit)",
+                "name": "CentOS 5.2 (32-bit)",
+                "id": 13
+            },
+            "description": "server to test the api. created by Alex",
+            "image": {
+                "type": {
+                    "object": "option",
+                    "description": "Web or Application Server",
+                    "name": "Web Server",
+                    "id": 1
+                },
+                "owner": {
+                    "object": "customer",
+                    "name": "BitRock",
+                    "id": 24732
+                },
+                "updatedTime": 1262649582180,
+                "isActive": true,
+                "id": 1946,
+                "createdTime": 1261504577971,
+                "isPublic": true,
+                "billingtokens": [
+                    {
+                        "price": 0,
+                        "name": "CentOS 5.2 32bit",
+                        "id": 38
+                    },
+                    {
+                        "price": 0,
+                        "name": "BitNami: Gallery",
+                        "id": 56
+                    }
+                ],
+                "object": "serverimage",
+                "friendlyName": "BitNami Gallery 2.3.1-0",
+                "os": {
+                    "object": "option",
+                    "description": "CentOS 5.2 (32-bit)",
+                    "name": "CentOS 5.2 (32-bit)",
+                    "id": 13
+                },
+                "price": 0,
+                "description": "http://bitnami.org/stack/gallery",
+                "state": {
+                    "object": "option",
+                    "description": "Image is available for adds",
+                    "name": "Available",
+                    "id": 2
+                },
+                "location": "24732/GSI-f8979644-e646-4711-ad58-d98a5fa3612c.img",
+                "name": "GSI-f8979644-e646-4711-ad58-d98a5fa3612c"
+            },
+            "state": {
+                "object": "option",
+                "description": "Server is in active state.",
+                "name": "On",
+                "id": 1
+            },
+            "ram": {
+                "object": "option",
+                "description": "Server with 512MB RAM",
+                "name": "512MB",
+                "id": 1
+            },
+            "name": "PowerServer",
+            "ip": {
+                "object": "ip",
+                "public": true,
+                "subnet": "204.51.240.176/255.255.255.240",
+                "state": {
+                    "object": "option",
+                    "description": "IP is reserved or in use",
+                    "name": "Assigned",
+                    "id": 2
+                },
+                "ip": "204.51.240.178",
+                "id": 1313079
+            },
+            "id": 75245
+        }
+    ],
+    "summary": {
+        "total": 1,
+        "start": 0,
+        "numpages": 0,
+        "returned": 1
+    },
+    "status": "success",
+    "method": "/grid/server/get"
+}

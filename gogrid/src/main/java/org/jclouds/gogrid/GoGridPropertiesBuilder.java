@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,43 +39,51 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.functions;
+package org.jclouds.gogrid;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.util.SortedSet;
+import org.jclouds.PropertiesBuilder;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.gogrid.reference.GoGridConstants.*;
 
-import org.jclouds.http.functions.ParseJson;
-import org.jclouds.domain.Status;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.net.URI;
+import java.util.Properties;
 
 /**
- * This parses {@link Status} from a json string.
+ * Builds properties used in GoGrid Clients
  * 
  * @author Adrian Cole
+ * @author Oleksiy Yarmula
+ *
  */
-@Singleton
-public class ParseStatusesFromJsonResponse extends ParseJson<SortedSet<Status>> {
+public class GoGridPropertiesBuilder extends PropertiesBuilder {
+   @Override
+   protected Properties defaultProperties() {
+      Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_GOGRID_ENDPOINT, "https://api.gogrid.com/api");
+      properties.setProperty(PROPERTY_GOGRID_SESSIONINTERVAL, 60 + "");
 
-   @Inject
-   public ParseStatusesFromJsonResponse(Gson gson) {
-      super(gson);
+      return properties;
    }
 
-   public SortedSet<Status> apply(InputStream stream) {
-      Type setType = new TypeToken<SortedSet<Status>>() {
-      }.getType();
-      try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public GoGridPropertiesBuilder(Properties properties) {
+      super(properties);
+   }
+
+   public GoGridPropertiesBuilder(String id, String secret) {
+      super();
+      withCredentials(id, secret);
+   }
+
+   public GoGridPropertiesBuilder withCredentials(String id, String secret) {
+      properties.setProperty(PROPERTY_GOGRID_USER, checkNotNull(id, "user"));
+      properties.setProperty(PROPERTY_GOGRID_PASSWORD, checkNotNull(secret, "password"));
+      return this;
+   }
+
+   public GoGridPropertiesBuilder withEndpoint(URI endpoint) {
+      properties.setProperty(PROPERTY_GOGRID_ENDPOINT, checkNotNull(endpoint, "endpoint")
+               .toString());
+      return this;
    }
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,42 +39,39 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds;
+package org.jclouds.gogrid;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.util.concurrent.ListenableFuture;
 
-import java.util.List;
-import java.util.Properties;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.config.GoGridContextModule;
-import org.jclouds.config.GoGridRestClientModule;
-import org.jclouds.reference.GoGridConstants;
+import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
+import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
+import org.jclouds.rest.annotations.*;
 
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import java.util.Set;
+
+import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 
 /**
- * 
+ * Provides asynchronous access to GoGrid via their REST API.
+ * <p/>
+ *
+ * @see GoGridClient
+ * @see <a href="http://wiki.gogrid.com/wiki/index.php/API" />
  * @author Adrian Cole
+ * @author Oleksiy Yarmula
  */
-public class GoGridContextBuilder extends RestContextBuilder<GoGridAsyncClient, GoGridClient> {
+@Endpoint(GoGrid.class)
+@RequestFilters(SharedKeyLiteAuthentication.class)
+@QueryParams(keys = VERSION, values = "1.3")
+public interface GoGridAsyncClient {
 
-   public GoGridContextBuilder(Properties props) {
-      super(new TypeLiteral<GoGridAsyncClient>() {
-      }, new TypeLiteral<GoGridClient>() {
-      }, props);
-      checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_USER));
-      checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_PASSWORD));
-   }
-
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GoGridRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new GoGridContextModule());
-   }
+   @GET
+   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @Path("/grid/server/list")
+   ListenableFuture<Set<Server>> getServerList();
 
 }

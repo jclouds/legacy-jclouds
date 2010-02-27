@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,40 +39,21 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.SortedSet;
-
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.domain.Status;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+package org.jclouds.gogrid.reference;
 
 /**
- * Tests behavior of {@code GoGridClient}
- * 
+ * Configuration properties and constants used in GoGrid connections.
+ *
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "gogrid.GoGridClientLiveTest")
-public class GoGridClientLiveTest {
-
-   private GoGridClient connection;
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-
-      connection = GoGridContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getApi();
-   }
-
-   @Test
-   public void testGetMyMentions() {
-      SortedSet<Status> response = connection.getMyMentions();
-      assert (response.size() > 0);
-   }
-
+public interface GoGridConstants {
+    public static final String PROPERTY_GOGRID_ENDPOINT = "jclouds.gogrid.endpoint";
+    //TODO: see if "users" needs to be renamed to "apiKey"
+    public static final String PROPERTY_GOGRID_USER = "jclouds.gogrid.api.key";
+    //TODO: see if "password" needs to be renamed to "secret"
+    public static final String PROPERTY_GOGRID_PASSWORD = "jclouds.gogrid.secret";
+    /**
+     * how long do we wait before obtaining a new timestamp for requests.
+     */
+    public static final String PROPERTY_GOGRID_SESSIONINTERVAL = "jclouds.gogrid.sessioninterval";
 }

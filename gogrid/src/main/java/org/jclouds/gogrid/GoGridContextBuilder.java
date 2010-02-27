@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,47 +39,44 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds;
+package org.jclouds.gogrid;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.reference.GoGridConstants.PROPERTY_GOGRID_ENDPOINT;
-import static org.jclouds.reference.GoGridConstants.PROPERTY_GOGRID_PASSWORD;
-import static org.jclouds.reference.GoGridConstants.PROPERTY_GOGRID_USER;
 
-import java.net.URI;
+import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.gogrid.config.GoGridContextModule;
+import org.jclouds.gogrid.config.GoGridRestClientModule;
+import org.jclouds.gogrid.reference.GoGridConstants;
+
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
+
 /**
- * Builds properties used in GoGrid Clients
  * 
  * @author Adrian Cole
  */
-public class GoGridPropertiesBuilder extends PropertiesBuilder {
+public class GoGridContextBuilder extends RestContextBuilder<GoGridAsyncClient, GoGridClient> {
+
+   public GoGridContextBuilder(Properties props) {
+      super(new TypeLiteral<GoGridAsyncClient>() {
+      }, new TypeLiteral<GoGridClient>() {
+      }, props);
+      checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_USER));
+      checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_PASSWORD));
+   }
+
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new GoGridRestClientModule());
+   }
+
    @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_GOGRID_ENDPOINT, "https://api.gogrid.com/api");
-      return properties;
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new GoGridContextModule());
    }
 
-   public GoGridPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
-   public GoGridPropertiesBuilder(String id, String secret) {
-      super();
-      withCredentials(id, secret);
-   }
-
-   public GoGridPropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_GOGRID_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_GOGRID_PASSWORD, checkNotNull(secret, "password"));
-      return this;
-   }
-
-   public GoGridPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_GOGRID_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
-   }
 }

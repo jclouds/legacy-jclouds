@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,36 +39,47 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds;
+package org.jclouds.gogrid.functions;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.SortedSet;
-import com.google.common.util.concurrent.ListenableFuture;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.domain.Status;
-import org.jclouds.functions.ParseStatusesFromJsonResponse;
+import com.google.common.collect.Sets;
+import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
+import org.jclouds.http.functions.ParseJson;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
- * Provides asynchronous access to GoGrid via their REST API.
- * <p/>
+ * This parses {@link Server servers} from a json string.
  *
- * @see GoGridClient
- * @see <a href="TODO: insert URL of client documentation" />
  * @author Adrian Cole
  */
-@Endpoint(GoGrid.class)
-@RequestFilters(BasicAuthentication.class)
-public interface GoGridAsyncClient {
+@Singleton
+public class ParseServerListFromJsonResponse extends ParseJson<SortedSet<Server>> {
 
-   @GET
-   @ResponseParser(ParseStatusesFromJsonResponse.class)
-   @Path("/statuses/mentions.json")
-   ListenableFuture<SortedSet<Status>> getMyMentions();
+    @Inject
+    public ParseServerListFromJsonResponse(Gson gson) {
+        super(gson);
+    }
 
+    public SortedSet<Server> apply(InputStream stream) {
+        Type setType = new TypeToken<GenericResponseContainer<Server>>() {
+        }.getType();
+        GenericResponseContainer<Server> response;
+        try {
+            response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+        }
+        return response.getList();
+    }
 }

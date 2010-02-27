@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,80 +39,100 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.config;
+package org.jclouds.gogrid.config;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.text.DateFormat;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Supplier;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.date.DateService;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.encryption.EncryptionService;
 
-import org.jclouds.GoGrid;
-import org.jclouds.GoGridClient;
-import org.jclouds.GoGridAsyncClient;
-import org.jclouds.reference.GoGridConstants;
+import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.gogrid.reference.GoGridConstants;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
+import static org.jclouds.gogrid.reference.GoGridConstants.*;
+
 /**
  * Configures the GoGrid connection.
- * 
+ *
  * @author Adrian Cole
+ * @author Oleksiy Yarmula
  */
 @RequiresHttp
 @ConfiguresRestClient
 public class GoGridRestClientModule extends AbstractModule {
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
+    @Override
+    protected void configure() {
+        bindErrorHandlers();
+        bindRetryHandlers();
+    }
 
-   @Provides
-   @Singleton
-   public BasicAuthentication provideBasicAuthentication(
-            @Named(GoGridConstants.PROPERTY_GOGRID_USER) String user,
-            @Named(GoGridConstants.PROPERTY_GOGRID_PASSWORD) String password,
-            EncryptionService encryptionService)
-            throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password, encryptionService);
-   }
+    @Provides
+    @Singleton
+    protected GoGridAsyncClient provideClient(RestClientFactory factory) {
+        return factory.create(GoGridAsyncClient.class);
+    }
 
-   @Provides
-   @Singleton
-   protected GoGridAsyncClient provideClient(RestClientFactory factory) {
-      return factory.create(GoGridAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public GoGridClient provideClient(GoGridAsyncClient client) throws IllegalArgumentException,
+    @Provides
+    @Singleton
+    public GoGridClient provideClient(GoGridAsyncClient client) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
-      return SyncProxy.create(GoGridClient.class, client);
-   }
-   
-   @Provides
-   @Singleton
-   @GoGrid
-   protected URI provideURI(@Named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
-   }
+        return SyncProxy.create(GoGridClient.class, client);
+    }
 
-   protected void bindErrorHandlers() {
-      // TODO
-   }
+    @Provides
+    @Singleton
+    @GoGrid
+    protected URI provideURI(@Named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT) String endpoint) {
+        return URI.create(endpoint);
+    }
 
-   protected void bindRetryHandlers() {
-      // TODO
-   }
+    @Provides
+    @TimeStamp
+    protected Long provideTimeStamp(@TimeStamp Supplier<Long> cache) {
+        return cache.get();
+    }
+
+    /**
+     * borrowing concurrency code to ensure that caching takes place properly
+     */
+    @Provides
+    @TimeStamp
+    Supplier<Long> provideTimeStampCache(
+            @Named(PROPERTY_GOGRID_SESSIONINTERVAL) long seconds,
+            final DateService dateService) {
+        return new ExpirableSupplier<Long>(new Supplier<Long>() {
+            public Long get() {
+                return System.currentTimeMillis() / 1000;
+            }
+        }, seconds, TimeUnit.SECONDS);
+    }
+
+    protected void bindErrorHandlers() {
+        // TODO
+    }
+
+    protected void bindRetryHandlers() {
+        // TODO
+    }
 
 }
