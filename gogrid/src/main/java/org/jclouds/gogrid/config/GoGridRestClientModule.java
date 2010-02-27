@@ -54,9 +54,14 @@ import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.handlers.GoGridErrorHandler;
 import org.jclouds.gogrid.services.GridServerAsyncClient;
 import org.jclouds.gogrid.services.GridServerClient;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
@@ -125,7 +130,12 @@ public class GoGridRestClientModule extends AbstractModule {
     }
 
     protected void bindErrorHandlers() {
-        // TODO
+        bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               GoGridErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               GoGridErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               GoGridErrorHandler.class);
     }
 
     protected void bindRetryHandlers() {

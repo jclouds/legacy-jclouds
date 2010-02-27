@@ -22,12 +22,11 @@ import static org.testng.Assert.assertEquals;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.gogrid.handlers.GoGridErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
@@ -86,7 +85,7 @@ public class GoGridContextModuleTest {
     void testServerErrorHandler() {
         DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
         assertEquals(handler.getServerErrorHandler().getClass(),
-                CloseContentAndSetExceptionErrorHandler.class);
+                GoGridErrorHandler.class);
     }
 
     @Test
@@ -99,7 +98,7 @@ public class GoGridContextModuleTest {
     void testClientErrorHandler() {
         DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
         assertEquals(handler.getClientErrorHandler().getClass(),
-                CloseContentAndSetExceptionErrorHandler.class);
+                GoGridErrorHandler.class);
     }
 
     @Test

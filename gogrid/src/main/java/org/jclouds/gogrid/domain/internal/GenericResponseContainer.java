@@ -1,11 +1,15 @@
 package org.jclouds.gogrid.domain.internal;
 
-import com.google.common.base.Throwables;
-
-import java.lang.reflect.Field;
 import java.util.SortedSet;
 
 /**
+ * General format of GoGrid's response.
+ *
+ * This is the wrapper for most responses, and the actual
+ * result (or error) will be set to {@link #list}.
+ * Note that even the single returned item will be set to
+ * {@link #list} per GoGrid's design.
+ *
  * @author Oleksiy Yarmula
  */
 public class GenericResponseContainer<T> {

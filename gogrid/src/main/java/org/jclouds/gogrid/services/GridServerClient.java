@@ -32,7 +32,7 @@ import org.jclouds.gogrid.domain.Server;
 /**
  * Provides synchronous access to GoGrid.
  * <p/>
- * 
+ *
  * @see GridServerAsyncClient
  * @see <a href="http://wiki.gogrid.com/wiki/index.php/API" />
  *
@@ -42,6 +42,19 @@ import org.jclouds.gogrid.domain.Server;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridServerClient {
 
-   Set<Server> getServerList();
+    Set<Server> getServerList();
+
+    //Set<Server> getServersByName(String... names);
+
+    /**
+     * Retrieves the server(s) by unique id(s).
+     *
+     * Given an id or a set of ids, finds one or
+     * multiple servers. 
+     * @param id
+     * @return
+     */
+  //  Set<Server> getServersById(Long... ids);
+
 
 }
