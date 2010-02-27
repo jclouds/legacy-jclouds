@@ -21,40 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.jclouds.gogrid.domain.Server;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+package org.jclouds.gogrid.services;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.gogrid.domain.Server;
 
 /**
- * Tests behavior of {@code GoGridClient}
+ * Provides synchronous access to GoGrid.
+ * <p/>
+ * 
+ * @see GridServerAsyncClient
+ * @see <a href="http://wiki.gogrid.com/wiki/index.php/API" />
  *
  * @author Adrian Cole
+ * @author Oleksiy Yarmula
  */
-@Test(groups = "live", testName = "gogrid.GoGridClientLiveTest")
-public class GoGridClientLiveTest {
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface GridServerClient {
 
-    private GoGridClient client;
-
-    @BeforeGroups(groups = { "live" })
-    public void setupClient() {
-        String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-        String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-
-        client = GoGridContextFactory.createContext(user, password, new Log4JLoggingModule())
-                .getApi();
-    }
-
-    @Test
-    public void testGetServerList() {
-        Set<Server> response = client.getServerClient().getServerList();
-        assert (response.size() > 0);
-    }
+   Set<Server> getServerList();
 
 }

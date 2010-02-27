@@ -51,9 +51,8 @@ import java.net.URI;
 import javax.inject.Singleton;
 
 import com.google.common.collect.Iterables;
-import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
-import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.gogrid.services.GridServerAsyncClient;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -75,12 +74,12 @@ import com.google.inject.TypeLiteral;
  * @author Oleksiy Yarmula
  */
 @Test(groups = "unit", testName = "gogrid.GoGridAsyncClientTest")
-public class GoGridAsyncClientTest extends RestClientTest<GoGridAsyncClient> {
+public class GoGridAsyncClientTest extends RestClientTest<GridServerAsyncClient> {
 
     @Test
     public void testGetServerList() throws SecurityException, NoSuchMethodException, IOException {
-        Method method = GoGridAsyncClient.class.getMethod("getServerList");
-        GeneratedHttpRequest<GoGridAsyncClient> httpRequest = processor.createRequest(method);
+        Method method = GridServerAsyncClient.class.getMethod("getServerList");
+        GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method);
 
         assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/list?v=1.3 HTTP/1.1");
         assertHeadersEqual(httpRequest, "");
@@ -102,14 +101,14 @@ public class GoGridAsyncClientTest extends RestClientTest<GoGridAsyncClient> {
     }
 
     @Override
-    protected void checkFilters(GeneratedHttpRequest<GoGridAsyncClient> httpMethod) {
+    protected void checkFilters(GeneratedHttpRequest<GridServerAsyncClient> httpMethod) {
         assertEquals(httpMethod.getFilters().size(), 1);
         assertEquals(httpMethod.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
     }
 
     @Override
-    protected TypeLiteral<RestAnnotationProcessor<GoGridAsyncClient>> createTypeLiteral() {
-        return new TypeLiteral<RestAnnotationProcessor<GoGridAsyncClient>>() {
+    protected TypeLiteral<RestAnnotationProcessor<GridServerAsyncClient>> createTypeLiteral() {
+        return new TypeLiteral<RestAnnotationProcessor<GridServerAsyncClient>>() {
         };
     }
 

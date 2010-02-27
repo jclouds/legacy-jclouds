@@ -41,28 +41,26 @@
  */
 package org.jclouds.gogrid.config;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.text.DateFormat;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.google.common.base.Supplier;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.services.GridServerAsyncClient;
+import org.jclouds.gogrid.services.GridServerClient;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
 import org.jclouds.gogrid.GoGrid;
-import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.reference.GoGridConstants;
 
 import com.google.inject.AbstractModule;
@@ -88,15 +86,15 @@ public class GoGridRestClientModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected GoGridAsyncClient provideClient(RestClientFactory factory) {
-        return factory.create(GoGridAsyncClient.class);
+    protected GridServerAsyncClient provideServerClient(RestClientFactory factory) {
+        return factory.create(GridServerAsyncClient.class);
     }
 
     @Provides
     @Singleton
-    public GoGridClient provideClient(GoGridAsyncClient client) throws IllegalArgumentException,
+    public GridServerClient provideServerClient(GridServerAsyncClient client) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
-        return SyncProxy.create(GoGridClient.class, client);
+        return SyncProxy.create(GridServerClient.class, client);
     }
 
     @Provides
@@ -118,8 +116,7 @@ public class GoGridRestClientModule extends AbstractModule {
     @Provides
     @TimeStamp
     Supplier<Long> provideTimeStampCache(
-            @Named(PROPERTY_GOGRID_SESSIONINTERVAL) long seconds,
-            final DateService dateService) {
+            @Named(PROPERTY_GOGRID_SESSIONINTERVAL) long seconds) {
         return new ExpirableSupplier<Long>(new Supplier<Long>() {
             public Long get() {
                 return System.currentTimeMillis() / 1000;

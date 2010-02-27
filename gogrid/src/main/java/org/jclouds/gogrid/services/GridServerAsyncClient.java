@@ -39,60 +39,40 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid.config;
+package org.jclouds.gogrid.services;
 
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.util.Date;
+import com.google.common.util.concurrent.ListenableFuture;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-import com.google.gson.*;
-import org.jclouds.gogrid.GoGridAsyncClient;
-import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.gogrid.GoGrid;
-import org.jclouds.gogrid.reference.GoGridConstants;
+import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
+import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
+import org.jclouds.rest.annotations.*;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import java.util.Set;
+
+import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 
 /**
- * Configures the GoGrid connection, including logging and http transport.
- * 
+ * Provides asynchronous access to GoGrid via their REST API.
+ * <p/>
+ *
+ * @see GridServerClient
+ * @see <a href="http://wiki.gogrid.com/wiki/index.php/API" />
  * @author Adrian Cole
  * @author Oleksiy Yarmula
  */
-public class GoGridContextModule extends AbstractModule {
-   @Override
-   protected void configure() {
-      bind(DateAdapter.class).to(DateSecondsAdapter.class);
-   }
+@Endpoint(GoGrid.class)
+@RequestFilters(SharedKeyLiteAuthentication.class)
+@QueryParams(keys = VERSION, values = "1.3")
+public interface GridServerAsyncClient {
 
-   @Provides
-   @Singleton
-   RestContext<GoGridAsyncClient, GoGridClient> provideContext(Closer closer, GoGridAsyncClient asyncApi,
-            GoGridClient syncApi, @GoGrid URI endPoint, @Named(GoGridConstants.PROPERTY_GOGRID_USER) String account) {
-      return new RestContextImpl<GoGridAsyncClient, GoGridClient>(closer, asyncApi, syncApi, endPoint, account);
-   }
-
-   @Singleton
-   public static class DateSecondsAdapter implements DateAdapter {
-
-      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(src.getTime());
-      }
-
-      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         String toParse = json.getAsJsonPrimitive().getAsString();
-         return new Date(Long.valueOf(toParse));
-      }
-
-   }
+   @GET
+   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @Path("/grid/server/list")
+   ListenableFuture<Set<Server>> getServerList();
 
 }

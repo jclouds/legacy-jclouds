@@ -25,6 +25,8 @@ package org.jclouds.gogrid;
 
 import java.util.Properties;
 
+import org.jclouds.gogrid.services.GridServerAsyncClient;
+import org.jclouds.gogrid.services.GridServerClient;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -32,7 +34,7 @@ import org.jclouds.rest.RestContext;
 import com.google.inject.Module;
 
 /**
- * Creates {@link RestContext} for {@link GoGridClient} instances based on the most commonly
+ * Creates {@link RestContext} for {@link GridServerClient} instances based on the most commonly
  * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
@@ -45,8 +47,8 @@ import com.google.inject.Module;
  * @author Oleksiy Yarmula
  * 
  * @see RestContext
- * @see GoGridClient
- * @see GoGridAsyncClient
+ * @see GridServerClient
+ * @see GridServerAsyncClient
  */
 public class GoGridContextFactory {
 
