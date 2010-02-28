@@ -31,10 +31,7 @@ public class GoGridErrorHandler implements HttpErrorHandler {
         Exception exception;
         ErrorResponse error = parseErrorFromContentOrNull(response.getContent());
         switch (response.getStatusCode()) {
-            case 403:
-                exception = new AuthorizationException(command.getRequest(),
-                        error.getMessage());
-                break;
+            //more cases to be added
             default:
                 exception = error != null ?
                         new GoGridResponseException(command, response, error) :

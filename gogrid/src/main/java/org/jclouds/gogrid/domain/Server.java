@@ -30,7 +30,7 @@ public class Server implements Comparable<Server> {
                   String description, Option state, Option type,
                   Option ram, Option os, Ip ip, ServerImage image) {
         this.id = id;
-        isSandbox = sandbox;
+        this.isSandbox = sandbox;
         this.name = name;
         this.description = description;
         this.state = state;

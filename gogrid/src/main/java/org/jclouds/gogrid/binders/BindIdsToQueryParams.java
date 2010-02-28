@@ -7,7 +7,11 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
+
 /**
+ * Binds IDs to corresponding query parameters
+ *
  * @author Oleksiy Yarmula
  */
 public class BindIdsToQueryParams  implements Binder {
@@ -35,7 +39,7 @@ public class BindIdsToQueryParams  implements Binder {
         GeneratedHttpRequest generatedRequest = (GeneratedHttpRequest) request;
 
         for(Long id : names) {
-            generatedRequest.addQueryParam("id", checkNotNull(id.toString(),
+            generatedRequest.addQueryParam(ID_KEY, checkNotNull(id.toString(),
                                                         /*or throw*/ "id must have a non-null value"));
         }
 

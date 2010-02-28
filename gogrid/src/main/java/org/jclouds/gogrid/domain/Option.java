@@ -5,7 +5,7 @@ package org.jclouds.gogrid.domain;
  */
 public class Option {
 
-    private long id;
+    private Long id;
     private String name;
     private String description;
 
@@ -16,7 +16,15 @@ public class Option {
     public Option() {
     }
 
-    public Option(long id, String name, String description) {
+    public Option(Long id) {
+        this(id, null, null);
+    }
+
+    public Option(String name) {
+        this(null, name, null);
+    }
+
+    public Option(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -41,8 +49,8 @@ public class Option {
 
         Option option = (Option) o;
 
-        if (id != option.id) return false;
         if (description != null ? !description.equals(option.description) : option.description != null) return false;
+        if (id != null ? !id.equals(option.id) : option.id != null) return false;
         if (name != null ? !name.equals(option.name) : option.name != null) return false;
 
         return true;
@@ -50,7 +58,7 @@ public class Option {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;

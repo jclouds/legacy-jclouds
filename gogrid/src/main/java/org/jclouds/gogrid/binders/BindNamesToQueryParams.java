@@ -7,7 +7,11 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import static org.jclouds.gogrid.reference.GoGridQueryParams.NAME_KEY;
+
 /**
+ * Binds names to corresponding query parameters
+
  * @author Oleksiy Yarmula
  */
 public class BindNamesToQueryParams implements Binder {
@@ -36,7 +40,7 @@ public class BindNamesToQueryParams implements Binder {
         GeneratedHttpRequest generatedRequest = (GeneratedHttpRequest) request;
 
         for(String name : names) {
-            generatedRequest.addQueryParam("name", name);
+            generatedRequest.addQueryParam(NAME_KEY, name);
         }
 
     }

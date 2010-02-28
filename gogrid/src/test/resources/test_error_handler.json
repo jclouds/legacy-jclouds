@@ -1,0 +1,16 @@
+{
+    "list": [
+        {
+            "object": "error",
+            "message": "No object found that matches your input criteria.",
+            "errorcode": "IllegalArgumentException"
+        }
+    ],
+    "summary": {
+        "total": 1,
+        "start": 0,
+        "returned": 1
+    },
+    "status": "failure",
+    "method": "/grid/server/get"
+}

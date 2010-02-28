@@ -1,11 +1,14 @@
 package org.jclouds.gogrid.domain.internal;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author Oleksiy Yarmula
  */
 public class ErrorResponse {
 
     private String message;
+    @SerializedName("errorcode")
     private String errorCode;
 
     /**

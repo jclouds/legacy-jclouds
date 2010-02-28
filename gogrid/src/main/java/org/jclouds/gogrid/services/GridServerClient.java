@@ -27,7 +27,10 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.options.AddServerOptions;
+import org.jclouds.gogrid.options.GetServerListOptions;
 
 /**
  * Provides synchronous access to GoGrid.
@@ -42,7 +45,14 @@ import org.jclouds.gogrid.domain.Server;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridServerClient {
 
-    Set<Server> getServerList();
+    /**
+     * Retrieves the list of all servers.
+     *
+     * The result can be narrowed down by providing the options.
+     * @param getServerListOptions options to narrow down the result
+     * @return servers found by the request
+     */
+    Set<Server> getServerList(GetServerListOptions... getServerListOptions);
 
     /**
      * Retrieves the server(s) by unique name(s).
@@ -64,5 +74,58 @@ public interface GridServerClient {
      */
     Set<Server> getServersById(Long... ids);
 
+    /**
+     * Adds a server with specified attributes
+     *  
+     * @param name name of the server
+     * @param image
+     *          image (id or name)
+     * @param ram
+     *          ram type (id or name)
+     * @param ip
+     *          ip address
+     * @param addServerOptions
+     *              options to make it a sandbox instance or/and description
+     * @return created server
+     */
+    Server addServer(String name,
+                          String image,
+                          String ram,
+                          String ip,
+                          AddServerOptions... addServerOptions);
 
+
+    /**
+     * Changes the server's state according to {@link PowerCommand}
+     *
+     * @param idOrName
+     *          id or name of the server to apply the command
+     * @param power
+     *          new desired state
+     * @return server immediately after applying the command
+     */
+    Server power(String idOrName,
+                 PowerCommand power);
+
+    /**
+     * Deletes the server by Id
+     * 
+     * @param id
+     *          id of the server to delete
+     * @return server before the command is executed
+     */
+    Server deleteById(Long id);
+
+    /**
+     * Deletes the server by name;
+     *
+     * NOTE: Using this parameter may generate an 
+     * error if one or more servers share a non-unique name.
+     *
+     * @param name
+     *      name of the server to be deleted
+     *
+     * @return server before the command is executed
+     */
+    Server deleteByName(String name);
 }

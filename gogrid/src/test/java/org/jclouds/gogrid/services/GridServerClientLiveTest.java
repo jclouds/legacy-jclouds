@@ -27,12 +27,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.GoGridContextFactory;
+import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.util.Set;
+import static org.testng.Assert.assertNotNull;
+
 
 /**
  * Tests behavior of {@code GoGridClient}
@@ -69,6 +72,21 @@ public class GridServerClientLiveTest {
     public void testGetServerById() {
         Set<Server> response = client.getServerClient().getServersById(75245L, 75523L);
         assert (response.size() > 0);
+    }
+
+    @Test
+    public void testAddServer() {
+        Server createdServer = client.getServerClient().addServer("ServerCreatedFromAPI",
+                                        "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
+                                        "1",
+                                        "204.51.240.189");
+        assertNotNull(createdServer);
+    }
+
+    @Test
+    public void testRestart() {
+        Server createdServer = client.getServerClient().power("PowerServer", PowerCommand.RESTART);
+        assertNotNull(createdServer);
     }
 
 }

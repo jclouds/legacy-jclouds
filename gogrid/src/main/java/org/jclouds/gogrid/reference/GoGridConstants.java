@@ -48,12 +48,11 @@ package org.jclouds.gogrid.reference;
  */
 public interface GoGridConstants {
     public static final String PROPERTY_GOGRID_ENDPOINT = "jclouds.gogrid.endpoint";
-    //TODO: see if "users" needs to be renamed to "apiKey"
     public static final String PROPERTY_GOGRID_USER = "jclouds.gogrid.api.key";
-    //TODO: see if "password" needs to be renamed to "secret"
     public static final String PROPERTY_GOGRID_PASSWORD = "jclouds.gogrid.secret";
     /**
      * how long do we wait before obtaining a new timestamp for requests.
      */
     public static final String PROPERTY_GOGRID_SESSIONINTERVAL = "jclouds.gogrid.sessioninterval";
+
 }
