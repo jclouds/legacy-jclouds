@@ -55,8 +55,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.handlers.GoGridErrorHandler;
-import org.jclouds.gogrid.services.GridServerAsyncClient;
-import org.jclouds.gogrid.services.GridServerClient;
+import org.jclouds.gogrid.services.*;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -100,6 +99,32 @@ public class GoGridRestClientModule extends AbstractModule {
     public GridServerClient provideServerClient(GridServerAsyncClient client) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
         return SyncProxy.create(GridServerClient.class, client);
+    }
+
+    @Provides
+    @Singleton
+    protected GridJobAsyncClient provideJobClient(RestClientFactory factory) {
+        return factory.create(GridJobAsyncClient.class);
+    }
+
+    @Provides
+    @Singleton
+    public GridJobClient provideJobClient(GridJobAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+        return SyncProxy.create(GridJobClient.class, client);
+    }
+
+    @Provides
+    @Singleton
+    protected GridIpAsyncClient provideIpClient(RestClientFactory factory) {
+        return factory.create(GridIpAsyncClient.class);
+    }
+
+    @Provides
+    @Singleton
+    public GridIpClient provideIpClient(GridIpAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+        return SyncProxy.create(GridIpClient.class, client);
     }
 
     @Provides

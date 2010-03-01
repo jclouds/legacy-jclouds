@@ -23,31 +23,38 @@
  */
 package org.jclouds.gogrid.functions;
 
-import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
-import org.jclouds.gogrid.domain.Server;
-import org.jclouds.http.functions.ParseJson;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.jclouds.gogrid.config.GoGridContextModule;
+import org.jclouds.gogrid.domain.internal.ErrorResponse;
+import org.jclouds.http.functions.config.ParserModule;
+import org.testng.annotations.Test;
 
-import javax.inject.Inject;
 import java.io.InputStream;
-import java.util.SortedSet;
+import java.net.UnknownHostException;
 
 /**
- * Parses a single {@link Server} from a json string.
- *
- * This class delegates parsing to {@link ParseServerListFromJsonResponse}.
- *
  * @author Oleksiy Yarmula
  */
-public class ParseServerFromJsonResponse extends ParseJson<Server> {
+public class ParseErrorFromJsonResponseTest {
 
-    @Inject
-    public ParseServerFromJsonResponse(Gson gson) {
-        super(gson);
-    }
+    Injector i = Guice.createInjector(new ParserModule() {
+        @Override
+        protected void configure() {
+            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
+            super.configure();
+        }
+    });
 
-    public Server apply(InputStream stream) {
-        SortedSet<Server> allServers = new ParseServerListFromJsonResponse(gson).apply(stream);
-        return Iterables.getOnlyElement(allServers);
+    @Test
+    public void testApplyInputStreamDetails() throws UnknownHostException {
+        InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
+
+        ParseErrorFromJsonResponse parser = new ParseErrorFromJsonResponse(i
+                .getInstance(Gson.class));
+        ErrorResponse response = parser.apply(is);
+        assert "No object found that matches your input criteria.".equals(response.getMessage());
+        assert "IllegalArgumentException".equals(response.getErrorCode());
     }
 }

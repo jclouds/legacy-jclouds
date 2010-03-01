@@ -46,7 +46,7 @@ import org.jclouds.gogrid.options.GetServerListOptions;
 public interface GridServerClient {
 
     /**
-     * Retrieves the list of all servers.
+     * Returns the list of all servers.
      *
      * The result can be narrowed down by providing the options.
      * @param getServerListOptions options to narrow down the result
@@ -55,7 +55,7 @@ public interface GridServerClient {
     Set<Server> getServerList(GetServerListOptions... getServerListOptions);
 
     /**
-     * Retrieves the server(s) by unique name(s).
+     * Returns the server(s) by unique name(s).
      *
      * Given a name or a set of names, finds one or
      * multiple servers.
@@ -65,7 +65,7 @@ public interface GridServerClient {
     Set<Server> getServersByName(String... names);
 
     /**
-     * Retrieves the server(s) by unique id(s).
+     * Returns the server(s) by unique id(s).
      *
      * Given an id or a set of ids, finds one or
      * multiple servers. 

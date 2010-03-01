@@ -26,7 +26,6 @@ package org.jclouds.gogrid.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,11 +35,8 @@ import com.google.common.collect.Iterables;
 import org.jclouds.gogrid.config.GoGridContextModule;
 import org.jclouds.gogrid.domain.*;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.date.DateService;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -60,7 +56,6 @@ public class ParseStatusesFromJsonResponseTest {
             super.configure();
         }
     });
-    DateService dateService = new SimpleDateFormatDateService();
 
     public void testApplyInputStreamDetails() throws UnknownHostException {
         InputStream is = getClass().getResourceAsStream("/test_get_server_list.json");
@@ -76,7 +71,7 @@ public class ParseStatusesFromJsonResponseTest {
                 webServer,
                 new Option(1L, "512MB", "Server with 512MB RAM"),
                 centOs,
-                new Ip(1313079L, "204.51.240.178", "204.51.240.176/255.255.255.240", false,
+                new Ip(1313079L, "204.51.240.178", "204.51.240.176/255.255.255.240", true,
                         new Option(2L, "Assigned", "IP is reserved or in use")),
                 new ServerImage(1946L, "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
                         "BitNami Gallery 2.3.1-0", "http://bitnami.org/stack/gallery",
