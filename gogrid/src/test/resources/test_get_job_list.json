@@ -1,0 +1,67 @@
+{
+    "list": [
+        {
+            "object": "job",
+            "command": {
+                "object": "option",
+                "description": "Delete Virtual Server",
+                "name": "DeleteVirtualServer",
+                "id": 7
+            },
+            "currentstate": {
+                "object": "option",
+                "description": "Change request has succeeded.",
+                "name": "Succeeded",
+                "id": 3
+            },
+            "owner": "3116784158f0af2d-24076@api.gogrid.com",
+            "objecttype": {
+                "object": "option",
+                "description": null,
+                "name": "VirtualServer",
+                "id": 1
+            },
+            "detail": {
+                "type": "virtual_server",
+                "description": null,
+                "image": "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
+                "name": "ServerCreated40562",
+                "ip": "204.51.240.189"
+            },
+            "history": [
+                {
+                    "state": {
+                        "object": "option",
+                        "description": "Change request is created but not queued yet",
+                        "name": "Created",
+                        "id": 7
+                    },
+                    "id": 940263,
+                    "updatedon": 1267404528897
+                },
+                {
+                    "state": {
+                        "object": "option",
+                        "description": "Change request is new to the system.",
+                        "name": "Queued",
+                        "id": 1
+                    },
+                    "id": 940264,
+                    "updatedon": 1267404528967
+                }
+            ],
+            "attempts": 1,
+            "createdon": 1267404528895,
+            "lastupdatedon": 1267404538592,
+            "id": 250628
+        }
+    ],
+    "summary": {
+        "total": 68,
+        "start": 0,
+        "numpages": 14,
+        "returned": 5
+    },
+    "status": "success",
+    "method": "/grid/job/list"
+}

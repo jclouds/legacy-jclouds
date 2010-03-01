@@ -18,21 +18,32 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.common.base.CaseFormat;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Oleksiy Yarmula
  */
-public enum IpState {
-    UNASSIGNED, ASSIGNED;
+public enum LoadBalancerType {
 
+    ROUND_ROBIN("Round Robin"),
+    LEAST_CONNECTED("Least Connect"),
+    UNKNOWN("Unknown");
+
+    String type;
+    LoadBalancerType(String type) {
+        this.type = type;
+    }
+
+    @Override
     public String toString() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+        return type;
     }
 
-    public static IpState fromValue(String state) {
-        return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+    public static LoadBalancerType fromValue(String type) {
+        for(LoadBalancerType persistenceType : values()) {
+            if(persistenceType.type.equals(checkNotNull(type))) return persistenceType;
+        }
+        return UNKNOWN;
     }
+
 }

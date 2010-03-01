@@ -88,9 +88,8 @@ public class SharedKeyLiteAuthentication  implements HttpRequestFilter {
         try {
             return encryptionService.md5Hex(stringToHash.getBytes());
         } catch(Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
-
     }
 
 }

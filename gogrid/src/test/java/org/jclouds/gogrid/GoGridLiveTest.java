@@ -19,10 +19,7 @@
 package org.jclouds.gogrid;
 
 import com.google.common.collect.Iterables;
-import org.jclouds.gogrid.domain.Ip;
-import org.jclouds.gogrid.domain.Job;
-import org.jclouds.gogrid.domain.PowerCommand;
-import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.domain.*;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
@@ -163,6 +160,12 @@ public class GoGridLiveTest {
 
         //delete the server
         client.getServerServices().deleteByName(nameOfServer);
+    }
+
+
+    @Test(enabled=false)
+    public void testLoadBalancers() {
+        Set<LoadBalancer> balancers = client.getLoadBalancerServices().getLoadBalancerList();
     }
 
     /**

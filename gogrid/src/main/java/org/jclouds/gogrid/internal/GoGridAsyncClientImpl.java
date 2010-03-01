@@ -37,14 +37,17 @@ public class GoGridAsyncClientImpl implements GoGridAsyncClient {
     private GridServerAsyncClient gridServerAsyncClient;
     private GridJobAsyncClient gridJobAsyncClient;
     private GridIpAsyncClient gridIpAsyncClient;
+    private GridLoadBalancerAsyncClient gridLoadBalancerAsyncClient;
 
     @Inject
     public GoGridAsyncClientImpl(GridServerAsyncClient gridServerClient,
                                  GridJobAsyncClient gridJobAsyncClient,
-                                 GridIpAsyncClient gridIpAsyncClient) {
+                                 GridIpAsyncClient gridIpAsyncClient,
+                                 GridLoadBalancerAsyncClient gridLoadBalancerAsyncClient) {
         this.gridServerAsyncClient = gridServerClient;
         this.gridJobAsyncClient = gridJobAsyncClient;
         this.gridIpAsyncClient = gridIpAsyncClient;
+        this.gridLoadBalancerAsyncClient = gridLoadBalancerAsyncClient;
     }
 
     @Override
@@ -57,7 +60,13 @@ public class GoGridAsyncClientImpl implements GoGridAsyncClient {
         return gridJobAsyncClient;
     }
 
+    @Override
     public GridIpAsyncClient getIpServices() {
         return gridIpAsyncClient;
+    }
+
+    @Override
+    public GridLoadBalancerAsyncClient getLoadBalancerServices() {
+        return gridLoadBalancerAsyncClient;
     }
 }

@@ -25,14 +25,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Oleksiy Yarmula
  */
-public enum IpState {
-    UNASSIGNED, ASSIGNED;
+public enum LoadBalancerPersistenceType {
 
-    public String toString() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+    NONE("None"),
+    SSL_STICKY("SSL Sticky"),
+    SOURCE_ADDRESS("Source Address"),
+    UNKNOWN("Unknown");
+
+    String type;
+    LoadBalancerPersistenceType(String type) {
+        this.type = type;
     }
 
-    public static IpState fromValue(String state) {
-        return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+    @Override
+    public String toString() {
+        return type;
+    }
+
+    public static LoadBalancerPersistenceType fromValue(String type) {
+        for(LoadBalancerPersistenceType persistenceType : values()) {
+            if(persistenceType.type.equals(checkNotNull(type))) return persistenceType;
+        }
+        return UNKNOWN;
     }
 }

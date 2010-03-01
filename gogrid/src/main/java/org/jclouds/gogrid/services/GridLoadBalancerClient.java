@@ -16,23 +16,23 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid.domain;
+package org.jclouds.gogrid.services;
 
-import com.google.common.base.CaseFormat;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.gogrid.domain.LoadBalancer;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Oleksiy Yarmula
  */
-public enum IpState {
-    UNASSIGNED, ASSIGNED;
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface GridLoadBalancerClient {
 
-    public String toString() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
-    }
-
-    public static IpState fromValue(String state) {
-        return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-    }
+    /**
+     * Returns all load balancers found for the current user. 
+     * @return load balancers found
+     */
+    Set<LoadBalancer> getLoadBalancerList();
 }

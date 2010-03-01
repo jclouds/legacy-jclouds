@@ -42,18 +42,20 @@
 package org.jclouds.gogrid.config;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
+import org.jclouds.Constants;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
-import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.gogrid.GoGridAsyncClient;
-import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.domain.*;
+import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.gogrid.handlers.GoGridErrorHandler;
 import org.jclouds.gogrid.services.*;
 import org.jclouds.http.HttpErrorHandler;
@@ -129,6 +131,19 @@ public class GoGridRestClientModule extends AbstractModule {
 
     @Provides
     @Singleton
+    protected GridLoadBalancerAsyncClient provideLoadBalancerClient(RestClientFactory factory) {
+        return factory.create(GridLoadBalancerAsyncClient.class);
+    }
+
+    @Provides
+    @Singleton
+    public GridLoadBalancerClient provideLoadBalancerClient(GridLoadBalancerAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+        return SyncProxy.create(GridLoadBalancerClient.class, client);
+    }
+
+    @Provides
+    @Singleton
     @GoGrid
     protected URI provideURI(@Named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT) String endpoint) {
         return URI.create(endpoint);
@@ -139,6 +154,21 @@ public class GoGridRestClientModule extends AbstractModule {
     protected Long provideTimeStamp(@TimeStamp Supplier<Long> cache) {
         return cache.get();
     }
+
+    @Provides
+    @Singleton
+    @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
+    public Map<Class, Object> provideCustomAdapterBindings() {
+        Map<Class, Object> bindings = Maps.newHashMap();
+        bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());
+        bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
+        bindings.put(LoadBalancerState.class, new CustomDeserializers.LoadBalancerStateAdapter());
+        bindings.put(LoadBalancerPersistenceType.class, new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
+        bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
+        bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
+        return bindings;
+    }
+    
 
     /**
      * borrowing concurrency code to ensure that caching takes place properly

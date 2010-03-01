@@ -125,5 +125,9 @@ public interface Constants {
     * Name of the logger that records the steps of the request signing process of the HTTP_service.
     */
    public static final String LOGGER_SIGNATURE = "jclouds.signature";
+    /**
+     * Name of the custom adapter bindings map for Gson
+     */
+   public static final String PROPERTY_GSON_ADAPTERS = "jclouds.gson.adapters";
 
 }

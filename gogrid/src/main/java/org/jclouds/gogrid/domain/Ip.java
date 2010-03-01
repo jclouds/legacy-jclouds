@@ -37,7 +37,7 @@ public class Ip implements Comparable<Ip> {
     private String subnet;
     @SerializedName("public")
     private boolean isPublic;
-    private Option state;
+    private IpState state;
 
     /**
      * A no-args constructor is required for deserialization
@@ -45,7 +45,7 @@ public class Ip implements Comparable<Ip> {
     public Ip() {
     }
 
-    public Ip(long id, String ip, String subnet, boolean isPublic, Option state) {
+    public Ip(long id, String ip, String subnet, boolean isPublic, IpState state) {
         this.id = id;
         this.ip = ip;
         this.subnet = subnet;
@@ -69,7 +69,7 @@ public class Ip implements Comparable<Ip> {
         return isPublic;
     }
 
-    public Option getState() {
+    public IpState getState() {
         return state;
     }
 

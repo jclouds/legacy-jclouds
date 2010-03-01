@@ -18,21 +18,22 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.common.base.CaseFormat;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Oleksiy Yarmula
  */
-public enum IpState {
-    UNASSIGNED, ASSIGNED;
+public enum LoadBalancerOs {
 
-    public String toString() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+    F5,
+    UNKNOWN;
+
+    public static LoadBalancerOs fromValue(String value) {
+        try {
+            return valueOf(checkNotNull(value));
+        } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+        }
     }
 
-    public static IpState fromValue(String state) {
-        return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-    }
 }

@@ -26,9 +26,7 @@ package org.jclouds.gogrid.internal;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.services.GridIpClient;
-import org.jclouds.gogrid.services.GridJobClient;
-import org.jclouds.gogrid.services.GridServerClient;
+import org.jclouds.gogrid.services.*;
 
 /**
  * @author Oleksiy Yarmula
@@ -39,14 +37,17 @@ public class GoGridClientImpl implements GoGridClient {
     private GridServerClient gridServerClient;
     private GridJobClient gridJobClient;
     private GridIpClient gridIpClient;
+    private GridLoadBalancerClient gridLoadBalancerClient;
 
     @Inject
     public GoGridClientImpl(GridServerClient gridServerClient,
                             GridJobClient gridJobClient,
-                            GridIpClient gridIpClient) {
+                            GridIpClient gridIpClient,
+                            GridLoadBalancerClient gridLoadBalancerClient) {
         this.gridServerClient = gridServerClient;
         this.gridJobClient = gridJobClient;
         this.gridIpClient = gridIpClient;
+        this.gridLoadBalancerClient = gridLoadBalancerClient;
     }
 
     @Override
@@ -62,5 +63,10 @@ public class GoGridClientImpl implements GoGridClient {
     @Override
     public GridIpClient getIpServices() {
         return gridIpClient;
+    }
+
+    @Override
+    public GridLoadBalancerClient getLoadBalancerServices() {
+        return gridLoadBalancerClient;
     }
 }

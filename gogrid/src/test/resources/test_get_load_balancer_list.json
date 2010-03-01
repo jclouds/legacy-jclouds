@@ -1,0 +1,92 @@
+{
+    "list": [
+        {
+            "object": "loadbalancer",
+            "virtualip": {
+                "object": "ipportpair",
+                "ip": {
+                    "object": "ip",
+                    "public": true,
+                    "subnet": "204.51.240.176/255.255.255.240",
+                    "state": {
+                        "object": "option",
+                        "description": "IP is reserved or in use",
+                        "name": "Assigned",
+                        "id": 2
+                    },
+                    "ip": "204.51.240.181",
+                    "id": 1313082
+                },
+                "port": 80
+            },
+            "type": {
+                "object": "option",
+                "description": "",
+                "name": "Round Robin",
+                "id": 1
+            },
+            "os": {
+                "object": "option",
+                "description": "The F5 Load Balancer.",
+                "name": "F5",
+                "id": 1
+            },
+            "state": {
+                "object": "option",
+                "description": "Loadbalancer is enabled and on.",
+                "name": "On",
+                "id": 1
+            },
+            "name": "Balancer",
+            "realiplist": [
+                {
+                    "ip": {
+                        "object": "ip",
+                        "public": true,
+                        "subnet": "204.51.240.176/255.255.255.240",
+                        "state": {
+                            "object": "option",
+                            "description": "IP is reserved or in use",
+                            "name": "Assigned",
+                            "id": 2
+                        },
+                        "ip": "204.51.240.185",
+                        "id": 1313086
+                    },
+                    "port": 80
+                },
+                {
+                    "ip": {
+                        "object": "ip",
+                        "public": true,
+                        "subnet": "204.51.240.176/255.255.255.240",
+                        "state": {
+                            "object": "option",
+                            "description": "IP is reserved or in use",
+                            "name": "Assigned",
+                            "id": 2
+                        },
+                        "ip": "204.51.240.188",
+                        "id": 1313089
+                    },
+                    "port": 80
+                }
+            ],
+            "id": 6372,
+            "persistence": {
+                "object": "option",
+                "description": "",
+                "name": "None",
+                "id": 1
+            }
+        }
+    ],
+    "summary": {
+        "total": 1,
+        "start": 0,
+        "numpages": 0,
+        "returned": 1
+    },
+    "status": "success",
+    "method": "/grid/loadbalancer/list"
+}

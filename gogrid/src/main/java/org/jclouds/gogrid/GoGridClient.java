@@ -27,6 +27,7 @@ import com.google.inject.ImplementedBy;
 import org.jclouds.gogrid.internal.GoGridClientImpl;
 import org.jclouds.gogrid.services.GridIpClient;
 import org.jclouds.gogrid.services.GridJobClient;
+import org.jclouds.gogrid.services.GridLoadBalancerClient;
 import org.jclouds.gogrid.services.GridServerClient;
 
 /**
@@ -53,5 +54,11 @@ public interface GoGridClient {
      * @return ipServices
      */
     GridIpClient getIpServices();
+
+    /**
+     * Returns method, related to managing load balancers.
+     * @return loadBalancerServices
+     */
+    GridLoadBalancerClient getLoadBalancerServices();
 
 }

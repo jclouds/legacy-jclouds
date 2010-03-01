@@ -38,7 +38,7 @@ public class Job implements Comparable<Job> {
     private long id;
     private Option command;
     @SerializedName("objecttype")
-    private Option objectType;
+    private ObjectType objectType;
     @SerializedName("createdon")
     private Date createdOn;
     @SerializedName("lastupdatedon")
@@ -60,7 +60,7 @@ public class Job implements Comparable<Job> {
     public Job() {
     }
 
-    public Job(long id, Option command, Option objectType,
+    public Job(long id, Option command, ObjectType objectType,
                Date createdOn, Date lastUpdatedOn, Option currentState,
                int attempts, String owner, List<JobState> history,
                Map<String, String> details) {
@@ -84,7 +84,7 @@ public class Job implements Comparable<Job> {
         return command;
     }
 
-    public Option getObjectType() {
+    public ObjectType getObjectType() {
         return objectType;
     }
 
@@ -157,5 +157,21 @@ public class Job implements Comparable<Job> {
         if(createdOn != null && o.getCreatedOn() != null)
             return Longs.compare(createdOn.getTime(), o.getCreatedOn().getTime());
         return Longs.compare(id, o.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + id +
+                ", command=" + command +
+                ", objectType=" + objectType +
+                ", createdOn=" + createdOn +
+                ", lastUpdatedOn=" + lastUpdatedOn +
+                ", currentState=" + currentState +
+                ", attempts=" + attempts +
+                ", owner='" + owner + '\'' +
+                ", history=" + history +
+                ", details=" + details +
+                '}';
     }
 }

@@ -25,14 +25,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Oleksiy Yarmula
  */
-public enum IpState {
-    UNASSIGNED, ASSIGNED;
+public enum ObjectType {
 
-    public String toString() {
+    VIRTUAL_SERVER,
+    LOAD_BALANCER,
+    CLOUD_STORAGE,
+    STORAGE_DNS,
+    SERVER_IMAGE,
+    DEDICATED_SERVER,
+    UNKNOWN;
+
+    public String value() {
         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
     }
 
-    public static IpState fromValue(String state) {
-        return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+    @Override
+    public String toString() {
+        return value();
     }
+
+    public static ObjectType fromValue(String type) {
+        if("StorageDNS".equals(type)) return STORAGE_DNS;
+        try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "type")));
+        } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+        }
+    }
+
 }

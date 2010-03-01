@@ -39,14 +39,6 @@ import java.net.UnknownHostException;
  */
 public class ParseErrorFromJsonResponseTest {
 
-    Injector i = Guice.createInjector(new ParserModule() {
-        @Override
-        protected void configure() {
-            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
-            super.configure();
-        }
-    });
-
     @Test
     public void testApplyInputStreamDetails() throws UnknownHostException {
         InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
@@ -57,4 +49,14 @@ public class ParseErrorFromJsonResponseTest {
         assert "No object found that matches your input criteria.".equals(response.getMessage());
         assert "IllegalArgumentException".equals(response.getErrorCode());
     }
+
+
+    Injector i = Guice.createInjector(new ParserModule() {
+        @Override
+        protected void configure() {
+            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
+            super.configure();
+        }
+    });
+
 }

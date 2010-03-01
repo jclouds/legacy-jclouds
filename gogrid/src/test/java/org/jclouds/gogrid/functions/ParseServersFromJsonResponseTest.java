@@ -29,11 +29,16 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.inject.Provides;
+import org.jclouds.Constants;
 import org.jclouds.gogrid.config.GoGridContextModule;
 import org.jclouds.gogrid.domain.*;
+import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
 
@@ -41,22 +46,17 @@ import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import javax.inject.Singleton;
+
 /**
  * Tests behavior of {@code ParseStatusesFromJsonResponse}
  *
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "twitter.ParseStatusesFromJsonResponseTest")
-public class ParseStatusesFromJsonResponseTest {
+@Test(groups = "unit", testName = "gogrid.ParseServersFromJsonResponseTest")
+public class ParseServersFromJsonResponseTest {
 
-    Injector i = Guice.createInjector(new ParserModule() {
-        @Override
-        protected void configure() {
-            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
-            super.configure();
-        }
-    });
-
+    @Test
     public void testApplyInputStreamDetails() throws UnknownHostException {
         InputStream is = getClass().getResourceAsStream("/test_get_server_list.json");
 
@@ -72,7 +72,7 @@ public class ParseStatusesFromJsonResponseTest {
                 new Option(1L, "512MB", "Server with 512MB RAM"),
                 centOs,
                 new Ip(1313079L, "204.51.240.178", "204.51.240.176/255.255.255.240", true,
-                        new Option(2L, "Assigned", "IP is reserved or in use")),
+                        IpState.ASSIGNED),
                 new ServerImage(1946L, "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
                         "BitNami Gallery 2.3.1-0", "http://bitnami.org/stack/gallery",
                         centOs, null, webServer,
@@ -86,6 +86,25 @@ public class ParseStatusesFromJsonResponseTest {
                                 new BillingToken(56L, "BitNami: Gallery", 0.0)
                         ),
                         new Customer(24732L, "BitRock")));
-        assertEquals(Iterables.getOnlyElement(response), server);        
+        assertEquals(Iterables.getOnlyElement(response), server);
     }
+
+
+    Injector i = Guice.createInjector(new ParserModule() {
+        @Override
+        protected void configure() {
+            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
+            super.configure();
+        }
+
+
+        @Provides
+        @Singleton
+        @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
+        public Map<Class, Object> provideCustomAdapterBindings() {
+            Map<Class, Object> bindings = Maps.newHashMap();
+            bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
+            return bindings;
+        }
+    });
 }

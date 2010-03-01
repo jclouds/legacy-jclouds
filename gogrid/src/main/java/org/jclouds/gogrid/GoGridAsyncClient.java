@@ -25,9 +25,7 @@ package org.jclouds.gogrid;
 
 import com.google.inject.ImplementedBy;
 import org.jclouds.gogrid.internal.GoGridAsyncClientImpl;
-import org.jclouds.gogrid.services.GridIpAsyncClient;
-import org.jclouds.gogrid.services.GridJobAsyncClient;
-import org.jclouds.gogrid.services.GridServerAsyncClient;
+import org.jclouds.gogrid.services.*;
 
 /**
  * @author Oleksiy Yarmula
@@ -49,5 +47,10 @@ public interface GoGridAsyncClient {
     * @see GoGridClient#getIpServices() 
     */
     GridIpAsyncClient getIpServices();
+
+    /**
+    * @see GoGridClient#getLoadBalancerServices()
+    */
+    GridLoadBalancerAsyncClient getLoadBalancerServices();
 
 }

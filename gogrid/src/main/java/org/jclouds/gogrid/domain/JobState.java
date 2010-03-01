@@ -90,4 +90,14 @@ public class JobState {
         result = 31 * result + (note != null ? note.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "JobState{" +
+                "id=" + id +
+                ", updatedOn=" + updatedOn +
+                ", state=" + state +
+                ", note='" + note + '\'' +
+                '}';
+    }
 }
