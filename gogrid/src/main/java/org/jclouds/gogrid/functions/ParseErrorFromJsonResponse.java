@@ -36,23 +36,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.util.SortedSet;
+
 import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Parses {@link org.jclouds.gogrid.domain.internal.ErrorResponse
  * error response} from a json string.
+ * 
+ * GoGrid may return multiple error objects, if multiple errors were found.
  *
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseErrorFromJsonResponse extends ParseJson<ErrorResponse> {
+public class ParseErrorFromJsonResponse extends ParseJson<SortedSet<ErrorResponse>> {
 
     @Inject
     public ParseErrorFromJsonResponse(Gson gson) {
         super(gson);
     }
 
-    public ErrorResponse apply(InputStream stream) {
+    public SortedSet<ErrorResponse> apply(InputStream stream) {
         Type setType = new TypeToken<GenericResponseContainer<ErrorResponse>>() {
         }.getType();
         GenericResponseContainer<ErrorResponse> response;
@@ -61,8 +65,6 @@ public class ParseErrorFromJsonResponse extends ParseJson<ErrorResponse> {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("jclouds requires UTF-8 encoding", e);
         }
-        checkState(response.getList() != null && response.getList().size() == 1,
-                /*or throw*/ "Expected exactly 1 error object in response");
-        return Iterables.getOnlyElement(response.getList());
+        return response.getList();
     }
 }

@@ -166,6 +166,7 @@ public class GoGridRestClientModule extends AbstractModule {
         bindings.put(LoadBalancerPersistenceType.class, new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
         bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
         bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
+        bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
         return bindings;
     }
     

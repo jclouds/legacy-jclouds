@@ -55,6 +55,11 @@ public interface GoGridQueryParams {
     public static final String IP_STATE_KEY = "ip.state";
     public static final String IP_TYPE_KEY = "ip.type";
 
+    public static final String LOAD_BALANCER_TYPE_KEY = "loadbalancer.type";
+    public static final String LOAD_BALANCER_PERSISTENCE_TYPE_KEY = "loadbalancer.persistence";
+    public static final String VIRTUAL_IP_KEY = "virtualip.";
+    public static final String REAL_IP_LIST_KEY = "realiplist.";
+
 
 
 }

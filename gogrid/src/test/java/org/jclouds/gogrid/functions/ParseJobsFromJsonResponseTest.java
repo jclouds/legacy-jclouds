@@ -20,18 +20,13 @@ package org.jclouds.gogrid.functions;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.internal.ImmutableMap;
 import org.jclouds.Constants;
 import org.jclouds.gogrid.config.GoGridContextModule;
-import org.jclouds.gogrid.domain.Job;
-import org.jclouds.gogrid.domain.JobState;
-import org.jclouds.gogrid.domain.ObjectType;
-import org.jclouds.gogrid.domain.Option;
+import org.jclouds.gogrid.domain.*;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
@@ -72,16 +67,14 @@ public class ParseJobsFromJsonResponseTest {
                 ObjectType.VIRTUAL_SERVER,
                 new Date(1267404528895L),
                 new Date(1267404538592L),
-                new Option(3L, "Succeeded", "Change request has succeeded."),
+                JobState.SUCCEEDED,
                 1,
                 "3116784158f0af2d-24076@api.gogrid.com",
                 Arrays.asList(
-                        new JobState(940263L, new Date(1267404528897L),
-                                new Option(7L, "Created",
-                                        "Change request is created but not queued yet"), null),
-                        new JobState(940264L, new Date(1267404528967L),
-                                new Option(1L, "Queued",
-                                        "Change request is new to the system."), null)
+                        new JobProperties(940263L, new Date(1267404528897L),
+                                JobState.CREATED, null),
+                        new JobProperties(940264L, new Date(1267404528967L),
+                                JobState.QUEUED, null)
                 ),
                 details);
         assertEquals(job, Iterables.getOnlyElement(response));
@@ -101,6 +94,7 @@ public class ParseJobsFromJsonResponseTest {
         public Map<Class, Object> provideCustomAdapterBindings() {
             Map<Class, Object> bindings = Maps.newHashMap();
             bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());
+            bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
             return bindings;
         }
     });

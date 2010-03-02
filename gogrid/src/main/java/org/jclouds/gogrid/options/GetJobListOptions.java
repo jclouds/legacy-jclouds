@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid.options;
 
+import org.jclouds.gogrid.domain.JobState;
+import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 import java.util.Date;
@@ -56,15 +58,15 @@ public class GetJobListOptions extends BaseHttpRequestOptions {
         return this;
     }
 
-    public GetJobListOptions onlyForState(String jobState) {
+    public GetJobListOptions onlyForState(JobState jobState) {
         checkState(!queryParameters.containsKey(JOB_STATE_KEY), "Can't have duplicate job state for filtering");
-        queryParameters.put(JOB_STATE_KEY, jobState);
+        queryParameters.put(JOB_STATE_KEY, jobState.toString());
         return this;
     }
 
-    public GetJobListOptions onlyForObjectType(String objectType) {
+    public GetJobListOptions onlyForObjectType(ObjectType objectType) {
         checkState(!queryParameters.containsKey(JOB_OBJECT_TYPE_KEY), "Can't have duplicate object type for filtering");
-        queryParameters.put(JOB_OBJECT_TYPE_KEY, objectType);
+        queryParameters.put(JOB_OBJECT_TYPE_KEY, objectType.toString());
         return this;
     }
 
@@ -74,15 +76,27 @@ public class GetJobListOptions extends BaseHttpRequestOptions {
         return this;
     }
 
+    /*
+    * This method is intended for testing
+    */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GetJobListOptions options = (GetJobListOptions) o;
+
+        return buildQueryParameters().equals(options.buildQueryParameters());
+    }
+
     public static class Builder {
         public GetJobListOptions create() {
              return new GetJobListOptions();
         }
 
-        public GetJobListOptions latestJobForServerByName(String serverName) {
+        public GetJobListOptions latestJobForObjectByName(String serverName) {
             return new GetJobListOptions().
                     maxItemsNumber(1).
-                    onlyForObjectType("VirtualServer").
                     onlyForObjectName(serverName);
         }
     }

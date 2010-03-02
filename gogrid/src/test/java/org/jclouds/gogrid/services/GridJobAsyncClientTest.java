@@ -25,6 +25,8 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.domain.JobState;
+import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseJobListFromJsonResponse;
 import org.jclouds.gogrid.options.GetJobListOptions;
@@ -54,10 +56,15 @@ public class GridJobAsyncClientTest extends RestClientTest<GridJobAsyncClient> {
         GeneratedHttpRequest<GridJobAsyncClient> httpRequest = processor.createRequest(method,
                                     new GetJobListOptions.Builder().
                                             create().
-                                            withStartDate(new Date(1267385381770L)));
+                                            withStartDate(new Date(1267385381770L)).
+                                            withEndDate(new Date(1267385382770L)).
+                                            onlyForObjectType(ObjectType.VIRTUAL_SERVER).
+                                            onlyForState(JobState.PROCESSING));
 
         assertRequestLineEquals(httpRequest,
-                "GET https://api.gogrid.com/api/grid/job/list?v=1.3&startdate=1267385381770 HTTP/1.1");
+                "GET https://api.gogrid.com/api/grid/job/list?v=1.3&startdate=1267385381770&" +
+                        "enddate=1267385382770&job.objecttype=VirtualServer&" +
+                        "job.state=Processing HTTP/1.1");
         assertHeadersEqual(httpRequest, "");
         assertPayloadEquals(httpRequest, null);
 
@@ -70,8 +77,9 @@ public class GridJobAsyncClientTest extends RestClientTest<GridJobAsyncClient> {
 
         assertRequestLineEquals(httpRequest,
                     "GET https://api.gogrid.com/api/grid/job/list?v=1.3&startdate=1267385381770&" +
-                            "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
-                            "HTTP/1.1");
+                        "enddate=1267385382770&job.objecttype=VirtualServer&" +
+                        "job.state=Processing&" +
+                            "sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
         assertHeadersEqual(httpRequest, "");
         assertPayloadEquals(httpRequest, null);
     }

@@ -28,7 +28,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * @author Oleksiy Yarmula
  */
-public class ErrorResponse {
+public class ErrorResponse implements Comparable<ErrorResponse> {
 
     private String message;
     @SerializedName("errorcode")
@@ -51,5 +51,10 @@ public class ErrorResponse {
 
     public String getErrorCode() {
         return errorCode;
+    }
+
+    @Override
+    public int compareTo(ErrorResponse o) {
+        return message.compareTo(o.getMessage());
     }
 }

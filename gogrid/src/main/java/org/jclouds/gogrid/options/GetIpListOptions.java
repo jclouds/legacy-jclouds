@@ -59,6 +59,10 @@ public class GetIpListOptions extends BaseHttpRequestOptions {
         public GetIpListOptions limitToType(IpType type) {
             return new GetIpListOptions().onlyWithType(type);
         }
+
+        public GetIpListOptions unassignedPublicIps() {
+            return new GetIpListOptions().onlyWithType(IpType.PUBLIC).onlyUnassigned();
+        }
     }
 
 }

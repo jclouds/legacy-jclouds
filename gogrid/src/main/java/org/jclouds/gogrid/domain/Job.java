@@ -18,7 +18,6 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
@@ -44,10 +43,10 @@ public class Job implements Comparable<Job> {
     @SerializedName("lastupdatedon")
     private Date lastUpdatedOn;
     @SerializedName("currentstate")
-    private Option currentState;
+    private JobState currentState;
     private int attempts;
     private String owner;
-    private List<JobState> history;
+    private List<JobProperties> history;
     @SerializedName("detail") /*NOTE: as of Feb 28, 10,
                                       there is a contradiction b/w the name in
                                       documentation (details) and actual param
@@ -61,8 +60,8 @@ public class Job implements Comparable<Job> {
     }
 
     public Job(long id, Option command, ObjectType objectType,
-               Date createdOn, Date lastUpdatedOn, Option currentState,
-               int attempts, String owner, List<JobState> history,
+               Date createdOn, Date lastUpdatedOn, JobState currentState,
+               int attempts, String owner, List<JobProperties> history,
                Map<String, String> details) {
         this.id = id;
         this.command = command;
@@ -96,7 +95,7 @@ public class Job implements Comparable<Job> {
         return lastUpdatedOn;
     }
 
-    public Option getCurrentState() {
+    public JobState getCurrentState() {
         return currentState;
     }
 
@@ -108,7 +107,7 @@ public class Job implements Comparable<Job> {
         return owner;
     }
 
-    public List<JobState> getHistory() {
+    public List<JobProperties> getHistory() {
         return history;
     }
 

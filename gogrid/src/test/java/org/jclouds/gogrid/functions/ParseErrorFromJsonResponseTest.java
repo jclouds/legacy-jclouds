@@ -23,6 +23,7 @@
  */
 package org.jclouds.gogrid.functions;
 
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -45,7 +46,7 @@ public class ParseErrorFromJsonResponseTest {
 
         ParseErrorFromJsonResponse parser = new ParseErrorFromJsonResponse(i
                 .getInstance(Gson.class));
-        ErrorResponse response = parser.apply(is);
+        ErrorResponse response = Iterables.getOnlyElement(parser.apply(is));
         assert "No object found that matches your input criteria.".equals(response.getMessage());
         assert "IllegalArgumentException".equals(response.getErrorCode());
     }

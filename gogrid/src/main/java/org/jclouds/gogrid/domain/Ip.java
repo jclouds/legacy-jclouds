@@ -45,6 +45,16 @@ public class Ip implements Comparable<Ip> {
     public Ip() {
     }
 
+    /**
+     * Constructs a generic IP address
+     * without any additional options.
+     *
+     * @param ip ip address
+     */
+    public Ip(String ip) {
+        this.ip = ip;
+    }
+
     public Ip(long id, String ip, String subnet, boolean isPublic, IpState state) {
         this.id = id;
         this.ip = ip;

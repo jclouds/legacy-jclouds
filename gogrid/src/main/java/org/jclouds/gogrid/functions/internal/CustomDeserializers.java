@@ -76,4 +76,12 @@ public class CustomDeserializers {
         }
     }
 
+    public static class JobStateAdapter implements JsonDeserializer<JobState> {
+        @Override
+        public JobState deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            String name = ((JsonObject) jsonElement).get("name").getAsString();
+            return JobState.fromValue(name);
+        }
+    }
+
 }

@@ -20,9 +20,13 @@ package org.jclouds.gogrid;
 
 import com.google.common.collect.Iterables;
 import org.jclouds.gogrid.domain.*;
+import org.jclouds.gogrid.options.AddLoadBalancerOptions;
+import org.jclouds.gogrid.options.GetIpListOptions;
+import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
+import org.testng.SkipException;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -31,7 +35,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 import static java.lang.String.format;
 
 /**
@@ -45,12 +49,14 @@ public class GoGridLiveTest {
 
     private GoGridClient client;
 
-    private RetryablePredicate<Server> latestJobCompleted;
+    private RetryablePredicate<Server> serverLatestJobCompleted;
+    private RetryablePredicate<LoadBalancer> loadBalancerLatestJobCompleted;
     /**
      * Keeps track of the servers, created during the tests,
      * to remove them after all tests complete
      */
     private List<String> serversToDeleteAfterTheTests = new ArrayList<String>();
+    private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
 
     @BeforeGroups(groups = { "live" })
     public void setupClient() {
@@ -60,9 +66,12 @@ public class GoGridLiveTest {
         client = GoGridContextFactory.createContext(user, password, new Log4JLoggingModule())
                 .getApi();
 
-
-        latestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),
-                240, 15, TimeUnit.SECONDS);
+        serverLatestJobCompleted = new RetryablePredicate<Server>(
+                new ServerLatestJobCompleted(client.getJobServices()),
+                800, 20, TimeUnit.SECONDS);
+        loadBalancerLatestJobCompleted = new RetryablePredicate<LoadBalancer>(
+                new LoadBalancerLatestJobCompleted(client.getJobServices()),
+                800, 20, TimeUnit.SECONDS);
     }
 
     /**
@@ -73,7 +82,7 @@ public class GoGridLiveTest {
     public void testServerLifecycle() {
         int serverCountBeforeTest = client.getServerServices().getServerList().size();
 
-        final String nameOfServer = "ServerCreated" + String.valueOf(new Date().getTime()).substring(8);
+        final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
 
         Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
@@ -84,7 +93,7 @@ public class GoGridLiveTest {
                 "1",
                 availableIp.getIp());
         assertNotNull(createdServer);
-        assert latestJobCompleted.apply(createdServer);
+        assert serverLatestJobCompleted.apply(createdServer);
 
         //get server by name
         Set<Server> response = client.getServerServices().getServersByName(nameOfServer);
@@ -96,7 +105,7 @@ public class GoGridLiveTest {
         Set<Job> jobs = client.getJobServices().getJobsForObjectName(nameOfServer);
         assert("RestartVirtualServer".equals(Iterables.getLast(jobs).getCommand().getName()));
 
-        assert latestJobCompleted.apply(createdServer);
+        assert serverLatestJobCompleted.apply(createdServer);
 
         int serverCountAfterAddingOneServer = client.getServerServices().getServerList().size();
         assert serverCountAfterAddingOneServer == serverCountBeforeTest + 1 :
@@ -108,7 +117,7 @@ public class GoGridLiveTest {
         jobs = client.getJobServices().getJobsForObjectName(nameOfServer);
         assert("DeleteVirtualServer".equals(Iterables.getLast(jobs).getCommand().getName()));
 
-        assert latestJobCompleted.apply(createdServer);
+        assert serverLatestJobCompleted.apply(createdServer);
 
         int serverCountAfterDeletingTheServer = client.getServerServices().getServerList().size();
         assert serverCountAfterDeletingTheServer == serverCountBeforeTest :
@@ -124,7 +133,7 @@ public class GoGridLiveTest {
      */
     @Test(/*dependsOnMethods = "testServerLifecycle", */ enabled=false)
     public void testJobs() {
-        final String nameOfServer = "ServerCreated" + String.valueOf(new Date().getTime()).substring(8);
+        final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
 
         Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
@@ -134,7 +143,7 @@ public class GoGridLiveTest {
                 "1",
                 Iterables.getLast(availableIps).getIp());
 
-        assert latestJobCompleted.apply(createdServer);
+        assert serverLatestJobCompleted.apply(createdServer);
 
         //restart the server
         client.getServerServices().power(nameOfServer, PowerCommand.RESTART);
@@ -155,17 +164,67 @@ public class GoGridLiveTest {
 
         Set<Job> jobsFetched = client.getJobServices().getJobsById(idsOfAllJobs.toArray(new Long[jobs.size()]));
         assert jobsFetched.size() == jobs.size() : format("Number of jobs fetched by ids doesn't match the number of jobs " +
-                                                   "requested. Requested/expected: %d. Found: %d.",
-                                                   jobs.size(), jobsFetched.size());
+                "requested. Requested/expected: %d. Found: %d.",
+                jobs.size(), jobsFetched.size());
 
         //delete the server
         client.getServerServices().deleteByName(nameOfServer);
     }
 
 
-    @Test(enabled=false)
-    public void testLoadBalancers() {
-        Set<LoadBalancer> balancers = client.getLoadBalancerServices().getLoadBalancerList();
+    /**
+     * Tests common load balancer operations.
+     * Also verifies IP services and job services.
+     */
+    @Test(enabled=true)
+    public void testLoadBalancerLifecycle() {
+        int lbCountBeforeTest = client.getLoadBalancerServices().getLoadBalancerList().size();
+
+        final String nameOfLoadBalancer = "LoadBalancer" + String.valueOf(new Date().getTime()).substring(6);
+        loadBalancersToDeleteAfterTest.add(nameOfLoadBalancer);
+
+        GetIpListOptions ipOptions = new GetIpListOptions.Builder().unassignedPublicIps();
+        Set<Ip> availableIps = client.getIpServices().getIpList(ipOptions);
+
+        if(availableIps.size() < 3) throw new SkipException("Not enough available IPs (3 needed) to run the test");
+        Iterator<Ip> ipIterator = availableIps.iterator();
+        Ip vip = ipIterator.next();
+        Ip realIp1 = ipIterator.next();
+        Ip realIp2 = ipIterator.next();
+
+        AddLoadBalancerOptions options = new AddLoadBalancerOptions.Builder().
+                create(LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SOURCE_ADDRESS);
+        LoadBalancer createdLoadBalancer = client.getLoadBalancerServices().
+                addLoadBalancer(nameOfLoadBalancer, new IpPortPair(vip, 80),
+                        Arrays.asList(new IpPortPair(realIp1, 80),
+                                new IpPortPair(realIp2, 80)), options);
+        assertNotNull(createdLoadBalancer);
+        assert loadBalancerLatestJobCompleted.apply(createdLoadBalancer);
+
+        //get load balancer by name
+        Set<LoadBalancer> response = client.getLoadBalancerServices().getLoadBalancersByName(nameOfLoadBalancer);
+        assert (response.size() == 1);
+        createdLoadBalancer = Iterables.getOnlyElement(response);
+        assertNotNull(createdLoadBalancer.getRealIpList());
+        assert createdLoadBalancer.getRealIpList().size() == 2;
+        assertNotNull(createdLoadBalancer.getVirtualIp());
+        assertEquals(createdLoadBalancer.getVirtualIp().getIp().getIp(), vip.getIp());
+
+        int lbCountAfterAddingOneServer = client.getLoadBalancerServices().getLoadBalancerList().size();
+        assert lbCountAfterAddingOneServer == lbCountBeforeTest + 1 :
+                "There should be +1 increase in the number of load balancers since the test started";
+
+        //delete the load balancer
+        client.getLoadBalancerServices().deleteByName(nameOfLoadBalancer);
+
+        Set<Job> jobs = client.getJobServices().getJobsForObjectName(nameOfLoadBalancer);
+        assert("DeleteLoadBalancer".equals(Iterables.getLast(jobs).getCommand().getName()));
+
+        assert loadBalancerLatestJobCompleted.apply(createdLoadBalancer);
+
+        int lbCountAfterDeletingTheServer = client.getLoadBalancerServices().getLoadBalancerList().size();
+        assert lbCountAfterDeletingTheServer == lbCountBeforeTest :
+                "There should be the same # of load balancers as since the test started";
     }
 
     /**
@@ -181,6 +240,14 @@ public class GoGridLiveTest {
                 // it's already been deleted - proceed
             }
         }
+        for(String loadBalancerName : loadBalancersToDeleteAfterTest) {
+            try {
+                client.getLoadBalancerServices().deleteByName(loadBalancerName);
+            } catch(Exception e) {
+                // it's already been deleted - proceed
+            }
+        }
+
     }
 
 }

@@ -35,6 +35,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * @author Oleksiy Yarmula
@@ -52,18 +53,18 @@ public class GoGridErrorHandler implements HttpErrorHandler {
     @Override
     public void handleError(HttpCommand command, HttpResponse response) {
         Exception exception;
-        ErrorResponse error = parseErrorFromContentOrNull(response.getContent());
+        Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response.getContent());
         switch (response.getStatusCode()) {
             default:
-                exception = error != null ?
-                        new GoGridResponseException(command, response, error) :
+                exception = errors != null ?
+                        new GoGridResponseException(command, response, errors) :
                         new HttpResponseException(command, response);
         }
         command.setException(exception);
         Closeables.closeQuietly(response.getContent());
     }
 
-    ErrorResponse parseErrorFromContentOrNull(InputStream content) {
+    Set<ErrorResponse> parseErrorsFromContentOrNull(InputStream content) {
         if (content != null) {
             return errorParser.apply(content);
         }

@@ -28,6 +28,8 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 
+import java.util.Set;
+
 import static java.lang.String.format;
 
 /**
@@ -37,22 +39,28 @@ public class GoGridResponseException extends HttpResponseException {
 
     private static final long serialVersionUID = 1924589L;
 
-    private ErrorResponse error;
+    private Set<ErrorResponse> errors;
 
-    public GoGridResponseException(HttpCommand command, HttpResponse response, ErrorResponse error) {
-        super(format("command %s failed with code %s, error [%s]: %s",
-                    command.toString(), response.getStatusCode(), error.getErrorCode(),
-                    error.getMessage()),
-              command, response);
-        this.setError(error);
+    public GoGridResponseException(HttpCommand command, HttpResponse response, Set<ErrorResponse> errors) {
+        super(buildMessage(command, response, errors), command, response);
+        this.setErrors(errors);
     }
 
-
-    public ErrorResponse getError() {
-        return error;
+    public Set<ErrorResponse> getError() {
+        return errors;
     }
 
-    public void setError(ErrorResponse error) {
-        this.error = error;
+    public void setErrors(Set<ErrorResponse> errors) {
+        this.errors = errors;
+    }
+
+    private static String buildMessage(HttpCommand command, HttpResponse response, Set<ErrorResponse> errors) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(format("command %s failed with code %s. ", command.toString(),
+                response.getStatusCode()));
+        for(ErrorResponse error : errors) {
+            builder.append(format("Error [%s]: %s. ", error.getErrorCode(), error.getMessage()));
+        }
+        return builder.toString();
     }
 }

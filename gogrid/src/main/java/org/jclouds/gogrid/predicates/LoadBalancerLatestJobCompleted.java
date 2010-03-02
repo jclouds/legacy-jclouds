@@ -23,7 +23,7 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobState;
-import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.domain.LoadBalancer;
 import org.jclouds.gogrid.options.GetJobListOptions;
 import org.jclouds.gogrid.services.GridJobClient;
 import org.jclouds.logging.Logger;
@@ -34,16 +34,10 @@ import javax.inject.Singleton;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Checks if the latest job for the server is in "Succeeded" state.
- * To achieve meaningful results, this must be run in a sequential
- * environment when a server has only one job related to it at a time.
- *
- * The passed server instance must not be null and must have a name.
- *
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ServerLatestJobCompleted implements Predicate<Server> {
+public class LoadBalancerLatestJobCompleted implements Predicate<LoadBalancer> {
 
     protected GridJobClient jobClient;
 
@@ -51,16 +45,16 @@ public class ServerLatestJobCompleted implements Predicate<Server> {
     protected Logger logger = Logger.NULL;
 
     @Inject
-    public ServerLatestJobCompleted(GridJobClient jobClient) {
+    public LoadBalancerLatestJobCompleted(GridJobClient jobClient) {
         this.jobClient = jobClient;
     }
 
     @Override
-    public boolean apply(Server server) {
-        checkNotNull(server, "Server must be a valid instance");
-        checkNotNull(server.getName(), "Server must be a valid name");
+    public boolean apply(LoadBalancer loadBalancer) {
+        checkNotNull(loadBalancer, "Load balancer must be a valid instance");
+        checkNotNull(loadBalancer.getName(), "Load balancer must be a valid name");
         GetJobListOptions jobOptions = new GetJobListOptions.Builder().
-                latestJobForObjectByName(server.getName());
+                latestJobForObjectByName(loadBalancer.getName());
         Job latestJob = Iterables.getOnlyElement(jobClient.getJobList(jobOptions));
         return JobState.SUCCEEDED.equals(latestJob.getCurrentState());
     }

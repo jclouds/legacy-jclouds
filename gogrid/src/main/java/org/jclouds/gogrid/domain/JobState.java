@@ -18,86 +18,41 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.gson.annotations.SerializedName;
+import org.omg.CORBA.UNKNOWN;
 
-import java.util.Date;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * State of a job.
- *
- * @see <a href="http://wiki.gogrid.com/wiki/index.php/API:Job_State_(Object)"/>
- *
  * @author Oleksiy Yarmula
  */
-public class JobState {
+public enum JobState {
 
-    private long id;
-    @SerializedName("updatedon")
-    private Date updatedOn;
-    private Option state;
-    private String note;
+    QUEUED("Queued", "Change request is new to the system."),
+    PROCESSING("Processing", "Change request is is transient state...Processing."),
+    SUCCEEDED("Succeeded", "Change request has succeeded."),
+    FAILED("Failed", "Change request has failed."),
+    CANCELED("Canceled", "Change request has been canceled."),
+    FATAL("Fatal", "Change request had Fatal or Unrecoverable Failure"),
+    CREATED("Created", "Change request is created but not queued yet"),
+    UNKNOWN("Unknown", "The state is unknown to JClouds");
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public JobState() {
-
-    }
-
-    public JobState(long id, Date updatedOn, Option state, String note) {
-        this.id = id;
-        this.updatedOn = updatedOn;
-        this.state = state;
-        this.note = note;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public Date getUpdatedOn() {
-        return updatedOn;
-    }
-
-    public Option getState() {
-        return state;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JobState jobState = (JobState) o;
-
-        if (id != jobState.id) return false;
-        if (note != null ? !note.equals(jobState.note) : jobState.note != null) return false;
-        if (state != null ? !state.equals(jobState.state) : jobState.state != null) return false;
-        if (updatedOn != null ? !updatedOn.equals(jobState.updatedOn) : jobState.updatedOn != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (updatedOn != null ? updatedOn.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (note != null ? note.hashCode() : 0);
-        return result;
+    String name;
+    String description;
+    JobState(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     @Override
     public String toString() {
-        return "JobState{" +
-                "id=" + id +
-                ", updatedOn=" + updatedOn +
-                ", state=" + state +
-                ", note='" + note + '\'' +
-                '}';
+        return name;
     }
+
+    public static JobState fromValue(String state) {
+        for(JobState jobState : values()) {
+            if(jobState.name.equals(checkNotNull(state))) return jobState;
+        }
+        return UNKNOWN;
+    }
+
 }
