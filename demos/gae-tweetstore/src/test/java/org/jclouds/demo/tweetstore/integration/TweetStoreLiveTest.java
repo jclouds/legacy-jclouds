@@ -81,7 +81,7 @@ public class TweetStoreLiveTest {
       // WATCH THIS.. when adding a new context, you must update the string
       props
                .setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS,
-                        "cloudfiles,s3,azureblob,atmos");
+                        "cloudfiles,s3,azureblob");
 
       props = new TwitterPropertiesBuilder(props).withCredentials(
                checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
@@ -102,10 +102,6 @@ public class TweetStoreLiveTest {
                checkNotNull(System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT),
                         PROPERTY_AZURESTORAGE_ACCOUNT),
                System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
-
-      props = new AtmosStoragePropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_EMCSAAS_UID), PROPERTY_EMCSAAS_UID),
-               System.getProperty(PROPERTY_EMCSAAS_KEY, PROPERTY_EMCSAAS_KEY)).build();
 
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
@@ -128,10 +124,7 @@ public class TweetStoreLiveTest {
                .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
                .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
 
-      BlobStoreContext atContext = factory.createContext("atmos", checkNotNull(System
-               .getProperty(PROPERTY_EMCSAAS_UID), PROPERTY_EMCSAAS_UID), System.getProperty(
-               PROPERTY_EMCSAAS_KEY, PROPERTY_EMCSAAS_KEY));
-      this.contexts = ImmutableList.of(s3Context, cfContext, azContext, atContext);
+      this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
       boolean deleted = false;
       for (BlobStoreContext context : contexts) {
          if (context.getBlobStore().containerExists(container)) {
@@ -173,7 +166,7 @@ public class TweetStoreLiveTest {
       URL gurl = new URL(url, "/store/do");
 
       // WATCH THIS, you need to add a context each time
-      for (String context : new String[] { "cloudfiles", "s3", "azureblob", "atmos" }) {
+      for (String context : new String[] { "cloudfiles", "s3", "azureblob" }) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
