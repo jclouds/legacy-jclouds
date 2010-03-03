@@ -25,10 +25,7 @@ package org.jclouds.gogrid;
 
 import com.google.inject.ImplementedBy;
 import org.jclouds.gogrid.internal.GoGridClientImpl;
-import org.jclouds.gogrid.services.GridIpClient;
-import org.jclouds.gogrid.services.GridJobClient;
-import org.jclouds.gogrid.services.GridLoadBalancerClient;
-import org.jclouds.gogrid.services.GridServerClient;
+import org.jclouds.gogrid.services.*;
 
 /**
  * @author Oleksiy Yarmula
@@ -38,27 +35,28 @@ import org.jclouds.gogrid.services.GridServerClient;
 public interface GoGridClient {
 
     /**
-     * Returns methods, related to managing servers
-     * @return serverServices
+     * Services with methods, related to managing servers
      */
     GridServerClient getServerServices();
 
     /**
-     * Returns methods, related to retrieving jobs
-     * @return jobServices
+     * Services with methods, related to retrieving jobs
      */
     GridJobClient getJobServices();
 
     /**
-     * Returns methods, related to retrieving IP addresses
-     * @return ipServices
+     * Services with methods, related to retrieving IP addresses
      */
     GridIpClient getIpServices();
 
     /**
-     * Returns method, related to managing load balancers.
-     * @return loadBalancerServices
+     * Services with methods, related to managing load balancers.
      */
     GridLoadBalancerClient getLoadBalancerServices();
+
+    /**
+    * Services with methods, related to managing images.
+    */
+    GridImageClient getImageServices();
 
 }

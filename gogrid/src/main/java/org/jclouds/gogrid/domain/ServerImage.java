@@ -23,16 +23,17 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * @author Oleksiy Yarmula
  */
-public class ServerImage {
+public class ServerImage implements Comparable<ServerImage> {
 
     private long id;
     private String name;
@@ -40,8 +41,8 @@ public class ServerImage {
     private String description;
     private Option os;
     private Option architecture;
-    private Option type;
-    private Option state;
+    private ServerImageType type;
+    private ServerImageState state;
     private double price;
     private String location;
     private boolean isActive;
@@ -49,7 +50,7 @@ public class ServerImage {
     private Date createdTime;
     private Date updatedTime;
     @SerializedName("billingtokens")
-    private List<BillingToken> billingTokens;
+    private SortedSet<BillingToken> billingTokens;
     private Customer owner;
 
     /**
@@ -60,9 +61,9 @@ public class ServerImage {
 
     public ServerImage(long id, String name, String friendlyName,
                        String description, Option os, Option architecture,
-                       Option type, Option state, double price, String location,
+                       ServerImageType type, ServerImageState state, double price, String location,
                        boolean active, boolean aPublic, Date createdTime,
-                       Date updatedTime, List<BillingToken> billingTokens, Customer owner) {
+                       Date updatedTime, SortedSet<BillingToken> billingTokens, Customer owner) {
         this.id = id;
         this.name = name;
         this.friendlyName = friendlyName;
@@ -105,11 +106,11 @@ public class ServerImage {
         return architecture;
     }
 
-    public Option getType() {
+    public ServerImageType getType() {
         return type;
     }
 
-    public Option getState() {
+    public ServerImageState getState() {
         return state;
     }
 
@@ -137,8 +138,8 @@ public class ServerImage {
         return updatedTime;
     }
 
-    public List<BillingToken> getBillingTokens() {
-        return ImmutableList.copyOf(billingTokens);
+    public SortedSet<BillingToken> getBillingTokens() {
+        return ImmutableSortedSet.copyOf(billingTokens);
     }
 
     public Customer getOwner() {
@@ -194,5 +195,32 @@ public class ServerImage {
         result = 31 * result + (billingTokens != null ? billingTokens.hashCode() : 0);
         result = 31 * result + (owner != null ? owner.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(ServerImage o) {
+        return Longs.compare(id, o.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "ServerImage{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", friendlyName='" + friendlyName + '\'' +
+                ", description='" + description + '\'' +
+                ", os=" + os +
+                ", architecture=" + architecture +
+                ", type=" + type +
+                ", state=" + state +
+                ", price=" + price +
+                ", location='" + location + '\'' +
+                ", isActive=" + isActive +
+                ", isPublic=" + isPublic +
+                ", createdTime=" + createdTime +
+                ", updatedTime=" + updatedTime +
+                ", billingTokens=" + billingTokens +
+                ", owner=" + owner +
+                '}';
     }
 }

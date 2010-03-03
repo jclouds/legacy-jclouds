@@ -18,12 +18,13 @@
  */
 package org.jclouds.gogrid.domain;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * Represents any job in GoGrid system
@@ -46,7 +47,7 @@ public class Job implements Comparable<Job> {
     private JobState currentState;
     private int attempts;
     private String owner;
-    private List<JobProperties> history;
+    private SortedSet<JobProperties> history;
     @SerializedName("detail") /*NOTE: as of Feb 28, 10,
                                       there is a contradiction b/w the name in
                                       documentation (details) and actual param
@@ -61,7 +62,7 @@ public class Job implements Comparable<Job> {
 
     public Job(long id, Option command, ObjectType objectType,
                Date createdOn, Date lastUpdatedOn, JobState currentState,
-               int attempts, String owner, List<JobProperties> history,
+               int attempts, String owner, SortedSet<JobProperties> history,
                Map<String, String> details) {
         this.id = id;
         this.command = command;
@@ -107,8 +108,8 @@ public class Job implements Comparable<Job> {
         return owner;
     }
 
-    public List<JobProperties> getHistory() {
-        return history;
+    public SortedSet<JobProperties> getHistory() {
+        return ImmutableSortedSet.copyOf(history);
     }
 
     public Map<String, String> getDetails() {

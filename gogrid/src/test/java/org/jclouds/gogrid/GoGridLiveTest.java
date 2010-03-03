@@ -18,19 +18,23 @@
  */
 package org.jclouds.gogrid;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.jclouds.gogrid.domain.*;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
+import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.SkipException;
+import org.testng.TestException;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -176,7 +180,7 @@ public class GoGridLiveTest {
      * Tests common load balancer operations.
      * Also verifies IP services and job services.
      */
-    @Test(enabled=true)
+    @Test(enabled=false)
     public void testLoadBalancerLifecycle() {
         int lbCountBeforeTest = client.getLoadBalancerServices().getLoadBalancerList().size();
 
@@ -212,12 +216,12 @@ public class GoGridLiveTest {
         assertEquals(createdLoadBalancer.getVirtualIp().getIp().getIp(), vip.getIp());
 
         LoadBalancer editedLoadBalancer = client.getLoadBalancerServices().
-                 editLoadBalancer(nameOfLoadBalancer, Arrays.asList(new IpPortPair(realIp3, 8181)));
+                editLoadBalancer(nameOfLoadBalancer, Arrays.asList(new IpPortPair(realIp3, 8181)));
         assert loadBalancerLatestJobCompleted.apply(editedLoadBalancer);
         assertNotNull(editedLoadBalancer.getRealIpList());
         assertEquals(editedLoadBalancer.getRealIpList().size(), 1);
         assertEquals(Iterables.getOnlyElement(editedLoadBalancer.getRealIpList()).getIp().getIp(), realIp3.getIp());
-        
+
         int lbCountAfterAddingOneServer = client.getLoadBalancerServices().getLoadBalancerList().size();
         assert lbCountAfterAddingOneServer == lbCountBeforeTest + 1 :
                 "There should be +1 increase in the number of load balancers since the test started";
@@ -233,6 +237,38 @@ public class GoGridLiveTest {
         int lbCountAfterDeletingTheServer = client.getLoadBalancerServices().getLoadBalancerList().size();
         assert lbCountAfterDeletingTheServer == lbCountBeforeTest :
                 "There should be the same # of load balancers as since the test started";
+    }
+
+    /**
+     * Tests common server image operations.
+     */
+    @Test(enabled=true)
+    public void testImageLifecycle() {
+        GetImageListOptions options = new GetImageListOptions.Builder().publicDatabaseServers();
+        Set<ServerImage> images = client.getImageServices().getImageList(options);
+
+        Predicate<ServerImage> isDatabaseServer = new Predicate<ServerImage>() {
+            @Override
+            public boolean apply(@Nullable ServerImage serverImage) {
+                return checkNotNull(serverImage).getType() == ServerImageType.DATABASE_SERVER;
+            }
+        };
+
+        assert Iterables.all(images, isDatabaseServer) : "All of the images should've been of database type";
+
+        ServerImage image = Iterables.getLast(images);
+        ServerImage imageFromServer = Iterables.getOnlyElement(
+                client.getImageServices().getImagesByName(image.getName()));
+        assertEquals(image, imageFromServer);
+
+        try {
+            client.getImageServices().editImageDescription(image.getName(), "newDescription");
+            throw new TestException("An exception hasn't been thrown where expected; expected GoGridResponseException");
+        } catch(GoGridResponseException e) {
+            //expected situation - check and proceed
+            assertTrue(e.getMessage().contains("GoGridIllegalArgumentException"));
+        }
+
     }
 
     /**

@@ -18,10 +18,13 @@
  */
 package org.jclouds.gogrid.domain;
 
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
 /**
  * @author Oleksiy Yarmula
  */
-public class IpPortPair {
+public class IpPortPair implements Comparable<IpPortPair> {
 
     private Ip ip;
     private int port;
@@ -63,5 +66,11 @@ public class IpPortPair {
         int result = ip != null ? ip.hashCode() : 0;
         result = 31 * result + port;
         return result;
+    }
+
+    @Override
+    public int compareTo(IpPortPair o) {
+        if(ip != null && o.getIp() != null) return Longs.compare(ip.getId(), o.getIp().getId());
+        return Ints.compare(port, o.getPort());
     }
 }

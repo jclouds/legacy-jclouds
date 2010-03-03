@@ -23,10 +23,12 @@
  */
 package org.jclouds.gogrid.domain;
 
+import com.google.common.primitives.Longs;
+
 /**
  * @author Oleksiy Yarmula
  */
-public class BillingToken {
+public class BillingToken implements Comparable<BillingToken> {
 
     private long id;
     private String name;
@@ -79,5 +81,19 @@ public class BillingToken {
         temp = price != +0.0d ? Double.doubleToLongBits(price) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @Override
+    public int compareTo(BillingToken o) {
+        return Longs.compare(id, o.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "BillingToken{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

@@ -21,7 +21,6 @@ package org.jclouds.gogrid.functions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jclouds.gogrid.domain.Ip;
-import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
 
@@ -37,7 +36,7 @@ import java.util.SortedSet;
  *
  * @author Oleksiy Yarmula
  */
-public class ParseIpListFromJsonResponse  extends ParseJson<SortedSet<Ip>> {
+public class ParseIpListFromJsonResponse extends ParseJson<SortedSet<Ip>> {
 
     @Inject
     public ParseIpListFromJsonResponse(Gson gson) {

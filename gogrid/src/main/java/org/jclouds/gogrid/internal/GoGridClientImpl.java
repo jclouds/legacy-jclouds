@@ -38,16 +38,19 @@ public class GoGridClientImpl implements GoGridClient {
     private GridJobClient gridJobClient;
     private GridIpClient gridIpClient;
     private GridLoadBalancerClient gridLoadBalancerClient;
+    private GridImageClient gridImageClient;
 
     @Inject
     public GoGridClientImpl(GridServerClient gridServerClient,
                             GridJobClient gridJobClient,
                             GridIpClient gridIpClient,
-                            GridLoadBalancerClient gridLoadBalancerClient) {
+                            GridLoadBalancerClient gridLoadBalancerClient,
+                            GridImageClient gridImageClient) {
         this.gridServerClient = gridServerClient;
         this.gridJobClient = gridJobClient;
         this.gridIpClient = gridIpClient;
         this.gridLoadBalancerClient = gridLoadBalancerClient;
+        this.gridImageClient = gridImageClient;
     }
 
     @Override
@@ -68,5 +71,10 @@ public class GoGridClientImpl implements GoGridClient {
     @Override
     public GridLoadBalancerClient getLoadBalancerServices() {
         return gridLoadBalancerClient;
+    }
+
+    @Override
+    public GridImageClient getImageServices() {
+        return gridImageClient;
     }
 }

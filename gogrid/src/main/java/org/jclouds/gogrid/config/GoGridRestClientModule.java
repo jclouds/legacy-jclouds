@@ -144,6 +144,19 @@ public class GoGridRestClientModule extends AbstractModule {
 
     @Provides
     @Singleton
+    protected GridImageAsyncClient provideImageClient(RestClientFactory factory) {
+        return factory.create(GridImageAsyncClient.class);
+    }
+
+    @Provides
+    @Singleton
+    public GridImageClient provideImageClient(GridImageAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+        return SyncProxy.create(GridImageClient.class, client);
+    }
+
+    @Provides
+    @Singleton
     @GoGrid
     protected URI provideURI(@Named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT) String endpoint) {
         return URI.create(endpoint);
@@ -167,6 +180,8 @@ public class GoGridRestClientModule extends AbstractModule {
         bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
         bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
         bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
+        bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
+        bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
         return bindings;
     }
     

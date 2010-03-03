@@ -18,6 +18,7 @@
  */
 package org.jclouds.gogrid.functions;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -61,7 +62,7 @@ public class ParseLoadBalancersFromJsonResponseTest {
                         true,
                         IpState.ASSIGNED),
                         80),
-                Arrays.asList(
+                ImmutableSortedSet.of(
                         new IpPortPair(new Ip(1313086L,
                                 "204.51.240.185",
                                 "204.51.240.176/255.255.255.240",

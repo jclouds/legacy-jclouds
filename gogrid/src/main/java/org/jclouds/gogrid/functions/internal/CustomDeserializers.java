@@ -84,4 +84,20 @@ public class CustomDeserializers {
         }
     }
 
+    public static class ServerImageStateAdapter implements JsonDeserializer<ServerImageState> {
+        @Override
+        public ServerImageState deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            String name = ((JsonObject) jsonElement).get("name").getAsString();
+            return ServerImageState.fromValue(name);
+        }
+    }
+
+    public static class ServerImageTypeAdapter implements JsonDeserializer<ServerImageType> {
+        @Override
+        public ServerImageType deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            String name = ((JsonObject) jsonElement).get("name").getAsString();
+            return ServerImageType.fromValue(name);
+        }
+    }
+
 }

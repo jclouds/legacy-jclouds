@@ -18,10 +18,11 @@
  */
 package org.jclouds.gogrid.domain;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * @author Oleksiy Yarmula
@@ -34,7 +35,7 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
     @SerializedName("virtualip")
     private IpPortPair virtualIp;
     @SerializedName("realiplist")
-    private List<IpPortPair> realIpList;
+    private SortedSet<IpPortPair> realIpList;
     private LoadBalancerType type;
     private LoadBalancerPersistenceType persistence;
     private LoadBalancerOs os;
@@ -47,7 +48,7 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
     }
 
     public LoadBalancer(long id, String name, String description,
-                        IpPortPair virtualIp, List<IpPortPair> realIpList, LoadBalancerType type,
+                        IpPortPair virtualIp, SortedSet<IpPortPair> realIpList, LoadBalancerType type,
                         LoadBalancerPersistenceType persistence, LoadBalancerOs os,
                         LoadBalancerState state) {
         this.id = id;
@@ -77,8 +78,8 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
         return virtualIp;
     }
 
-    public List<IpPortPair> getRealIpList() {
-        return realIpList;
+    public SortedSet<IpPortPair> getRealIpList() {
+        return ImmutableSortedSet.copyOf(realIpList);
     }
 
     public LoadBalancerType getType() {

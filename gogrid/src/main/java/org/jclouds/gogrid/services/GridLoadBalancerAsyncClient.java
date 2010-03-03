@@ -41,6 +41,8 @@ import java.util.Set;
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.NAME_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOAD_BALANCER_KEY;
+
 
 /**
  * @author Oleksiy Yarmula
@@ -80,7 +82,7 @@ public interface GridLoadBalancerAsyncClient {
     @GET
     @ResponseParser(ParseLoadBalancerFromJsonResponse.class)
     @Path("/grid/loadbalancer/add")
-    ListenableFuture<LoadBalancer> addLoadBalancer(@QueryParam("name") String name,
+    ListenableFuture<LoadBalancer> addLoadBalancer(@QueryParam(NAME_KEY) String name,
                        @BinderParam(BindVirtualIpPortPairToQueryParams.class) IpPortPair virtualIp,
                        @BinderParam(BindRealIpPortPairsToQueryParams.class) List<IpPortPair> realIps,
                        AddLoadBalancerOptions... options);
@@ -91,7 +93,7 @@ public interface GridLoadBalancerAsyncClient {
     @GET
     @ResponseParser(ParseLoadBalancerFromJsonResponse.class)
     @Path("/grid/loadbalancer/edit")
-    ListenableFuture<LoadBalancer> editLoadBalancer(@QueryParam("loadbalancer") String idOrName,
+    ListenableFuture<LoadBalancer> editLoadBalancer(@QueryParam(LOAD_BALANCER_KEY) String idOrName,
                                   @BinderParam(BindRealIpPortPairsToQueryParams.class) List<IpPortPair> realIps);
 
     /**

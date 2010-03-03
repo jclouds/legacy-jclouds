@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
@@ -75,13 +76,13 @@ public class ParseServersFromJsonResponseTest {
                         IpState.ASSIGNED),
                 new ServerImage(1946L, "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
                         "BitNami Gallery 2.3.1-0", "http://bitnami.org/stack/gallery",
-                        centOs, null, webServer,
-                        new Option(2L, "Available", "Image is available for adds"),
+                        centOs, null, ServerImageType.WEB_APPLICATION_SERVER,
+                        ServerImageState.AVAILABLE,
                         0.0, "24732/GSI-f8979644-e646-4711-ad58-d98a5fa3612c.img",
                         true, true,
                         new Date(1261504577971L),
                         new Date(1262649582180L),
-                        Arrays.asList(
+                        ImmutableSortedSet.of(
                                 new BillingToken(38L, "CentOS 5.2 32bit", 0.0),
                                 new BillingToken(56L, "BitNami: Gallery", 0.0)
                         ),
@@ -104,6 +105,8 @@ public class ParseServersFromJsonResponseTest {
         public Map<Class, Object> provideCustomAdapterBindings() {
             Map<Class, Object> bindings = Maps.newHashMap();
             bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
+            bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
+            bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
             return bindings;
         }
     });

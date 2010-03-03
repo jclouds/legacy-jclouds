@@ -18,6 +18,7 @@
  */
 package org.jclouds.gogrid.domain;
 
+import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -29,7 +30,7 @@ import java.util.Date;
  *
  * @author Oleksiy Yarmula
  */
-public class JobProperties {
+public class JobProperties implements Comparable<JobProperties> {
 
     private long id;
     @SerializedName("updatedon")
@@ -99,5 +100,10 @@ public class JobProperties {
                 ", state=" + state +
                 ", note='" + note + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(JobProperties o) {
+        return Longs.compare(id, o.getId());
     }
 }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.gogrid.functions;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -34,7 +35,6 @@ import org.testng.annotations.Test;
 import javax.inject.Singleton;
 import java.io.InputStream;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
@@ -70,7 +70,7 @@ public class ParseJobsFromJsonResponseTest {
                 JobState.SUCCEEDED,
                 1,
                 "3116784158f0af2d-24076@api.gogrid.com",
-                Arrays.asList(
+                ImmutableSortedSet.of(
                         new JobProperties(940263L, new Date(1267404528897L),
                                 JobState.CREATED, null),
                         new JobProperties(940264L, new Date(1267404528967L),

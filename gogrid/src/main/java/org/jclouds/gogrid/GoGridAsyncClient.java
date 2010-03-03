@@ -53,4 +53,9 @@ public interface GoGridAsyncClient {
     */
     GridLoadBalancerAsyncClient getLoadBalancerServices();
 
+    /**
+    * @see GoGridClient#getImageServices()
+    */
+    GridImageAsyncClient getImageServices();
+
 }

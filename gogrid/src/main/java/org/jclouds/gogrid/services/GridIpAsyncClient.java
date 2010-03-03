@@ -39,6 +39,8 @@ import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_STATE_KEY;
 
 /**
+ * @see org.jclouds.gogrid.services.GridImageClient
+ *
  * @author Oleksiy Yarmula
  */
 @Endpoint(GoGrid.class)
