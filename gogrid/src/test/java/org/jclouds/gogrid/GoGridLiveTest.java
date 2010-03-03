@@ -135,7 +135,7 @@ public class GoGridLiveTest {
      * Starts a servers, verifies that jobs are created correctly and
      * an be retrieved from the job services
      */
-    @Test(/*dependsOnMethods = "testServerLifecycle", */ enabled=false)
+    @Test(dependsOnMethods = "testServerLifecycle", enabled=false)
     public void testJobs() {
         final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
@@ -242,7 +242,7 @@ public class GoGridLiveTest {
     /**
      * Tests common server image operations.
      */
-    @Test(enabled=true)
+    @Test(enabled=false)
     public void testImageLifecycle() {
         GetImageListOptions options = new GetImageListOptions.Builder().publicDatabaseServers();
         Set<ServerImage> images = client.getImageServices().getImageList(options);
