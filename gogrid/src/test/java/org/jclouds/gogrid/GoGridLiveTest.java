@@ -186,11 +186,12 @@ public class GoGridLiveTest {
         GetIpListOptions ipOptions = new GetIpListOptions.Builder().unassignedPublicIps();
         Set<Ip> availableIps = client.getIpServices().getIpList(ipOptions);
 
-        if(availableIps.size() < 3) throw new SkipException("Not enough available IPs (3 needed) to run the test");
+        if(availableIps.size() < 4) throw new SkipException("Not enough available IPs (4 needed) to run the test");
         Iterator<Ip> ipIterator = availableIps.iterator();
         Ip vip = ipIterator.next();
         Ip realIp1 = ipIterator.next();
         Ip realIp2 = ipIterator.next();
+        Ip realIp3 = ipIterator.next();
 
         AddLoadBalancerOptions options = new AddLoadBalancerOptions.Builder().
                 create(LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SOURCE_ADDRESS);
@@ -206,10 +207,17 @@ public class GoGridLiveTest {
         assert (response.size() == 1);
         createdLoadBalancer = Iterables.getOnlyElement(response);
         assertNotNull(createdLoadBalancer.getRealIpList());
-        assert createdLoadBalancer.getRealIpList().size() == 2;
+        assertEquals(createdLoadBalancer.getRealIpList().size(), 2);
         assertNotNull(createdLoadBalancer.getVirtualIp());
         assertEquals(createdLoadBalancer.getVirtualIp().getIp().getIp(), vip.getIp());
 
+        LoadBalancer editedLoadBalancer = client.getLoadBalancerServices().
+                 editLoadBalancer(nameOfLoadBalancer, Arrays.asList(new IpPortPair(realIp3, 8181)));
+        assert loadBalancerLatestJobCompleted.apply(editedLoadBalancer);
+        assertNotNull(editedLoadBalancer.getRealIpList());
+        assertEquals(editedLoadBalancer.getRealIpList().size(), 1);
+        assertEquals(Iterables.getOnlyElement(editedLoadBalancer.getRealIpList()).getIp().getIp(), realIp3.getIp());
+        
         int lbCountAfterAddingOneServer = client.getLoadBalancerServices().getLoadBalancerList().size();
         assert lbCountAfterAddingOneServer == lbCountBeforeTest + 1 :
                 "There should be +1 increase in the number of load balancers since the test started";

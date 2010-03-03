@@ -59,17 +59,6 @@ public interface GridLoadBalancerAsyncClient {
     ListenableFuture<Set<LoadBalancer>> getLoadBalancerList();
 
     /**
-     * @see GridLoadBalancerClient#addLoadBalancer
-     */
-    @GET
-    @ResponseParser(ParseLoadBalancerFromJsonResponse.class)
-    @Path("/grid/loadbalancer/add")
-    ListenableFuture<LoadBalancer> addLoadBalancer(@QueryParam("name") String name,
-                       @BinderParam(BindVirtualIpPortPairToQueryParams.class) IpPortPair virtualIp,
-                       @BinderParam(BindRealIpPortPairsToQueryParams.class) List<IpPortPair> realIps,
-                       AddLoadBalancerOptions... options);
-
-    /**
     * @see GridLoadBalancerClient#getLoadBalancersByName
     */
     @GET
@@ -84,6 +73,26 @@ public interface GridLoadBalancerAsyncClient {
     @ResponseParser(ParseLoadBalancerListFromJsonResponse.class)
     @Path("/grid/loadbalancer/get")
     ListenableFuture<Set<LoadBalancer>> getLoadBalancersById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
+
+    /**
+     * @see GridLoadBalancerClient#addLoadBalancer
+     */
+    @GET
+    @ResponseParser(ParseLoadBalancerFromJsonResponse.class)
+    @Path("/grid/loadbalancer/add")
+    ListenableFuture<LoadBalancer> addLoadBalancer(@QueryParam("name") String name,
+                       @BinderParam(BindVirtualIpPortPairToQueryParams.class) IpPortPair virtualIp,
+                       @BinderParam(BindRealIpPortPairsToQueryParams.class) List<IpPortPair> realIps,
+                       AddLoadBalancerOptions... options);
+
+    /**
+     * @see GridLoadBalancerClient#editLoadBalancer
+     */
+    @GET
+    @ResponseParser(ParseLoadBalancerFromJsonResponse.class)
+    @Path("/grid/loadbalancer/edit")
+    ListenableFuture<LoadBalancer> editLoadBalancer(@QueryParam("loadbalancer") String idOrName,
+                                  @BinderParam(BindRealIpPortPairsToQueryParams.class) List<IpPortPair> realIps);
 
     /**
     * @see GridLoadBalancerClient#

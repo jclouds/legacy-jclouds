@@ -40,26 +40,6 @@ public interface GridLoadBalancerClient {
     Set<LoadBalancer> getLoadBalancerList();
 
     /**
-     * Creates a load balancer with given properties.
-     *
-     * @param name name of the load balancer
-     * @param virtualIp virtual IP with IP address set in
-     *                  {@link org.jclouds.gogrid.domain.Ip#ip} and
-     *                  port set in {@link IpPortPair#port}
-     * @param realIps real IPs to bind the virtual IP to, with
-     *                  IP address set in
-     *                  {@link org.jclouds.gogrid.domain.Ip#ip} and
-     *                  port set in {@link IpPortPair#port}
-     * @param options options that specify load balancer's type (round robin,
-     *                  least load), persistence strategy, or description.
-     * @return created load balancer object
-     */
-    LoadBalancer addLoadBalancer(String name,
-                       IpPortPair virtualIp,
-                       List<IpPortPair> realIps,
-                       AddLoadBalancerOptions... options);
-
-    /**
      * Returns the load balancer(s) by unique name(s).
      *
      * Given a name or a set of names, finds one or
@@ -78,6 +58,40 @@ public interface GridLoadBalancerClient {
      * @return load balancer(s) matching the ids
      */
     Set<LoadBalancer> getLoadBalancersById(Long... ids);
+
+    /**
+     * Creates a load balancer with given properties.
+     *
+     * @param name name of the load balancer
+     * @param virtualIp virtual IP with IP address set in
+     *                  {@link org.jclouds.gogrid.domain.Ip#ip} and
+     *                  port set in {@link IpPortPair#port}
+     * @param realIps real IPs to bind the virtual IP to, with
+     *                  IP address set in
+     *                  {@link org.jclouds.gogrid.domain.Ip#ip} and
+     *                  port set in {@link IpPortPair#port}
+     * @param options options that specify load balancer's type (round robin,
+     *                  least load), persistence strategy, or description.
+     * @return created load balancer object
+     */
+    LoadBalancer addLoadBalancer(String name,
+                                 IpPortPair virtualIp,
+                                 List<IpPortPair> realIps,
+                                 AddLoadBalancerOptions... options);
+
+    /**
+     * Edits the existing load balancer to change the real
+     * IP mapping.
+     *
+     * @param idOrName id or name of the existing load balancer
+     * @param realIps real IPs to bind the virtual IP to, with
+     *                  IP address set in
+     *                  {@link org.jclouds.gogrid.domain.Ip#ip} and
+     *                  port set in {@link IpPortPair#port}
+     * @return edited object
+     */
+    LoadBalancer editLoadBalancer(String idOrName,
+                                  List<IpPortPair> realIps);
 
     /**
      * Deletes the load balancer by Id

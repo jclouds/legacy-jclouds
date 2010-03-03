@@ -119,6 +119,38 @@ public class GridLoadBalancerAsyncClientTest extends RestClientTest<GridLoadBala
     }
 
     @Test
+    public void testEditLoadBalancer() throws NoSuchMethodException, IOException {
+        Method method = GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancer",
+                String.class, List.class);
+        GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method,
+                "BalanceIt", Arrays.asList(new IpPortPair(new Ip("127.0.0.1"), 8080),
+                        new IpPortPair(new Ip("127.0.0.1"), 9090)));
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/loadbalancer/" +
+                        "edit?v=1.4&loadbalancer=BalanceIt&realiplist.0.ip=127.0.0.1&" +
+                        "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090 HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+
+        assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerFromJsonResponse.class);
+        assertSaxResponseParserClassEquals(method, null);
+        assertExceptionParserClassEquals(method, null);
+
+        checkFilters(httpRequest);
+        Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/loadbalancer/" +
+                        "edit?v=1.4&loadbalancer=BalanceIt&realiplist.0.ip=127.0.0.1&" +
+                        "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&" +
+                        "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
+                        "HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+    }
+
+    @Test
     public void testGetLoadBalancersByName() throws NoSuchMethodException, IOException {
         Method method = GridLoadBalancerAsyncClient.class.getMethod("getLoadBalancersByName", String[].class);
         GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method,
