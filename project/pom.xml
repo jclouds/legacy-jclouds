@@ -91,6 +91,10 @@
             <id>googlecode.java-xmlbuilder</id>
             <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>       
         </repository>
+	<repository>
+	    <id>clojure</id>
+	    <url>http://build.clojure.org/releases</url>
+	</repository>
     </repositories>
 
     <distributionManagement>
