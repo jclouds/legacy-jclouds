@@ -25,6 +25,7 @@ Here's an example of getting some compute configuration from rackspace:
 "}
   org.jclouds.compute
   (:use clojure.contrib.duck-streams
+        clojure.contrib.logging
         [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
         [clojure.contrib.java-utils :only [wall-hack-field]])
   (:import java.io.File
@@ -39,18 +40,29 @@ Here's an example of getting some compute configuration from rackspace:
            (com.google.common.collect ImmutableSet)))
 
 (def module-lookup
-     {:log4j org.jclouds.logging.log4j.config.Log4JLoggingModule
-      :ssh org.jclouds.ssh.jsch.config.JschSshClientModule
-      :enterprise org.jclouds.enterprise.config.EnterpriseConfigurationModule})
+     {:log4j 'org.jclouds.logging.log4j.config.Log4JLoggingModule
+      :ssh 'org.jclouds.ssh.jsch.config.JschSshClientModule
+      :enterprise 'org.jclouds.enterprise.config.EnterpriseConfigurationModule})
+
+(defn- instantiate [sym]
+  (let [loader (.getContextClassLoader (Thread/currentThread))]
+    (try
+     (.newInstance #^Class (.loadClass loader (name sym)))
+     (catch java.lang.ClassNotFoundException e
+       (warn (str "Could not find " (name sym) " module.
+Ensure the module is on the classpath.  You are maybe missing a dependency on
+  org.jclouds/jclouds-jsch
+  org.jclouds/jclouds-log4j
+  or org.jclouds/jclouds-enterprise."))))))
 
 (defn modules
   "Build a list of modules suitable for passing to compute-context"
   [& modules]
   (.build #^com.google.common.collect.ImmutableSet$Builder
-          (reduce #(.add #^com.google.common.collect.ImmutableSet$Builder %1
-                         (.newInstance #^Class (%2 module-lookup)))
+          (reduce #(.add #^com.google.common.collect.ImmutableSet$Builder %1 %2)
                   (com.google.common.collect.ImmutableSet/builder)
-                  modules)))
+                  (filter (complement nil?)
+                          (map (comp instantiate module-lookup) modules)))))
 
 (defn compute-context
   "Create a logged in context."
