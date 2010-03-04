@@ -435,20 +435,25 @@ public class RestAnnotationProcessor<T> {
       Multimap<String, String> map = LinkedListMultimap.create();
       if (in == null) {
       } else if (in.indexOf('&') == -1) {
-         map.put(in, null);
+         if(in.contains("=")) parseKeyValueFromStringToMap(in, map);
+         else map.put(in, null);
       } else {
          String[] parts = HttpUtils.urlDecode(in).split("&");
-         for (int partIndex = 0; partIndex < parts.length; partIndex++) {
-            // note that '=' can be a valid part of the value
-            int indexOfFirstEquals = parts[partIndex].indexOf('=');
-            String key = indexOfFirstEquals == -1 ? parts[partIndex] : parts[partIndex].substring(
-                     0, indexOfFirstEquals);
-            String value = indexOfFirstEquals == -1 ? null : parts[partIndex]
-                     .substring(indexOfFirstEquals + 1);
-            map.put(key, value);
+         for(String part : parts) {
+             parseKeyValueFromStringToMap(part, map);
          }
       }
       return map;
+   }
+
+   public static void parseKeyValueFromStringToMap(String stringToParse, Multimap<String, String> map) {
+       // note that '=' can be a valid part of the value
+            int indexOfFirstEquals = stringToParse.indexOf('=');
+            String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(
+                     0, indexOfFirstEquals);
+            String value = indexOfFirstEquals == -1 ? null : stringToParse
+                     .substring(indexOfFirstEquals + 1);
+            map.put(key, value);
    }
 
    public static SortedSet<Entry<String, String>> sortEntries(

@@ -21,15 +21,16 @@ package org.jclouds.http.functions.config;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.SortedSet;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.google.common.collect.Maps;
+import com.google.inject.name.Named;
+import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
@@ -127,12 +128,16 @@ public class ParserModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Gson provideGson(DateAdapter adapter, SortedSetOfInetAddressCreator addressSetCreator) {
+   Gson provideGson(DateAdapter adapter, SortedSetOfInetAddressCreator addressSetCreator,
+                    GsonAdapterBindings bindings) {
       GsonBuilder gson = new GsonBuilder();
       gson.registerTypeAdapter(InetAddress.class, new InetAddressAdapter());
       gson.registerTypeAdapter(Date.class, adapter);
       gson.registerTypeAdapter(new TypeToken<SortedSet<InetAddress>>() {
       }.getType(), addressSetCreator);
+      for(Map.Entry<Class, Object> binding : bindings.getBindings().entrySet()) {
+          gson.registerTypeAdapter(binding.getKey(), binding.getValue());
+      }
       return gson.create();
    }
 
@@ -186,5 +191,19 @@ public class ParserModule extends AbstractModule {
          return toReturn;
       }
 
+   }
+
+   @Singleton
+   public static class GsonAdapterBindings {
+       private final Map<Class, Object> bindings = Maps.newHashMap();
+
+       @com.google.inject.Inject(optional=true)
+       public void setBindings(@Named(Constants.PROPERTY_GSON_ADAPTERS) Map<Class, Object> bindings) {
+           this.bindings.putAll(bindings);
+       }
+
+       public Map<Class, Object> getBindings() {
+           return bindings;
+       }
    }
 }

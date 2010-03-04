@@ -56,6 +56,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.collect.*;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
@@ -105,11 +106,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -818,6 +814,30 @@ public class RestAnnotationProcessorTest {
       String query = factory(TestQueryReplace.class).createRequest(oneQuery,
                new Object[] { "robot", new TestReplaceQueryOptions() }).getEndpoint().getQuery();
       assertEquals(query, "x-amz-copy-source=/robot");
+   }
+
+   @Test
+   public void testParseQueryToMapSingleParam() {
+       Multimap<String, String> parsedMap = RestAnnotationProcessor.parseQueryToMap("v=1.3");
+       assert parsedMap.keySet().size() == 1 : "Expected 1 key, found: " + parsedMap.keySet().size();
+       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
+       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
+       assert valueForV.equals("1.3") :
+               "Expected the value for 'v' to be '1.3', found: " + valueForV;
+   }
+
+   @Test
+   public void testParseQueryToMapMultiParam() {
+       Multimap<String, String> parsedMap = RestAnnotationProcessor.parseQueryToMap("v=1.3&sig=123");
+       assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: " + parsedMap.keySet().size();
+       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
+       assert parsedMap.keySet().contains("sig") : "Expected sig to be a part of the keys";
+       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
+       assert valueForV.equals("1.3") :
+               "Expected the value for 'v' to be '1.3', found: " + valueForV;
+       String valueForSig = Iterables.getOnlyElement(parsedMap.get("sig"));
+       assert valueForSig.equals("123") :
+               "Expected the value for 'v' to be '123', found: " + valueForSig;
    }
 
    @Endpoint(Localhost.class)
