@@ -28,8 +28,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.gogrid.config.GoGridContextModule;
+import com.google.inject.Key;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.gogrid.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.gogrid.reference.GoGridConstants;
 
@@ -37,26 +40,36 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
-public class GoGridContextBuilder extends RestContextBuilder<GoGridAsyncClient, GoGridClient> {
+public class GoGridContextBuilder extends ComputeServiceContextBuilder<GoGridAsyncClient, GoGridClient> {
 
-   public GoGridContextBuilder(Properties props) {
-      super(new TypeLiteral<GoGridAsyncClient>() {
-      }, new TypeLiteral<GoGridClient>() {
-      }, props);
-      checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_USER));
-      checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_PASSWORD));
-   }
+    public GoGridContextBuilder(Properties props) {
+        super(new TypeLiteral<GoGridAsyncClient>() {
+        }, new TypeLiteral<GoGridClient>() {
+        }, props);
+        checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_USER));
+        checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_PASSWORD));
+    }
 
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GoGridRestClientModule());
-   }
+    protected void addClientModule(List<Module> modules) {
+        modules.add(new GoGridRestClientModule());
+    }
 
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new GoGridContextModule());
-   }
+    @Override
+    protected void addContextModule(List<Module> modules) {
+        modules.add(new GoGridComputeServiceContextModule());
+    }
+
+    @Override
+    public ComputeServiceContext buildComputeServiceContext() {
+        return this
+                .buildInjector()
+                .getInstance(
+                        Key
+                                .get(new TypeLiteral<ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>>() {
+                        }));
+    }
 
 }
