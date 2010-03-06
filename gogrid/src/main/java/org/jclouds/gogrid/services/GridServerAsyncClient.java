@@ -29,6 +29,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.GoGrid;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
@@ -37,10 +38,12 @@ import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
+import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponse;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.*;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
@@ -83,6 +86,14 @@ public interface GridServerAsyncClient {
     @ResponseParser(ParseServerListFromJsonResponse.class)
     @Path("/grid/server/get")
     ListenableFuture<Set<Server>> getServersById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
+
+    /**
+    * @see GridServerClient#getServerCredentialsList
+    */
+    @GET
+    @ResponseParser(ParseServerNameToCredentialsMapFromJsonResponse.class)
+    @Path("/support/password/list")
+    ListenableFuture<Map<String, Credentials>> getServerCredentialsList();
 
     /**
     * @see GridServerClient#addServer(String, String, String, String, org.jclouds.gogrid.options.AddServerOptions...)

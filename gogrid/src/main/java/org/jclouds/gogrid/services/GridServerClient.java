@@ -23,10 +23,12 @@
  */
 package org.jclouds.gogrid.services;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.options.AddServerOptions;
@@ -73,6 +75,13 @@ public interface GridServerClient {
      * @return server(s) matching the ids
      */
     Set<Server> getServersById(Long... ids);
+
+    /**
+     * Returns a map of running servers' names to the
+     * log in credentials.
+     * @return map <String server name => Credentials>
+     */
+    Map<String, Credentials> getServerCredentialsList();
 
     /**
      * Adds a server with specified attributes

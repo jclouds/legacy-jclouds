@@ -42,10 +42,10 @@ import com.google.inject.Module;
  * <p/>
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
- * 
+ *
  * @author Adrian Cole
  * @author Oleksiy Yarmula
- * 
+ *
  * @see RestContext
  * @see GridServerClient
  * @see GridServerAsyncClient

@@ -128,7 +128,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getOsDescription() == null)
                returnVal = false;
             else
-               returnVal = input.getOsDescription().matches(osDescription);
+               returnVal = input.getOsDescription().contains(osDescription) ||
+                       input.getOsDescription().matches(osDescription); /*note: matches() expects a regex!*/
          }
          return returnVal;
       }

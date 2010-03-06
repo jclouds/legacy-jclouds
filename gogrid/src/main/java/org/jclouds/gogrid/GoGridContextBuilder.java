@@ -49,8 +49,6 @@ public class GoGridContextBuilder extends ComputeServiceContextBuilder<GoGridAsy
         super(new TypeLiteral<GoGridAsyncClient>() {
         }, new TypeLiteral<GoGridClient>() {
         }, props);
-        checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_USER));
-        checkNotNull(properties.getProperty(GoGridConstants.PROPERTY_GOGRID_PASSWORD));
     }
 
     protected void addClientModule(List<Module> modules) {

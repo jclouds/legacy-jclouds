@@ -41,6 +41,7 @@
  */
 package org.jclouds.gogrid.config;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import org.jclouds.Constants;
@@ -63,6 +65,8 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
@@ -170,6 +174,12 @@ public class GoGridRestClientModule extends AbstractModule {
 
     @Provides
     @Singleton
+    protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
+        return new RetryablePredicate<InetSocketAddress>(open, 130, 1, TimeUnit.SECONDS);
+    }
+
+    @Provides
+    @Singleton
     @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
     public Map<Class, Object> provideCustomAdapterBindings() {
         Map<Class, Object> bindings = Maps.newHashMap();
@@ -184,7 +194,7 @@ public class GoGridRestClientModule extends AbstractModule {
         bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
         return bindings;
     }
-    
+
 
     /**
      * borrowing concurrency code to ensure that caching takes place properly
@@ -202,11 +212,11 @@ public class GoGridRestClientModule extends AbstractModule {
 
     protected void bindErrorHandlers() {
         bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               GoGridErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               GoGridErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               GoGridErrorHandler.class);
+                GoGridErrorHandler.class);
+        bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+                GoGridErrorHandler.class);
+        bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+                GoGridErrorHandler.class);
     }
 
     protected void bindRetryHandlers() {

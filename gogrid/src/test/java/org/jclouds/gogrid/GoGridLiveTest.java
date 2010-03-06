@@ -20,6 +20,7 @@ package org.jclouds.gogrid;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.*;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 import org.jclouds.gogrid.options.GetImageListOptions;
@@ -28,6 +29,9 @@ import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.jsch.JschSshClient;
 import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.AfterTest;
@@ -35,6 +39,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -269,6 +276,50 @@ public class GoGridLiveTest {
             assertTrue(e.getMessage().contains("GoGridIllegalArgumentException"));
         }
 
+    }
+
+    @Test(enabled=false)
+    private void testShellAccess() throws IOException {
+        final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
+        serversToDeleteAfterTheTests.add(nameOfServer);
+
+        Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
+        Ip availableIp = Iterables.getLast(availableIps);
+
+        Server createdServer = client.getServerServices().addServer(nameOfServer,
+                "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
+                "1",
+                availableIp.getIp());
+        assertNotNull(createdServer);
+        assert serverLatestJobCompleted.apply(createdServer);
+
+        //get server by name
+        Set<Server> response = client.getServerServices().getServersByName(nameOfServer);
+        assert (response.size() == 1);
+        createdServer = Iterables.getOnlyElement(response);
+
+        Map<String, Credentials> credsMap = client.getServerServices().getServerCredentialsList();
+        Credentials instanceCredentials = credsMap.get(createdServer.getName());
+        assertNotNull(instanceCredentials);
+
+        InetSocketAddress socket = new InetSocketAddress(InetAddress.getByName(createdServer.getIp().getIp()), 22);
+
+        Predicate<InetSocketAddress> socketOpen =
+                new RetryablePredicate<InetSocketAddress>(new SocketOpen(), 180, 5, TimeUnit.SECONDS);
+
+        socketOpen.apply(socket);
+
+        SshClient sshClient =
+                new JschSshClient(socket, 60000,
+                        instanceCredentials.account, instanceCredentials.key);
+        sshClient.connect();
+        String output = sshClient.exec("df").getOutput();
+        assertTrue(output.contains("Filesystem"),
+                "The output should've contained filesystem information, but it didn't. Output: " + output);
+        sshClient.disconnect();
+
+        //delete the server
+        client.getServerServices().deleteByName(nameOfServer);
     }
 
     /**
