@@ -1,0 +1,5 @@
+service=gogrid
+driver=gogrid
+account=apikey_not_your_email
+key=shared_secret_not_your_password
+nodetag=name_of_your_server
