@@ -24,7 +24,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.*;
@@ -46,6 +45,7 @@ import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
+import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -57,11 +57,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
@@ -367,23 +365,23 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         holder.logger.debug(">> providing sizes");
 
         sizes.add(new SizeImpl("1", "1", null, null,
-                ImmutableMap.<String, String> of(), 0, 512, 0,
+                ImmutableMap.<String, String> of(), 1, 512, 28,
                 ImmutableSet.<Architecture> of(Architecture.X86_32,
                         Architecture.X86_64)));
         sizes.add(new SizeImpl("2", "2", null, null,
-                ImmutableMap.<String, String> of(), 0, 1024, 0,
+                ImmutableMap.<String, String> of(), 1, 1024, 57,
                 ImmutableSet.<Architecture> of(Architecture.X86_32,
                         Architecture.X86_64)));
         sizes.add(new SizeImpl("3", "3", null, null,
-                ImmutableMap.<String, String> of(), 0, 2048, 0,
+                ImmutableMap.<String, String> of(), 1, 2048, 113,
                 ImmutableSet.<Architecture> of(Architecture.X86_32,
                         Architecture.X86_64)));
         sizes.add(new SizeImpl("4", "4", null, null,
-                ImmutableMap.<String, String> of(), 0, 4096, 0,
+                ImmutableMap.<String, String> of(), 3, 4096, 233,
                 ImmutableSet.<Architecture> of(Architecture.X86_32,
                         Architecture.X86_64)));
         sizes.add(new SizeImpl("5", "5", null, null,
-                ImmutableMap.<String, String> of(), 0, 8192, 0,
+                ImmutableMap.<String, String> of(), 6, 8192, 462,
                 ImmutableSet.<Architecture> of(Architecture.X86_32,
                         Architecture.X86_64)));
         holder.logger.debug("<< sizes(%d)", sizes.size());
@@ -396,7 +394,8 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         protected Logger logger = Logger.NULL;
     }
 
-    public static final Pattern GOGRID_PATTERN = Pattern.compile("([a-zA-Z]*)(.*)");
+    public static final Pattern GOGRID_OS_NAME_PATTERN = Pattern.compile("([a-zA-Z]*)(.*)");
+    public static final Pattern GOGRID_OS_VERSION_PATTERN = Pattern.compile("([a-zA-Z\\s]*)(\\d(\\.)*\\d+)");
 
     @Provides
     @Singleton
@@ -408,21 +407,24 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         Set<ServerImage> allImages = sync.getImageServices().getImageList();
         for (ServerImage from : allImages) {
             OsFamily os = null;
-            Architecture arch = from.getDescription().indexOf("64") == -1 ? Architecture.X86_32
+            Architecture arch = (from.getDescription().indexOf("64") == -1 && 
+                                 from.getOs().getName().indexOf("64") == -1) ? Architecture.X86_32
                     : Architecture.X86_64;
             String osDescription;
             String version = "";
 
             osDescription = from.getOs().getName();
 
-            Matcher matcher = GOGRID_PATTERN.matcher(from.getOs().getName());
-            if (matcher.find()) {
-                try {
-                    os = OsFamily.fromValue(matcher.group(1).toLowerCase());
-                } catch (IllegalArgumentException e) {
-                    holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
-                }
+            String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(from.getOs().getName(),
+                    GOGRID_OS_NAME_PATTERN, 1);
+            try {
+                os = OsFamily.fromValue(matchedOs.toLowerCase());
+            } catch (IllegalArgumentException e) {
+                holder.logger.debug("<< didn't match os(%s)", matchedOs);
             }
+
+            version = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(from.getOs().getName(),
+                    GOGRID_OS_VERSION_PATTERN, 2);
 
             images.add(new ImageImpl(from.getName(), from.getDescription(), null, null, ImmutableMap
                     .<String, String> of(), from.getDescription(), version, os, osDescription, arch));

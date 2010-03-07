@@ -23,8 +23,20 @@
  */
 package org.jclouds.gogrid.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author Oleksiy Yarmula
  */
 public class GoGridUtils {
+
+    public static String parseStringByPatternAndGetNthMatchGroup(String stringToParse, Pattern pattern, int nthGroup) {
+        Matcher osVersionMatcher = pattern.matcher(stringToParse);
+        if (osVersionMatcher.find()) {
+            return osVersionMatcher.group(nthGroup).toLowerCase();
+        }
+        return null;
+    }
+
 }
