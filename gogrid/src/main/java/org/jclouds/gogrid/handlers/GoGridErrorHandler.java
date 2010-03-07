@@ -55,6 +55,9 @@ public class GoGridErrorHandler implements HttpErrorHandler {
         Exception exception;
         Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response.getContent());
         switch (response.getStatusCode()) {
+            case 403:
+                exception = new HttpResponseException(command, response);
+                break;
             default:
                 exception = errors != null ?
                         new GoGridResponseException(command, response, errors) :
@@ -66,7 +69,11 @@ public class GoGridErrorHandler implements HttpErrorHandler {
 
     Set<ErrorResponse> parseErrorsFromContentOrNull(InputStream content) {
         if (content != null) {
-            return errorParser.apply(content);
+            try {
+                return errorParser.apply(content);
+            } catch(/*Parsing*/Exception e) {
+                return null;
+            }
         }
         return null;
     }

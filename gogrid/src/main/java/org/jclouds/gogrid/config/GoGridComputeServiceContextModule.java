@@ -246,17 +246,29 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         };
     }
 
+    /**
+     * Finds matches to required configurations.
+     * GoGrid's documentation only specifies how much RAM one can get with
+     * different instance types. The # of cores and disk sizes are purely
+     * empyrical and aren't guaranteed.
+     * However, these are the matches found:
+     * Ram: 512MB, CPU: 1 core, HDD: 28 GB
+     * Ram: 1GB, CPU: 1 core, HDD: 57 GB
+     * Ram: 2GB, CPU: 1 core, HDD: 113 GB
+     * Ram: 4GB, CPU: 3 cores, HDD: 233 GB
+     * Ram: 8GB, CPU: 6 cores, HDD: 462 GB
+     * @return matched size
+     */
     @Singleton
     @Provides
     Function<Size, String> provideSizeToRam() {
         return new Function<Size, String>() {
             @Override
             public String apply(Size size) {
-                int ramRequired = size.getRam();
-                if(ramRequired >= 8 * 1024) return "8GB";
-                if(ramRequired >= 4 * 1024) return "4GB";
-                if(ramRequired >= 2 * 1024) return "2GB";
-                if(ramRequired >= 1024) return "1GB";
+                if(size.getRam() >= 8 * 1024 || size.getCores() >= 6 || size.getDisk() >= 450) return "8GB";
+                if(size.getRam() >= 4 * 1024 || size.getCores() >= 3 || size.getDisk() >= 230) return "4GB";
+                if(size.getRam() >= 2 * 1024 || size.getDisk() >= 110) return "2GB";
+                if(size.getRam() >= 1024 || size.getDisk() >= 55) return "1GB";
                 return "512MB"; /*smallest*/
             }
         };
