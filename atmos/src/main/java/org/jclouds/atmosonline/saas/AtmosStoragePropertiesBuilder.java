@@ -32,11 +32,12 @@ import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
  * @author Adrian Cole
  */
 public class AtmosStoragePropertiesBuilder extends PropertiesBuilder {
+   
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT,
-               "http://accesspoint.emccis.com");
+               "https://accesspoint.atmosonline.com");
       properties.setProperty(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL, "60");
       return properties;
    }

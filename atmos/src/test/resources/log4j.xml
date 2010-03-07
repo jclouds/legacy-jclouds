@@ -120,7 +120,7 @@
     <category name="jclouds.headers">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
-    </category><!--
+    </category>
 
     <category name="jclouds.wire">
         <priority value="DEBUG" />
@@ -128,7 +128,7 @@
     </category>
    
    
-    --><!-- ======================= -->
+    <!-- ======================= -->
     <!-- Setup the Root category -->
     <!-- ======================= -->
 

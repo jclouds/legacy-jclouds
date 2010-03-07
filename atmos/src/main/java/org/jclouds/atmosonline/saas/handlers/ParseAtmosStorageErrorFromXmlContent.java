@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.AtmosStorageResponseException;
 import org.jclouds.atmosonline.saas.domain.AtmosStorageError;
@@ -49,6 +50,7 @@ import com.google.common.io.Closeables;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;

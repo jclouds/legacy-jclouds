@@ -38,7 +38,7 @@ import org.jclouds.http.options.GetOptions;
  * @see <a href="https://community.emc.com/community/labs/atmos_online" />
  * @author Adrian Cole
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface AtmosStorageClient {
    /**
     * Creates a default implementation of AtmosObject
