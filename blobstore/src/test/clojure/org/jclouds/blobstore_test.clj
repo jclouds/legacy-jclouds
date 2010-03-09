@@ -1,9 +1,9 @@
 (ns org.jclouds.blobstore-test
   (:use [org.jclouds.blobstore] :reload-all)
   (:use clojure.test)
-  (:import org.jclouds.blobstore.TransientBlobStoreContextBuilder))
+  (:import org.jclouds.blobstore.BlobStoreContextFactory))
 
-(def stub-context (.buildBlobStoreContext (TransientBlobStoreContextBuilder.)))
+(def stub-context (.createContext (BlobStoreContextFactory.) "transient" "" ""))
 (def stub-blobstore (.getBlobStore stub-context))
 
 (defn clean-stub-fixture [f]
@@ -24,7 +24,7 @@
   (is (= stub-context (blobstore-context stub-blobstore))))
 
 (deftest as-blobstore-test
-  ;(is (blobstore? (blobstore "stub" "user" "password")))
+  (is (blobstore? (blobstore "transient" "user" "password")))
   (is (blobstore? (as-blobstore stub-blobstore)))
   (is (blobstore? (as-blobstore stub-context))))
 
