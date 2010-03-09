@@ -18,8 +18,9 @@ Here's a quick example of how to view blob resources in rackspace
       (pprint (blobs blobstore your_container_name)))
 
 See http://code.google.com/p/jclouds for details."
-  (:use org.jclouds.core)
-  (:import java.io.File
+  (:use [org.jclouds.core]
+        [clojure.contrib.duck-streams :only [copy]])
+  (:import [java.io File FileOutputStream OutputStream]
            [org.jclouds.blobstore
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
             domain.BlobMetadata domain.StorageMetadata domain.Blob
@@ -241,8 +242,26 @@ container, name, string -> etag
                (doto (.newBlob blobstore name)
                  (.setPayload data)))))
 
+(defmulti #^{:arglists '[[container-name name target]
+                         [blobstore container-name name target]]}
+  download-blob (fn [& args]
+                  (if (= (count args) 3)
+                    ::short-form
+                    (class (last args)))))
 
-(define-accessors StorageMetadata "blob" type id name location-id uri last-modfied)
+(defmethod download-blob ::short-form
+  [container-name name target]
+  (download-blob *blobstore* container-name name target))
+
+(defmethod download-blob OutputStream [blobstore container-name name target]
+  (let [blob (get-blob blobstore container-name name)]
+    (copy (.getContent blob) target)))
+
+(defmethod download-blob File [blobstore container-name name target]
+  (download-blob (FileOutputStream. target)))
+
+(define-accessors StorageMetadata "blob" type id name
+  location-id uri last-modfied)
 (define-accessors BlobMetadata "blob" content-type)
 
 (defn blob-etag [blob]

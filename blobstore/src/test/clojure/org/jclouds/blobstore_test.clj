@@ -1,14 +1,15 @@
 (ns org.jclouds.blobstore-test
   (:use [org.jclouds.blobstore] :reload-all)
   (:use clojure.test)
-  (:import org.jclouds.blobstore.BlobStoreContextFactory))
+  (:import [org.jclouds.blobstore BlobStoreContextFactory]
+           [java.io ByteArrayOutputStream]))
 
 (def stub-context (.createContext (BlobStoreContextFactory.) "transient" "" ""))
 (def stub-blobstore (.getBlobStore stub-context))
 
 (defn clean-stub-fixture [f]
-  (doseq [container (.list stub-blobstore)]
-    (.deleteContainer stub-blobstore (.getName container)))
+  (doseq [container (containers)]
+    (delete-container (.getName container)))
   (f))
 
 (use-fixtures :each clean-stub-fixture)
@@ -63,7 +64,8 @@
   (is (create-blob stub-blobstore "container" "dir/blob2" "blob2"))
   (is (= 3 (count (list-container stub-blobstore "container"))))
   (is (= 4 (count (list-container stub-blobstore "container" :recursive))))
-  (is (= 1 (count (list-container stub-blobstore "container" :in-directory "dir")))))
+  (is (= 1 (count (list-container stub-blobstore "container"
+                                  :in-directory "dir")))))
 
 (deftest list-container-with-blobstore-test
   (with-blobstore [stub-blobstore]
@@ -79,4 +81,16 @@
     (is (= 4 (count (list-container "container" :recursive))))
     (is (= 1 (count (list-container "container" :in-directory "dir"))))))
 
+(deftest download-blob-test
+  (with-blobstore [stub-blobstore]
+    (let [name "test"
+          container-name "test-container"
+          data "test content"
+          baos (ByteArrayOutputStream.)]
+      (create-container container-name)
+      (create-blob container-name name data)
+      (download-blob container-name name baos)
+      (is (= data (.toString baos))))))
+
 ;; TODO: more tests involving blob-specific functions
+
