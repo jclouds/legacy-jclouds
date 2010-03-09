@@ -7,9 +7,8 @@
 (def stub-blobstore (.getBlobStore stub-context))
 
 (defn clean-stub-fixture [f]
-  (doall
-   (map
-    #(.deleteContainer stub-blobstore (.getName %)) (.list stub-blobstore)))
+  (doseq [container (.list stub-blobstore)]
+    (.deleteContainer stub-blobstore (.getName container)))
   (f))
 
 (use-fixtures :each clean-stub-fixture)
@@ -32,7 +31,7 @@
   (with-blobstore [stub-blobstore]
     (is (= stub-blobstore *blobstore*))))
 
-(deftest create-container-test
+(deftest create-existing-container-test
   (is (not (container-exists? stub-blobstore "")))
   (with-blobstore [stub-blobstore]
     (is (not (container-exists? ""))))
@@ -79,3 +78,5 @@
     (is (= 3 (count (list-container "container"))))
     (is (= 4 (count (list-container "container" :recursive))))
     (is (= 1 (count (list-container "container" :in-directory "dir"))))))
+
+;; TODO: more tests involving blob-specific functions
