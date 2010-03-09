@@ -34,6 +34,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link CloudFilesContextModule}; requires {@link CloudFilesAsyncClient} bound.
@@ -45,7 +46,10 @@ public class CloudFilesContextModule extends AbstractModule {
    @Override
    protected void configure() {
       // for converters to work.
-      install(new BlobStoreObjectModule());
+      install(new BlobStoreObjectModule<CloudFilesAsyncClient, CloudFilesClient>(
+               new TypeLiteral<CloudFilesAsyncClient>() {
+               }, new TypeLiteral<CloudFilesClient>() {
+               }));
       install(new CFObjectModule());
    }
 

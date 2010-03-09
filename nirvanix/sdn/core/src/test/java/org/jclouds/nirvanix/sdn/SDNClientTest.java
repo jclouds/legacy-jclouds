@@ -28,8 +28,8 @@ import java.util.Map;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
@@ -182,7 +182,10 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            install(new BlobStoreObjectModule());
+            install(new BlobStoreObjectModule<SDNAsyncClient, SDNClient>(
+                     new TypeLiteral<SDNAsyncClient>() {
+                     }, new TypeLiteral<SDNClient>() {
+                     }));
             bind(URI.class).annotatedWith(SDN.class).toInstance(URI.create("http://stub:8080"));
             bind(String.class).annotatedWith(SessionToken.class).toInstance("sessiontoken");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

@@ -32,6 +32,7 @@ import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlob;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -57,12 +58,12 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AtmosBlobStore(BlobStoreUtils blobUtils, AtmosStorageClient sync, ObjectToBlob object2Blob,
-            ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
+   AtmosBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, AtmosStorageClient sync,
+            ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
             EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(blobUtils);
+      super(context, blobUtils);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,

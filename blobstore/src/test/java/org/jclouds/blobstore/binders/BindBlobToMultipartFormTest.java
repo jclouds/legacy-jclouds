@@ -27,14 +27,12 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
+import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
-
-import com.google.inject.Guice;
 
 /**
  * Tests parsing of a request
@@ -50,7 +48,7 @@ public class BindBlobToMultipartFormTest {
    public static final Blob TEST_BLOB;
 
    static {
-      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
+      blobProvider = new StubBlobStoreContextBuilder().buildInjector().getInstance(
                Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
       addData(BOUNDRY, "hello", builder);
@@ -71,7 +69,8 @@ public class BindBlobToMultipartFormTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, TEST_BLOB);
 
-      assertEquals(Utils.toStringAndClose((InputStream) request.getPayload().getRawContent()), EXPECTS);
+      assertEquals(Utils.toStringAndClose((InputStream) request.getPayload().getRawContent()),
+               EXPECTS);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 131 + "");
 
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),

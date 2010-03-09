@@ -28,6 +28,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -72,14 +73,14 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   CloudFilesAsyncBlobStore(BlobStoreUtils blobUtils,
+   CloudFilesAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, CloudFilesClient sync,
             CloudFilesAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
             BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(blobUtils, service);
+      super(context, blobUtils, service);
       this.sync = sync;
       this.async = async;
       this.container2ResourceMd = container2ResourceMd;

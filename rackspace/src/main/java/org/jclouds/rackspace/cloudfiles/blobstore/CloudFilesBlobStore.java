@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -61,13 +62,13 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   CloudFilesBlobStore(BlobStoreUtils blobUtils, CloudFilesClient sync,
+   CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, CloudFilesClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
             BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(blobUtils);
+      super(context, blobUtils);
       this.sync = sync;
       this.container2ResourceMd = container2ResourceMd;
       this.container2ContainerListOptions = container2ContainerListOptions;

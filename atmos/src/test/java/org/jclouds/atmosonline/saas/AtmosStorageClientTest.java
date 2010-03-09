@@ -289,7 +289,10 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
       return new AbstractModule() {
          @Override
          protected void configure() {
-            install(new BlobStoreObjectModule());
+            install(new BlobStoreObjectModule<AtmosStorageAsyncClient, AtmosStorageClient>(
+                     new TypeLiteral<AtmosStorageAsyncClient>() {
+                     }, new TypeLiteral<AtmosStorageClient>() {
+                     }));
             install(new AtmosObjectModule());
             bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
                      URI.create("http://accesspoint.emccis.com"));

@@ -35,6 +35,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 @RequiresHttp
 public class AtmosStorageContextModule extends AbstractModule {
@@ -42,7 +43,10 @@ public class AtmosStorageContextModule extends AbstractModule {
    @Override
    protected void configure() {
       // for converters to work.
-      install(new BlobStoreObjectModule());
+      install(new BlobStoreObjectModule<AtmosStorageAsyncClient, AtmosStorageClient>(
+               new TypeLiteral<AtmosStorageAsyncClient>() {
+               }, new TypeLiteral<AtmosStorageClient>() {
+               }));
       install(new AtmosObjectModule());
    }
 

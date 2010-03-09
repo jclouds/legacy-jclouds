@@ -42,6 +42,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
@@ -78,6 +79,8 @@ public class BaseComputeService implements ComputeService {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
+   protected final ComputeServiceContext context;
    protected final Provider<Map<String, ? extends Image>> images;
    protected final Provider<Map<String, ? extends Size>> sizes;
    protected final Provider<Map<String, ? extends Location>> locations;
@@ -119,7 +122,8 @@ public class BaseComputeService implements ComputeService {
    };
 
    @Inject
-   protected BaseComputeService(Provider<Map<String, ? extends Image>> images,
+   protected BaseComputeService(ComputeServiceContext context,
+            Provider<Map<String, ? extends Image>> images,
             Provider<Map<String, ? extends Size>> sizes,
             Provider<Map<String, ? extends Location>> locations,
             ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
@@ -127,17 +131,26 @@ public class BaseComputeService implements ComputeService {
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.images = images;
-      this.sizes = sizes;
-      this.locations = locations;
-      this.listNodesStrategy = listNodesStrategy;
-      this.getNodeMetadataStrategy = getNodeMetadataStrategy;
-      this.runNodesAndAddToSetStrategy = runNodesAndAddToSetStrategy;
-      this.rebootNodeStrategy = rebootNodeStrategy;
-      this.destroyNodeStrategy = destroyNodeStrategy;
-      this.templateBuilderProvider = templateBuilderProvider;
-      this.utils = utils;
-      this.executor = executor;
+      this.context = checkNotNull(context, "context");
+      this.images = checkNotNull(images, "images");
+      this.sizes = checkNotNull(sizes, "sizes");
+      this.locations = checkNotNull(locations, "locations");
+      this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
+      this.getNodeMetadataStrategy = checkNotNull(getNodeMetadataStrategy,
+               "getNodeMetadataStrategy");
+      this.runNodesAndAddToSetStrategy = checkNotNull(runNodesAndAddToSetStrategy,
+               "runNodesAndAddToSetStrategy");
+      this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
+      this.destroyNodeStrategy = checkNotNull(destroyNodeStrategy, "destroyNodeStrategy");
+      this.templateBuilderProvider = checkNotNull(templateBuilderProvider,
+               "templateBuilderProvider");
+      this.utils = checkNotNull(utils, "utils");
+      this.executor = checkNotNull(executor, "executor");
+   }
+
+   @Override
+   public ComputeServiceContext getContext() {
+      return context;
    }
 
    @Override

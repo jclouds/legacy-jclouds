@@ -18,8 +18,6 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.config;
 
-import javax.inject.Singleton;
-
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
@@ -27,17 +25,15 @@ import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.atmosonline.saas.config.AtmosStorageContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
 
-import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link AtmosBlobStoreContext}; requires {@link AtmosAsyncBlobStore} bound.
@@ -50,19 +46,14 @@ public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
    protected void configure() {
       super.configure();
       install(new BlobStoreMapModule());
-      bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).asEagerSingleton();
-      bind(BlobStore.class).to(AtmosBlobStore.class).asEagerSingleton();
+      bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
+      bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStore.class).to(AtmosBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class)
+               .to(
+                        new TypeLiteral<BlobStoreContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>>() {
+                        }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
-   }
-
-   @Provides
-   @Singleton
-   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            AsyncBlobStore asynchBlobStore, BlobStore blobStore,
-            RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context) {
-      return new BlobStoreContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>(blobMapFactory,
-               inputStreamMapFactory, asynchBlobStore, blobStore, context);
    }
 
 }

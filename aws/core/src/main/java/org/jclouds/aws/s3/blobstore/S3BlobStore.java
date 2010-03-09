@@ -36,6 +36,7 @@ import org.jclouds.aws.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -68,12 +69,13 @@ public class S3BlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   S3BlobStore(BlobStoreUtils blobUtils, S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
+   S3BlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, S3Client sync,
+            BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd) {
-      super(blobUtils);
+      super(context, blobUtils);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");

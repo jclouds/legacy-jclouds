@@ -20,13 +20,10 @@ package org.jclouds.blobstore;
 
 import java.util.Properties;
 
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.rest.RestContextBuilder;
 
-import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 /**
  * @author Adrian Cole
@@ -49,9 +46,6 @@ public abstract class BlobStoreContextBuilder<A, S> extends RestContextBuilder<A
    }
 
    public BlobStoreContext buildBlobStoreContext() {
-      // need the generic type information
-      return (BlobStoreContext) buildInjector().getInstance(
-               Key.get(Types.newParameterizedType(BlobStoreContextImpl.class, asyncClientType
-                        .getType(), syncClientType.getType())));
+      return buildInjector().getInstance(BlobStoreContext.class);
    }
 }

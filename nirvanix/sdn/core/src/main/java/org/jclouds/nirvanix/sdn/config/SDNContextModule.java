@@ -35,13 +35,17 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 @RequiresHttp
 public class SDNContextModule extends AbstractModule {
    @Override
    protected void configure() {
       // for converters to work.
-      install(new BlobStoreObjectModule());
+      install(new BlobStoreObjectModule<SDNAsyncClient, SDNClient>(
+               new TypeLiteral<SDNAsyncClient>() {
+               }, new TypeLiteral<SDNClient>() {
+               }));
    }
 
    @Provides

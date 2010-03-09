@@ -34,6 +34,7 @@ import org.jclouds.azure.storage.blob.blobstore.functions.ListOptionsToListBlobs
 import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -63,13 +64,13 @@ public class AzureBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureBlobStore(BlobStoreUtils blobUtils, AzureBlobClient sync,
+   AzureBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, AzureBlobClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList,
             AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
             BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(blobUtils);
+      super(context, blobUtils);
       this.sync = checkNotNull(sync, "sync");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,

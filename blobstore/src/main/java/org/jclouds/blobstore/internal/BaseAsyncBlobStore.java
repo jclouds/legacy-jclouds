@@ -32,6 +32,7 @@ import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
@@ -51,14 +52,21 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
+   protected final BlobStoreContext context;
    protected final BlobStoreUtils blobUtils;
    protected final ExecutorService service;
 
    @Inject
-   protected BaseAsyncBlobStore(BlobStoreUtils blobUtils,
+   protected BaseAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
+      this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
+   }
+
+   @Override
+   public BlobStoreContext getContext() {
+      return context;
    }
 
    /**

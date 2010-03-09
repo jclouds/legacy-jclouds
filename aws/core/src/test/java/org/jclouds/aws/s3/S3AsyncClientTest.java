@@ -540,7 +540,10 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            install(new BlobStoreObjectModule());
+            install(new BlobStoreObjectModule<S3AsyncClient, S3Client>(
+                     new TypeLiteral<S3AsyncClient>() {
+                     }, new TypeLiteral<S3Client>() {
+                     }));
             install(new S3ObjectModule());
             bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("http://stub:8080"));
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(

@@ -18,24 +18,20 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.config;
 
-import javax.inject.Singleton;
-
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
-import org.jclouds.rest.RestContext;
 
-import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link CloudFilesBlobStoreContext}; requires {@link CloudFilesAsyncBlobStore}
@@ -49,18 +45,12 @@ public class CloudFilesBlobStoreContextModule extends CloudFilesContextModule {
    protected void configure() {
       super.configure();
       install(new BlobStoreMapModule());
-      bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).asEagerSingleton();
-      bind(BlobStore.class).to(CloudFilesBlobStore.class).asEagerSingleton();
-   }
-
-   @Provides
-   @Singleton
-   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            CloudFilesAsyncBlobStore asynchBlobStore, CloudFilesBlobStore blobStore,
-            RestContext<CloudFilesAsyncClient, CloudFilesClient> context) {
-      return new BlobStoreContextImpl<CloudFilesAsyncClient, CloudFilesClient>(blobMapFactory,
-               inputStreamMapFactory, asynchBlobStore, blobStore, context);
+      bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+      bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStore.class).to(CloudFilesBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(
+               new TypeLiteral<BlobStoreContextImpl<CloudFilesAsyncClient, CloudFilesClient>>() {
+               }).in(Scopes.SINGLETON);
    }
 
 }

@@ -18,24 +18,20 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
-import javax.inject.Singleton;
-
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.S3BlobStore;
 import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
 
-import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link S3BlobStoreContext}; requires {@link S3AsyncBlobStore} bound.
@@ -48,18 +44,11 @@ public class S3BlobStoreContextModule extends S3ContextModule {
    protected void configure() {
       super.configure();
       install(new BlobStoreMapModule());
-      bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).asEagerSingleton();
-      bind(BlobStore.class).to(S3BlobStore.class).asEagerSingleton();
+      bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
+      bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(
+               new TypeLiteral<BlobStoreContextImpl<S3AsyncClient, S3Client>>() {
+               }).in(Scopes.SINGLETON);
    }
-
-   @Provides
-   @Singleton
-   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            S3AsyncBlobStore asynchBlobStore, S3BlobStore blobStore,
-            RestContext<S3AsyncClient, S3Client> context) {
-      return new BlobStoreContextImpl<S3AsyncClient, S3Client>(blobMapFactory,
-               inputStreamMapFactory, asynchBlobStore, blobStore, context);
-   }
-
 }

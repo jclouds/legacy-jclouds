@@ -81,6 +81,7 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -180,9 +181,10 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
-                  template.getImage().getId(), Double.valueOf(template.getSize().getCores()).intValue(), template.getSize()
-                           .getRam(), template.getSize().getDisk() * 1024 * 1024l, ImmutableMap
-                           .<String, String> of(), template.getOptions().getInboundPorts());
+                  template.getImage().getId(), Double.valueOf(template.getSize().getCores())
+                           .intValue(), template.getSize().getRam(),
+                  template.getSize().getDisk() * 1024 * 1024l, ImmutableMap.<String, String> of(),
+                  template.getOptions().getInboundPorts());
          VApp vApp = client.getVApp(metaMap.get("id"));
          return newCreateNodeResponse(tag, template, metaMap, vApp);
       }
@@ -202,6 +204,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Singleton
    public static class VCloudListNodesStrategy extends VCloudGetNodeMetadata implements
             ListNodesStrategy {
+      @Resource
+      protected Logger logger = Logger.NULL;
 
       @Inject
       protected VCloudListNodesStrategy(VCloudClient client, VCloudComputeClient computeClient,
@@ -215,11 +219,25 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-                  nodes.add(getNodeMetadataByIdInVDC(vdc.getId(), resource.getId()));
+                  addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
                }
             }
          }
          return nodes;
+      }
+
+      @VisibleForTesting
+      void addVAppToSetRetryingIfNotYetPresent(Set<ComputeMetadata> nodes, NamedResource vdc,
+               NamedResource resource) {
+         NodeMetadata node = null;
+         while (node == null) {
+            try {
+               node = getNodeMetadataByIdInVDC(vdc.getId(), resource.getId());
+            } catch (NullPointerException e) {
+               logger.warn("vApp %s not yet present in vdc %s", resource.getId(), vdc.getId());
+            }
+         }
+         nodes.add(node);
       }
 
    }

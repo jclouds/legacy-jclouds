@@ -119,7 +119,8 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), null);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
    }
 
@@ -135,7 +136,9 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
                ContainerHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), MapHttp4xxCodesToExceptions.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testGetFileInfo() throws SecurityException, NoSuchMethodException {
@@ -150,7 +153,8 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
                FileHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnNullOnKeyNotFound.class);
    }
 
@@ -220,7 +224,8 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), null);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
    }
 
@@ -238,7 +243,9 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals("bar", httpMethod.getPayload().getRawContent());
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), MapHttp4xxCodesToExceptions.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                CloseContentAndReturn.class);
    }
@@ -253,7 +260,9 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost/pow/metadata/newkey HTTP/1.1");
 
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), MapHttp4xxCodesToExceptions.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               MapHttp4xxCodesToExceptions.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                AddMetadataItemIntoMap.class);
    }
@@ -285,7 +294,10 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
          @Override
          protected void configure() {
             install(new PCSObjectModule());
-            install(new BlobStoreObjectModule());
+            install(new BlobStoreObjectModule<PCSAsyncClient, PCSClient>(
+                     new TypeLiteral<PCSAsyncClient>() {
+                     }, new TypeLiteral<PCSClient>() {
+                     }));
             bind(URI.class).annotatedWith(PCS.class)
                      .toInstance(URI.create("http://localhost:8080"));
             bind(URI.class).annotatedWith(RootContainer.class).toInstance(

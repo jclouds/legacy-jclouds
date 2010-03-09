@@ -34,6 +34,10 @@ import org.jclouds.blobstore.options.ListContainerOptions;
  * @see BlobStoreContextFactory
  */
 public interface BlobStore {
+   /**
+    * @return a reference to the context that created this BlobStore.
+    */
+   BlobStoreContext getContext();
 
    /**
     * creates a new blob with the specified name.

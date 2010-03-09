@@ -64,9 +64,13 @@ public class S3BlobStoreModuleTest {
    }
 
    @Test
-   void testContextImpl() {
-      BlobStoreContext context = createInjector().getInstance(BlobStoreContext.class);
+   void testContextImplAndSingleton() {
+      Injector i = createInjector();
+      BlobStoreContext context = i.getInstance(BlobStoreContext.class);
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
+      assertEquals(context, i.getInstance(BlobStoreContext.class));
+      assertEquals(context.getAsyncBlobStore().getContext().getAsyncBlobStore(), context.getAsyncBlobStore());
+      assertEquals(context.getBlobStore().getContext().getBlobStore(), context.getBlobStore());
    }
 
 }

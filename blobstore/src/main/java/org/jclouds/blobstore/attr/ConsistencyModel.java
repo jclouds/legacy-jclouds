@@ -18,18 +18,21 @@
  */
 package org.jclouds.blobstore.attr;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 /**
+ * Represents the ways data can become consistent in distributed systems.
+ * 
  * @author Adrian Cole
+ * 
  */
-@Target( { TYPE, METHOD })
-@Retention(RUNTIME)
-public @interface ConsistencyModel {
-   ConsistencyModels value();
+public enum ConsistencyModel {
+
+   /**
+    * Eventually, all updates will propagate through the system. However, reads do not always return
+    * the latest write.
+    */
+   EVENTUAL,
+   /**
+    * Reads return the latest write.
+    */
+   STRICT
 }

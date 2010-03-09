@@ -29,13 +29,23 @@ import org.jclouds.encryption.EncryptionService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the domain object mappings needed for all Blob implementations
  * 
  * @author Adrian Cole
  */
-public class BlobStoreObjectModule extends AbstractModule {
+public class BlobStoreObjectModule<A, S> extends AbstractModule {
+   protected final TypeLiteral<A> asyncClientType;
+   protected final TypeLiteral<S> syncClientType;
+
+   public BlobStoreObjectModule(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType) {
+      // type erasure makes looking up a concrete impl that has externally defined type variables a
+      // pain
+      this.asyncClientType = asyncClientType;
+      this.syncClientType = syncClientType;
+   }
 
    /**
     * explicit factories are created here as it has been shown that Assisted Inject is extremely

@@ -62,8 +62,6 @@ import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.aws.s3.xml.LocationConstraintHandler;
 import org.jclouds.aws.s3.xml.PayerHandler;
 import org.jclouds.blobstore.attr.BlobScope;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
@@ -104,7 +102,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(RequestAuthorizeSignature.class)
 @Endpoint(S3.class)
 @BlobScope(CONTAINER)
-@ConsistencyModel(ConsistencyModels.EVENTUAL)
 public interface S3AsyncClient {
 
    /**

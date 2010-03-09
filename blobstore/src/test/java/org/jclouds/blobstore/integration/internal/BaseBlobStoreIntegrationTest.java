@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.attr.ConsistencyModels;
+import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
@@ -205,7 +205,7 @@ public class BaseBlobStoreIntegrationTest {
     */
    protected static void assertConsistencyAware(BlobStoreContext context, Runnable assertion)
             throws InterruptedException {
-      if (context.getConsistencyModel() == ConsistencyModels.STRICT) {
+      if (context.getConsistencyModel() == ConsistencyModel.STRICT) {
          assertion.run();
          return;
       } else {
@@ -232,7 +232,7 @@ public class BaseBlobStoreIntegrationTest {
    protected static void createContainerAndEnsureEmpty(BlobStoreContext context,
             final String containerName) throws InterruptedException {
       context.getBlobStore().createContainerInLocation("default", containerName);
-      if (context.getConsistencyModel() == ConsistencyModels.EVENTUAL)
+      if (context.getConsistencyModel() == ConsistencyModel.EVENTUAL)
          Thread.sleep(1000);
       context.getBlobStore().clearContainer(containerName);
    }

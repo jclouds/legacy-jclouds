@@ -35,6 +35,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 @RequiresHttp
 public class AzureBlobContextModule extends AbstractModule {
@@ -42,8 +43,10 @@ public class AzureBlobContextModule extends AbstractModule {
    @Override
    protected void configure() {
       // for converters
-      install(new BlobStoreObjectModule());
-      install(new AzureBlobModule());
+      install(new BlobStoreObjectModule<AzureBlobAsyncClient, AzureBlobClient>(
+               new TypeLiteral<AzureBlobAsyncClient>() {
+               }, new TypeLiteral<AzureBlobClient>() {
+               }));      install(new AzureBlobModule());
    }
 
    @Provides

@@ -40,15 +40,13 @@ import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHead
 import org.jclouds.azure.storage.blob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
+import org.jclouds.azure.storage.blob.predicates.validators.ContainerNameValidator;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.blob.xml.ContainerNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.blob.predicates.validators.ContainerNameValidator;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
@@ -57,7 +55,17 @@ import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.ParamValidators;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -77,7 +85,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
 @Endpoint(AzureBlob.class)
-@ConsistencyModel(ConsistencyModels.STRICT)
 public interface AzureBlobAsyncClient {
 
    public org.jclouds.azure.storage.blob.domain.AzureBlob newBlob();

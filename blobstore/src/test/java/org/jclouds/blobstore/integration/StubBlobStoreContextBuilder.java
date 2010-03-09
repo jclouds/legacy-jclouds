@@ -27,11 +27,14 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
+import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.lifecycle.Closer;
@@ -41,6 +44,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -69,13 +73,18 @@ public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<AsyncBl
 
    @Override
    public void addContextModule(List<Module> modules) {
-      modules.add(new BlobStoreObjectModule());
+      modules.add(new BlobStoreObjectModule<AsyncBlobStore, BlobStore>(
+               new TypeLiteral<AsyncBlobStore>() {
+               }, new TypeLiteral<BlobStore>() {
+               }));
       modules.add(new BlobStoreMapModule());
       modules.add(new AbstractModule() {
 
          @Override
          protected void configure() {
             bind(AsyncBlobStore.class).to(StubAsyncBlobStore.class).asEagerSingleton();
+            bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+            bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<AsyncBlobStore, BlobStore>>(){}).in(Scopes.SINGLETON);
          }
 
          @SuppressWarnings("unused")

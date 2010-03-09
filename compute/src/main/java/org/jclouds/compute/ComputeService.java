@@ -39,6 +39,12 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BaseComputeService.class)
 public interface ComputeService {
+
+   /**
+    * @return a reference to the context that created this ComputeService.
+    */
+   ComputeServiceContext getContext();
+
    /**
     * Makes a new template builder for this service
     */

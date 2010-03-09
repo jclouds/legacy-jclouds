@@ -43,6 +43,7 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -76,14 +77,14 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    private final ObjectToBlobMetadata object2BlobMd;
 
    @Inject
-   S3AsyncBlobStore(BlobStoreUtils blobUtils,
+   S3AsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, S3AsyncClient async,
             S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd) {
-      super(blobUtils, service);
+      super(context, blobUtils, service);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.async = checkNotNull(async, "async");
       this.sync = checkNotNull(sync, "sync");

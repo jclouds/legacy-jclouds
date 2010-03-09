@@ -33,6 +33,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see AsyncBlobStore
  */
 public interface AsyncBlobStore {
+   /**
+    * @see BlobStore#getContext
+    */
+   BlobStoreContext getContext();
 
    /**
     * @see BlobStore#newBlob

@@ -42,6 +42,7 @@ import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -72,14 +73,14 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureAsyncBlobStore(BlobStoreUtils blobUtils,
+   AzureAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
             AzureBlobAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList,
             AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
             BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(blobUtils, service);
+      super(context, blobUtils, service);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
@@ -224,14 +225,15 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(async.getBlobProperties(container, key), new Function<BlobProperties, BlobMetadata>() {
+      return compose(async.getBlobProperties(container, key),
+               new Function<BlobProperties, BlobMetadata>() {
 
-         @Override
-         public BlobMetadata apply(BlobProperties from) {
-            return blob2BlobMd.apply(from);
-         }
+                  @Override
+                  public BlobMetadata apply(BlobProperties from) {
+                     return blob2BlobMd.apply(from);
+                  }
 
-      }, service);
+               }, service);
    }
 
    @Override

@@ -18,8 +18,6 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.config;
 
-import javax.inject.Singleton;
-
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.AzureAsyncBlobStore;
@@ -27,17 +25,15 @@ import org.jclouds.azure.storage.blob.blobstore.AzureBlobStore;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
 
-import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link AzureBlobStoreContext}; requires {@link AzureAsyncBlobStore} bound.
@@ -50,19 +46,13 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
    protected void configure() {
       super.configure();
       install(new BlobStoreMapModule());
-      bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).asEagerSingleton();
-      bind(BlobStore.class).to(AzureBlobStore.class).asEagerSingleton();
+      bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+      bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStore.class).to(AzureBlobStore.class).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(
+               new TypeLiteral<BlobStoreContextImpl<AzureBlobAsyncClient, AzureBlobClient>>() {
+               }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
-   }
-
-   @Provides
-   @Singleton
-   BlobStoreContext provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
-            AzureAsyncBlobStore asynchBlobStore, AzureBlobStore blobStore,
-            RestContext<AzureBlobAsyncClient, AzureBlobClient> context) {
-      return new BlobStoreContextImpl<AzureBlobAsyncClient, AzureBlobClient>(blobMapFactory,
-               inputStreamMapFactory, asynchBlobStore, blobStore, context);
    }
 
 }

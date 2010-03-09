@@ -40,6 +40,7 @@ import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -70,14 +71,14 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AtmosAsyncBlobStore(BlobStoreUtils blobUtils,
+   AtmosAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
             AtmosStorageAsyncClient async, AtmosStorageClient sync, ObjectToBlob object2Blob,
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
             EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(blobUtils, service);
+      super(context, blobUtils, service);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.async = checkNotNull(async, "async");

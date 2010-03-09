@@ -21,6 +21,7 @@ package org.jclouds.blobstore.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
@@ -28,72 +29,66 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.rest.RestContext;
 
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class BlobStoreContextImpl<X, Y> implements BlobStoreContext {
    private final BlobMap.Factory blobMapFactory;
    private final InputStreamMap.Factory inputStreamMapFactory;
    private final AsyncBlobStore ablobStore;
    private final BlobStore blobStore;
-   private final ConsistencyModels consistencyModel;
    private final RestContext<X, Y> providerSpecificContext;
+   private final ConsistencyModel consistencyModel;
 
    @Inject
-   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory,
+   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore,
             BlobStore blobStore, RestContext<X, Y> providerSpecificContext) {
       this.providerSpecificContext = providerSpecificContext;
-      Class<?> type;
-      if (providerSpecificContext.getAsyncApi().getClass().isAnnotationPresent(
-               ConsistencyModel.class)) {
-         type = providerSpecificContext.getAsyncApi().getClass();
-      } else if (providerSpecificContext.getAsyncApi().getClass().getInterfaces().length > 0
-               && providerSpecificContext.getAsyncApi().getClass().getInterfaces()[0]
-                        .isAnnotationPresent(ConsistencyModel.class)) {
-         type = providerSpecificContext.getAsyncApi().getClass().getInterfaces()[0];
-      } else {
-         throw new IllegalStateException("@ConsistencyModel needed on "
-                  + providerSpecificContext.getAsyncApi().getClass());
-      }
-      this.consistencyModel = type.getAnnotation(ConsistencyModel.class).value();
+      this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");
       this.ablobStore = checkNotNull(ablobStore, "ablobStore");
       this.blobStore = checkNotNull(blobStore, "blobStore");
    }
 
+   @Override
+   public ConsistencyModel getConsistencyModel() {
+      return consistencyModel;
+   }
+
+   @Override
    public BlobMap createBlobMap(String container, ListContainerOptions options) {
       return blobMapFactory.create(container, options);
    }
 
+   @Override
    public BlobMap createBlobMap(String container) {
       return blobMapFactory.create(container, ListContainerOptions.NONE);
    }
 
+   @Override
    public InputStreamMap createInputStreamMap(String container, ListContainerOptions options) {
       return inputStreamMapFactory.create(container, options);
    }
 
+   @Override
    public InputStreamMap createInputStreamMap(String container) {
       return inputStreamMapFactory.create(container, ListContainerOptions.NONE);
    }
 
+   @Override
    public BlobStore getBlobStore() {
       return blobStore;
    }
 
+   @Override
    public AsyncBlobStore getAsyncBlobStore() {
       return ablobStore;
-   }
-
-   @Override
-   public ConsistencyModels getConsistencyModel() {
-      return consistencyModel;
    }
 
    @SuppressWarnings("unchecked")

@@ -45,8 +45,6 @@ import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.azure.storage.options.ListOptions;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
@@ -63,7 +61,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@ConsistencyModel(ConsistencyModels.STRICT)
 public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    private final StubAsyncBlobStore blobStore;

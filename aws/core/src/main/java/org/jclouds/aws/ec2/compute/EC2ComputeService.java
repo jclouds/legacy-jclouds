@@ -34,6 +34,7 @@ import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
 import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -63,7 +64,8 @@ public class EC2ComputeService extends BaseComputeService {
    protected final Predicate<RunningInstance> instanceStateTerminated;
 
    @Inject
-   protected EC2ComputeService(Provider<Map<String, ? extends Image>> images,
+   protected EC2ComputeService(ComputeServiceContext context,
+            Provider<Map<String, ? extends Image>> images,
             Provider<Map<String, ? extends Size>> sizes,
             Provider<Map<String, ? extends Location>> locations,
             ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
@@ -75,7 +77,7 @@ public class EC2ComputeService extends BaseComputeService {
             Map<RegionTag, KeyPairCredentials> credentialsMap,
             Map<PortsRegionTag, String> securityGroupMap,
             @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated) {
-      super(images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
+      super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                templateBuilderProvider, utils, executor);
       this.ec2Client = ec2Client;

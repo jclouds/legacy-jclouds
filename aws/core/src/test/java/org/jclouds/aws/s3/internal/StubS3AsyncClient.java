@@ -59,8 +59,6 @@ import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -82,7 +80,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * @author James Murty
  */
-@ConsistencyModel(ConsistencyModels.STRICT)
 public class StubS3AsyncClient implements S3AsyncClient {
    private final DateService dateService;
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;

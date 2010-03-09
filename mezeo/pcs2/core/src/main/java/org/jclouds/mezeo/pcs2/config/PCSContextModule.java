@@ -34,6 +34,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the PCS connection, including logging and http transport.
@@ -43,7 +44,10 @@ import com.google.inject.Provides;
 public class PCSContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      install(new BlobStoreObjectModule());
+      install(new BlobStoreObjectModule<PCSAsyncClient, PCSClient>(
+               new TypeLiteral<PCSAsyncClient>() {
+               }, new TypeLiteral<PCSClient>() {
+               }));
       install(new PCSObjectModule());
    }
 

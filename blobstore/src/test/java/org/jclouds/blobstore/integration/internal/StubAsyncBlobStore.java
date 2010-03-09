@@ -50,10 +50,9 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -96,7 +95,6 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * @author James Murty
  */
-@ConsistencyModel(ConsistencyModels.STRICT)
 public class StubAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
@@ -107,13 +105,14 @@ public class StubAsyncBlobStore extends BaseAsyncBlobStore {
    protected final Factory blobFactory;
 
    @Inject
-   protected StubAsyncBlobStore(DateService dateService, EncryptionService encryptionService,
+   protected StubAsyncBlobStore(BlobStoreContext context, DateService dateService,
+            EncryptionService encryptionService,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory,
             BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      super(blobUtils, service);
+      super(context, blobUtils, service);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.encryptionService = encryptionService;

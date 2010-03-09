@@ -34,6 +34,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link S3ContextModule}; requires {@link S3AsyncClient} bound.
@@ -45,7 +46,9 @@ public class S3ContextModule extends AbstractModule {
    @Override
    protected void configure() {
       // for converters
-      install(new BlobStoreObjectModule());
+      install(new BlobStoreObjectModule<S3AsyncClient, S3Client>(new TypeLiteral<S3AsyncClient>() {
+      }, new TypeLiteral<S3Client>() {
+      }));
       install(new S3ObjectModule());
    }
 

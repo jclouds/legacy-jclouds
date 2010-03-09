@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.ListableMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -47,7 +48,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseBlobMap<V> implements Map<String, V> {
+public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
    protected final BlobStore blobstore;
    protected final String containerName;
    protected final Function<String, String> prefixer;

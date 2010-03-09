@@ -32,8 +32,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
@@ -92,7 +90,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(CloudFiles.class)
-@ConsistencyModel(ConsistencyModels.STRICT)
 public interface CloudFilesAsyncClient {
 
    CFObject newCFObject();
@@ -209,8 +206,8 @@ public interface CloudFilesAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
    @Path("{container}")
-   ListenableFuture<PageSet<ObjectInfo>> listObjects(
-            @PathParam("container") String container, ListContainerOptions... options);
+   ListenableFuture<PageSet<ObjectInfo>> listObjects(@PathParam("container") String container,
+            ListContainerOptions... options);
 
    /**
     * @see CloudFilesClient#containerExists

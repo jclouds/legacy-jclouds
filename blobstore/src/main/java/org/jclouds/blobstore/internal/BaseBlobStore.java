@@ -24,6 +24,7 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
@@ -41,11 +42,18 @@ import com.google.common.base.Supplier;
  */
 public abstract class BaseBlobStore implements BlobStore {
 
+   protected final BlobStoreContext context;
    protected final BlobStoreUtils blobUtils;
 
    @Inject
-   protected BaseBlobStore(BlobStoreUtils blobUtils) {
+   protected BaseBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils) {
+      this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
+   }
+
+   @Override
+   public BlobStoreContext getContext() {
+      return context;
    }
 
    /**
