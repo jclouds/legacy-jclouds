@@ -71,18 +71,6 @@ Options can also be specified for extension modules
      ~@body))
 
 (defn- parse-args
-  "Takes a seq of 'ssh' arguments and returns a map of option keywords
-  to option values."
-  [args]
-  (loop [[arg :as args] args
-         opts {:cmd [] :out "UTF-8"}]
-    (if-not args
-      opts
-      (if (keyword? arg)
-        (recur (nnext args) (assoc opts arg (second args)))
-        (recur (next args) (update-in opts [:cmd] conj arg))))))
-
-(defn- parse-args
   "Parses arguments, recognises keywords in the set single as boolean switches."
   [args single default]
   (loop [[arg :as args] args
