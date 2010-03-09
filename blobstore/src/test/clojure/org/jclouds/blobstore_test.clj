@@ -8,9 +8,10 @@
 (def stub-blobstore (.getBlobStore stub-context))
 
 (defn clean-stub-fixture [f]
-  (doseq [container (containers)]
-    (delete-container (.getName container)))
-  (f))
+  (with-blobstore [stub-blobstore]
+    (doseq [container (containers)]
+      (delete-container (.getName container)))
+    (f)))
 
 (use-fixtures :each clean-stub-fixture)
 
@@ -34,19 +35,13 @@
 
 (deftest create-existing-container-test
   (is (not (container-exists? stub-blobstore "")))
-  (with-blobstore [stub-blobstore]
-    (is (not (container-exists? ""))))
+  (is (not (container-exists? "")))
   (is (create-container stub-blobstore "fred"))
-  (is (container-exists? stub-blobstore "fred"))
-  (with-blobstore [stub-blobstore]
-    (is (container-exists? "fred"))))
+  (is (container-exists? stub-blobstore "fred")))
 
 (deftest create-container-test
   (is (create-container stub-blobstore "fred"))
-  (is (container-exists? stub-blobstore "fred"))
-  (with-blobstore [stub-blobstore]
-    (is (create-container "fred"))
-    (is (container-exists? "fred"))))
+  (is (container-exists? stub-blobstore "fred")))
 
 (deftest containers-test
   (is (empty? (containers stub-blobstore)))
@@ -54,43 +49,27 @@
   (is (= 1 (count (containers stub-blobstore)))))
 
 (deftest list-container-test
-  (is (create-container stub-blobstore "container"))
-  (is (empty? (list-container stub-blobstore "container")))
-  (is (create-blob stub-blobstore "container" "blob1" "blob1"))
-  (is (create-blob stub-blobstore "container" "blob2" "blob2"))
-  (is (= 2 (count (list-container stub-blobstore "container"))))
-  (is (= 1 (count (list-container stub-blobstore "container" :max-results 1))))
-  (create-directory stub-blobstore "container" "dir")
-  (is (create-blob stub-blobstore "container" "dir/blob2" "blob2"))
-  (is (= 3 (count (list-container stub-blobstore "container"))))
-  (is (= 4 (count (list-container stub-blobstore "container" :recursive))))
-  (is (= 1 (count (list-container stub-blobstore "container"
-                                  :in-directory "dir")))))
-
-(deftest list-container-with-blobstore-test
-  (with-blobstore [stub-blobstore]
-    (is (create-container "container"))
-    (is (empty? (list-container "container")))
-    (is (create-blob "container" "blob1" "blob1"))
-    (is (create-blob "container" "blob2" "blob2"))
-    (is (= 2 (count (list-container "container"))))
-    (is (= 1 (count (list-container "container" :max-results 1))))
-    (create-directory "container" "dir")
-    (is (create-blob "container" "dir/blob2" "blob2"))
-    (is (= 3 (count (list-container "container"))))
-    (is (= 4 (count (list-container "container" :recursive))))
-    (is (= 1 (count (list-container "container" :in-directory "dir"))))))
+  (is (create-container "container"))
+  (is (empty? (list-container "container")))
+  (is (create-blob "container" "blob1" "blob1"))
+  (is (create-blob "container" "blob2" "blob2"))
+  (is (= 2 (count (list-container "container"))))
+  (is (= 1 (count (list-container "container" :max-results 1))))
+  (create-directory "container" "dir")
+  (is (create-blob "container" "dir/blob2" "blob2"))
+  (is (= 3 (count (list-container "container"))))
+  (is (= 4 (count (list-container "container" :recursive))))
+  (is (= 1 (count (list-container "container" :in-directory "dir")))))
 
 (deftest download-blob-test
-  (with-blobstore [stub-blobstore]
-    (let [name "test"
-          container-name "test-container"
-          data "test content"
-          baos (ByteArrayOutputStream.)]
-      (create-container container-name)
-      (create-blob container-name name data)
-      (download-blob container-name name baos)
-      (is (= data (.toString baos))))))
+  (let [name "test"
+        container-name "test-container"
+        data "test content"
+        baos (ByteArrayOutputStream.)]
+    (create-container container-name)
+    (create-blob container-name name data)
+    (download-blob container-name name baos)
+    (is (= data (.toString baos)))))
 
 ;; TODO: more tests involving blob-specific functions
 
