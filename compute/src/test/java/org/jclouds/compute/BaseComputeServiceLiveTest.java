@@ -88,11 +88,6 @@ public abstract class BaseComputeServiceLiveTest {
    protected Template template;
    protected Map<String, String> keyPair;
 
-   @Test(groups = { "live" })
-   void canGetContext() {
-      assertEquals(context.getComputeService().getContext(), context);
-   }
-
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
