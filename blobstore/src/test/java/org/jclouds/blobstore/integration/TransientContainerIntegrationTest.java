@@ -18,14 +18,14 @@
  */
 package org.jclouds.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.testng.annotations.Test;
 
 /**
+ * @author James Murty
  * @author Adrian Cole
  */
-
-@Test(groups = { "integration", "live" }, testName = "blobstore.StubBlobMapIntegrationTest")
-public class StubBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
+@Test(groups = { "integration", "live" }, testName = "blobstore.TransientContainerIntegrationTest")
+public class TransientContainerIntegrationTest extends BaseContainerIntegrationTest {
 
 }

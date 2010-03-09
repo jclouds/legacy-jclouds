@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.TransientBlobStoreContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -46,7 +46,7 @@ public class BaseBlobMapTest {
 
    @BeforeClass
    void addDefaultObjectsSoThatTestsWillPass() {
-      context = new StubBlobStoreContextBuilder().buildBlobStoreContext();
+      context = new TransientBlobStoreContextBuilder().buildBlobStoreContext();
       map = (InputStreamMapImpl) context.createInputStreamMap("test");
    }
 

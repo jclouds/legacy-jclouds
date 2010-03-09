@@ -30,11 +30,11 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
@@ -64,7 +64,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Singleton
 public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubAsyncBlobStore blobStore;
+   private final TransientAsyncBlobStore blobStore;
    private final CFObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
@@ -74,7 +74,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
 
    @Inject
-   private StubCloudFilesAsyncClient(StubAsyncBlobStore blobStore,
+   private StubCloudFilesAsyncClient(TransientAsyncBlobStore blobStore,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             CFObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,

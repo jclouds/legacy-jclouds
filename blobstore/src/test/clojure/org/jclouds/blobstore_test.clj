@@ -1,9 +1,9 @@
 (ns org.jclouds.blobstore-test
   (:use [org.jclouds.blobstore] :reload-all)
   (:use clojure.test)
-  (:import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder))
+  (:import org.jclouds.blobstore.TransientBlobStoreContextBuilder))
 
-(def stub-context (.buildBlobStoreContext (StubBlobStoreContextBuilder.)))
+(def stub-context (.buildBlobStoreContext (TransientBlobStoreContextBuilder.)))
 (def stub-blobstore (.getBlobStore stub-context))
 
 (defn clean-stub-fixture [f]

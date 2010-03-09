@@ -108,7 +108,7 @@
                             <systemProperties>
                                 <property>
                                     <name>jclouds.test.initializer</name>
-                                    <value>org.jclouds.blobstore.integration.StubTestInitializer</value>
+                                    <value>org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer</value>
                                 </property>
                                 <property>
                                     <name>jclouds.blobstore.httpstream.url</name>

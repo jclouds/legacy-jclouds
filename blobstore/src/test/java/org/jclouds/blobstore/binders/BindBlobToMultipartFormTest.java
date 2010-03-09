@@ -27,9 +27,9 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.TransientBlobStoreContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -48,7 +48,7 @@ public class BindBlobToMultipartFormTest {
    public static final Blob TEST_BLOB;
 
    static {
-      blobProvider = new StubBlobStoreContextBuilder().buildInjector().getInstance(
+      blobProvider = new TransientBlobStoreContextBuilder().buildInjector().getInstance(
                Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
       addData(BOUNDRY, "hello", builder);

@@ -20,7 +20,7 @@ package org.jclouds.rackspace.cloudfiles.config;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.blobstore.config.TransientBlobStoreModule;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
@@ -36,7 +36,7 @@ public class CloudFilesStubClientModule extends AbstractModule {
 
    protected void configure() {
       install(new ParserModule());
-      install(new StubBlobStoreModule());
+      install(new TransientBlobStoreModule());
       bind(CloudFilesAsyncClient.class).to(StubCloudFilesAsyncClient.class).asEagerSingleton();
    }
 

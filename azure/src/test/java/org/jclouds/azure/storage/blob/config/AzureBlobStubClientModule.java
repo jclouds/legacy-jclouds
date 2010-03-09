@@ -26,7 +26,7 @@ import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.internal.StubAzureBlobAsyncClient;
-import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.blobstore.config.TransientBlobStoreModule;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -44,7 +44,7 @@ public class AzureBlobStubClientModule extends AbstractModule {
 
    protected void configure() {
       install(new ParserModule());
-      install(new StubBlobStoreModule());
+      install(new TransientBlobStoreModule());
       bind(AzureBlobAsyncClient.class).to(StubAzureBlobAsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
                URI.create("https://localhost/azurestub"));

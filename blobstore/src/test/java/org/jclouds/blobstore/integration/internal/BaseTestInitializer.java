@@ -48,7 +48,7 @@ public abstract class BaseTestInitializer {
       }
    }
 
-   protected abstract BlobStoreContext createStubContext();
+   protected abstract BlobStoreContext createStubContext() throws IOException;
 
    protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url,
             String app, String account, String key) throws IOException;

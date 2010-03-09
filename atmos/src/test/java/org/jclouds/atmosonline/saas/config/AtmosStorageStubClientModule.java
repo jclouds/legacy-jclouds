@@ -26,7 +26,7 @@ import org.jclouds.atmosonline.saas.AtmosStorage;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.internal.StubAtmosStorageAsyncClient;
-import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.blobstore.config.TransientBlobStoreModule;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.rest.ConfiguresRestClient;
 
@@ -42,7 +42,7 @@ import com.google.inject.Provides;
 public class AtmosStorageStubClientModule extends AbstractModule {
 
    protected void configure() {
-      install(new StubBlobStoreModule());
+      install(new TransientBlobStoreModule());
       bind(AtmosStorageAsyncClient.class).to(StubAtmosStorageAsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
                URI.create("https://localhost/azurestub"));

@@ -18,34 +18,14 @@
  */
 package org.jclouds.blobstore.integration;
 
-import java.net.URI;
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.testng.annotations.Test;
 
 /**
- * Builds properties used in Stub Connections
- * 
  * @author Adrian Cole
  */
-public class StubPropertiesBuilder extends PropertiesBuilder {
 
-   public StubPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
-   public StubPropertiesBuilder(String id, String secret) {
-      super();
-   }
-
-   @Override
-   public PropertiesBuilder withCredentials(String account, String key) {
-      return this;
-   }
-
-   @Override
-   public PropertiesBuilder withEndpoint(URI endpoint) {
-      return this;
-   }
+@Test(groups = { "integration", "live" }, testName = "blobstore.TransientBlobMapIntegrationTest")
+public class TransientBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
 
 }

@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "blobstore.StubInputStreamMapIntegrationTest")
-public class StubInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
+@Test(groups = { "integration", "live" }, testName = "blobstore.TransientInputStreamMapIntegrationTest")
+public class TransientInputStreamMapIntegrationTest extends BaseInputStreamMapIntegrationTest {
 
 }

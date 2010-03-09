@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.integration.internal;
+package org.jclouds.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -50,9 +50,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -95,7 +92,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * @author James Murty
  */
-public class StubAsyncBlobStore extends BaseAsyncBlobStore {
+public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
    protected final EncryptionService encryptionService;
@@ -105,7 +102,7 @@ public class StubAsyncBlobStore extends BaseAsyncBlobStore {
    protected final Factory blobFactory;
 
    @Inject
-   protected StubAsyncBlobStore(BlobStoreContext context, DateService dateService,
+   protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService,
             EncryptionService encryptionService,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
@@ -267,14 +264,6 @@ public class StubAsyncBlobStore extends BaseAsyncBlobStore {
       return newMd;
    }
 
-   // public BlobMetadata metadata(final String container, final String key) {
-   // if (!getContainerToBlobs().containsKey(container))
-   // return immediateFailedFuture(new ContainerNotFoundException(container));
-   // Map<String, Blob> realContents = getContainerToBlobs().get(container);
-   // if (!realContents.containsKey(key))
-   // return immediateFailedFuture(new KeyNotFoundException(container, key));
-   // return copy(realContents.get(key).getMetadata());
-   // }
    /**
     * {@inheritDoc}
     */

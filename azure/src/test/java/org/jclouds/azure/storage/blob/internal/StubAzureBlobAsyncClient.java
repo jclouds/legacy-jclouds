@@ -45,10 +45,10 @@ import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedHashSet;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
@@ -63,7 +63,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubAsyncBlobStore blobStore;
+   private final TransientAsyncBlobStore blobStore;
    private final AzureBlob.Factory objectProvider;
    private final AzureBlobToBlob object2Blob;
    private final BlobToAzureBlob blob2Object;
@@ -73,7 +73,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
 
    @Inject
-   private StubAzureBlobAsyncClient(StubAsyncBlobStore blobStore,
+   private StubAzureBlobAsyncClient(TransientAsyncBlobStore blobStore,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             AzureBlob.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, AzureBlobToBlob object2Blob,

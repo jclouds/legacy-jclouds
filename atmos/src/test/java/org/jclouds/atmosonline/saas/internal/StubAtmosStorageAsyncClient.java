@@ -40,10 +40,10 @@ import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
+import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
@@ -58,7 +58,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubAsyncBlobStore blobStore;
+   private final TransientAsyncBlobStore blobStore;
    private final AtmosObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
@@ -67,7 +67,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    private final ResourceMetadataListToDirectoryEntryList resource2ObjectList;
 
    @Inject
-   private StubAtmosStorageAsyncClient(StubAsyncBlobStore blobStore,
+   private StubAtmosStorageAsyncClient(TransientAsyncBlobStore blobStore,
             AtmosObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, BlobMetadataToObject blob2ObjectInfo,

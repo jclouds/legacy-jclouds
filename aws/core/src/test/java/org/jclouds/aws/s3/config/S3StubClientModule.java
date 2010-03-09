@@ -26,7 +26,7 @@ import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.internal.StubS3AsyncClient;
-import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.blobstore.config.TransientBlobStoreModule;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -44,7 +44,7 @@ public class S3StubClientModule extends AbstractModule {
 
    protected void configure() {
       install(new ParserModule());
-      install(new StubBlobStoreModule());
+      install(new TransientBlobStoreModule());
       bind(S3AsyncClient.class).to(StubS3AsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
    }

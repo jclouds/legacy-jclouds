@@ -18,13 +18,29 @@
  */
 package org.jclouds.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
-import org.testng.annotations.Test;
+import java.io.IOException;
+
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
+
+import com.google.inject.Module;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "blobstore.StubServiceIntegrationTest")
-public class StubServiceIntegrationTest extends BaseServiceIntegrationTest {
+public class TransientBlobStoreTestInitializer extends BaseTestInitializer {
+
+   @Override
+   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
+            String account, String key) throws IOException {
+      return createStubContext();
+   }
+
+   @Override
+   protected BlobStoreContext createStubContext() throws IOException {
+      return new BlobStoreContextFactory().createContext("transient", "foo", "bar");
+   }
 
 }

@@ -18,26 +18,15 @@
  */
 package org.jclouds.blobstore.integration;
 
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
-
-import com.google.inject.Module;
+import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.testng.annotations.Test;
 
 /**
  * 
+ * @author James Murty
  * @author Adrian Cole
  */
-public class StubTestInitializer extends BaseTestInitializer {
-
-   @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String account, String key) {
-      return createStubContext();
-   }
-
-   @Override
-   protected BlobStoreContext createStubContext() {
-      return new StubBlobStoreContextBuilder().buildBlobStoreContext();
-   }
+@Test(groups = { "integration" }, testName = "blobstore.TransientBlobIntegrationTest")
+public class TransientBlobIntegrationTest extends BaseBlobIntegrationTest {
 
 }
