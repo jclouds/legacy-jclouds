@@ -40,6 +40,38 @@
         <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
+    <build>
+      <resources>
+	<resource>
+	  <directory>src/main/clojure</directory>
+	</resource>
+	<resource>
+	  <directory>src/main/resources</directory>
+	</resource>
+      </resources>
+      <plugins>
+	<plugin>
+	  <groupId>com.theoryinpractise</groupId>
+	  <artifactId>clojure-maven-plugin</artifactId>
+	  <version>1.3.1</version>
+	  <executions>
+	    <execution>
+	      <id>test-clojure</id>
+	      <phase>test</phase>
+	      <goals>
+		<goal>test</goal>
+	      </goals>
+	    </execution>
+	  </executions>
+          <configuration>
+            <testNamespaces>
+              <testNamespace>!clojure.*</testNamespace>
+            </testNamespaces>
+          </configuration>
+	</plugin>
+      </plugins>
+    </build>
+
     <repositories>
         <repository>
             <id>gson</id>
@@ -93,8 +125,26 @@
             <artifactId>google-guava</artifactId>
             <version>1.0-r11</version>
         </dependency>
+        <dependency>
+           <groupId>org.clojure</groupId>
+           <artifactId>clojure</artifactId>
+           <version>1.1.0</version>
+           <scope>test</scope>
+        </dependency>
+        <dependency>
+           <groupId>org.clojure</groupId>
+           <artifactId>clojure-contrib</artifactId>
+           <version>1.1.0</version>
+           <scope>test</scope>
+        </dependency>
+	<dependency>
+          <groupId>swank-clojure</groupId>
+          <artifactId>swank-clojure</artifactId>
+          <version>1.1.0</version>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
-    
+
     <profiles>
         <profile>
             <id>distribution</id>

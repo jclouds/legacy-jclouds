@@ -1,15 +1,13 @@
-(ns
-    #^{:doc "
-a lib for interacting with jclouds ComputeService.
+(ns org.jclouds.compute
+  "A clojure binding to the jclouds ComputeService.
 
 Current supported services are:
    [ec2, rimuhosting, terremark, vcloud, hostingdotcom]
 
 Here's an example of getting some compute configuration from rackspace:
 
-  (ns example.jclouds
-    (:use org.jclouds.compute
-          clojure.contrib.pprint))
+  (use 'org.jclouds.compute)
+  (use 'clojure.contrib.pprint)
 
   (def user \"username\")
   (def password \"password\")
@@ -22,9 +20,9 @@ Here's an example of getting some compute configuration from rackspace:
   (pprint (nodes compute))
   (pprint (sizes compute))
 
-"}
-  org.jclouds.compute
-  (:use clojure.contrib.duck-streams
+See http://code.google.com/p/jclouds for details."
+  (:use org.jclouds.core
+        clojure.contrib.duck-streams
         clojure.contrib.logging
         [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
         [clojure.contrib.java-utils :only [wall-hack-field]])
@@ -39,40 +37,12 @@ Here's an example of getting some compute configuration from rackspace:
                                        Architecture)
            (com.google.common.collect ImmutableSet)))
 
-(def module-lookup
-     {:log4j 'org.jclouds.logging.log4j.config.Log4JLoggingModule
-      :ssh 'org.jclouds.ssh.jsch.config.JschSshClientModule
-      :enterprise 'org.jclouds.enterprise.config.EnterpriseConfigurationModule})
-
-(defn- instantiate [sym]
-  (let [loader (.getContextClassLoader (Thread/currentThread))]
-    (try
-     (.newInstance #^Class (.loadClass loader (name sym)))
-     (catch java.lang.ClassNotFoundException e
-       (warn (str "Could not find " (name sym) " module.
-Ensure the module is on the classpath.  You are maybe missing a dependency on
-  org.jclouds/jclouds-jsch
-  org.jclouds/jclouds-log4j
-  or org.jclouds/jclouds-enterprise."))))))
-
-(defn modules
-  "Build a list of modules suitable for passing to compute-context"
-  [& modules]
-  (.build #^com.google.common.collect.ImmutableSet$Builder
-          (reduce #(.add #^com.google.common.collect.ImmutableSet$Builder %1 %2)
-                  (com.google.common.collect.ImmutableSet/builder)
-                  (filter (complement nil?)
-                          (map (comp instantiate module-lookup) modules)))))
-
 (defn compute-context
   "Create a logged in context."
-  ([s a k]
-     (compute-context s a k (modules :log4j :ssh :enterprise)))
-  ([#^String s #^String a #^String k #^ImmutableSet m]
-     (.createContext (new ComputeServiceContextFactory) s a k m)))
-
-(defn- seq-from-immutable-set [#^ImmutableSet set]
-  (map #(.getValue %) set))
+  ([service account key]
+     (compute-context service account key (modules :log4j :ssh :enterprise)))
+  ([#^String service #^String account #^String key #^ImmutableSet modules]
+     (.createContext (new ComputeServiceContextFactory) service account key modules)))
 
 (defn locations
   "Retrieve the available compute locations for the compute context."
@@ -203,48 +173,10 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
   [#^ComputeMetadata node]
   (.getName node))
 
-(defn- dashed [a]
-  (apply str (interpose "-" (map lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
-
-(defn- camelize [a]
-  (apply str (map-str capitalize (.split a "-"))))
-
-(defn camelize-mixed [a]
-  (let [c (.split a "-")]
-    (apply str (lower-case (first c)) (map capitalize (rest c)))))
-
-(defmacro #^{:private true} define-accessor
-  [class property obj-name]
-  (list 'defn (symbol (str obj-name "-" (name property)))
-        (vector  (with-meta (symbol obj-name) {:tag (.getName class)}))
-        (list (symbol (str ".get" (camelize (name property)))) (symbol obj-name))))
-
-(defmacro #^{:private true} define-accessors
-  "Defines read accessors, modelled on class-name-property-name.  If the second
-  argument is a string, it is used instead of the class-name prefix."
-  [class & properties]
-  (let [obj-name (if (string? (first properties))
-                   (first properties)
-                   (dashed (.getName class)))
-        properties (if (string? (first properties))
-                     (rest properties)
-                     properties)]
-    `(do
-       ~@(for [property properties]
-           `(define-accessor ~class ~property ~obj-name)))))
-
 (define-accessors Template image size location options)
 (define-accessors Image version os-family os-description architecture)
 (define-accessors Size cores ram disk)
 (define-accessors NodeMetadata "node" credentials extra state tag)
-
-(defmacro option-fn-0arg [key]
-  `(fn [builder#]
-     (~(symbol (str "." (camelize-mixed (name key)))) builder#)))
-
-(defmacro option-fn-1arg [key]
-  `(fn [builder# value#]
-     (~(symbol (str "." (camelize-mixed (name key)))) builder# value#)))
 
 (defn builder-options [builder]
   (or (wall-hack-field org.jclouds.compute.internal.TemplateBuilderImpl :options builder)
@@ -266,9 +198,6 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
      (let [options# (builder-options builder#)]
        (~(symbol (str "." (camelize-mixed (name key)))) options# (seq-to-array value#))
        (.options builder# options#))))
-
-(defmacro make-option-map [f keywords]
-  `[ ~@(reduce (fn [v# k#] (conj (conj v# k#) `(~f ~k#))) [] keywords)])
 
 (def option-1arg-map
      (apply array-map

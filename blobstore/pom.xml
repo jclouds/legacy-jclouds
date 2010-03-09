@@ -149,6 +149,11 @@
 		  </goals>
 		</execution>
 	      </executions>
+	      <configuration>
+		<testNamespaces>
+		  <testNamespace>!clojure.*</testNamespace>
+		</testNamespaces>
+	      </configuration>
 	    </plugin>
         </plugins>
 	<resources>
