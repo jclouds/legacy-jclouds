@@ -258,7 +258,7 @@ container, name, string -> etag
     (copy (.getContent blob) target)))
 
 (defmethod download-blob File [blobstore container-name name target]
-  (download-blob (FileOutputStream. target)))
+  (download-blob blobstore container-name name (FileOutputStream. target)))
 
 (define-accessors StorageMetadata "blob" type id name
   location-id uri last-modfied)

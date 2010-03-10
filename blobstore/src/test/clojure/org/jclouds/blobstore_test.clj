@@ -1,6 +1,6 @@
 (ns org.jclouds.blobstore-test
   (:use [org.jclouds.blobstore] :reload-all)
-  (:use clojure.test)
+  (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
            [java.io ByteArrayOutputStream]))
 
@@ -65,11 +65,12 @@
   (let [name "test"
         container-name "test-container"
         data "test content"
-        baos (ByteArrayOutputStream.)]
-    (create-container container-name)
-    (create-blob container-name name data)
-    (download-blob container-name name baos)
-    (is (= data (.toString baos)))))
+        data-file (java.io.File/createTempFile "jclouds" "data")]
+    (try (create-container container-name)
+         (create-blob container-name name data)
+         (download-blob container-name name data-file)
+         (is (= data (slurp (.getAbsolutePath data-file))))
+         (finally (.delete data-file)))))
 
 ;; TODO: more tests involving blob-specific functions
 
