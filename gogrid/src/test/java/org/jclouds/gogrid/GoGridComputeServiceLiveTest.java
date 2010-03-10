@@ -65,7 +65,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
     }
 
     protected Template buildTemplate(TemplateBuilder templateBuilder) {
-        return templateBuilder.osFamily(CENTOS).imageId("GSI-f8979644-e646-4711-ad58-d98a5fa3612c").smallest().build();
+        return templateBuilder.osFamily(CENTOS).imageId("centos5.3_32_base").smallest().build();
     }
 
     @Override
