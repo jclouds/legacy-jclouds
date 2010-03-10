@@ -110,7 +110,7 @@ public class ParseServerNameToCredentialsMapFromJsonResponse extends ParseJson<M
 
         @Override
         public int compareTo(Password o) {
-            return userName.compareTo(o.getUserName());
+            return server.getName().compareTo(o.getServer().getName());
         }
     }
 

@@ -67,7 +67,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "compute.ComputeServiceLiveTest")
@@ -92,7 +92,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       if (tag == null)
-         tag = checkNotNull(service, "service");
+         tag = checkNotNull(service, "service") + "alex";
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       String secretKeyFile;
@@ -134,17 +134,7 @@ public abstract class BaseComputeServiceLiveTest {
                .getOptions()
                .installPrivateKey(keyPair.get("private"))
                .authorizePublicKey(keyPair.get("public"))
-               .runScript(
-                        new StringBuilder()//
-                                 .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-                                 .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-                                 .append(
-                                          "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-                                 .append("apt-get update\n")//
-                                 .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-                                 .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
-                                 .append("chmod 755 /usr/bin/runurl\n")//
-                                 .toString().getBytes());
+               .runScript(buildScript().getBytes());
       nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template).values());
       assertEquals(nodes.size(), 2);
       checkNodes();
@@ -178,6 +168,20 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
+
+   protected String buildScript() {
+       return
+                        new StringBuilder()//
+                                 .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+                                 .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+                                 .append(
+                                          "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+                                 .append("apt-get update\n")//
+                                 .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+                                 .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
+                                 .append("chmod 755 /usr/bin/runurl\n")//
+                                 .toString();
+   }
 
    @Test(enabled = true, dependsOnMethods = "testCreate")
    public void testGet() throws Exception {
@@ -261,7 +265,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   private void doCheckKey(NodeMetadata node) throws IOException {
+   protected void doCheckKey(NodeMetadata node) throws IOException {
       InetSocketAddress socket = new InetSocketAddress(Iterables.get(node.getPublicAddresses(), 0),
                22);
       socketTester.apply(socket); // TODO add transitionTo option that accepts a socket conection

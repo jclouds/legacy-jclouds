@@ -21,7 +21,6 @@ package org.jclouds.gogrid;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-
 import java.util.Map;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -45,46 +44,60 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", enabled = true, sequential = true, testName = "gogrid.GoGridComputeServiceLiveTest")
 public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
-      service = "gogrid";
-   }
+    @BeforeClass
+    @Override
+    public void setServiceDefaults() {
+        service = "gogrid";
+    }
 
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(CENTOS).osDescriptionMatches(".*5.3.*").smallest().build();
-   }
+    @Override
+    public String buildScript() {
+        return
+                new StringBuilder()//
+                        .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+                        .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                        .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                        .append("echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                        .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                        .append("yum -y install java-1.6.0-openjdk\n")
+                        .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
+                        .toString();
+    }
 
-   @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
-   }
+    protected Template buildTemplate(TemplateBuilder templateBuilder) {
+        return templateBuilder.osFamily(CENTOS).imageId("GSI-f8979644-e646-4711-ad58-d98a5fa3612c").smallest().build();
+    }
 
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<GoGridAsyncClient, GoGridClient> goGridContext = new ComputeServiceContextFactory()
-               .createContext(service, user, password).getProviderSpecificContext();
-   }
+    @Override
+    protected JschSshClientModule getSshModule() {
+        return new JschSshClientModule();
+    }
 
-   @Test(enabled = false)
-   public void endToEndComputeServiceTest() {
-      ComputeService service = context.getComputeService();
-      Template t = service.templateBuilder().minRam(1024).imageId(
-               "GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2").build();
+    public void testAssignability() throws Exception {
+        @SuppressWarnings("unused")
+        RestContext<GoGridAsyncClient, GoGridClient> goGridContext = new ComputeServiceContextFactory()
+                .createContext(service, user, password).getProviderSpecificContext();
+    }
 
-      assertEquals(t.getImage().getId(), "GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2");
-      service.runNodesWithTag("testTag", 1, t);
+    @Test(enabled = false)
+    public void endToEndComputeServiceTest() {
+        ComputeService service = context.getComputeService();
+        Template t = service.templateBuilder().minRam(1024).imageId(
+                "GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2").build();
 
-      Map<String, ? extends ComputeMetadata> nodes = service.getNodes();
-      assertEquals(nodes.size(), 1);
+        assertEquals(t.getImage().getId(), "GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2");
+        service.runNodesWithTag("testTag", 1, t);
 
-      NodeMetadata nodeMetadata = service.getNodeMetadata(Iterables.getOnlyElement(nodes.values()));
-      assertEquals(nodeMetadata.getPublicAddresses().size(), 1,
-               "There must be 1 public address for the node");
-      assertTrue(nodeMetadata.getName().startsWith("testTag"));
-      service.rebootNode(nodeMetadata); // blocks until finished
+        Map<String, ? extends ComputeMetadata> nodes = service.getNodes();
+        assertEquals(nodes.size(), 1);
 
-      assertEquals(service.getNodeMetadata(nodeMetadata).getState(), NodeState.RUNNING);
-      service.destroyNode(nodeMetadata);
-   }
+        NodeMetadata nodeMetadata = service.getNodeMetadata(Iterables.getOnlyElement(nodes.values()));
+        assertEquals(nodeMetadata.getPublicAddresses().size(), 1,
+                "There must be 1 public address for the node");
+        assertTrue(nodeMetadata.getName().startsWith("testTag"));
+        service.rebootNode(nodeMetadata); // blocks until finished
+
+        assertEquals(service.getNodeMetadata(nodeMetadata).getState(), NodeState.RUNNING);
+        service.destroyNode(nodeMetadata);
+    }
 }

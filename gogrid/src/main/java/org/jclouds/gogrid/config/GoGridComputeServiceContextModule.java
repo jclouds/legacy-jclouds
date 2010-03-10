@@ -18,9 +18,7 @@
  */
 package org.jclouds.gogrid.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.google.common.base.*;
 import com.google.common.collect.*;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -40,10 +38,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.domain.Ip;
-import org.jclouds.gogrid.domain.PowerCommand;
-import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.*;
+import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
@@ -57,6 +53,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -97,6 +94,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         private final Function<Size, String> sizeToRam;
         private final Function<Server, NodeMetadata> serverToNodeMetadata;
         private RetryablePredicate<Server> serverLatestJobCompleted;
+        private RetryablePredicate<Server> serverLatestJobCompletedShort;
 
         @Inject
         protected GoGridAddNodeWithTagStrategy(GoGridClient client,
@@ -108,18 +106,36 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             this.serverLatestJobCompleted = new RetryablePredicate<Server>(
                     new ServerLatestJobCompleted(client.getJobServices()),
                     800, 20, TimeUnit.SECONDS);
+            this.serverLatestJobCompletedShort =  new RetryablePredicate<Server>(
+                    new ServerLatestJobCompleted(client.getJobServices()),
+                    60, 20, TimeUnit.SECONDS);
         }
 
         @Override
         public NodeMetadata execute(String tag, String name, Template template) {
-            Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
-            Ip availableIp = Iterables.getLast(availableIps);
-            Server addedServer = client.getServerServices().addServer(name, checkNotNull(template.getImage().getId()),
-                    sizeToRam.apply(template.getSize()), availableIp.getIp());
+            Server addedServer = null;
+            boolean notStarted = true;
+            int numOfRetries = 20;
+            // lock-free consumption of a shared resource: IP address pool
+            while(notStarted) { // TODO: replace with Predicate-based thread collision avoidance for simplicity
+                Set<Ip> availableIps =
+                        client.getIpServices().getIpList(new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC));
+                if(availableIps.size() == 0) throw new RuntimeException("No public IPs available on this account.");
+                int ipIndex = new SecureRandom().nextInt(availableIps.size());
+                Ip availableIp = Iterables.get(availableIps, ipIndex);
+                try {
+                    addedServer = client.getServerServices().addServer(name, checkNotNull(template.getImage().getId()),
+                            sizeToRam.apply(template.getSize()), availableIp.getIp());
+                    notStarted = false;
+                } catch(Exception e) {
+                    if(--numOfRetries == 0) Throwables.propagate(e);
+                    notStarted = true;
+                }
+            }
             serverLatestJobCompleted.apply(addedServer);
 
             client.getServerServices().power(addedServer.getName(), PowerCommand.START);
-            serverLatestJobCompleted.apply(addedServer);
+            serverLatestJobCompletedShort.apply(addedServer);
 
             addedServer = Iterables.getOnlyElement(
                     client.getServerServices().getServersByName(addedServer.getName())
@@ -132,6 +148,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
     public static class GoGridRebootNodeStrategy implements RebootNodeStrategy {
         private final GoGridClient client;
         private RetryablePredicate<Server> serverLatestJobCompleted;
+        private RetryablePredicate<Server> serverLatestJobCompletedShort;
 
         @Inject
         protected GoGridRebootNodeStrategy(GoGridClient client) {
@@ -139,6 +156,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             this.serverLatestJobCompleted = new RetryablePredicate<Server>(
                     new ServerLatestJobCompleted(client.getJobServices()),
                     800, 20, TimeUnit.SECONDS);
+            this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(
+                    new ServerLatestJobCompleted(client.getJobServices()),
+                    60, 20, TimeUnit.SECONDS);
         }
 
         @Override
@@ -148,7 +168,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             client.getServerServices().power(server.getName(), PowerCommand.RESTART);
             serverLatestJobCompleted.apply(server);
             client.getServerServices().power(server.getName(), PowerCommand.START);
-            return serverLatestJobCompleted.apply(server);
+            return serverLatestJobCompletedShort.apply(server);
         }
     }
 
@@ -290,7 +310,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         @Override
         public NodeMetadata apply(Server from) {
             String locationId = "Unavailable";
-            String tag = from.getName();
+            String tag = CharMatcher.JAVA_LETTER.retainFrom(from.getName());
             Credentials creds = client.getServerServices().getServerCredentialsList().get(from.getName());
             Set<InetAddress> ipSet =
                     ImmutableSet.of(stringIpToInetAddress.apply(from.getIp().getIp()));
@@ -407,9 +427,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         Set<ServerImage> allImages = sync.getImageServices().getImageList();
         for (ServerImage from : allImages) {
             OsFamily os = null;
-            Architecture arch = (from.getDescription().indexOf("64") == -1 && 
-                                 from.getOs().getName().indexOf("64") == -1) ? Architecture.X86_32
-                    : Architecture.X86_64;
+            Architecture arch = (from.getOs().getName().indexOf("64") == -1 &&
+                    from.getDescription().indexOf("64") == -1) ?
+                    Architecture.X86_32 : Architecture.X86_64;
             String osDescription;
             String version = "";
 
