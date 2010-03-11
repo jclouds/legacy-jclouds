@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
@@ -46,7 +47,7 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
    public void setServiceDefaults() {
       service = "bluelock";
    }
-   
+
    @Override
    public void testListImages() throws Exception {
       super.testListImages();
@@ -95,6 +96,19 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       // get details on a specific template I know by name
       bluelockClient.getVAppTemplate(vAppTemplatesByName
                .get("Ubuntu904Serverx64 1CPUx1GBx20GB a01").getId());
+   }
+
+   @Test
+   public void testErrorWhereAllNetworksReturn403() throws Exception {
+      VCloudClient bluelockClient = VCloudClient.class.cast(context.getProviderSpecificContext()
+               .getApi());
+      for (String i : new String[] { "1", "2", "3", "4" }) {
+         try {
+            bluelockClient.getNetwork(i);
+         } catch (HttpResponseException e) {
+            assertEquals(e.getResponse().getStatusCode(), 403);
+         }
+      }
 
    }
 }
