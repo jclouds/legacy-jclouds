@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import java.util.Map;
 
+import com.google.common.base.Predicate;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -33,10 +34,13 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Oleksiy Yarmula
@@ -79,19 +83,27 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                 .createContext(service, user, password).getProviderSpecificContext();
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void endToEndComputeServiceTest() {
         ComputeService service = context.getComputeService();
         Template t = service.templateBuilder().minRam(1024).imageId(
                 "GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2").build();
 
+        int originalSize = service.getNodes().size();
+
         assertEquals(t.getImage().getId(), "GSI-6890f8b6-c8fb-4ac1-bc33-2563eb4e29d2");
-        service.runNodesWithTag("testTag", 1, t);
+        service.runNodesWithTag(this.service, 1, t);
 
         Map<String, ? extends ComputeMetadata> nodes = service.getNodes();
-        assertEquals(nodes.size(), 1);
+        assertEquals(nodes.size(), originalSize + 1, "size should've been larger by 1");
 
-        NodeMetadata nodeMetadata = service.getNodeMetadata(Iterables.getOnlyElement(nodes.values()));
+        ComputeMetadata node = Iterables.find(nodes.values(), new Predicate<ComputeMetadata>() {
+            @Override public boolean apply(ComputeMetadata computeMetadata) {
+                return computeMetadata.getName().startsWith(GoGridComputeServiceLiveTest.this.service);
+            }
+        });
+
+        NodeMetadata nodeMetadata = service.getNodeMetadata(node);
         assertEquals(nodeMetadata.getPublicAddresses().size(), 1,
                 "There must be 1 public address for the node");
         assertTrue(nodeMetadata.getName().startsWith("testTag"));

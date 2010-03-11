@@ -89,7 +89,7 @@ public class GoGridLiveTest {
      * Tests server start, reboot and deletion.
      * Also verifies IP services and job services.
      */
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testServerLifecycle() {
         int serverCountBeforeTest = client.getServerServices().getServerList().size();
 
@@ -142,7 +142,7 @@ public class GoGridLiveTest {
      * Starts a servers, verifies that jobs are created correctly and
      * an be retrieved from the job services
      */
-    @Test(dependsOnMethods = "testServerLifecycle", enabled=false)
+    @Test(dependsOnMethods = "testServerLifecycle", enabled=true)
     public void testJobs() {
         final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
@@ -187,7 +187,7 @@ public class GoGridLiveTest {
      * Tests common load balancer operations.
      * Also verifies IP services and job services.
      */
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testLoadBalancerLifecycle() {
         int lbCountBeforeTest = client.getLoadBalancerServices().getLoadBalancerList().size();
 
@@ -249,7 +249,7 @@ public class GoGridLiveTest {
     /**
      * Tests common server image operations.
      */
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testImageLifecycle() {
         GetImageListOptions options = new GetImageListOptions.Builder().publicDatabaseServers();
         Set<ServerImage> images = client.getImageServices().getImageList(options);
@@ -278,7 +278,7 @@ public class GoGridLiveTest {
 
     }
 
-    @Test(enabled=false)
+    @Test(enabled=true)
     private void testShellAccess() throws IOException {
         final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
