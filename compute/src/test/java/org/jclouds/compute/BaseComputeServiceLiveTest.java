@@ -92,7 +92,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       if (tag == null)
-         tag = checkNotNull(service, "service") + "alex";
+         tag = checkNotNull(service, "service");
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       String secretKeyFile;
