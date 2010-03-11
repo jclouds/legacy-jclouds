@@ -41,6 +41,11 @@ public interface Image extends ComputeMetadata {
    String getVersion();
 
    /**
+    * Description of the image.
+    */
+   String getDescription();
+
+   /**
     * Operating System
     */
    OsFamily getOsFamily();

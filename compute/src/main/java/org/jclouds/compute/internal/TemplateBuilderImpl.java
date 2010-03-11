@@ -53,6 +53,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private String osDescription;
    private String imageVersion;
    private String imageName;
+   private String imageDescription;
 
    private double minCores;
    private int minRam;
@@ -127,8 +128,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getOsDescription() == null)
                returnVal = false;
             else
-               returnVal = input.getOsDescription().contains(osDescription) ||
-                       input.getOsDescription().matches(osDescription); /*note: matches() expects a regex!*/
+               returnVal = input.getOsDescription().contains(osDescription)
+                        || input.getOsDescription().matches(osDescription); /*
+                                                                             * note: matches()
+                                                                             * expects a regex!
+                                                                             */
          }
          return returnVal;
       }
@@ -159,7 +163,19 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return returnVal;
       }
    };
-
+   private final Predicate<Image> imageDescriptionPredicate = new Predicate<Image>() {
+      @Override
+      public boolean apply(Image input) {
+         boolean returnVal = true;
+         if (imageDescription != null) {
+            if (input.getName() == null)
+               returnVal = false;
+            else
+               returnVal = input.getName().matches(imageDescription);
+         }
+         return returnVal;
+      }
+   };
    private final Predicate<Size> sizeIdPredicate = new Predicate<Size>() {
       @Override
       public boolean apply(Size input) {
@@ -177,7 +193,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    private final Predicate<Image> imagePredicate = Predicates.and(idPredicate, locationPredicate,
             osPredicate, imageArchPredicate, osDescriptionPredicate, imageVersionPredicate,
-            imageNamePredicate);
+            imageNamePredicate, imageDescriptionPredicate);
 
    private final Predicate<Size> sizeArchPredicate = new Predicate<Size>() {
       @Override
@@ -221,9 +237,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return ComparisonChain.start().compare(left.getName(), right.getName(),
                   Ordering.<String> natural().nullsLast()).compare(left.getVersion(),
                   right.getVersion(), Ordering.<String> natural().nullsLast()).compare(
-                  left.getOsDescription(), right.getOsDescription(),
-                  Ordering.<String> natural().nullsLast()).compare(left.getArchitecture(),
-                  right.getArchitecture()).result();
+                  left.getDescription(), right.getDescription(),
+                  Ordering.<String> natural().nullsLast()).compare(left.getOsDescription(),
+                  right.getOsDescription(), Ordering.<String> natural().nullsLast()).compare(
+                  left.getArchitecture(), right.getArchitecture()).result();
       }
    };
 
@@ -258,6 +275,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          this.locationId = image.getLocationId();
       if (image.getOsFamily() != null)
          this.os = image.getOsFamily();
+      if (image.getName() != null)
+         this.imageName = image.getName();
+      if (image.getDescription() != null)
+         this.imageDescription = image.getDescription();
       if (image.getOsDescription() != null)
          this.osDescription = image.getOsDescription();
       if (image.getVersion() != null)
@@ -369,8 +390,17 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
+   public TemplateBuilder imageNameMatches(String nameRegex) {
+      this.imageName = nameRegex;
+      return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public TemplateBuilder imageDescriptionMatches(String descriptionRegex) {
-      this.imageName = descriptionRegex;
+      this.imageDescription = descriptionRegex;
       return this;
    }
 
@@ -430,11 +460,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Override
    public String toString() {
-      return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest
-               + ", imageDescription=" + imageName + ", imageId=" + imageId + ", imageVersion="
-               + imageVersion + ", location=" + locationId + ", minCores=" + minCores + ", minRam="
-               + minRam + ", os=" + os + ", osDescription=" + osDescription + ", sizeId=" + sizeId
-               + "]";
+      return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest + ", imageName="
+               + imageName + ", imageDescription=" + imageDescription + ", imageId=" + imageId
+               + ", imageVersion=" + imageVersion + ", location=" + locationId + ", minCores="
+               + minCores + ", minRam=" + minRam + ", os=" + os + ", osDescription="
+               + osDescription + ", sizeId=" + sizeId + "]";
    }
 
 }

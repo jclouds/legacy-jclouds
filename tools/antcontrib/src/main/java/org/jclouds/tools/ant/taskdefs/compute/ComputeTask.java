@@ -149,9 +149,12 @@ public class ComputeTask extends Task {
    private void listImages(ComputeService computeService) {
       log("list images");
       for (Image image : computeService.getImages().values()) {// TODO
-         log(String.format("   image location=%s, id=%s, version=%s, arch=%s, osfam=%s, desc=%s",
-                  image.getLocationId(), image.getId(), image.getVersion(),
-                  image.getArchitecture(), image.getOsFamily(), image.getOsDescription()));
+         log(String
+                  .format(
+                           "   image location=%s, id=%s, name=%s, version=%s, arch=%s, osfam=%s, osdesc=%s, desc=%s",
+                           image.getLocationId(), image.getId(), image.getName(), image
+                                    .getVersion(), image.getArchitecture(), image.getOsFamily(),
+                           image.getOsDescription(), image.getDescription()));
       }
    }
 

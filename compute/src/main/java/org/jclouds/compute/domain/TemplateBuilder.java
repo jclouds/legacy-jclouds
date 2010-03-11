@@ -99,14 +99,19 @@ public interface TemplateBuilder {
    TemplateBuilder osDescriptionMatches(String osDescriptionRegex);
 
    /**
+    * Configure this template to have an image name that matches the regular expression
+    */
+   TemplateBuilder imageNameMatches(String imageNameRegex);
+   
+   /**
     * Configure this template to have an image version that matches the regular expression
     */
    TemplateBuilder imageVersionMatches(String imageVersionRegex);
 
    /**
-    * Configure this template to have a description that matches the regular expression
+    * Configure this template to have an image description that matches the regular expression
     */
-   TemplateBuilder imageDescriptionMatches(String descriptionRegex);
+   TemplateBuilder imageDescriptionMatches(String imageDescriptionRegex);
 
    /**
     * Configure this template to require the minimum cores below

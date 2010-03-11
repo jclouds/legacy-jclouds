@@ -44,6 +44,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    private static final long serialVersionUID = 7856744554191025307L;
 
    private final String version;
+   private final String description;
    private final OsFamily osFamily;
    private final String osDescription;
    private final Architecture architecture;
@@ -54,6 +55,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       super(ComputeType.IMAGE, id, name, locationId, uri, userMetadata);
       this.version = checkNotNull(version, "version");
       this.osFamily = osFamily;
+      this.description = checkNotNull(description, "description");
       this.osDescription = checkNotNull(osDescription, "osDescription");
       this.architecture = checkNotNull(architecture, "architecture");
    }
@@ -64,6 +66,14 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    @Override
    public String getVersion() {
       return version;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getDescription() {
+      return description;
    }
 
    /**
@@ -93,8 +103,9 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    @Override
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", locationId=" + getLocationId()
-               + ", architecture=" + architecture + ", osDescription=" + osDescription
-               + ", osFamily=" + osFamily + ", version=" + version + "]";
+               + ", architecture=" + architecture + ", description=" + description
+               + ", osDescription=" + osDescription + ", osFamily=" + osFamily + ", version="
+               + version + "]";
    }
 
    @Override
@@ -102,6 +113,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((osDescription == null) ? 0 : osDescription.hashCode());
       result = prime * result + ((osFamily == null) ? 0 : osFamily.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
@@ -121,6 +133,11 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
          if (other.architecture != null)
             return false;
       } else if (!architecture.equals(other.architecture))
+         return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
          return false;
       if (osDescription == null) {
          if (other.osDescription != null)
