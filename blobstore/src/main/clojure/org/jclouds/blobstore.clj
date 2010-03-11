@@ -130,7 +130,7 @@ Options can also be specified for extension modules
 (defn clear-container
   "Clear a container."
   ([container-name]
-     (clear-container container-name))
+     (clear-container *blobstore* container-name))
   ([blobstore container-name]
      (.clearContainer blobstore container-name)))
 
