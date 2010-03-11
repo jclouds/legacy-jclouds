@@ -225,11 +225,11 @@ example:
        \"somecontainer\" \"some-dir\"))
 "
   ([blobstore container-name]
-     (.list (.getBlobStore blobstore) container-name ))
+     (.list (as-blobstore blobstore) container-name))
 
-  ([blobstore container-name dir]
-     (.list (.getBlobStore blobstore) container-name
-            (.inDirectory (new ListContainerOptions) dir))))
+  ([blobstore container-name prefix]
+     (.list (as-blobstore blobstore) container-name
+            (.inDirectory (new ListContainerOptions) prefix))))
 
 (defn create-blob
   "Create an blob representing text data:
