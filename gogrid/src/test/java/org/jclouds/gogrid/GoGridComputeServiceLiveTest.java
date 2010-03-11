@@ -90,13 +90,10 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       ComputeService service = context.getComputeService();
       Template t = service.templateBuilder().minRam(1024).imageId("1532").build();
 
-      int originalSize = service.getNodes().size();
-
       assertEquals(t.getImage().getId(), "1532");
       service.runNodesWithTag(this.service, 1, t);
 
       Map<String, ? extends ComputeMetadata> nodes = service.getNodes();
-      assertEquals(nodes.size(), originalSize + 1, "size should've been larger by 1");
 
       ComputeMetadata node = Iterables.find(nodes.values(), new Predicate<ComputeMetadata>() {
          @Override
