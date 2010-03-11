@@ -106,7 +106,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
         NodeMetadata nodeMetadata = service.getNodeMetadata(node);
         assertEquals(nodeMetadata.getPublicAddresses().size(), 1,
                 "There must be 1 public address for the node");
-        assertTrue(nodeMetadata.getName().startsWith("testTag"));
+        assertTrue(nodeMetadata.getName().startsWith(this.service));
         service.rebootNode(nodeMetadata); // blocks until finished
 
         assertEquals(service.getNodeMetadata(nodeMetadata).getState(), NodeState.RUNNING);
