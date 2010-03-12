@@ -85,7 +85,8 @@ Options can also be specified for extension modules
 (def list-options
      (apply array-map
             (concat (make-option-map option-fn-0arg [:recursive])
-                    (make-option-map option-fn-1arg [:after-marker :in-directory :max-results]))))
+                    (make-option-map option-fn-1arg [:after-marker :in-directory
+                                                     :max-results]))))
 
 (defn- list-options-apply
   [single target key value]
@@ -110,7 +111,8 @@ Options can also be specified for extension modules
     (let [single-keywords #{:recursive}
           options (parse-args (next args) single-keywords {})
           list-options (reduce
-                        #(list-options-apply single-keywords %1 (first %2) (second %2))
+                        #(list-options-apply single-keywords %1
+                                             (first %2) (second %2))
                         (ListContainerOptions.)
                         options)]
       (.list blobstore (first args) list-options))
@@ -227,9 +229,9 @@ example:
   ([blobstore container-name]
      (.list (as-blobstore blobstore) container-name))
 
-  ([blobstore container-name prefix]
+  ([blobstore container-name dir]
      (.list (as-blobstore blobstore) container-name
-            (.inDirectory (new ListContainerOptions) prefix))))
+            (.inDirectory (new ListContainerOptions) dir))))
 
 (defn create-blob
   "Create an blob representing text data:
