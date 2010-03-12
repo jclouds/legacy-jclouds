@@ -126,8 +126,8 @@ Options can also be specified for extension modules
      (if (blobstore? blobstore)
        (create-container blobstore "default" container-name)
        (create-container *blobstore* container-name blobstore)))
-  ([blobstore container-name location-name]
-     (.createContainerInLocation blobstore container-name location-name)))
+  ([blobstore location-name container-name]
+     (.createContainerInLocation blobstore location-name container-name)))
 
 (defn clear-container
   "Clear a container."
