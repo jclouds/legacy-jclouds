@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
@@ -91,9 +92,20 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       logger.debug("<< deployed vApp(%s)", vAppResponse.getId());
 
       logger.debug(">> powering vApp(%s)", vAppResponse.getId());
-      task = client.powerOnVApp(vAppResponse.getId());
-      if (!taskTester.apply(task.getId())) {
-         throw new TaskException("powerOn", vAppResponse, task);
+      try {
+         task = client.powerOnVApp(vAppResponse.getId());
+         if (!taskTester.apply(task.getId())) {
+            throw new TaskException("powerOn", vAppResponse, task);
+         }
+      } catch (HttpResponseException e) {
+         if (e.getResponse().getStatusCode() == 400
+                  && client.getVApp(vAppResponse.getId()).getStatus() == VAppStatus.ON) {
+            // TODO temporary hack because some vcloud implementations automatically transition to
+            // powerOn from deploy
+         } else {
+            throw e;
+         }
+
       }
       logger.debug("<< on vApp(%s)", vAppResponse.getId());
 
