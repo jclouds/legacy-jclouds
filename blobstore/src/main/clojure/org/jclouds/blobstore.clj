@@ -242,7 +242,8 @@ container, name, string -> etag
   ([blobstore container-name name data]
      (put-blob blobstore container-name
                (doto (.newBlob blobstore name)
-                 (.setPayload data)))))
+                 (.setPayload data)
+                 (.generateMD5)))))
 
 (defmulti #^{:arglists '[[container-name name target]
                          [blobstore container-name name target]]}
