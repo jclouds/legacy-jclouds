@@ -230,7 +230,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       void addVAppToSetRetryingIfNotYetPresent(Set<ComputeMetadata> nodes, NamedResource vdc,
                NamedResource resource) {
          NodeMetadata node = null;
-         while (node == null) {
+         int i = 0;
+         while (node == null && i++ < 3) {
             try {
                node = getNodeMetadataByIdInVDC(vdc.getId(), resource.getId());
             } catch (NullPointerException e) {

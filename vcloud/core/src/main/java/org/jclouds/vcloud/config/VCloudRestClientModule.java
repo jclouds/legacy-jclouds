@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
@@ -29,6 +31,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.Map;
+import java.util.SortedMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -51,6 +55,7 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.endpoints.Catalog;
@@ -121,14 +126,16 @@ public class VCloudRestClientModule extends AbstractModule {
    @VCloudToken
    @Provides
    String provideVCloudToken(Supplier<VCloudSession> cache) {
-      return cache.get().getVCloudToken();
+      return checkNotNull(cache.get().getVCloudToken(), "No token present in session");
    }
 
    @Provides
    @Org
    @Singleton
    protected URI provideOrg(Supplier<VCloudSession> cache, @Named(PROPERTY_VCLOUD_USER) String user) {
-      return Iterables.getLast(cache.get().getOrgs().values()).getLocation();
+      VCloudSession discovery = cache.get();
+      checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
+      return Iterables.getLast(discovery.getOrgs().values()).getLocation();
    }
 
    @Provides
@@ -170,7 +177,12 @@ public class VCloudRestClientModule extends AbstractModule {
    protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
             @Named(PROPERTY_VCLOUD_VERSION) String version) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return versionService.getSupportedVersions().get(180, TimeUnit.SECONDS).get(version);
+      SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180,
+               TimeUnit.SECONDS);
+      checkState(versions.size() > 0, "No versions present");
+      checkState(versions.containsKey(version), "version " + version + " not present in: "
+               + versions);
+      return versions.get(version);
    }
 
    @Provides
@@ -238,6 +250,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @VDC
    @Singleton
    protected URI provideDefaultVDC(Organization org) {
+      checkState(org.getVDCs().size() > 0, "No vdcs present in org: " + org.getName());
       return Iterables.get(org.getVDCs().values(), 0).getLocation();
    }
 
@@ -245,18 +258,19 @@ public class VCloudRestClientModule extends AbstractModule {
    @Catalog
    @Singleton
    protected URI provideCatalog(Organization org, @Named(PROPERTY_VCLOUD_USER) String user) {
+      checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
       return Iterables.get(org.getCatalogs().values(), 0).getLocation();
    }
 
    @Provides
    @Network
    @Singleton
-   protected URI provideDefaultNetwork(VCloudAsyncClient client) throws InterruptedException,
+   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return Iterables
-               .get(
-                        client.getDefaultVDC().get(180, TimeUnit.SECONDS).getAvailableNetworks()
-                                 .values(), 0).getLocation();
+      org.jclouds.vcloud.domain.VDC vDC = client.getDefaultVDC();
+      Map<String, NamedResource> networks = vDC.getAvailableNetworks();
+      checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
+      return Iterables.get(networks.values(), 0).getLocation();
    }
 
    @Provides
@@ -270,6 +284,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @TasksList
    @Singleton
    protected URI provideDefaultTasksList(Organization org) {
-      return org.getTasksLists().values().iterator().next().getLocation();
+      checkState(org.getTasksLists().size() > 0, "No tasks lists present in org: " + org.getName());
+      return Iterables.get(org.getTasksLists().values(), 0).getLocation();
    }
 }

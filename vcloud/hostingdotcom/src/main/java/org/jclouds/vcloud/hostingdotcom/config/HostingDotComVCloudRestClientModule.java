@@ -72,10 +72,10 @@ public class HostingDotComVCloudRestClientModule extends VCloudRestClientModule 
    }
 
    @Override
-   protected URI provideDefaultNetwork(VCloudAsyncClient client) {
+   protected URI provideDefaultNetwork(VCloudClient client) {
       return URI.create("https://vcloud.safesecureweb.com/network/1990");
    }
-   
+
    @Override
    protected Predicate<String> successTester(TaskSuccess success) {
       return new RetryablePredicate<String>(success, 45, 10, TimeUnit.MINUTES);
