@@ -124,7 +124,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention() {
-      return "%s%d";
+      return "%s-%d";
    }
 
    @Singleton
@@ -281,7 +281,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
       protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
          VApp vApp = client.getVApp(id);
-         String tag = vApp.getName().replaceAll("[0-9]+", "");
+         String tag = vApp.getName().replaceAll("-[0-9]+", "");
          return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
                   ImmutableMap.<String, String> of(), tag, vAppStatusToNodeState.get(vApp
                            .getStatus()), computeClient.getPublicAddresses(id), computeClient
