@@ -30,8 +30,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.TransientBlobStoreContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.domain.Status;
@@ -56,8 +56,8 @@ public class StoreTweetsControllerTest {
 
    Map<String, BlobStoreContext> createBlobStores() throws InterruptedException, ExecutionException {
       Map<String, BlobStoreContext> contexts = ImmutableMap.<String, BlobStoreContext> of("test1",
-               new StubBlobStoreContextBuilder().buildBlobStoreContext(), "test2",
-               new StubBlobStoreContextBuilder().buildBlobStoreContext());
+               new TransientBlobStoreContextBuilder().buildBlobStoreContext(), "test2",
+               new TransientBlobStoreContextBuilder().buildBlobStoreContext());
       for (BlobStoreContext blobstore : contexts.values()) {
          blobstore.getAsyncBlobStore().createContainerInLocation(null, "favo").get();
       }
