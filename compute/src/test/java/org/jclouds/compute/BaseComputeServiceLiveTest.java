@@ -67,7 +67,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "compute.ComputeServiceLiveTest")
@@ -119,7 +119,13 @@ public abstract class BaseComputeServiceLiveTest {
 
    abstract protected Module getSshModule();
 
-   @Test(enabled = true)
+   public void testTemplateMatch() throws Exception {
+      template = buildTemplate(client.templateBuilder());
+      Template toMatch = client.templateBuilder().imageId(template.getImage().getId()).build();
+      assertEquals(toMatch, template);
+   }
+
+   @Test(dependsOnMethods = "testTemplateMatch")
    public void testCreate() throws Exception {
       try {
          client.destroyNodesWithTag(tag);
@@ -130,11 +136,8 @@ public abstract class BaseComputeServiceLiveTest {
       }
       template = buildTemplate(client.templateBuilder());
 
-      template
-               .getOptions()
-               .installPrivateKey(keyPair.get("private"))
-               .authorizePublicKey(keyPair.get("public"))
-               .runScript(buildScript().getBytes());
+      template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(
+               keyPair.get("public")).runScript(buildScript().getBytes());
       nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template).values());
       assertEquals(nodes.size(), 2);
       checkNodes();
@@ -170,17 +173,16 @@ public abstract class BaseComputeServiceLiveTest {
    protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
 
    protected String buildScript() {
-       return
-                        new StringBuilder()//
-                                 .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-                                 .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-                                 .append(
-                                          "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-                                 .append("apt-get update\n")//
-                                 .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-                                 .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
-                                 .append("chmod 755 /usr/bin/runurl\n")//
-                                 .toString();
+      return new StringBuilder()//
+               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+               .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+               .append(
+                        "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+               .append("apt-get update\n")//
+               .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+               .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
+               .append("chmod 755 /usr/bin/runurl\n")//
+               .toString();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreate")

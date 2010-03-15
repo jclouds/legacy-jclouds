@@ -55,15 +55,13 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    public String buildScript() {
       return new StringBuilder()
-               //
                .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-               //
                .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
                .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
                .append(
                         "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
                .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append("yum -y install java-1.6.0-openjdk\n")
+               .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")
                .append(
                         "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
                .toString();
