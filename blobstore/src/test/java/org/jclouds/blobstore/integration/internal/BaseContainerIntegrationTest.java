@@ -83,8 +83,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
                   maxResults(1).withDetails());
 
-         BlobMetadata metadata = (BlobMetadata) Iterables.getOnlyElement(container);
-         
+         BlobMetadata metadata = BlobMetadata.class.cast(Iterables.get(container, 0));
+
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
          assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");

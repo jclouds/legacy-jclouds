@@ -56,7 +56,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
     * maximum duration of an unwrapped http Request
     */
    @Inject(optional = true)
-   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
 
    @Resource

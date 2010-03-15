@@ -55,7 +55,7 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
     * maximum duration of an blob Request
     */
    @Inject(optional = true)
-   @Named(Constants.PROPERTY_HTTP_REQUEST_TIMEOUT)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
    protected Long maxTime;
 
    @Inject
