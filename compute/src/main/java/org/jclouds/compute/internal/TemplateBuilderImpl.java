@@ -128,8 +128,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getOsDescription() == null)
                returnVal = false;
             else
-               returnVal = input.getOsDescription().contains(osDescription) ||
-                           input.getOsDescription().matches(osDescription); /* note: matches() expects a regex!*/
+               returnVal = input.getOsDescription().contains(osDescription)
+                        || input.getOsDescription().matches(osDescription); /*
+                                                                             * note: matches()
+                                                                             * expects a regex!
+                                                                             */
          }
          return returnVal;
       }
@@ -142,8 +145,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getVersion() == null)
                returnVal = false;
             else
-               returnVal = input.getVersion().contains(imageVersion) ||
-                           input.getVersion().matches(imageVersion); /* note: matches() expects a regex!*/
+               returnVal = input.getVersion().contains(imageVersion)
+                        || input.getVersion().matches(imageVersion); /*
+                                                                      * note: matches() expects a
+                                                                      * regex!
+                                                                      */
          }
          return returnVal;
       }
@@ -156,8 +162,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getName() == null)
                returnVal = false;
             else
-               returnVal = input.getName().contains(imageName) ||
-                           input.getName().matches(imageName); /* note: matches() expects a regex!*/
+               returnVal = input.getName().contains(imageName)
+                        || input.getName().matches(imageName); /* note: matches() expects a regex! */
          }
          return returnVal;
       }
@@ -170,8 +176,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getName() == null)
                returnVal = false;
             else
-               returnVal = input.getName().contains(imageDescription) ||
-                           input.getName().matches(imageDescription); /* note: matches() expects a regex!*/
+               returnVal = input.getDescription().equals(imageDescription)
+                        || input.getDescription().contains(imageDescription)
+                        || input.getDescription().matches(imageDescription); /*
+                                                                              * note: matches()
+                                                                              * expects a regex!
+                                                                              */
          }
          return returnVal;
       }
