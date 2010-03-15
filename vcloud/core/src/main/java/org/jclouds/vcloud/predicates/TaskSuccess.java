@@ -38,23 +38,25 @@ import com.google.inject.Inject;
 @Singleton
 public class TaskSuccess implements Predicate<String> {
 
-	private final VCloudClient client;
+   private final VCloudClient client;
 
-	@Resource
-	protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-	@Inject
-	public TaskSuccess(VCloudClient client) {
-		this.client = client;
-	}
+   @Inject
+   public TaskSuccess(VCloudClient client) {
+      this.client = client;
+   }
 
-	public boolean apply(String taskId) {
-		logger.trace("looking for status on task %s", taskId);
+   public boolean apply(String taskId) {
+      logger.trace("looking for status on task %s", taskId);
 
-		Task task = client.getTask(taskId);
-		logger.trace("%s: looking for status %s: currently: %s", task,
-				TaskStatus.SUCCESS, task.getStatus());
-		return task.getStatus() == TaskStatus.SUCCESS;
-	}
+      Task task = client.getTask(taskId);
+      logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task
+               .getStatus());
+      if (task.getStatus() == TaskStatus.ERROR)
+         throw new RuntimeException("error on task: " + task.getId() + " error: " + task.getError());
+      return task.getStatus() == TaskStatus.SUCCESS;
+   }
 
 }

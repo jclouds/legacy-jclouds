@@ -56,24 +56,24 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       // TODO verify parsing works
    }
 
-   // https://forums.bluelock.com/showthread.php?p=353#post353
-   @Override
-   @Test(enabled = false)
-   public void testCreate() throws Exception {
-      super.testCreate();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testGet() throws Exception {
-      super.testGet();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testReboot() throws Exception {
-      super.testReboot();
-   }
+//   // https://forums.bluelock.com/showthread.php?p=353#post353
+//   @Override
+//   @Test(enabled = false)
+//   public void testCreate() throws Exception {
+//      super.testCreate();
+//   }
+//
+//   @Override
+//   @Test(enabled = false)
+//   public void testGet() throws Exception {
+//      super.testGet();
+//   }
+//
+//   @Override
+//   @Test(enabled = false)
+//   public void testReboot() throws Exception {
+//      super.testReboot();
+//   }
 
    @Test
    public void testExample() throws Exception {
