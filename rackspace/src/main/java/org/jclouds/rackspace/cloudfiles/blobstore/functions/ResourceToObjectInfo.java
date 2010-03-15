@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -59,8 +61,10 @@ public class ResourceToObjectInfo implements
       to.setLastModified(from.getLastModified());
       if (from.getSize() != null)
          to.setBytes(from.getSize());
-      if (from.getUserMetadata() != null)
-         to.getMetadata().putAll(from.getUserMetadata());
+      if (from.getUserMetadata() != null) {
+         for (Entry<String, String> entry : from.getUserMetadata().entrySet())
+            to.getMetadata().put(entry.getKey().toLowerCase(), entry.getValue());
+      }
       return to;
    }
 

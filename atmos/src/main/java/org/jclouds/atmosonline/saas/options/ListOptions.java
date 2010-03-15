@@ -56,6 +56,20 @@ public class ListOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   /**
+    * the maximum number of items that should be returned. If this is not specified, there is no
+    * limit.
+    */
+   public ListOptions includeMeta() {
+      headers.put("x-emc-include-meta", Integer.toString(1));
+      return this;
+   }
+
+   public boolean metaIncluded() {
+      String meta = getFirstHeaderOrNull("x-emc-include-meta");
+      return (meta != null) ? meta.equals("1") : false;
+   }
+
    public Integer getLimit() {
       String maxresults = getFirstHeaderOrNull("x-emc-limit");
       return (maxresults != null) ? new Integer(maxresults) : null;
@@ -69,6 +83,14 @@ public class ListOptions extends BaseHttpRequestOptions {
       public static ListOptions token(String token) {
          ListOptions options = new ListOptions();
          return options.token(token);
+      }
+
+      /**
+       * @see ListOptions#includeMeta()
+       */
+      public static ListOptions includeMeta() {
+         ListOptions options = new ListOptions();
+         return options.includeMeta();
       }
 
       /**

@@ -36,21 +36,38 @@ public class ListOptionsTest {
       ListOptions options = new ListOptions().token("a");
       assertEquals(ImmutableList.of("a"), options.buildRequestHeaders().get("x-emc-token"));
    }
-   
-   public void testLimit() {
-      int limit = 1;
-      ListOptions options = new ListOptions().limit(limit);
-      assertEquals(ImmutableList.of("1"), options.buildRequestHeaders().get("x-emc-limit"));
-   }
 
    public void testTokenStatic() {
       ListOptions options = ListOptions.Builder.token("a");
       assertEquals(ImmutableList.of("a"), options.buildRequestHeaders().get("x-emc-token"));
    }
 
+   public void testLimit() {
+      int limit = 1;
+      ListOptions options = new ListOptions().limit(limit);
+      assertEquals(ImmutableList.of("1"), options.buildRequestHeaders().get("x-emc-limit"));
+   }
+
    public void testLimitStatic() {
       int limit = 1;
       ListOptions options = ListOptions.Builder.limit(limit);
       assertEquals(ImmutableList.of("1"), options.buildRequestHeaders().get("x-emc-limit"));
+   }
+
+   public void testNoMeta() {
+      ListOptions options = new ListOptions();
+      assert !options.metaIncluded();
+   }
+
+   public void testMeta() {
+      ListOptions options = new ListOptions().includeMeta();
+      assertEquals(ImmutableList.of("1"), options.buildRequestHeaders().get("x-emc-include-meta"));
+      assert options.metaIncluded();
+   }
+
+   public void testMetaStatic() {
+      ListOptions options = ListOptions.Builder.includeMeta();
+      assertEquals(ImmutableList.of("1"), options.buildRequestHeaders().get("x-emc-include-meta"));
+      assert options.metaIncluded();
    }
 }

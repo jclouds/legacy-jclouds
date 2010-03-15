@@ -28,12 +28,17 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -53,6 +58,38 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          context.getBlobStore().createContainerInLocation("default", containerName);
          context.getBlobStore().createContainerInLocation("default", containerName);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testWithDetails() throws InterruptedException {
+      String key = "hello";
+
+      Blob object = context.getBlobStore().newBlob(key);
+      object.setPayload(TEST_STRING);
+      object.getMetadata().setContentType(MediaType.TEXT_PLAIN);
+      object.getMetadata().setSize(new Long(TEST_STRING.length()));
+      // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
+      // providers.
+      object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
+      object.getMetadata().setContentMD5(new JCEEncryptionService().md5(TEST_STRING.getBytes()));
+      String containerName = getContainerName();
+      try {
+         addBlobToContainer(containerName, object);
+         validateContent(containerName, key);
+
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
+                  maxResults(1).withDetails());
+
+         BlobMetadata metadata = (BlobMetadata) Iterables.getOnlyElement(container);
+         
+         assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
+         assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
+         assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
+         assertEquals(metadata.getContentMD5(), new JCEEncryptionService().md5(TEST_STRING
+                  .getBytes()));
       } finally {
          returnContainer(containerName);
       }
@@ -151,20 +188,20 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          context.getBlobStore().clearContainer(containerName, inDirectory(directory));
          assert context.getBlobStore().directoryExists(containerName, directory);
-         assert context.getBlobStore().directoryExists(containerName,  directory + "/" + directory);
+         assert context.getBlobStore().directoryExists(containerName, directory + "/" + directory);
 
          // should have only the 2 level-deep directory above
          container = context.getBlobStore().list(containerName, inDirectory(directory));
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
-         
+
          context.getBlobStore().clearContainer(containerName, inDirectory(directory).recursive());
 
          // should no longer have the 2 level-deep directory above
          container = context.getBlobStore().list(containerName, inDirectory(directory));
          assert container.getNextMarker() == null;
          assert container.size() == 0 : container;
-         
+
          container = context.getBlobStore().list(containerName);
          // should only have the directory
          assert container.getNextMarker() == null;

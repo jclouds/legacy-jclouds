@@ -32,7 +32,7 @@ public class PageSetImpl<T> extends HashSet<T> implements PageSet<T> {
    private static final long serialVersionUID = -7133632087734650835L;
    protected final String marker;
 
-   public PageSetImpl(Iterable<T> contents, @Nullable String nextMarker) {
+   public PageSetImpl(Iterable<? extends T> contents, @Nullable String nextMarker) {
       Iterables.addAll(this, contents);
       this.marker = nextMarker;
    }

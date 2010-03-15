@@ -37,13 +37,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public class ListContainerOptions extends ListOptions implements Cloneable {
+
+   public static final ImmutableListContainerOptions NONE = new ImmutableListContainerOptions(
+            new ListContainerOptions());
+
+   private String dir;
+   private boolean recursive;
+   private boolean detailed;
+
    public ListContainerOptions() {
    }
 
-   ListContainerOptions(Integer maxKeys, String marker, String dir, boolean recursive) {
+   ListContainerOptions(Integer maxKeys, String marker, String dir, boolean recursive,
+            boolean detailed) {
       super(maxKeys, marker);
       this.dir = dir;
       this.recursive = recursive;
+      this.detailed = detailed;
    }
 
    public static class ImmutableListContainerOptions extends ListContainerOptions {
@@ -66,6 +76,11 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
       @Override
       public ListContainerOptions inDirectory(String dir) {
          throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean isDetailed() {
+         return delegate.isDetailed();
       }
 
       @Override
@@ -106,19 +121,16 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
 
    }
 
-   public static final ImmutableListContainerOptions NONE = new ImmutableListContainerOptions(
-            new ListContainerOptions());
-
-   private String dir;
-
-   private boolean recursive;
-
    public String getDir() {
       return dir;
    }
 
    public boolean isRecursive() {
       return recursive;
+   }
+
+   public boolean isDetailed() {
+      return detailed;
    }
 
    /**
@@ -151,6 +163,15 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
    public ListContainerOptions recursive() {
       // checkArgument(path == null, "path and recursive combination currently not supported");
       this.recursive = true;
+      return this;
+   }
+
+   /**
+    * populate each result with detailed such as metadata even if it incurs extra requests to the
+    * service.
+    */
+   public ListContainerOptions withDetails() {
+      this.detailed = true;
       return this;
    }
 
@@ -188,15 +209,23 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
          return options.recursive();
       }
 
+      /**
+       * @see ListContainerOptions#withDetails()
+       */
+      public static ListContainerOptions withDetails() {
+         ListContainerOptions options = new ListContainerOptions();
+         return options.withDetails();
+      }
    }
 
    @Override
    public ListContainerOptions clone() {
-      return new ListContainerOptions(getMaxResults(), getMarker(), dir, recursive);
+      return new ListContainerOptions(getMaxResults(), getMarker(), dir, recursive, detailed);
    }
 
    @Override
    public String toString() {
-      return "[dir=" + dir + ", recursive=" + recursive + ", maxResults=" + getMaxResults() + "]";
+      return "[dir=" + dir + ", recursive=" + recursive + ", detailed=" + detailed
+               + ", maxResults=" + getMaxResults() + "]";
    }
 }

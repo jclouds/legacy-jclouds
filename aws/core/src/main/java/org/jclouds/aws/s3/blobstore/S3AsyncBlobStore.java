@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -52,6 +53,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
 
@@ -75,6 +77,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
    private final ObjectToBlobMetadata object2BlobMd;
+   private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
    S3AsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
@@ -83,7 +86,8 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
-            ObjectToBlobMetadata object2BlobMd) {
+            ObjectToBlobMetadata object2BlobMd,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, service);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.async = checkNotNull(async, "async");
@@ -95,6 +99,8 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
       this.object2Blob = checkNotNull(object2Blob, "object2Blob");
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
+               "fetchBlobMetadataProvider");
    }
 
    /**
@@ -148,7 +154,10 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
             ListContainerOptions options) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(options);
       ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
-      return compose(returnVal, bucket2ResourceList, service);
+      ListenableFuture<PageSet<? extends StorageMetadata>> list = compose(returnVal,
+               bucket2ResourceList, service);
+      return options.isDetailed() ? compose(list, fetchBlobMetadataProvider.get().setContainerName(
+               container), service) : list;
    }
 
    /**

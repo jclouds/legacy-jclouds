@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
 import java.util.Set;
@@ -25,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -37,6 +39,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
@@ -71,6 +74,7 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToObject blob2Object;
    private final ObjectToBlobMetadata object2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
    CloudFilesAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
@@ -79,7 +83,8 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions) {
+            BlobToHttpGetOptions blob2ObjectGetOptions,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, service);
       this.sync = sync;
       this.async = async;
@@ -90,6 +95,8 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
       this.blob2Object = blob2Object;
       this.object2BlobMd = object2BlobMd;
       this.blob2ObjectGetOptions = blob2ObjectGetOptions;
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
+               "fetchBlobMetadataProvider");
    }
 
    /**
@@ -139,7 +146,10 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
                .apply(options);
       ListenableFuture<PageSet<ObjectInfo>> returnVal = async.listObjects(container, httpOptions);
-      return compose(returnVal, container2ResourceList, service);
+      ListenableFuture<PageSet<? extends StorageMetadata>> list = compose(returnVal,
+               container2ResourceList, service);
+      return options.isDetailed() ? compose(list, fetchBlobMetadataProvider.get().setContainerName(
+               container), service) : list;
    }
 
    /**

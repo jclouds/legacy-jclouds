@@ -35,4 +35,8 @@ public class AtmosStorageContainerIntegrationTest extends BaseContainerIntegrati
       // Not currently working
    }
 
+   @Override
+   public void testListContainerMarker() throws InterruptedException, UnsupportedEncodingException {
+      // Not currently working https://community.emc.com/thread/100545
+   }
 }

@@ -47,6 +47,10 @@ public class ListOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   public boolean getIncludeMetadata() {
+      return getFirstQueryOrNull("include").equals("metadata");
+   }
+
    /**
     * Filters the results to return only objects whose name begins with the specified prefix.
     */

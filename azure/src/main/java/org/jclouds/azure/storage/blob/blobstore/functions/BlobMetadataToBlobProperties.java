@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import java.util.Map.Entry;
+
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
@@ -42,8 +44,10 @@ public class BlobMetadataToBlobProperties implements Function<BlobMetadata, Muta
       to.setLastModified(from.getLastModified());
       if (from.getSize() != null)
          to.setContentLength(from.getSize());
-      if (from.getUserMetadata() != null)
-         to.setMetadata(from.getUserMetadata());
+      if (from.getUserMetadata() != null) {
+         for (Entry<String, String> entry : from.getUserMetadata().entrySet())
+            to.getMetadata().put(entry.getKey().toLowerCase(), entry.getValue());
+      }
       return to;
    }
 

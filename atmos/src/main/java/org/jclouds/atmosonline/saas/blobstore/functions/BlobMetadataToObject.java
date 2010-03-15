@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.functions;
 
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -48,8 +50,10 @@ public class BlobMetadataToObject implements Function<BlobMetadata, AtmosObject>
       if (from == null)
          return null;
       UserMetadata userMd = new UserMetadata();
-      if (from.getUserMetadata() != null)
-         userMd.getMetadata().putAll(from.getUserMetadata());
+      if (from.getUserMetadata() != null) {
+         for (Entry<String, String> entry : from.getUserMetadata().entrySet())
+            userMd.getMetadata().put(entry.getKey().toLowerCase(), entry.getValue());
+      }
       return factory.create(blob2ContentMd.apply(from), blob2SysMd.apply(from), userMd);
    }
 

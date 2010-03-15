@@ -103,7 +103,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
                   }
                }
             }, Executors.sameThreadExecutor());
-            responses.put(md, ablobstore.getBlob(container, md.getName()));
+            responses.put(md, future);
          }
          exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
                   "getting from containerName: %s", container));

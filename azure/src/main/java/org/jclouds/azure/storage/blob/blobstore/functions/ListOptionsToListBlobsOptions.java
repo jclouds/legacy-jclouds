@@ -48,6 +48,9 @@ public class ListOptionsToListBlobsOptions implements
       if (from.getMaxResults() != null) {
          httpOptions.maxResults(from.getMaxResults());
       }
+      if (from.isDetailed()) {
+         httpOptions.includeMetadata();
+      }
       return httpOptions;
    }
 }

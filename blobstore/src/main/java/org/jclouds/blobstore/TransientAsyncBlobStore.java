@@ -144,20 +144,20 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     * default maxResults is 1000
     */
    @Override
-   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(final String name,
-            ListContainerOptions options) {
-      final Map<String, Blob> realContents = getContainerToBlobs().get(name);
+   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(
+            final String container, ListContainerOptions options) {
+      final Map<String, Blob> realContents = getContainerToBlobs().get(container);
 
       if (realContents == null)
-         return immediateFailedFuture(cnfe(name));
+         return immediateFailedFuture(cnfe(container));
 
       SortedSet<StorageMetadata> contents = Sets.newTreeSet(Iterables.transform(realContents
                .keySet(), new Function<String, StorageMetadata>() {
          public StorageMetadata apply(String key) {
             Blob oldBlob = realContents.get(key);
             checkState(oldBlob != null, "blob " + key
-                     + " is not present although it was in the list of " + name);
-            checkState(oldBlob.getMetadata() != null, "blob " + name + "/" + key
+                     + " is not present although it was in the list of " + container);
+            checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key
                      + " has no metadata");
             MutableBlobMetadata md = copy(oldBlob.getMetadata());
             String directoryName = ifDirectoryReturnName.execute(md);
@@ -224,6 +224,14 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
                      }
                   }));
       }
+
+      // trim metadata, if the response isn't supposed to be detailed.
+      if (!options.isDetailed()) {
+         for (StorageMetadata md : contents) {
+            md.getUserMetadata().clear();
+         }
+      }
+
       return immediateFuture(new PageSetImpl<StorageMetadata>(contents, marker));
 
    }

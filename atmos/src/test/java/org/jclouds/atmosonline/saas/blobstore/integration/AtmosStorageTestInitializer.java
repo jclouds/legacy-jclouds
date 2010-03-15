@@ -40,8 +40,8 @@ public class AtmosStorageTestInitializer extends BaseTestInitializer {
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
             String account, String key) throws IOException {
-      return new BlobStoreContextFactory().createContext("atmos", account, key, ImmutableSet.of(
-               configurationModule, new Log4JLoggingModule()), new Properties());
+      return new BlobStoreContextFactory().createContext("atmosonline", account, key, ImmutableSet
+               .of(configurationModule, new Log4JLoggingModule()), new Properties());
    }
 
    @Override

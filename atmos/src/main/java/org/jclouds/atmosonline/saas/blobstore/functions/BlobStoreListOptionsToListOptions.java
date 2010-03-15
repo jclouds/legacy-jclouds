@@ -42,6 +42,9 @@ public class BlobStoreListOptionsToListOptions implements
       if (from.getMaxResults() != null) {
          httpOptions.limit(from.getMaxResults());
       }
+      if (from.isDetailed()) {
+         httpOptions.includeMeta();
+      }
       return httpOptions;
    }
 }

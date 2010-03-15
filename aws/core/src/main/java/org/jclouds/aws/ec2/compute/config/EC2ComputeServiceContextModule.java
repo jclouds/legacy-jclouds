@@ -321,19 +321,23 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
                   holder.logger.debug("<< didn't match os(%s)", matcher.group(1));
                }
             }
-            images
-                     .add(new ImageImpl(
-                              from.getId(),
-                              name,
-                              region.toString(),
-                              null,
-                              ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
-                              from.getDescription(),
-                              version,
-                              os,
-                              osDescription,
-                              from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
-                                       : Architecture.X86_64));
+            try {
+               images
+                        .add(new ImageImpl(
+                                 from.getId(),
+                                 name,
+                                 region.toString(),
+                                 null,
+                                 ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
+                                 from.getDescription(),
+                                 version,
+                                 os,
+                                 osDescription,
+                                 from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
+                                          : Architecture.X86_64));
+            } catch (NullPointerException e) {
+               holder.logger.debug("<< image (%s) missing (%s)", from.getId(), e.getMessage());
+            }
          }
       }
       holder.logger.debug("<< images(%d)", images.size());

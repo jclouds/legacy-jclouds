@@ -29,7 +29,8 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ListBlobsOptionsToListOptions implements Function<ListBlobsOptions[], ListContainerOptions> {
+public class ListBlobsOptionsToListOptions implements
+         Function<ListBlobsOptions[], ListContainerOptions> {
    public ListContainerOptions apply(ListBlobsOptions[] optionsList) {
       ListContainerOptions options = new ListContainerOptions();
       if (optionsList.length != 0) {
@@ -46,6 +47,9 @@ public class ListBlobsOptionsToListOptions implements Function<ListBlobsOptions[
          }
          if (optionsList[0].getPrefix() != null) {
             options.inDirectory(optionsList[0].getPrefix());
+         }
+         if (optionsList[0].getIncludeMetadata()) {
+            options.withDetails();
          }
       }
       return options;

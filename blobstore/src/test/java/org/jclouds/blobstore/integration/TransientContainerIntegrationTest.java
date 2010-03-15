@@ -18,8 +18,19 @@
  */
 package org.jclouds.blobstore.integration;
 
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
+import static org.testng.Assert.assertEquals;
+
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author James Murty
@@ -28,4 +39,33 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "blobstore.TransientContainerIntegrationTest")
 public class TransientContainerIntegrationTest extends BaseContainerIntegrationTest {
 
+   @Test(groups = { "integration", "live" })
+   public void testNotWithDetails() throws InterruptedException {
+
+      String key = "hello";
+
+      Blob object = context.getBlobStore().newBlob(key);
+      object.setPayload(TEST_STRING);
+      object.getMetadata().setContentType(MediaType.TEXT_PLAIN);
+      object.getMetadata().setSize(new Long(TEST_STRING.length()));
+      // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
+      // providers.
+      object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
+      String containerName = getContainerName();
+      try {
+         addBlobToContainer(containerName, object);
+         validateContent(containerName, key);
+
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
+                  maxResults(1));
+
+         BlobMetadata metadata = (BlobMetadata) Iterables.getOnlyElement(container);
+         // transient container should be lenient and not return metadata on undetailed listing.
+
+         assertEquals(metadata.getUserMetadata().size(), 0);
+
+      } finally {
+         returnContainer(containerName);
+      }
+   }
 }

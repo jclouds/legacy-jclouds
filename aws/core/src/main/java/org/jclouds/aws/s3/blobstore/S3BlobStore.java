@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
@@ -45,6 +46,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.Utils;
@@ -67,6 +69,7 @@ public class S3BlobStore extends BaseBlobStore {
    private final BlobToObject blob2Object;
    private final ObjectToBlobMetadata object2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
    S3BlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, S3Client sync,
@@ -74,7 +77,8 @@ public class S3BlobStore extends BaseBlobStore {
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
-            ObjectToBlobMetadata object2BlobMd) {
+            ObjectToBlobMetadata object2BlobMd,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -85,6 +89,8 @@ public class S3BlobStore extends BaseBlobStore {
       this.object2Blob = checkNotNull(object2Blob, "object2Blob");
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
+               "fetchBlobMetadataProvider");
    }
 
    /**
@@ -132,9 +138,12 @@ public class S3BlobStore extends BaseBlobStore {
     *           bucket name
     */
    @Override
-   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions optionsList) {
-      ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
-      return bucket2ResourceList.apply(sync.listBucket(container, httpOptions));
+   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options) {
+      ListBucketOptions httpOptions = container2BucketListOptions.apply(options);
+      PageSet<? extends StorageMetadata> list = bucket2ResourceList.apply(sync.listBucket(
+               container, httpOptions));
+      return options.isDetailed() ? fetchBlobMetadataProvider.get().setContainerName(container)
+               .apply(list) : list;
    }
 
    /**
@@ -191,7 +200,6 @@ public class S3BlobStore extends BaseBlobStore {
    @Override
    public BlobMetadata blobMetadata(String container, String key) {
       return object2BlobMd.apply(sync.headObject(container, key));
-
    }
 
    /**

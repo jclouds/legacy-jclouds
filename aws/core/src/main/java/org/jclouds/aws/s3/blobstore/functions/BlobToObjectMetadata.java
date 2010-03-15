@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.s3.blobstore.functions;
 
+import java.util.Map.Entry;
+
 import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
@@ -42,8 +44,10 @@ public class BlobToObjectMetadata implements Function<BlobMetadata, MutableObjec
       to.setLastModified(from.getLastModified());
       if (from.getSize() != null)
          to.setSize(from.getSize());
-      if (from.getUserMetadata() != null)
-         to.setUserMetadata(from.getUserMetadata());
+      if (from.getUserMetadata() != null) {
+         for (Entry<String, String> entry : from.getUserMetadata().entrySet())
+            to.getUserMetadata().put(entry.getKey().toLowerCase(), entry.getValue());
+      }
       return to;
    }
 

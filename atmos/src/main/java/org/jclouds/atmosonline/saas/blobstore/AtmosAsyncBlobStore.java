@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -38,6 +39,8 @@ import org.jclouds.atmosonline.saas.blobstore.functions.DirectoryEntryListToReso
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlob;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
+import org.jclouds.atmosonline.saas.domain.BoundedSet;
+import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -47,6 +50,7 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
+import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.encryption.EncryptionService;
@@ -69,6 +73,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    private final DirectoryEntryListToResourceMetadataList container2ResourceList;
    private final EncryptionService encryptionService;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
@@ -77,7 +82,8 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
-            EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions) {
+            EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, service);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -89,6 +95,8 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
       this.encryptionService = checkNotNull(encryptionService, "encryptionService");
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
+               "fetchBlobMetadataProvider");
    }
 
    /**
@@ -208,7 +216,12 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
             org.jclouds.blobstore.options.ListContainerOptions options) {
       container = AtmosStorageUtils.adjustContainerIfDirOptionPresent(container, options);
       ListOptions nativeOptions = container2ContainerListOptions.apply(options);
-      return compose(async.listDirectory(container, nativeOptions), container2ResourceList, service);
+      ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> returnVal = async
+               .listDirectory(container, nativeOptions);
+      ListenableFuture<PageSet<? extends StorageMetadata>> list = compose(returnVal,
+               container2ResourceList, service);
+      return options.isDetailed() ? compose(list, fetchBlobMetadataProvider.get().setContainerName(
+               container), service) : list;
    }
 
    /**

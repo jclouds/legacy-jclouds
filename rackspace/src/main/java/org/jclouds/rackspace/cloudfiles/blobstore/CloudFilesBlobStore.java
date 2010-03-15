@@ -18,9 +18,12 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStoreContext;
@@ -32,6 +35,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
@@ -60,6 +64,7 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    private final BlobToObject blob2Object;
    private final ObjectToBlobMetadata object2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
    CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, CloudFilesClient sync,
@@ -67,7 +72,8 @@ public class CloudFilesBlobStore extends BaseBlobStore {
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions) {
+            BlobToHttpGetOptions blob2ObjectGetOptions,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils);
       this.sync = sync;
       this.container2ResourceMd = container2ResourceMd;
@@ -77,6 +83,8 @@ public class CloudFilesBlobStore extends BaseBlobStore {
       this.blob2Object = blob2Object;
       this.object2BlobMd = object2BlobMd;
       this.blob2ObjectGetOptions = blob2ObjectGetOptions;
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
+               "fetchBlobMetadataProvider");
    }
 
    /**
@@ -124,10 +132,13 @@ public class CloudFilesBlobStore extends BaseBlobStore {
     *           container name
     */
    @Override
-   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions optionsList) {
+   public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
-               .apply(optionsList);
-      return container2ResourceList.apply(sync.listObjects(container, httpOptions));
+               .apply(options);
+      PageSet<? extends StorageMetadata> list = container2ResourceList.apply(sync.listObjects(
+               container, httpOptions));
+      return options.isDetailed() ? fetchBlobMetadataProvider.get().setContainerName(container)
+               .apply(list) : list;
    }
 
    /**

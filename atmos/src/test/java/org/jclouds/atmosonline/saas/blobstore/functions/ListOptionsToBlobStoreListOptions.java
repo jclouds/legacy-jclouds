@@ -39,6 +39,9 @@ public class ListOptionsToBlobStoreListOptions implements
          if (optionsList[0].getLimit() != null) {
             options.maxResults(optionsList[0].getLimit());
          }
+         if (optionsList[0].metaIncluded()) {
+            options.withDetails();
+         }
       }
       return options;
    }
