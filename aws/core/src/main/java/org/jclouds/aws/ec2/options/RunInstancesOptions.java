@@ -76,7 +76,7 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    }
     
    String getSecurityGroup() {
-      return getFirstFormOrNull("SecurityGroup");
+      return getFirstFormOrNull("SecurityGroup.1");
    }
 
    /**
