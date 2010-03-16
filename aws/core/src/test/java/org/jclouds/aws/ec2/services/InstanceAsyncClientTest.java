@@ -30,6 +30,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.EC2AsyncClient;
+import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
 import org.jclouds.aws.ec2.domain.InstanceType;
@@ -53,6 +56,7 @@ import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -157,15 +161,17 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
                         RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
                Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, "ami-voo", 1, 5,
-               new RunInstancesOptions().withKernelId("kernelId").enableMonitoring());
+               new RunInstancesOptions().withKernelId("kernelId").enableMonitoring().
+      withSecurityGroups("group1", "group2"));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               httpMethod,
-               "Content-Length: 118\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.eu-west-1.amazonaws.com\n");
-      assertPayloadEquals(
-               httpMethod,
-               "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&Placement.AvailabilityZone=eu-west-1a");
+       assertRequestLineEquals(httpMethod, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
+            assertHeadersEqual(
+                     httpMethod,
+                     "Content-Length: 164\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.eu-west-1.amazonaws.com\n");
+       assertPayloadEquals(
+                     httpMethod,
+                     "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=eu-west-1a");
+
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RunInstancesResponseHandler.class);
