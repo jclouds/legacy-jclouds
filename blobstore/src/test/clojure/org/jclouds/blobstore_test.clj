@@ -72,5 +72,22 @@
          (is (= data (slurp (.getAbsolutePath data-file))))
          (finally (.delete data-file)))))
 
+(deftest download-checksum-test
+  (binding [get-blob (fn [blobstore c-name name]
+                       (let [blob (.newBlob blobstore name)
+                             md (.getMetadata blob)]
+                         (.setPayload blob "bogus payload")
+                         (.setContentMD5 md (.getBytes "bogus MD5"))
+                         blob))]
+    (let [name "test"
+          container-name "test-container"
+          data "test content"
+          data-file (java.io.File/createTempFile "jclouds" "data")]
+      (try (create-container container-name)
+           (create-blob container-name name data)
+           (is (thrown? Exception
+                        (download-blob container-name name data-file)))
+           (finally (.delete data-file))))))
+
 ;; TODO: more tests involving blob-specific functions
 

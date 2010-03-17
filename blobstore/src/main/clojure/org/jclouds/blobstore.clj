@@ -25,6 +25,7 @@ See http://code.google.com/p/jclouds for details."
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
             domain.BlobMetadata domain.StorageMetadata domain.Blob
             options.ListContainerOptions]
+           [java.security DigestOutputStream MessageDigest]
            [com.google.common.collect ImmutableSet]))
 
 (defn blobstore
@@ -66,6 +67,8 @@ Options can also be specified for extension modules
    :else (apply blobstore args)))
 
 (def *blobstore*)
+
+(def *max-retries* 3)
 
 (defmacro with-blobstore [[& blobstore-or-args] & body]
   `(binding [*blobstore* (as-blobstore ~@blobstore-or-args)]
@@ -256,9 +259,19 @@ container, name, string -> etag
   [container-name name target]
   (download-blob *blobstore* container-name name target))
 
-(defmethod download-blob OutputStream [blobstore container-name name target]
-  (let [blob (get-blob blobstore container-name name)]
-    (copy (.getContent blob) target)))
+(defmethod download-blob OutputStream [blobstore container-name name target
+                                       & [retries]]
+  (let [blob (get-blob blobstore container-name name)
+        digest-stream (DigestOutputStream. ;; TODO: not all clouds use MD5
+                       target (MessageDigest/getInstance "MD5"))]
+    (copy (.getContent blob) digest-stream)
+    (let [digest (.digest (.getMessageDigest digest-stream))
+          metadata-digest (.getContentMD5 (.getMetadata blob))]
+      (when-not (MessageDigest/isEqual digest metadata-digest)
+        (if (<= (or retries 0) *max-retries*)
+          (recur blobstore container-name name target [(inc (or retries 1))])
+          (throw (Exception. (format "Download failed for %s/%s"
+                                     container-name name))))))))
 
 (defmethod download-blob File [blobstore container-name name target]
   (download-blob blobstore container-name name (FileOutputStream. target)))
