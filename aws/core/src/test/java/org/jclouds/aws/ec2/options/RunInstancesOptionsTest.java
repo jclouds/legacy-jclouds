@@ -78,7 +78,7 @@ public class RunInstancesOptionsTest {
    public void testWithSecurityGroup() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup"), Collections
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections
                .singletonList("test"));
    }
 
@@ -91,7 +91,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithSecurityGroupStatic() {
       RunInstancesOptions options = withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup"), Collections
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections
                .singletonList("test"));
    }
 
