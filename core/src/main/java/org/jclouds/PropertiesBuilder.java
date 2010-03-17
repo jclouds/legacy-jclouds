@@ -26,7 +26,11 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTION_REUSE;
 import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
 import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
 import static org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES;
+import static org.jclouds.Constants.PROPERTY_PROXY_HOST;
+import static org.jclouds.Constants.PROPERTY_PROXY_PASSWORD;
+import static org.jclouds.Constants.PROPERTY_PROXY_PORT;
 import static org.jclouds.Constants.PROPERTY_PROXY_SYSTEM;
+import static org.jclouds.Constants.PROPERTY_PROXY_USER;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
@@ -56,6 +60,38 @@ public abstract class PropertiesBuilder {
     */
    public PropertiesBuilder useSystemProxies(boolean useSystemProxies) {
       properties.setProperty(PROPERTY_PROXY_SYSTEM, useSystemProxies + "");
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_HOST
+    */
+   public PropertiesBuilder withProxyHost(String proxyHost) {
+      properties.setProperty(PROPERTY_PROXY_HOST, proxyHost);
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_PORT
+    */
+   public PropertiesBuilder withProxyPort(int proxyPort) {
+      properties.setProperty(PROPERTY_PROXY_PORT, Integer.toString(proxyPort));
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_USER
+    */
+   public PropertiesBuilder withProxyUser(String proxyUser) {
+      properties.setProperty(PROPERTY_PROXY_USER, proxyUser);
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_PASSWORD
+    */
+   public PropertiesBuilder withProxyPassword(String proxyPassword) {
+      properties.setProperty(PROPERTY_PROXY_PASSWORD, proxyPassword);
       return this;
    }
 

@@ -74,6 +74,18 @@ public class HttpUtils {
    private final int globalMaxConnectionsPerHost;
    private final int connectionTimeout;
    private final int soTimeout;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_PROXY_HOST)
+   private String proxyHost;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_PROXY_PORT)
+   private Integer proxyPort;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_PROXY_USER)
+   private String proxyUser;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_PROXY_PASSWORD)
+   private String proxyPassword;
 
    @Inject
    public HttpUtils(@Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
@@ -84,6 +96,34 @@ public class HttpUtils {
       this.connectionTimeout = connectionTimeout;
       this.globalMaxConnections = globalMaxConnections;
       this.globalMaxConnectionsPerHost = globalMaxConnectionsPerHost;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_HOST
+    */
+   public String getProxyHost() {
+      return proxyHost;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_PORT
+    */
+   public Integer getProxyPort() {
+      return proxyPort;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_USER
+    */
+   public String getProxyUser() {
+      return proxyUser;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PROXY_PASSWORD
+    */
+   public String getProxyPassword() {
+      return proxyPassword;
    }
 
    public int getSocketOpenTimeout() {

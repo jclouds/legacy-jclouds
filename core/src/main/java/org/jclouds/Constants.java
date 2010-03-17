@@ -88,6 +88,31 @@ public interface Constants {
     */
    public static final String PROPERTY_PROXY_SYSTEM = "jclouds.use_system_proxy";
    /**
+    * String property.
+    * <p/>
+    *Explicitly sets the host name of a HTTP proxy server.
+    */
+   public static final String PROPERTY_PROXY_HOST = "jclouds.proxy_host";
+   /**
+    * Integer property.
+    * <p/>
+    * Explicitly sets the port number of a HTTP proxy server.
+    */
+   public static final String PROPERTY_PROXY_PORT = "jclouds.proxy_port";
+   /**
+    * String property.
+    * <p/>
+    * Explicitly sets the user name credential for proxy authentication.
+    */
+   public static final String PROPERTY_PROXY_USER = "jclouds.proxy_user";
+   /**
+    * String property.
+    * <p/>
+    * Explicitly sets the password credential for proxy authentication.
+    */
+   public static final String PROPERTY_PROXY_PASSWORD = "jclouds.proxy_password";
+
+   /**
     * Integer property.
     * <p/>
     * Commands are retried, if the problem on the server side was a resolvable conflict. However,
@@ -125,9 +150,9 @@ public interface Constants {
     * Name of the logger that records the steps of the request signing process of the HTTP_service.
     */
    public static final String LOGGER_SIGNATURE = "jclouds.signature";
-    /**
-     * Name of the custom adapter bindings map for Gson
-     */
+   /**
+    * Name of the custom adapter bindings map for Gson
+    */
    public static final String PROPERTY_GSON_ADAPTERS = "jclouds.gson.adapters";
 
 }

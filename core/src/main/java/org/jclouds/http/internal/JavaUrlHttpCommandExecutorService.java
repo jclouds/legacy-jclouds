@@ -23,9 +23,13 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 
@@ -105,7 +109,6 @@ public class JavaUrlHttpCommandExecutorService extends
       response.setMessage(connection.getResponseMessage());
       return response;
    }
-   
 
    public InputStream consumeOnClose(InputStream in) {
       return new ConsumeOnCloseInputStream(in);
@@ -138,7 +141,6 @@ public class JavaUrlHttpCommandExecutorService extends
 
    }
 
-
    private InputStream bufferAndCloseStream(InputStream inputStream) throws IOException {
       InputStream in = null;
       try {
@@ -160,6 +162,17 @@ public class JavaUrlHttpCommandExecutorService extends
          System.setProperty("java.net.useSystemProxies", "true");
          Iterable<Proxy> proxies = ProxySelector.getDefault().select(request.getEndpoint());
          Proxy proxy = Iterables.getLast(proxies);
+         connection = (HttpURLConnection) url.openConnection(proxy);
+      } else if (utils.getProxyHost() != null) {
+         SocketAddress addr = new InetSocketAddress(utils.getProxyHost(), utils.getProxyPort());
+         Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
+         Authenticator authenticator = new Authenticator() {
+            public PasswordAuthentication getPasswordAuthentication() {
+               return (new PasswordAuthentication(utils.getProxyUser(), utils.getProxyPassword()
+                        .toCharArray()));
+            }
+         };
+         Authenticator.setDefault(authenticator);
          connection = (HttpURLConnection) url.openConnection(proxy);
       } else {
          connection = (HttpURLConnection) url.openConnection();
