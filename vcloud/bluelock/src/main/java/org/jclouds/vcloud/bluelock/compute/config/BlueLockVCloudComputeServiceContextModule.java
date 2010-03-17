@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.bluelock.compute.config;
 
+import org.jclouds.vcloud.bluelock.compute.BlueLockVCloudComputeClient;
+import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
 /**
@@ -26,12 +28,13 @@ import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
  * 
  * @author Adrian Cole
  */
-public class BlueLockVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
    @Override
    protected void configure() {
       super.configure();
+      bind(VCloudComputeClient.class).to(BlueLockVCloudComputeClient.class);
+
    }
 
 }
