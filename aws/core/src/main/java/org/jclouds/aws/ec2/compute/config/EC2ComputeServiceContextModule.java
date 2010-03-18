@@ -282,9 +282,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       protected Logger logger = Logger.NULL;
    }
 
-   // alestic-32-eu-west-1/debian-4.0-etch-base-20081130.manifest.xml
-   public static final Pattern ALESTIC_PATTERN = Pattern
-            .compile(".*/([^-]*)-([^-]*)-.*-(.*)\\.manifest\\.xml");
+   // alestic-32-eu-west-1/debian-4.0-etch-base-20081130
+   public static final Pattern ALESTIC_PATTERN = Pattern.compile(".*/([^-]*)-([^-]*)-.*-(.*)");
 
    @Provides
    @Singleton
