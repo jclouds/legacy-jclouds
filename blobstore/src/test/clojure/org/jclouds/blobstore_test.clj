@@ -91,3 +91,49 @@
 
 ;; TODO: more tests involving blob-specific functions
 
+(deftest corruption-hunt
+  (let [service "transient"
+        account ""
+        secret-key ""
+        container-name "test"
+        name "work-file"
+        upload-filename "/home/phil/work-file"
+        total-downloads 100
+        threads 10
+        blob-s (blobstore service account secret-key)]
+
+    ;; upload
+    (create-container blob-s container-name)
+    (when-not (blob-exists? blob-s container-name name)
+      (create-blob blob-s container-name name
+                   (java.io.File. upload-filename)))
+
+    ;; download
+    (let [total (atom total-downloads)]
+      (defn new-agent []
+        (agent name))
+
+      (defn dl-and-restart [file]
+        (when-not (<= @total 0)
+          (with-open [baos (java.io.ByteArrayOutputStream.)]
+            (try
+             (download-blob blob-s container-name file baos)
+             (catch Exception e
+               (with-open [of (java.io.FileOutputStream.
+                               (java.io.File/createTempFile "jclouds" ".dl"))]
+                 (.write of (.toByteArray baos)))
+               (throw e))))
+          (swap! total dec)
+          (send *agent* dl-and-restart)
+          file))
+
+      (defn start-agents []
+        (let [agents (map (fn [_] (new-agent))
+                          (range threads))]
+          (doseq [a agents]
+            (send-off a dl-and-restart))
+          agents))
+
+      (let [agents (start-agents)]
+        (apply await agents)
+        (is (every? nil? (map agent-errors agents)))))))
