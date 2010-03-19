@@ -91,10 +91,10 @@
             <id>googlecode.java-xmlbuilder</id>
             <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>       
         </repository>
-	<repository>
+        <repository>
             <id>clojure</id>
             <url>http://build.clojure.org/releases</url>
-	</repository>
+        </repository>
         <repository>
             <id>clojars.org</id>
             <url>http://clojars.org/repo</url>
@@ -142,17 +142,26 @@
                 <role>PMC</role>
             </roles>
             <url>http://www.jclouds.org</url>
-            <timezone>+0</timezone>
+            <timezone>-8</timezone>
         </developer>
         <developer>
-            <name>Andrew Phillips</name>
-            <id>sharedocs1</id>
-            <email>aphillips -at- qrmedia.com</email>
+            <name>Hugo Duncan</name>
+            <id>hugoduncan</id>
+            <email>tabcdef -at- hugoduncan.org</email>
             <roles>
-                <role>Apprentice</role>
+                <role>Clojure Developer</role>
             </roles>
-            <timezone>+1</timezone>
-        </developer>          
+            <timezone>-8</timezone>
+        </developer> 
+        <developer>
+            <name>Phil Hagelberg</name>
+            <id>technomancy</id>
+            <email>phil -at- technomancy.us</email>
+            <roles>
+                <role>Clojure Developer</role>
+            </roles>
+            <timezone>-8</timezone>
+        </developer>                 
         <developer>
             <name>Ivan Meredith</name>
             <id>barefootnz</id>
@@ -162,6 +171,24 @@
             </roles>
             <timezone>+13</timezone>
         </developer>          
+        <developer>
+            <name>Andrew Phillips</name>
+            <id>demobox</id>
+            <email>aphillips -at- qrmedia.com</email>
+            <roles>
+                <role>Apprentice</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>    
+        <developer>
+            <name>Alex Yarmuda</name>
+            <id>alexstaytuned</id>
+            <email>oleksiy.yarmula -at- gmail.com</email>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+            <timezone>-8</timezone>
+        </developer>
     </developers>
 
     <properties>
@@ -402,11 +429,6 @@ pageTracker._trackPageview();
                 <groupId>org.jvnet.wagon-svn</groupId>
                 <artifactId>wagon-svn</artifactId>
                 <version>1.9</version>
-            </extension>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-1</version>
             </extension>
         </extensions>
     </build>
