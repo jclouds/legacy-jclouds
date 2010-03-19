@@ -1,7 +1,0 @@
-target
-.settings
-.classpath
-.project
-jclouds-core.iml
-jclouds-core.ipr
-jclouds-core.iws

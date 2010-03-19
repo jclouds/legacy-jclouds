@@ -1,8 +1,0 @@
-target
-.settings
-.classpath
-.project
-jclouds-demo-gae-tweetstore.iml
-jclouds-demo-gae-tweetstore.ipr
-jclouds-demo-gae-tweetstore.iws
-temp-testng-customsuite.xml

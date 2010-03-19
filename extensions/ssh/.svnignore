@@ -1,7 +1,0 @@
-target
-.settings
-.classpath
-.project
-jclouds-ssh-project.iml
-jclouds-ssh-project.ipr
-jclouds-ssh-project.iws

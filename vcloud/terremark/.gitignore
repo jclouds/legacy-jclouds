@@ -1,0 +1,9 @@
+# use glob syntax.
+syntax: glob
+target
+.settings
+.classpath
+.project
+jclouds-terremark.iml
+jclouds-terremark.ipr
+jclouds-terremark.iws

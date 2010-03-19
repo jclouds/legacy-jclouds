@@ -1,7 +1,0 @@
-target
-.settings
-.classpath
-.project
-jclouds-bouncycastle.iml
-jclouds-bouncycastle.ipr
-jclouds-bouncycastle.iws

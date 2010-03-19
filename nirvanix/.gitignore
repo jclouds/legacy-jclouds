@@ -1,0 +1,9 @@
+# use glob syntax.
+syntax: glob
+target
+.settings
+.classpath
+.project
+jclouds-nirvanix-project.iml
+jclouds-nirvanix-project.ipr
+jclouds-nirvanix-project.iws

@@ -1,0 +1,9 @@
+# use glob syntax.
+syntax: glob
+target
+.settings
+.classpath
+.project
+jclouds-json-client-archetype.iml
+jclouds-json-client-archetype.ipr
+jclouds-json-client-archetype.iws

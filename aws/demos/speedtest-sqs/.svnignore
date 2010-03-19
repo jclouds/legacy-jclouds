@@ -1,7 +1,0 @@
-target
-.settings
-.classpath
-.project
-jclouds-speedtest-sqs.iml
-jclouds-speedtest-sqs.ipr
-jclouds-speedtest-sqs.iws
