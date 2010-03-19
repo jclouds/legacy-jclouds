@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>6104eee1-affd-49d7-92a0-516cab8a8ba6</requestId>
+    <imagesSet>
+        <item>
+            <imageId>ami-870de2ee</imageId>
+            <imageLocation>vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>133804938231</imageOwnerId>
+            <isPublic>false</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-94c527fd</kernelId>
+            <ramdiskId>ari-96c527ff</ramdiskId>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>

@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -46,6 +45,7 @@ import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.compute.functions.CreateKeyPairIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.ImageParser;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
@@ -55,13 +55,10 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -82,7 +79,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -282,9 +278,6 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       protected Logger logger = Logger.NULL;
    }
 
-   // alestic-32-eu-west-1/debian-4.0-etch-base-20081130
-   public static final Pattern ALESTIC_PATTERN = Pattern.compile(".*/([^-]*)-([^-]*)-.*-(.*)");
-
    @Provides
    @Singleton
    @Named(PROPERTY_EC2_AMI_OWNERS)
@@ -297,46 +290,19 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    protected Map<String, ? extends Image> provideImages(final EC2Client sync,
             Map<Region, URI> regionMap, LogHolder holder,
             Function<ComputeMetadata, String> indexer,
-            @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners) throws InterruptedException,
-            ExecutionException, TimeoutException {
+            @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, ImageParser parser)
+            throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
 
       for (final Region region : regionMap.keySet()) {
          for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
                   .describeImagesInRegion(region, ownedBy(amiOwners))) {
-            OsFamily os = null;
-            String name = null;
-            String osDescription = from.getImageLocation();
-            String version = "";
-
-            Matcher matcher = ALESTIC_PATTERN.matcher(from.getImageLocation());
-            if (matcher.find()) {
-               try {
-                  os = OsFamily.fromValue(matcher.group(1));
-                  name = matcher.group(2);// TODO no field for os version
-                  version = matcher.group(3);
-               } catch (IllegalArgumentException e) {
-                  holder.logger.debug("<< didn't match os(%s)", matcher.group(1));
-               }
-            }
-            try {
-               images
-                        .add(new ImageImpl(
-                                 from.getId(),
-                                 name,
-                                 region.toString(),
-                                 null,
-                                 ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
-                                 from.getDescription(),
-                                 version,
-                                 os,
-                                 osDescription,
-                                 from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
-                                          : Architecture.X86_64));
-            } catch (NullPointerException e) {
-               holder.logger.debug("<< image (%s) missing (%s)", from.getId(), e.getMessage());
-            }
+            Image image = parser.apply(from);
+            if (image != null)
+               images.add(image);
+            else
+               holder.logger.debug("<< images(%s) didn't parse", from.getId());
          }
       }
       holder.logger.debug("<< images(%d)", images.size());

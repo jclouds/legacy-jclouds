@@ -44,6 +44,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return templateBuilder.osFamily(UBUNTU).smallest().architecture(Architecture.X86_32).build();
    }
 
+   @Test
+   public void testTemplateBuilder() {
+      client.templateBuilder().imageId("ami-d57f93bc").build();
+   }
+
    @Override
    protected JschSshClientModule getSshModule() {
       return new JschSshClientModule();

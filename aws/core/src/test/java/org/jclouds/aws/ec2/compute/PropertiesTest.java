@@ -45,10 +45,9 @@ public class PropertiesTest {
    }
 
    public void testProperties() {
-      assertEquals(properties.getProperty("ec2.contextbuilder"),
-               EC2ContextBuilder.class.getName());
-      assertEquals(properties.getProperty("ec2.propertiesbuilder"),
-               EC2PropertiesBuilder.class.getName());
+      assertEquals(properties.getProperty("ec2.contextbuilder"), EC2ContextBuilder.class.getName());
+      assertEquals(properties.getProperty("ec2.propertiesbuilder"), EC2PropertiesBuilder.class
+               .getName());
    }
 
 }

@@ -104,8 +104,10 @@ public abstract class BaseComputeServiceLiveTest {
       }
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
+
       context = new ComputeServiceContextFactory().createContext(service, user, password,
                ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
+
       Injector injector = Guice.createInjector(getSshModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
