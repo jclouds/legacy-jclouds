@@ -33,5 +33,6 @@
     <name>jclouds Maven archetypes</name>
     <modules>
         <module>json-client-archetype</module>
+        <module>compute-service-archetype</module>
     </modules>
 </project>
