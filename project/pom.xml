@@ -135,7 +135,7 @@
         <developer>
             <name>Adrian Cole</name>
             <id>ferncam1</id>
-            <email>adrian -at- jclouds.org</email>
+            <email>adrian -at- jclouds -dot- org</email>
             <organization>jclouds</organization>
             <roles>
                 <role>Java Developer</role>
@@ -147,7 +147,7 @@
         <developer>
             <name>Hugo Duncan</name>
             <id>hugoduncan</id>
-            <email>tabcdef -at- hugoduncan.org</email>
+            <email>tabcdef -at- hugoduncan -dot- org</email>
             <roles>
                 <role>Clojure Developer</role>
             </roles>
@@ -156,7 +156,7 @@
         <developer>
             <name>Phil Hagelberg</name>
             <id>technomancy</id>
-            <email>phil -at- technomancy.us</email>
+            <email>phil -at- technomancy -dot- us</email>
             <roles>
                 <role>Clojure Developer</role>
             </roles>
@@ -165,7 +165,7 @@
         <developer>
             <name>Ivan Meredith</name>
             <id>barefootnz</id>
-            <email>ivan -at- ivan.com</email>
+            <email>ivan -at- ivan -dot- net -dot- nz</email>
             <roles>
                 <role>Java Developer</role>
             </roles>
@@ -174,7 +174,7 @@
         <developer>
             <name>Andrew Phillips</name>
             <id>demobox</id>
-            <email>aphillips -at- qrmedia.com</email>
+            <email>aphillips -at- qrmedia -dot- com</email>
             <roles>
                 <role>Apprentice</role>
             </roles>
@@ -183,7 +183,7 @@
         <developer>
             <name>Alex Yarmuda</name>
             <id>alexstaytuned</id>
-            <email>oleksiy.yarmula -at- gmail.com</email>
+            <email>oleksiy -dot- yarmula -at- gmail -dot- com</email>
             <roles>
                 <role>Java Developer</role>
             </roles>

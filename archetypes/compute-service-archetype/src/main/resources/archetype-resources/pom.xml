@@ -1,4 +1,4 @@
-#set( $lcaseClientName = ${clientName.toLowerCase()} )
+#set( $lcaseProviderName = ${providerName.toLowerCase()} )
 #set( $symbol_dollar = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
@@ -6,7 +6,7 @@
    ${symbol_dollar}Revision${symbol_dollar}
    ${symbol_dollar}Date${symbol_dollar}
 
-   Copyright (C) 2009 Cloud Conscious, LLC <info@cloudconscious.com>
+   Copyright (C) 2010 Cloud Conscious, LLC <info@cloudconscious.com>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -27,34 +27,42 @@
    under the License.
    ====================================================================
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
     <groupId>${groupId}</groupId>
     <artifactId>jclouds-${artifactId}</artifactId>
-    <name>jclouds ${clientName} core</name>
+    <name>jclouds ${providerName} compute service</name>
     <packaging>jar</packaging>
-    <description>jclouds components to access ${clientName}</description>
+    <description>jclouds components to access ${providerName}</description>
 
     <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/${lcaseClientName}</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/${lcaseClientName}</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/${lcaseClientName}</url>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/${lcaseProviderName}</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/${lcaseProviderName}</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk/${lcaseProviderName}</url>
     </scm>
     <properties>
-        <jclouds.test.user>${clientUser}</jclouds.test.user>
-        <jclouds.test.key>${clientPassword}</jclouds.test.key>
+        <jclouds.test.user>${providerUser}</jclouds.test.user>
+        <jclouds.test.key>${providerPassword}</jclouds.test.key>
+        <jclouds.test.endpoint>${providerEndpoint}</jclouds.test.endpoint>        
     </properties>
     <dependencies>
         <dependency>
             <groupId>${symbol_dollar}{project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <artifactId>jclouds-compute</artifactId>
             <version>${symbol_dollar}{project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${symbol_dollar}{project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${symbol_dollar}{project.groupId}</groupId>
@@ -64,15 +72,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
+            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${symbol_dollar}{project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${symbol_dollar}{project.groupId}</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${symbol_dollar}{project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

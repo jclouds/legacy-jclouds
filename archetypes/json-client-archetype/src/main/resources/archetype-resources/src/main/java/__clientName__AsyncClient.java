@@ -44,18 +44,9 @@
  */
 package ${package};
 
-import java.util.SortedSet;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import ${package}.domain.Status;
-import ${package}.functions.ParseStatusesFromJsonResponse;
 
 /**
  * Provides asynchronous access to ${clientName} via their REST API.
@@ -68,10 +59,7 @@ import ${package}.functions.ParseStatusesFromJsonResponse;
 @Endpoint(${clientName}.class)
 @RequestFilters(BasicAuthentication.class)
 public interface ${clientName}AsyncClient {
-
-   @GET
-   @ResponseParser(ParseStatusesFromJsonResponse.class)
-   @Path("/statuses/mentions.json")
-   ListenableFuture<SortedSet<Status>> getMyMentions();
-
+    /*
+     * TODO: define interface methods for ${clientName} 
+     */
 }

@@ -47,10 +47,7 @@ package ${package};
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.SortedSet;
-
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import ${package}.domain.Status;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -73,10 +70,7 @@ public class ${clientName}ClientLiveTest {
                .getApi();
    }
 
-   @Test
-   public void testGetMyMentions() {
-      SortedSet<Status> response = connection.getMyMentions();
-      assert (response.size() > 0);
-   }
-
+   /*
+    * TODO: add tests for ${clientName} interface methods
+    */
 }

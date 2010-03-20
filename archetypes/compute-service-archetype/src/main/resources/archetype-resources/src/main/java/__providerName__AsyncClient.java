@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  *
  * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -21,20 +24,17 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid.reference;
+package ${package};
+
+import com.google.inject.ImplementedBy;
+import ${package}.internal.${providerName}AsyncClientImpl;
 
 /**
- * Configuration properties and constants used in GoGrid connections.
- *
- * @author Adrian Cole
+ * @author ${author}
  */
-public interface GoGridConstants {
-    public static final String PROPERTY_GOGRID_ENDPOINT = "jclouds.gogrid.endpoint";
-    public static final String PROPERTY_GOGRID_USER = "jclouds.gogrid.api.key";
-    public static final String PROPERTY_GOGRID_PASSWORD = "jclouds.gogrid.secret";
-    /**
-     * how long do we wait before obtaining a new timestamp for requests.
+@ImplementedBy(${providerName}AsyncClientImpl.class)
+public interface ${providerName}AsyncClient {
+    /*
+     * TODO: define interface methods for ${providerName}
      */
-    public static final String PROPERTY_GOGRID_SESSIONINTERVAL = "jclouds.gogrid.sessioninterval";
-
 }

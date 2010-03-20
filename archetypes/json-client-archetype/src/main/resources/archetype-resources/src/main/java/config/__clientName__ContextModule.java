@@ -49,7 +49,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;

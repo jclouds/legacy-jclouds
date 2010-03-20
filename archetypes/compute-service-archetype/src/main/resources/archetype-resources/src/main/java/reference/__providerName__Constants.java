@@ -1,3 +1,5 @@
+#set( $lcaseProviderName = ${providerName.toLowerCase()} )
+#set( $ucaseProviderName = ${providerName.toUpperCase()} )
 /**
  *
  * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -21,20 +23,20 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid.reference;
+package ${package}.reference;
 
 /**
- * Configuration properties and constants used in GoGrid connections.
+ * Configuration properties and constants used in ${providerName} connections.
  *
  * @author Adrian Cole
  */
-public interface GoGridConstants {
-    public static final String PROPERTY_GOGRID_ENDPOINT = "jclouds.gogrid.endpoint";
-    public static final String PROPERTY_GOGRID_USER = "jclouds.gogrid.api.key";
-    public static final String PROPERTY_GOGRID_PASSWORD = "jclouds.gogrid.secret";
+public interface ${providerName}Constants {
+    public static final String PROPERTY_${ucaseProviderName}_ENDPOINT = "jclouds.${lcaseProviderName}.endpoint";
+    public static final String PROPERTY_${ucaseProviderName}_USER = "jclouds.${lcaseProviderName}.user";
+    public static final String PROPERTY_${ucaseProviderName}_KEY = "jclouds.${lcaseProviderName}.key";
     /**
      * how long do we wait before obtaining a new timestamp for requests.
      */
-    public static final String PROPERTY_GOGRID_SESSIONINTERVAL = "jclouds.gogrid.sessioninterval";
+    public static final String PROPERTY_${ucaseProviderName}_SESSIONINTERVAL = "jclouds.${lcaseProviderName}.sessioninterval";
 
 }

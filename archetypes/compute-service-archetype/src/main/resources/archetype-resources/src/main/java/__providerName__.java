@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  *
  * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -21,20 +24,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid.reference;
+package ${package};
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Configuration properties and constants used in GoGrid connections.
- *
- * @author Adrian Cole
+ * Related to a ${providerName} resource.
+ * 
+ * @author ${author}
+ * 
  */
-public interface GoGridConstants {
-    public static final String PROPERTY_GOGRID_ENDPOINT = "jclouds.gogrid.endpoint";
-    public static final String PROPERTY_GOGRID_USER = "jclouds.gogrid.api.key";
-    public static final String PROPERTY_GOGRID_PASSWORD = "jclouds.gogrid.secret";
-    /**
-     * how long do we wait before obtaining a new timestamp for requests.
-     */
-    public static final String PROPERTY_GOGRID_SESSIONINTERVAL = "jclouds.gogrid.sessioninterval";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface ${providerName} {
 
 }

@@ -279,7 +279,7 @@ public class GoGridLiveTest {
     }
 
     @Test(enabled=true)
-    private void testShellAccess() throws IOException {
+    public void testShellAccess() throws IOException {
         final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
 
