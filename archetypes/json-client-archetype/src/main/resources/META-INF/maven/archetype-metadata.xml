@@ -49,7 +49,6 @@
       <directory>src/test/resources</directory>
       <includes>
         <include>**/*.xml</include>
-        <include>**/*.json</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
