@@ -20,9 +20,7 @@ package org.jclouds.gae;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -30,12 +28,10 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.testng.v6.Maps;
 
-import com.google.appengine.tools.development.ApiProxyLocalImpl;
-import com.google.apphosting.api.ApiProxy;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
 import com.google.inject.Module;
 
 /**
@@ -79,21 +75,9 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
       super.testPostBinder();
    }
 
-   @BeforeTest
-   void validateExecutor() {
-      // ExecutorService executorService = injector.getInstance(ExecutorService.class);
-      // assert executorService.getClass().isAnnotationPresent(SingleThreadCompatible.class) :
-      // Arrays
-      // .asList(executorService.getClass().getAnnotations()).toString()
-      // + executorService.getClass().getName();
-
-   }
-
    @BeforeMethod
    void setupApiProxy() {
-      ApiProxy.setEnvironmentForCurrentThread(new TestEnvironment());
-      ApiProxy.setDelegate(new ApiProxyLocalImpl(new File(".")) {
-      });
+      new LocalServiceTestHelper(new LocalURLFetchServiceTestConfig()).setUp();
    }
 
    @Override
@@ -177,11 +161,11 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
    }
 
    @Override
-   @Test(enabled = false)
+   @Test(invocationCount = 50, timeOut = 3000)
    public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      // GAE does not support sending headers in their test stub as of version
-      // 1.2.0
+      setupApiProxy();
+      super.testGetStringWithHeader();
    }
 
    @Override
@@ -192,54 +176,14 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
       super.testHead();
    }
 
-   @Test(enabled = false)
+   @Override
+   @Test(invocationCount = 50, timeOut = 3000)
    public void testRequestFilter() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      // GAE does not support sending headers in their test stub as of version
-      // 1.2.0
+      setupApiProxy();
+      super.testRequestFilter();
    }
-
-   class TestEnvironment implements ApiProxy.Environment {
-      public String getAppId() {
-         return "Unit Tests";
-      }
-
-      public String getVersionId() {
-         return "1.0";
-      }
-
-      public void setDefaultNamespace(String s) {
-      }
-
-      public String getRequestNamespace() {
-         return null;
-      }
-
-      public String getDefaultNamespace() {
-         return null;
-      }
-
-      public String getAuthDomain() {
-         return null;
-      }
-
-      public boolean isLoggedIn() {
-         return false;
-      }
-
-      public String getEmail() {
-         return null;
-      }
-
-      public boolean isAdmin() {
-         return false;
-      }
-
-      public Map<String, Object> getAttributes() {
-         return Maps.newHashMap();
-      }
-   }
-
+   
    protected Module createConnectionModule() {
       return new GoogleAppEngineConfigurationModule();
    }

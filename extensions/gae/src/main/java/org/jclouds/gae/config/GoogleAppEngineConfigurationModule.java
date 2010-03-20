@@ -22,7 +22,6 @@ import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.joda.config.JodaDateServiceModule;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
@@ -51,7 +50,6 @@ public class GoogleAppEngineConfigurationModule extends ExecutorServiceModule {
    @Override
    protected void configure() {
       super.configure();
-      install(new BouncyCastleEncryptionServiceModule());
       install(new JodaDateServiceModule());
       bind(HttpCommandExecutorService.class).to(GaeHttpCommandExecutorService.class);
       bind(TransformingHttpCommandExecutorService.class).to(

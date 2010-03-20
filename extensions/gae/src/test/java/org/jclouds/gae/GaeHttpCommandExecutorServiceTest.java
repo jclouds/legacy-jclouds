@@ -138,7 +138,7 @@ public class GaeHttpCommandExecutorServiceTest {
       assert gaeRequest.getPayload() == null;
       assertEquals(gaeRequest.getHeaders().size(), 2);// content length, user agent
       assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.USER_AGENT);
-      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "jclouds/1.0 urlfetch/1.3.0");
+      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "jclouds/1.0 urlfetch/1.3.2");
    }
 
    @Test

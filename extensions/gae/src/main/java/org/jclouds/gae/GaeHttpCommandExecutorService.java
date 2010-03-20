@@ -33,7 +33,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.SingleThreaded;
-import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -56,7 +55,6 @@ import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Google App Engine version of {@link HttpCommandExecutorService}
@@ -66,7 +64,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SingleThreaded
 @Singleton
 public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorService<HTTPRequest> {
-   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.0";
+   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.2";
 
    private final URLFetchService urlFetchService;
 
@@ -76,12 +74,6 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
       super(ioExecutor, retryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
-   }
-
-   @Override
-   public ListenableFuture<HttpResponse> submit(HttpCommand command) {
-      convertHostHeaderToEndPoint(command);
-      return super.submit(command);
    }
 
    /**
@@ -147,22 +139,6 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
          gaeRequest.addHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
       }
       return gaeRequest;
-   }
-
-   /**
-    * As host headers are not supported in GAE/J v1.2.1, we'll change the hostname of the
-    * destination to the same value as the host header
-    * 
-    * @param command
-    */
-   @VisibleForTesting
-   public static void convertHostHeaderToEndPoint(HttpCommand command) {
-      HttpRequest request = command.getRequest();
-      String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
-      if (hostHeader != null) {
-         command.changeSchemeHostAndPortTo(request.getEndpoint().getScheme(), hostHeader, request
-                  .getEndpoint().getPort());
-      }
    }
 
    /**
