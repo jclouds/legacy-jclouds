@@ -57,24 +57,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-           <groupId>org.clojure</groupId>
-           <artifactId>clojure</artifactId>
-           <version>1.1.0</version>
-           <scope>test</scope>
-        </dependency>
-        <dependency>
-           <groupId>org.clojure</groupId>
-           <artifactId>clojure-contrib</artifactId>
-           <version>1.1.0</version>
-           <scope>test</scope>
-        </dependency>
-	<dependency>
-	  <groupId>swank-clojure</groupId>
-	  <artifactId>swank-clojure</artifactId>
-	  <version>1.1.0</version>
-	  <scope>test</scope>
-	</dependency>
     </dependencies>
     <build>
         <plugins>
@@ -156,13 +138,5 @@
 	      </configuration>
 	    </plugin>
         </plugins>
-	<resources>
-	  <resource>
-	    <directory>src/main/clojure</directory>
-	  </resource>
-	  <resource>
-	    <directory>src/main/resources</directory>
-	  </resource>
-	</resources>
     </build>
 </project>
