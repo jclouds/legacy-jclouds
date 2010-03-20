@@ -44,23 +44,21 @@
  */
 package ${package};
 
-import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import ${package}.domain.Status;
 
 /**
  * Provides synchronous access to ${clientName}.
  * <p/>
  * 
  * @see ${clientName}AsyncClient
- * @see <a href="TODO: insert URL of client documentation" />
+ * @see <a href="TODO: insert URL of ${clientName} documentation" />
  * @author ${author}
  */
 @Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface ${clientName}Client {
-
-   SortedSet<Status> getMyMentions();
-
+    /*
+     * TODO: define interface methods for ${clientName} 
+     */
 }

@@ -60,7 +60,6 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import ${package}.functions.ParseStatusesFromJsonResponse;
 import org.jclouds.encryption.EncryptionService;
 import org.testng.annotations.Test;
 
@@ -85,7 +84,7 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
+      assertResponseParserClassEquals(method, httpMethod, "TODO: insert expected response class");
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
