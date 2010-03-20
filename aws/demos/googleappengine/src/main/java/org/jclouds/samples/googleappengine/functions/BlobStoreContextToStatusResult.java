@@ -29,7 +29,7 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.logging.Logger;
-import org.jclouds.samples.googleappengine.domain.ContainerResult;
+import org.jclouds.samples.googleappengine.domain.StatusResult;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -37,8 +37,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 @Singleton
-public class BlobStoreContextToContainerResult implements Function<String, ContainerResult> {
-   private final class BuildContainerResult implements Function<StorageMetadata, ContainerResult> {
+public class BlobStoreContextToStatusResult implements Function<String, StatusResult> {
+   private final class BuildContainerResult implements Function<StorageMetadata, StatusResult> {
       private final String host;
       private final BlobStoreContext context;
       private final String contextName;
@@ -49,7 +49,7 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
          this.contextName = contextName;
       }
 
-      public ContainerResult apply(StorageMetadata from) {
+      public StatusResult apply(StorageMetadata from) {
          String status;
          try {
             try {
@@ -63,7 +63,7 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
             logger.error(e, "Error listing container %s//%s", contextName, from);
             status = (e.getMessage());
          }
-         return new ContainerResult(contextName, host, from.getName(), status);
+         return new StatusResult(contextName, host, from.getName(), status);
       }
    }
 
@@ -73,7 +73,7 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public ContainerResult apply(final String contextName) {
+   public StatusResult apply(final String contextName) {
       final BlobStoreContext context = contexts.get(contextName);
       final String host = context.getProviderSpecificContext().getEndPoint().getHost();
       try {
@@ -87,7 +87,7 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
          })));
          return new BuildContainerResult(host, context, contextName).apply(md);
       } catch (Exception e) {
-         ContainerResult result = new ContainerResult(contextName, host, null, e.getMessage());
+         StatusResult result = new StatusResult(contextName, host, null, e.getMessage());
          logger.error(e, "Error listing service %s", contextName);
          return result;
       }

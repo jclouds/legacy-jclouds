@@ -21,23 +21,14 @@ package org.jclouds.samples.googleappengine.functest;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.jclouds.aws.s3.S3ContextBuilder;
+import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
-import org.jclouds.azure.storage.blob.AzureBlobContextBuilder;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
-import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
-import org.jclouds.samples.googleappengine.config.GuiceServletConfig;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
@@ -62,10 +53,6 @@ public class GoogleAppEngineLiveTest {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
 
-      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, String.format("%s,%s,%s",
-               S3ContextBuilder.class.getName(), CloudFilesContextBuilder.class.getName(),
-               AzureBlobContextBuilder.class.getName()));
-
       props = new S3PropertiesBuilder(props)
                .withCredentials(
                         checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
@@ -73,14 +60,12 @@ public class GoogleAppEngineLiveTest {
                         System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
                                  PROPERTY_AWS_SECRETACCESSKEY)).build();
 
-      props = new CloudFilesPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
-               System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY)).build();
-
-      props = new AzureBlobPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT),
-                        PROPERTY_AZURESTORAGE_ACCOUNT),
-               System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
+      props = new EC2PropertiesBuilder(props)
+               .withCredentials(
+                        checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
+                                 PROPERTY_AWS_ACCESSKEYID),
+                        System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
+                                 PROPERTY_AWS_SECRETACCESSKEY)).build();
 
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
@@ -95,7 +80,7 @@ public class GoogleAppEngineLiveTest {
 
    @Test(invocationCount = 5, enabled = true)
    public void testGuiceJCloudsSerial() throws InterruptedException, IOException {
-      URL gurl = new URL(url, "/guice/containers.blobstore");
+      URL gurl = new URL(url, "/guice/status.check");
       InputStream i = gurl.openStream();
       String string = Utils.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
@@ -103,7 +88,7 @@ public class GoogleAppEngineLiveTest {
 
    @Test(invocationCount = 10, enabled = true, threadPoolSize = 3)
    public void testGuiceJCloudsParallel() throws InterruptedException, IOException {
-      URL gurl = new URL(url, "/guice/containers.blobstore");
+      URL gurl = new URL(url, "/guice/status.check");
       InputStream i = gurl.openStream();
       String string = Utils.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;

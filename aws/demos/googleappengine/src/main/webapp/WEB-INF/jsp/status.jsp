@@ -22,14 +22,14 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <html>
 <head>
-<title>jclouds: anyweight cloudware for java</title>
+<title>jclouds: multi-cloud framework</title>
 </head>
 <body>
-<h2>Container List</h2>
-<display:table name="containers"  >
+<h2>Status List</h2>
+<display:table name="status"  >
 	<display:column property="service"  title="Service" />
 	<display:column property="host"  title="Host" />
-	<display:column property="name"  title="Container" />
+	<display:column property="name"  title="Item" />
     <display:column property="status"  title="Status" />	
 </display:table>
 </body>

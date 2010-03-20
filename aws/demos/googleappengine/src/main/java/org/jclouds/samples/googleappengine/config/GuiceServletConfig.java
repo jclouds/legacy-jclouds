@@ -18,26 +18,27 @@
  */
 package org.jclouds.samples.googleappengine.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
-import org.jclouds.samples.googleappengine.GetAllContainersController;
+import org.jclouds.samples.googleappengine.GetAllStatusController;
 
-import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+import com.google.appengine.repackaged.com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Closeables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
@@ -49,31 +50,23 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-   public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
+   private Map<String, BlobStoreContext> blobsStoreContexts;
+   private Map<String, ComputeServiceContext> computeServiceContexts;
 
-   private Map<String, BlobStoreContext> contexts;
-
-   @SuppressWarnings("unchecked")
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       Properties props = loadJCloudsProperties(servletContextEvent);
-      ImmutableList<String> list = ImmutableList.<String> of(checkNotNull(
-               props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS).split(
-               ","));
-      contexts = Maps.newHashMap();
-      for (String className : list) {
-         try {
-            Class<BlobStoreContextBuilder<?, ?>> builderClass;
-            builderClass = (Class<BlobStoreContextBuilder<?, ?>>) Class.forName(className);
-            String name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
-            Constructor<BlobStoreContextBuilder<?, ?>> constructor = builderClass
-                     .getConstructor(Properties.class);
-            contexts.put(name, constructor.newInstance(props).withModules(
-                     new GoogleAppEngineConfigurationModule()).buildBlobStoreContext());
-         } catch (Exception e) {
-            throw new RuntimeException(e);
-         }
+      ImmutableSet<Module> modules = ImmutableSet
+               .<Module> of(new GoogleAppEngineConfigurationModule());
+      try {
+         blobsStoreContexts = ImmutableMap.<String, BlobStoreContext> of("s3",
+                  new BlobStoreContextFactory().createContext("s3", modules, props));
+         computeServiceContexts = ImmutableMap.<String, ComputeServiceContext> of("ec2",
+                  new ComputeServiceContextFactory().createContext("ec2", modules, props));
+      } catch (IOException e) {
+         Throwables.propagate(e);
       }
+
       super.contextInitialized(servletContextEvent);
    }
 
@@ -97,8 +90,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
          @Override
          protected void configureServlets() {
             bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
-            }).toInstance(GuiceServletConfig.this.contexts);
-            serve("*.blobstore").with(GetAllContainersController.class);
+            }).toInstance(GuiceServletConfig.this.blobsStoreContexts);
+            bind(new TypeLiteral<Map<String, ComputeServiceContext>>() {
+            }).toInstance(GuiceServletConfig.this.computeServiceContexts);
+            serve("*.check").with(GetAllStatusController.class);
             requestInjection(this);
          }
       }
@@ -108,7 +103,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext context : contexts.values()) {
+      for (BlobStoreContext context : blobsStoreContexts.values()) {
+         context.close();
+      }
+      for (ComputeServiceContext context : computeServiceContexts.values()) {
          context.close();
       }
       super.contextDestroyed(servletContextEvent);

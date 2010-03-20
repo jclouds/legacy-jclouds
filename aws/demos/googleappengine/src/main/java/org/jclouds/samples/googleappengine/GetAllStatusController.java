@@ -33,8 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.logging.Logger;
-import org.jclouds.samples.googleappengine.functions.BlobStoreContextToContainerResult;
+import org.jclouds.samples.googleappengine.functions.BlobStoreContextToStatusResult;
+import org.jclouds.samples.googleappengine.functions.ComputeServiceContextToStatusResult;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -45,39 +47,48 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class GetAllContainersController extends HttpServlet {
+public class GetAllStatusController extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
-   private Map<String, BlobStoreContext> contexts;
-   private final BlobStoreContextToContainerResult blobStoreContextToContainerResult;
+   private final Map<String, BlobStoreContext> blobsStoreContexts;
+   private final Map<String, ComputeServiceContext> computeServiceContexts;
+   private final BlobStoreContextToStatusResult blobStoreContextToContainerResult;
+   private final ComputeServiceContextToStatusResult computeServiceContextToContainerResult;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public GetAllContainersController(Map<String, BlobStoreContext> contexts,
-            BlobStoreContextToContainerResult blobStoreContextToContainerResult) {
-      this.contexts = contexts;
+   GetAllStatusController(Map<String, BlobStoreContext> blobsStoreContexts,
+            Map<String, ComputeServiceContext> computeServiceContexts,
+            BlobStoreContextToStatusResult blobStoreContextToContainerResult,
+            ComputeServiceContextToStatusResult computeServiceContextToContainerResult) {
+      this.blobsStoreContexts = blobsStoreContexts;
+      this.computeServiceContexts = computeServiceContexts;
       this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;
+      this.computeServiceContextToContainerResult = computeServiceContextToContainerResult;
    }
 
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         addMyContainersToRequest(request);
+         addStatusResultsToRequest(request);
          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(
-                  "/WEB-INF/jsp/containers.jsp");
+                  "/WEB-INF/jsp/status.jsp");
          dispatcher.forward(request, response);
       } catch (Exception e) {
-         logger.error(e, "Error listing containers");
+         logger.error(e, "Error listing status");
          throw new ServletException(e);
       }
    }
 
-   private void addMyContainersToRequest(HttpServletRequest request) throws InterruptedException,
+   private void addStatusResultsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
-      request.setAttribute("containers", Sets.newTreeSet(Iterables.transform(contexts.keySet(),
-               blobStoreContextToContainerResult)));
+      request.setAttribute("status", Sets
+               .newTreeSet(Iterables.concat(Iterables.transform(blobsStoreContexts.keySet(),
+                        blobStoreContextToContainerResult), Iterables.transform(
+                        computeServiceContexts.keySet(), computeServiceContextToContainerResult))));
    }
+
 }

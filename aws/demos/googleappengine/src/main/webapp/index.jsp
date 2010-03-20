@@ -20,12 +20,11 @@
 --%>
 <html>
 <head>
-<title>jclouds: anyweight cloudware for java</title>
+<title>jclouds: multi-cloud framework</title>
 </head>
 <body>
 <h2>Welcome!</h2>
 Click
-<a href="/guice/containers.blobstore">here</a>
-to list my containers.
+<a href="/guice/status.check">here</a> to get status of cloud services.
 </body>
 </html>

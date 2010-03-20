@@ -46,26 +46,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-azure</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-rackspace</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-enterprise</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-gae</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -205,22 +185,6 @@
                                 </goals>
                                 <configuration>
                                     <systemProperties>
-                                        <property>
-                                            <name>jclouds.azure.storage.account</name>
-                                            <value>${jclouds.azure.storage.account}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.azure.storage.key</name>
-                                            <value>${jclouds.azure.storage.key}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.rackspace.user</name>
-                                            <value>${jclouds.rackspace.user}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.rackspace.key</name>
-                                            <value>${jclouds.rackspace.key}</value>
-                                        </property>
                                         <property>
                                             <name>jclouds.aws.accesskeyid</name>
                                             <value>${jclouds.aws.accesskeyid}</value>

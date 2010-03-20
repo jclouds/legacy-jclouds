@@ -24,7 +24,7 @@ import java.io.Serializable;
  * 
  * @author Adrian Cole
  */
-public class ContainerResult implements Comparable<ContainerResult>, Serializable {
+public class StatusResult implements Comparable<StatusResult>, Serializable {
    /** The serialVersionUID */
    private static final long serialVersionUID = -3257496189689220018L;
    private final String service;
@@ -32,7 +32,7 @@ public class ContainerResult implements Comparable<ContainerResult>, Serializabl
    private final String name;
    private final String status;
 
-   public ContainerResult(String service, String host, String name, String status) {
+   public StatusResult(String service, String host, String name, String status) {
       this.service = service;
       this.host = host;
       this.name = name;
@@ -58,7 +58,7 @@ public class ContainerResult implements Comparable<ContainerResult>, Serializabl
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ContainerResult other = (ContainerResult) obj;
+      StatusResult other = (StatusResult) obj;
       if (host == null) {
          if (other.host != null)
             return false;
@@ -82,7 +82,7 @@ public class ContainerResult implements Comparable<ContainerResult>, Serializabl
       return true;
    }
 
-   public int compareTo(ContainerResult o) {
+   public int compareTo(StatusResult o) {
       return (this == o) ? 0 : getService().compareTo(o.getService());
    }
 
