@@ -4,49 +4,39 @@
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
            [java.io ByteArrayOutputStream]))
 
-(def stub-context (.createContext (BlobStoreContextFactory.) "transient" "" ""))
-(def stub-blobstore (.getBlobStore stub-context))
+(defn clean-stub-fixture
+  "This should allow basic tests to easily be run with another service."
+  [service account key & options]
+  (fn [f]
+    (with-blobstore [(apply blobstore service account key options)]
+      (doseq [container (containers)]
+        (delete-container (.getName container)))
+      (f))))
 
-(defn clean-stub-fixture [f]
-  (with-blobstore [stub-blobstore]
-    (doseq [container (containers)]
-      (delete-container (.getName container)))
-    (f)))
-
-(use-fixtures :each clean-stub-fixture)
+(use-fixtures :each (clean-stub-fixture "transient" "" ""))
 
 (deftest blobstore?-test
-  (is (blobstore? stub-blobstore)))
-
-(deftest blobstore-context?-test
-  (is (blobstore-context? stub-context)))
-
-(deftest blobstore-context-test
-  (is (= stub-context (blobstore-context stub-blobstore))))
+  (is (blobstore? *blobstore*)))
 
 (deftest as-blobstore-test
   (is (blobstore? (blobstore "transient" "user" "password")))
-  (is (blobstore? (as-blobstore stub-blobstore)))
-  (is (blobstore? (as-blobstore stub-context))))
-
-(deftest with-blobstore-test
-  (with-blobstore [stub-blobstore]
-    (is (= stub-blobstore *blobstore*))))
+  (is (blobstore? (as-blobstore *blobstore*)))
+  (is (blobstore? (as-blobstore (blobstore-context *blobstore*)))))
 
 (deftest create-existing-container-test
-  (is (not (container-exists? stub-blobstore "")))
+  (is (not (container-exists? *blobstore* "")))
   (is (not (container-exists? "")))
-  (is (create-container stub-blobstore "fred"))
-  (is (container-exists? stub-blobstore "fred")))
+  (is (create-container *blobstore* "fred"))
+  (is (container-exists? *blobstore* "fred")))
 
 (deftest create-container-test
-  (is (create-container stub-blobstore "fred"))
-  (is (container-exists? stub-blobstore "fred")))
+  (is (create-container *blobstore* "fred"))
+  (is (container-exists? *blobstore* "fred")))
 
 (deftest containers-test
-  (is (empty? (containers stub-blobstore)))
-  (is (create-container stub-blobstore "fred"))
-  (is (= 1 (count (containers stub-blobstore)))))
+  (is (empty? (containers *blobstore*)))
+  (is (create-container *blobstore* "fred"))
+  (is (= 1 (count (containers *blobstore*)))))
 
 (deftest list-container-test
   (is (create-container "container"))
@@ -91,3 +81,45 @@
 
 ;; TODO: more tests involving blob-specific functions
 
+(deftest corruption-hunt
+  (let [container-name "test"
+        name "work-file"
+        total-downloads 100
+        threads 10]
+
+    ;; upload
+    (create-container container-name)
+    (when-not (blob-exists? container-name name)
+      (let [data-stream (java.io.ByteArrayOutputStream.)]
+        (dotimes [i 5000000] (.write data-stream i))
+        (create-blob container-name name (.toByteArray data-stream))))
+
+    ;; download
+    (let [total (atom total-downloads)]
+      (defn new-agent []
+        (agent name))
+
+      (defn dl-and-restart [blob-s file]
+        (when-not (<= @total 0)
+          (with-open [baos (java.io.ByteArrayOutputStream.)]
+            (try
+             (download-blob blob-s container-name file baos)
+             (catch Exception e
+               (with-open [of (java.io.FileOutputStream.
+                               (java.io.File/createTempFile "jclouds" ".dl"))]
+                 (.write of (.toByteArray baos)))
+               (throw e))))
+          (swap! total dec)
+          (send *agent* (partial dl-and-restart blob-s))
+          file))
+
+      (defn start-agents []
+        (let [agents (map (fn [_] (new-agent))
+                          (range threads))]
+          (doseq [a agents]
+            (send-off a (partial dl-and-restart *blobstore*)))
+          agents))
+
+      (let [agents (start-agents)]
+        (apply await agents)
+        (is (every? nil? (map agent-errors agents)))))))
