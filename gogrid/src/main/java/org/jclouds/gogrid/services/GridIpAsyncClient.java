@@ -37,6 +37,7 @@ import java.util.Set;
 
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_STATE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_TYPE_KEY;
 
 /**
  * @see org.jclouds.gogrid.services.GridImageClient
@@ -64,6 +65,16 @@ public interface GridIpAsyncClient {
     @Path("/grid/ip/list")
     @QueryParams(keys = IP_STATE_KEY, values = "Unassigned")
     ListenableFuture<Set<Ip>> getUnassignedIpList();
+
+
+    /**
+    * @see org.jclouds.gogrid.services.GridIpClient#getUnassignedPublicIpList()
+    */
+    @GET
+    @ResponseParser(ParseIpListFromJsonResponse.class)
+    @Path("/grid/ip/list")
+    @QueryParams(keys = {IP_STATE_KEY, IP_TYPE_KEY}, values = {"Unassigned", "Public"})
+    ListenableFuture<Set<Ip>> getUnassignedPublicIpList();
 
     /**
     * @see org.jclouds.gogrid.services.GridIpClient#getAssignedIpList()

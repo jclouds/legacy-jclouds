@@ -20,7 +20,14 @@ package org.jclouds.http;
 
 /**
  * // TODO: Adrian: Document this!
- * 
+ *
+ * NOTE: {@link #filter} must be idempotent in a sense that
+ * multiple calls to it with the same request yield in the
+ * same output.
+ * Example: this is required for request retrial
+ * ({@link org.jclouds.http.internal.BaseHttpCommandExecutorService},
+ * so that signatures can be updated.
+ *
  * @author Adrian Cole
  */
 public interface HttpRequestFilter {

@@ -23,7 +23,8 @@
  */
 package org.jclouds.gogrid.filters;
 
-import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import org.jclouds.Constants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
@@ -33,10 +34,13 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -74,9 +78,18 @@ public class SharedKeyLiteAuthentication  implements HttpRequestFilter {
         String toSign = createStringToSign();
         String signatureMd5 = getMd5For(toSign);
 
-        generatedRequest.addQueryParam("sig", signatureMd5);
-        generatedRequest.addQueryParam("api_key", apiKey);
+        String query = request.getEndpoint().getQuery();
+        Multimap<String, String> decodedParams =
+                RestAnnotationProcessor.parseQueryToMap(query);
 
+        decodedParams.replaceValues("sig", ImmutableSet.of(signatureMd5));
+        decodedParams.replaceValues("api_key", ImmutableSet.of(apiKey));
+
+        String updatedQuery = RestAnnotationProcessor.makeQueryLine(decodedParams, null);
+        String requestBasePart = request.getEndpoint().toASCIIString();
+        String updatedEndpoint = requestBasePart.substring(0, requestBasePart.indexOf("?") + 1) + updatedQuery;
+        request.setEndpoint(URI.create(updatedEndpoint ));
+        
         HttpUtils.logRequest(signatureLog, request, "<<");
     }
 

@@ -84,6 +84,16 @@ public class GridJobAsyncClientTest extends RestClientTest<GridJobAsyncClient> {
         assertPayloadEquals(httpRequest, null);
     }
 
+    @Test
+    public void testGetJobListNoOptions() throws NoSuchMethodException, IOException {
+        Method method = GridJobAsyncClient.class.getMethod("getJobList", GetJobListOptions[].class);
+        GeneratedHttpRequest<GridJobAsyncClient> httpRequest = processor.createRequest(method);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/grid/job/list?v=1.3 HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+    }
 
     @Test
     public void testGetJobsForServerName() throws NoSuchMethodException, IOException {

@@ -96,12 +96,14 @@ public class GoGridLiveTest {
         final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
 
-        Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
+        Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
         Ip availableIp = Iterables.getLast(availableIps);
+
+        String ram = Iterables.get(client.getServerServices().getRamSizes(), 0).getName();
 
         Server createdServer = client.getServerServices().addServer(nameOfServer,
                 "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
-                "1",
+                ram,
                 availableIp.getIp());
         assertNotNull(createdServer);
         assert serverLatestJobCompleted.apply(createdServer);
@@ -147,11 +149,13 @@ public class GoGridLiveTest {
         final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
         serversToDeleteAfterTheTests.add(nameOfServer);
 
-        Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
+        Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
+
+        String ram = Iterables.get(client.getServerServices().getRamSizes(), 0).getName();
 
         Server createdServer = client.getServerServices().addServer(nameOfServer,
                 "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
-                "1",
+                ram,
                 Iterables.getLast(availableIps).getIp());
 
         assert serverLatestJobCompleted.apply(createdServer);
@@ -194,8 +198,7 @@ public class GoGridLiveTest {
         final String nameOfLoadBalancer = "LoadBalancer" + String.valueOf(new Date().getTime()).substring(6);
         loadBalancersToDeleteAfterTest.add(nameOfLoadBalancer);
 
-        GetIpListOptions ipOptions = new GetIpListOptions.Builder().unassignedPublicIps();
-        Set<Ip> availableIps = client.getIpServices().getIpList(ipOptions);
+        Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
 
         if(availableIps.size() < 4) throw new SkipException("Not enough available IPs (4 needed) to run the test");
         Iterator<Ip> ipIterator = availableIps.iterator();

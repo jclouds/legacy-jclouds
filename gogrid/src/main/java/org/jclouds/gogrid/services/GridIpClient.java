@@ -40,13 +40,25 @@ public interface GridIpClient {
     Set<Ip> getIpList(GetIpListOptions... options);
 
     /**
-     * Returns the list of unassigned IPs
+     * Returns the list of unassigned IPs.
+     *
+     * NOTE: this returns both public and private IPs!
+     *
      * @return unassigned IPs
      */
     Set<Ip> getUnassignedIpList();
 
     /**
+     * Returns the list of unassigned public IPs.
+     * @return unassigned public IPs
+     */
+    Set<Ip> getUnassignedPublicIpList();
+
+    /**
      * Returns the list of assigned IPs
+     *
+     * NOTE: this returns both public and private IPs!
+     *
      * @return assigned IPs
      */
     Set<Ip> getAssignedIpList();
