@@ -33,9 +33,11 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.GoGrid;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
+import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponse;
@@ -132,6 +134,12 @@ public interface GridServerAsyncClient {
     @Path("/grid/server/delete")
     ListenableFuture<Server> deleteByName(@QueryParam(NAME_KEY) String name);
 
-
-
+    /**
+     * @see GridServerClient#getRamSizes
+     */
+    @GET
+    @ResponseParser(ParseOptionsFromJsonResponse.class)
+    @Path("/common/lookup/list")
+    @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.ram")
+    ListenableFuture<Set<Option>> getRamSizes();
 }

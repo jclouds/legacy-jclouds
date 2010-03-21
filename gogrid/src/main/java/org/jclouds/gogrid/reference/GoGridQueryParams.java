@@ -66,4 +66,6 @@ public interface GoGridQueryParams {
     public static final String IMAGE_STATE_KEY = "image.state";
     public static final String IMAGE_FRIENDLY_NAME_KEY = "friendlyName";
     public static final String IMAGE_DESCRIPTION_KEY = "description";
+
+    public static final String LOOKUP_LIST_KEY = "lookup";
 }

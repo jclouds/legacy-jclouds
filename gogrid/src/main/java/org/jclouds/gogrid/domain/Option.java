@@ -23,10 +23,12 @@
  */
 package org.jclouds.gogrid.domain;
 
+import com.google.common.primitives.Longs;
+
 /**
  * @author Oleksiy Yarmula
  */
-public class Option {
+public class Option implements Comparable<Option> {
 
     private Long id;
     private String name;
@@ -85,5 +87,10 @@ public class Option {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(Option o) {
+        return Longs.compare(id, o.id);
     }
 }

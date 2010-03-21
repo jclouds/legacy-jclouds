@@ -54,6 +54,7 @@ import com.google.common.collect.Iterables;
 import org.jclouds.gogrid.GoGrid;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
+import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
@@ -273,6 +274,34 @@ public class GridServerAsyncClientTest extends RestClientTest<GridServerAsyncCli
         assertRequestLineEquals(httpRequest,
                 "GET https://api.gogrid.com/api/grid/server/delete?v=1.3&" +
                         "name=PowerServer&" +
+                        "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
+                        "HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+    }
+
+
+    @Test
+    public void testGetRamSizes() throws NoSuchMethodException, IOException {
+        Method method = GridServerAsyncClient.class.getMethod("getRamSizes");
+        GeneratedHttpRequest<GridServerAsyncClient> httpRequest =
+                processor.createRequest(method);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/common/lookup/list?v=1.3&lookup=server.ram " +
+                        "HTTP/1.1");
+        assertHeadersEqual(httpRequest, "");
+        assertPayloadEquals(httpRequest, null);
+
+        assertResponseParserClassEquals(method, httpRequest, ParseOptionsFromJsonResponse.class);
+        assertSaxResponseParserClassEquals(method, null);
+        assertExceptionParserClassEquals(method, null);
+
+        checkFilters(httpRequest);
+        Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+        assertRequestLineEquals(httpRequest,
+                "GET https://api.gogrid.com/api/common/lookup/list?v=1.3&lookup=server.ram&" +
                         "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " +
                         "HTTP/1.1");
         assertHeadersEqual(httpRequest, "");

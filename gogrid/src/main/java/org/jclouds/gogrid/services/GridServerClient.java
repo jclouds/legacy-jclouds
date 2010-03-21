@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.domain.Credentials;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.options.AddServerOptions;
@@ -137,4 +138,16 @@ public interface GridServerClient {
      * @return server before the command is executed
      */
     Server deleteByName(String name);
+
+    /**
+     * Retrieves the list of supported RAM configurations.
+     * The objects will have RAM ID, name and description. In
+     * most cases, id or name will be used for {@link #addServer}.
+     * 
+     * To see how RAM maps to CPU and disk space (as of March 2010),
+     * see {@link org.jclouds.gogrid.config.GoGridComputeServiceContextModule#provideSizeToRam}.
+     *
+     * @return supported ram sizes
+     */
+    Set<Option> getRamSizes();
 }
