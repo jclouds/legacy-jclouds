@@ -25,7 +25,7 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.util.Properties;
 
-import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
+import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.testng.annotations.Test;
 
@@ -37,7 +37,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test
-public class ApacheHCHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceTest {
+public class ApacheHCHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    static {
       System.setProperty("http.conn-manager.timeout", 1000 + "");
    }

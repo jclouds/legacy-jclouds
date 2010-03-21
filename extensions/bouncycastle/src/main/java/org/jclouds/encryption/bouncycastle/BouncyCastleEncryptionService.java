@@ -19,8 +19,6 @@
 package org.jclouds.encryption.bouncycastle;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -83,16 +81,14 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       return resBuf;
    }
 
-   public byte[] md5(File toEncode) {
+   public byte[] md5(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       byte[] buffer = new byte[1024];
       int numRead = -1;
-      InputStream i = null;
       try {
-         i = new FileInputStream(toEncode);
          do {
-            numRead = i.read(buffer);
+            numRead = toEncode.read(buffer);
             if (numRead > 0) {
                eTag.update(buffer, 0, numRead);
             }
@@ -100,7 +96,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         Closeables.closeQuietly(i);
+         Closeables.closeQuietly(toEncode);
       }
       eTag.doFinal(resBuf, 0);
       return resBuf;

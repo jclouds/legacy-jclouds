@@ -18,6 +18,7 @@
  */
 package org.jclouds.http;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -61,6 +62,10 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id);
+
+   @GET
+   @Path("{path}")
+   ListenableFuture<InputStream> downloadStream(@PathParam("path") String path);
 
    @GET
    @Path("{path}")
@@ -136,7 +141,7 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id, @HeaderParam("test") String header);
-   
+
    @GET
    @Path("objects/{id}")
    @XMLResponseParser(BarHandler.class)

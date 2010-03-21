@@ -18,8 +18,7 @@
  */
 package org.jclouds.encryption.internal;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -29,8 +28,6 @@ import java.security.NoSuchProviderException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import java.io.ByteArrayOutputStream;
 
 import com.google.common.io.Closeables;
 
@@ -78,15 +75,13 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return eTag.digest();
    }
 
-   public byte[] md5(File toEncode) {
+   public byte[] md5(InputStream toEncode) {
       MessageDigest eTag = getDigest();
       byte[] buffer = new byte[1024];
       int numRead = -1;
-      InputStream i = null;
       try {
-         i = new FileInputStream(toEncode);
          do {
-            numRead = i.read(buffer);
+            numRead = toEncode.read(buffer);
             if (numRead > 0) {
                eTag.update(buffer, 0, numRead);
             }
@@ -94,7 +89,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         Closeables.closeQuietly(i);
+         Closeables.closeQuietly(toEncode);
       }
       return eTag.digest();
    }

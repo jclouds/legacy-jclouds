@@ -21,6 +21,8 @@ package org.jclouds.encryption.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +31,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
 import org.jclouds.encryption.EncryptionService;
+
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -90,9 +94,13 @@ public abstract class BaseEncryptionService implements EncryptionService {
       } else if (data instanceof String) {
          md5 = md5(((String) data).getBytes());
       } else if (data instanceof File) {
-         md5 = md5(((File) data));
+         try {
+            md5 = md5(new FileInputStream((File) data));
+         } catch (FileNotFoundException e) {
+            Throwables.propagate(e);
+         }
       } else if (data instanceof InputStream) {
-         md5 = generateMD5Result(((InputStream) data)).md5;
+         md5 = md5(((InputStream) data));
       } else {
          throw new UnsupportedOperationException("Content not supported " + data.getClass());
       }

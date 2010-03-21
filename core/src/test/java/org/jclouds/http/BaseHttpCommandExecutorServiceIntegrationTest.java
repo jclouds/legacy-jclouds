@@ -38,8 +38,8 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(threadPoolSize = 10, sequential = true)
-public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
+@Test(threadPoolSize = 10, groups = "integration", sequential = true)
+public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends BaseJettyTest {
 
    @Test(invocationCount = 25, timeOut = 5000)
    public void testRequestFilter() throws MalformedURLException, ExecutionException,
@@ -90,6 +90,13 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.download("redirect").trim(), XML2);
+   }
+
+   @Test(invocationCount = 100, timeOut = 5000)
+   public void testGetBigFile() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      assertEquals(encryptionService.toBase64String(encryptionService.md5(client
+               .downloadStream("101constitutions"))), md5);
    }
 
    @Test(enabled = false, invocationCount = 25, timeOut = 5000)

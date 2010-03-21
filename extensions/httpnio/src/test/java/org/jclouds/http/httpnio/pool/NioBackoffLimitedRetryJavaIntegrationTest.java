@@ -18,7 +18,7 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import org.jclouds.http.BackoffLimitedRetryJavaIntegrationTest;
+import org.jclouds.http.BackoffLimitedRetryJavaTest;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
 import org.testng.annotations.Test;
@@ -35,7 +35,7 @@ import com.google.inject.Module;
  */
 @Test(sequential = true)
 public class NioBackoffLimitedRetryJavaIntegrationTest extends
-         BackoffLimitedRetryJavaIntegrationTest {
+         BackoffLimitedRetryJavaTest {
 
    protected Module createConnectionModule() {
       return new NioTransformingHttpCommandExecutorServiceModule();

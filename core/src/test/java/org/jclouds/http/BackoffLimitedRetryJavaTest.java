@@ -44,7 +44,7 @@ import com.google.inject.Module;
  * @author James Murty
  */
 @Test(sequential = true)
-public class BackoffLimitedRetryJavaIntegrationTest extends BaseJettyTest {
+public class BackoffLimitedRetryJavaTest extends BaseJettyTest {
    private int beginToFailOnRequestNumber = 0;
    private int endFailuresOnRequestNumber = 0;
    private int requestCount = 0;

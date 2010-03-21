@@ -138,13 +138,13 @@
     <category name="jclouds.compute">
         <priority value="TRACE" />
         <appender-ref ref="ASYNCCOMPUTE" />
-    </category>
+    </category><!--
 
     <category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-    <!--  ======================= -->
+    --><!--  ======================= -->
     <!-- Setup the Root category -->
     <!-- ======================= -->
 

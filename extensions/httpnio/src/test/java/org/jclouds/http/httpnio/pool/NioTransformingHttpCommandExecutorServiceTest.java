@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
+import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
 import org.testng.annotations.Test;
 
@@ -40,7 +40,7 @@ import com.google.inject.Module;
  */
 @Test(threadPoolSize = 10, sequential = true)
 public class NioTransformingHttpCommandExecutorServiceTest extends
-         BaseHttpCommandExecutorServiceTest {
+         BaseHttpCommandExecutorServiceIntegrationTest {
 
    @Override
    @Test(enabled = false)
@@ -66,4 +66,10 @@ public class NioTransformingHttpCommandExecutorServiceTest extends
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
    }
 
+   @Override
+   @Test(enabled = false)
+   public void testGetBigFile() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      // disabled since test data is too big
+   }
 }

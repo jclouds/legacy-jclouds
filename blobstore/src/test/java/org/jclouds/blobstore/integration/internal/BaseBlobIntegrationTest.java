@@ -23,17 +23,21 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagMatches;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifModifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import javax.ws.rs.core.MediaType;
 
@@ -43,17 +47,103 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.EncryptionService.MD5InputStreamResult;
 import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.Payloads;
+import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
+import org.testng.ITestContext;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.InputSupplier;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
  */
 public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
+   private byte[] oneHundredOneConstitutions;
+   private EncryptionService encryptionService;
+   private byte[] oneHundredOneConstitutionsMD5;
+   private long oneHundredOneConstitutionsLength;
+
+   @BeforeClass(groups = { "integration", "live" })
+   @Override
+   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
+      encryptionService = Guice.createInjector().getInstance(EncryptionService.class);
+      MD5InputStreamResult result = encryptionService.generateMD5Result(getTestDataSupplier()
+               .getInput());
+      oneHundredOneConstitutions = result.data;
+      oneHundredOneConstitutionsMD5 = result.md5;
+      oneHundredOneConstitutionsLength = result.length;
+      super.setUpResourcesOnThisThread(testContext);
+   }
+
+   @SuppressWarnings("unchecked")
+   public static InputSupplier<InputStream> getTestDataSupplier() throws IOException {
+      byte[] oneConstitution = ByteStreams.toByteArray(new GZIPInputStream(BaseJettyTest.class
+               .getResourceAsStream("/const.txt.gz")));
+      InputSupplier<ByteArrayInputStream> constitutionSupplier = ByteStreams
+               .newInputStreamSupplier(oneConstitution);
+
+      InputSupplier<InputStream> temp = ByteStreams.join(constitutionSupplier);
+
+      for (int i = 0; i < 100; i++) {
+         temp = ByteStreams.join(temp, constitutionSupplier);
+      }
+      return temp;
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testBigFileGets() throws InterruptedException, IOException {
+      String containerName = getContainerName();
+      try {
+         String key = "constitution.txt";
+
+         uploadConstitution(containerName, key);
+         Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
+         for (int i = 0; i < 10; i++) {
+
+            responses.put(i, Futures.compose(context.getAsyncBlobStore()
+                     .getBlob(containerName, key), new Function<Blob, Void>() {
+
+               @Override
+               public Void apply(Blob from) {
+                  assertEquals(encryptionService.md5(from.getContent()),
+                           oneHundredOneConstitutionsMD5);
+                  return null;
+               }
+
+            }));
+         }
+         Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l,
+                  Logger.CONSOLE, "get constitution");
+         assert exceptions.size() == 0 : exceptions;
+
+      } finally {
+         returnContainer(containerName);
+      }
+
+   }
+
+   private void uploadConstitution(String containerName, String key) throws IOException {
+      Blob sourceObject = context.getBlobStore().newBlob(key);
+      sourceObject.getMetadata().setContentType("text/plain");
+      sourceObject.getMetadata().setContentMD5(oneHundredOneConstitutionsMD5);
+      sourceObject.setContentLength(oneHundredOneConstitutionsLength);
+      sourceObject.setPayload(oneHundredOneConstitutions);
+      context.getBlobStore().putBlob(containerName, sourceObject);
+   }
 
    @Test(groups = { "integration", "live" })
    public void testGetIfModifiedSince() throws InterruptedException {

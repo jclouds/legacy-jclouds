@@ -18,7 +18,9 @@
  */
 package org.jclouds.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
@@ -35,6 +38,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
@@ -53,7 +57,10 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.InputSupplier;
 import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -139,12 +146,22 @@ public abstract class BaseJettyTest {
    private Server server2;
    protected RestContext<IntegrationTestAsyncClient, IntegrationTestClient> context;
    private int testPort;
+   protected EncryptionService encryptionService;
+   protected String md5;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
    @BeforeTest
    @Parameters( { "test-jetty-port" })
    public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
       this.testPort = testPort;
+
+      final InputSupplier<InputStream> oneHundredOneConstitutions = getTestDataSupplier();
+
+      encryptionService = Guice.createInjector().getInstance(EncryptionService.class);
+
+      md5 = encryptionService.md5Base64(ByteStreams.toByteArray(oneHundredOneConstitutions
+               .getInput()));
+
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request,
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
@@ -152,6 +169,11 @@ public abstract class BaseJettyTest {
                return;
             } else if (target.indexOf("redirect") > 0) {
                response.sendRedirect("http://localhost:" + (testPort + 1));
+            } else if (target.indexOf("101constitutions") > 0) {
+               response.setContentType("text/plain");
+               response.setHeader("Content-MD5", md5);
+               response.setStatus(HttpServletResponse.SC_OK);
+               ByteStreams.copy(oneHundredOneConstitutions.getInput(), response.getOutputStream());
             } else if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
@@ -243,6 +265,21 @@ public abstract class BaseJettyTest {
       assert client != null;
 
       assert client.newStringBuffer() != null;
+   }
+
+   @SuppressWarnings("unchecked")
+   public static InputSupplier<InputStream> getTestDataSupplier() throws IOException {
+      byte[] oneConstitution = ByteStreams.toByteArray(new GZIPInputStream(BaseJettyTest.class
+               .getResourceAsStream("/const.txt.gz")));
+      InputSupplier<ByteArrayInputStream> constitutionSupplier = ByteStreams
+               .newInputStreamSupplier(oneConstitution);
+
+      InputSupplier<InputStream> temp = ByteStreams.join(constitutionSupplier);
+
+      for (int i = 0; i < 100; i++) {
+         temp = ByteStreams.join(temp, constitutionSupplier);
+      }
+      return temp;
    }
 
    public static RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> newBuilder(

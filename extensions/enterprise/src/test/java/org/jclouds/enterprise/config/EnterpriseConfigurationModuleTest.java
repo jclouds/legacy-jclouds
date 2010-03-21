@@ -25,7 +25,7 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.util.Properties;
 
-import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
+import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -36,7 +36,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test
-public class EnterpriseConfigurationModuleTest extends BaseHttpCommandExecutorServiceTest {
+public class EnterpriseConfigurationModuleTest extends BaseHttpCommandExecutorServiceIntegrationTest {
 
    protected Module createConnectionModule() {
       return new EnterpriseConfigurationModule();

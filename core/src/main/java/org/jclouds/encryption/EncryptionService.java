@@ -21,7 +21,6 @@ package org.jclouds.encryption;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -57,7 +56,7 @@ public interface EncryptionService {
 
    byte[] md5(byte[] plainBytes);
 
-   byte[] md5(File toEncode);
+   byte[] md5(InputStream toEncode);
 
    String toBase64String(byte[] resBuf);
 

@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
-import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
+import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -46,7 +46,7 @@ import com.google.inject.Module;
  */
 @Test
 public class GaeHttpCommandExecutorServiceIntegrationTest extends
-         BaseHttpCommandExecutorServiceTest {
+         BaseHttpCommandExecutorServiceIntegrationTest {
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
@@ -246,6 +246,13 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
 
    @Override
    protected void addConnectionProperties(Properties props) {
+   }
+
+   @Override
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testGetBigFile() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      // disabled since test data is too big
    }
 
 }
