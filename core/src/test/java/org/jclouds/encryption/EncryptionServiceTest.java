@@ -20,6 +20,8 @@ package org.jclouds.encryption;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -30,12 +32,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.jclouds.PerformanceTest;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.EncryptionService.MD5OutputStream;
 import org.jclouds.encryption.internal.Base64;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.io.ByteStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -48,51 +51,51 @@ import com.google.inject.Injector;
 public class EncryptionServiceTest extends PerformanceTest {
 
    protected EncryptionService encryptionService;
+
    @BeforeTest
    protected void createEncryptionService() {
       Injector i = Guice.createInjector();
       encryptionService = i.getInstance(EncryptionService.class);
    }
-   
+
    public final static Object[][] base64KeyMessageDigest = {
-      { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There",
-               "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
-      { Base64.decode("SmVmZQ=="), "what do ya want for nothing?",
-               "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
-      { Base64.decode("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation",
-               "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
-      {
-               Base64
-                        .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
-               "Test Using Larger Than Block-Size Key - Hash Key First",
-               "qkrl4VJy0A6VcFY3zoo7Ve1AIRI=" },
-      {
-               Base64
-                        .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
-               "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
-               "6OmdD0UjfXhta7qnllx4CLv/GpE=" } };
-   
+            { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There",
+                     "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
+            { Base64.decode("SmVmZQ=="), "what do ya want for nothing?",
+                     "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
+            { Base64.decode("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation",
+                     "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
+            {
+                     Base64
+                              .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
+                     "Test Using Larger Than Block-Size Key - Hash Key First",
+                     "qkrl4VJy0A6VcFY3zoo7Ve1AIRI=" },
+            {
+                     Base64
+                              .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
+                     "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
+                     "6OmdD0UjfXhta7qnllx4CLv/GpE=" } };
 
    @DataProvider(name = "hmacsha1")
    public Object[][] createData1() {
       return base64KeyMessageDigest;
    }
 
-   @Test(dataProvider = "hmacsha1", enabled = false)
+   @Test(dataProvider = "hmacsha1")
    public void testHmacSha1Base64(byte[] key, String message, String base64Digest)
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
       String b64 = encryptionService.hmacSha1Base64(message, key);
       assertEquals(b64, base64Digest);
    }
 
-   @Test(dataProvider = "hmacsha1", enabled = false)
+   @Test(dataProvider = "hmacsha1")
    void testDigestSerialResponseTime(byte[] key, String message, String base64Digest)
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
       for (int i = 0; i < 10000; i++)
          testHmacSha1Base64(key, message, base64Digest);
    }
 
-   @Test(dataProvider = "hmacsha1", enabled = false)
+   @Test(dataProvider = "hmacsha1")
    void testDigestParallelResponseTime(final byte[] key, final String message,
             final String base64Digest) throws NoSuchProviderException, NoSuchAlgorithmException,
             InvalidKeyException, InterruptedException, ExecutionException {
@@ -110,22 +113,28 @@ public class EncryptionServiceTest extends PerformanceTest {
 
    @DataProvider(name = "eTag")
    public Object[][] createMD5Data() {
-      return base64MD5MessageDigest;
+      return hexMD5MessageDigest;
    }
 
-   public final static Object[][] base64MD5MessageDigest = {
+   public final static Object[][] hexMD5MessageDigest = {
             { "apple", "1f3870be274f6c49b3e31a0c6728957f" },
             { "bear", "893b56e3cfe153fb770a120b83bac20c" },
             { "candy", "c48ba993d35c3abe0380f91738fe2a34" },
             { "dogma", "95eb470e4faee302e9cd3063b1923dab" },
             { "emma", "00a809937eddc44521da9521269e75c6" } };
 
-
-   @Test(dataProvider = "eTag", enabled = false)
-   public void testMD5Digest(String message, String base64Digest) throws NoSuchProviderException,
-            NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+   @Test(dataProvider = "eTag")
+   public void testMD5Digest(String message, String hexMD5Digest) throws NoSuchProviderException,
+            NoSuchAlgorithmException, InvalidKeyException, IOException {
       String b64 = encryptionService.md5Hex(message.getBytes());
-      assertEquals(base64Digest, b64);
+      assertEquals(hexMD5Digest, b64);
+
+      MD5OutputStream outputStream = encryptionService.md5OutputStream(new ByteArrayOutputStream());
+      ByteStreams.copy(ByteStreams.newInputStreamSupplier(message.getBytes()).getInput(),
+               outputStream);
+
+      assertEquals(encryptionService.fromHexString(hexMD5Digest), outputStream.getMD5());
+
    }
 
    byte[] bytes = { 0, 1, 2, 4, 8, 16, 32, 64 };

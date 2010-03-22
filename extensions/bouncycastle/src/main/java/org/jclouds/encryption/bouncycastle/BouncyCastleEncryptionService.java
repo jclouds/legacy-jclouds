@@ -21,6 +21,7 @@ package org.jclouds.encryption.bouncycastle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -31,6 +32,7 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.io.DigestOutputStream;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
@@ -136,4 +138,22 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       return Base64.decode(encoded);
    }
 
+   @Override
+   public MD5OutputStream md5OutputStream(OutputStream out) {
+      return new BouncyCastleMD5OutputStream(out);
+   }
+
+   public static class BouncyCastleMD5OutputStream extends MD5OutputStream {
+      public BouncyCastleMD5OutputStream(OutputStream out) {
+         super(new DigestOutputStream(out, new MD5Digest()));
+      }
+
+      @Override
+      public byte[] getMD5() {
+         MD5Digest digest = (MD5Digest) ((DigestOutputStream) out).getDigest();
+         byte[] resBuf = new byte[digest.getDigestSize()];
+         digest.doFinal(resBuf, 0);
+         return resBuf;
+      }
+   }
 }

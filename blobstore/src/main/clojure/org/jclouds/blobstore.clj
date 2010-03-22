@@ -25,7 +25,8 @@ See http://code.google.com/p/jclouds for details."
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
             domain.BlobMetadata domain.StorageMetadata domain.Blob
             options.ListContainerOptions]
-           [java.security DigestOutputStream MessageDigest]
+           [org.jclouds.encryption.internal JCEEncryptionService]
+           [java.util Arrays]
            [com.google.common.collect ImmutableSet]))
 
 (defn blobstore
@@ -67,6 +68,8 @@ Options can also be specified for extension modules
    :else (apply blobstore args)))
 
 (def *blobstore*)
+
+(def *encryption-service* (JCEEncryptionService.)) ;; TODO: use guice
 
 (def *max-retries* 3)
 
@@ -240,7 +243,7 @@ example:
   "Create an blob representing text data:
 container, name, string -> etag
 "
-  ([container-name name data]
+  ([container-name name data] ;; TODO: allow payload to be a stream
      (create-blob *blobstore* container-name name data))
   ([blobstore container-name name data]
      (put-blob blobstore container-name
@@ -262,12 +265,12 @@ container, name, string -> etag
 (defmethod download-blob OutputStream [blobstore container-name name target
                                        & [retries]]
   (let [blob (get-blob blobstore container-name name)
-        digest-stream (DigestOutputStream. ;; TODO: not all clouds use MD5
-                       target (MessageDigest/getInstance "MD5"))]
+        digest-stream (.md5OutputStream ;; TODO: not all clouds use MD5
+                       *encryption-service* target)]
     (copy (.getContent blob) digest-stream)
-    (let [digest (.digest (.getMessageDigest digest-stream))
+    (let [digest (.getMD5 digest-stream)
           metadata-digest (.getContentMD5 (.getMetadata blob))]
-      (when-not (MessageDigest/isEqual digest metadata-digest)
+      (when-not (Arrays/equals digest metadata-digest)
         (if (<= (or retries 0) *max-retries*)
           (recur blobstore container-name name target [(inc (or retries 1))])
           (throw (Exception. (format "Download failed for %s/%s"

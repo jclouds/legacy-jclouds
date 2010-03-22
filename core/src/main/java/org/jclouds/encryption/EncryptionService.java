@@ -21,7 +21,9 @@ package org.jclouds.encryption;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.FilterOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -63,6 +65,16 @@ public interface EncryptionService {
    byte[] md5(Object data);
 
    MD5InputStreamResult generateMD5Result(InputStream toEncode);
+
+   MD5OutputStream md5OutputStream(OutputStream out);
+
+   public static abstract class MD5OutputStream extends FilterOutputStream {
+      public MD5OutputStream(OutputStream out) {
+         super(out);
+      }
+
+      public abstract byte[] getMD5();
+   }
 
    public static class MD5InputStreamResult {
       public final byte[] data;

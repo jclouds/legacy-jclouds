@@ -283,9 +283,9 @@
             </execution>
           </executions>
           <configuration>
-            <testNamespaces>
-              <testNamespace>!clojure.*</testNamespace>
-            </testNamespaces>
+            <clojureOptions>-Xms128m -Xmx512m</clojureOptions>
+            <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
+            <testDeclaredNamespaceOnly>true</testDeclaredNamespaceOnly>
           </configuration>
         </plugin>
             <plugin>

@@ -21,6 +21,8 @@ package org.jclouds.encryption.internal;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.DigestOutputStream;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -122,7 +124,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return new MD5InputStreamResult(out.toByteArray(), eTag.digest(), length);
    }
 
-   private MessageDigest getDigest() {
+   private static MessageDigest getDigest() {
       MessageDigest eTag;
       try {
          eTag = MessageDigest.getInstance("MD5");
@@ -136,4 +138,20 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return Base64.decode(encoded);
    }
 
+   @Override
+   public MD5OutputStream md5OutputStream(OutputStream out) {
+      return new JCEMD5OutputStream(out);
+   }
+
+   public static class JCEMD5OutputStream extends MD5OutputStream {
+      public JCEMD5OutputStream(OutputStream out) {
+         super(new DigestOutputStream(out, getDigest()));
+      }
+
+      @Override
+      public byte[] getMD5() {
+         MessageDigest digest = ((DigestOutputStream) out).getMessageDigest();
+         return digest.digest();
+      }
+   }
 }
