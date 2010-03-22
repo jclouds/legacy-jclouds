@@ -157,7 +157,17 @@ public class JavaUrlHttpCommandExecutorService extends
    protected HttpURLConnection convert(HttpRequest request) throws IOException,
             InterruptedException {
       URL url = request.getEndpoint().toURL();
+
+      boolean chunked = false;
+      for (String header : request.getHeaders().keySet()) {
+         for (String value : request.getHeaders().get(header)) {
+            if ("Transfer-Encoding".equals(header) && "chunked".equals(value)) {
+               chunked = true;
+            }
+         }
+      }
       HttpURLConnection connection;
+
       if (utils.useSystemProxies()) {
          System.setProperty("java.net.useSystemProxies", "true");
          Iterable<Proxy> proxies = ProxySelector.getDefault().select(request.getEndpoint());
@@ -191,20 +201,24 @@ public class JavaUrlHttpCommandExecutorService extends
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header)) {
             connection.setRequestProperty(header, value);
-            if ("Transfer-Encoding".equals(header) && "chunked".equals(value)) {
-               connection.setChunkedStreamingMode(8192);
-            }
          }
       }
       connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
       connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
 
       if (request.getPayload() != null) {
-         OutputStream out = connection.getOutputStream();
+         OutputStream out = null;
          try {
+            if (chunked) {
+               connection.setChunkedStreamingMode(8192);
+            } else {
+               connection.setFixedLengthStreamingMode(Integer.parseInt(request
+                        .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH)));
+            }
+            out = connection.getOutputStream();
             request.getPayload().writeTo(out);
-         } finally {
             out.flush();
+         } finally {
             Closeables.closeQuietly(out);
          }
       } else {
