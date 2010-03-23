@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
@@ -72,6 +75,7 @@ public class S3UtilsTest {
                               Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
                      bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
                               .to("https://s3.amazonaws.com");
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
 
                });

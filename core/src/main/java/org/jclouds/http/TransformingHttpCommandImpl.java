@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
@@ -45,6 +46,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    private final TransformingHttpCommandExecutorService executorService;
    private final Function<HttpResponse, T> transformer;
+   private final Provider<UriBuilder> uriBuilderProvider;
 
    private GeneratedHttpRequest<?> request;
    private volatile int failureCount;
@@ -56,8 +58,10 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    protected volatile Exception exception;
 
    @Inject
-   public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService,
+   public TransformingHttpCommandImpl(Provider<UriBuilder> uriBuilderProvider,
+            TransformingHttpCommandExecutorService executorService,
             GeneratedHttpRequest<?> request, Function<HttpResponse, T> transformer) {
+      this.uriBuilderProvider = uriBuilderProvider;
       this.request = request;
       this.executorService = executorService;
       this.transformer = transformer;
@@ -85,7 +89,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     */
    @Override
    public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
-      UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
+      UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
       builder.scheme(scheme);
       builder.host(host);
       builder.port(port);

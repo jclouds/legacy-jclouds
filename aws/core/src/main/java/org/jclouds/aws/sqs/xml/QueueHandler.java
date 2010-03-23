@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.aws.domain.Region;
@@ -42,9 +43,11 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
    Queue queue;
 
    private final ImmutableBiMap<Region, URI> regionBiMap;
+   private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   QueueHandler(Map<Region, URI> regionMap) {
+   QueueHandler(Provider<UriBuilder> uriBuilderProvider, Map<Region, URI> regionMap) {
+      this.uriBuilderProvider = uriBuilderProvider;
       this.regionBiMap = ImmutableBiMap.copyOf(regionMap);
    }
 
@@ -58,7 +61,7 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
          String uriText = currentText.toString().trim();
          String queueName = uriText.substring(uriText.lastIndexOf('/') + 1);
          URI location = URI.create(uriText);
-         URI regionURI = UriBuilder.fromUri(location).replacePath("").build();
+         URI regionURI = uriBuilderProvider.get().uri(location).replacePath("").build();
          Region region = regionBiMap.inverse().get(regionURI);
          this.queue = new Queue(region, queueName, location);
       }

@@ -26,11 +26,12 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Collections;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.ext.RuntimeDelegate;
+import javax.ws.rs.core.UriBuilder;
 
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.HashMultimap;
@@ -41,15 +42,21 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class TransformingHttpCommandImplTest {
+   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
+
+      @Override
+      public UriBuilder get() {
+         return new UriBuilderImpl();
+      }
+
+   };
 
    @SuppressWarnings("unchecked")
    @Test
    public void testChangeSchemeHostAndPortTo() {
-      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      TransformingHttpCommandImpl<?> command = new TransformingHttpCommandImpl(null, request,
-               null);
+      TransformingHttpCommandImpl<?> command = new TransformingHttpCommandImpl(uriBuilderProvider,
+               null, request, null);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/mypath"));
       request.setEndpoint(URI.create("https://remotehost:443/mypath"));
       Multimap<String, String> headers = HashMultimap.create();
@@ -57,7 +64,6 @@ public class TransformingHttpCommandImplTest {
       replay(request);
       command.changeSchemeHostAndPortTo("https", "remotehost", 443);
       assertEquals(headers.get(HttpHeaders.HOST), Collections.singletonList("remotehost"));
-
    }
 
    @Test

@@ -19,8 +19,10 @@
 package org.jclouds.aws.handlers;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.reference.AWSConstants;
@@ -41,8 +43,9 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    private final AWSUtils utils;
 
    @Inject
-   public AWSRedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler, AWSUtils utils) {
-      super(backoffHandler);
+   public AWSRedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
+            BackoffLimitedRetryHandler backoffHandler, AWSUtils utils) {
+      super(uriBuilderProvider, backoffHandler);
       this.utils = utils;
    }
 

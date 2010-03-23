@@ -30,8 +30,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
-import javax.ws.rs.ext.RuntimeDelegate;
+import javax.ws.rs.core.UriBuilder;
 
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PerformanceTest;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
@@ -39,7 +40,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -79,7 +79,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
 
          @Override
          protected void configure() {
-            RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
+            bind(UriBuilder.class).to(UriBuilderImpl.class);
          }
 
          @SuppressWarnings("unused")
@@ -126,7 +126,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       }
    }
 
-   @Test(enabled=false)
+   @Test(enabled = false)
    void testRegexSerialResponseTime() throws IOException {
       long now = System.currentTimeMillis();
       for (int i = 0; i < LOOP_COUNT; i++)
@@ -134,7 +134,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       System.out.println("testRegex serial: " + (System.currentTimeMillis() - now) + "");
    }
 
-   @Test(enabled=false)
+   @Test(enabled = false)
    void testRegexParallelResponseTime() throws Throwable {
       List<Runnable> tasks = ImmutableList.<Runnable> of(new Runnable() {
          public void run() {
@@ -144,7 +144,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       executeMultiThreadedPerformanceTest("testRegexParallelResponseTime", tasks);
    }
 
-   @Test(enabled=false)
+   @Test(enabled = false)
    void testSaxSerialResponseTime() throws IOException {
       long now = System.currentTimeMillis();
       for (int i = 0; i < LOOP_COUNT; i++)
@@ -152,7 +152,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
       System.out.println("testSax serial: " + (System.currentTimeMillis() - now) + "");
    }
 
-   @Test(enabled=false)
+   @Test(enabled = false)
    void testSaxParallelResponseTime() throws Throwable {
       List<Runnable> tasks = ImmutableList.<Runnable> of(new Runnable() {
          public void run() {

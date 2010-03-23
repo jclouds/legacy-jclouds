@@ -25,6 +25,9 @@ import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -68,6 +71,7 @@ public class AzureStorageRestClientModuleTest {
                               Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
                      bindConstant().annotatedWith(
                               Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

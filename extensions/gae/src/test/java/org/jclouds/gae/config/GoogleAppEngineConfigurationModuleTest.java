@@ -22,6 +22,9 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
@@ -63,6 +66,7 @@ public class GoogleAppEngineConfigurationModuleTest {
                   return Logger.NULL;
                }
             });
+            bind(UriBuilder.class).to(UriBuilderImpl.class);
             super.configure();
          }
       });

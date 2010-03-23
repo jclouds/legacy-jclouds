@@ -29,25 +29,34 @@ import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import javax.ws.rs.ext.RuntimeDelegate;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 
 @Test(groups = { "unit" })
 public class ParseURIFromListOrLocationHeaderIf20xTest {
+   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
+
+      @Override
+      public UriBuilder get() {
+         return new UriBuilderImpl();
+      }
+
+   };
 
    @Test
    public void testExceptionWhenNoContentOn200() throws ExecutionException, InterruptedException,
             TimeoutException, IOException {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
@@ -64,7 +73,8 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
    @Test
    public void testExceptionWhenIOExceptionOn200() throws ExecutionException, InterruptedException,
             TimeoutException, IOException {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
@@ -81,12 +91,12 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
 
    @Test
    public void testResponseOk() throws Exception {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
-      expect(response.getContent()).andReturn(Utils.toInputStream("http://locahost"))
-               .atLeastOnce();
+      expect(response.getContent()).andReturn(Utils.toInputStream("http://locahost")).atLeastOnce();
       replay(response);
       assertEquals(function.apply(response), URI.create("http://locahost"));
       verify(response);
@@ -94,7 +104,8 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
 
    @Test
    public void testResponseLocationOk() throws Exception {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
@@ -106,7 +117,8 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
 
    @Test
    public void testResponseLowercaseLocationOk() throws Exception {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
@@ -117,14 +129,10 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       verify(response);
    }
 
-   @BeforeTest
-   public void beforeTest() {
-      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-   }
-
    @Test
    public void testResponsePathLocationOk() throws Exception {
-      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x();
+      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       function.setContext(request);
@@ -141,7 +149,8 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
 
    @Test
    public void testResponsePathPortLocationOk() throws Exception {
-      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x();
+      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       function.setContext(request);
@@ -155,11 +164,11 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       verify(request);
       verify(response);
    }
-   
 
    @Test
    public void testResponsePathSchemeLocationOk() throws Exception {
-      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x();
+      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
+               uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       function.setContext(request);

@@ -25,11 +25,9 @@ import java.io.File;
 import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -41,9 +39,6 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "unit", testName = "rest.BindMapToMatrixParamsTest")
 public class BindMapToMatrixParamsTest {
-   static {
-      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-   }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeMap() {

@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
@@ -42,6 +44,13 @@ import com.google.common.base.Function;
  */
 public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpResponse, URI>,
          InvocationContext {
+   private final Provider<UriBuilder> uriBuilderProvider;
+
+   @Inject
+   ParseURIFromListOrLocationHeaderIf20x(Provider<UriBuilder> uriBuilderProvider) {
+      this.uriBuilderProvider = uriBuilderProvider;
+   }
+
    private GeneratedHttpRequest<?> request;
 
    public URI apply(HttpResponse from) {
@@ -67,7 +76,8 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
             checkState(request != null, "request should have been initialized");
             if (!location.startsWith("/"))
                location = "/" + location;
-            UriBuilder builder = UriBuilder.fromUri(URI.create("http://localhost" + location));
+            UriBuilder builder = uriBuilderProvider.get().uri(
+                     URI.create("http://localhost" + location));
             builder.host(request.getEndpoint().getHost());
             builder.port(request.getEndpoint().getPort());
             builder.scheme(request.getEndpoint().getScheme());

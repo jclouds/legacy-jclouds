@@ -23,6 +23,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
@@ -57,6 +60,7 @@ public class PCSContextModuleTest {
                   return Logger.NULL;
                }
             });
+            bind(UriBuilder.class).to(UriBuilderImpl.class);
             super.configure();
          }
       }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),

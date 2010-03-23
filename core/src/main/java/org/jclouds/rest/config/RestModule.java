@@ -19,8 +19,10 @@
 package org.jclouds.rest.config;
 
 import javax.inject.Inject;
-import javax.ws.rs.ext.RuntimeDelegate;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
@@ -28,7 +30,6 @@ import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RuntimeDelegateImpl;
 
 import com.google.common.base.Function;
 import com.google.inject.AbstractModule;
@@ -43,18 +44,21 @@ public class RestModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new ParserModule());
-      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
+      bind(UriBuilder.class).to(UriBuilderImpl.class);
       bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
    }
 
    private static class Factory implements AsyncRestClientProxy.Factory {
       @Inject
       private TransformingHttpCommandExecutorService executorService;
+      @Inject
+      private Provider<UriBuilder> uriBuilderProvider;
 
       @SuppressWarnings("unchecked")
       public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
                Function<HttpResponse, ?> transformer) {
-         return new TransformingHttpCommandImpl(executorService, request, transformer);
+         return new TransformingHttpCommandImpl(uriBuilderProvider, executorService, request,
+                  transformer);
       }
 
    }
