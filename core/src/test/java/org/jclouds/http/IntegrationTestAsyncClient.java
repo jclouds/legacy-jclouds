@@ -18,7 +18,11 @@
  */
 package org.jclouds.http;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -28,9 +32,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.HttpHeaders;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
+import org.jclouds.encryption.internal.Base64;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.rest.Binder;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -49,7 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
- * 
+ *
  * @author Adrian Cole
  */
 @Endpoint(Localhost.class)
@@ -110,6 +121,23 @@ public interface IntegrationTestAsyncClient {
       public void bindToRequest(HttpRequest request, Object payload) {
          super.bindToRequest(request, payload);
          request.setPayload(Utils.toInputStream(payload.toString()));
+      }
+   }
+
+   @POST
+   @Path("objects/{id}")
+   ListenableFuture<String> postWithMd5(@PathParam("id") String id,
+            @BinderParam(BindToFilePayload.class) File file);
+
+   static class BindToFilePayload implements Binder {
+      @Override
+      public void bindToRequest(HttpRequest request, Object payload) {
+         File f = (File) payload;
+         if (request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE) == null)
+         request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "application/unknown");
+         request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH, Collections.singletonList(f.length() + ""));
+         request.getHeaders().replaceValues("Content-MD5", Collections.singletonList(Base64.encodeBytes(new JCEEncryptionService().md5(f))));
+         request.setPayload(f);
       }
    }
 

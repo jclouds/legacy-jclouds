@@ -20,6 +20,10 @@ package org.jclouds.http;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -124,6 +128,35 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          postFailures.incrementAndGet();
       }
    }
+
+   /**
+     * Tests sending a big file to the server.
+     * Note: this is a heavy test, takes several minutes to finish.
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testUploadBigFile() throws IOException {
+        String filename = "jclouds";
+        OutputStream os = null;
+        File f = null;
+        try {
+            //create a file, twice big as free heap memory
+            f = File.createTempFile(filename, "tmp");
+            f.deleteOnExit();
+            long length = Runtime.getRuntime().freeMemory() * 2;
+            os = new FileOutputStream(f.getAbsolutePath());
+            for(long i = 0; i < length; i++) os.write('a');
+            os.flush();
+            os.close();
+
+            //upload and verify the response
+            assertEquals(client.postWithMd5("fileso", f).trim(), "created");
+
+        } finally {
+            if(os != null) os.close();
+            if(f != null && f.exists()) f.delete();
+        }
+    }
 
    protected AtomicInteger postFailures = new AtomicInteger();
 

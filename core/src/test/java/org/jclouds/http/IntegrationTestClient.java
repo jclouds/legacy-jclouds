@@ -18,6 +18,7 @@
  */
 package org.jclouds.http;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +51,8 @@ public interface IntegrationTestClient {
    String post(String id, String toPut);
 
    String postAsInputStream(String id, String toPut);
+
+   String postWithMd5(String id, File file);
 
    String postJson(String id, String toPut);
 

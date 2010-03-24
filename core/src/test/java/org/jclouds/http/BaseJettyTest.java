@@ -39,6 +39,8 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.Base64;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
@@ -188,9 +190,20 @@ public abstract class BaseJettyTest {
                if (failEveryTenRequests(request, response))
                   return;
                if (request.getContentLength() > 0) {
-                  response.setStatus(HttpServletResponse.SC_OK);
-                  response.getWriter().println(
+                  if(request.getHeader("Content-MD5") != null) {
+                       String expectedMd5 = request.getHeader("Content-MD5");
+                       String realMd5FromRequest = Base64.encodeBytes(new JCEEncryptionService().md5(request.getInputStream()));
+                       boolean matched = expectedMd5.equals(realMd5FromRequest);
+                       if(matched) {
+                           response.setContentType("text/xml");
+                           response.setStatus(HttpServletResponse.SC_OK);
+                           response.getWriter().println("created");
+                       }
+                  } else {
+                       response.setStatus(HttpServletResponse.SC_OK);
+                       response.getWriter().println(
                            Utils.toStringAndClose(request.getInputStream()) + "POST");
+                  }
                } else {
                   handleAction(request, response);
                }
@@ -227,9 +240,20 @@ public abstract class BaseJettyTest {
                }
             } else if (request.getMethod().equals("POST")) {
                if (request.getContentLength() > 0) {
-                  response.setStatus(HttpServletResponse.SC_OK);
-                  response.getWriter().println(
+                  if(request.getHeader("Content-MD5") != null) {
+                       String expectedMd5 = request.getHeader("Content-MD5");
+                       String realMd5FromRequest = Base64.encodeBytes(new JCEEncryptionService().md5(request.getInputStream()));
+                       boolean matched = expectedMd5.equals(realMd5FromRequest);
+                       if(matched) {
+                           response.setContentType("text/xml");
+                           response.setStatus(HttpServletResponse.SC_OK);
+                           response.getWriter().println("created");
+                       }
+                  } else {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getWriter().println(
                            Utils.toStringAndClose(request.getInputStream()) + "POST");
+                  }
                } else {
                   handleAction(request, response);
                }
@@ -300,7 +324,7 @@ public abstract class BaseJettyTest {
 
    /**
     * Fails every 10 requests.
-    * 
+    *
     * @param request
     * @param response
     * @return
