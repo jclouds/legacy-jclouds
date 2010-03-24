@@ -22,6 +22,9 @@ import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
@@ -64,6 +67,7 @@ public class S3RestClientModuleTest {
                               Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
                      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
                               .to("1");
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

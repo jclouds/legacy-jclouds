@@ -18,6 +18,9 @@
  */
 package org.jclouds.http.handlers;
 
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -51,10 +54,11 @@ public class DelegatingRetryHandler implements HttpRetryHandler {
    @ServerError
    HttpRetryHandler serverErrorRetryHandler;
 
-   public DelegatingRetryHandler() {
+   @Inject
+   public DelegatingRetryHandler(Provider<UriBuilder> uriBuilderProvider) {
       BackoffLimitedRetryHandler backOff = new BackoffLimitedRetryHandler();
       this.serverErrorRetryHandler = backOff;
-      this.redirectionRetryHandler = new RedirectionRetryHandler(backOff);
+      this.redirectionRetryHandler = new RedirectionRetryHandler(uriBuilderProvider, backOff);
       this.clientErrorRetryHandler = HttpRetryHandler.NEVER_RETRY;
    }
 

@@ -21,6 +21,9 @@ package org.jclouds.azure.storage.blob.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
@@ -73,6 +76,7 @@ public class RestAzureBlobClientModuleTest {
                                        Jsr330
                                                 .named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
                               .to(1l);
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

@@ -31,8 +31,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -59,6 +61,14 @@ public class PCSClientLiveTest {
    private PCSClient connection;
 
    private String user;
+   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
+
+      @Override
+      public UriBuilder get() {
+         return new UriBuilderImpl();
+      }
+
+   };
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
@@ -167,7 +177,7 @@ public class PCSClientLiveTest {
       connection.putMetadataItem(objectURI, "name", "object");
 
       try {
-         connection.downloadFile(UriBuilder.fromUri(objectURI).path("sad").build());
+         connection.downloadFile(uriBuilderProvider.get().uri(objectURI).path("sad").build());
          assert false;
       } catch (KeyNotFoundException e) {
       }

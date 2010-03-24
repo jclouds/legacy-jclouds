@@ -21,6 +21,9 @@ package org.jclouds.aws.ec2.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
@@ -61,6 +64,7 @@ public class EC2RestClientModuleTest {
                               Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
                      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
                               .to("1");
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

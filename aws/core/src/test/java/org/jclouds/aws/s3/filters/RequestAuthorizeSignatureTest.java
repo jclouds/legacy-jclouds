@@ -25,7 +25,9 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
@@ -154,6 +156,7 @@ public class RequestAuthorizeSignatureTest {
                               .to("1");
                      bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
                               .to("https://s3.amazonaws.com");
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
       filter = injector.getInstance(RequestAuthorizeSignature.class);

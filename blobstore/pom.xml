@@ -118,25 +118,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-	    <plugin>
-	      <groupId>com.theoryinpractise</groupId>
-	      <artifactId>clojure-maven-plugin</artifactId>
-	      <version>1.3.1</version>
-	      <executions>
-		<execution>
-		  <id>test-clojure</id>
-		  <phase>test</phase>
-		  <goals>
-		    <goal>test</goal>
-		  </goals>
-		</execution>
-	      </executions>
-	      <configuration>
-		<testNamespaces>
-		  <testNamespace>!clojure.*</testNamespace>
-		</testNamespaces>
-	      </configuration>
-	    </plugin>
         </plugins>
     </build>
 </project>

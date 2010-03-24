@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 
 import javax.ws.rs.POST;
-import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
@@ -38,7 +37,6 @@ import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -107,7 +105,6 @@ public class AddSessionTokenToRequestTest {
                new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
 
                   protected void configure() {
-                     RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
                      bind(DateService.class);
                      Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
                               "appname", "username", "password").build());

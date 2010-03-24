@@ -32,6 +32,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
@@ -68,6 +71,7 @@ public class VCloudRestClientModuleTest {
                               "http://localhost");
                      bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_SESSIONINTERVAL))
                               .to("2");
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

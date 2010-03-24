@@ -24,6 +24,7 @@ import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
@@ -52,10 +53,13 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    protected final BackoffLimitedRetryHandler backoffHandler;
+   private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   public RedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler) {
+   public RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
+            BackoffLimitedRetryHandler backoffHandler) {
       this.backoffHandler = backoffHandler;
+      this.uriBuilderProvider = uriBuilderProvider;
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
@@ -63,7 +67,7 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
 
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
       if (hostHeader != null && command.incrementRedirectCount() < retryCountLimit) {
-         URI redirectionUrl = UriBuilder.fromUri(hostHeader).build();
+         URI redirectionUrl = uriBuilderProvider.get().uri(URI.create(hostHeader)).build();
          if (redirectionUrl.getScheme().equals(command.getRequest().getEndpoint().getScheme())
                   && redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
                   && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {

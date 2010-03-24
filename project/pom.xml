@@ -107,10 +107,14 @@
             <id>jclouds-googlecode-deploy</id>
             <url>svn:https://jclouds.googlecode.com/svn/repo</url>
         </repository>
-        <snapshotRepository>
+        <!--snapshotRepository>
       	    <id>jclouds-rimu-snapshots</id>
             <url>dav:http://jclouds.rimuhosting.com/maven2/snapshots/</url>
-        </snapshotRepository>
+        </snapshotRepository-->
+        <snapshotRepository>
+      	    <id>jclouds-rimu-snapshots-nexus</id>
+            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>        
         <site>
             <id>website</id>
             <name>website</name>
@@ -272,7 +276,7 @@
         <plugin>
           <groupId>com.theoryinpractise</groupId>
           <artifactId>clojure-maven-plugin</artifactId>
-          <version>1.3.1</version>
+          <version>1.3.2</version>
           <executions>
             <execution>
               <id>test-clojure</id>

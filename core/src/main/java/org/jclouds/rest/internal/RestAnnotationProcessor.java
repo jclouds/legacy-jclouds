@@ -42,6 +42,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -71,8 +72,8 @@ import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.InputParamValidator;
+import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -191,6 +192,7 @@ public class RestAnnotationProcessor<T> {
             });
 
    private final ParseSax.Factory parserFactory;
+   private final Provider<UriBuilder> uriBuilderProvider;
 
    private char[] skips;
 
@@ -230,6 +232,7 @@ public class RestAnnotationProcessor<T> {
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
+      this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       seedCache(declaring);
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
          skips = declaring.getAnnotation(SkipEncoding.class).value();
@@ -374,8 +377,8 @@ public class RestAnnotationProcessor<T> {
          throw new IllegalStateException(e);
       }
 
-      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endpoint, this,
-               declaring, method, args);
+      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(uriBuilderProvider, httpMethod,
+               endpoint, this, declaring, method, args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
 
@@ -399,22 +402,23 @@ public class RestAnnotationProcessor<T> {
 
    public URI replaceQuery(URI in, String newQuery,
             @Nullable Comparator<Entry<String, String>> sorter) {
-      return replaceQuery(in, newQuery, sorter, skips);
+      return replaceQuery(uriBuilderProvider, in, newQuery, sorter, skips);
    }
 
-   public static URI replaceQuery(URI in, String newQuery,
+   public static URI replaceQuery(Provider<UriBuilder> uriBuilderProvider, URI in, String newQuery,
             @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
-      UriBuilder builder = UriBuilder.fromUri(in);
+      UriBuilder builder = uriBuilderProvider.get().uri(in);
       builder.replaceQuery(makeQueryLine(parseQueryToMap(newQuery), sorter, skips));
       return builder.build();
    }
 
    public URI addQueryParam(URI in, String key, String[] values) {
-      return addQueryParam(in, key, values, skips);
+      return addQueryParam(uriBuilderProvider, in, key, values, skips);
    }
 
-   public static URI addQueryParam(URI in, String key, String[] values, char... skips) {
-      UriBuilder builder = UriBuilder.fromUri(in);
+   public static URI addQueryParam(Provider<UriBuilder> uriBuilderProvider, URI in, String key,
+            String[] values, char... skips) {
+      UriBuilder builder = uriBuilderProvider.get().uri(in);
       Multimap<String, String> map = parseQueryToMap(in.getQuery());
       map.putAll(key, Arrays.asList(values));
       builder.replaceQuery(makeQueryLine(map, null, skips));
@@ -435,25 +439,28 @@ public class RestAnnotationProcessor<T> {
       Multimap<String, String> map = LinkedListMultimap.create();
       if (in == null) {
       } else if (in.indexOf('&') == -1) {
-         if(in.contains("=")) parseKeyValueFromStringToMap(in, map);
-         else map.put(in, null);
+         if (in.contains("="))
+            parseKeyValueFromStringToMap(in, map);
+         else
+            map.put(in, null);
       } else {
          String[] parts = HttpUtils.urlDecode(in).split("&");
-         for(String part : parts) {
-             parseKeyValueFromStringToMap(part, map);
+         for (String part : parts) {
+            parseKeyValueFromStringToMap(part, map);
          }
       }
       return map;
    }
 
-   public static void parseKeyValueFromStringToMap(String stringToParse, Multimap<String, String> map) {
-       // note that '=' can be a valid part of the value
-            int indexOfFirstEquals = stringToParse.indexOf('=');
-            String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(
-                     0, indexOfFirstEquals);
-            String value = indexOfFirstEquals == -1 ? null : stringToParse
-                     .substring(indexOfFirstEquals + 1);
-            map.put(key, value);
+   public static void parseKeyValueFromStringToMap(String stringToParse,
+            Multimap<String, String> map) {
+      // note that '=' can be a valid part of the value
+      int indexOfFirstEquals = stringToParse.indexOf('=');
+      String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(0,
+               indexOfFirstEquals);
+      String value = indexOfFirstEquals == -1 ? null : stringToParse
+               .substring(indexOfFirstEquals + 1);
+      map.put(key, value);
    }
 
    public static SortedSet<Entry<String, String>> sortEntries(
@@ -614,7 +621,7 @@ public class RestAnnotationProcessor<T> {
    private UriBuilder addHostPrefixIfPresent(URI endpoint, Method method, Object... args) {
       Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@HostPrefixParam",
                methodToIndexOfParamToHostPrefixParamAnnotations);
-      UriBuilder builder = UriBuilder.fromUri(endpoint);
+      UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
       if (map.size() == 1) {
          HostPrefixParam param = (HostPrefixParam) map.values().iterator().next().iterator().next();
          int index = map.keySet().iterator().next();

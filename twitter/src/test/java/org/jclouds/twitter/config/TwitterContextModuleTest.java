@@ -21,6 +21,9 @@ package org.jclouds.twitter.config;
 import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -57,6 +60,7 @@ public class TwitterContextModuleTest {
                   return Logger.NULL;
                }
             });
+            bind(UriBuilder.class).to(UriBuilderImpl.class);
             super.configure();
          }
       }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),

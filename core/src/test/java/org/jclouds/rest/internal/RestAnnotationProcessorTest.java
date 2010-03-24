@@ -41,6 +41,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Qualifier;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -55,8 +56,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
-import com.google.common.collect.*;
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
@@ -106,6 +108,12 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -121,6 +129,15 @@ import com.google.inject.util.Types;
  */
 @Test(groups = "unit", testName = "jaxrs.JaxrsUtilTest")
 public class RestAnnotationProcessorTest {
+   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
+
+      @Override
+      public UriBuilder get() {
+         return new UriBuilderImpl();
+      }
+
+   };
+
    @Target( { ElementType.METHOD })
    @Retention(RetentionPolicy.RUNTIME)
    @javax.ws.rs.HttpMethod("FOO")
@@ -164,7 +181,8 @@ public class RestAnnotationProcessorTest {
 
       URI start = URI
                .create("http://services.nirvanix.com/ws/Metadata/SetMetadata.ashx?output=json&path=adriancole-compute.testObjectOperations&metadata=chef%3Asushi&metadata=foo%3Abar&sessionToken=775ef26e-0740-4707-ad92-afe9814bc436");
-      URI value = RestAnnotationProcessor.replaceQuery(start, start.getQuery(), null, '/', ':');
+      URI value = RestAnnotationProcessor.replaceQuery(uriBuilderProvider, start, start.getQuery(),
+               null, '/', ':');
       assertEquals(value, expects);
    }
 
@@ -818,26 +836,27 @@ public class RestAnnotationProcessorTest {
 
    @Test
    public void testParseQueryToMapSingleParam() {
-       Multimap<String, String> parsedMap = RestAnnotationProcessor.parseQueryToMap("v=1.3");
-       assert parsedMap.keySet().size() == 1 : "Expected 1 key, found: " + parsedMap.keySet().size();
-       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
-       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
-       assert valueForV.equals("1.3") :
-               "Expected the value for 'v' to be '1.3', found: " + valueForV;
+      Multimap<String, String> parsedMap = RestAnnotationProcessor.parseQueryToMap("v=1.3");
+      assert parsedMap.keySet().size() == 1 : "Expected 1 key, found: " + parsedMap.keySet().size();
+      assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
+      String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
+      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: "
+               + valueForV;
    }
 
    @Test
    public void testParseQueryToMapMultiParam() {
-       Multimap<String, String> parsedMap = RestAnnotationProcessor.parseQueryToMap("v=1.3&sig=123");
-       assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: " + parsedMap.keySet().size();
-       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
-       assert parsedMap.keySet().contains("sig") : "Expected sig to be a part of the keys";
-       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
-       assert valueForV.equals("1.3") :
-               "Expected the value for 'v' to be '1.3', found: " + valueForV;
-       String valueForSig = Iterables.getOnlyElement(parsedMap.get("sig"));
-       assert valueForSig.equals("123") :
-               "Expected the value for 'v' to be '123', found: " + valueForSig;
+      Multimap<String, String> parsedMap = RestAnnotationProcessor.parseQueryToMap("v=1.3&sig=123");
+      assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: "
+               + parsedMap.keySet().size();
+      assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
+      assert parsedMap.keySet().contains("sig") : "Expected sig to be a part of the keys";
+      String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
+      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: "
+               + valueForV;
+      String valueForSig = Iterables.getOnlyElement(parsedMap.get("sig"));
+      assert valueForSig.equals("123") : "Expected the value for 'v' to be '123', found: "
+               + valueForSig;
    }
 
    @Endpoint(Localhost.class)
@@ -1139,7 +1158,8 @@ public class RestAnnotationProcessorTest {
       RestAnnotationProcessor<TestTransformers> processor = factory(TestTransformers.class);
       Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
       GeneratedHttpRequest<TestTransformers> request = new GeneratedHttpRequest<TestTransformers>(
-               "GET", URI.create("http://localhost"), processor, TestTransformers.class, method);
+               uriBuilderProvider, "GET", URI.create("http://localhost"), processor,
+               TestTransformers.class, method);
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ReturnStringIf200Context.class);
       assertEquals(((ReturnStringIf200Context) transformer).request, request);
@@ -1547,8 +1567,9 @@ public class RestAnnotationProcessorTest {
    public void testPut() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
       Method method = TestPayload.class.getMethod("put", String.class);
-      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>("GET", URI
-               .create("http://localhost"), processor, TestPayload.class, method, "test");
+      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>(
+               uriBuilderProvider, "GET", URI.create("http://localhost"), processor,
+               TestPayload.class, method, "test");
       processor.decorateRequest(request);
       assertEquals(request.getPayload().toString(), "test");
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
@@ -1564,8 +1585,9 @@ public class RestAnnotationProcessorTest {
 
       RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
       Method method = TestPayload.class.getMethod("putWithPath", String.class, String.class);
-      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>("GET", URI
-               .create("http://localhost"), processor, TestPayload.class, method, "rabble", "test");
+      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>(
+               uriBuilderProvider, "GET", URI.create("http://localhost"), processor,
+               TestPayload.class, method, "rabble", "test");
       processor.decorateRequest(request);
       assertEquals(request.getPayload().toString(), "test");
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections

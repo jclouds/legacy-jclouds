@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map.Entry;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
@@ -40,10 +41,13 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    private final Method javaMethod;
    private final Object[] args;
    private final RestAnnotationProcessor<T> processor;
+   private final Provider<UriBuilder> uriBuilderProvider;
 
-   GeneratedHttpRequest(String method, URI endpoint, RestAnnotationProcessor<T> processor,
-            Class<T> declaring, Method javaMethod, Object... args) {
+   GeneratedHttpRequest(Provider<UriBuilder> uriBuilderProvider, String method, URI endpoint,
+            RestAnnotationProcessor<T> processor, Class<T> declaring, Method javaMethod,
+            Object... args) {
       super(method, endpoint);
+      this.uriBuilderProvider = uriBuilderProvider;
       this.processor = processor;
       this.declaring = declaring;
       this.javaMethod = javaMethod;
@@ -67,7 +71,7 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    }
 
    public void replaceMatrixParam(String name, Object... values) {
-      UriBuilder builder = UriBuilder.fromUri(getEndpoint());
+      UriBuilder builder = uriBuilderProvider.get().uri(getEndpoint());
       builder.replaceMatrixParam(name, values);
       replacePath(builder.build().getPath());
    }
@@ -81,7 +85,7 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    }
 
    public void replacePath(String path) {
-      UriBuilder builder = UriBuilder.fromUri(getEndpoint());
+      UriBuilder builder = uriBuilderProvider.get().uri(getEndpoint());
       builder.replacePath(path);
       setEndpoint(builder.build());
    }

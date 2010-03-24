@@ -28,6 +28,10 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
@@ -88,13 +92,21 @@ public class BackoffLimitedRetryHandlerTest {
    }
 
    TransformingHttpCommandExecutorServiceImpl executorService;
+   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
+
+      @Override
+      public UriBuilder get() {
+         return new UriBuilderImpl();
+      }
+
+   };
 
    @BeforeTest
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
-               execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(),
-               new HttpWire(), new HttpUtils(0, 500, 1, 1), null);
+               execService, new DelegatingRetryHandler(uriBuilderProvider),
+               new DelegatingErrorHandler(), new HttpWire(), new HttpUtils(0, 500, 1, 1), null);
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService);
    }
 
@@ -167,8 +179,8 @@ public class BackoffLimitedRetryHandlerTest {
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Method method = IntegrationTestAsyncClient.class.getMethod("download", String.class);
 
-      return new TransformingHttpCommandImpl<String>(executorService, processor.createRequest(
-               method, "1"), new ReturnStringIf200());
+      return new TransformingHttpCommandImpl<String>(uriBuilderProvider, executorService, processor
+               .createRequest(method, "1"), new ReturnStringIf200());
    }
 
    @Test
