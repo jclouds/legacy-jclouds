@@ -40,7 +40,7 @@ Options can also be specified for extension modules
   (let [context
         (.createContext
          (BlobStoreContextFactory.) service account key
-         (apply modules (filter #(not #{:sync :async} %) options)))]
+         (apply modules (filter #(not (#{:sync :async} %)) options)))]
     (if (some #(= :async %) options)
       (.getAsyncBlobStore context)
       (.getBlobStore context))))
