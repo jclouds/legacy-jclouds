@@ -148,12 +148,6 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
       this.contentLength = contentLength;
    }
 
-   @Override
-   protected void finalize() throws Throwable {
-      closeContentIfPresent();
-      super.finalize();
-   }
-
    private void closeContentIfPresent() {
       if (getContent() != null) {
          Closeables.closeQuietly(getContent());
