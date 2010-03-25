@@ -124,7 +124,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return new MD5InputStreamResult(out.toByteArray(), eTag.digest(), length);
    }
 
-   private static MessageDigest getDigest() {
+   public static MessageDigest getDigest() {
       MessageDigest eTag;
       try {
          eTag = MessageDigest.getInstance("MD5");

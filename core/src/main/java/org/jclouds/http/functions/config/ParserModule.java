@@ -21,21 +21,23 @@ package org.jclouds.http.functions.config;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Map;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import com.google.common.collect.Maps;
-import com.google.inject.name.Named;
 import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.xml.sax.XMLReader;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,6 +54,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.name.Named;
 
 /**
  * Contains logic for parsing objects from Strings.
@@ -126,17 +129,18 @@ public class ParserModule extends AbstractModule {
       return factory;
    }
 
+   @SuppressWarnings("unchecked")
    @Provides
    @Singleton
    Gson provideGson(DateAdapter adapter, SortedSetOfInetAddressCreator addressSetCreator,
-                    GsonAdapterBindings bindings) {
+            GsonAdapterBindings bindings) {
       GsonBuilder gson = new GsonBuilder();
       gson.registerTypeAdapter(InetAddress.class, new InetAddressAdapter());
       gson.registerTypeAdapter(Date.class, adapter);
       gson.registerTypeAdapter(new TypeToken<SortedSet<InetAddress>>() {
       }.getType(), addressSetCreator);
-      for(Map.Entry<Class, Object> binding : bindings.getBindings().entrySet()) {
-          gson.registerTypeAdapter(binding.getKey(), binding.getValue());
+      for (Map.Entry<Class, Object> binding : bindings.getBindings().entrySet()) {
+         gson.registerTypeAdapter(binding.getKey(), binding.getValue());
       }
       return gson.create();
    }
@@ -195,15 +199,18 @@ public class ParserModule extends AbstractModule {
 
    @Singleton
    public static class GsonAdapterBindings {
-       private final Map<Class, Object> bindings = Maps.newHashMap();
+      @SuppressWarnings("unchecked")
+      private final Map<Class, Object> bindings = Maps.newHashMap();
 
-       @com.google.inject.Inject(optional=true)
-       public void setBindings(@Named(Constants.PROPERTY_GSON_ADAPTERS) Map<Class, Object> bindings) {
-           this.bindings.putAll(bindings);
-       }
+      @SuppressWarnings("unchecked")
+      @com.google.inject.Inject(optional = true)
+      public void setBindings(@Named(Constants.PROPERTY_GSON_ADAPTERS) Map<Class, Object> bindings) {
+         this.bindings.putAll(bindings);
+      }
 
-       public Map<Class, Object> getBindings() {
-           return bindings;
-       }
+      @SuppressWarnings("unchecked")
+      public Map<Class, Object> getBindings() {
+         return bindings;
+      }
    }
 }

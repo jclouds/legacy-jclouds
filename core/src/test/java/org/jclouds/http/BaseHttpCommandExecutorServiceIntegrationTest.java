@@ -20,21 +20,26 @@ package org.jclouds.http;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.security.MessageDigest;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.options.GetOptions;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Closeables;
 
 /**
  * Tests for functionality all HttpCommandExecutorServices must express. These tests will operate
@@ -130,33 +135,48 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    /**
-     * Tests sending a big file to the server.
-     * Note: this is a heavy test, takes several minutes to finish.
-     * @throws java.io.IOException
-     */
-    @Test
-    public void testUploadBigFile() throws IOException {
-        String filename = "jclouds";
-        OutputStream os = null;
-        File f = null;
-        try {
-            //create a file, twice big as free heap memory
-            f = File.createTempFile(filename, "tmp");
-            f.deleteOnExit();
-            long length = Runtime.getRuntime().freeMemory() * 2;
-            os = new FileOutputStream(f.getAbsolutePath());
-            for(long i = 0; i < length; i++) os.write('a');
+    * Tests sending a big file to the server. Note: this is a heavy test, takes several minutes to
+    * finish.
+    * 
+    * @throws java.io.IOException
+    */
+   @Test(invocationCount = 1)
+   public void testUploadBigFile() throws IOException {
+      String filename = "jclouds";
+      OutputStream os = null;
+      File f = null;
+      try {
+         // create a file, twice big as free heap memory
+         f = File.createTempFile(filename, "tmp");
+         f.deleteOnExit();
+         long length = (long) (Runtime.getRuntime().freeMemory() * 1.1);
+         os = new BufferedOutputStream(new FileOutputStream(f.getAbsolutePath()));
+
+         MessageDigest eTag = JCEEncryptionService.getDigest();
+         ByteArrayOutputStream out = new ByteArrayOutputStream();
+         try {
+            for (long i = 0; i < length; i++) {
+               eTag.update((byte) 'a');
+               os.write((byte) 'a');
+            }
             os.flush();
+         } catch (IOException e) {
+            throw new RuntimeException(e);
+         } finally {
+            Closeables.closeQuietly(out);
+         }
+
+         // upload and verify the response
+         assertEquals(client.postWithMd5("fileso",
+                  this.encryptionService.toBase64String(eTag.digest()), f).trim(), "created");
+
+      } finally {
+         if (os != null)
             os.close();
-
-            //upload and verify the response
-            assertEquals(client.postWithMd5("fileso", f).trim(), "created");
-
-        } finally {
-            if(os != null) os.close();
-            if(f != null && f.exists()) f.delete();
-        }
-    }
+         if (f != null && f.exists())
+            f.delete();
+      }
+   }
 
    protected AtomicInteger postFailures = new AtomicInteger();
 

@@ -52,7 +52,7 @@ public interface IntegrationTestClient {
 
    String postAsInputStream(String id, String toPut);
 
-   String postWithMd5(String id, File file);
+   String postWithMd5(String id, String base64MD5, File file);
 
    String postJson(String id, String toPut);
 

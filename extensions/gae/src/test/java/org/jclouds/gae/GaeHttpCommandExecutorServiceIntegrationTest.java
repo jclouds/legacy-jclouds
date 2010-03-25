@@ -21,6 +21,7 @@ package org.jclouds.gae;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Properties;
@@ -249,9 +250,15 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
    }
 
    @Override
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(enabled = false)
    public void testGetBigFile() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
+      // disabled since test data is too big
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testUploadBigFile() throws IOException {
       // disabled since test data is too big
    }
 

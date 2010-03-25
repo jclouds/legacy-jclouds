@@ -22,6 +22,7 @@ import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -72,4 +73,11 @@ public class NioTransformingHttpCommandExecutorServiceTest extends
             InterruptedException, TimeoutException {
       // disabled since test data is too big
    }
+   
+   @Override
+   @Test(enabled = false)
+   public void testUploadBigFile() throws IOException {
+      // disabled since test data is too big
+   }
+
 }
