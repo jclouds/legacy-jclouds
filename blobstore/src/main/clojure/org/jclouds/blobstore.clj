@@ -95,14 +95,15 @@ Options can also be specified for extension modules
   :recursive true"
   [blobstore & args]
   (if (blobstore? blobstore)
-    (let [options (apply hash-map args)
+    (let [[container-name & args] args
+          options (apply hash-map args)
           list-options (reduce
                         (fn [lco [k v]]
                           ((list-option-map k) lco v)
                           lco)
                         (ListContainerOptions.)
                         options)]
-      (.list blobstore (first args) list-options))
+      (.list blobstore container-name list-options))
     (apply list-container *blobstore* blobstore args)))
 
 (defn create-container
@@ -234,7 +235,7 @@ container, name, string -> etag"
   download-blob (fn [& args]
                   (if (= (count args) 3)
                     ::short-form
-                    (class (last args)))))
+                    (class (last (butlast args))))))
 
 (defmethod download-blob ::short-form
   [container-name name target]
