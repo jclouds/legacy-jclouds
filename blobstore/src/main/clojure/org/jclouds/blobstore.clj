@@ -34,8 +34,7 @@ See http://code.google.com/p/jclouds for details."
 Options for communication style
      :sync and :async.
 Options can also be specified for extension modules
-     :log4j :enterprise :httpnio :apachehc :bouncycastle :joda :gae
-"
+     :log4j :enterprise :httpnio :apachehc :bouncycastle :joda :gae"
   [#^String service #^String account #^String key & options]
   (let [context
         (.createContext
@@ -77,48 +76,30 @@ Options can also be specified for extension modules
   `(binding [*blobstore* (as-blobstore ~@blobstore-or-args)]
      ~@body))
 
-(defn- parse-args
-  "Parses arguments, recognises keywords in the set single as boolean switches."
-  [args single default]
-  (loop [[arg :as args] args
-         opts default]
-    (if-not args
-      opts
-      (if (single arg)
-        (recur (next args) (assoc opts arg true))
-        (recur (nnext args) (assoc opts arg (second args)))))))
-
-(def list-options
-     (apply array-map
-            (concat (make-option-map option-fn-0arg [:recursive])
-                    (make-option-map option-fn-1arg [:after-marker :in-directory
-                                                     :max-results]))))
-
-(defn- list-options-apply
-  [single target key value]
-  (if (single key)
-    ((list-options key) target)
-    ((list-options key) target value))
-  target)
-
 (defn containers
   "List all containers in a blobstore."
   ([] (containers *blobstore*))
   ([blobstore] (.list blobstore)))
+
+(def #^{:private true} list-option-map
+     {:after-marker #(.afterMarker %1 %2)
+      :in-directory #(.inDirectory %1 %2)
+      :max-results #(.maxResults %1 %2)
+      :recursive #(when %2 (.recursive %1))})
 
 (defn list-container
   "List a container. Options are:
   :after-marker string
   :in-direcory path
   :max-results n
-  :recursive"
+  :recursive true"
   [blobstore & args]
   (if (blobstore? blobstore)
-    (let [single-keywords #{:recursive}
-          options (parse-args (next args) single-keywords {})
+    (let [options (apply hash-map args)
           list-options (reduce
-                        #(list-options-apply single-keywords %1
-                                             (first %2) (second %2))
+                        (fn [lco [k v]]
+                          ((list-option-map k) lco v)
+                          lco)
                         (ListContainerOptions.)
                         options)]
       (.list blobstore (first args) list-options))
@@ -228,8 +209,7 @@ example:
     (pprint
       (blobs
       (blobstore-context flightcaster-creds)
-       \"somecontainer\" \"some-dir\"))
-"
+       \"somecontainer\" \"some-dir\"))"
   ([blobstore container-name]
      (.list (as-blobstore blobstore) container-name))
 
