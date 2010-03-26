@@ -237,11 +237,11 @@ example:
      (.list (as-blobstore blobstore) container-name
             (.inDirectory (new ListContainerOptions) dir))))
 
-(defn create-blob
+(defn upload-blob
   "Create an blob representing text data:
 container, name, string -> etag"
   ([container-name name data] ;; TODO: allow payload to be a stream
-     (create-blob container-name name data *blobstore*))
+     (upload-blob container-name name data *blobstore*))
   ([container-name name data blobstore]
      (put-blob container-name
                (doto (.newBlob blobstore name)

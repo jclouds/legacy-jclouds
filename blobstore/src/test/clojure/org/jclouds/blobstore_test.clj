@@ -41,12 +41,12 @@
 (deftest list-container-test
   (is (create-container "container"))
   (is (empty? (list-container "container")))
-  (is (create-blob "container" "blob1" "blob1"))
-  (is (create-blob "container" "blob2" "blob2"))
+  (is (upload-blob "container" "blob1" "blob1"))
+  (is (upload-blob "container" "blob2" "blob2"))
   (is (= 2 (count (list-container "container"))))
   (is (= 1 (count (list-container "container" :max-results 1))))
   (create-directory "container" "dir")
-  (is (create-blob "container" "dir/blob2" "blob2"))
+  (is (upload-blob "container" "dir/blob2" "blob2"))
   (is (= 3 (count (list-container "container"))))
   (is (= 4 (count (list-container "container" :recursive))))
   (is (= 1 (count (list-container "container" :in-directory "dir")))))
@@ -57,7 +57,7 @@
         data "test content"
         data-file (java.io.File/createTempFile "jclouds" "data")]
     (try (create-container container-name)
-         (create-blob container-name name data)
+         (upload-blob container-name name data)
          (download-blob container-name name data-file)
          (is (= data (slurp (.getAbsolutePath data-file))))
          (finally (.delete data-file)))))
@@ -74,7 +74,7 @@
           data "test content"
           data-file (java.io.File/createTempFile "jclouds" "data")]
       (try (create-container container-name)
-           (create-blob container-name name data)
+           (upload-blob container-name name data)
            (is (thrown? Exception
                         (download-blob container-name name data-file)))
            (finally (.delete data-file))))))
@@ -92,7 +92,7 @@
     (when-not (blob-exists? container-name name)
       (let [data-stream (java.io.ByteArrayOutputStream.)]
         (dotimes [i 5000000] (.write data-stream i))
-        (create-blob container-name name (.toByteArray data-stream))))
+        (upload-blob container-name name (.toByteArray data-stream))))
 
     ;; download
     (let [total (atom total-downloads)]
