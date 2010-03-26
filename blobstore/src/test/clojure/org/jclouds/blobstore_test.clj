@@ -24,19 +24,18 @@
   (is (blobstore? (as-blobstore (blobstore-context *blobstore*)))))
 
 (deftest create-existing-container-test
-  (is (not (container-exists? *blobstore* "")))
   (is (not (container-exists? "")))
-  (is (create-container *blobstore* "fred"))
-  (is (container-exists? *blobstore* "fred")))
+  (is (create-container "fred"))
+  (is (container-exists? "fred")))
 
 (deftest create-container-test
-  (is (create-container *blobstore* "fred"))
-  (is (container-exists? *blobstore* "fred")))
+  (is (create-container "fred"))
+  (is (container-exists? "fred")))
 
 (deftest containers-test
-  (is (empty? (containers *blobstore*)))
-  (is (create-container *blobstore* "fred"))
-  (is (= 1 (count (containers *blobstore*)))))
+  (is (empty? (containers)))
+  (is (create-container "fred"))
+  (is (= 1 (count (containers)))))
 
 (deftest list-container-test
   (is (create-container "container"))
@@ -48,7 +47,7 @@
   (create-directory "container" "dir")
   (is (upload-blob "container" "dir/blob2" "blob2"))
   (is (= 3 (count (list-container "container"))))
-  (is (= 4 (count (list-container "container" :recursive))))
+  (is (= 4 (count (list-container "container" :recursive true))))
   (is (= 1 (count (list-container "container" :in-directory "dir")))))
 
 (deftest download-blob-test
@@ -103,7 +102,7 @@
         (when-not (<= @total 0)
           (with-open [baos (java.io.ByteArrayOutputStream.)]
             (try
-             (download-blob blob-s container-name file baos)
+             (download-blob container-name file baos blob-s)
              (catch Exception e
                (with-open [of (java.io.FileOutputStream.
                                (java.io.File/createTempFile "jclouds" ".dl"))]
