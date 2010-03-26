@@ -103,9 +103,9 @@
 
     <distributionManagement>
         <repository>
-            <uniqueVersion>false</uniqueVersion>
             <id>jclouds-googlecode-deploy</id>
-            <url>svn:https://jclouds.googlecode.com/svn/repo</url>
+            <url>dav:https://jclouds.googlecode.com/svn/repo</url>
+            <uniqueVersion>false</uniqueVersion>            
         </repository>
         <!--snapshotRepository>
       	    <id>jclouds-rimu-snapshots</id>
@@ -196,14 +196,13 @@
     </developers>
 
     <properties>
-        <!--parent.basedir>${basedir}</parent.basedir-->
         <sourceEncoding>UTF-8</sourceEncoding>
         <maven.compile.source>1.6</maven.compile.source>
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
-        <http.proxyHost></http.proxyHost>
-        <http.proxyPort></http.proxyPort>
+        <http.proxyHost />
+        <http.proxyPort />
         <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
         <jclouds.blobstore.httpstream.md5>c581a15cb0001d9b771ad6df7c8156f8</jclouds.blobstore.httpstream.md5>
         <jclouds.wire.httpstream.url>http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
@@ -481,13 +480,6 @@ pageTracker._trackPageview();
                 <artifactId>maven-site-plugin</artifactId>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.jvnet.wagon-svn</groupId>
-                <artifactId>wagon-svn</artifactId>
-                <version>1.9</version>
-            </extension>
-        </extensions>
     </build>
     <profiles>
         <profile>
@@ -695,5 +687,4 @@ pageTracker._trackPageview();
             </plugin>
         </plugins>
     </reporting>
-
 </project>
