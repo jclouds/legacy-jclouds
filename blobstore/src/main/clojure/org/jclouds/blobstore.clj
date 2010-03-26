@@ -127,96 +127,94 @@ Options can also be specified for extension modules
 (defn create-container
   "Create a container."
   ([container-name]
-     (create-container *blobstore* "default" container-name))
-  ([blobstore container-name]
-     (if (blobstore? blobstore)
-       (create-container blobstore "default" container-name)
-       (create-container *blobstore* container-name blobstore)))
-  ([blobstore location-name container-name]
+     (create-container container-name "default" *blobstore*))
+  ([container-name location-name]
+     (create-container container-name location-name *blobstore*))
+  ([container-name location-name blobstore]
      (.createContainerInLocation blobstore location-name container-name)))
 
 (defn clear-container
   "Clear a container."
   ([container-name]
-     (clear-container *blobstore* container-name))
-  ([blobstore container-name]
+     (clear-container container-name *blobstore*))
+  ([container-name blobstore]
      (.clearContainer blobstore container-name)))
 
 (defn delete-container
   "Delete a container."
   ([container-name]
-     (delete-container *blobstore* container-name))
-  ([blobstore container-name]
+     (delete-container container-name *blobstore*))
+  ([container-name blobstore]
      (.deleteContainer blobstore container-name)))
 
 (defn container-exists?
   "Predicate to check presence of a container"
   ([container-name]
-     (container-exists? *blobstore* container-name))
-  ([blobstore container-name]
+     (container-exists? container-name *blobstore*))
+  ([container-name blobstore]
      (.containerExists blobstore container-name)))
 
 (defn directory-exists?
   "Predicate to check presence of a directory"
   ([container-name path]
-     (directory-exists? *blobstore* container-name path))
-  ([blobstore container-name path]
+     (directory-exists? container-name path *blobstore*))
+  ([container-name path blobstore]
      (.directoryExists blobstore container-name path)))
 
 (defn create-directory
   "Create a directory path."
   ([container-name path]
-     (create-directory *blobstore* container-name path))
-  ([blobstore container-name path]
+     (create-directory container-name path *blobstore*))
+  ([container-name path blobstore]
      (.createDirectory blobstore container-name path)))
 
 (defn delete-directory
   "Delete a directory path."
   ([container-name path]
-     (delete-directory *blobstore* container-name path))
-  ([blobstore container-name path]
+     (delete-directory container-name path *blobstore*))
+  ([container-name path blobstore]
      (.deleteDirectory blobstore container-name path)))
 
 (defn blob-exists?
   "Predicate to check presence of a blob"
   ([container-name path]
-     (blob-exists? *blobstore* container-name path))
-  ([blobstore container-name path]
+     (blob-exists? container-name path *blobstore*))
+  ([container-name path blobstore]
      (.blobExists blobstore container-name path)))
 
 (defn put-blob
   "Put a blob.  Metadata in the blob determines location."
   ([container-name blob]
-     (put-blob *blobstore* container-name blob))
-  ([blobstore container-name blob]
+     (put-blob container-name blob *blobstore*))
+  ([container-name blob blobstore]
      (.putBlob blobstore container-name blob)))
 
 (defn blob-metadata
   "Get blob metadata from given path"
   ([container-name path]
-     (blob-metadata *blobstore* container-name path))
-  ([blobstore container-name path]
+     (blob-metadata container-name path *blobstore*))
+  ([container-name path blobstore]
      (.blobMetadata blobstore container-name path)))
 
 (defn get-blob
   "Get blob from given path"
   ([container-name path]
-     (get-blob *blobstore* container-name path))
-  ([blobstore container-name path]
+     (get-blob container-name path *blobstore*))
+  ([container-name path blobstore]
      (.getBlob blobstore container-name path)))
 
 (defn remove-blob
   "Remove blob from given path"
   ([container-name path]
-     (remove-blob *blobstore* container-name path))
-  ([blobstore container-name path]
+     (remove-blob container-name path *blobstore*))
+  ([container-name path blobstore]
      (.removeBlob blobstore container-name path)))
 
 (defn count-blobs
   "Count blobs"
   ([container-name]
-     (count-blobs *blobstore* container-name))
-  ([blobstore container-name]
+     (count-blobs container-name *blobstore*))
+  ([container-name blobstore]
      (.countBlob blobstore container-name)))
 
 (defn blobs
@@ -241,18 +239,18 @@ example:
 
 (defn create-blob
   "Create an blob representing text data:
-container, name, string -> etag
-"
+container, name, string -> etag"
   ([container-name name data] ;; TODO: allow payload to be a stream
-     (create-blob *blobstore* container-name name data))
-  ([blobstore container-name name data]
-     (put-blob blobstore container-name
+     (create-blob container-name name data *blobstore*))
+  ([container-name name data blobstore]
+     (put-blob container-name
                (doto (.newBlob blobstore name)
                  (.setPayload data)
-                 (.generateMD5)))))
+                 (.generateMD5))
+               blobstore)))
 
 (defmulti #^{:arglists '[[container-name name target]
-                         [blobstore container-name name target]]}
+                         [container-name name target blobstore]]}
   download-blob (fn [& args]
                   (if (= (count args) 3)
                     ::short-form
@@ -260,11 +258,11 @@ container, name, string -> etag
 
 (defmethod download-blob ::short-form
   [container-name name target]
-  (download-blob *blobstore* container-name name target))
+  (download-blob container-name name target *blobstore*))
 
-(defmethod download-blob OutputStream [blobstore container-name name target
+(defmethod download-blob OutputStream [container-name name target blobstore
                                        & [retries]]
-  (let [blob (get-blob blobstore container-name name)
+  (let [blob (get-blob container-name name blobstore)
         digest-stream (.md5OutputStream ;; TODO: not all clouds use MD5
                        *encryption-service* target)]
     (copy (.getContent blob) digest-stream)
@@ -272,12 +270,12 @@ container, name, string -> etag
           metadata-digest (.getContentMD5 (.getMetadata blob))]
       (when-not (Arrays/equals digest metadata-digest)
         (if (<= (or retries 0) *max-retries*)
-          (recur blobstore container-name name target [(inc (or retries 1))])
+          (recur container-name name target blobstore [(inc (or retries 1))])
           (throw (Exception. (format "Download failed for %s/%s"
                                      container-name name))))))))
 
-(defmethod download-blob File [blobstore container-name name target]
-  (download-blob blobstore container-name name (FileOutputStream. target)))
+(defmethod download-blob File [container-name name target blobstore]
+  (download-blob container-name name (FileOutputStream. target) blobstore))
 
 (define-accessors StorageMetadata "blob" type id name
   location-id uri last-modfied)
