@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
@@ -125,14 +126,6 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
       return ip != null ? ip.getAddress() : null;
    }
 
-   @Override
-   public void stop(String id) {
-      VApp vApp = client.getVApp(id);
-      Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
-      deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
-      super.stop(id);
-   }
-
    private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VApp vApp) {
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
       SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC()
@@ -171,6 +164,32 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
             continue IPADDRESS;
          }
       }
+   }
+
+   /**
+    * deletes the internet service and nodes associated with the vapp. Deletes the IP address, if
+    * there are no others using it. Finally, it powers off and deletes the vapp. Note that we do not
+    * call undeploy, as terremark does not support the command.
+    */
+   @Override
+   public void stop(String id) {
+      VApp vApp = client.getVApp(id);
+      Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
+      deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
+      if (vApp.getStatus() != VAppStatus.OFF) {
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
+                  .getStatus());
+         Task task = client.powerOffVApp(vApp.getId());
+         if (!taskTester.apply(task.getId())) {
+            throw new TaskException("powerOff", vApp, task);
+         }
+         vApp = client.getVApp(id);
+         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
+      }
+      logger.debug(">> deleting vApp(%s)", vApp.getId());
+      client.deleteVApp(id);
+      boolean successful = notFoundTester.apply(vApp);
+      logger.debug("<< deleted vApp(%s) completed(%s)", vApp.getId(), successful);
    }
 
    @Override

@@ -145,7 +145,19 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
          if (!taskTester.apply(task.getId())) {
             throw new TaskException("powerOff", vApp, task);
          }
-         logger.debug("<< off vApp(%s)", vApp.getId());
+         vApp = client.getVApp(id);
+         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
+      }
+      if (vApp.getStatus() != VAppStatus.UNRESOLVED) {
+         logger
+                  .debug(">> undeploying vApp(%s), current status: %s", vApp.getId(), vApp
+                           .getStatus());
+         Task task = client.undeployVApp(vApp.getId());
+         if (!taskTester.apply(task.getId())) {
+            throw new TaskException("undeploy", vApp, task);
+         }
+         vApp = client.getVApp(id);
+         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
       }
       logger.debug(">> deleting vApp(%s)", vApp.getId());
       client.deleteVApp(id);
