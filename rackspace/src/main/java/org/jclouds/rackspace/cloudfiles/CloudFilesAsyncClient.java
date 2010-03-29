@@ -147,7 +147,7 @@ public interface CloudFilesAsyncClient {
    /**
     * @see CloudFilesClient#enableCDN(String, long);
     */
-   @POST
+   @PUT
    @Path("{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCdnUriFromHeaders.class)
@@ -158,7 +158,7 @@ public interface CloudFilesAsyncClient {
    /**
     * @see CloudFilesClient#enableCDN(String)
     */
-   @POST
+   @PUT
    @Path("{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCdnUriFromHeaders.class)
