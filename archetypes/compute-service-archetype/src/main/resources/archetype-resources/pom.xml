@@ -38,7 +38,6 @@
     <groupId>${groupId}</groupId>
     <artifactId>jclouds-${artifactId}</artifactId>
     <name>jclouds ${providerName} compute service</name>
-    <packaging>jar</packaging>
     <description>jclouds components to access ${providerName}</description>
 
     <scm>

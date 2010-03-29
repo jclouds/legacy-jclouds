@@ -30,7 +30,7 @@
   </parent>
   <artifactId>jclouds-compute-service-archetype</artifactId>
   <name>jclouds Compute service archetype</name>
-  <description>Maven archetype for a provider of a Computer service</description>
+  <description>Maven archetype for a provider of a Compute service</description>
   <packaging>maven-archetype</packaging>
   
   <build>
