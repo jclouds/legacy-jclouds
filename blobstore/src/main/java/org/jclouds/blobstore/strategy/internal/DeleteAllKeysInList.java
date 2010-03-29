@@ -106,13 +106,13 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
                      if (options.isRecursive() && !fullPath.equals(options.getDir())) {
                         execute(containerName, options.clone().inDirectory(fullPath));
                      }
-                     connection.deleteDirectory(containerName, fullPath);
+                     responses.put(md, connection.deleteDirectory(containerName, fullPath));
                      break;
                   case RELATIVE_PATH:
                      if (options.isRecursive() && !fullPath.equals(options.getDir())) {
                         execute(containerName, options.clone().inDirectory(fullPath));
                      }
-                     connection.deleteDirectory(containerName, md.getName());
+                     responses.put(md, connection.deleteDirectory(containerName, md.getName()));
                      break;
                   case CONTAINER:
                      throw new IllegalArgumentException("Container type not supported");
