@@ -170,7 +170,7 @@ public abstract class BaseJettyTest {
             if (failIfNoContentLength(request, response)) {
                return;
             } else if (target.indexOf("redirect") > 0) {
-               response.sendRedirect("http://localhost:" + (testPort + 1));
+               response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
             } else if (target.indexOf("101constitutions") > 0) {
                response.setContentType("text/plain");
                response.setHeader("Content-MD5", md5);
@@ -213,6 +213,11 @@ public abstract class BaseJettyTest {
                response.setContentType("text/plain");
                response.setStatus(HttpServletResponse.SC_OK);
                response.getWriter().println("test");
+            } else if (request.getMethod().equals("HEAD")) {
+               /* NOTE: by HTML specification, HEAD response MUST NOT
+                        include a body */
+               response.setContentType("text/xml");
+               response.setStatus(HttpServletResponse.SC_OK);
             } else {
                if (failEveryTenRequests(request, response))
                   return;
@@ -257,6 +262,11 @@ public abstract class BaseJettyTest {
                } else {
                   handleAction(request, response);
                }
+            } else if (request.getMethod().equals("HEAD")) {
+               /* NOTE: by HTML specification, HEAD response MUST NOT
+                        include a body */
+               response.setContentType("text/xml");
+               response.setStatus(HttpServletResponse.SC_OK);
             } else {
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
