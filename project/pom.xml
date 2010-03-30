@@ -73,14 +73,14 @@
 
     <repositories>
         <repository>
-            <id>jclouds-googlecode</id>
+            <id>jclouds-googlecode-deploy</id>
             <url>http://jclouds.googlecode.com/svn/repo</url>
         </repository>
         <repository>
-            <id>jclouds-rimu</id>
-            <url>http://jclouds.rimuhosting.com/maven2/snapshots</url>
+            <id>jclouds-rimu-snapshots-nexus</id>
+            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
             <snapshots>
-               <enabled>true</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
         <repository>
@@ -107,10 +107,6 @@
             <url>dav:https://jclouds.googlecode.com/svn/repo</url>
             <uniqueVersion>false</uniqueVersion>            
         </repository>
-        <!--snapshotRepository>
-      	    <id>jclouds-rimu-snapshots</id>
-            <url>dav:http://jclouds.rimuhosting.com/maven2/snapshots/</url>
-        </snapshotRepository-->
         <snapshotRepository>
       	    <id>jclouds-rimu-snapshots-nexus</id>
             <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
@@ -130,7 +126,7 @@
             </snapshots>
         </pluginRepository>
         <pluginRepository>
-            <id>jclouds-googlecode</id>
+            <id>jclouds-googlecode-deploy</id>
             <url>http://jclouds.googlecode.com/svn/repo</url>
         </pluginRepository>
     </pluginRepositories>
