@@ -45,6 +45,22 @@
         <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/${lcaseClientName}</developerConnection>
         <url>http://jclouds.googlecode.com/svn/trunk/${lcaseClientName}</url>
     </scm>
+    
+    <!-- bootstrapping: need to fetch the project POM -->
+    <repositories>
+        <repository>
+            <id>jclouds-googlecode-deploy</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+        </repository>
+        <repository>
+            <id>jclouds-rimu-snapshots-nexus</id>
+            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>    
+    </repositories>
+    
     <properties>
         <jclouds.test.user>${clientUser}</jclouds.test.user>
         <jclouds.test.key>${clientPassword}</jclouds.test.key>
