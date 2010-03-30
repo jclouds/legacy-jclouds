@@ -27,97 +27,146 @@ See http://code.google.com/p/jclouds for details."
         [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
         [clojure.contrib.java-utils :only [wall-hack-field]])
   (:import java.io.File
-           org.jclouds.domain.Location
+           [org.jclouds.domain Location]
+           [org.jclouds.compute
+            ComputeService ComputeServiceContext ComputeServiceContextFactory]
+           [org.jclouds.compute.domain
+            Template TemplateBuilder ComputeMetadata NodeMetadata Size OsFamily
+            Image Architecture]
            org.jclouds.compute.options.TemplateOptions
-           (org.jclouds.compute ComputeService
-                                ComputeServiceContext
-                                ComputeServiceContextFactory)
-           (org.jclouds.compute.domain Template TemplateBuilder ComputeMetadata
-                                       NodeMetadata Size OsFamily Image
-                                       Architecture)
-           (com.google.common.collect ImmutableSet)))
+           [com.google.common.collect ImmutableSet]))
+
+(defn compute-service
+  "Create a logged in context."
+  ([#^String service #^String account #^String key & options]
+     (.. (ComputeServiceContextFactory.)
+         (createContext
+          service account key
+          (apply modules (filter #(not (#{:sync :async} %)) options)))
+         (getComputeService))))
 
 (defn compute-context
-  "Create a logged in context."
-  ([service account key]
-     (compute-context service account key (modules :log4j :ssh :enterprise)))
-  ([#^String service #^String account #^String key #^ImmutableSet modules]
-     (.createContext (new ComputeServiceContextFactory) service account key modules)))
+  "Returns a compute context from a compute service."
+  [compute]
+  (.getContext compute))
+
+(defn compute-service?
+  [object]
+  (instance? ComputeService object))
+
+(defn compute-context?
+  [object]
+  (instance? ComputeServiceContext object))
+
+(defn as-compute-service
+  "Tries hard to produce a compute service from its input arguments"
+  [& args]
+  (cond
+   (compute-service? (first args)) (first args)
+   (compute-context? (first args)) (.getComputeService (first args))
+   :else (apply compute-context args)))
+
+(def *compute*)
+
+(defmacro with-compute-service
+  "Specify the default compute service"
+  [[& compute-or-args] & body]
+  `(binding [*compute* (as-compute-service ~@compute-or-args)]
+     ~@body))
 
 (defn locations
   "Retrieve the available compute locations for the compute context."
-  [#^ComputeServiceContext compute]
-  (seq-from-immutable-set (.getLocations (.getComputeService compute))))
+  ([] (locations *compute*))
+  ([#^ComputeService compute]
+     (seq-from-immutable-set (.getLocations compute))))
 
 (defn nodes
   "Retrieve the existing nodes for the compute context."
-  ([#^ComputeServiceContext compute]
-     (seq-from-immutable-set (.getNodes (.getComputeService compute))))
-  ([#^ComputeServiceContext compute #^String tag]
-     (seq-from-immutable-set (.getNodesWithTag (.getComputeService compute) tag))))
+  ([] (nodes *compute*))
+  ([compute-or-tag]
+     (if (compute-service? compute-or-tag)
+       (seq-from-immutable-set (.getNodes compute-or-tag))
+       (nodes compute-or-tag *compute*)))
+  ([#^String tag #^ComputeService compute]
+     (seq-from-immutable-set (.getNodesWithTag compute tag))))
 
 (defn images
   "Retrieve the available images for the compute context."
-  [#^ComputeServiceContext compute]
-  (seq-from-immutable-set (.getImages (.getComputeService compute))))
+  ([] (images *compute*))
+  ([#^ComputeService compute]
+     (seq-from-immutable-set (.getImages compute))))
 
 (defn sizes
   "Retrieve the available node sizes for the compute context."
-  [#^ComputeServiceContext compute]
-  (seq-from-immutable-set (.getSizes (.getComputeService compute))))
+  ([] (sizes *compute*))
+  ([#^ComputeService compute]
+     (seq-from-immutable-set (.getSizes compute))))
 
-(defn default-template [#^ComputeServiceContext compute]
-  (.. compute (getComputeService) (templateBuilder)
-      (osFamily OsFamily/UBUNTU)
-      smallest
-      (options
-       (org.jclouds.compute.options.TemplateOptions$Builder/authorizePublicKey
-        (slurp (str (. System getProperty "user.home") "/.ssh/id_rsa.pub"))))
-      build))
+(defn default-template
+  ([] (default-template *compute*))
+  ([#^ComputeService compute]
+     (.. compute (templateBuilder)
+         (osFamily OsFamily/UBUNTU)
+         smallest
+         (options
+          (org.jclouds.compute.options.TemplateOptions$Builder/authorizePublicKey
+           (slurp (str (. System getProperty "user.home") "/.ssh/id_rsa.pub"))))
+         build)))
 
 (defn run-nodes
   "Create the specified number of nodes using the default or specified
    template."
-  ([compute tag count]
-     (run-nodes compute tag count (default-template compute)))
-  ([#^ComputeServiceContext compute tag count template]
+  ([tag count]
+     (run-nodes tag count (default-template *compute*) *compute*))
+  ([tag count compute-or-template]
+     (if (compute-service? compute-or-template)
+       (run-nodes
+        tag count (default-template compute-or-template) compute-or-template)
+       (run-nodes tag count compute-or-template *compute*)))
+  ([tag count template #^ComputeService compute]
      (seq-from-immutable-set
-      (.runNodesWithTag
-       (.getComputeService compute) tag count template))))
+      (.runNodesWithTag compute tag count template))))
 
 (defn run-node
   "Create a node using the default or specified template."
-  ([compute tag]
-    (run-nodes compute tag 1 (default-template compute)))
-  ([compute tag template]
-     (run-nodes compute tag 1 template)))
+  ([tag]
+     (run-nodes tag 1 (default-template *compute*) *compute*))
+  ([tag compute-or-template]
+     (if (compute-service? compute-or-template)
+       (run-nodes tag 1 (default-template compute-or-template) compute-or-template)
+       (run-nodes tag 1 compute-or-template *compute*)))
+  ([tag template compute]
+     (run-nodes tag 1 template compute)))
 
 (defn #^NodeMetadata node-details
   "Retrieve the node metadata."
-  [#^ComputeServiceContext compute node]
-  (.getNodeMetadata (.getComputeService compute) node ))
+  ([node] (node-details node *compute*))
+  ([node #^ComputeService compute]
+     (.getNodeMetadata compute node )))
 
 (defn reboot-nodes
   "Reboot all the nodes with the given tag."
-  ([#^ComputeServiceContext compute #^String tag]
-    (.rebootNodesWithTag (.getComputeService compute) tag )))
+  ([tag] (reboot-nodes tag *compute*))
+  ([#^String tag #^ComputeService compute]
+     (.rebootNodesWithTag compute tag )))
 
 (defn reboot-node
   "Reboot a given node."
-  ([#^ComputeServiceContext compute
-    #^ComputeMetadata node]
-    (.rebootNode (.getComputeService compute) node )))
+  ([node] (reboot-node node *compute*))
+  ([#^ComputeMetadata node #^ComputeService compute]
+     (.rebootNode compute node )))
 
 (defn destroy-nodes
   "Destroy all the nodes with the given tag."
-  ([#^ComputeServiceContext compute #^String tag]
-    (.destroyNodesWithTag (.getComputeService compute) tag )))
+  ([tag] (destroy-nodes tag *compute*))
+  ([#^String tag #^ComputeService compute]
+     (.destroyNodesWithTag compute tag )))
 
 (defn destroy-node
   "Destroy a given node."
-  ([#^ComputeServiceContext compute
-    #^ComputeMetadata node]
-    (.destroyNode (.getComputeService compute) node )))
+  ([node] (destroy-node node *compute*))
+  ([#^ComputeMetadata node #^ComputeServiceContext compute]
+     (.destroyNode compute node)))
 
 (defmacro state-predicate [node state]
   `(= (.getState ~node)
@@ -248,8 +297,8 @@ See http://code.google.com/p/jclouds for details."
       (f builder value)
       (println "Unknown option" option))))
 
-(defn build-template [#^ComputeServiceContext compute option & options]
-  (let [builder (.. compute (getComputeService) (templateBuilder))]
+(defn build-template [#^ComputeService compute option & options]
+  (let [builder (.. compute (templateBuilder))]
     (loop [option option
            remaining options]
       (if (empty? remaining)
