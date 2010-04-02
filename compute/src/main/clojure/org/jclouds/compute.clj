@@ -12,14 +12,15 @@ Here's an example of getting some compute configuration from rackspace:
   (def user \"username\")
   (def password \"password\")
   (def compute-name \"cloudservers\")
-
+  
   (def compute (compute-context compute-name user password))
 
-  (pprint (locations compute))
-  (pprint (images compute))
-  (pprint (nodes compute))
-  (pprint (sizes compute))
-
+  (with-compute-service [compute]
+    (pprint (locations))
+    (pprint (images))
+    (pprint (nodes))
+    (pprint (sizes)))
+    
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
         clojure.contrib.duck-streams
@@ -253,7 +254,7 @@ See http://code.google.com/p/jclouds for details."
             (concat
              (make-option-map option-fn-1arg
                               [:os-family :location-id :architecture :image-id :size-id
-                               :os-description-matches :image-version-matches
+                               :os-description-matches :image-version-matches :image-name-matches
                                :image-description-matches :min-cores :min-ram])
              (make-option-map option-option-fn-1arg
                               [:run-script :install-private-key :authorize-public-key :inbound-ports]))))
