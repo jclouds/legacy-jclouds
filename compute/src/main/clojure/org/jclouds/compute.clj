@@ -64,7 +64,7 @@ See http://code.google.com/p/jclouds for details."
   (cond
    (compute-service? (first args)) (first args)
    (compute-context? (first args)) (.getComputeService (first args))
-   :else (apply compute-context args)))
+   :else (apply compute-service args)))
 
 (def *compute*)
 
