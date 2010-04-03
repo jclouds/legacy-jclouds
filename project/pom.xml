@@ -95,10 +95,14 @@
             <id>clojure</id>
             <url>http://build.clojure.org/releases</url>
         </repository>
-        <repository>
-            <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
-        </repository>
+	    <repository>
+	        <id>clojars.org</id>
+	        <url>http://clojars.org/repo</url>
+	    </repository>
+		<repository>
+		    <id>ning.http.client</id>
+		    <url>http://oss.sonatype.org/service/local/repositories/snapshots/content</url>
+		</repository>
     </repositories>
 
     <distributionManagement>

@@ -1,0 +1,9 @@
+# use glob syntax.
+syntax: glob
+target
+.settings
+.classpath
+.project
+jclouds-apachehc.iml
+jclouds-apachehc.ipr
+jclouds-apachehc.iws

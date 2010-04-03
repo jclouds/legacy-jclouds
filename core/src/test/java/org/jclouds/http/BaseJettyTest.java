@@ -353,7 +353,7 @@ public abstract class BaseJettyTest {
    protected boolean redirectEveryTwentyRequests(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
       if (cycle.incrementAndGet() % 20 == 0) {
-         response.sendRedirect("http://localhost:" + (testPort + 1));
+         response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
          ((Request) request).setHandled(true);
          return true;
       }
