@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.terremark.compute.config;
 
+import static org.jclouds.compute.domain.OsFamily.JEOS;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -34,9 +36,12 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
+import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -57,6 +62,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Configures the {@link TerremarkVCloudComputeServiceContext}; requires
@@ -70,6 +76,14 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    protected void configure() {
       super.configure();
       bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
+   }
+
+   @Override
+   @Provides
+   protected TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
+            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
+            Location defaultLocation) {
+      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(JEOS);
    }
 
    private static final ComputeOptionsToSize sizeConverter = new ComputeOptionsToSize();

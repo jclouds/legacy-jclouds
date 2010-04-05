@@ -34,7 +34,6 @@ public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServ
    protected void configure() {
       super.configure();
       bind(VCloudComputeClient.class).to(BlueLockVCloudComputeClient.class);
-
    }
 
 }

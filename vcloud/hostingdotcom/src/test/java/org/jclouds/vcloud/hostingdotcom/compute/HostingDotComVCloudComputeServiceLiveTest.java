@@ -19,10 +19,11 @@
 
 package org.jclouds.vcloud.hostingdotcom.compute;
 
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.testng.Assert.assertEquals;
 
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,9 +41,13 @@ public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServ
       service = "hostingdotcom";
    }
 
-   @Override
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(CENTOS).smallest().build();
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
+      assertEquals(defaultTemplate.getLocation().getId(), "188849");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
    // Takes too long

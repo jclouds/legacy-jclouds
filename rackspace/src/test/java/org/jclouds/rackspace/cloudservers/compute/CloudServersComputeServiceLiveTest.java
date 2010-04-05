@@ -19,12 +19,13 @@
 
 package org.jclouds.rackspace.cloudservers.compute;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rest.RestContext;
@@ -47,8 +48,13 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       service = "cloudservers";
    }
 
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).osDescriptionMatches(".*9.10.*").smallest().build();
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getLocation().getId(), "DALLAS");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
    @Override

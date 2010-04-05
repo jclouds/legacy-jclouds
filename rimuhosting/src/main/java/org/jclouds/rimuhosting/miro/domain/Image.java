@@ -28,7 +28,7 @@ import com.google.gson.annotations.SerializedName;
 public class Image implements Comparable<Image> {
    @SerializedName("distro_code")
    private String id;
-   @SerializedName("distro_desciption")
+   @SerializedName("distro_description")
    private String description;
 
    @Override

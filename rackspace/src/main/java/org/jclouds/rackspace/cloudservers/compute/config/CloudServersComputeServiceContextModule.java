@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudservers.compute.config;
 
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -43,11 +45,13 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -102,6 +106,13 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       bind(GetNodeMetadataStrategy.class).to(CloudServersGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(CloudServersRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(CloudServersDestroyNodeStrategy.class);
+   }
+
+   @Provides
+   TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
+            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
+            Location defaultLocation) {
+      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(UBUNTU);
    }
 
    @Provides

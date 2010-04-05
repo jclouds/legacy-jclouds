@@ -23,7 +23,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
+import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -56,24 +59,33 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       // TODO verify parsing works
    }
 
-//   // https://forums.bluelock.com/showthread.php?p=353#post353
-//   @Override
-//   @Test(enabled = false)
-//   public void testCreate() throws Exception {
-//      super.testCreate();
-//   }
-//
-//   @Override
-//   @Test(enabled = false)
-//   public void testGet() throws Exception {
-//      super.testGet();
-//   }
-//
-//   @Override
-//   @Test(enabled = false)
-//   public void testReboot() throws Exception {
-//      super.testReboot();
-//   }
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getLocation().getId(), "133");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+   }
+
+   // // https://forums.bluelock.com/showthread.php?p=353#post353
+   // @Override
+   // @Test(enabled = false)
+   // public void testCreate() throws Exception {
+   // super.testCreate();
+   // }
+   //
+   // @Override
+   // @Test(enabled = false)
+   // public void testGet() throws Exception {
+   // super.testGet();
+   // }
+   //
+   // @Override
+   // @Test(enabled = false)
+   // public void testReboot() throws Exception {
+   // super.testReboot();
+   // }
 
    @Test
    public void testExample() throws Exception {

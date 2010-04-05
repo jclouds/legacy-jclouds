@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.compute.config;
 
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.net.URI;
 import java.util.Map;
@@ -58,7 +59,9 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -100,6 +103,13 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
+   }
+
+   @Provides
+   TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
+            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
+            Location defaultLocation) {
+      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(UBUNTU);
    }
 
    @Singleton
