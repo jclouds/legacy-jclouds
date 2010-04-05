@@ -38,6 +38,7 @@ See http://code.google.com/p/jclouds for details."
         [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
         [clojure.contrib.java-utils :only [wall-hack-field]])
   (:import java.io.File
+           java.util.Properties
            [org.jclouds.domain Location]
            [org.jclouds.compute
             ComputeService ComputeServiceContext ComputeServiceContextFactory]
@@ -50,11 +51,16 @@ See http://code.google.com/p/jclouds for details."
 (defn compute-service
   "Create a logged in context."
   ([#^String service #^String account #^String key & options]
-     (.. (ComputeServiceContextFactory.)
-         (createContext
-          service account key
-          (apply modules (filter #(not (#{:sync :async} %)) options)))
-         (getComputeService))))
+     (let [module-keys (set (keys module-lookup))
+           ext-modules (filter #(module-keys %) options)
+           opts (apply hash-map (filter #(not (module-keys %)) options))]
+       (.. (ComputeServiceContextFactory.)
+           (createContext
+            service account key
+            (apply modules (concat ext-modules (opts :extensions)))
+            (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
+                    (Properties.) (dissoc opts :extensions)))
+           (getComputeService)))))
 
 (defn compute-context
   "Returns a compute context from a compute service."
