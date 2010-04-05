@@ -38,7 +38,7 @@
             extraction of appengine-java-sdk
         -->
         <appengine.home>YOUR_APPENGINE_HOME</appengine.home>
-        <appengine.applicationid>jclouds-s3-example</appengine.applicationid>
+        <appengine.applicationid>jclouds-aws-demo</appengine.applicationid>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
     </properties>

@@ -99,6 +99,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
                "request is not ready to sign; host not present");
       Multimap<String, String> decodedParams = RestAnnotationProcessor.parseQueryToMap(request
                .getPayload().getRawContent().toString());
+      request.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
