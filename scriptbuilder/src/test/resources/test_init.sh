@@ -59,21 +59,33 @@ init)
    default || exit 1
    mkebsboot || exit 1
    mkdir -p $INSTANCE_HOME
-   rm $INSTANCE_HOME/mkebsboot.sh 2>&-
-   echo '#!/bin/bash'>>$INSTANCE_HOME/mkebsboot.sh
-   echo 'set +u'>>$INSTANCE_HOME/mkebsboot.sh
-   echo 'shopt -s xpg_echo'>>$INSTANCE_HOME/mkebsboot.sh
-   echo 'shopt -s expand_aliases'>>$INSTANCE_HOME/mkebsboot.sh
-   echo "PROMPT_COMMAND='echo -ne \"\033]0;mkebsboot\007\"'">>$INSTANCE_HOME/mkebsboot.sh
-   echo 'export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin'>>$INSTANCE_HOME/mkebsboot.sh
-   echo "export INSTANCE_NAME='mkebsboot'">>$INSTANCE_HOME/mkebsboot.sh
-   echo "export TMP_DIR='$TMP_DIR'">>$INSTANCE_HOME/mkebsboot.sh
-   echo "export INSTANCE_NAME='$INSTANCE_NAME'">>$INSTANCE_HOME/mkebsboot.sh
-   echo "export INSTANCE_HOME='$INSTANCE_HOME'">>$INSTANCE_HOME/mkebsboot.sh
-   echo "export LOG_DIR='$LOG_DIR'">>$INSTANCE_HOME/mkebsboot.sh
-   echo 'cd $INSTANCE_HOME'>>$INSTANCE_HOME/mkebsboot.sh
-   echo 'find /'>>$INSTANCE_HOME/mkebsboot.sh
-   echo 'exit 0'>>$INSTANCE_HOME/mkebsboot.sh
+   
+   # create runscript header
+   cat > $INSTANCE_HOME/mkebsboot.sh <<END_OF_SCRIPT
+#!/bin/bash
+set +u
+shopt -s xpg_echo
+shopt -s expand_aliases
+PROMPT_COMMAND='echo -ne "\033]0;mkebsboot\007"'
+export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+export INSTANCE_NAME='mkebsboot'
+export TMP_DIR='$TMP_DIR'
+export INSTANCE_NAME='$INSTANCE_NAME'
+export INSTANCE_HOME='$INSTANCE_HOME'
+export LOG_DIR='$LOG_DIR'
+END_OF_SCRIPT
+   
+   # add desired commands from the user
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
+cd $INSTANCE_HOME
+find /
+END_OF_SCRIPT
+   
+   # add runscript footer
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
+exit 0
+END_OF_SCRIPT
+   
    chmod u+x $INSTANCE_HOME/mkebsboot.sh
    ;;
 status)
@@ -95,12 +107,15 @@ start)
    ;;
 tail)
    default || exit 1
-   tail $LOG_DIR/stdout.log;;
+   tail $LOG_DIR/stdout.log
+   ;;
 tailerr)
    default || exit 1
-   tail $LOG_DIR/stderr.log;;
+   tail $LOG_DIR/stderr.log
+   ;;
 run)
    default || exit 1
-   $INSTANCE_HOME/$INSTANCE_NAME.sh;;
+   $INSTANCE_HOME/$INSTANCE_NAME.sh
+   ;;
 esac
 exit 0

@@ -28,6 +28,8 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
+
 /**
  * 
  * @author Adrian Cole
@@ -42,7 +44,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test
    public void testTemplateBuilderCanUseImageId() {
-      client.templateBuilder().imageId("ami-d57f93bc").build();
+      client.templateBuilder().imageId(Iterables.get(client.getImages().keySet(), 0)).build();
    }
 
    @Test
