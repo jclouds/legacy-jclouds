@@ -1,7 +1,6 @@
 package org.jclouds.vcloud.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map.Entry;
@@ -11,8 +10,6 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -34,11 +31,6 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       System.setProperty("vcloud.endpoint", checkNotNull(System
                .getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint"));
       service = "vcloud";
-   }
-
-   @Override
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().build();
    }
 
    @Override

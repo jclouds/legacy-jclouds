@@ -19,6 +19,7 @@
 package org.jclouds.gogrid.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -45,10 +46,12 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -107,6 +110,14 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
    }
 
    @Provides
+   TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
+            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
+            Location defaultLocation) {
+      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(CENTOS)
+               .imageNameMatches(".*w/ None.*");
+   }
+
+   @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention() {
@@ -140,7 +151,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
          int numOfRetries = 20;
          // lock-free consumption of a shared resource: IP address pool
          while (notStarted) { // TODO: replace with Predicate-based thread collision avoidance for
-                              // simplicity
+            // simplicity
             Set<Ip> availableIps = client.getIpServices().getIpList(
                      new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC));
             if (availableIps.size() == 0)
@@ -316,6 +327,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       private final Function<String, InetAddress> stringIpToInetAddress;
       private final GoGridClient client;
 
+      @SuppressWarnings("unused")
       @Inject
       ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState,
                Function<String, InetAddress> stringIpToInetAddress, GoGridClient client) {
@@ -337,7 +349,6 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
          return new NodeMetadataImpl(from.getId() + "", from.getName(), locationId, null,
                   ImmutableMap.<String, String> of(), tag, state, ipSet, ImmutableList
                            .<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
-
       }
    }
 
@@ -447,8 +458,8 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             holder.logger.debug("<< didn't match os(%s)", matchedOs);
          }
 
-         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), location.getId(), null,
-                  ImmutableMap.<String, String> of(), from.getDescription(), version, os,
+         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), location.getId(),
+                  null, ImmutableMap.<String, String> of(), from.getDescription(), version, os,
                   osDescription, arch));
       }
       holder.logger.debug("<< images(%d)", images.size());

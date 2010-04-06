@@ -19,7 +19,12 @@
 
 package org.jclouds.vcloud.terremark.compute;
 
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
@@ -39,6 +44,15 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
    @Override
    public void setServiceDefaults() {
       service = "terremark";
+   }
+
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.JEOS);
+      assertEquals(defaultTemplate.getLocation().getId(), "32");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
    public void testAssignability() throws Exception {

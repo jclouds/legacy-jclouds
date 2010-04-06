@@ -18,12 +18,12 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,13 +40,18 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       service = "ec2";
    }
 
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).smallest().architecture(Architecture.X86_32).build();
+   @Test
+   public void testTemplateBuilderCanUseImageId() {
+      client.templateBuilder().imageId("ami-d57f93bc").build();
    }
 
    @Test
    public void testTemplateBuilder() {
-      client.templateBuilder().imageId("ami-d57f93bc").build();
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
    @Override

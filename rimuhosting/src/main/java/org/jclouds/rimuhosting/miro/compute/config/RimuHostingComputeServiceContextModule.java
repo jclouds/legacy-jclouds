@@ -19,6 +19,7 @@
 package org.jclouds.rimuhosting.miro.compute.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -47,10 +48,12 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -106,6 +109,14 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       bind(GetNodeMetadataStrategy.class).to(RimuHostingGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(RimuHostingRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(RimuHostingDestroyNodeStrategy.class);
+   }
+
+   @Provides
+   TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
+            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
+            Location defaultLocation) {
+      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).sizeId("MIRO1B")
+               .osFamily(UBUNTU);
    }
 
    @Provides

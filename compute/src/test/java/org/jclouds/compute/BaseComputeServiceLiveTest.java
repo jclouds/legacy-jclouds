@@ -39,6 +39,7 @@ import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -139,7 +140,8 @@ public abstract class BaseComputeServiceLiveTest {
       template = buildTemplate(client.templateBuilder());
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(
-               keyPair.get("public")).runScript(buildScript().getBytes());
+               keyPair.get("public")).runScript(
+               buildScript(template.getImage().getOsFamily()).getBytes());
       nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template).values());
       assertEquals(nodes.size(), 2);
       checkNodes();
@@ -172,19 +174,40 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   protected abstract Template buildTemplate(TemplateBuilder templateBuilder);
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      return templateBuilder.build();
+   }
 
-   protected String buildScript() {
-      return new StringBuilder()//
-               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-               .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-               .append(
-                        "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-               .append("apt-get update\n")//
-               .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-               .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
-               .append("chmod 755 /usr/bin/runurl\n")//
-               .toString();
+   protected String buildScript(OsFamily osFamily) {
+      switch (osFamily) {
+         case JEOS:
+         case UBUNTU:
+            return new StringBuilder()//
+                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+                     .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+                     .append(
+                              "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+                     .append("apt-get update\n")//
+                     .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+                     .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
+                     .append("chmod 755 /usr/bin/runurl\n")//
+                     .toString();
+         case CENTOS:
+         case RHEL:
+            return new StringBuilder()
+                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
+                     .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append(
+                              "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")
+                     .append(
+                              "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
+                     .toString();
+         default:
+            throw new IllegalArgumentException(osFamily.toString());
+      }
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreate")

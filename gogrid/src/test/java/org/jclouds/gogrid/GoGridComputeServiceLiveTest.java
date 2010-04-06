@@ -18,7 +18,6 @@
  */
 package org.jclouds.gogrid;
 
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -27,11 +26,12 @@ import java.util.Map;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
@@ -52,24 +52,13 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       service = "gogrid";
    }
 
-   @Override
-   public String buildScript() {
-      return new StringBuilder()
-               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-               .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append(
-                        "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")
-               .append(
-                        "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
-               .toString();
-   }
-
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(CENTOS).imageDescriptionMatches(".*w/ None.*").smallest()
-               .build();
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
+      assertEquals(defaultTemplate.getLocation().getId(), "SANFRANCISCO");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
    @Override

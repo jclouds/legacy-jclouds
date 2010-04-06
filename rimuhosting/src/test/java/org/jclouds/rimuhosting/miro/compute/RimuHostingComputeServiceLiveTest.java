@@ -18,11 +18,12 @@
  */
 package org.jclouds.rimuhosting.miro.compute;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,8 +40,14 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
       tag = "rimuhosting.jclouds";
    }
 
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.osFamily(UBUNTU).sizeId("MIRO1B").build();
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
+      assertEquals(defaultTemplate.getSize().getId(), "MIRO1B");
+      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
    @Override

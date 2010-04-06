@@ -53,11 +53,17 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutTwiceIsOk() throws InterruptedException {
+   public void testPutTwiceIsOkAndDoesntOverwrite() throws InterruptedException {
       String containerName = getContainerName();
       try {
          context.getBlobStore().createContainerInLocation("default", containerName);
+
+         Blob blob = context.getBlobStore().newBlob("hello");
+         blob.setPayload(TEST_STRING);
+         context.getBlobStore().putBlob(containerName, blob);
+
          context.getBlobStore().createContainerInLocation("default", containerName);
+         assertEquals(context.getBlobStore().countBlobs(containerName), 1);
       } finally {
          returnContainer(containerName);
       }

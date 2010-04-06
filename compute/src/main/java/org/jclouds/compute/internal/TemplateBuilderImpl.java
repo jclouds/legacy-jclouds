@@ -41,6 +41,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ComparisonChain;
@@ -63,21 +64,35 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private final Map<String, ? extends Image> images;
    private final Map<String, ? extends Size> sizes;
    private final Map<String, ? extends Location> locations;
-   private OsFamily os;
-   private Architecture arch;
-   private String locationId;
-   private String imageId;
-   private String sizeId;
-   private String osDescription;
-   private String imageVersion;
-   private String imageName;
-   private String imageDescription;
+   @VisibleForTesting
+   OsFamily os;
+   @VisibleForTesting
+   Architecture arch;
+   @VisibleForTesting
+   String locationId;
+   @VisibleForTesting
+   String imageId;
+   @VisibleForTesting
+   String sizeId;
+   @VisibleForTesting
+   String osDescription;
+   @VisibleForTesting
+   String imageVersion;
 
-   private double minCores;
-   private int minRam;
+   @VisibleForTesting
+   String imageName;
+   @VisibleForTesting
+   String imageDescription;
 
-   private boolean biggest;
-   private boolean fastest;
+   @VisibleForTesting
+   double minCores;
+   @VisibleForTesting
+   int minRam;
+
+   @VisibleForTesting
+   boolean biggest;
+   @VisibleForTesting
+   boolean fastest;
 
    private TemplateOptions options = TemplateOptions.NONE;
 
@@ -411,6 +426,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public TemplateBuilder imageId(String imageId) {
       this.imageId = imageId;
+      this.imageName = null;
+      this.imageDescription = null;
+      this.imageVersion = null;
+      this.arch = null;
+      this.os = null;
+      this.osDescription = null;
       return this;
    }
 

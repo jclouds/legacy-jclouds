@@ -9,18 +9,28 @@ Here's an example of getting some compute configuration from rackspace:
   (use 'org.jclouds.compute)
   (use 'clojure.contrib.pprint)
 
+  (def provider \"cloudservers\")
   (def user \"username\")
   (def password \"password\")
-  (def compute-name \"cloudservers\")
   
-  (def compute (compute-context compute-name user password))
+  ; create a compute service
+  (def compute 
+    (compute-service provider user password))
 
   (with-compute-service [compute]
     (pprint (locations))
     (pprint (images))
     (pprint (nodes))
     (pprint (sizes)))
-    
+
+Here's an example of creating and running a small linux node with the tag webserver:
+  
+  ; create a compute service using ssh and log4j extensions
+  (def compute 
+    (compute-service provider user password :ssh :log4j))
+
+  (run-node \"webserver\" compute)
+
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
         clojure.contrib.duck-streams
@@ -28,6 +38,7 @@ See http://code.google.com/p/jclouds for details."
         [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
         [clojure.contrib.java-utils :only [wall-hack-field]])
   (:import java.io.File
+           java.util.Properties
            [org.jclouds.domain Location]
            [org.jclouds.compute
             ComputeService ComputeServiceContext ComputeServiceContextFactory]
@@ -40,11 +51,16 @@ See http://code.google.com/p/jclouds for details."
 (defn compute-service
   "Create a logged in context."
   ([#^String service #^String account #^String key & options]
-     (.. (ComputeServiceContextFactory.)
-         (createContext
-          service account key
-          (apply modules (filter #(not (#{:sync :async} %)) options)))
-         (getComputeService))))
+     (let [module-keys (set (keys module-lookup))
+           ext-modules (filter #(module-keys %) options)
+           opts (apply hash-map (filter #(not (module-keys %)) options))]
+       (.. (ComputeServiceContextFactory.)
+           (createContext
+            service account key
+            (apply modules (concat ext-modules (opts :extensions)))
+            (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
+                    (Properties.) (dissoc opts :extensions)))
+           (getComputeService)))))
 
 (defn compute-context
   "Returns a compute context from a compute service."
@@ -107,8 +123,6 @@ See http://code.google.com/p/jclouds for details."
   ([] (default-template *compute*))
   ([#^ComputeService compute]
      (.. compute (templateBuilder)
-         (osFamily OsFamily/UBUNTU)
-         smallest
          (options
           (org.jclouds.compute.options.TemplateOptions$Builder/authorizePublicKey
            (slurp (str (. System getProperty "user.home") "/.ssh/id_rsa.pub"))))
@@ -116,7 +130,26 @@ See http://code.google.com/p/jclouds for details."
 
 (defn run-nodes
   "Create the specified number of nodes using the default or specified
-   template."
+   template.
+
+  ; simplest way to add 2 small linux nodes to the group webserver is to run
+  (run-nodes \"webserver\" 2 compute)
+
+  ; which is the same as wrapping the run-nodes command with an implicit compute service
+  ; note that this will actually add another 2 nodes to the set called \"webserver\"
+  (with-compute-service [compute]
+    (run-nodes \"webserver\" 2 ))
+
+  ; which is the same as specifying the default template
+  (with-compute-service [compute]
+    (run-nodes \"webserver\" 2 (default-template)))
+
+  ; which, on gogrid, is the same as constructing the smallest centos template that has no layered software
+  (with-compute-service [compute]
+    (run-nodes \"webserver\" 2 
+      (build-template service :centos :smallest :image-name-matches \".*w/ None.*\")))
+
+"
   ([tag count]
      (run-nodes tag count (default-template *compute*) *compute*))
   ([tag count compute-or-template]
@@ -129,7 +162,17 @@ See http://code.google.com/p/jclouds for details."
       (.runNodesWithTag compute tag count template))))
 
 (defn run-node
-  "Create a node using the default or specified template."
+  "Create a node using the default or specified template.
+
+  ; simplest way to add a small linux node to the group webserver is to run
+  (run-node \"webserver\" compute)
+
+  ; which is the same as wrapping the run-node command with an implicit compute service
+  ; note that this will actually add another node to the set called \"webserver\"
+  (with-compute-service [compute]
+    (run-node \"webserver\" ))
+
+"
   ([tag]
      (run-nodes tag 1 (default-template *compute*) *compute*))
   ([tag compute-or-template]
@@ -298,7 +341,12 @@ See http://code.google.com/p/jclouds for details."
       (f builder value)
       (println "Unknown option" option))))
 
-(defn build-template [#^ComputeService compute option & options]
+(defn build-template 
+  "Creates a template that can be used to run nodes.
+
+There are many options to use for the default template
+   "
+  [#^ComputeService compute option & options]
   (let [builder (.. compute (templateBuilder))]
     (loop [option option
            remaining options]
