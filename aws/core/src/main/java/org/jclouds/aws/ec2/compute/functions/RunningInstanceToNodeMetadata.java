@@ -60,7 +60,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       // canonical/alestic images use the ubuntu user to login
       // TODO: add this as a property of image
-      if (credentials != null && image.getImageOwnerId().equals("063491364108"))
+      if (credentials != null && image.getImageOwnerId().matches("063491364108|099720109477"))
          credentials = new Credentials("ubuntu", credentials.key);
 
       String locationId = from.getAvailabilityZone().toString();
