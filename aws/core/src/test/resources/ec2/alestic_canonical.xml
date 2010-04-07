@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>6104eee1-affd-49d7-92a0-516cab8a8ba6</requestId>
+    <imagesSet>
+        <item>
+            <imageId>ami-7e28ca17</imageId>
+            <imageLocation>ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>099720109477</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-92ba58fb</kernelId>
+            <ramdiskId>ari-94ba58fd</ramdiskId>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+        <item>
+            <imageId>ami-19a34270</imageId>
+            <imageLocation>alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>063491364108</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-a71cf9ce</kernelId>
+            <ramdiskId>ari-a51cf9cc</ramdiskId>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+        <item>
+            <imageId>ami-bb709dd2</imageId>
+            <imageLocation>ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>099720109477</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-5f15f636</kernelId>
+            <ramdiskId>ari-d5709dbc</ramdiskId>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+        <item>
+            <imageId>ami-190fe070</imageId>
+            <imageLocation>ubuntu-images-testing-us/ubuntu-lucid-daily-amd64-desktop-20100317.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>099720109477</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-11c72878</kernelId>
+            <name>ubuntu-images-testing/ubuntu-lucid-daily-amd64-desktop-20100317</name>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+        <item>
+            <imageId>ami-c0fa1ea9</imageId>
+            <imageLocation>alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>063491364108</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-a71cf9ce</kernelId>
+            <ramdiskId>ari-a51cf9cc</ramdiskId>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+        <item>
+            <imageId>aki-fd15f694</imageId>
+            <imageLocation>ubuntu-kernels-us/ubuntu-karmic-amd64-linux-image-2.6.31-302-ec2-v-2.6.31-302.7-kernel.img.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>099720109477</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>x86_64</architecture>
+            <imageType>kernel</imageType>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping />
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>

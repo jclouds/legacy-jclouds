@@ -108,14 +108,17 @@ goto CASE_%1
 :CASE_tail
    call :default
    if errorlevel 1 goto abort
-   tail %LOG_DIR%\stdout.logGOTO END_SWITCH
+   tail %LOG_DIR%\stdout.log
+   GOTO END_SWITCH
 :CASE_tailerr
    call :default
    if errorlevel 1 goto abort
-   tail %LOG_DIR%\stderr.logGOTO END_SWITCH
+   tail %LOG_DIR%\stderr.log
+   GOTO END_SWITCH
 :CASE_run
    call :default
    if errorlevel 1 goto abort
-   %INSTANCE_HOME%\%INSTANCE_NAME%.cmdGOTO END_SWITCH
+   %INSTANCE_HOME%\%INSTANCE_NAME%.cmd
+   GOTO END_SWITCH
 :END_SWITCH
 exit /b 0

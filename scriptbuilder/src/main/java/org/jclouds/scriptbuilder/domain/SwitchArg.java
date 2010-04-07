@@ -28,6 +28,7 @@ import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -38,6 +39,8 @@ import com.google.common.collect.Lists;
  * @author Adrian Cole
  */
 public class SwitchArg implements Statement {
+
+   private static final String INDENT = "   ";
 
    public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX,
             "case ${arg} in\n", OsFamily.WINDOWS, "goto CASE_%{arg}\r\n");
@@ -84,10 +87,22 @@ public class SwitchArg implements Statement {
                "arg", arg + "")));
 
       for (Entry<String, Statement> entry : valueToActions.entrySet()) {
+
+         StringBuilder actionBuilder = new StringBuilder();
+         boolean inRunScript = false;
+         for (String line : Splitter.on(ShellToken.LF.to(family)).split(
+                  entry.getValue().render(family))) {
+            if (!inRunScript)
+               actionBuilder.append(INDENT);
+            actionBuilder.append(line).append(ShellToken.LF.to(family));
+            if (line.indexOf(CreateRunScript.MARKER) != -1) {
+               inRunScript = inRunScript ? false : true;
+            }
+         }
+         actionBuilder.delete(actionBuilder.lastIndexOf(ShellToken.LF.to(family)), actionBuilder
+                  .length());
          switchClause.append(Utils.replaceTokens(OS_TO_CASE_PATTERN.get(family), ImmutableMap.of(
-                  "value", entry.getKey(), "action", entry.getValue().render(family).replaceAll(
-                           "^", "   ").replace(ShellToken.LF.to(family),
-                           ShellToken.LF.to(family) + "   "))));
+                  "value", entry.getKey(), "action", actionBuilder.toString())));
       }
 
       switchClause.append(OS_TO_END_SWITCH_PATTERN.get(family));

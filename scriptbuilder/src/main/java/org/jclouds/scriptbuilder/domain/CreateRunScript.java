@@ -19,6 +19,7 @@
 package org.jclouds.scriptbuilder.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
 import java.util.Collections;
@@ -42,6 +43,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class CreateRunScript implements Statement {
+   public final static String MARKER = "END_OF_SCRIPT";
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;
@@ -57,6 +59,7 @@ public class CreateRunScript implements Statement {
       this.exports = checkNotNull(exports, "exports");
       this.pwd = checkNotNull(pwd, "pwd").replaceAll("[/\\\\]", "{fs}");
       this.execLines = checkNotNull(execLines, "execLines");
+      checkState(execLines.length > 0, "you must pass something to execute");
    }
 
    public static class AddTitleToFile implements Statement {
@@ -142,34 +145,79 @@ public class CreateRunScript implements Statement {
       Map<String, String> tokenMap = ShellToken.tokenValueMap(family);
       String runScript = Utils.replaceTokens(pwd + "{fs}" + instanceName + ".{sh}", tokenMap);
       statements.add(interpret(String.format("{md} %s{lf}", pwd)));
-      statements.add(interpret(String.format("{rm} %s 2{closeFd}{lf}", runScript)));
-      for (String line : Splitter.on(ShellToken.LF.to(family)).split(
-               ShellToken.BEGIN_SCRIPT.to(family))) {
-         if (!line.equals(""))
-            statements.add(appendToFile(line, runScript, family));
-      }
-      statements.add(new AddTitleToFile(instanceName, runScript));
-      statements
-               .add(appendToFile(Utils.writeZeroPath(family).replace(ShellToken.LF.to(family), ""),
-                        runScript, family));
-      statements.add(new AddExportToFile("instanceName", instanceName, runScript));
-      for (String export : exports) {
-         statements.add(new AddExportToFile(export, Utils.replaceTokens("{varl}"
-                  + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export) + "{varr}",
-                  tokenMap), runScript));
-      }
-      statements.add(appendToFile("{cd} " + pwd, runScript, family));
-      for (String execLine : execLines) {
-         statements.add(appendToFile(execLine, runScript, family));
-      }
-      for (String line : Splitter.on(ShellToken.LF.to(family)).split(
-               ShellToken.END_SCRIPT.to(family))) {
-         if (!line.equals(""))
-            statements.add(appendToFile(line, runScript, family));
+      if (family == OsFamily.UNIX) {
+         StringBuilder builder = new StringBuilder();
+         builder.append("\n");
+         addUnixRunScriptHeader(family, runScript, builder);
+         builder.append("\n");
+         addUnixRunScript(runScript, builder);
+         builder.append("\n");
+         addUnixRunScriptFooter(family, runScript, builder);
+         builder.append("\n");
+         statements.add(interpret(builder.toString()));
+      } else {
+         statements.add(interpret(String.format("{rm} %s 2{closeFd}{lf}", runScript)));
+         for (String line : Splitter.on(ShellToken.LF.to(family)).split(
+                  ShellToken.BEGIN_SCRIPT.to(family))) {
+            if (!line.equals(""))
+               statements.add(appendToFile(line, runScript, family));
+         }
+         statements.add(new AddTitleToFile(instanceName, runScript));
+         statements.add(appendToFile(Utils.writeZeroPath(family).replace(ShellToken.LF.to(family),
+                  ""), runScript, family));
+         statements.add(new AddExportToFile("instanceName", instanceName, runScript));
+         for (String export : exports) {
+            statements.add(new AddExportToFile(export, Utils.replaceTokens("{varl}"
+                     + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export) + "{varr}",
+                     tokenMap), runScript));
+         }
+         statements.add(appendToFile("{cd} " + pwd, runScript, family));
+         for (String execLine : execLines) {
+            statements.add(appendToFile(execLine, runScript, family));
+         }
+         for (String line : Splitter.on(ShellToken.LF.to(family)).split(
+                  ShellToken.END_SCRIPT.to(family))) {
+            if (!line.equals(""))
+               statements.add(appendToFile(line, runScript, family));
+         }
       }
       statements.add(interpret(Utils.replaceTokens(OS_TO_CHMOD_PATTERN.get(family), ImmutableMap
                .of("file", runScript))));
       return new StatementList(statements).render(family);
+   }
+
+   private void addUnixRunScriptFooter(OsFamily family, String runScript, StringBuilder builder) {
+      builder.append("# add runscript footer\n");
+      builder.append("cat >> ").append(runScript).append(" <<'").append(MARKER).append("'\n");
+      builder.append(ShellToken.END_SCRIPT.to(family));
+      builder.append(MARKER).append("\n");
+   }
+
+   private void addUnixRunScript(String runScript, StringBuilder builder) {
+      builder.append("# add desired commands from the user\n");
+      builder.append("cat >> ").append(runScript).append(" <<'").append(MARKER).append("'\n");
+      builder.append("cd ").append(pwd).append("\n");
+      for (String execLine : execLines) {
+         builder.append(execLine).append("\n");
+      }
+      builder.append(MARKER).append("\n");
+   }
+
+   private void addUnixRunScriptHeader(OsFamily family, String runScript, StringBuilder builder) {
+      builder.append("# create runscript header\n");
+      builder.append("cat > ").append(runScript).append(" <<").append(MARKER).append("\n");
+      builder.append(ShellToken.BEGIN_SCRIPT.to(family));
+      builder.append("PROMPT_COMMAND='echo -ne \"\\033]0;").append(instanceName).append(
+               "\\007\"'\n");
+      builder.append(Utils.writeZeroPath(family));
+      builder.append("export INSTANCE_NAME='").append(instanceName).append("'\n");
+      for (String export : exports) {
+         String variableNameInUpper = CaseFormat.LOWER_CAMEL
+                  .to(CaseFormat.UPPER_UNDERSCORE, export);
+         builder.append("export ").append(variableNameInUpper).append("='$").append(
+                  variableNameInUpper).append("'\n");
+      }
+      builder.append(MARKER).append("\n");
    }
 
    private Statement appendToFile(String line, String runScript, OsFamily family) {

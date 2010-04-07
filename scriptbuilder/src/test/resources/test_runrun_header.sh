@@ -1,7 +1,8 @@
 mkdir -p /tmp/$USER/scripttest
 
 # create runscript header
-cat > /tmp/$USER/scripttest/yahooprod.sh <<END_OF_SCRIPT
+(
+cat <<END_OF_SCRIPT
 #!/bin/bash
 set +u
 shopt -s xpg_echo
@@ -11,17 +12,22 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 export INSTANCE_NAME='yahooprod'
 export JAVA_HOME='$JAVA_HOME'
 END_OF_SCRIPT
+) > /tmp/$USER/scripttest/yahooprod.sh
 
 # add desired commands from the user
-cat >> /tmp/$USER/scripttest/yahooprod.sh <<'END_OF_SCRIPT'
+(
+cat <<'END_OF_SCRIPT'
 cd /tmp/$USER/scripttest
 echo hello
 echo $JAVA_HOME/bin/java -DinstanceName=$INSTANCE_NAME myServer.Main
 END_OF_SCRIPT
+) >> /tmp/$USER/scripttest/yahooprod.sh
 
 # add runscript footer
-cat >> /tmp/$USER/scripttest/yahooprod.sh <<'END_OF_SCRIPT'
+(
+cat <<'END_OF_SCRIPT'
 exit 0
 END_OF_SCRIPT
+) >> /tmp/$USER/scripttest/yahooprod.sh
 
 chmod u+x /tmp/$USER/scripttest/yahooprod.sh

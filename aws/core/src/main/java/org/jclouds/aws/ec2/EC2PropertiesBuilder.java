@@ -41,7 +41,8 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_EC2_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, "60");
-      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108");
+      // alestic and canonical
+      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477");
       return properties;
    }
 

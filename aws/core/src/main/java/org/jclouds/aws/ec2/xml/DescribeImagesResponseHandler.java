@@ -50,7 +50,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private Set<Image> contents = Sets.newHashSet();
+   private Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
 
    private Architecture architecture;

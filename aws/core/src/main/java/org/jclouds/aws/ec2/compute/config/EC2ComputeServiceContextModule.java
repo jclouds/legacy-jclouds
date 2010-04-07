@@ -55,6 +55,7 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -109,7 +110,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
             Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
             Location defaultLocation) {
-      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(UBUNTU);
+      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).architecture(
+               Architecture.X86_32).osFamily(UBUNTU);
    }
 
    @Singleton
@@ -291,7 +293,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Singleton
    @Named(PROPERTY_EC2_AMI_OWNERS)
    String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
-      return Iterables.toArray(Splitter.on('.').split(amiOwners), String.class);
+      return Iterables.toArray(Splitter.on(',').split(amiOwners), String.class);
    }
 
    @Provides
@@ -311,7 +313,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
             if (image != null)
                images.add(image);
             else
-               holder.logger.debug("<< images(%s) didn't parse", from.getId());
+               holder.logger.trace("<< image(%s) didn't parse", from.getId());
          }
       }
       holder.logger.debug("<< images(%d)", images.size());

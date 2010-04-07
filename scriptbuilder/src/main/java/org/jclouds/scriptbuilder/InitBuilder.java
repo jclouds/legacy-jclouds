@@ -89,17 +89,17 @@ public class InitBuilder extends ScriptBuilder {
                                                    "tail",
                                                    newStatementList(
                                                             call("default"),
-                                                            interpret("tail {varl}LOG_DIR{varr}{fs}stdout.log")))
+                                                            interpret("tail {varl}LOG_DIR{varr}{fs}stdout.log{lf}")))
                                           .put(
                                                    "tailerr",
                                                    newStatementList(
                                                             call("default"),
-                                                            interpret("tail {varl}LOG_DIR{varr}{fs}stderr.log")))
+                                                            interpret("tail {varl}LOG_DIR{varr}{fs}stderr.log{lf}")))
                                           .put(
                                                    "run",
                                                    newStatementList(
                                                             call("default"),
-                                                            interpret("{varl}INSTANCE_HOME{varr}{fs}{varl}INSTANCE_NAME{varr}.{sh}")))
+                                                            interpret("{varl}INSTANCE_HOME{varr}{fs}{varl}INSTANCE_NAME{varr}.{sh}{lf}")))
                                           .build()));
    }
 }

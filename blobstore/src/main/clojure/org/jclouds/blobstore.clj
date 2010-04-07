@@ -85,6 +85,7 @@ Options can also be specified for extension modules
      {:after-marker #(.afterMarker %1 %2)
       :in-directory #(.inDirectory %1 %2)
       :max-results #(.maxResults %1 %2)
+      :with-details #(when %2 (.withDetails %1))
       :recursive #(when %2 (.recursive %1))})
 
 (defn list-container
