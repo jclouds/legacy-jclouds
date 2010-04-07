@@ -50,10 +50,16 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
+      assert (defaultTemplate.getImage().getId().startsWith("ami-")) : defaultTemplate;
+      assertEquals(defaultTemplate.getImage().getName(), "9.10");
       assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+      client.templateBuilder().osFamily(OsFamily.UBUNTU).smallest().architecture(
+               Architecture.X86_32).imageId("ami-7e28ca17").build();
+      client.templateBuilder().osFamily(OsFamily.UBUNTU).smallest().architecture(
+               Architecture.X86_32).imageId("ami-bb709dd2").build();
    }
 
    @Override

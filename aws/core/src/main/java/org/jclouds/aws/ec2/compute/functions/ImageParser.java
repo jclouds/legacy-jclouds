@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
@@ -35,32 +37,48 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * @author Adrian Cole
+ */
 @Singleton
-public class ImageParser implements
-         Function<org.jclouds.aws.ec2.domain.Image, Image> {
+public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, Image> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   // alestic-32-eu-west-1/debian-4.0-etch-base-20081130
-   public static final Pattern ALESTIC_PATTERN = Pattern
+   public static final Pattern CANONICAL_PATTERN = Pattern
             .compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
+
+   public static final Map<String, String> NAME_VERSION_MAP = ImmutableMap
+            .<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10").put("jaunty",
+                     "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
+            .build();
 
    @Override
    public Image apply(org.jclouds.aws.ec2.domain.Image from) {
+      if (from.getImageLocation().indexOf("test") != -1) {
+         logger.trace("skipping test image(%s)", from.getId());
+         return null;
+      }
+      if (from.getImageType() != ImageType.MACHINE) {
+         logger.trace("skipping as not a machine image(%s)", from.getId());
+         return null;
+      }
       OsFamily os = null;
       String name = "";
       String description = from.getDescription() != null ? from.getDescription() : from
                .getImageLocation();
       String osDescription = from.getImageLocation();
       String version = "";
-
-      Matcher matcher = ALESTIC_PATTERN.matcher(from.getImageLocation());
+      Matcher matcher = CANONICAL_PATTERN.matcher(from.getImageLocation());
       if (matcher.find()) {
          try {
             os = OsFamily.fromValue(matcher.group(1));
             name = matcher.group(2);// TODO no field for os version
-            version = matcher.group(3).replace("\\.manifest.xml", "");
+            // normalize versions across ubuntu from alestic and canonical
+            if (NAME_VERSION_MAP.containsKey(name))
+               name = NAME_VERSION_MAP.get(name);
+            version = matcher.group(3).replace(".manifest.xml", "");
          } catch (IllegalArgumentException e) {
             logger.debug("<< didn't match os(%s)", matcher.group(1));
          }
