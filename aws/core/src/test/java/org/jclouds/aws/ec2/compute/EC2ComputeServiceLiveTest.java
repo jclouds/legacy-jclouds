@@ -21,14 +21,13 @@ package org.jclouds.aws.ec2.compute;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.*;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import java.util.Map;
 
 /**
  * 
@@ -60,6 +59,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                Architecture.X86_32).imageId("ami-7e28ca17").build();
       client.templateBuilder().osFamily(OsFamily.UBUNTU).smallest().architecture(
                Architecture.X86_32).imageId("ami-bb709dd2").build();
+   }
+
+   @Test
+   public void testCredentialsMapping() {
+//       Template simpleTemplate = client.templateBuilder().smallest().build();
+//       client.runNodesWithTag("ec2", 1, simpleTemplate);
+       Map<String, ? extends NodeMetadata> map = client.getNodesWithTag("ec2");
+       int a = 5;
    }
 
    @Override

@@ -34,7 +34,7 @@ import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.gogrid.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
-import org.jclouds.gogrid.reference.GoGridConstants;
+import org.jclouds.gogrid.config.internal.GoGridAuthenticationModule;
 
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -61,6 +61,11 @@ public class GoGridContextBuilder extends ComputeServiceContextBuilder<GoGridAsy
     }
 
     @Override
+    protected void addImageResolutionModule() {
+        modules.add(new GoGridAuthenticationModule());
+    }
+
+    @Override
     public ComputeServiceContext buildComputeServiceContext() {
         return this
                 .buildInjector()
@@ -69,5 +74,4 @@ public class GoGridContextBuilder extends ComputeServiceContextBuilder<GoGridAsy
                                 .get(new TypeLiteral<ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>>() {
                         }));
     }
-
 }
