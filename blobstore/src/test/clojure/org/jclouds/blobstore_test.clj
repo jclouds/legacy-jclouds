@@ -48,6 +48,7 @@
   (is (upload-blob "container" "dir/blob2" "blob2"))
   (is (= 3 (count (list-container "container"))))
   (is (= 4 (count (list-container "container" :recursive true))))
+  (is (= 3 (count (list-container "container" :with-details true))))
   (is (= 1 (count (list-container "container" :in-directory "dir")))))
 
 (deftest download-blob-test
