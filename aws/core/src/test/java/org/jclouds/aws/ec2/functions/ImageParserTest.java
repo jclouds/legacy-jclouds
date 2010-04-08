@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.compute.functions.ImageParser;
+import org.jclouds.aws.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.compute.domain.OsFamily;
@@ -52,6 +53,7 @@ public class ImageParserTest extends BaseHandlerTest {
       assertEquals(result.size(), 6);
 
       ImageParser parser = new ImageParser();
+      parser.setAuthenticator(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
       org.jclouds.compute.domain.Image ubuntuHardy = parser.apply(Iterables.get(result, 0));
 
       assertEquals(ubuntuHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
@@ -125,6 +127,7 @@ public class ImageParserTest extends BaseHandlerTest {
       Set<Image> result = parseImages(is);
 
       ImageParser parser = new ImageParser();
+      parser.setAuthenticator(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 

@@ -60,7 +60,11 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
    @Inject
    private PopulateDefaultLoginCredentialsForImageStrategy authenticator;
 
-   @Override
+   public void setAuthenticator(PopulateDefaultLoginCredentialsForImageStrategy authenticator) {
+       this.authenticator = authenticator;
+   }
+
+    @Override
    public Image apply(org.jclouds.aws.ec2.domain.Image from) {
       if (from.getImageLocation().indexOf("test") != -1) {
          logger.trace("skipping test image(%s)", from.getId());
