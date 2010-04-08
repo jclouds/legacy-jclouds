@@ -26,6 +26,7 @@ package org.jclouds.compute.domain;
 import org.jclouds.compute.domain.internal.ImageImpl;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.domain.Credentials;
 
 /**
  * Running Operating system
@@ -59,4 +60,10 @@ public interface Image extends ComputeMetadata {
     * Operating System
     */
    Architecture getArchitecture();
+
+    /**
+     * Default credentials for the current image
+     */
+   Credentials getDefaultCredentials();
+
 }

@@ -379,7 +379,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          }
          images.add(new ImageImpl(from.getId() + "", from.getName(), location.getId(), null,
                   ImmutableMap.<String, String> of(), from.getName(), version, os, osDescription,
-                  arch));
+                  arch, new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return Maps.uniqueIndex(images, indexer);

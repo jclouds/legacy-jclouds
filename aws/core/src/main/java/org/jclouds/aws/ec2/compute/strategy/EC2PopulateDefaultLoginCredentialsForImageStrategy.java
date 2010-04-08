@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.compute.strategy;
 
 import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.compute.strategy.AuthenticateImagesStrategy;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Oleksiy Yarmula
  */
-public class EC2AuthenticateImagesStrategy implements AuthenticateImagesStrategy {
+public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements PopulateDefaultLoginCredentialsForImageStrategy {
 
     @Override
     public Credentials execute(Object resourceToAuthenticate) {
@@ -36,12 +36,12 @@ public class EC2AuthenticateImagesStrategy implements AuthenticateImagesStrategy
         checkArgument(resourceToAuthenticate instanceof Image, "Resource must be an image (for EC2)");
         Image image = (Image) resourceToAuthenticate;
 
-        Credentials credentials = null;
+        Credentials credentials;
 
         // canonical/alestic images use the ubuntu user to login
         if (image.getImageOwnerId().matches("063491364108|099720109477"))
-         credentials = new Credentials("ubuntu", "");
-        else credentials = new Credentials("root", "");
+         credentials = new Credentials("ubuntu", null);
+        else credentials = new Credentials("root", null);
 
         return credentials;
     }

@@ -63,7 +63,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test
    public void testCredentialsMapping() {
-//       Template simpleTemplate = client.templateBuilder().smallest().build();
+       Template simpleTemplate = client.templateBuilder().smallest().build();
 //       client.runNodesWithTag("ec2", 1, simpleTemplate);
        Map<String, ? extends NodeMetadata> map = client.getNodesWithTag("ec2");
        int a = 5;

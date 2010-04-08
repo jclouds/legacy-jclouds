@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule;
-import org.jclouds.aws.ec2.compute.config.internal.EC2AuthenticationModule;
+import org.jclouds.aws.ec2.compute.config.internal.EC2ResolveImagesModule;
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -71,6 +71,6 @@ public class EC2ContextBuilder extends
 
     @Override
     protected void addImageResolutionModule() {
-        modules.add(new EC2AuthenticationModule());
+        modules.add(new EC2ResolveImagesModule());
     }
 }

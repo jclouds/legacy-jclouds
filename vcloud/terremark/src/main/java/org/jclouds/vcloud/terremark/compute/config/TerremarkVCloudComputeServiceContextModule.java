@@ -41,6 +41,7 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -135,7 +136,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
                               images.add(new ImageImpl(resource.getId(), template.getName(), vDC
                                        .getId(), template.getLocation(), ImmutableMap
                                        .<String, String> of(), template.getDescription(), "", myOs,
-                                       template.getName(), arch));
+                                       template.getName(), arch, new Credentials("root", null)));
                               return null;
                            }
                         }), executor));

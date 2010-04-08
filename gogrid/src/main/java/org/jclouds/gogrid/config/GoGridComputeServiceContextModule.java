@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.inject.AbstractModule;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Architecture;
@@ -323,17 +322,14 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
         private final Map<String, NodeState> serverStateToNodeState;
         private final Function<String, InetAddress> stringIpToInetAddress;
         private final GoGridClient client;
-        private final AuthenticateImagesStrategy authenticator;
 
         @SuppressWarnings("unused")
         @Inject
         ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState,
-                             Function<String, InetAddress> stringIpToInetAddress, GoGridClient client,
-                             AuthenticateImagesStrategy authenticator) {
+                             Function<String, InetAddress> stringIpToInetAddress, GoGridClient client) {
             this.serverStateToNodeState = serverStateToNodeState;
             this.stringIpToInetAddress = stringIpToInetAddress;
             this.client = client;
-            this.authenticator = authenticator;
         }
 
         @Override
@@ -343,7 +339,8 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             Set<InetAddress> ipSet = ImmutableSet
                     .of(stringIpToInetAddress.apply(from.getIp().getIp()));
             NodeState state = serverStateToNodeState.get(from.getState().getName());
-            Credentials creds = authenticator.execute(from);
+            Credentials creds = client.getServerServices().getServerCredentialsList().get(
+                    from.getName());
             return new NodeMetadataImpl(from.getId() + "", from.getName(), locationId, null,
                     ImmutableMap.<String, String> of(), tag, state, ipSet, ImmutableList
                             .<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
@@ -434,8 +431,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
     @Provides
     @Singleton
     protected Map<String, ? extends Image> provideImages(final GoGridClient sync, LogHolder holder,
-                                                         Function<ComputeMetadata, String> indexer, Location location)
-            throws InterruptedException, ExecutionException, TimeoutException {
+                                                         Function<ComputeMetadata, String> indexer, Location location,
+                                                         PopulateDefaultLoginCredentialsForImageStrategy authenticator)
+                                throws InterruptedException, ExecutionException, TimeoutException {
         final Set<Image> images = Sets.newHashSet();
         holder.logger.debug(">> providing images");
         Set<ServerImage> allImages = sync.getImageServices().getImageList();
@@ -455,10 +453,10 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             } catch (IllegalArgumentException e) {
                 holder.logger.debug("<< didn't match os(%s)", matchedOs);
             }
-
+            Credentials defaultCredentials = authenticator.execute(from);
             images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), location.getId(),
                     null, ImmutableMap.<String, String> of(), from.getDescription(), version, os,
-                    osDescription, arch));
+                    osDescription, arch, defaultCredentials));
         }
         holder.logger.debug("<< images(%d)", images.size());
         return Maps.uniqueIndex(images, indexer);

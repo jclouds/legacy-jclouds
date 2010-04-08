@@ -16,26 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.compute.strategy;
+package org.jclouds.aws.ec2.compute.config.internal;
 
-import org.jclouds.domain.Credentials;
+import com.google.inject.AbstractModule;
+import org.jclouds.aws.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.config.ResolvesImages;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 
 /**
  * @author Oleksiy Yarmula
  */
-public interface AuthenticateImagesStrategy {
-
-    /**
-     * Processes the resource to determine credentials.
-     *
-     * @param resourceToAuthenticate
-     *                  this can be any resource, such as an image,
-     *                  running server instance or other. It's the
-     *                  responsibility of an implementation to apply
-     *                  the cloud-specific logic.
-     * @return credentials object. Note: the key
-     *                  may not be set, but the account must be set
-     */
-    Credentials execute(Object resourceToAuthenticate);
-
+@ResolvesImages
+public class EC2ResolveImagesModule extends AbstractModule {
+    
+    @Override
+    protected void configure() {
+        bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(EC2PopulateDefaultLoginCredentialsForImageStrategy.class);
+    }
+    
 }

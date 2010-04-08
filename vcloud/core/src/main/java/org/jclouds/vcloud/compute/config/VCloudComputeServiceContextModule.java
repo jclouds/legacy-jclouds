@@ -366,7 +366,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                               images.add(new ImageImpl(resource.getId(), template.getName(), vDC
                                        .getId(), template.getLocation(), ImmutableMap
                                        .<String, String> of(), template.getDescription(), "", myOs,
-                                       template.getName(), arch));
+                                       template.getName(), arch, new Credentials("root", null)));
                               return null;
                            }
                         }), executor));

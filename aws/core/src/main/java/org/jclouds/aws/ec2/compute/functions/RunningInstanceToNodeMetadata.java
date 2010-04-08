@@ -18,7 +18,6 @@ import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.strategy.AuthenticateImagesStrategy;
 import org.jclouds.domain.Credentials;
 
 import com.google.common.base.Function;
@@ -35,15 +34,15 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    private final AMIClient amiClient;
    private final Map<RegionTag, KeyPairCredentials> credentialsMap;
-   private final AuthenticateImagesStrategy authenticator;
+   private final ImageParser imageParser;
 
    @Inject
    public RunningInstanceToNodeMetadata(AMIClient amiClient,
             Map<RegionTag, KeyPairCredentials> credentialsMap,
-            AuthenticateImagesStrategy authenticator) {
+            ImageParser imageParser) {
       this.amiClient = amiClient;
       this.credentialsMap = credentialsMap;
-      this.authenticator = authenticator;
+      this.imageParser = imageParser;
    }
 
    @Override
@@ -62,7 +61,12 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Image image = Iterables.getOnlyElement(amiClient.describeImagesInRegion(from.getRegion(),
                DescribeImagesOptions.Builder.imageIds(from.getImageId())));
 
-      if(credentials == null) credentials = authenticator.execute(image);
+      // canonical/alestic images use the ubuntu user to login
+      // TODO: add this as a property of image
+      if (credentials != null && image.getImageOwnerId().matches("063491364108|099720109477"))
+         credentials = new Credentials("ubuntu", credentials.key);
+
+      if(credentials == null) credentials = imageParser.apply(image).getDefaultCredentials();
 
       String locationId = from.getAvailabilityZone().toString();
       Map<String, String> extra = ImmutableMap.<String, String> of();

@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -32,6 +33,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -53,6 +56,9 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
             .<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10").put("jaunty",
                      "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
             .build();
+
+   @Inject
+   private PopulateDefaultLoginCredentialsForImageStrategy authenticator;
 
    @Override
    public Image apply(org.jclouds.aws.ec2.domain.Image from) {
@@ -83,6 +89,8 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
             logger.debug("<< didn't match os(%s)", matcher.group(1));
          }
       }
+      Credentials defaultCredentials = authenticator.execute(from);
+
       return new ImageImpl(
                from.getId(),
                name,
@@ -94,7 +102,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
                os,
                osDescription,
                from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
-                        : Architecture.X86_64);
+                        : Architecture.X86_64,
+               defaultCredentials);
    }
-
 }

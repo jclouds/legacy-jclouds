@@ -34,6 +34,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -113,7 +114,7 @@ public class EC2ComputeServiceTest {
       Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null, true);
       Image image = new ImageImpl("ami-image", "image", "us-east-1", null, Maps
                .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
-               Architecture.X86_64);
+               Architecture.X86_64, new Credentials("root", null));
 
       return new TemplateBuilderImpl(ImmutableMap.of("us-east-1", location), ImmutableMap.of(
                "ami-image", image), Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM,

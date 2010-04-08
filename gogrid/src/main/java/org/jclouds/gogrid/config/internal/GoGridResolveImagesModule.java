@@ -20,10 +20,10 @@ package org.jclouds.gogrid.config.internal;
 
 import com.google.inject.AbstractModule;
 import org.jclouds.compute.config.ResolvesImages;
-import org.jclouds.compute.strategy.AuthenticateImagesStrategy;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.domain.ServerImage;
 
 import javax.inject.Inject;
 
@@ -34,27 +34,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Oleksiy Yarmula
  */
 @ResolvesImages
-public class GoGridAuthenticationModule extends AbstractModule {
+public class GoGridResolveImagesModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(AuthenticateImagesStrategy.class).to(GoGridAuthenticateImagesStrategy.class);
+        bind(PopulateDefaultLoginCredentialsForImageStrategy.class).
+                to(GoGridPopulateDefaultLoginCredentialsForImageStrategy.class);
     }
 
-    public static class GoGridAuthenticateImagesStrategy implements AuthenticateImagesStrategy {
+    public static class GoGridPopulateDefaultLoginCredentialsForImageStrategy
+            implements PopulateDefaultLoginCredentialsForImageStrategy {
         private final GoGridClient client;
 
         @Inject
-        protected GoGridAuthenticateImagesStrategy(GoGridClient client) {
+        protected GoGridPopulateDefaultLoginCredentialsForImageStrategy(GoGridClient client) {
             this.client = client;
         }
 
         @Override
         public Credentials execute(Object resourceToAuthenticate) {
-            checkNotNull(resourceToAuthenticate);
-            checkArgument(resourceToAuthenticate instanceof Server, "Resource must be a server (for GoGrid)");
-            Server server = (Server) resourceToAuthenticate;
-            return client.getServerServices().getServerCredentialsList().get(
-                    server.getName());
+            return new Credentials("root", null);
         }
     }
 

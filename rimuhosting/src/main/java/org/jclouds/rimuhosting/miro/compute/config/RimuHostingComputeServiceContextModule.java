@@ -416,7 +416,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
          }
 
          images.add(new ImageImpl(from.getId(), from.getDescription(), null, null, ImmutableMap
-                  .<String, String> of(), from.getDescription(), version, os, osDescription, arch));
+                  .<String, String> of(), from.getDescription(), version, os, osDescription, arch,
+                 new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return Maps.uniqueIndex(images, indexer);
