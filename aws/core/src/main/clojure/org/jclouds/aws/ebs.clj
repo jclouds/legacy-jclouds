@@ -5,7 +5,7 @@
  (:use (clojure.contrib def core))
   (:import org.jclouds.aws.domain.Region
     org.jclouds.aws.ec2.domain.AvailabilityZone
-    (org.jclouds.aws.ec2.options DescribeSnapshotsOptions DetachVolumeOptions)))
+    (org.jclouds.aws.ec2.options DescribeSnapshotsOptions DetachVolumeOptions CreateSnapshotOptions)))
 
 (defn #^org.jclouds.aws.ec2.services.ElasticBlockStoreClient
   ebs-services
@@ -97,6 +97,32 @@
     (string? v) (Integer/parseInt v)
     :else (throw (IllegalArgumentException.
                    (str "Don't know how to convert object of type " (class v) " to a string")))))
+
+(defn create-snapshot
+  "Creates a snapshot of a volume in the specified region with an optional description.
+   If provided, the description must be < 255 characters in length. Returns the
+   org.jclouds.aws.ec2.domain.Snapshot object representing the created snapshot.
+
+   e.g. (with-compute-service [compute]
+          (create-snapshot :us-east-1 \"vol-1dbe6785\")
+          (create-snapshot :us-east-1 \"vol-1dbe6785\" \"super-important data\"))"
+  [region volume-id & [description]]
+  (.createSnapshotInRegion (ebs-services)
+    (as-region region)
+    (as-string volume-id)
+    (into-array CreateSnapshotOptions (when description
+                                        [(.withDescription (CreateSnapshotOptions.) description)]))))
+
+(defn delete-snapshot
+  "Deletes a snapshot in the specified region.
+
+   e.g. (with-compute-service [compute]
+          (delete-snapshot :us-east-1 :snap-252310af)
+          (delete-snapshot :us-east-1 \"snap-242adf03\"))"
+  [region snapshot-id]
+  (.deleteSnapshotInRegion (ebs-services)
+    (as-region region)
+    (as-string snapshot-id)))
 
 (defn create-volume
   "Creates a new volume given a set of options.  :zone is required, one
