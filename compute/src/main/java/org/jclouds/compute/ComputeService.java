@@ -27,9 +27,12 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.ssh.ExecResponse;
 
 /**
  * Provides portable access to launching compute instances.
@@ -151,5 +154,27 @@ public interface ComputeService {
     * @param tag
     */
    Map<String, ? extends NodeMetadata> getNodesWithTag(String tag);
+
+    /**
+     * Runs the script without any additional options
+     * 
+     * @see #runScriptOnNodesWithTag(String, org.jclouds.domain.Credentials,
+     *                              byte[], org.jclouds.compute.options.RunScriptOptions)
+     */
+   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, Credentials credentials,
+                                                             byte[] runScript);
+
+   /**
+     * Run the script on all nodes with the specific tag.
+     *
+     * @param tag tag to look up the nodes
+     * @param credentials credentials to use (same for all nodes)
+     * @param runScript script to run in byte format. If the script is a string, use
+     *                  {@link String#getBytes()} to retrieve the bytes
+     * @param options nullable options to how to run the script
+     * @return map with node identifiers and corresponding responses
+     */
+   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, Credentials credentials,
+                                                             byte[] runScript, RunScriptOptions options);
 
 }

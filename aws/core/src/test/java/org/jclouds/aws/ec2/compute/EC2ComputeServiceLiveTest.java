@@ -22,11 +22,13 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.*;
+import org.jclouds.domain.Credentials;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+
 import java.util.Map;
 
 /**
@@ -62,11 +64,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Test
-   public void testCredentialsMapping() {
+   public void testScriptExecution() throws Exception {
        Template simpleTemplate = client.templateBuilder().smallest().build();
-//       client.runNodesWithTag("ec2", 1, simpleTemplate);
+       client.runNodesWithTag("ec2", 1, simpleTemplate);
        Map<String, ? extends NodeMetadata> map = client.getNodesWithTag("ec2");
-       int a = 5;
+       NodeMetadata node = map.values().iterator().next();
+       Credentials creds = new Credentials("ubuntu", keyPair.get("public"));
+       client.runScriptOnNodesWithTag("ec2", creds,
+                      "mkdir ~/ahha; sleep 3".getBytes());
+       client.destroyNodesWithTag("ec2");
    }
 
    @Override

@@ -32,6 +32,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
@@ -46,56 +48,61 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", enabled = true, sequential = true, testName = "gogrid.GoGridComputeServiceLiveTest")
 public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
-      service = "gogrid";
-   }
+    @BeforeClass
+    @Override
+    public void setServiceDefaults() {
+        service = "gogrid";
+    }
 
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
-      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
-      assertEquals(defaultTemplate.getLocation().getId(), "SANFRANCISCO");
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
-   }
+    @Test
+    public void testTemplateBuilder() {
+        Template defaultTemplate = client.templateBuilder().build();
+        assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+        assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
+        assertEquals(defaultTemplate.getLocation().getId(), "SANFRANCISCO");
+        assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+    }
 
-   @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
-   }
+    @Override
+    protected JschSshClientModule getSshModule() {
+        return new JschSshClientModule();
+    }
 
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<GoGridAsyncClient, GoGridClient> goGridContext = new ComputeServiceContextFactory()
-               .createContext(service, user, password).getProviderSpecificContext();
-   }
+    public void testAssignability() throws Exception {
+        @SuppressWarnings("unused")
+        RestContext<GoGridAsyncClient, GoGridClient> goGridContext = new ComputeServiceContextFactory()
+                .createContext(service, user, password).getProviderSpecificContext();
+    }
 
-   @Test(enabled = true)
-   public void endToEndComputeServiceTest() {
-      ComputeService service = context.getComputeService();
-      Template t = service.templateBuilder().minRam(1024).imageId("1532").build();
+    @Test(enabled = true)
+    public void endToEndComputeServiceTest() {
+        ComputeService service = context.getComputeService();
+        Template t = service.templateBuilder().minRam(1024).imageId("1532").build();
 
-      assertEquals(t.getImage().getId(), "1532");
-      service.runNodesWithTag(this.service, 1, t);
+        assertEquals(t.getImage().getId(), "1532");
+        service.runNodesWithTag(this.service, 3, t);
 
-      Map<String, ? extends ComputeMetadata> nodes = service.getNodes();
+        Map<String, ? extends ComputeMetadata> nodes = service.getNodes();
 
-      ComputeMetadata node = Iterables.find(nodes.values(), new Predicate<ComputeMetadata>() {
-         @Override
-         public boolean apply(ComputeMetadata computeMetadata) {
-            return computeMetadata.getName().startsWith(GoGridComputeServiceLiveTest.this.service);
-         }
-      });
+        ComputeMetadata node = Iterables.find(nodes.values(), new Predicate<ComputeMetadata>() {
+            @Override
+            public boolean apply(ComputeMetadata computeMetadata) {
+                return computeMetadata.getName().startsWith(GoGridComputeServiceLiveTest.this.service);
+            }
+        });
 
-      NodeMetadata nodeMetadata = service.getNodeMetadata(node);
-      assertEquals(nodeMetadata.getPublicAddresses().size(), 1,
-               "There must be 1 public address for the node");
-      assertTrue(nodeMetadata.getName().startsWith(this.service));
-      service.rebootNode(nodeMetadata); // blocks until finished
+        NodeMetadata nodeMetadata = service.getNodeMetadata(node);
+        assertEquals(nodeMetadata.getPublicAddresses().size(), 1,
+                "There must be 1 public address for the node");
+        assertTrue(nodeMetadata.getName().startsWith(this.service));
+        service.rebootNode(nodeMetadata); // blocks until finished
 
-      assertEquals(service.getNodeMetadata(nodeMetadata).getState(), NodeState.RUNNING);
-      service.destroyNode(nodeMetadata);
-   }
+        assertEquals(service.getNodeMetadata(nodeMetadata).getState(), NodeState.RUNNING);
+
+        client.runScriptOnNodesWithTag("gogrid", null/*no credentials*/,
+                "mkdir ~/ahha; sleep 3".getBytes(),
+                new RunScriptOptions.Builder().overrideCredentials(false).build());
+
+        service.destroyNodesWithTag("gogrid");
+    }
 }
