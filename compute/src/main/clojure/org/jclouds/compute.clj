@@ -174,13 +174,13 @@ See http://code.google.com/p/jclouds for details."
 
 "
   ([tag]
-     (run-nodes tag 1 (default-template *compute*) *compute*))
+     (first (run-nodes tag 1 (default-template *compute*) *compute*)))
   ([tag compute-or-template]
      (if (compute-service? compute-or-template)
-       (run-nodes tag 1 (default-template compute-or-template) compute-or-template)
-       (run-nodes tag 1 compute-or-template *compute*)))
+       (first (run-nodes tag 1 (default-template compute-or-template) compute-or-template))
+       (first (run-nodes tag 1 compute-or-template *compute*))))
   ([tag template compute]
-     (run-nodes tag 1 template compute)))
+     (first (run-nodes tag 1 template compute))))
 
 (defn #^NodeMetadata node-details
   "Retrieve the node metadata."
@@ -265,6 +265,11 @@ See http://code.google.com/p/jclouds for details."
   "Returns the compute node's name"
   [#^ComputeMetadata node]
   (.getName node))
+
+(defn location
+  "Returns the compute node's location id"
+  [#^ComputeMetadata node]
+  (.getLocationId node))
 
 (define-accessors Template image size location options)
 (define-accessors Image version os-family os-description architecture)
