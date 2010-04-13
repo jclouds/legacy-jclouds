@@ -63,7 +63,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Provides;
 
 /**
  * Configures the {@link TerremarkVCloudComputeServiceContext}; requires
@@ -80,7 +79,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    }
 
    @Override
-   @Provides
    protected TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
             Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
             Location defaultLocation) {

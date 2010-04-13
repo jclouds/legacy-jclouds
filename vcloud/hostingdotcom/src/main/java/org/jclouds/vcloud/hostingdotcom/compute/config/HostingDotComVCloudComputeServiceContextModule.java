@@ -31,8 +31,6 @@ import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
 
-import com.google.inject.Provides;
-
 /**
  * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
  * {@link HostingDotComVCloudComputeClient} bound.
@@ -49,7 +47,6 @@ public class HostingDotComVCloudComputeServiceContextModule extends
    }
 
    @Override
-   @Provides
    protected TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
             Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
             Location defaultLocation) {
