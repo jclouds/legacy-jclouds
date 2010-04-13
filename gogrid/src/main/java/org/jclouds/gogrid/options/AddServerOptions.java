@@ -23,32 +23,53 @@
  */
 package org.jclouds.gogrid.options;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.DESCRIPTION_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IS_SANDBOX_KEY;
+
+import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
  * @author Oleksiy Yarmula
  */
 public class AddServerOptions extends BaseHttpRequestOptions {
 
-    public AddServerOptions setDescription(String description) {
-        checkState(!queryParameters.containsKey(DESCRIPTION_KEY), "Can't have duplicate server description");
-        queryParameters.put(DESCRIPTION_KEY, description);
-        return this;
-    }
+   public AddServerOptions withDescription(String description) {
+      checkArgument(description.length() <= 500, "Description cannot be longer than 500 characters");
+      checkState(!queryParameters.containsKey(DESCRIPTION_KEY),
+               "Can't have duplicate server description");
+      queryParameters.put(DESCRIPTION_KEY, description);
+      return this;
+   }
 
-    /**
-     * Make server a sandbox instance.
-     * By default, it's not.
-     *
-     * @return itself for convenience
-     */
-    public AddServerOptions makeSandboxType() {
-        checkState(!queryParameters.containsKey(IS_SANDBOX_KEY), "Can only have one sandbox option per server");
-        queryParameters.put(IS_SANDBOX_KEY, "true");
-        return this;
-    }
+   /**
+    * Make server a sandbox instance. By default, it's not.
+    * 
+    * @return itself for convenience
+    */
+   public AddServerOptions asSandboxType() {
+      checkState(!queryParameters.containsKey(IS_SANDBOX_KEY),
+               "Can only have one sandbox option per server");
+      queryParameters.put(IS_SANDBOX_KEY, "true");
+      return this;
+   }
 
+   public static class Builder {
+      /**
+       * @see AddServerOptions#withDescription(String)
+       */
+      public static AddServerOptions withDescription(String description) {
+         AddServerOptions options = new AddServerOptions();
+         return options.withDescription(description);
+      }
+
+      /**
+       * @see AddServerOptions#asSandboxType()
+       */
+      public static AddServerOptions asSandboxType() {
+         AddServerOptions options = new AddServerOptions();
+         return options.asSandboxType();
+      }
+   }
 }
