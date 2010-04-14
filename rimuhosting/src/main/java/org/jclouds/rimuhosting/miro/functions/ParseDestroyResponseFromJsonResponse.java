@@ -50,16 +50,19 @@ public class ParseDestroyResponseFromJsonResponse extends ParseJson<List<String>
          return cancel_messages;
       }
 
+      @SuppressWarnings("unused")
       public void setCancelMessages(List<String> cancel_messages) {
          this.cancel_messages = cancel_messages;
       }
    }
+
    @Override
    protected List<String> apply(InputStream stream) {
       Type setType = new TypeToken<Map<String, DestroyResponse>>() {
       }.getType();
       try {
-         Map<String, DestroyResponse> responseMap = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         Map<String, DestroyResponse> responseMap = gson.fromJson(new InputStreamReader(stream,
+                  "UTF-8"), setType);
          return responseMap.values().iterator().next().getCancelMessages();
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

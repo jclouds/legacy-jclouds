@@ -125,7 +125,6 @@ public class ParserModule extends AbstractModule {
       SAXParserFactory factory = SAXParserFactory.newInstance();
       factory.setNamespaceAware(false);
       factory.setValidating(false);
-      factory.setXIncludeAware(false);
       return factory;
    }
 

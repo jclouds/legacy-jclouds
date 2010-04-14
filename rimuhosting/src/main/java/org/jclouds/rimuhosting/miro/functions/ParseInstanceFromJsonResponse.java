@@ -18,24 +18,25 @@
  */
 package org.jclouds.rimuhosting.miro.functions;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rimuhosting.miro.domain.Server;
-import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * @author Ivan Meredith
  */
-
 @Singleton
 public class ParseInstanceFromJsonResponse extends ParseJson<Server> {
    @Inject
@@ -45,20 +46,24 @@ public class ParseInstanceFromJsonResponse extends ParseJson<Server> {
 
    private static class OrderResponse extends RimuHostingResponse {
       private Server about_order;
+
       public Server getAboutOrder() {
          return about_order;
       }
 
+      @SuppressWarnings("unused")
       public void setAboutOrder(Server about_orders) {
          this.about_order = about_orders;
       }
    }
+
    @Override
    protected Server apply(InputStream stream) {
       Type setType = new TypeToken<Map<String, OrderResponse>>() {
       }.getType();
       try {
-         Map<String, OrderResponse> responseMap = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         Map<String, OrderResponse> responseMap = gson.fromJson(new InputStreamReader(stream,
+                  "UTF-8"), setType);
          return responseMap.values().iterator().next().getAboutOrder();
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

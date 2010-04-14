@@ -119,7 +119,8 @@ public class EC2ComputeServiceTest {
       return new TemplateBuilderImpl(ImmutableMap.of("us-east-1", location), ImmutableMap.of(
                "ami-image", image), Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM,
                EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE,
-               EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE), indexer()), location);
+               EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE), indexer()), location) {
+      };
    }
 
    Function<ComputeMetadata, String> indexer() {

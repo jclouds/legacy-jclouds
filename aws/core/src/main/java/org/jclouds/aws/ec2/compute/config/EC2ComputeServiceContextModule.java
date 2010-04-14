@@ -107,11 +107,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    }
 
    @Provides
-   TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
-            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
-            Location defaultLocation) {
-      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).architecture(
-               Architecture.X86_32).osFamily(UBUNTU);
+   TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+      return template.architecture(Architecture.X86_32).osFamily(UBUNTU);
    }
 
    @Singleton

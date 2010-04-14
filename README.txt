@@ -4,7 +4,7 @@ jclouds is an open source framework that helps you get started in the cloud
 and reuse your java development skills. Our api allows you to freedom to use
 portable abstractions or cloud-specific features.
  
-our current version is 1.0-beta-3
+our current version is 1.0-beta-4
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, rackspace, rimuhosting, vcloud, terremark, 
@@ -45,11 +45,13 @@ Compute Example:
   nodes = client.runNodesWithTag("mycluster", 2, template);
  
 Downloads:
-  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-3-package.zip
+  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-4.zip
   * maven repo: http://jclouds.googlecode.com/svn/repo 
   * snapshot repo: http://jclouds.rimuhosting.com/maven2/snapshots
  
 Links:
   * project page: http://code.google.com/p/jclouds/
+  * javadocs: http://jclouds.rimuhosting.com/apidocs/
+  * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
   * twitter: http://twitter.com/jclouds

@@ -114,10 +114,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    }
 
    @Provides
-   protected TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
-            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
-            Location defaultLocation) {
-      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(UBUNTU);
+   protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+      return template.osFamily(UBUNTU);
    }
 
    @Override

@@ -18,16 +18,15 @@
  */
 package org.jclouds.compute;
 
-import java.util.List;
 import java.util.Properties;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
 import org.jclouds.compute.config.ResolvesImages;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.rest.RestContextBuilder;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -48,18 +47,18 @@ public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuil
 
    }
 
-    @Override
-    public Injector buildInjector() {
-        addImageResolutionModuleIfNotPresent();
-        return super.buildInjector();
-    }
+   @Override
+   public Injector buildInjector() {
+      addImageResolutionModuleIfNotPresent();
+      return super.buildInjector();
+   }
 
-    /**
+   /**
     * {@inheritDoc}
     */
    @Override
    public ComputeServiceContextBuilder<A, S> withModules(Module... modules) {
-       return (ComputeServiceContextBuilder<A, S>) super.withModules(modules);
+      return (ComputeServiceContextBuilder<A, S>) super.withModules(modules);
    }
 
    public ComputeServiceContext buildComputeServiceContext() {
@@ -70,7 +69,7 @@ public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuil
    }
 
    protected void addImageResolutionModuleIfNotPresent() {
-       if (!Iterables.any(modules, new Predicate<Module>() {
+      if (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ResolvesImages.class);
          }
@@ -80,9 +79,8 @@ public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuil
       }
    }
 
-   @SuppressWarnings({"UnusedDeclaration"})
    protected void addImageResolutionModule() {
-       // do nothing;
-       // this is to be overridden when needed
+      // do nothing;
+      // this is to be overridden when needed
    }
 }
