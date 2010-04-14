@@ -42,7 +42,6 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -79,10 +78,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    }
 
    @Override
-   protected TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
-            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
-            Location defaultLocation) {
-      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(JEOS);
+   protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+      return template.osFamily(JEOS);
    }
 
    private static final ComputeOptionsToSize sizeConverter = new ComputeOptionsToSize();

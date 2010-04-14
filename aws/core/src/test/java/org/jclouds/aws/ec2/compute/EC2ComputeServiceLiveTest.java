@@ -65,14 +65,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test
    public void testScriptExecution() throws Exception {
-       Template simpleTemplate = client.templateBuilder().smallest().build();
-       client.runNodesWithTag("ec2", 1, simpleTemplate);
-       Map<String, ? extends NodeMetadata> map = client.getNodesWithTag("ec2");
-       NodeMetadata node = map.values().iterator().next();
-       Credentials creds = new Credentials("ubuntu", keyPair.get("public"));
-       client.runScriptOnNodesWithTag("ec2", creds,
-                      "mkdir ~/ahha; sleep 3".getBytes());
-       client.destroyNodesWithTag("ec2");
+      Template simpleTemplate = client.templateBuilder().smallest().build();
+      client.runNodesWithTag("ec2", 1, simpleTemplate);
+      Map<String, ? extends NodeMetadata> map = client.getNodesWithTag("ec2");
+      map.values().iterator().next();
+      Credentials creds = new Credentials("ubuntu", keyPair.get("public"));
+      client.runScriptOnNodesWithTag("ec2", creds, "mkdir ~/ahha; sleep 3".getBytes());
+      client.destroyNodesWithTag("ec2");
    }
 
    @Override

@@ -97,7 +97,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private TemplateOptions options = TemplateOptions.NONE;
 
    @Inject
-   public TemplateBuilderImpl(Map<String, ? extends Location> locations,
+   protected TemplateBuilderImpl(Map<String, ? extends Location> locations,
             Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
             Location defaultLocation) {
       this.locations = locations;

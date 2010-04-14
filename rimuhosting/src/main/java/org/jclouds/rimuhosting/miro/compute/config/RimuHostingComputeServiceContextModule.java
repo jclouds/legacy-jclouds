@@ -112,11 +112,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    }
 
    @Provides
-   TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
-            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
-            Location defaultLocation) {
-      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).sizeId("MIRO1B")
-               .osFamily(UBUNTU);
+   TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+      return template.sizeId("MIRO1B").osFamily(UBUNTU);
    }
 
    @Provides
@@ -417,7 +414,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
          images.add(new ImageImpl(from.getId(), from.getDescription(), null, null, ImmutableMap
                   .<String, String> of(), from.getDescription(), version, os, osDescription, arch,
-                 new Credentials("root", null)));
+                  new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return Maps.uniqueIndex(images, indexer);

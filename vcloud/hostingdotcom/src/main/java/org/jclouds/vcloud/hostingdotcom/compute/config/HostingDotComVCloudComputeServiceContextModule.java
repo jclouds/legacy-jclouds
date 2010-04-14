@@ -20,13 +20,8 @@ package org.jclouds.vcloud.hostingdotcom.compute.config;
 
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
-import java.util.Map;
-
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
-import org.jclouds.domain.Location;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
@@ -47,10 +42,8 @@ public class HostingDotComVCloudComputeServiceContextModule extends
    }
 
    @Override
-   protected TemplateBuilder provideTemplate(Map<String, ? extends Location> locations,
-            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
-            Location defaultLocation) {
-      return new TemplateBuilderImpl(locations, images, sizes, defaultLocation).osFamily(CENTOS);
+   protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+      return template.osFamily(CENTOS);
    }
 
 }
