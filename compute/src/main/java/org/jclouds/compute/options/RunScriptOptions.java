@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.options;
 
+import org.jclouds.domain.Credentials;
+
 /**
  * Enables additional options for running a script.
  *
@@ -30,16 +32,16 @@ public class RunScriptOptions {
      * <ul>
      * <li>override the credentials with ones supplied in
      *          call to {@link org.jclouds.compute.ComputeService#runScriptOnNodesWithTag}</li>
-     * <li>do not run the script as root (run with current privileges)</li>
+     * <li>run the script as root (versus running with current privileges)</li>
      * </ul>
      */
     public static final RunScriptOptions NONE = new RunScriptOptions();
 
-    private boolean overrideCredentials = true;
-    private boolean runAsRoot = false;
+    private Credentials overridingCredentials;
+    private boolean runAsRoot = true;
 
-    private void overrideCredentials(boolean overrideCredentials) {
-        this.overrideCredentials = overrideCredentials;
+    private void withOverridingCredentials(Credentials overridingCredentials) {
+        this.overridingCredentials = overridingCredentials;
     }
 
     private void runAsRoot(boolean runAsRoot) {
@@ -52,13 +54,13 @@ public class RunScriptOptions {
      * By default, true.
      * @return value
      */
-    public boolean isOverrideCredentials() {
-        return overrideCredentials;
+    public Credentials getOverrideCredentials() {
+        return overridingCredentials;
     }
 
     /**
-     * Whether to run the script as root (run with current privileges).
-     * By default, false.
+     * Whether to run the script as root (or run with current privileges).
+     * By default, true.
      * @return value
      */
     public boolean isRunAsRoot() {
@@ -68,9 +70,9 @@ public class RunScriptOptions {
     public static class Builder {
         private RunScriptOptions options;
 
-        public Builder overrideCredentials(boolean value) {
+        public Builder overrideCredentials(Credentials credentials) {
             if(options == null) options = new RunScriptOptions();
-            options.overrideCredentials(value);
+            options.withOverridingCredentials(credentials);
             return this;
         }
 

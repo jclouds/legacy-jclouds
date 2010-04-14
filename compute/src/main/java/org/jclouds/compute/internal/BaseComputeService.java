@@ -323,26 +323,24 @@ public class BaseComputeService implements ComputeService {
     }
 
     /**
-     * @see #runScriptOnNodesWithTag(String, org.jclouds.domain.Credentials, byte[],
+     * @see #runScriptOnNodesWithTag(String, byte[],
      *                                  org.jclouds.compute.options.RunScriptOptions)
      */
-    public Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, Credentials credentials,
+    public Map<String, ExecResponse> runScriptOnNodesWithTag(String tag,
                                                              byte[] runScript) {
-        return runScriptOnNodesWithTag(tag, credentials, runScript, RunScriptOptions.NONE);
+        return runScriptOnNodesWithTag(tag, runScript, RunScriptOptions.NONE);
     }
 
     /**
      * Run the script on all nodes with the specific tag.
      *
      * @param tag tag to look up the nodes
-     * @param credentials nullable credentials to use (same for all nodes).
      * @param runScript script to run in byte format. If the script is a string, use
      *                  {@link String#getBytes()} to retrieve the bytes
-     * @param options nullable options to how to run the script
+     * @param options nullable options to how to run the script, whether to override credentials
      * @return map with node identifiers and corresponding responses
      */
-    public Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, @Nullable Credentials credentials,
-                                                             byte[] runScript, @Nullable RunScriptOptions options) {
+    public Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, byte[] runScript, @Nullable RunScriptOptions options) {
         checkNotEmpty(tag, "Tag must be provided");
         checkNotNull(runScript,
                 "The script (represented by bytes array - use \"script\".getBytes() must be provided");
@@ -354,18 +352,19 @@ public class BaseComputeService implements ComputeService {
         for(NodeMetadata node : nodes.values()) {
             if(NodeState.RUNNING != node.getState()) continue; //make sure the node is active
 
-            if(options.isOverrideCredentials()) {
+            if(options.getOverrideCredentials() != null) {
                 //override the credentials with provided to this method
-                checkNotNull(credentials, "If the credentials need to be overridden, they can't be null");
-                node = ComputeUtils.installNewCredentials(node, credentials);
+                node = ComputeUtils.installNewCredentials(node, options.getOverrideCredentials());
             } else {
                 //don't override
                 checkNotNull(node.getCredentials(), "If the default credentials need to be used, they can't be null");
             }
 
-            //todo: execute script as root if required
-
-            ComputeUtils.SshCallable<?> callable = utils.runScriptOnNode(node, "computeserv.sh", runScript);
+            ComputeUtils.SshCallable<?> callable;
+            if(options.isRunAsRoot())
+                callable = utils.runScriptOnNode(node, "computeserv.sh", runScript);
+            else
+                callable = utils.runScriptOnNodeAsDefaultUser(node, "computeserv.sh", runScript);
 
             Map<ComputeUtils.SshCallable<?>, ?> scriptRunResults = utils.runCallablesOnNode(node,
                     Sets.newHashSet(callable),

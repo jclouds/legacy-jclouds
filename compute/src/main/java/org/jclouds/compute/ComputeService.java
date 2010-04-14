@@ -158,23 +158,22 @@ public interface ComputeService {
     /**
      * Runs the script without any additional options
      * 
-     * @see #runScriptOnNodesWithTag(String, org.jclouds.domain.Credentials,
+     * @see #runScriptOnNodesWithTag(String,
      *                              byte[], org.jclouds.compute.options.RunScriptOptions)
      */
-   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, Credentials credentials,
+   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag,
                                                              byte[] runScript);
 
    /**
      * Run the script on all nodes with the specific tag.
      *
      * @param tag tag to look up the nodes
-     * @param credentials credentials to use (same for all nodes)
      * @param runScript script to run in byte format. If the script is a string, use
      *                  {@link String#getBytes()} to retrieve the bytes
      * @param options nullable options to how to run the script
      * @return map with node identifiers and corresponding responses
      */
-   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag, Credentials credentials,
+   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag,
                                                              byte[] runScript, RunScriptOptions options);
 
 }
