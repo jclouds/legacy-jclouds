@@ -52,7 +52,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudServersClient {
 
    /**
