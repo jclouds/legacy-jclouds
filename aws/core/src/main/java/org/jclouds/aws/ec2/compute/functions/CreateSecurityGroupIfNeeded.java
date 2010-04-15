@@ -10,10 +10,12 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.domain.IpProtocol;
+import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 @Singleton
 public class CreateSecurityGroupIfNeeded implements Function<PortsRegionTag, String> {
@@ -45,6 +47,13 @@ public class CreateSecurityGroupIfNeeded implements Function<PortsRegionTag, Str
                      name, IpProtocol.TCP, port, port, "0.0.0.0/0");
             logger.debug("<< authorized securityGroup(%s)", name);
          }
+         logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself", region, name);
+         String myOwnerId = Iterables.get(ec2Client.getSecurityGroupServices()
+             .describeSecurityGroupsInRegion(region),0).getOwnerId();
+         ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name, 
+             new UserIdGroupPair(myOwnerId, name));
+         logger.debug("<< authorized securityGroup(%s)", name);
+
       } catch (AWSResponseException e) {
          if (e.getError().getCode().equals("InvalidGroup.Duplicate")) {
             logger.debug("<< reused securityGroup(%s)", name);
