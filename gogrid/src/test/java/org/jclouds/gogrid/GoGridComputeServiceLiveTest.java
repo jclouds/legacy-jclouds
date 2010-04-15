@@ -99,9 +99,9 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
         assertEquals(service.getNodeMetadata(nodeMetadata).getState(), NodeState.RUNNING);
 
-        client.runScriptOnNodesWithTag("gogrid", null/*no credentials*/,
+        client.runScriptOnNodesWithTag("gogrid", 
                 "mkdir ~/ahha; sleep 3".getBytes(),
-                new RunScriptOptions.Builder().overrideCredentials(false).build());
+                new RunScriptOptions.Builder().overrideCredentials(new Credentials("root", null)).build());
 
         service.destroyNodesWithTag("gogrid");
     }
