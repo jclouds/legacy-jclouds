@@ -70,7 +70,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       Map<String, ? extends NodeMetadata> map = client.getNodesWithTag("ec2");
       map.values().iterator().next();
       Credentials creds = new Credentials("ubuntu", keyPair.get("public"));
-      client.runScriptOnNodesWithTag("ec2", creds, "mkdir ~/ahha; sleep 3".getBytes());
+      client.runScriptOnNodesWithTag("ec2", "mkdir ~/ahha; sleep 3".getBytes());
       client.destroyNodesWithTag("ec2");
    }
 
