@@ -60,6 +60,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -173,6 +174,8 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
                   logger.debug("<< options applied node(%s)", node.getId());
                   nodes.add(computeService.getNodeMetadata(node));
                } catch (Exception e) {
+                  logger.error(e, "<< problem applying options to node(%s): ", node.getId(),
+                           Throwables.getRootCause(e).getMessage());
                   if (!template.getOptions().shouldDestroyOnError())
                      nodes.add(computeService.getNodeMetadata(node));
                }
