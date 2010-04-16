@@ -216,19 +216,24 @@
 
    - one of :zone (keyword, string, or AvailabilityZone) or :node (NodeMetadata)
    - one or both of :snapshot (keyword or string) or :size (string, keyword, or number)
-   - only if also attaching the new volume: :attach (logical boolean) and :device (string or keyword)
+   - :device (string or keyword) provided *only* when you want to attach the new volume to
+     the :node you specified!
 
    Returns a vector of [created org.jclouds.aws.ec2.domain.Volume,
                         optional org.jclouds.aws.ec2.domain.Attachment]
 
    Note that specifying :node instead of :zone will only attach the created volume
-   if :attach is logically true, and :device is provided.  Otherwise, the node is only
-   used to obtain the desired availability zone.
+   :device is also provided.  Otherwise, the node is only used to obtain the desired
+   availability zone.
+
+   Note also that if :device and :node are specified, and the attach operation fails,
+   you will have \"leaked\" the newly-created volume
+   (volume creation and attachment cannot be done atomically).
 
    e.g. (with-compute-service [compute]
           (create-volume :zone :us-east-1a :size 250)
           (create-volume :node node-instance :size 250)
-          (create-volume :node node-instance :size 250 :attach true :device \"/dev/sdj\")
+          (create-volume :node node-instance :size 250 :device \"/dev/sdj\")
           (create-volume :zone :eu-west-1b :snapshot \"snap-252310af\")
           (create-volume :zone :eu-west-1b :snapshot \"snap-252310af\" :size :1024))"
   [& options]
@@ -243,15 +248,15 @@
                (get-zone zone)
                (throw (IllegalArgumentException. "Must supply a :zone or :node option.")))
         ebs (ebs-services)]
-    (when (and (:attach options) (or (not node) (not (:device options))))
-      (throw (IllegalArgumentException. "Cannot create and attach new volume; no :node and/or :device specified")))
+    (when (and (:device options) (not node))
+      (throw (IllegalArgumentException. "Cannot create and attach new volume; no :node specified")))
     (let [new-volume (cond
                        (and snapshot size) (.createVolumeFromSnapshotInAvailabilityZone ebs zone size snapshot)
                        snapshot (.createVolumeFromSnapshotInAvailabilityZone ebs zone snapshot)
                        size (.createVolumeInAvailabilityZone ebs zone size)
                        :else (throw (IllegalArgumentException. "Must supply :size and/or :snapshot options.")))]
-      [new-volume (when (:attach options)
-                    (attach-volume node new-volume (:device options)))])))
+      [new-volume (when (:device options)
+                    (attach-volume node new-volume (as-string (:device options))))])))
 
 (defn delete-volume
   "Deletes a volume in the specified region.
