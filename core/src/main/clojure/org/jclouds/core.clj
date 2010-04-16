@@ -18,11 +18,14 @@
 
 (ns org.jclouds.core
   "Core functionality used across blobstore and compute."
-  (:use clojure.contrib.logging
-        [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
-        [clojure.contrib.java-utils :only [wall-hack-field]])
+  (:use clojure.contrib.logging)
   (:import java.io.File
            (com.google.common.collect ImmutableSet)))
+
+(try
+  (require '[clojure.contrib.string :as string])
+  (catch Exception e
+    (require '[clojure.contrib.str-utils2 :as string])))
 
 (def module-lookup
      {:log4j 'org.jclouds.logging.log4j.config.Log4JLoggingModule
@@ -59,14 +62,14 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
   (map #(.getValue %) set))
 
 (defn dashed [a]
-  (apply str (interpose "-" (map lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
+  (apply str (interpose "-" (map string/lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
 
 (defn camelize [a]
-  (map-str capitalize (.split a "-")))
+  (string/map-str string/capitalize (.split a "-")))
 
 (defn camelize-mixed [a]
   (let [c (.split a "-")]
-    (apply str (lower-case (first c)) (map capitalize (rest c)))))
+    (apply str (string/lower-case (first c)) (map string/capitalize (rest c)))))
 
 (defmacro option-fn-0arg [key]
   `(fn [builder#]

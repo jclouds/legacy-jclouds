@@ -36,8 +36,7 @@ Here's a quick example of how to view blob resources in rackspace
       (pprint (blobs blobstore your_container_name)))
 
 See http://code.google.com/p/jclouds for details."
-  (:use [org.jclouds.core]
-        [clojure.contrib.duck-streams :only [copy]])
+  (:use [org.jclouds.core])
   (:import [java.io File FileOutputStream OutputStream]
            [org.jclouds.blobstore
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
@@ -46,6 +45,11 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.encryption.internal JCEEncryptionService]
            [java.util Arrays]
            [com.google.common.collect ImmutableSet]))
+
+(try
+  (require '[clojure.contrib.io :as io])
+  (catch Exception e
+    (require '[clojure.contrib.duck-streams :as io])))
 
 (defn blobstore
   "Create a logged in context.
@@ -265,7 +269,7 @@ container, name, string -> etag"
   (let [blob (get-blob container-name name blobstore)
         digest-stream (.md5OutputStream ;; TODO: not all clouds use MD5
                        *encryption-service* target)]
-    (copy (.getContent blob) digest-stream)
+    (io/copy (.getContent blob) digest-stream)
     (let [digest (.getMD5 digest-stream)
           metadata-digest (.getContentMD5 (.getMetadata blob))]
       (when-not (Arrays/equals digest metadata-digest)

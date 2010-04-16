@@ -51,10 +51,7 @@ Here's an example of creating and running a small linux node with the tag webser
 
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
-        clojure.contrib.duck-streams
-        clojure.contrib.logging
-        [clojure.contrib.str-utils2 :only [capitalize lower-case map-str]]
-        [clojure.contrib.java-utils :only [wall-hack-field]])
+        clojure.contrib.logging)
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
@@ -65,6 +62,13 @@ See http://code.google.com/p/jclouds for details."
             Image Architecture]
            org.jclouds.compute.options.TemplateOptions
            [com.google.common.collect ImmutableSet]))
+
+(try
+ (use '[clojure.contrib.reflect :only [get-field]])
+ (catch Exception e
+   (use '[clojure.contrib.java-utils
+          :only [wall-hack-field]
+          :rename {wall-hack-field get-field}])))
 
 (defn compute-service
   "Create a logged in context."
@@ -295,7 +299,7 @@ See http://code.google.com/p/jclouds for details."
 (define-accessors NodeMetadata "node" credentials extra state tag)
 
 (defn builder-options [builder]
-  (or (wall-hack-field org.jclouds.compute.internal.TemplateBuilderImpl :options builder)
+  (or (get-field org.jclouds.compute.internal.TemplateBuilderImpl :options builder)
       (TemplateOptions.)))
 
 (defmacro option-option-fn-0arg [key]
