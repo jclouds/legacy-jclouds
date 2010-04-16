@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -51,6 +52,7 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
@@ -103,6 +105,7 @@ public abstract class BaseComputeServiceLiveTest {
       } catch (NullPointerException e) {
          secretKeyFile = System.getProperty("user.home") + "/.ssh/id_rsa";
       }
+      checkSecretKeyFile(secretKeyFile);
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
 
@@ -118,6 +121,14 @@ public abstract class BaseComputeServiceLiveTest {
       // keyPair = sshFactory.generateRSAKeyPair("", "");
       keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
                new File(secretKeyFile + ".pub"), Charsets.UTF_8));
+   }
+
+   private void checkSecretKeyFile(String secretKeyFile) throws FileNotFoundException {
+      Utils.checkNotEmpty(secretKeyFile,
+               "System property: [jclouds.test.ssh.keyfile] set to an empty string");
+      if (!new File(secretKeyFile).exists()) {
+         throw new FileNotFoundException("secretKeyFile not found at: " + secretKeyFile);
+      }
    }
 
    abstract protected Module getSshModule();
