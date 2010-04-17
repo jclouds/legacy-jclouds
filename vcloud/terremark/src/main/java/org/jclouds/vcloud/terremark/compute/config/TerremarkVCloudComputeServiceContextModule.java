@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.terremark.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.JEOS;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -79,7 +77,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    @Override
    protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
-      return template.osFamily(JEOS);
+      return template.imageNameMatches(".*JeOS.*");
    }
 
    private static final ComputeOptionsToSize sizeConverter = new ComputeOptionsToSize();
