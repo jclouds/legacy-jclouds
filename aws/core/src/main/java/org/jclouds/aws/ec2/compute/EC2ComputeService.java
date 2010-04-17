@@ -30,9 +30,9 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromNodeOrDefault;
-import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
 import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
@@ -59,7 +59,7 @@ import com.google.common.collect.Iterables;
 public class EC2ComputeService extends BaseComputeService {
    protected final EC2Client ec2Client;
    protected final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
-   protected final Map<RegionTag, KeyPairCredentials> credentialsMap;
+   protected final Map<RegionTag, KeyPair> credentialsMap;
    protected final Map<PortsRegionTag, String> securityGroupMap;
    protected final Predicate<RunningInstance> instanceStateTerminated;
 
@@ -74,8 +74,7 @@ public class EC2ComputeService extends BaseComputeService {
             Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
             GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
-            Map<RegionTag, KeyPairCredentials> credentialsMap,
-            Map<PortsRegionTag, String> securityGroupMap,
+            Map<RegionTag, KeyPair> credentialsMap, Map<PortsRegionTag, String> securityGroupMap,
             @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
@@ -98,11 +97,14 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    private void deleteKeyPair(Region region, String tag) {
-      if (ec2Client.getKeyPairServices().describeKeyPairsInRegion(region, tag).size() > 0) {
-         logger.debug(">> deleting keyPair(%s)", tag);
-         ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, tag);
-         credentialsMap.remove(new RegionTag(region, tag)); // TODO: test this clear happens
-         logger.debug("<< deleted keyPair(%s)", tag);
+      for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
+         if (keyPair.getKeyName().matches(tag + "-[0-9]+")) {
+            logger.debug(">> deleting keyPair(%s)", tag);
+            ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
+            credentialsMap.remove(new RegionTag(region, keyPair.getKeyName())); // TODO: test this
+                                                                                // clear happens
+            logger.debug("<< deleted keyPair(%s)", keyPair.getKeyName());
+         }
       }
    }
 

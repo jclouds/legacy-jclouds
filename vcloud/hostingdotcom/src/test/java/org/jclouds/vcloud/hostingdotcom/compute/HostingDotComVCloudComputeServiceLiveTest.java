@@ -53,8 +53,8 @@ public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServ
    // Takes too long
    @Override
    @Test(enabled = false)
-   public void testCreate() throws Exception {
-      super.testCreate();
+   public void testCreateTwoNodesWithRunScript() throws Exception {
+      super.testCreateTwoNodesWithRunScript();
    }
 
    @Override

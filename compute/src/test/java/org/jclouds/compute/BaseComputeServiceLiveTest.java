@@ -44,6 +44,8 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -60,6 +62,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -109,18 +112,24 @@ public abstract class BaseComputeServiceLiveTest {
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
 
-      context = new ComputeServiceContextFactory().createContext(service, user, password,
-               ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
+      initializeContextAndClient();
 
       Injector injector = Guice.createInjector(getSshModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
-      client = context.getComputeService();
       // keyPair = sshFactory.generateRSAKeyPair("", "");
       keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
                new File(secretKeyFile + ".pub"), Charsets.UTF_8));
+   }
+
+   private void initializeContextAndClient() throws IOException {
+      if (context != null)
+         context.close();
+      context = new ComputeServiceContextFactory().createContext(service, user, password,
+               ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
+      client = context.getComputeService();
    }
 
    private void checkSecretKeyFile(String secretKeyFile) throws FileNotFoundException {
@@ -140,7 +149,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    @Test(dependsOnMethods = "testTemplateMatch")
-   public void testCreate() throws Exception {
+   public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesWithTag(tag);
       } catch (HttpResponseException e) {
@@ -155,20 +164,56 @@ public abstract class BaseComputeServiceLiveTest {
                buildScript(template.getImage().getOsFamily()).getBytes());
       nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template).values());
       assertEquals(nodes.size(), 2);
-      checkNodes();
+      checkNodes(nodes, tag);
       NodeMetadata node1 = nodes.first();
       NodeMetadata node2 = nodes.last();
       // credentials aren't always the same
       // assertEquals(node1.getCredentials(), node2.getCredentials());
       assert !node1.getId().equals(node2.getId());
 
-      // run one more
-      nodes.addAll(client.runNodesWithTag(tag, 1, template).values());
-      assertEquals(nodes.size(), 3);
-      checkNodes();
    }
 
-   private void checkNodes() throws IOException {
+   @Test(dependsOnMethods = "testCreateTwoNodesWithRunScript")
+   public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
+      initializeContextAndClient();
+
+      checkNodes(client.runNodesWithTag(tag, 1, template).values(), tag);
+   }
+
+   @Test
+   public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
+      String tag = this.tag + "script";
+      Template simpleTemplate = buildTemplate(client.templateBuilder());
+      simpleTemplate.getOptions().blockOnPort(22, 60);
+      try {
+         Map<String, ? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, simpleTemplate);
+         Credentials good = nodes.values().iterator().next().getCredentials();
+         assert good.account != null;
+
+         try {
+            runScriptWithCreds(tag, simpleTemplate.getImage().getOsFamily(), new Credentials(
+                     good.account, "romeo"));
+            assert false : "shouldn't pass with a bad password";
+         } catch (SshException e) {
+            assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
+         }
+
+         runScriptWithCreds(tag, simpleTemplate.getImage().getOsFamily(), good);
+
+         checkNodes(nodes.values(), tag);
+
+      } finally {
+         client.destroyNodesWithTag(tag);
+      }
+   }
+
+   private Map<String, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
+            Credentials creds) {
+      return client.runScriptOnNodesWithTag(tag, buildScript(osFamily).getBytes(),
+               RunScriptOptions.Builder.overrideCredentialsWith(creds));
+   }
+
+   private void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getId());
          assertNotNull(node.getTag());
@@ -191,7 +236,6 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected String buildScript(OsFamily osFamily) {
       switch (osFamily) {
-         case JEOS:
          case UBUNTU:
             return new StringBuilder()//
                      .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
@@ -221,7 +265,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreate")
+   @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
       Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(client.getNodesWithTag(tag)
                .values());
@@ -291,7 +335,7 @@ public abstract class BaseComputeServiceLiveTest {
    private void sshPing(NodeMetadata node) throws IOException {
       for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
          try {
-            doCheckKey(node);
+            doCheckJavaIsInstalledViaSsh(node);
             return;
          } catch (SshException e) {
             try {
@@ -303,7 +347,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   protected void doCheckKey(NodeMetadata node) throws IOException {
+   protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
       InetSocketAddress socket = new InetSocketAddress(Iterables.get(node.getPublicAddresses(), 0),
                22);
       socketTester.apply(socket); // TODO add transitionTo option that accepts a socket conection

@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.functions;
+package org.jclouds.aws.ec2.compute.functions;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.compute.functions.ImageParser;
 import org.jclouds.aws.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
@@ -52,8 +51,7 @@ public class ImageParserTest extends BaseHandlerTest {
       Set<Image> result = parseImages(is);
       assertEquals(result.size(), 6);
 
-      ImageParser parser = new ImageParser();
-      parser.setAuthenticator(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
+      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
       org.jclouds.compute.domain.Image ubuntuHardy = parser.apply(Iterables.get(result, 0));
 
       assertEquals(ubuntuHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
@@ -116,7 +114,7 @@ public class ImageParserTest extends BaseHandlerTest {
       assertEquals(alesticHardy.getUserMetadata(), ImmutableMap.<String, String> of("owner",
                "063491364108"));
       assertEquals(alesticHardy.getVersion(), "20080905");
-      
+
       // should skip kernel
       assert parser.apply(Iterables.get(result, 5)) == null;
    }
@@ -126,8 +124,7 @@ public class ImageParserTest extends BaseHandlerTest {
 
       Set<Image> result = parseImages(is);
 
-      ImageParser parser = new ImageParser();
-      parser.setAuthenticator(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
+      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 

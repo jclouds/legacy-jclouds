@@ -37,13 +37,13 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
-import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
 import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
-import org.jclouds.aws.ec2.compute.functions.CreateKeyPairIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.CreateNewKeyPair;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
@@ -84,9 +84,9 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    };
    protected final ComputeService computeService;
    protected final EC2Client ec2Client;
-   protected final Map<RegionTag, KeyPairCredentials> credentialsMap;
+   protected final Map<RegionTag, KeyPair> credentialsMap;
    protected final Map<PortsRegionTag, String> securityGroupMap;
-   protected final CreateKeyPairIfNeeded createKeyPairIfNeeded;
+   protected final CreateNewKeyPair createNewKeyPair;
    protected final CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded;
    protected final Predicate<RunningInstance> instanceStateRunning;
    protected final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
@@ -94,9 +94,8 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    @Inject
    protected EC2RunNodesAndAddToSetStrategy(ComputeService computeService, EC2Client ec2Client,
-            Map<RegionTag, KeyPairCredentials> credentialsMap,
-            Map<PortsRegionTag, String> securityGroupMap,
-            CreateKeyPairIfNeeded createKeyPairIfNeeded,
+            Map<RegionTag, KeyPair> credentialsMap, Map<PortsRegionTag, String> securityGroupMap,
+            CreateNewKeyPair createKeyPairIfNeeded,
             CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
             @Named("RUNNING") Predicate<RunningInstance> instanceStateRunning,
             RunningInstanceToNodeMetadata runningInstanceToNodeMetadata, ComputeUtils utils,
@@ -105,7 +104,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
-      this.createKeyPairIfNeeded = createKeyPairIfNeeded;
+      this.createNewKeyPair = createKeyPairIfNeeded;
       this.createSecurityGroupIfNeeded = createSecurityGroupIfNeeded;
       this.instanceStateRunning = instanceStateRunning;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -136,9 +135,11 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       // another thread
       // deletes a key
       RegionTag regionTag = new RegionTag(region, tag);
-      if (!credentialsMap.containsKey(regionTag)) {
-         credentialsMap.put(regionTag, createKeyPairIfNeeded.apply(regionTag));
-      }
+
+      KeyPair keyPair = createNewKeyPair.apply(regionTag);
+
+      credentialsMap.put(new RegionTag(region, keyPair.getKeyName()), keyPair);
+
       TemplateOptions options = template.getOptions();
       PortsRegionTag portsRegionTag = new PortsRegionTag(region, tag, options.getInboundPorts());
       if (!securityGroupMap.containsKey(portsRegionTag)) {
@@ -150,7 +151,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
                         ">> running %d instance region(%s) zone(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
                         count, region, zone, template.getImage().getId(),
                         ec2Size.getInstanceType(), tag, tag);
-      RunInstancesOptions instanceOptions = withKeyName(tag)// key
+      RunInstancesOptions instanceOptions = withKeyName(keyPair.getKeyName())// key
                .asType(ec2Size.getInstanceType())// instance size
                .withSecurityGroup(tag)// group I created above
                .withAdditionalInfo(tag);

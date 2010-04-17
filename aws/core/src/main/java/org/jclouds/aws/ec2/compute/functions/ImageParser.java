@@ -57,14 +57,14 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
                      "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
             .build();
 
-   @Inject
-   private PopulateDefaultLoginCredentialsForImageStrategy authenticator;
+   private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
 
-   public void setAuthenticator(PopulateDefaultLoginCredentialsForImageStrategy authenticator) {
-       this.authenticator = authenticator;
+   @Inject
+   ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider) {
+      this.credentialProvider = credentialProvider;
    }
 
-    @Override
+   @Override
    public Image apply(org.jclouds.aws.ec2.domain.Image from) {
       if (from.getImageLocation().indexOf("test") != -1) {
          logger.trace("skipping test image(%s)", from.getId());
@@ -93,7 +93,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
             logger.debug("<< didn't match os(%s)", matcher.group(1));
          }
       }
-      Credentials defaultCredentials = authenticator.execute(from);
+      Credentials defaultCredentials = credentialProvider.execute(from);
 
       return new ImageImpl(
                from.getId(),
@@ -106,7 +106,6 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
                os,
                osDescription,
                from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
-                        : Architecture.X86_64,
-               defaultCredentials);
+                        : Architecture.X86_64, defaultCredentials);
    }
 }

@@ -1,4 +1,24 @@
+/**
+ *
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
 package org.jclouds.aws.ec2.compute.functions;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -8,23 +28,28 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.InstanceState;
+import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
+/**
+ * @author Adrian Cole
+ */
 @Singleton
 public class RunningInstanceToNodeMetadata implements Function<RunningInstance, NodeMetadata> {
    private static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
@@ -33,45 +58,54 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
                      NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
    private final AMIClient amiClient;
-   private final Map<RegionTag, KeyPairCredentials> credentialsMap;
-   private final ImageParser imageParser;
+   private final Map<RegionTag, KeyPair> credentialsMap;
+   private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
 
    @Inject
-   public RunningInstanceToNodeMetadata(AMIClient amiClient,
-            Map<RegionTag, KeyPairCredentials> credentialsMap,
-            ImageParser imageParser) {
-      this.amiClient = amiClient;
-      this.credentialsMap = credentialsMap;
-      this.imageParser = imageParser;
+   RunningInstanceToNodeMetadata(AMIClient amiClient, Map<RegionTag, KeyPair> credentialsMap,
+            PopulateDefaultLoginCredentialsForImageStrategy credentialProvider) {
+      this.amiClient = checkNotNull(amiClient, "amiClient");
+      this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
+      this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
    }
 
    @Override
-   public NodeMetadata apply(RunningInstance from) {
-      String id = from.getId();
+   public NodeMetadata apply(RunningInstance instance) {
+      String id = checkNotNull(instance, "instance").getId();
       String name = null; // user doesn't determine a node name;
       URI uri = null; // no uri to get rest access to host info
       Map<String, String> userMetadata = ImmutableMap.<String, String> of();
-      String tag = from.getKeyName();
-      NodeState state = instanceToNodeState.get(from.getInstanceState());
-      Set<InetAddress> publicAddresses = nullSafeSet(from.getIpAddress());
-      Set<InetAddress> privateAddresses = nullSafeSet(from.getPrivateIpAddress());
-      Credentials credentials = credentialsMap.containsKey(new RegionTag(from.getRegion(), tag)) ? credentialsMap
-               .get(new RegionTag(from.getRegion(), tag))
-               : null;
-      Image image = Iterables.getOnlyElement(amiClient.describeImagesInRegion(from.getRegion(),
-               DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      String tag = instance.getKeyName().replaceAll("-[0-9]+", "");
+      NodeState state = instanceToNodeState.get(instance.getInstanceState());
 
-      // canonical/alestic images use the ubuntu user to login
-      // TODO: add this as a property of image
-      if (credentials != null && image.getImageOwnerId().matches("063491364108|099720109477"))
-         credentials = new Credentials("ubuntu", credentials.key);
+      Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
+      Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
 
-      if(credentials == null) credentials = imageParser.apply(image).getDefaultCredentials();
+      Credentials credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(
+               instance, tag));
 
-      String locationId = from.getAvailabilityZone().toString();
+      String locationId = instance.getAvailabilityZone().toString();
+
       Map<String, String> extra = ImmutableMap.<String, String> of();
+
       return new NodeMetadataImpl(id, name, locationId, uri, userMetadata, tag, state,
                publicAddresses, privateAddresses, extra, credentials);
+   }
+
+   @VisibleForTesting
+   String getPrivateKeyOrNull(RunningInstance instance, String tag) {
+      KeyPair keyPair = credentialsMap.get(new RegionTag(instance.getRegion(), instance
+               .getKeyName()));
+      String privateKey = keyPair != null ? keyPair.getKeyMaterial() : null;
+      return privateKey;
+   }
+
+   @VisibleForTesting
+   String getLoginAccountFor(RunningInstance from) {
+      Image image = Iterables.getOnlyElement(amiClient.describeImagesInRegion(from.getRegion(),
+               DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      return checkNotNull(credentialProvider.execute(image), "login from image: "
+               + from.getImageId()).account;
    }
 
    Set<InetAddress> nullSafeSet(InetAddress in) {

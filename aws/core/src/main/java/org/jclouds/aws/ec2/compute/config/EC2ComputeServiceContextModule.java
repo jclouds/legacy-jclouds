@@ -40,10 +40,9 @@ import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
-import org.jclouds.aws.ec2.compute.domain.KeyPairCredentials;
 import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
-import org.jclouds.aws.ec2.compute.functions.CreateKeyPairIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.CreateNewKeyPair;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.ImageParser;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
@@ -51,6 +50,7 @@ import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
@@ -214,7 +214,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   protected final Map<RegionTag, KeyPairCredentials> credentialsMap(CreateKeyPairIfNeeded in) {
+   protected final Map<RegionTag, KeyPair> credentialsMap(CreateNewKeyPair in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();
