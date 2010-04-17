@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 
-import net.jcip.annotations.ThreadSafe;
-
 import org.jclouds.date.DateService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -37,7 +35,6 @@ import org.joda.time.format.DateTimeFormatter;
  * @author Adrian Cole
  * @author James Murty
  */
-@ThreadSafe
 @Singleton
 public class JodaDateService implements DateService {
 
