@@ -162,7 +162,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // Confirm that minimum allowed value for TTL is 3600, lower values are ignored.
          getApi().updateCDN(containerNameWithCDN, 3599L);
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
-         assertEquals(cdnMetadata.getTTL(), minimumTTL); // Note that TTL is 3600 here, not 3599
+         assertEquals(cdnMetadata.getTTL(), 3599L);
 
          // Disable CDN with POST
          assertTrue(getApi().disableCDN(containerNameWithCDN));
