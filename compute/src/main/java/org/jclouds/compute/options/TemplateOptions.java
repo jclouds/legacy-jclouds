@@ -34,6 +34,18 @@ public class TemplateOptions {
 
    private boolean destroyOnError;
 
+   private int port = -1;
+
+   private int seconds = -1;
+
+   public int getPort() {
+      return port;
+   }
+
+   public int getSeconds() {
+      return seconds;
+   }
+
    public int[] getInboundPorts() {
       return inboundPorts;
    }
@@ -52,6 +64,17 @@ public class TemplateOptions {
 
    public boolean shouldDestroyOnError() {
       return destroyOnError;
+   }
+
+   /**
+    * When the node is started, wait until the following port is active
+    */
+   public TemplateOptions blockOnPort(int port, int seconds) {
+      checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
+      checkArgument(seconds > 0, "seconds must be a positive integer");
+      this.port = port;
+      this.seconds = seconds;
+      return this;
    }
 
    /**
@@ -98,6 +121,8 @@ public class TemplateOptions {
     * Opens the set of ports to public access.
     */
    public TemplateOptions inboundPorts(int... ports) {
+      for (int port : ports)
+         checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
       this.inboundPorts = ports;
       return this;
    }
@@ -117,6 +142,14 @@ public class TemplateOptions {
       public static TemplateOptions inboundPorts(int... ports) {
          TemplateOptions options = new TemplateOptions();
          return options.inboundPorts(ports);
+      }
+
+      /**
+       * @see TemplateOptions#port
+       */
+      public static TemplateOptions blockOnPort(int port, int seconds) {
+         TemplateOptions options = new TemplateOptions();
+         return options.blockOnPort(port, seconds);
       }
 
       /**
@@ -149,6 +182,7 @@ public class TemplateOptions {
    public String toString() {
       return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
                + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
-               + (script != null) + ", destroyOnError=" + destroyOnError + "]";
+               + (script != null) + ", destroyOnError=" + destroyOnError + ", port:seconds=" + port
+               + ":" + seconds + "]";
    }
 }

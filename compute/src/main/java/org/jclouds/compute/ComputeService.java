@@ -28,11 +28,10 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.ssh.ExecResponse;
 
 import com.google.inject.ImplementedBy;
-import org.jclouds.ssh.ExecResponse;
 
 /**
  * Provides portable access to launching compute instances.

@@ -22,69 +22,65 @@ import org.jclouds.domain.Credentials;
 
 /**
  * Enables additional options for running a script.
- *
+ * 
  * @author Oleksiy Yarmula
  */
 public class RunScriptOptions {
 
-    /**
-     * Default options. The default settings are:
-     * <ul>
-     * <li>override the credentials with ones supplied in
-     *          call to {@link org.jclouds.compute.ComputeService#runScriptOnNodesWithTag}</li>
-     * <li>run the script as root (versus running with current privileges)</li>
-     * </ul>
-     */
-    public static final RunScriptOptions NONE = new RunScriptOptions();
+   /**
+    * Default options. The default settings are:
+    * <ul>
+    * <li>override the credentials with ones supplied in call to
+    * {@link org.jclouds.compute.ComputeService#runScriptOnNodesWithTag}</li>
+    * <li>run the script as root (versus running with current privileges)</li>
+    * </ul>
+    */
+   public static final RunScriptOptions NONE = new RunScriptOptions();
 
-    private Credentials overridingCredentials;
-    private boolean runAsRoot = true;
+   private Credentials overridingCredentials;
+   private boolean runAsRoot = true;
 
-    private void withOverridingCredentials(Credentials overridingCredentials) {
-        this.overridingCredentials = overridingCredentials;
-    }
+   public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
+      this.overridingCredentials = overridingCredentials;
+      return this;
+   }
 
-    private void runAsRoot(boolean runAsRoot) {
-        this.runAsRoot = runAsRoot;
-    }
+   public RunScriptOptions runAsRoot(boolean runAsRoot) {
+      this.runAsRoot = runAsRoot;
+      return this;
+   }
 
-    /**
-     * Whether to override the credentials with ones supplied in
-     *          call to {@link org.jclouds.compute.ComputeService#runScriptOnNodesWithTag}.
-     * By default, true.
-     * @return value
-     */
-    public Credentials getOverrideCredentials() {
-        return overridingCredentials;
-    }
+   /**
+    * Whether to override the credentials with ones supplied in call to
+    * {@link org.jclouds.compute.ComputeService#runScriptOnNodesWithTag}. By default, true.
+    * 
+    * @return value
+    */
+   public Credentials getOverrideCredentials() {
+      return overridingCredentials;
+   }
 
-    /**
-     * Whether to run the script as root (or run with current privileges).
-     * By default, true.
-     * @return value
-     */
-    public boolean isRunAsRoot() {
-        return runAsRoot;
-    }
+   /**
+    * Whether to run the script as root (or run with current privileges). By default, true.
+    * 
+    * @return value
+    */
+   public boolean isRunAsRoot() {
+      return runAsRoot;
+   }
 
-    public static class Builder {
-        private RunScriptOptions options;
+   public static class Builder {
 
-        public Builder overrideCredentials(Credentials credentials) {
-            if(options == null) options = new RunScriptOptions();
-            options.withOverridingCredentials(credentials);
-            return this;
-        }
+      public static RunScriptOptions overrideCredentialsWith(Credentials credentials) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.withOverridingCredentials(credentials);
+      }
 
-        public Builder runAsRoot(boolean value) {
-            if(options == null) options = new RunScriptOptions();
-            options.runAsRoot(value);
-            return this;
-        }
+      public static RunScriptOptions runAsRoot(boolean value) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.runAsRoot(value);
+      }
 
-        public RunScriptOptions build() {
-            return options;
-        }
-    }
+   }
 
 }
