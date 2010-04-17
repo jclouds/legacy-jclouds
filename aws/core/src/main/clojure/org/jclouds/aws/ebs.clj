@@ -28,7 +28,7 @@
     (org.jclouds.aws.ec2.options DescribeSnapshotsOptions DetachVolumeOptions CreateSnapshotOptions)))
 
 (defn #^org.jclouds.aws.ec2.services.ElasticBlockStoreClient
-  ebs-services
+  ebs-service
   "Returns the synchronous ElasticBlockStoreClient associated with
    the specified compute service, or compute/*compute* as bound by with-compute-service."
   [& [compute]]
@@ -61,56 +61,20 @@
     :else (throw (IllegalArgumentException.
                    (str "Can't obtain volume id from argument of type " (class v))))))
 
-(defn describe-volumes
+(defn volumes
   "Returns a set of org.jclouds.aws.ec2.domain.Volume instances corresponding to the
    volumes in the specified region (defaulting to your account's default region).
 
-   e.g. (with-compute-service [compute] (describe-volumes))
-        (with-compute-service [compute] (describe-volumes :us-east-1 \"vol-6b218805\" ...))"
+   e.g. (with-compute-service [compute] (volumes))
+        (with-compute-service [compute] (volumes :us-east-1 \"vol-6b218805\" ...))"
   [& [region & volume-ids]]
   (set
-    (.describeVolumesInRegion (ebs-services)
+    (.describeVolumesInRegion (ebs-service)
       (get-region region Region/DEFAULT)
       (into-array String (map get-volume-id
                            (if (get-region region)
                              volume-ids
                              (when region (cons region volume-ids))))))))
-
-(defn- snapshot-options
-  [optmap]
-  (let [string-array #(let [v (% optmap)]
-                        (into-array String (cond
-                                             (keyword? v) [(name v)]
-                                             (string? v) [v]
-                                             :else (map as-string v))))]
-    (-> (DescribeSnapshotsOptions.)
-      (.ownedBy (string-array :owner))
-      (.snapshotIds (string-array :ids))
-      (.restorableBy (string-array :restorable-by)))))
-
-(defn describe-snapshots
-  "Returns a set of org.jclouds.aws.ec2.domain.Snapshot instances that match
-   the criteria provided.  Options include:
-
-   :region - region string or keyword
-   :owner - AWS account id (or \"amazon\" or \"self\")
-   :restorable-by - AWS account id
-
-   Multiple values for each type of criteria can be provided by passing a seq
-   of the appropriate types as values.
-
-    (with-compute-service [compute]
-      (describe-snapshots :owner \"self\")
-      (describe-snapshots :region :us-west-1 :ids [\"snap-44b3ab2d\" \"snap-9e8821f7\"]))"
-  [& options]
-  (let [options (apply hash-map options)
-        region (:region options)
-        options (snapshot-options (dissoc options :region))]
-    (set
-      (.describeSnapshotsInRegion (ebs-services)
-        (get-region region Region/DEFAULT)
-        (into-array DescribeSnapshotsOptions [options])))))
-
 (defn- as-string
   [v]
   (cond
@@ -128,6 +92,41 @@
     :else (throw (IllegalArgumentException.
                    (str "Don't know how to convert object of type " (class v) " to a string")))))
 
+(defn- snapshot-options
+  [optmap]
+  (let [string-array #(let [v (% optmap)]
+                        (into-array String (cond
+                                             (keyword? v) [(name v)]
+                                             (string? v) [v]
+                                             :else (map as-string v))))]
+    (-> (DescribeSnapshotsOptions.)
+      (.ownedBy (string-array :owner))
+      (.snapshotIds (string-array :ids))
+      (.restorableBy (string-array :restorable-by)))))
+
+(defn snapshots
+  "Returns a set of org.jclouds.aws.ec2.domain.Snapshot instances that match
+   the criteria provided.  Options include:
+
+   :region - region string or keyword
+   :owner - AWS account id (or \"amazon\" or \"self\")
+   :restorable-by - AWS account id
+
+   Multiple values for each type of criteria can be provided by passing a seq
+   of the appropriate types as values.
+
+    (with-compute-service [compute]
+      (snapshots :owner \"self\")
+      (snapshots :region :us-west-1 :ids [\"snap-44b3ab2d\" \"snap-9e8821f7\"]))"
+  [& options]
+  (let [options (apply hash-map options)
+        region (:region options)
+        options (snapshot-options (dissoc options :region))]
+    (set
+      (.describeSnapshotsInRegion (ebs-service)
+        (get-region region Region/DEFAULT)
+        (into-array DescribeSnapshotsOptions [options])))))
+
 (defn create-snapshot
   "Creates a snapshot of a volume in the specified region with an optional description.
    If provided, the description must be < 255 characters in length. Returns the
@@ -140,7 +139,7 @@
   ([#^Volume volume] (create-snapshot volume nil))
   ([#^Volume volume description] (create-snapshot (.getRegion volume) (.getId volume) description))
   ([region volume-id description]
-    (.createSnapshotInRegion (ebs-services)
+    (.createSnapshotInRegion (ebs-service)
       (get-region region)
       (as-string volume-id)
       (into-array CreateSnapshotOptions (when description
@@ -154,7 +153,7 @@
           (delete-snapshot :us-east-1 \"snap-242adf03\"))"
   ([#^Snapshot snapshot] (delete-snapshot (.getRegion snapshot) (.getId snapshot)))
   ([region snapshot-id]
-  (.deleteSnapshotInRegion (ebs-services)
+  (.deleteSnapshotInRegion (ebs-service)
     (get-region region)
     (as-string snapshot-id))))
 
@@ -178,7 +177,7 @@
   ([#^NodeMetadata node volume device]
     (attach-volume node (.getId node) (get-volume-id volume) device))
   ([region instance-id volume-id device]
-    (apply #(.attachVolumeInRegion (ebs-services)
+    (apply #(.attachVolumeInRegion (ebs-service)
               (get-region region) % %2 %3)
       (map as-string [volume-id instance-id device]))))
 
@@ -205,7 +204,7 @@
     (when (not region)
       (throw (IllegalArgumentException.
                "Must specify volume's region via :region or :node options, or by providing a Volume instance.")))
-    (.detachVolumeInRegion (ebs-services)
+    (.detachVolumeInRegion (ebs-service)
       region
       volume-id
       (boolean (:force options))
@@ -247,7 +246,7 @@
         zone (if zone
                (get-zone zone)
                (throw (IllegalArgumentException. "Must supply a :zone or :node option.")))
-        ebs (ebs-services)]
+        ebs (ebs-service)]
     (when (and (:device options) (not node))
       (throw (IllegalArgumentException. "Cannot create and attach new volume; no :node specified")))
     (let [new-volume (cond
@@ -267,6 +266,6 @@
   ([#^Volume volume]
     (delete-volume (.getRegion volume) (.getId volume)))
   ([region volume-id]
-    (.deleteVolumeInRegion (ebs-services)
+    (.deleteVolumeInRegion (ebs-service)
       (get-region region)
       (as-string volume-id))))
