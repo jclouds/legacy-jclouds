@@ -25,9 +25,6 @@ import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.regex.Pattern;
 
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
-
 import org.jclouds.date.DateService;
 
 /**
@@ -37,25 +34,24 @@ import org.jclouds.date.DateService;
  * @author Adrian Cole
  * @author James Murty
  */
-@ThreadSafe
 public class SimpleDateFormatDateService implements DateService {
    /*
     * Use default Java Date/SimpleDateFormat classes for date manipulation, but be *very* careful to
     * guard against the lack of thread safety.
     */
-   @GuardedBy("this")
+   //@GuardedBy("this")
    private static final SimpleDateFormat iso8601SecondsSimpleDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
 
-   @GuardedBy("this")
+   //@GuardedBy("this")
    private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 
-   @GuardedBy("this")
+   //@GuardedBy("this")
    private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat(
             "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 
-   @GuardedBy("this")
+   //@GuardedBy("this")
    private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat(
             "EEE MMM dd HH:mm:ss '+0000' yyyy", Locale.US);
 
