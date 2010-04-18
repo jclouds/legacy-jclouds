@@ -34,6 +34,7 @@ import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -68,10 +69,12 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
    }
 
    @Override
-   public Map<String, String> start(String vDCId, String name, String templateId, int minCores,
-            int minMegs, Long diskSize, Map<String, String> properties, int... portsToOpen) {
-      Map<String, String> response = super.start(vDCId, name, templateId, minCores, minMegs, null,
-               properties, portsToOpen);// trmk does not support resizing the primary disk
+   public Map<String, String> start(String vDCId, String name, String templateId,
+            InstantiateVAppTemplateOptions options, int... portsToOpen) {
+      if (options.getDiskSizeKilobytes() != null) {
+         logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
+      }
+      Map<String, String> response = super.start(vDCId, name, templateId, options, portsToOpen);
       if (portsToOpen.length > 0)
          createPublicAddressMappedToPorts(response.get("id"), portsToOpen);
       return response;

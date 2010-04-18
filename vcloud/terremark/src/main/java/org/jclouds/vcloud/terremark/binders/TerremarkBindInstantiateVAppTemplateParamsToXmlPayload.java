@@ -18,12 +18,14 @@
  */
 package org.jclouds.vcloud.terremark.binders;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -36,6 +38,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.ResourceType;
 
 import com.jamesmurty.utils.XMLBuilder;
@@ -53,22 +56,25 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
    public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
             @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
+            @Named(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED) String defaultDhcpEnabled,
+            @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String defaultFenceMode,
             @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
             OptionalConstantsHolder optionalDefaults) {
-      super(stringBinder, ns, schema, network, optionalDefaults);
+      super(stringBinder, ns, schema, defaultDhcpEnabled, defaultFenceMode, network,
+               optionalDefaults);
    }
 
    @Override
    protected String generateXml(String name, String template, Map<String, String> properties,
-            SortedMap<ResourceType, String> virtualHardwareQuantity, String network)
-            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+            SortedMap<ResourceType, String> virtualHardwareQuantity, String networkName,
+            FenceMode fenceMode, boolean dhcp, URI network) throws ParserConfigurationException,
+            FactoryConfigurationError, TransformerException {
       checkNotNull(virtualHardwareQuantity.get(ResourceType.PROCESSOR),
                "cpuCount must be present in instantiateVapp on terremark");
       checkNotNull(virtualHardwareQuantity.get(ResourceType.MEMORY),
                "memorySizeMegabytes must be present in instantiateVapp on terremark");
-      checkArgument(virtualHardwareQuantity.get(ResourceType.DISK_DRIVE) == null,
-               "diskSizeKilobytes no settable on instantiateVapp on terremark");
-      return super.generateXml(name, template, properties, virtualHardwareQuantity, network);
+      return super.generateXml(name, template, properties, virtualHardwareQuantity, networkName,
+               fenceMode, dhcp, network);
    }
 
    @Override

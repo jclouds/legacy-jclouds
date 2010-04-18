@@ -39,6 +39,9 @@ public interface VCloudConstants {
    /**
     * megabytes
     */
+   public static final String PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED = "jclouds.vcloud.defaults.dhcpenabled";
+   public static final String PROPERTY_VCLOUD_DEFAULT_FENCEMODE = "jclouds.vcloud.defaults.fencemode";
+
    public static final String PROPERTY_VCLOUD_DEFAULT_MEMORY = "jclouds.vcloud.defaults.memorysizemegabytes";
    public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
    /**

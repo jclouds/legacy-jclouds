@@ -19,6 +19,8 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
@@ -31,6 +33,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.vcloud.domain.FenceMode;
 
 /**
  * Builds properties used in VCloud Clients
@@ -44,7 +47,10 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
-      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
+               "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
       return properties;
    }
 

@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.InetAddress;
 import java.util.Map;
@@ -69,16 +69,14 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       this.vAppStatusToNodeState = vAppStatusToNodeState;
    }
 
-   public Map<String, String> start(String vDCId, String name, String templateId, int minCores,
-            int minMegs, Long diskSize, Map<String, String> properties, int... portsToOpen) {
-      logger
-               .debug(
-                        ">> instantiating vApp vDC(%s) name(%s) template(%s)  minCores(%d) minMegs(%d) diskSize(%d) properties(%s) ",
-                        vDCId, name, templateId, minCores, minMegs, diskSize, properties);
-      InstantiateVAppTemplateOptions options = processorCount(minCores).memory(minMegs)
-               .productProperties(properties);
-      if (diskSize != null)
-         options.disk(diskSize);
+   @Override
+   public Map<String, String> start(String vDCId, String name, String templateId,
+            InstantiateVAppTemplateOptions options, int... portsToOpen) {
+      checkNotNull(options, "options");
+
+      logger.debug(">> instantiating vApp vDC(%s) name(%s) template(%s) options(%s) ", vDCId, name,
+               templateId, options);
+
       VApp vAppResponse = client.instantiateVAppTemplateInVDC(vDCId, name, templateId, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 

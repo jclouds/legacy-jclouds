@@ -22,7 +22,7 @@ import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.inject.ImplementedBy;
 
@@ -50,10 +50,8 @@ public interface VCloudComputeClient {
     *           amount of virtual cpu cores
     * @param megs
     *           amount of ram in megabytes
-    * @param diskSizeKilobytes
-    *           size of disk in kilobytes, null is ok
-    * @param properties
-    *           sets product properties on the vApp
+    * @param options
+    *           options for instantiating the vApp; null is ok
     * @param portsToOpen
     *           opens the following ports on the public ip address
     * @return map contains at least the following properties
@@ -62,8 +60,8 @@ public interface VCloudComputeClient {
     *         login password</li>
     *         </ol>
     */
-   Map<String, String> start(String vDCId, String name, String templateId, int cores, int megs,
-            @Nullable Long diskSizeKilobytes, Map<String, String> properties, int... portsToOpen);
+   Map<String, String> start(String vDCId, String name, String templateId,
+            InstantiateVAppTemplateOptions options, int... portsToOpen);
 
    /**
     * returns a set of addresses that are only visible to the private network.

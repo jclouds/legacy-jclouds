@@ -19,6 +19,8 @@
 package org.jclouds.vcloud;
 
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
@@ -43,6 +45,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -517,6 +520,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
          @Override
          protected void configure() {
             Properties props = new Properties();
+            props.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
+            props.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
             props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
                      "https://vcloud.safesecureweb.com/network/1990");
             props.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");

@@ -24,6 +24,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.vcloud.domain.FenceMode;
+
 import com.google.common.collect.Maps;
 
 /**
@@ -38,6 +40,9 @@ public class InstantiateVAppTemplateOptions {
    private String diskSizeKilobytes;
    private String network;
    private Map<String, String> properties = Maps.newTreeMap();
+   private String fenceMode;
+   private String dhcpEnabled;
+   private String networkName;
 
    public InstantiateVAppTemplateOptions productProperty(String key, String value) {
       properties.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
@@ -52,6 +57,21 @@ public class InstantiateVAppTemplateOptions {
    public InstantiateVAppTemplateOptions processorCount(int cpuCount) {
       checkArgument(cpuCount >= 1, "cpuCount must be positive");
       this.cpuCount = cpuCount + "";
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions networkName(String networkName) {
+      this.networkName = checkNotNull(networkName, "networkName");
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
+      this.fenceMode = checkNotNull(fenceMode, "fenceMode").toString();
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions dhcpEnabled(boolean dhcpEnabled) {
+      this.dhcpEnabled = dhcpEnabled + "";
       return this;
    }
 
@@ -86,6 +106,18 @@ public class InstantiateVAppTemplateOptions {
 
    public String getNetwork() {
       return network;
+   }
+
+   public String getNetworkName() {
+      return networkName;
+   }
+
+   public String getFenceMode() {
+      return fenceMode;
+   }
+
+   public String getDhcpEnabled() {
+      return dhcpEnabled;
    }
 
    public Map<String, String> getProperties() {
@@ -127,6 +159,30 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
+       * @see InstantiateVAppTemplateOptions#fenceMode(FenceMode)
+       */
+      public static InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.fenceMode(fenceMode);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#dhcpEnabled(boolean)
+       */
+      public static InstantiateVAppTemplateOptions dhcpEnabled(boolean dhcpEnabled) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.dhcpEnabled(dhcpEnabled);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#networkName(String)
+       */
+      public static InstantiateVAppTemplateOptions networkName(String networkName) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.networkName(networkName);
+      }
+
+      /**
        * @see InstantiateVAppTemplateOptions#productProperty(String,String)
        */
       public static InstantiateVAppTemplateOptions productProperty(String key, String value) {
@@ -141,6 +197,14 @@ public class InstantiateVAppTemplateOptions {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.productProperties(properties);
       }
+   }
+
+   @Override
+   public String toString() {
+      return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount + ", memorySizeMegabytes="
+               + memorySizeMegabytes + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network="
+               + network + ", networkName=" + networkName + ", fenceMode=" + fenceMode
+               + ", dhcpEnabled=" + dhcpEnabled + ", properties=" + properties + "]";
    }
 
 }
