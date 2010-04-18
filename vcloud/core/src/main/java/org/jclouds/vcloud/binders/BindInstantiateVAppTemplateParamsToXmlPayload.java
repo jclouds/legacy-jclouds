@@ -22,12 +22,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CPUCOUNT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DISK;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_MEMORY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
@@ -67,7 +70,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    protected final Map<ResourceType, String> virtualHardwareToInstanceId = ImmutableMap.of(
             ResourceType.PROCESSOR, "1", ResourceType.MEMORY, "2", ResourceType.DISK_DRIVE, "9");
 
-   private final String defaultNetwork;
+   private final URI defaultNetwork;
+   private final FenceMode defaultFenceMode;
+   private final boolean defaultDhcpEnabled;
 
    /**
     * To allow for optional injection, since guice doesn't allow unresolved constants in
@@ -89,13 +94,17 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    public BindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
             @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
+            @Named(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED) String defaultDhcpEnabled,
+            @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String defaultFenceMode,
             @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
             OptionalConstantsHolder defaultsHolder) {
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
       this.defaultVirtualHardwareQuantity = Maps.newHashMap();
-      this.defaultNetwork = network;
+      this.defaultNetwork = URI.create(network);
+      this.defaultFenceMode = FenceMode.fromValue(defaultFenceMode);
+      this.defaultDhcpEnabled = Boolean.parseBoolean(defaultDhcpEnabled);
       if (defaultsHolder.cpuCount != null)
          this.defaultVirtualHardwareQuantity.put(ResourceType.PROCESSOR, defaultsHolder.cpuCount);
       if (defaultsHolder.memorySizeMegabytes != null)
@@ -115,6 +124,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       String name = checkNotNull(postParams.remove("name"), "name");
       String template = checkNotNull(postParams.remove("template"), "template");
       String network = postParams.remove("network");
+      String fenceMode = postParams.remove("fenceMode");
+      String dhcpEnabled = postParams.remove("dhcpEnabled");
+      String networkName = postParams.remove("networkName");
 
       SortedMap<ResourceType, String> virtualHardwareQuantity = extractVirtualQuantityFromPostParams(postParams);
 
@@ -126,10 +138,12 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
          network = networkFromOptions != null ? networkFromOptions : network;
          properties.putAll(options.getProperties());
       }
-      network = network == null ? defaultNetwork : network;
       try {
          stringBinder.bindToRequest(request, generateXml(name, template, properties,
-                  virtualHardwareQuantity, network));
+                  virtualHardwareQuantity, networkName == null ? name : networkName,
+                  fenceMode == null ? defaultFenceMode : FenceMode.fromValue(fenceMode),
+                  dhcpEnabled == null ? defaultDhcpEnabled : Boolean.parseBoolean(dhcpEnabled),
+                  network == null ? defaultNetwork : URI.create(network)));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -151,8 +165,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected String generateXml(String name, String template, Map<String, String> properties,
-            SortedMap<ResourceType, String> virtualHardwareQuantity, String network)
-            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+            SortedMap<ResourceType, String> virtualHardwareQuantity, String networkName,
+            FenceMode fenceMode, boolean dhcp, URI network) throws ParserConfigurationException,
+            FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(name);
 
       rootBuilder.e("VAppTemplate").a("href", template);
@@ -160,7 +175,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       XMLBuilder instantiationParamsBuilder = rootBuilder.e("InstantiationParams");
       addPropertiesifPresent(instantiationParamsBuilder, properties);
       addVirtualQuantityIfPresent(instantiationParamsBuilder, virtualHardwareQuantity);
-      addNetworkConfig(instantiationParamsBuilder, name, network);
+      addNetworkConfig(instantiationParamsBuilder, networkName, fenceMode, dhcp, network);
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);
@@ -180,13 +195,13 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder, String name,
-            String network) {
+            FenceMode fenceMode, boolean dhcp, URI network) {
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection").e(
                "NetworkConfig").a("name", name);
       XMLBuilder featuresBuilder = networkConfigBuilder.e("Features");
-      featuresBuilder.e("FenceMode").t(FenceMode.ALLOW_IN_OUT.value());
-      featuresBuilder.e("Dhcp").t("false");
-      networkConfigBuilder.e("NetworkAssociation").a("href", network);
+      featuresBuilder.e("FenceMode").t(fenceMode.value());
+      featuresBuilder.e("Dhcp").t(dhcp + "");
+      networkConfigBuilder.e("NetworkAssociation").a("href", network.toASCIIString());
    }
 
    protected void addVirtualQuantityIfPresent(XMLBuilder instantiationParamsBuilder,

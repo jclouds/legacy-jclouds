@@ -55,6 +55,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert allData.getExtra().get("processor/count") != null;
          assert allData.getExtra().get("disk_drive/1/kb") != null;
          assert allData.getExtra().get("memory/mb") != null;
+         System.out.println(allData.getExtra());
       }
    }
 }

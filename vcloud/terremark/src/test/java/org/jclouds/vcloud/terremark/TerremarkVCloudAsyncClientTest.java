@@ -19,6 +19,8 @@
 package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CPUCOUNT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_MEMORY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
@@ -48,6 +50,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.VCloudApi;
@@ -561,6 +564,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
          @Override
          protected void configure() {
             Properties props = new Properties();
+            props.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
+            props.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
             props.setProperty(PROPERTY_VCLOUD_DEFAULT_CPUCOUNT, "1");
             props.setProperty(PROPERTY_VCLOUD_DEFAULT_MEMORY, "512");
             props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,

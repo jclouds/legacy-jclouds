@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -86,11 +88,12 @@ public class VCloudComputeClientLiveTest {
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
       int memory = 512;
-      long disk = 10 * 1025 * 1024;
-      Map<String, String> properties = ImmutableMap.of("foo", "bar");
 
-      id = computeClient.start(client.getDefaultVDC().getId(), serverName, templateId,
-               processorCount, memory, disk, properties).get("id");
+      InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024)
+               .productProperties(ImmutableMap.of("foo", "bar"));
+
+      id = computeClient.start(client.getDefaultVDC().getId(), serverName, templateId, options)
+               .get("id");
       Expectation expectation = expectationMap.get(toTest);
 
       VApp vApp = client.getVApp(id);
@@ -136,7 +139,7 @@ public class VCloudComputeClientLiveTest {
       if (id != null)
          computeClient.stop(id);
    }
-   
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
@@ -150,8 +153,7 @@ public class VCloudComputeClientLiveTest {
       client = injector.getInstance(VCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
       }));
-      expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(
-               OsFamily.CENTOS,
+      expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
       service = "vcloudtest";
       templateId = "3";

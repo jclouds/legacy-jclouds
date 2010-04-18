@@ -21,9 +21,12 @@ package org.jclouds.vcloud.compute.config;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -84,6 +87,7 @@ import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -189,11 +193,15 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
+
+         InstantiateVAppTemplateOptions options = processorCount(
+                  Double.valueOf(template.getSize().getCores()).intValue()).memory(
+                  template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
+
+         options.networkName("templateId=" + template.getImage().getId());
+
          Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
-                  template.getImage().getId(), Double.valueOf(template.getSize().getCores())
-                           .intValue(), template.getSize().getRam(),
-                  template.getSize().getDisk() * 1024 * 1024l, ImmutableMap.<String, String> of(),
-                  template.getOptions().getInboundPorts());
+                  template.getImage().getId(), options, template.getOptions().getInboundPorts());
          VApp vApp = client.getVApp(metaMap.get("id"));
          return newCreateNodeResponse(tag, template, metaMap, vApp);
       }
@@ -306,9 +314,12 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       extra.put("processor/count", Iterables.getOnlyElement(
                vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)).getVirtualQuantity()
                + "");
-
       for (ResourceAllocation disk : vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)) {
          extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity() + "");
+      }
+
+      for (Entry<String, InetAddress> net : vApp.getNetworkToAddresses().entries()) {
+         extra.put(String.format("network/%s/ip", net.getKey()), net.getValue().getHostAddress());
       }
       return extra;
    }

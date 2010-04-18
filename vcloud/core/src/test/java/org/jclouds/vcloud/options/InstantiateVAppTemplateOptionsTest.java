@@ -18,15 +18,19 @@
  */
 package org.jclouds.vcloud.options;
 
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.dhcpEnabled;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.disk;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.fenceMode;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.inNetwork;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.memory;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.networkName;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.vcloud.domain.FenceMode;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -102,6 +106,45 @@ public class InstantiateVAppTemplateOptionsTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testDiskStaticWrong() {
       disk(0);
+   }
+
+   @Test
+   public void testNetworkName() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.networkName("network");
+      assertEquals(options.getNetworkName(), "network");
+   }
+
+   @Test
+   public void testNetworkNameStatic() {
+      InstantiateVAppTemplateOptions options = networkName("network");
+      assertEquals(options.getNetworkName(), "network");
+   }
+
+   @Test
+   public void testFenceMode() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.fenceMode(FenceMode.BLOCK_IN_OUT);
+      assertEquals(options.getFenceMode(), "blockInOut");
+   }
+
+   @Test
+   public void testFenceModeStatic() {
+      InstantiateVAppTemplateOptions options = fenceMode(FenceMode.BLOCK_IN_OUT);
+      assertEquals(options.getFenceMode(), "blockInOut");
+   }
+
+   @Test
+   public void testDhcpEnabled() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.dhcpEnabled(true);
+      assertEquals(options.getDhcpEnabled(), "true");
+   }
+
+   @Test
+   public void testDhcpEnabledStatic() {
+      InstantiateVAppTemplateOptions options = dhcpEnabled(true);
+      assertEquals(options.getDhcpEnabled(), "true");
    }
 
 }

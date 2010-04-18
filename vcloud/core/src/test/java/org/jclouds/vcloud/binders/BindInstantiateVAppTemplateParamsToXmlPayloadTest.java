@@ -34,6 +34,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.testng.annotations.Test;
 
@@ -65,7 +66,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       }
    });
 
-
    public void testDefault() throws IOException {
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
                "/newvapp-hosting.xml"));
@@ -89,7 +89,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       verify(request);
 
    }
-   
 
    public void testWithProcessorMemoryDisk() throws IOException {
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
@@ -115,6 +114,35 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       map.put(ResourceType.PROCESSOR.value(), "1");
       map.put(ResourceType.MEMORY.value(), "512");
       map.put(ResourceType.DISK_DRIVE.value(), "1024");
+
+      binder.bindToRequest(request, map);
+      verify(request);
+
+   }
+
+   public void testWithNetworkNameDhcpFenceMode() throws IOException {
+      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/newvapp-hostingnetworknamedhcpfencemode.xml"));
+      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
+               .<String, String> create());
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
+      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
+      request.setPayload(expected);
+      replay(request);
+
+      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+
+      Map<String, String> map = Maps.newHashMap();
+      map.put("name", "CentOS 01");
+      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+      map.put("network", "https://vcloud.safesecureweb.com/network/1990");
+      map.put("networkName", "aloha");
+      map.put("fenceMode", FenceMode.BRIDGED.toString());
+      map.put("dhcpEnabled", "true");
 
       binder.bindToRequest(request, map);
       verify(request);
