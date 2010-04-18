@@ -63,6 +63,7 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -124,7 +125,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute() {
+      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
          Set<NodeMetadata> nodes = Sets.newHashSet();
          for (Region region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
             Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client

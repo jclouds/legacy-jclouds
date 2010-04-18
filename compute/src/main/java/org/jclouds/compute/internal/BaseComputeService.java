@@ -53,6 +53,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -172,7 +173,7 @@ public class BaseComputeService implements ComputeService {
                "starting nodes");
       if (exceptions.size() > 0 && template.getOptions().shouldDestroyOnError()) {
          ImmutableMap<?, ? extends ComputeMetadata> currentNodes = Maps.uniqueIndex(
-                  listNodesStrategy.execute(), METADATA_TO_ID);
+                  listNodesStrategy.execute(GetNodesOptions.NONE), METADATA_TO_ID);
          for (Entry<?, Exception> entry : exceptions.entrySet()) {
             logger.error(entry.getValue(), "<< error applying nodes(%s) [%s] destroying ", entry
                      .getKey(), entry.getValue().getMessage());
@@ -221,18 +222,28 @@ public class BaseComputeService implements ComputeService {
    public Map<String, ? extends ComputeMetadata> getNodes() {
       logger.debug(">> listing servers");
       ImmutableMap<String, ? extends ComputeMetadata> map = Maps.uniqueIndex(listNodesStrategy
-               .execute(), METADATA_TO_ID);
+               .execute(GetNodesOptions.NONE), METADATA_TO_ID);
       logger.debug("<< list(%d)", map.size());
       return map;
    }
-
+   @Override
+   public Map<String, ? extends ComputeMetadata> getNodes(GetNodesOptions options) {
+      logger.debug(">> listing servers");
+      if(options == null){
+          options = GetNodesOptions.NONE;
+      }
+      ImmutableMap<String, ? extends ComputeMetadata> map = Maps.uniqueIndex(listNodesStrategy
+               .execute(options), METADATA_TO_ID);
+      logger.debug("<< list(%d)", map.size());
+      return map;
+   }
    /**
     * If the result of {@link ListNodesStrategy#execute} is a set of nodes, then return them.
     * Otherwise iteratively call {@link #getNodeMetadata}
     */
    protected Map<String, ? extends NodeMetadata> doGetNodesWithTag(final String tag) {
       Iterable<? extends NodeMetadata> nodes = Iterables.filter(Iterables.transform(
-               listNodesStrategy.execute(), new Function<ComputeMetadata, NodeMetadata>() {
+               listNodesStrategy.execute(GetNodesOptions.NONE), new Function<ComputeMetadata, NodeMetadata>() {
 
                   @Override
                   public NodeMetadata apply(ComputeMetadata from) {

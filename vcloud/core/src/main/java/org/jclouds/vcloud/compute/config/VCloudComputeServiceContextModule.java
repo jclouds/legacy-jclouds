@@ -53,6 +53,7 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -222,7 +223,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute() {
+      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
          Set<ComputeMetadata> nodes = Sets.newHashSet();
          for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {

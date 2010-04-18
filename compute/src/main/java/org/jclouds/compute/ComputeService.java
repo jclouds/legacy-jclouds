@@ -27,6 +27,7 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ssh.ExecResponse;
@@ -76,6 +77,12 @@ public interface ComputeService {
     * {@link NodeMetadata} objects.
     */
    Map<String, ? extends ComputeMetadata> getNodes();
+
+     /**
+    * all nodes available to the current user by id. If possible, the returned set will include
+    * {@link NodeMetadata} objects.
+    */
+   Map<String, ? extends ComputeMetadata> getNodes(GetNodesOptions options);
 
    /**
     * The get locations command returns all the valid locations for nodes. A location has a scope,

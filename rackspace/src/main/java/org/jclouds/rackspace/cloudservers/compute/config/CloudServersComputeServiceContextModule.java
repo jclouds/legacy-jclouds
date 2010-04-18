@@ -52,6 +52,7 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -206,7 +207,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute() {
+      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
          return Iterables.transform(client.listServers(ListOptions.Builder.withDetails()),
                   serverToNodeMetadata);
       }

@@ -20,6 +20,7 @@
 package org.jclouds.compute.strategy;
 
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.options.GetNodesOptions;
 
 /**
  * 
@@ -27,6 +28,5 @@ import org.jclouds.compute.domain.ComputeMetadata;
  */
 public interface ListNodesStrategy {
 
-   Iterable<? extends ComputeMetadata> execute();
-
+   Iterable<? extends ComputeMetadata> execute(GetNodesOptions options);
 }

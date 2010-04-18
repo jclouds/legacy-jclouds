@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -107,7 +108,7 @@ public class OneByOneRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetS
       Set<String> names = Sets.newHashSet();
       int nodeIndex = new SecureRandom().nextInt(8096);
       Map<String, ? extends ComputeMetadata> currentNodes = Maps.uniqueIndex(listNodesStrategy
-               .execute(), BaseComputeService.METADATA_TO_NAME);
+               .execute(GetNodesOptions.NONE), BaseComputeService.METADATA_TO_NAME);
       while (names.size() < count) {
          String name = String.format(nodeNamingConvention, tag, nodeIndex++);
          if (!currentNodes.containsKey(name)) {

@@ -44,6 +44,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -302,6 +303,20 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
+   public void testGetNodesWithDetails() throws Exception {
+      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes(new GetNodesOptions().withDetails()).entrySet()) {
+         assertEquals(node.getKey(), node.getValue().getId());
+         assert node.getValue().getId() != null;
+         assert node.getValue().getLocationId() != null;
+         assertEquals(node.getValue().getType(), ComputeType.NODE);
+         assert node.getValue() instanceof NodeMetadata;
+         NodeMetadata nodeMetadata = (NodeMetadata)node.getValue();
+         assertNotNull(nodeMetadata.getName());
+         assertNotNull(nodeMetadata.getPublicAddresses());
+         assert nodeMetadata.getPublicAddresses().size() > 1;
+         assertNotNull(nodeMetadata.getPrivateAddresses());
+      }
+   }
    public void testListImages() throws Exception {
       for (Entry<String, ? extends Image> image : client.getImages().entrySet()) {
          assertEquals(image.getKey(), image.getValue().getId());
