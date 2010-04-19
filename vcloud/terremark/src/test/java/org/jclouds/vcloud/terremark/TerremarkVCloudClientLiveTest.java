@@ -156,7 +156,11 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    @Test
    public void testInstantiateAndPowerOn() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      String serverName = "adriantest";
+      StringBuffer name = new StringBuffer();
+      for (int i = 0; i < 15; i++)
+         name.append("a");
+      String serverName = name.toString();// "adriantest";
+
       long hardDisk = 4194304;
 
       String expectedOs = "Ubuntu Linux (32-bit)";

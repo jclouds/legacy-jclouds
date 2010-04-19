@@ -218,6 +218,7 @@ public class ComputeUtils {
                node.getId()));
    }
 
+   @SuppressWarnings("unchecked")
    public <T> Map<SshCallable<?>, T> transform(Map<SshCallable<?>, ListenableFuture<?>> responses) {
       Map<SshCallable<?>, T> actualResponses = Maps.newHashMap();
       for (Map.Entry<SshCallable<?>, ListenableFuture<?>> entry : responses.entrySet()) {

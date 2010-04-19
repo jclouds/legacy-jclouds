@@ -46,7 +46,7 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
 
    /**
@@ -129,7 +129,6 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    void deleteNode(int nodeId);
 
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    SortedSet<Node> getNodes(int internetServiceId);
 
    SortedSet<IpAddress> getIpAddressesForNetwork(String networkId);

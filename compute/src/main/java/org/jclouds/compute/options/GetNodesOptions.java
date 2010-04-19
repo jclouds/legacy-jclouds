@@ -1,7 +1,5 @@
 package org.jclouds.compute.options;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Ivan Meredith
