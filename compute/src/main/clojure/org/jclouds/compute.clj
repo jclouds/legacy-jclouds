@@ -60,7 +60,7 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.compute.domain
             Template TemplateBuilder ComputeMetadata NodeMetadata Size OsFamily
             Image Architecture]
-           org.jclouds.compute.options.TemplateOptions
+           [org.jclouds.compute.options TemplateOptions GetNodesOptions]
            [com.google.common.collect ImmutableSet]))
 
 (try
@@ -119,15 +119,28 @@ See http://code.google.com/p/jclouds for details."
   ([#^ComputeService compute]
      (seq-from-immutable-set (.getLocations compute))))
 
+(defn nodes-with-tag
+  [#^String tag #^ComputeService compute]
+    (seq-from-immutable-set (.getNodesWithTag compute tag)))
+
+(def #^{:private true} list-nodes-map
+  { :with-details #(when %2 (.withDetails %1)) })
+
 (defn nodes
-  "Retrieve the existing nodes for the compute context."
+  "Retrieve the existing nodes for the compute context.
+  Options are:
+  :with-details true"
   ([] (nodes *compute*))
-  ([compute-or-tag]
+  ([compute-or-tag & options]
      (if (compute-service? compute-or-tag)
-       (seq-from-immutable-set (.getNodes compute-or-tag))
-       (nodes compute-or-tag *compute*)))
-  ([#^String tag #^ComputeService compute]
-     (seq-from-immutable-set (.getNodesWithTag compute tag))))
+       (let [options (apply hash-map options)
+         list-nodes-options (reduce
+                            (fn [lno [k v]]
+                              ((list-nodes-map k) lno v)
+                              lno)
+                            (GetNodesOptions.) options)]
+         (seq-from-immutable-set (.getNodes compute-or-tag list-nodes-options)))
+       (nodes-with-tag compute-or-tag *compute*))))
 
 (defn images
   "Retrieve the available images for the compute context."

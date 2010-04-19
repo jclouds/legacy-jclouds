@@ -115,6 +115,7 @@ Options can also be specified for extension modules
   :after-marker string
   :in-direcory path
   :max-results n
+  :with-details true
   :recursive true"
   [blobstore & args]
   (if (blobstore? blobstore)
