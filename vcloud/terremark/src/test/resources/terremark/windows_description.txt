@@ -1,0 +1,4 @@
+This template consists of a base Windows Server 2008 R2, Enterprise Edition build. Additional features and roles can be added using the Windows Server Manager.  The hostname, Administr
+ator password, and base IP will be set as part of the server creation process based on user input. Once deployment is complete, the server should be accessible via a Remote Desktop Cli
+ent. This customization can take 10 minutes after the base operating system has been deployed. The operating system license is provided through the SPLA program and is done assuming th
+at no application management is  being done by the managed services provider.

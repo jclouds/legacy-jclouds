@@ -1,0 +1,15 @@
+Manager UI URL: https://<Public Manager IP>:8000 
+Username: vpncubed 
+Password: vpncubed 
+Documentation Download Link: http://www.cohesiveft.com/dnld/VPN-Cubed_IPsec-to-Terremark_Free-Edition_2010218.pdf 
+
+For more information: http://www.cohesiveft.com/Cube/VPN/VPN-Cubed_IPsec_to_Cloud/
+
+VPN-Cubed IPsec to Terremark vCloud Express (Free Edition) is a free development/test-only version of the VPN-Cubed overlay network that allows you control of addressing, topology, pro
+tocols, and encrypted communications for your devices deployed to Terremark’s vCloud Express. This template is packaged to work between a data center using IPsec extranet connectivity 
+and Terremark. Your IPsec device connects to an IPsec gateway at Terremark running as a virtual appliance which routes to your VPN-Cubed overlay network subnet in Terremark.  An overla
+y network that you completely control.  Other Terremark resident cloud machine instances "plug into" the overlay network through the use of the OpenVPN software package. 
+
+VPN-Cubed IPsec to Terremark Free Edition creates an overlay network that uses the 172.31.1.x subnet, allows up to 5 client servers connections, and one IPsec tunnel connection. 
+
+Please contact CohesiveFT at Sales@CohesiveFT.com to discuss more robust VPN-Cubed Deployments.

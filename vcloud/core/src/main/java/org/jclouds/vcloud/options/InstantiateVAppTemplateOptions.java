@@ -39,10 +39,10 @@ public class InstantiateVAppTemplateOptions {
    private String memorySizeMegabytes;
    private String diskSizeKilobytes;
    private String network;
-   private Map<String, String> properties = Maps.newTreeMap();
    private String fenceMode;
    private String dhcpEnabled;
    private String networkName;
+   private Map<String, String> properties = Maps.newTreeMap();
 
    public InstantiateVAppTemplateOptions productProperty(String key, String value) {
       properties.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
@@ -205,6 +205,74 @@ public class InstantiateVAppTemplateOptions {
                + memorySizeMegabytes + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network="
                + network + ", networkName=" + networkName + ", fenceMode=" + fenceMode
                + ", dhcpEnabled=" + dhcpEnabled + ", properties=" + properties + "]";
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((cpuCount == null) ? 0 : cpuCount.hashCode());
+      result = prime * result + ((dhcpEnabled == null) ? 0 : dhcpEnabled.hashCode());
+      result = prime * result + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
+      result = prime * result + ((fenceMode == null) ? 0 : fenceMode.hashCode());
+      result = prime * result
+               + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes.hashCode());
+      result = prime * result + ((network == null) ? 0 : network.hashCode());
+      result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
+      result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      InstantiateVAppTemplateOptions other = (InstantiateVAppTemplateOptions) obj;
+      if (cpuCount == null) {
+         if (other.cpuCount != null)
+            return false;
+      } else if (!cpuCount.equals(other.cpuCount))
+         return false;
+      if (dhcpEnabled == null) {
+         if (other.dhcpEnabled != null)
+            return false;
+      } else if (!dhcpEnabled.equals(other.dhcpEnabled))
+         return false;
+      if (diskSizeKilobytes == null) {
+         if (other.diskSizeKilobytes != null)
+            return false;
+      } else if (!diskSizeKilobytes.equals(other.diskSizeKilobytes))
+         return false;
+      if (fenceMode == null) {
+         if (other.fenceMode != null)
+            return false;
+      } else if (!fenceMode.equals(other.fenceMode))
+         return false;
+      if (memorySizeMegabytes == null) {
+         if (other.memorySizeMegabytes != null)
+            return false;
+      } else if (!memorySizeMegabytes.equals(other.memorySizeMegabytes))
+         return false;
+      if (network == null) {
+         if (other.network != null)
+            return false;
+      } else if (!network.equals(other.network))
+         return false;
+      if (networkName == null) {
+         if (other.networkName != null)
+            return false;
+      } else if (!networkName.equals(other.networkName))
+         return false;
+      if (properties == null) {
+         if (other.properties != null)
+            return false;
+      } else if (!properties.equals(other.properties))
+         return false;
+      return true;
    }
 
 }

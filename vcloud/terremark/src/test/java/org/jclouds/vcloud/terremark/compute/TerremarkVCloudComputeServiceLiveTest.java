@@ -21,10 +21,15 @@ package org.jclouds.vcloud.terremark.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map.Entry;
+
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
@@ -59,6 +64,27 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
       @SuppressWarnings("unused")
       RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
+   }
+
+   @Override
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      Template template = super.buildTemplate(templateBuilder);
+      Image image = template.getImage();
+      assert image.getDefaultCredentials().account != null : image;
+      assert image.getDefaultCredentials().key != null : image;
+      return template;
+   }
+
+   @Override
+   public void testListImages() throws Exception {
+      for (Entry<String, ? extends Image> image : client.getImages().entrySet()) {
+         assertEquals(image.getKey(), image.getValue().getId());
+         assert image.getValue().getId() != null : image;
+         // image.getValue().getLocationId() can be null, if it is a location-free image
+         assertEquals(image.getValue().getType(), ComputeType.IMAGE);
+         assert image.getValue().getDefaultCredentials().account != null : image;
+         assert image.getValue().getDefaultCredentials().key != null : image;
+      }
    }
 
 }

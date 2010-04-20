@@ -31,7 +31,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
@@ -86,28 +85,19 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       if (!taskTester.apply(task.getId())) {
          throw new TaskException("deploy", vAppResponse, task);
       }
-
       logger.debug("<< deployed vApp(%s)", vAppResponse.getId());
 
       logger.debug(">> powering vApp(%s)", vAppResponse.getId());
-      try {
-         task = client.powerOnVApp(vAppResponse.getId());
-         if (!taskTester.apply(task.getId())) {
-            throw new TaskException("powerOn", vAppResponse, task);
-         }
-      } catch (HttpResponseException e) {
-         if (e.getResponse().getStatusCode() == 400
-                  && client.getVApp(vAppResponse.getId()).getStatus() == VAppStatus.ON) {
-            // TODO temporary hack because some vcloud implementations automatically transition to
-            // powerOn from deploy
-         } else {
-            throw e;
-         }
-
+      task = client.powerOnVApp(vAppResponse.getId());
+      if (!taskTester.apply(task.getId())) {
+         throw new TaskException("powerOn", vAppResponse, task);
       }
       logger.debug("<< on vApp(%s)", vAppResponse.getId());
+      return parseAndValidateResponse(templateId, vAppResponse);
+   }
 
-      Map<String, String> response = parseResponse(vAppResponse);
+   protected Map<String, String> parseAndValidateResponse(String templateId, VApp vAppResponse) {
+      Map<String, String> response = parseResponse(templateId, vAppResponse);
       checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
       checkState(response.containsKey("username"),
                "bad configuration: [username] should be in response");
@@ -116,7 +106,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       return response;
    }
 
-   protected Map<String, String> parseResponse(VApp vAppResponse) {
+   protected Map<String, String> parseResponse(String templateId, VApp vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
       config.put("id", vAppResponse.getId());
       config.put("username", null);

@@ -1,7 +1,5 @@
 package org.jclouds.vcloud.hostingdotcom.compute;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -25,17 +23,14 @@ import com.google.common.collect.ImmutableMap;
 public class HostingDotComVCloudComputeClient extends BaseVCloudComputeClient {
 
    @Inject
-   protected HostingDotComVCloudComputeClient(VCloudClient client,
-            Predicate<String> successTester, @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+   protected HostingDotComVCloudComputeClient(VCloudClient client, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
             Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, notFoundTester, vAppStatusToNodeState);
    }
 
    @Override
-   protected Map<String, String> parseResponse(VApp vAppResponse) {
-      checkState(vAppResponse instanceof HostingDotComVApp,
-               "bad configuration, vApp should be an instance of "
-                        + HostingDotComVApp.class.getName());
+   protected Map<String, String> parseResponse(String templateId, VApp vAppResponse) {
       HostingDotComVApp hVApp = HostingDotComVApp.class.cast(vAppResponse);
       return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", hVApp
                .getUsername(), "password", hVApp.getPassword());

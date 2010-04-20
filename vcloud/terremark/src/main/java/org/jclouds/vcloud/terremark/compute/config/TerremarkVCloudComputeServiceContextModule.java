@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.compute.config;
 
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -38,8 +39,8 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
-import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -51,6 +52,7 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
+import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 
 import com.google.common.base.Function;
@@ -60,6 +62,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Configures the {@link TerremarkVCloudComputeServiceContext}; requires
@@ -73,6 +76,15 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    protected void configure() {
       super.configure();
       bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
+      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
+               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+
+   }
+
+   @Named("PASSWORD")
+   @Provides
+   String providePassword() {
+      return new SecureRandom().nextLong() + "";
    }
 
    @Override
@@ -97,6 +109,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
     */
    @Override
    protected Map<String, ? extends Image> provideImages(final VCloudClient client,
+            final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
             LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {
@@ -129,7 +142,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
                               images.add(new ImageImpl(resource.getId(), template.getName(), vDC
                                        .getId(), template.getLocation(), ImmutableMap
                                        .<String, String> of(), template.getDescription(), "", myOs,
-                                       template.getName(), arch, new Credentials("root", null)));
+                                       template.getName(), arch, credentialsProvider
+                                                .execute(template)));
                               return null;
                            }
                         }), executor));

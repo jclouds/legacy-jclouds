@@ -21,15 +21,19 @@ package org.jclouds.vcloud.terremark.compute;
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.net.InetAddress;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -42,7 +46,6 @@ import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -53,19 +56,28 @@ import com.google.common.collect.Sets;
 public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
 
    private final TerremarkVCloudClient client;
+   private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
+   private Provider<String> passwordGenerator;
 
    @Inject
    protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
-            Predicate<String> successTester, @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
+            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+            @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<String> successTester,
+            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
             Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, notFoundTester, vAppStatusToNodeState);
       this.client = client;
+      this.credentialsProvider = credentialsProvider;
+      this.passwordGenerator = passwordGenerator;
    }
 
    @Override
-   protected Map<String, String> parseResponse(VApp vAppResponse) {
-      return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", "vcloud",
-               "password", "p4ssw0rd");
+   protected Map<String, String> parseAndValidateResponse(String templateId, VApp vAppResponse) {
+      Credentials credentials = credentialsProvider.execute(client.getVAppTemplate(templateId));
+      Map<String, String> toReturn = super.parseResponse(templateId, vAppResponse);
+      toReturn.put("username", credentials.account);
+      toReturn.put("password", credentials.key);
+      return toReturn;
    }
 
    @Override
@@ -74,7 +86,16 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
       if (options.getDiskSizeKilobytes() != null) {
          logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
       }
+      String password = null;
+      if (client.getVAppTemplate(templateId).getDescription().indexOf("Windows") != -1) {
+         password = passwordGenerator.get();
+         options.getProperties().put("password", password);
+      }
       Map<String, String> response = super.start(vDCId, name, templateId, options, portsToOpen);
+      if (password != null) {
+         response = new LinkedHashMap<String, String>(response);
+         response.put("password", password);
+      }
       if (portsToOpen.length > 0)
          createPublicAddressMappedToPorts(response.get("id"), portsToOpen);
       return response;

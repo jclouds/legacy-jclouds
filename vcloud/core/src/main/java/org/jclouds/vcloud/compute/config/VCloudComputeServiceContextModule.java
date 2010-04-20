@@ -63,6 +63,7 @@ import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
@@ -185,7 +186,6 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       @Inject
       protected VCloudAddNodeWithTagStrategy(VCloudClient client,
                VCloudComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
-         super();
          this.client = client;
          this.computeClient = computeClient;
          this.vAppStatusToNodeState = vAppStatusToNodeState;
@@ -197,8 +197,6 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          InstantiateVAppTemplateOptions options = processorCount(
                   Double.valueOf(template.getSize().getCores()).intValue()).memory(
                   template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
-
-         options.networkName("templateId=" + template.getImage().getId());
 
          Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
                   template.getImage().getId(), options, template.getOptions().getInboundPorts());
@@ -348,6 +346,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Provides
    @Singleton
    protected Map<String, ? extends Image> provideImages(final VCloudClient client,
+            final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
             LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {

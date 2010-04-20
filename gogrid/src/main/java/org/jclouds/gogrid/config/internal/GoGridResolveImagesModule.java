@@ -18,42 +18,33 @@
  */
 package org.jclouds.gogrid.config.internal;
 
-import com.google.inject.AbstractModule;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.config.ResolvesImages;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
-import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.domain.ServerImage;
 
-import javax.inject.Inject;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.inject.AbstractModule;
 
 /**
  * @author Oleksiy Yarmula
  */
 @ResolvesImages
 public class GoGridResolveImagesModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(PopulateDefaultLoginCredentialsForImageStrategy.class).
-                to(GoGridPopulateDefaultLoginCredentialsForImageStrategy.class);
-    }
+   @Override
+   protected void configure() {
+      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
+               GoGridPopulateDefaultLoginCredentialsForImageStrategy.class);
+   }
 
-    public static class GoGridPopulateDefaultLoginCredentialsForImageStrategy
-            implements PopulateDefaultLoginCredentialsForImageStrategy {
-        private final GoGridClient client;
+   @Singleton
+   public static class GoGridPopulateDefaultLoginCredentialsForImageStrategy implements
+            PopulateDefaultLoginCredentialsForImageStrategy {
 
-        @Inject
-        protected GoGridPopulateDefaultLoginCredentialsForImageStrategy(GoGridClient client) {
-            this.client = client;
-        }
-
-        @Override
-        public Credentials execute(Object resourceToAuthenticate) {
-            return new Credentials("root", null);
-        }
-    }
+      @Override
+      public Credentials execute(Object resourceToAuthenticate) {
+         return new Credentials("root", null);
+      }
+   }
 
 }

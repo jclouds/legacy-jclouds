@@ -1,0 +1,5 @@
+username: vcloud (SSH) or (Console)
+password: $Ep455l0ud!2
+This template consists of a basic Red Hat 5 (32-bit) installation without an entitlement. Additional software and updates are available via the Redhat Network once the server is regist
+ered with the Redhat Network.  The hostname and base IP will be set as part of the server creation process based on user input. Once deployment is complete, please connect via the cons
+ole and change the vcloud password.

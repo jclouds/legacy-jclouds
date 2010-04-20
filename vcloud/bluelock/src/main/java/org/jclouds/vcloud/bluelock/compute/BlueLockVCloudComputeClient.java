@@ -28,7 +28,7 @@ public class BlueLockVCloudComputeClient extends BaseVCloudComputeClient {
    }
 
    @Override
-   protected Map<String, String> parseResponse(VApp vAppResponse) {
+   protected Map<String, String> parseResponse(String templateId, VApp vAppResponse) {
       // https://forums.bluelock.com/faq.php?faq=vcloudexpressfaq
       return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", (vAppResponse
                .getOperatingSystemDescription().indexOf("buntu") != -1) ? "express" : "root",
