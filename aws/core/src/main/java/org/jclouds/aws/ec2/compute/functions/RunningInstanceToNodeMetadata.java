@@ -28,11 +28,13 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.collect.Maps;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.functions.InstanceTypeToStorageMappingUnix;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -86,10 +88,31 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       String locationId = instance.getAvailabilityZone().toString();
 
-      Map<String, String> extra = ImmutableMap.<String, String> of();
+      Map<String, String> extra = getExtra(instance);
 
       return new NodeMetadataImpl(id, name, locationId, uri, userMetadata, tag, state,
                publicAddresses, privateAddresses, extra, credentials);
+   }
+
+    /**
+     * Set extras for the node.
+     *
+     * Extras are derived from either additional API calls or
+     * hard-coded values.
+     * @param instance instance for which the extras are retrieved
+     * @return map with extras
+     */
+   @VisibleForTesting
+   Map<String, String> getExtra(RunningInstance instance) {
+       Map<String, String> extra = Maps.newHashMap();
+
+       //put storage info
+       /* TODO: only valid for UNIX */
+       InstanceTypeToStorageMappingUnix instanceToStorageMapping =
+               new InstanceTypeToStorageMappingUnix();
+       extra.putAll(instanceToStorageMapping.apply(instance.getInstanceType()));
+
+       return extra;
    }
 
    @VisibleForTesting

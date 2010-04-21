@@ -25,5 +25,6 @@ package org.jclouds.compute.reference;
 public interface ComputeServiceConstants {
 
    public static final String COMPUTE_LOGGER = "jclouds.compute";
+   public static final String LOCAL_PARTITION_GB_PATTERN = "disk_drive/%s/gb";
 
 }

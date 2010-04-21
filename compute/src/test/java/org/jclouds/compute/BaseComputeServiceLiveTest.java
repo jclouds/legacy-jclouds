@@ -317,6 +317,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertNotNull(nodeMetadata.getPrivateAddresses());
       }
    }
+
    public void testListImages() throws Exception {
       for (Entry<String, ? extends Image> image : client.getImages().entrySet()) {
          assertEquals(image.getKey(), image.getValue().getId());
