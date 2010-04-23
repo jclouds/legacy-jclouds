@@ -23,12 +23,9 @@
  */
 package org.jclouds.gogrid;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.Properties;
 
-import com.google.inject.Key;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
@@ -36,42 +33,44 @@ import org.jclouds.gogrid.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.gogrid.config.internal.GoGridResolveImagesModule;
 
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- *
+ * 
  * @author Adrian Cole
  */
-public class GoGridContextBuilder extends ComputeServiceContextBuilder<GoGridAsyncClient, GoGridClient> {
+public class GoGridContextBuilder extends
+         ComputeServiceContextBuilder<GoGridAsyncClient, GoGridClient> {
 
-    public GoGridContextBuilder(Properties props) {
-        super(new TypeLiteral<GoGridAsyncClient>() {
-        }, new TypeLiteral<GoGridClient>() {
-        }, props);
-    }
+   public GoGridContextBuilder(Properties props) {
+      super(new TypeLiteral<GoGridAsyncClient>() {
+      }, new TypeLiteral<GoGridClient>() {
+      }, props);
+   }
 
-    protected void addClientModule(List<Module> modules) {
-        modules.add(new GoGridRestClientModule());
-    }
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new GoGridRestClientModule());
+   }
 
-    @Override
-    protected void addContextModule(List<Module> modules) {
-        modules.add(new GoGridComputeServiceContextModule());
-    }
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new GoGridComputeServiceContextModule());
+   }
 
-    @Override
-    protected void addImageResolutionModule() {
-        modules.add(new GoGridResolveImagesModule());
-    }
+   @Override
+   protected void addImageResolutionModule() {
+      modules.add(new GoGridResolveImagesModule());
+   }
 
-    @Override
-    public ComputeServiceContext buildComputeServiceContext() {
-        return this
-                .buildInjector()
-                .getInstance(
+   @Override
+   public ComputeServiceContext buildComputeServiceContext() {
+      return this
+               .buildInjector()
+               .getInstance(
                         Key
-                                .get(new TypeLiteral<ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>>() {
-                        }));
-    }
+                                 .get(new TypeLiteral<ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>>() {
+                                 }));
+   }
 }

@@ -18,37 +18,37 @@
  */
 package org.jclouds.gogrid.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.OBJECT_KEY;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
-
 /**
- *
+ * 
  * @see org.jclouds.gogrid.services.GridJobClient#getJobsForObjectName(String)
- *
+ * 
  * @author Oleksiy Yarmula
  */
 public class BindObjectNameToGetJobsRequestQueryParams implements Binder {
 
-    /**
-     * Maps the object's name to the
-     * input of <a href="http://wiki.gogrid.com/wiki/index.php/API:grid.job.list/>.
-     */
-    @Override
-    public void bindToRequest(HttpRequest request, Object input) {
-        checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest,
-                "this binder is only valid for GeneratedHttpRequests!");
-        checkArgument(checkNotNull(input, "input is null") instanceof String,
-                "this binder is only valid for String arguments");
+   /**
+    * Maps the object's name to the input of <a
+    * href="http://wiki.gogrid.com/wiki/index.php/API:grid.job.list/>.
+    */
+   @Override
+   public void bindToRequest(HttpRequest request, Object input) {
+      checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest<?>,
+               "this binder is only valid for GeneratedHttpRequests!");
+      checkArgument(checkNotNull(input, "input is null") instanceof String,
+               "this binder is only valid for String arguments");
 
-        String serverName = (String) input;
-        GeneratedHttpRequest generatedRequest = (GeneratedHttpRequest) request;
+      String serverName = (String) input;
+      GeneratedHttpRequest<?> generatedRequest = (GeneratedHttpRequest<?>) request;
 
-        generatedRequest.addQueryParam(OBJECT_KEY, serverName);
-    }
+      generatedRequest.addQueryParam(OBJECT_KEY, serverName);
+   }
 
 }

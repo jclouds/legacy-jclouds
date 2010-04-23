@@ -18,6 +18,29 @@
  */
 package org.jclouds.gogrid.functions;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.Map;
+import java.util.SortedSet;
+
+import javax.inject.Singleton;
+
+import org.jclouds.Constants;
+import org.jclouds.gogrid.config.GoGridContextModule;
+import org.jclouds.gogrid.domain.Ip;
+import org.jclouds.gogrid.domain.IpPortPair;
+import org.jclouds.gogrid.domain.IpState;
+import org.jclouds.gogrid.domain.LoadBalancer;
+import org.jclouds.gogrid.domain.LoadBalancerOs;
+import org.jclouds.gogrid.domain.LoadBalancerPersistenceType;
+import org.jclouds.gogrid.domain.LoadBalancerState;
+import org.jclouds.gogrid.domain.LoadBalancerType;
+import org.jclouds.gogrid.functions.internal.CustomDeserializers;
+import org.jclouds.http.functions.config.ParserModule;
+import org.testng.annotations.Test;
+
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -25,21 +48,6 @@ import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import org.jclouds.Constants;
-import org.jclouds.gogrid.config.GoGridContextModule;
-import org.jclouds.gogrid.domain.*;
-import org.jclouds.gogrid.functions.internal.CustomDeserializers;
-import org.jclouds.http.functions.config.ParserModule;
-import org.testng.annotations.Test;
-
-import javax.inject.Singleton;
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.SortedSet;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author Oleksiy Yarmula
@@ -47,60 +55,45 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "unit", testName = "gogrid.ParseLoadBalancersFromJsonResponseTest")
 public class ParseLoadBalancersFromJsonResponseTest {
 
-    @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
-        InputStream is = getClass().getResourceAsStream("/test_get_load_balancer_list.json");
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/test_get_load_balancer_list.json");
 
-        ParseLoadBalancerListFromJsonResponse parser = new ParseLoadBalancerListFromJsonResponse(i
-                .getInstance(Gson.class));
-        SortedSet<LoadBalancer> response = parser.apply(is);
+      ParseLoadBalancerListFromJsonResponse parser = new ParseLoadBalancerListFromJsonResponse(i
+               .getInstance(Gson.class));
+      SortedSet<LoadBalancer> response = parser.apply(is);
 
-        LoadBalancer loadBalancer = new LoadBalancer(6372L,
-                "Balancer", null, new IpPortPair(new Ip(1313082L,
-                        "204.51.240.181",
-                        "204.51.240.176/255.255.255.240",
-                        true,
-                        IpState.ASSIGNED),
-                        80),
-                ImmutableSortedSet.of(
-                        new IpPortPair(new Ip(1313086L,
-                                "204.51.240.185",
-                                "204.51.240.176/255.255.255.240",
-                                true,
-                                IpState.ASSIGNED),
-                                80),
-                        new IpPortPair(new Ip(1313089L,
-                                "204.51.240.188",
-                                "204.51.240.176/255.255.255.240",
-                                true,
-                                IpState.ASSIGNED),
-                                80)
-                ),
-                LoadBalancerType.ROUND_ROBIN,
-                LoadBalancerPersistenceType.NONE,
-                LoadBalancerOs.F5,
-                LoadBalancerState.ON);
-        assertEquals(Iterables.getOnlyElement(response), loadBalancer);
-    }
+      LoadBalancer loadBalancer = new LoadBalancer(6372L, "Balancer", null, new IpPortPair(
+               new Ip(1313082L, "204.51.240.181", "204.51.240.176/255.255.255.240", true,
+                        IpState.ASSIGNED), 80), ImmutableSortedSet.of(new IpPortPair(
+               new Ip(1313086L, "204.51.240.185", "204.51.240.176/255.255.255.240", true,
+                        IpState.ASSIGNED), 80), new IpPortPair(new Ip(1313089L, "204.51.240.188",
+               "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED), 80)),
+               LoadBalancerType.ROUND_ROBIN, LoadBalancerPersistenceType.NONE, LoadBalancerOs.F5,
+               LoadBalancerState.ON);
+      assertEquals(Iterables.getOnlyElement(response), loadBalancer);
+   }
 
-    Injector i = Guice.createInjector(new ParserModule() {
-        @Override
-        protected void configure() {
-            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
-            super.configure();
-        }
+   Injector i = Guice.createInjector(new ParserModule() {
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
+         super.configure();
+      }
 
-        @Provides
-        @Singleton
-        @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
-        public Map<Class, Object> provideCustomAdapterBindings() {
-            Map<Class, Object> bindings = Maps.newHashMap();
-            bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
-            bindings.put(LoadBalancerState.class, new CustomDeserializers.LoadBalancerStateAdapter());
-            bindings.put(LoadBalancerPersistenceType.class, new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
-            bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
-            bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
-            return bindings;
-        }
-    });
+      @Provides
+      @Singleton
+      @SuppressWarnings( { "unused", "unchecked" })
+      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
+      public Map<Class, Object> provideCustomAdapterBindings() {
+         Map<Class, Object> bindings = Maps.newHashMap();
+         bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
+         bindings.put(LoadBalancerState.class, new CustomDeserializers.LoadBalancerStateAdapter());
+         bindings.put(LoadBalancerPersistenceType.class,
+                  new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
+         bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
+         bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
+         return bindings;
+      }
+   });
 }

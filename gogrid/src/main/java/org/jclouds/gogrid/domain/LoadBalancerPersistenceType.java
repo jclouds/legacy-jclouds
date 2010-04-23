@@ -18,8 +18,6 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.common.base.CaseFormat;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -27,25 +25,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public enum LoadBalancerPersistenceType {
 
-    NONE("None"),
-    SSL_STICKY("SSL Sticky"),
-    SOURCE_ADDRESS("Source Address"),
-    UNKNOWN("Unknown");
+   NONE("None"), SSL_STICKY("SSL Sticky"), SOURCE_ADDRESS("Source Address"), UNKNOWN("Unknown");
 
-    String type;
-    LoadBalancerPersistenceType(String type) {
-        this.type = type;
-    }
+   String type;
 
-    @Override
-    public String toString() {
-        return type;
-    }
+   LoadBalancerPersistenceType(String type) {
+      this.type = type;
+   }
 
-    public static LoadBalancerPersistenceType fromValue(String type) {
-        for(LoadBalancerPersistenceType persistenceType : values()) {
-            if(persistenceType.type.equals(checkNotNull(type))) return persistenceType;
-        }
-        return UNKNOWN;
-    }
+   @Override
+   public String toString() {
+      return type;
+   }
+
+   public static LoadBalancerPersistenceType fromValue(String type) {
+      for (LoadBalancerPersistenceType persistenceType : values()) {
+         if (persistenceType.type.equals(checkNotNull(type)))
+            return persistenceType;
+      }
+      return UNKNOWN;
+   }
 }

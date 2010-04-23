@@ -32,7 +32,6 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.collect.Sets;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
@@ -42,26 +41,26 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * Parses {@link Server servers} from a json string.
- *
+ * 
  * @author Adrian Cole
  */
 @Singleton
 public class ParseServerListFromJsonResponse extends ParseJson<SortedSet<Server>> {
 
-    @Inject
-    public ParseServerListFromJsonResponse(Gson gson) {
-        super(gson);
-    }
+   @Inject
+   public ParseServerListFromJsonResponse(Gson gson) {
+      super(gson);
+   }
 
-    public SortedSet<Server> apply(InputStream stream) {
-        Type setType = new TypeToken<GenericResponseContainer<Server>>() {
-        }.getType();
-        GenericResponseContainer<Server> response;
-        try {
-            response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-        }
-        return response.getList();
-    }
+   public SortedSet<Server> apply(InputStream stream) {
+      Type setType = new TypeToken<GenericResponseContainer<Server>>() {
+      }.getType();
+      GenericResponseContainer<Server> response;
+      try {
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+      return response.getList();
+   }
 }

@@ -18,11 +18,14 @@
  */
 package org.jclouds.gogrid.functions;
 
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
 import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.config.GoGridContextModule;
@@ -32,12 +35,12 @@ import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
-import javax.inject.Singleton;
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.Map;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 
 /**
  * @author Oleksiy Yarmula
@@ -45,36 +48,35 @@ import java.util.Map;
 @Test(groups = "unit", testName = "gogrid.ParseServerNameToCredentialsMapFromJsonResponseTest")
 public class ParseServerNameToCredentialsMapFromJsonResponseTest {
 
-    @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
-        InputStream is = getClass().getResourceAsStream("/test_credentials_list.json");
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/test_credentials_list.json");
 
-        ParseServerNameToCredentialsMapFromJsonResponse parser = new ParseServerNameToCredentialsMapFromJsonResponse(i
-                .getInstance(Gson.class));
-        Map<String, Credentials> response = parser.apply(is);
-        assertEquals(response.size(), 6);
-    }
+      ParseServerNameToCredentialsMapFromJsonResponse parser = new ParseServerNameToCredentialsMapFromJsonResponse(
+               i.getInstance(Gson.class));
+      Map<String, Credentials> response = parser.apply(is);
+      assertEquals(response.size(), 6);
+   }
 
+   Injector i = Guice.createInjector(new ParserModule() {
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
+         super.configure();
+      }
 
-    Injector i = Guice.createInjector(new ParserModule() {
-        @Override
-        protected void configure() {
-            bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
-            super.configure();
-        }
-
-
-        @Provides
-        @Singleton
-        @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
-        public Map<Class, Object> provideCustomAdapterBindings() {
-            Map<Class, Object> bindings = Maps.newHashMap();
-            bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
-            bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
-            bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
-            bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
-            return bindings;
-        }
-    });
+      @Provides
+      @Singleton
+      @SuppressWarnings( { "unused", "unchecked" })
+      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
+      public Map<Class, Object> provideCustomAdapterBindings() {
+         Map<Class, Object> bindings = Maps.newHashMap();
+         bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
+         bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
+         bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
+         bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
+         return bindings;
+      }
+   });
 
 }

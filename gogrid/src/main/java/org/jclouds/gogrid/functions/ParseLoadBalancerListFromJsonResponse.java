@@ -18,41 +18,42 @@
  */
 package org.jclouds.gogrid.functions;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.jclouds.gogrid.domain.Job;
-import org.jclouds.gogrid.domain.LoadBalancer;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
-import org.jclouds.http.functions.ParseJson;
-
-import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.SortedSet;
 
+import javax.inject.Inject;
+
+import org.jclouds.gogrid.domain.LoadBalancer;
+import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
+import org.jclouds.http.functions.ParseJson;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * Parses {@link org.jclouds.gogrid.domain.LoadBalancer jobs} from a json string.
- *
+ * 
  * @author Oleksiy Yarmula
  */
 public class ParseLoadBalancerListFromJsonResponse extends ParseJson<SortedSet<LoadBalancer>> {
 
-    @Inject
-    public ParseLoadBalancerListFromJsonResponse(Gson gson) {
-        super(gson);
-    }
+   @Inject
+   public ParseLoadBalancerListFromJsonResponse(Gson gson) {
+      super(gson);
+   }
 
-    public SortedSet<LoadBalancer> apply(InputStream stream) {
-        Type setType = new TypeToken<GenericResponseContainer<LoadBalancer>>() {
-        }.getType();
-        GenericResponseContainer<LoadBalancer> response;
-        try {
-            response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-        }
-        return response.getList();
-    }
+   public SortedSet<LoadBalancer> apply(InputStream stream) {
+      Type setType = new TypeToken<GenericResponseContainer<LoadBalancer>>() {
+      }.getType();
+      GenericResponseContainer<LoadBalancer> response;
+      try {
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+      return response.getList();
+   }
 }

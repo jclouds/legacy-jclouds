@@ -18,44 +18,44 @@
  */
 package org.jclouds.gogrid.functions;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.jclouds.gogrid.domain.LoadBalancer;
-import org.jclouds.gogrid.domain.Option;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
-import org.jclouds.http.functions.ParseJson;
-
-import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.SortedSet;
 
+import javax.inject.Inject;
+
+import org.jclouds.gogrid.domain.Option;
+import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
+import org.jclouds.http.functions.ParseJson;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * Parses the list of generic options.
- *
- * GoGrid uses options as containers for
- * id/name/description objects.
- *
+ * 
+ * GoGrid uses options as containers for id/name/description objects.
+ * 
  * @author Oleksiy Yarmula
  */
 public class ParseOptionsFromJsonResponse extends ParseJson<SortedSet<Option>> {
 
-    @Inject
-    public ParseOptionsFromJsonResponse(Gson gson) {
-        super(gson);
-    }
+   @Inject
+   public ParseOptionsFromJsonResponse(Gson gson) {
+      super(gson);
+   }
 
-    public SortedSet<Option> apply(InputStream stream) {
-        Type setType = new TypeToken<GenericResponseContainer<Option>>() {
-        }.getType();
-        GenericResponseContainer<Option> response;
-        try {
-            response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-        }
-        return response.getList();
-    }
+   public SortedSet<Option> apply(InputStream stream) {
+      Type setType = new TypeToken<GenericResponseContainer<Option>>() {
+      }.getType();
+      GenericResponseContainer<Option> response;
+      try {
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+      return response.getList();
+   }
 }
