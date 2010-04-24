@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.nullSafeSet;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -28,7 +29,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.collect.Maps;
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.InstanceState;
@@ -46,8 +46,8 @@ import org.jclouds.domain.Credentials;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -76,15 +76,22 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       String id = checkNotNull(instance, "instance").getId();
       String name = null; // user doesn't determine a node name;
       URI uri = null; // no uri to get rest access to host info
+
+      Credentials credentials = null;// default if no keypair exists
+      String tag = String.format("NOTAG-%s", instance.getId());// default if no keypair exists
+
+      if (instance.getKeyName() != null) {
+         tag = instance.getKeyName().replaceAll("-[0-9]+", "");
+         credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance,
+                  tag));
+      }
+
       Map<String, String> userMetadata = ImmutableMap.<String, String> of();
-      String tag = instance.getKeyName().replaceAll("-[0-9]+", "");
+
       NodeState state = instanceToNodeState.get(instance.getInstanceState());
 
       Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
       Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
-
-      Credentials credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(
-               instance, tag));
 
       String locationId = instance.getAvailabilityZone().toString();
 
@@ -94,25 +101,25 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
                publicAddresses, privateAddresses, extra, credentials);
    }
 
-    /**
-     * Set extras for the node.
-     *
-     * Extras are derived from either additional API calls or
-     * hard-coded values.
-     * @param instance instance for which the extras are retrieved
-     * @return map with extras
-     */
+   /**
+    * Set extras for the node.
+    * 
+    * Extras are derived from either additional API calls or hard-coded values.
+    * 
+    * @param instance
+    *           instance for which the extras are retrieved
+    * @return map with extras
+    */
    @VisibleForTesting
    Map<String, String> getExtra(RunningInstance instance) {
-       Map<String, String> extra = Maps.newHashMap();
+      Map<String, String> extra = Maps.newHashMap();
 
-       //put storage info
-       /* TODO: only valid for UNIX */
-       InstanceTypeToStorageMappingUnix instanceToStorageMapping =
-               new InstanceTypeToStorageMappingUnix();
-       extra.putAll(instanceToStorageMapping.apply(instance.getInstanceType()));
+      // put storage info
+      /* TODO: only valid for UNIX */
+      InstanceTypeToStorageMappingUnix instanceToStorageMapping = new InstanceTypeToStorageMappingUnix();
+      extra.putAll(instanceToStorageMapping.apply(instance.getInstanceType()));
 
-       return extra;
+      return extra;
    }
 
    @VisibleForTesting
@@ -129,13 +136,6 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
                DescribeImagesOptions.Builder.imageIds(from.getImageId())));
       return checkNotNull(credentialProvider.execute(image), "login from image: "
                + from.getImageId()).account;
-   }
-
-   Set<InetAddress> nullSafeSet(InetAddress in) {
-      if (in == null) {
-         return ImmutableSet.<InetAddress> of();
-      }
-      return ImmutableSet.<InetAddress> of(in);
    }
 
 }

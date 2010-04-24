@@ -96,4 +96,66 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
       return formParameters;
    }
 
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((formParameters == null) ? 0 : formParameters.hashCode());
+      result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+      result = prime * result + ((matrixParameters == null) ? 0 : matrixParameters.hashCode());
+      result = prime * result + ((pathSuffix == null) ? 0 : pathSuffix.hashCode());
+      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+      result = prime * result + ((queryParameters == null) ? 0 : queryParameters.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BaseHttpRequestOptions other = (BaseHttpRequestOptions) obj;
+      if (formParameters == null) {
+         if (other.formParameters != null)
+            return false;
+      } else if (!formParameters.equals(other.formParameters))
+         return false;
+      if (headers == null) {
+         if (other.headers != null)
+            return false;
+      } else if (!headers.equals(other.headers))
+         return false;
+      if (matrixParameters == null) {
+         if (other.matrixParameters != null)
+            return false;
+      } else if (!matrixParameters.equals(other.matrixParameters))
+         return false;
+      if (pathSuffix == null) {
+         if (other.pathSuffix != null)
+            return false;
+      } else if (!pathSuffix.equals(other.pathSuffix))
+         return false;
+      if (payload == null) {
+         if (other.payload != null)
+            return false;
+      } else if (!payload.equals(other.payload))
+         return false;
+      if (queryParameters == null) {
+         if (other.queryParameters != null)
+            return false;
+      } else if (!queryParameters.equals(other.queryParameters))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[formParameters=" + formParameters + ", headers=" + headers + ", matrixParameters="
+               + matrixParameters + ", pathSuffix=" + pathSuffix + ", payload=" + payload
+               + ", queryParameters=" + queryParameters + "]";
+   }
+
 }

@@ -304,16 +304,20 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testGetNodesWithDetails() throws Exception {
-      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes(new GetNodesOptions().withDetails()).entrySet()) {
+      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes(
+               new GetNodesOptions().withDetails()).entrySet()) {
          assertEquals(node.getKey(), node.getValue().getId());
-         assert node.getValue().getId() != null;
-         assert node.getValue().getLocationId() != null;
+         assert node.getValue().getId() != null : node;
+         assert node.getValue().getLocationId() != null : node;
          assertEquals(node.getValue().getType(), ComputeType.NODE);
          assert node.getValue() instanceof NodeMetadata;
-         NodeMetadata nodeMetadata = (NodeMetadata)node.getValue();
-         assertNotNull(nodeMetadata.getName());
-         assertNotNull(nodeMetadata.getPublicAddresses());
-         assert nodeMetadata.getPublicAddresses().size() > 1;
+         NodeMetadata nodeMetadata = (NodeMetadata) node.getValue();
+         assert nodeMetadata.getId() != null : nodeMetadata;
+         // user specified name is not always supported
+         // assert nodeMetadata.getName() != null : nodeMetadata;
+         assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
+
+         assert nodeMetadata.getPublicAddresses().size() > 1 : nodeMetadata;
          assertNotNull(nodeMetadata.getPrivateAddresses());
       }
    }

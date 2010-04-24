@@ -42,7 +42,7 @@ import com.google.common.collect.Iterables;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "compute.PropertiesTest")
+@Test(groups = "unit", testName = "compute.ImageParserTest")
 public class ImageParserTest extends BaseHandlerTest {
 
    public void testParseAlesticCanonicalImage() {

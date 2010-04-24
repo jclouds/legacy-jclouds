@@ -55,7 +55,7 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
    Set<Image> describeImagesInRegion(Region region, DescribeImagesOptions... options);
 
    /**
