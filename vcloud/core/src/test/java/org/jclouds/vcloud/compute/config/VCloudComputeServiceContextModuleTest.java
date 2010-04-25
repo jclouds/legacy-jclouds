@@ -109,7 +109,6 @@ public class VCloudComputeServiceContextModuleTest {
       expect(computeClient.getPrivateAddresses("10")).andReturn(
                Sets.newHashSet(InetAddress.getLocalHost()));
       
-      replay(getExtra);
       replay(client);
       replay(computeClient);
       
@@ -124,7 +123,6 @@ public class VCloudComputeServiceContextModuleTest {
 
       strategy.addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
       
-      verify(getExtra);
       verify(client);
       verify(computeClient);
    }
