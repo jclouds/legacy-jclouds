@@ -34,6 +34,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
@@ -52,6 +54,7 @@ import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -88,6 +91,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
+import org.jclouds.util.Jsr330;
 
 /**
  * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
@@ -105,6 +109,9 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
+      bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>(){}).
+              annotatedWith(Jsr330.named("volumeMapping")).
+              to(RunningInstanceToStorageMappingUnix.class).in(Scopes.SINGLETON);      
    }
 
    @Provides

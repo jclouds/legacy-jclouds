@@ -38,6 +38,7 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
@@ -94,7 +95,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(locations);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
-               credentialsMap, credentialProvider, images, locations);
+               credentialsMap, credentialProvider, images, locations,
+               new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), location);
@@ -162,7 +164,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(locations);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
-               credentialsMap, credentialProvider, images, locations);
+               credentialsMap, credentialProvider, images, locations,
+               new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
 

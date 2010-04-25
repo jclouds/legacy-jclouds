@@ -27,13 +27,13 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.functions.InstanceTypeToStorageMappingUnix;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.Image;
@@ -65,16 +65,19 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Map<String, ? extends Image> images;
    private final Map<String, ? extends Location> locations;
+   private final Function<RunningInstance, Map<String, String>> instanceToStorageMapping;
 
    @Inject
    RunningInstanceToNodeMetadata(AMIClient amiClient, Map<RegionTag, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Map<String, ? extends Image> images, Map<String, ? extends Location> locations) {
+            Map<String, ? extends Image> images, Map<String, ? extends Location> locations,
+            @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
       this.amiClient = checkNotNull(amiClient, "amiClient");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.images = checkNotNull(images, "images");
       this.locations = checkNotNull(locations, "locations");
+      this.instanceToStorageMapping = checkNotNull(instanceToStorageMapping);
    }
 
    @Override
@@ -123,8 +126,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       // put storage info
       /* TODO: only valid for UNIX */
-      InstanceTypeToStorageMappingUnix instanceToStorageMapping = new InstanceTypeToStorageMappingUnix();
-      extra.putAll(instanceToStorageMapping.apply(instance.getInstanceType()));
+      extra.putAll(instanceToStorageMapping.apply(instance));
 
       return extra;
    }
