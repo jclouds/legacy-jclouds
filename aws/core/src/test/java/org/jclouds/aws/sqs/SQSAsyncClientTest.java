@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.sqs;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
@@ -152,6 +154,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(new SQSPropertiesBuilder(new Properties())
+                     .build(), "properties"));
             bind(URI.class).annotatedWith(SQS.class).toInstance(URI.create("https://default"));
             bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
                      "user");

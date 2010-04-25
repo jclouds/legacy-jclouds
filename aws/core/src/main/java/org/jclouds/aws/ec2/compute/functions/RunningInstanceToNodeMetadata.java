@@ -30,18 +30,19 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.domain.RegionTag;
-import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.functions.InstanceTypeToStorageMappingUnix;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.services.AMIClient;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -62,13 +63,18 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    private final AMIClient amiClient;
    private final Map<RegionTag, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
+   private final Map<String, ? extends Image> images;
+   private final Map<String, ? extends Location> locations;
 
    @Inject
    RunningInstanceToNodeMetadata(AMIClient amiClient, Map<RegionTag, KeyPair> credentialsMap,
-            PopulateDefaultLoginCredentialsForImageStrategy credentialProvider) {
+            PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
+            Map<String, ? extends Image> images, Map<String, ? extends Location> locations) {
       this.amiClient = checkNotNull(amiClient, "amiClient");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
+      this.images = checkNotNull(images, "images");
+      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
@@ -97,8 +103,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       Map<String, String> extra = getExtra(instance);
 
-      return new NodeMetadataImpl(id, name, locationId, uri, userMetadata, tag, state,
-               publicAddresses, privateAddresses, extra, credentials);
+      return new NodeMetadataImpl(id, name, locations.get(locationId), uri, userMetadata, tag,
+               images.get(instance.getImageId()), state, publicAddresses, privateAddresses, extra,
+               credentials);
    }
 
    /**
@@ -126,14 +133,14 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    String getPrivateKeyOrNull(RunningInstance instance, String tag) {
       KeyPair keyPair = credentialsMap.get(new RegionTag(instance.getRegion(), instance
                .getKeyName()));
-      String privateKey = keyPair != null ? keyPair.getKeyMaterial() : null;
-      return privateKey;
+      return keyPair != null ? keyPair.getKeyMaterial() : null;
    }
 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) {
-      Image image = Iterables.getOnlyElement(amiClient.describeImagesInRegion(from.getRegion(),
-               DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(amiClient
+               .describeImagesInRegion(from.getRegion(), DescribeImagesOptions.Builder
+                        .imageIds(from.getImageId())));
       return checkNotNull(credentialProvider.execute(image), "login from image: "
                + from.getImageId()).account;
    }

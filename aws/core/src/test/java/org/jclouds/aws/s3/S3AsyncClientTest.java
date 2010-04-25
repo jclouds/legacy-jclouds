@@ -18,12 +18,14 @@
  */
 package org.jclouds.aws.s3;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
@@ -60,7 +62,6 @@ import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseETagHeader;
@@ -545,13 +546,13 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
                      }, new TypeLiteral<S3Client>() {
                      }));
             install(new S3ObjectModule());
+            Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder(new Properties())
+            .build(), "properties"));
             bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("http://stub:8080"));
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
                      "user");
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
                      .to("key");
-            bindConstant().annotatedWith(
-                     Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("prefix");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

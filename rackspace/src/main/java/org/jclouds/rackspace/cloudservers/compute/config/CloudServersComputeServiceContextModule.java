@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudservers.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
@@ -68,6 +69,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
+import org.jclouds.rackspace.cloudservers.compute.functions.ServerToNodeMetadata;
 import org.jclouds.rackspace.cloudservers.config.CloudServersContextModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
@@ -118,7 +120,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention(@Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-      return account + "-%s-%d";
+      return account + "-%s-%s";
    }
 
    @Singleton
@@ -176,8 +178,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       @Inject
       protected CloudServersAddNodeWithTagStrategy(CloudServersClient client,
                @Named("ACTIVE") Predicate<Server> serverActive) {
-         this.client = client;
-         this.serverActive = serverActive;
+         this.client = checkNotNull(client, "client");
+         this.serverActive = checkNotNull(serverActive, "serverActive");
       }
 
       @Override
@@ -185,10 +187,10 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          Server server = client.createServer(name, Integer.parseInt(template.getImage().getId()),
                   Integer.parseInt(template.getSize().getId()));
          serverActive.apply(server);
-         return new NodeMetadataImpl(server.getId() + "", name, template.getLocation().getId(),
-                  null, server.getMetadata(), tag, NodeState.RUNNING, server.getAddresses()
-                           .getPublicAddresses(), server.getAddresses().getPrivateAddresses(),
-                  ImmutableMap.<String, String> of(),
+         return new NodeMetadataImpl(server.getId() + "", name, template.getLocation(), null,
+                  server.getMetadata(), tag, template.getImage(), NodeState.RUNNING, server
+                           .getAddresses().getPublicAddresses(), server.getAddresses()
+                           .getPrivateAddresses(), ImmutableMap.<String, String> of(),
                   new Credentials("root", server.getAdminPass()));
       }
 
@@ -264,28 +266,6 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
    }
 
-   protected static class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
-      public static final Pattern TAG_PATTERN = Pattern.compile("[^-]+-([^-]+)-[0-9]+");
-      private final Location location;
-      private final Map<ServerStatus, NodeState> serverToNodeState;
-
-      @Inject
-      ServerToNodeMetadata(Location location, Map<ServerStatus, NodeState> serverToNodeState) {
-         this.location = location;
-         this.serverToNodeState = serverToNodeState;
-      }
-
-      @Override
-      public NodeMetadata apply(Server from) {
-         Matcher matcher = TAG_PATTERN.matcher(from.getName());
-         final String tag = matcher.find() ? matcher.group(1) : null;
-         return new NodeMetadataImpl(from.getId() + "", from.getName(), location.getId(), null,
-                  from.getMetadata(), tag, serverToNodeState.get(from.getStatus()), from
-                           .getAddresses().getPublicAddresses(), from.getAddresses()
-                           .getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
-      }
-   }
-
    @Provides
    @Singleton
    ComputeServiceContext provideContext(ComputeService computeService,
@@ -305,7 +285,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Provides
    @Singleton
    Location getRegion() {
-      return new LocationImpl(LocationScope.ZONE, "DALLAS", "Dallas, TX", null, true);
+      return new LocationImpl(LocationScope.ZONE, "DALLAS", "Dallas, TX", null);
    }
 
    @Provides
@@ -335,10 +315,9 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new SizeImpl(from.getId() + "", from.getName(), location.getId(), null,
-                  ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(), from
-                           .getDisk(), ImmutableSet.<Architecture> of(Architecture.X86_32,
-                           Architecture.X86_64)));
+         sizes.add(new SizeImpl(from.getId() + "", from.getName(), location, null, ImmutableMap
+                  .<String, String> of(), from.getDisk() / 10, from.getRam(), from.getDisk(),
+                  ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return Maps.uniqueIndex(sizes, indexer);
@@ -376,9 +355,9 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
-         images.add(new ImageImpl(from.getId() + "", from.getName(), location.getId(), null,
-                  ImmutableMap.<String, String> of(), from.getName(), version, os, osDescription,
-                  arch, new Credentials("root", null)));
+         images.add(new ImageImpl(from.getId() + "", from.getName(), location, null, ImmutableMap
+                  .<String, String> of(), from.getName(), version, os, osDescription, arch,
+                  new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return Maps.uniqueIndex(images, indexer);

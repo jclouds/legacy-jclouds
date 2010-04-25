@@ -28,9 +28,11 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -50,13 +52,16 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final Map<String, String> extra = Maps.newLinkedHashMap();
    private final Credentials credentials;
    private final String tag;
+   private final Image image;
 
-   public NodeMetadataImpl(String id, String name, String locationId, URI uri,
-            Map<String, String> userMetadata, @Nullable String tag, NodeState state,
-            Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
-            Map<String, String> extra, @Nullable Credentials credentials) {
-      super(ComputeType.NODE, id, name, locationId, uri, userMetadata);
+   public NodeMetadataImpl(String id, String name, Location location, URI uri,
+            Map<String, String> userMetadata, @Nullable String tag, @Nullable Image image,
+            NodeState state, Iterable<InetAddress> publicAddresses,
+            Iterable<InetAddress> privateAddresses, Map<String, String> extra,
+            @Nullable Credentials credentials) {
+      super(ComputeType.NODE, id, name, location, uri, userMetadata);
       this.tag = tag;
+      this.image = image;
       this.state = checkNotNull(state, "state");
       Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses, "publicAddresses"));
       Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses, "privateAddresses"));
@@ -78,6 +83,15 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public Credentials getCredentials() {
       return credentials;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   @Nullable
+   public Image getImage() {
+      return image;
    }
 
    /**
@@ -115,7 +129,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public String toString() {
       return "[id=" + getId() + ", tag=" + getTag() + ", name=" + getName() + ", location="
-               + getLocationId() + ", uri=" + getUri() + ", userMetadata=" + getUserMetadata()
+               + getLocation() + ", uri=" + getUri() + ", userMetadata=" + getUserMetadata()
                + ", state=" + getState() + ", privateAddresses=" + privateAddresses
                + ", publicAddresses=" + publicAddresses + "]";
    }

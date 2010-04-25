@@ -21,6 +21,8 @@ package org.jclouds.domain;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.domain.internal.ResourceMetadataImpl;
+
 import com.google.inject.ImplementedBy;
 
 /**
@@ -28,7 +30,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(ResourceMetadata.class)
+@ImplementedBy(ResourceMetadataImpl.class)
 public interface ResourceMetadata<T extends Enum<T>> extends Comparable<ResourceMetadata<T>> {
 
    /**
@@ -57,7 +59,7 @@ public interface ResourceMetadata<T extends Enum<T>> extends Comparable<Resource
     * ex. us-west-1
     * 
     */
-   String getLocationId();
+   Location getLocation();
 
    /**
     * URI used to access this resource

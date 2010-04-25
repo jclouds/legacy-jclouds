@@ -18,17 +18,12 @@
  */
 package org.jclouds.concurrent.internal;
 
-/**
- * Generates RESTful clients from appropriately annotated interfaces.
- * 
- * @author Adrian Cole
- */
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -39,10 +34,15 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * Generates RESTful clients from appropriately annotated interfaces.
+ * 
+ * @author Adrian Cole
+ */
 @Singleton
 public class SyncProxy implements InvocationHandler {
 
@@ -60,7 +60,7 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
-   private static final List<Method> objectMethods = ImmutableList.of(Object.class.getMethods());
+   private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
 
    @Inject
    public SyncProxy(Class<?> declaring, Object delegate) throws SecurityException,

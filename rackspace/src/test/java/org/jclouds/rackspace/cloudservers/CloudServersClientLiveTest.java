@@ -62,6 +62,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 
 /**
@@ -372,8 +373,8 @@ public class CloudServersClientLiveTest {
    }
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(newDetails.getAddresses()
-               .getPublicAddresses().first(), 22);
+      InetSocketAddress socket = new InetSocketAddress(Iterables.get(newDetails.getAddresses()
+               .getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, "root", pass);
@@ -389,8 +390,8 @@ public class CloudServersClientLiveTest {
    }
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(details.getAddresses().getPublicAddresses()
-               .first(), 22);
+      InetSocketAddress socket = new InetSocketAddress(Iterables.get(details.getAddresses()
+               .getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, "root", pass);
       try {

@@ -41,15 +41,12 @@ public class LocationImpl implements Location, Serializable {
    private final String id;
    private final String description;
    private final String parent;
-   private final boolean assignable;
 
-   public LocationImpl(LocationScope scope, String id, String description, @Nullable String parent,
-            boolean assignable) {
+   public LocationImpl(LocationScope scope, String id, String description, @Nullable String parent) {
       this.scope = checkNotNull(scope, "scope");
       this.id = checkNotNull(id, "id");
       this.description = checkNotNull(description, "description");
       this.parent = parent;
-      this.assignable = checkNotNull(assignable, "assignable");
    }
 
    public LocationScope getScope() {
@@ -68,15 +65,10 @@ public class LocationImpl implements Location, Serializable {
       return parent;
    }
 
-   public boolean isAssignable() {
-      return assignable;
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (assignable ? 1231 : 1237);
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((parent == null) ? 0 : parent.hashCode());
@@ -93,8 +85,6 @@ public class LocationImpl implements Location, Serializable {
       if (getClass() != obj.getClass())
          return false;
       LocationImpl other = (LocationImpl) obj;
-      if (assignable != other.assignable)
-         return false;
       if (description == null) {
          if (other.description != null)
             return false;
@@ -121,7 +111,7 @@ public class LocationImpl implements Location, Serializable {
    @Override
    public String toString() {
       return "[id=" + id + ", scope=" + scope + ", description=" + description + ", parent="
-               + parent + ", assignable=" + assignable + "]";
+               + parent + "]";
    }
 
 }

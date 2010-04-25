@@ -34,10 +34,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule.VCloudListNodesStrategy;
+import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -49,6 +52,7 @@ import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -93,6 +97,8 @@ public class VCloudComputeServiceContextModuleTest {
    public void testRetryOnVAppNotFoundForGetVAppEvenWhenPresentInAvailableResources()
             throws ExecutionException, InterruptedException, TimeoutException, IOException {
       VCloudClient client = createMock(VCloudClient.class);
+      GetExtra getExtra = new GetExtra();
+
       VCloudComputeClient computeClient = createMock(VCloudComputeClient.class);
       Map<VAppStatus, NodeState> vAppStatusToNodeState = Maps.newHashMap();
       VApp vApp = newVApp();
@@ -102,18 +108,23 @@ public class VCloudComputeServiceContextModuleTest {
       expect(computeClient.getPublicAddresses("10")).andReturn(Sets.<InetAddress> newHashSet());
       expect(computeClient.getPrivateAddresses("10")).andReturn(
                Sets.newHashSet(InetAddress.getLocalHost()));
+      
+      replay(getExtra);
       replay(client);
       replay(computeClient);
-
+      
+      Map<String, ? extends Location> locations = ImmutableMap.of();
+      Map<String, ? extends Image> images= ImmutableMap.of();
       VCloudListNodesStrategy strategy = new VCloudListNodesStrategy(client, computeClient,
-               vAppStatusToNodeState);
+               vAppStatusToNodeState, getExtra, locations, images);
 
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       NamedResource vdc = new NamedResourceImpl("1", null, null, null);
       NamedResource resource = new NamedResourceImpl("10", null, null, null);
 
       strategy.addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
-
+      
+      verify(getExtra);
       verify(client);
       verify(computeClient);
    }

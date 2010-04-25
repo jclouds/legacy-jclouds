@@ -18,12 +18,8 @@
  */
 package org.jclouds.vcloud;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -45,7 +41,6 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -57,6 +52,7 @@ import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.reference.VCloudConstants;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.NetworkHandler;
@@ -86,13 +82,13 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                String.class, String.class, String.class, Array.newInstance(
                         InstantiateVAppTemplateOptions.class, 0).getClass());
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "CentOS 01", 3 + "");
+               "my-vapp", 3 + "");
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 638\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 634\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/newvapp-hosting.xml")));
 
@@ -109,14 +105,14 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                String.class, String.class, String.class, Array.newInstance(
                         InstantiateVAppTemplateOptions.class, 0).getClass());
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "CentOS 01", 3 + "", processorCount(1).memory(512).disk(1024).inNetwork(
+               "my-vapp", 3 + "", processorCount(1).memory(512).disk(1024).inNetwork(
                         URI.create("https://vcloud.safesecureweb.com/network/1990")));
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 2022\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 2018\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/newvapp-hostingcpumemdisk.xml")));
 
@@ -127,16 +123,26 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(httpMethod);
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInstantiateVAppTemplateOptionsIllegalName() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
+               String.class, String.class, String.class, Array.newInstance(
+                        InstantiateVAppTemplateOptions.class, 0).getClass());
+      processor.createRequest(method, "1", "CentOS 01", 3 + "", processorCount(1).memory(512).disk(
+               1024).inNetwork(URI.create("https://vcloud.safesecureweb.com/network/1990")));
+   }
+
    public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
                String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "4181", "New Name");
+               "4181", "my-vapp");
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vdc/1/action/cloneVApp HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 398\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 397\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/cloneVApp-default.xml")));
 
@@ -151,7 +157,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
                String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "201", "New Linux Server", new CloneVAppOptions().deploy().powerOn()
+               "201", "new-linux-server", new CloneVAppOptions().deploy().powerOn()
                         .withDescription("The description of the new vApp"));
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vdc/1/action/cloneVApp HTTP/1.1");
@@ -166,6 +172,15 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testCloneVAppOptionsIllegalName() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
+               String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
+      processor.createRequest(method, "1", "201", "New Linux Server", new CloneVAppOptions()
+               .deploy().powerOn().withDescription("The description of the new vApp"));
    }
 
    public void testDefaultOrganization() throws SecurityException, NoSuchMethodException,
@@ -520,14 +535,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
          @Override
          protected void configure() {
             Properties props = new Properties();
-            props.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
-            props.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
-            props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
+            props.put(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK,
                      "https://vcloud.safesecureweb.com/network/1990");
-            props.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
-            props.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
-                     "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-            Jsr330.bindProperties(binder(), props);
+            Jsr330.bindProperties(binder(), checkNotNull(
+                     new VCloudPropertiesBuilder(props).build(), "properties"));
             bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)

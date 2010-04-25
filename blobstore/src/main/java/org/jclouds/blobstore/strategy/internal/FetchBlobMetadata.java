@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.util.Map;
@@ -45,7 +46,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -106,7 +106,7 @@ public class FetchBlobMetadata implements
                      Throwables.propagate(e);
                   }
                }
-            }, Executors.sameThreadExecutor());
+            }, sameThreadExecutor());
             responses.put(md, future);
          } else {
             metadata.add(md);

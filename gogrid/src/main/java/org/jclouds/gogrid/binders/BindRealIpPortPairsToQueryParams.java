@@ -32,36 +32,36 @@ import static org.jclouds.gogrid.reference.GoGridQueryParams.REAL_IP_LIST_KEY;
 
 /**
  * Binds a list of real IPs to the request.
- *
- * The {@link IpPortPair pairs} must have a {@link IpPortPair#ip} set with a valid
- * IP address.
- *
+ * 
+ * The {@link IpPortPair pairs} must have a {@link IpPortPair#ip} set with a valid IP address.
+ * 
  * @author Oleksiy Yarmula
  */
 public class BindRealIpPortPairsToQueryParams implements Binder {
 
-    @SuppressWarnings({"unchecked"})
-    @Override
-    public void bindToRequest(HttpRequest request, Object input) {
-        checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest,
-                "this binder is only valid for GeneratedHttpRequests!");
-        checkArgument(checkNotNull(input, "input is null") instanceof List,
-                "this binder is only valid for a List argument");
+   @SuppressWarnings( { "unchecked" })
+   @Override
+   public void bindToRequest(HttpRequest request, Object input) {
+      checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest,
+               "this binder is only valid for GeneratedHttpRequests!");
+      checkArgument(checkNotNull(input, "input is null") instanceof List,
+               "this binder is only valid for a List argument");
 
-        List<IpPortPair> ipPortPairs = (List<IpPortPair>) input;
-        GeneratedHttpRequest generatedRequest = (GeneratedHttpRequest) request;
+      List<IpPortPair> ipPortPairs = (List<IpPortPair>) input;
+      GeneratedHttpRequest generatedRequest = (GeneratedHttpRequest) request;
 
-        int i= 0;
-        for(IpPortPair ipPortPair : ipPortPairs) {
-            checkNotNull(ipPortPair.getIp(), "There must be an IP address defined");
-            checkNotNull(ipPortPair.getIp().getIp(), "There must be an IP address defined in Ip object");
-            checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
+      int i = 0;
+      for (IpPortPair ipPortPair : ipPortPairs) {
+         checkNotNull(ipPortPair.getIp(), "There must be an IP address defined");
+         checkNotNull(ipPortPair.getIp().getIp(),
+                  "There must be an IP address defined in Ip object");
+         checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-            generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".ip",
-                                                    ipPortPair.getIp().getIp());
-            generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".port",
-                                                    String.valueOf(ipPortPair.getPort()));
-            i++;
-        }
-    }
+         generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp()
+                  .getHostAddress());
+         generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".port", String.valueOf(ipPortPair
+                  .getPort()));
+         i++;
+      }
+   }
 }

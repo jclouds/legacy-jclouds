@@ -23,7 +23,6 @@
  */
 package org.jclouds.domain;
 
-
 /**
  * Running Operating system
  * 
@@ -52,11 +51,5 @@ public interface Location {
     * The Id of the parent, or null, if top-level
     */
    String getParent();
-
-   /**
-    * Whether nodes can be assigned to this location. It is possible that a location is a container
-    * type that cannot be assigned to, or that a location is full.
-    */
-   boolean isAssignable();
 
 }

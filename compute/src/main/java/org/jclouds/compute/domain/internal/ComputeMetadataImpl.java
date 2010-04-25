@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.domain.Location;
 import org.jclouds.domain.internal.ResourceMetadataImpl;
 
 /**
@@ -35,9 +36,9 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
    /** The serialVersionUID */
    private static final long serialVersionUID = 7374704415964898694L;
 
-   public ComputeMetadataImpl(ComputeType type, String id, String name, String locationId, URI uri,
+   public ComputeMetadataImpl(ComputeType type, String id, String name, Location location, URI uri,
             Map<String, String> userMetadata) {
-      super(type, id, name, locationId, uri, userMetadata);
+      super(type, id, name, location, uri, userMetadata);
    }
 
 }

@@ -47,7 +47,7 @@
 package ${package}.config;
 
 import static org.testng.Assert.assertEquals;
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;

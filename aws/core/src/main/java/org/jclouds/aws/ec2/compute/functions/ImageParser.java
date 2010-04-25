@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +37,7 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -58,10 +61,14 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
             .build();
 
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
+   private final Map<String, ? extends Location> locations;
 
    @Inject
-   ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider) {
-      this.credentialProvider = credentialProvider;
+   ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
+            Map<String, ? extends Location> locations) {
+      this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
+      this.locations = checkNotNull(locations, "locations");
+
    }
 
    @Override
@@ -98,7 +105,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
       return new ImageImpl(
                from.getId(),
                name,
-               from.getRegion().toString(),
+               locations.get(from.getRegion().toString()),
                null,
                ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
                description,

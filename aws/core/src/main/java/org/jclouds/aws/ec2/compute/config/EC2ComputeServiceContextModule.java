@@ -138,15 +138,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Singleton
    public static class GetRegionFromNodeOrDefault implements Function<ComputeMetadata, Region> {
-      private final Map<String, ? extends Location> locations;
-
-      @Inject
-      protected GetRegionFromNodeOrDefault(Map<String, ? extends Location> locations) {
-         this.locations = locations;
-      }
-
       public Region apply(ComputeMetadata node) {
-         Location location = locations.get(node.getLocationId());
+         Location location = node.getLocation();
          Region region = location.getScope() == LocationScope.REGION ? Region.fromValue(location
                   .getId()) : Region.fromValue(location.getParent());
          return region;
@@ -261,11 +254,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       Set<Location> locations = Sets.newHashSet();
       for (AvailabilityZone zone : map.keySet()) {
          locations.add(new LocationImpl(LocationScope.ZONE, zone.toString(), zone.toString(), map
-                  .get(zone).toString(), true));
+                  .get(zone).toString()));
       }
       for (Region region : map.values()) {
          locations.add(new LocationImpl(LocationScope.REGION, region.toString(), region.toString(),
-                  null, true));
+                  null));
       }
       return Maps.uniqueIndex(locations, new Function<Location, String>() {
          @Override

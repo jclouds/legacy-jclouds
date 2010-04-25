@@ -18,7 +18,7 @@
  */
 package org.jclouds.azure.storage.filters;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
 import static org.testng.Assert.assertEquals;
 

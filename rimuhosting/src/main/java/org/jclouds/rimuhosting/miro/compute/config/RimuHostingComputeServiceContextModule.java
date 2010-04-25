@@ -121,7 +121,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention() {
-      return "%s-%d";
+      return "%s-%s";
    }
 
    @Singleton
@@ -191,11 +191,11 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
          // we have to lookup the new details in order to retrieve the currently assigned ip
          // address.
          NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, template
-                  .getLocation().getId(), null, ImmutableMap.<String, String> of(), tag,
-                  runningStateToNodeState.get(server.getState()), getPublicAddresses.apply(server),
-                  ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(),
-                  new Credentials("root", serverResponse.getNewInstanceRequest().getCreateOptions()
-                           .getPassword()));
+                  .getLocation(), null, ImmutableMap.<String, String> of(), tag, template
+                  .getImage(), runningStateToNodeState.get(server.getState()), getPublicAddresses
+                  .apply(server), ImmutableList.<InetAddress> of(), ImmutableMap
+                  .<String, String> of(), new Credentials("root", serverResponse
+                  .getNewInstanceRequest().getCreateOptions().getPassword()));
          return node;
       }
 
@@ -256,24 +256,32 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    private static class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       private final Function<Server, Iterable<InetAddress>> getPublicAddresses;
       private final Map<RunningState, NodeState> runningStateToNodeState;
+      private final Map<String, ? extends Image> images;
+      @SuppressWarnings("unused")
+      private final Map<String, ? extends Location> locations;
 
       @SuppressWarnings("unused")
       @Inject
       ServerToNodeMetadata(Function<Server, Iterable<InetAddress>> getPublicAddresses,
-               Map<RunningState, NodeState> runningStateToNodeState) {
-         this.getPublicAddresses = getPublicAddresses;
-         this.runningStateToNodeState = runningStateToNodeState;
+               Map<RunningState, NodeState> runningStateToNodeState,
+               Map<String, ? extends Image> images, Map<String, ? extends Location> locations) {
+         this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
+         this.runningStateToNodeState = checkNotNull(runningStateToNodeState,
+                  "serverStateToNodeState");
+         this.images = checkNotNull(images, "images");
+         this.locations = checkNotNull(locations, "locations");
       }
 
       @Override
       public NodeMetadata apply(Server from) {
-         String locationId = "//TODO";
+         Location location = new LocationImpl(LocationScope.ZONE, "//TODO", null, null);
          String tag = from.getName().replaceAll("-[0-9]+", "");
          Credentials creds = null;
          NodeState state = runningStateToNodeState.get(from.getState());
-         return new NodeMetadataImpl(from.getId() + "", from.getName(), locationId, null,
-                  ImmutableMap.<String, String> of(), tag, state, getPublicAddresses.apply(from),
-                  ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
+         return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null,
+                  ImmutableMap.<String, String> of(), tag, images.get(from.getImageId()), state,
+                  getPublicAddresses.apply(from), ImmutableList.<InetAddress> of(), ImmutableMap
+                           .<String, String> of(), creds);
 
       }
    }
@@ -331,7 +339,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
             locations.add(new LocationImpl(LocationScope.ZONE, from.getDataCenter().getId(), from
-                     .getDataCenter().getName(), null, true));
+                     .getDataCenter().getName(), null));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }
@@ -360,18 +368,18 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    @Provides
    @Singleton
    protected Map<String, ? extends Size> provideSizes(RimuHostingClient sync,
-            Map<String, ? extends Image> images, LogHolder holder,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            Map<String, ? extends Image> images, Map<String, ? extends Location> locations,
+            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
-            sizes.add(new SizeImpl(from.getId(), from.getId(), from.getDataCenter().getId(), null,
-                     ImmutableMap.<String, String> of(), from.getDiskSize(), from.getRam(), from
-                              .getDiskSize(), ImmutableSet.<Architecture> of(Architecture.X86_32,
-                              Architecture.X86_64)));
+            sizes.add(new SizeImpl(from.getId(), from.getId(), locations.get(from.getDataCenter()
+                     .getId()), null, ImmutableMap.<String, String> of(), from.getDiskSize(), from
+                     .getRam(), from.getDiskSize(), ImmutableSet.<Architecture> of(
+                     Architecture.X86_32, Architecture.X86_64)));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }

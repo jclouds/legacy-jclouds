@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -77,7 +78,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "compute.ComputeServiceLiveTest")
+@Test(groups = "live", sequential = true, testName = "compute.ComputeServiceLiveTest")
 public abstract class BaseComputeServiceLiveTest {
    @BeforeClass
    abstract public void setServiceDefaults();
@@ -149,7 +150,7 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(toMatch, template);
    }
 
-   @Test(dependsOnMethods = "testTemplateMatch")
+   @Test(enabled = true, dependsOnMethods = "testTemplateMatch")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesWithTag(tag);
@@ -170,20 +171,39 @@ public abstract class BaseComputeServiceLiveTest {
       NodeMetadata node2 = nodes.last();
       // credentials aren't always the same
       // assertEquals(node1.getCredentials(), node2.getCredentials());
-      assert !node1.getId().equals(node2.getId());
+
+      assertLocationSameOrChild(node1.getLocation(), template.getLocation());
+      assertLocationSameOrChild(node2.getLocation(), template.getLocation());
+
+      assertEquals(node1.getImage(), template.getImage());
+      assertEquals(node2.getImage(), template.getImage());
 
    }
 
-   @Test(dependsOnMethods = "testCreateTwoNodesWithRunScript")
+   void assertLocationSameOrChild(Location test, Location expected) {
+      if (!test.equals(expected)) {
+         assertEquals(test.getParent(), expected.getId());
+      } else {
+         assertEquals(test, expected);
+      }
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
+      TreeSet<NodeMetadata> nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 1, template)
+               .values());
+      checkNodes(nodes, tag);
+      NodeMetadata node = nodes.first();
 
-      checkNodes(client.runNodesWithTag(tag, 1, template).values(), tag);
+      assertEquals(nodes.size(), 1);
+      assertLocationSameOrChild(node.getLocation(), template.getLocation());
+      assertEquals(node.getImage(), template.getImage());
    }
 
    @Test
    public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
-      String tag = this.tag + "script";
+      String tag = this.tag + "run";
       Template simpleTemplate = buildTemplate(client.templateBuilder());
       simpleTemplate.getOptions().blockOnPort(22, 60);
       try {
@@ -192,9 +212,9 @@ public abstract class BaseComputeServiceLiveTest {
          assert good.account != null;
 
          try {
-            runScriptWithCreds(tag, simpleTemplate.getImage().getOsFamily(), new Credentials(
-                     good.account, "romeo"));
-            assert false : "shouldn't pass with a bad password";
+            Map<String, ExecResponse> responses = runScriptWithCreds(tag, simpleTemplate.getImage()
+                     .getOsFamily(), new Credentials(good.account, "romeo"));
+            assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (SshException e) {
             assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
          }
@@ -274,7 +294,9 @@ public abstract class BaseComputeServiceLiveTest {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node);
          assertEquals(metadata.getId(), node.getId());
-         assertEquals(metadata.getName(), node.getName());
+         assertEquals(metadata.getTag(), node.getTag());
+         assertEquals(metadata.getLocation(), template.getLocation());
+         assertEquals(metadata.getImage(), template.getImage());
          assertEquals(metadata.getState(), NodeState.RUNNING);
          assertEquals(metadata.getPrivateAddresses(), node.getPrivateAddresses());
          assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());
@@ -298,7 +320,7 @@ public abstract class BaseComputeServiceLiveTest {
       for (Entry<String, ? extends ComputeMetadata> node : client.getNodes().entrySet()) {
          assertEquals(node.getKey(), node.getValue().getId());
          assert node.getValue().getId() != null;
-         assert node.getValue().getLocationId() != null;
+         assert node.getValue().getLocation() != null;
          assertEquals(node.getValue().getType(), ComputeType.NODE);
       }
    }
@@ -308,17 +330,19 @@ public abstract class BaseComputeServiceLiveTest {
                new GetNodesOptions().withDetails()).entrySet()) {
          assertEquals(node.getKey(), node.getValue().getId());
          assert node.getValue().getId() != null : node;
-         assert node.getValue().getLocationId() != null : node;
+         assert node.getValue().getLocation() != null : node;
          assertEquals(node.getValue().getType(), ComputeType.NODE);
          assert node.getValue() instanceof NodeMetadata;
          NodeMetadata nodeMetadata = (NodeMetadata) node.getValue();
          assert nodeMetadata.getId() != null : nodeMetadata;
+         assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
          // assert nodeMetadata.getName() != null : nodeMetadata;
-         assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
-
-         assert nodeMetadata.getPublicAddresses().size() > 1 : nodeMetadata;
-         assertNotNull(nodeMetadata.getPrivateAddresses());
+         if (nodeMetadata.getState() != NodeState.TERMINATED) {
+            assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
+            assert nodeMetadata.getPublicAddresses().size() > 0 : nodeMetadata;
+            assertNotNull(nodeMetadata.getPrivateAddresses());
+         }
       }
    }
 

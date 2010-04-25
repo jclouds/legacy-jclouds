@@ -23,6 +23,7 @@
  */
 package org.jclouds.gogrid.services;
 
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -101,7 +102,7 @@ public interface GridServerClient {
     Server addServer(String name,
                           String image,
                           String ram,
-                          String ip,
+                          InetAddress ip,
                           AddServerOptions... addServerOptions);
 
 
@@ -145,7 +146,7 @@ public interface GridServerClient {
      * most cases, id or name will be used for {@link #addServer}.
      * 
      * To see how RAM maps to CPU and disk space (as of March 2010),
-     * see {@link org.jclouds.gogrid.config.GoGridComputeServiceContextModule#provideSizeToRam}.
+     * see {@link org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule#provideSizeToRam}.
      *
      * @return supported ram sizes
      */

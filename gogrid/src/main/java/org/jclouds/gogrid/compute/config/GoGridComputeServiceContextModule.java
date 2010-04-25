@@ -16,9 +16,9 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.gogrid.config;
+package org.jclouds.gogrid.compute.config;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import java.net.InetAddress;
@@ -48,20 +48,26 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.predicates.RunScriptRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.*;
+import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.compute.functions.ServerToNodeMetadata;
+import org.jclouds.gogrid.config.GoGridContextModule;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.domain.PowerCommand;
@@ -75,12 +81,10 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -115,7 +119,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention() {
-      return "%s-%d";
+      return "%s-%s";
    }
 
    @Singleton
@@ -315,36 +319,6 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       };
    }
 
-   @Singleton
-   private static class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
-      private final Map<String, NodeState> serverStateToNodeState;
-      private final Function<String, InetAddress> stringIpToInetAddress;
-      private final GoGridClient client;
-
-      @SuppressWarnings("unused")
-      @Inject
-      ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState,
-               Function<String, InetAddress> stringIpToInetAddress, GoGridClient client) {
-         this.serverStateToNodeState = serverStateToNodeState;
-         this.stringIpToInetAddress = stringIpToInetAddress;
-         this.client = client;
-      }
-
-      @Override
-      public NodeMetadata apply(Server from) {
-         String locationId = "Unavailable";
-         String tag = CharMatcher.JAVA_LETTER.retainFrom(from.getName());
-         Set<InetAddress> ipSet = ImmutableSet
-                  .of(stringIpToInetAddress.apply(from.getIp().getIp()));
-         NodeState state = serverStateToNodeState.get(from.getState().getName());
-         Credentials creds = client.getServerServices().getServerCredentialsList().get(
-                  from.getName());
-         return new NodeMetadataImpl(from.getId() + "", from.getName(), locationId, null,
-                  ImmutableMap.<String, String> of(), tag, state, ipSet, ImmutableList
-                           .<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
-      }
-   }
-
    @Provides
    @Singleton
    ComputeServiceContext provideContext(ComputeService computeService,
@@ -372,8 +346,8 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
-      locations.add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA", null,
-               true));
+      locations
+               .add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA", null));
       holder.logger.debug("<< locations(%d)", locations.size());
       return Maps.uniqueIndex(locations, new Function<Location, String>() {
 
@@ -452,8 +426,8 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             holder.logger.debug("<< didn't match os(%s)", matchedOs);
          }
          Credentials defaultCredentials = authenticator.execute(from);
-         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), location.getId(),
-                  null, ImmutableMap.<String, String> of(), from.getDescription(), version, os,
+         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), location, null,
+                  ImmutableMap.<String, String> of(), from.getDescription(), version, os,
                   osDescription, arch, defaultCredentials));
       }
       holder.logger.debug("<< images(%d)", images.size());

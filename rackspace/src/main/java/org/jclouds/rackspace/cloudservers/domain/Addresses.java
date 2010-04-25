@@ -19,48 +19,43 @@
 package org.jclouds.rackspace.cloudservers.domain;
 
 import java.net.InetAddress;
-import java.util.Comparator;
-import java.util.SortedSet;
+import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class Addresses {
-   private static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
-
-      @Override
-      public int compare(InetAddress o1, InetAddress o2) {
-         return (o1 == o2) ? 0 : o1.getHostAddress().compareTo(o2.getHostAddress());
-      }
-
-   };
 
    @SerializedName("public")
-   private SortedSet<InetAddress> publicAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
+   private Set<InetAddress> publicAddresses = Sets.newLinkedHashSet();
    @SerializedName("private")
-   private SortedSet<InetAddress> privateAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
+   private Set<InetAddress> privateAddresses = Sets.newLinkedHashSet();
 
    public Addresses() {
    }
 
-   public Addresses(SortedSet<InetAddress> publicAddresses, SortedSet<InetAddress> privateAddresses) {
+   public Addresses(Set<InetAddress> publicAddresses, Set<InetAddress> privateAddresses) {
       this.publicAddresses = publicAddresses;
       this.privateAddresses = privateAddresses;
    }
 
-   public void setPublicAddresses(SortedSet<InetAddress> publicAddresses) {
+   public void setPublicAddresses(Set<InetAddress> publicAddresses) {
       this.publicAddresses = publicAddresses;
    }
 
-   public SortedSet<InetAddress> getPublicAddresses() {
+   public Set<InetAddress> getPublicAddresses() {
       return publicAddresses;
    }
 
-   public void setPrivateAddresses(SortedSet<InetAddress> privateAddresses) {
+   public void setPrivateAddresses(Set<InetAddress> privateAddresses) {
       this.privateAddresses = privateAddresses;
    }
 
-   public SortedSet<InetAddress> getPrivateAddresses() {
+   public Set<InetAddress> getPrivateAddresses() {
       return privateAddresses;
    }
 

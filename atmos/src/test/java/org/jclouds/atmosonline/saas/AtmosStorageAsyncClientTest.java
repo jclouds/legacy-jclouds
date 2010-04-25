@@ -18,12 +18,14 @@
  */
 package org.jclouds.atmosonline.saas;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -67,7 +69,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "emcsaas.AtmosStorageClientTest")
-public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClient> {
+public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyncClient> {
 
    private BlobToObject blobToObject;
 
@@ -294,12 +296,11 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
                      }, new TypeLiteral<AtmosStorageClient>() {
                      }));
             install(new AtmosObjectModule());
+            Jsr330.bindProperties(binder(), checkNotNull(new AtmosStoragePropertiesBuilder(
+                     new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
                      URI.create("http://accesspoint.emccis.com"));
             bind(String.class).annotatedWith(TimeStamp.class).toInstance("timestamp");
-            bindConstant().annotatedWith(
-                     Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
-                     "http://accesspoint.emccis.com");
             bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
                      .to("uid");
             bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))

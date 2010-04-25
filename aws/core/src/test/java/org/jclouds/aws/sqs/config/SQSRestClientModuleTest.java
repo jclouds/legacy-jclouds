@@ -19,7 +19,7 @@
 
 package org.jclouds.aws.sqs.config;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;

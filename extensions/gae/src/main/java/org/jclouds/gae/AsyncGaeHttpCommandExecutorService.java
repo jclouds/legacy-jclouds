@@ -19,6 +19,7 @@
 package org.jclouds.gae;
 
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,7 +54,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import com.google.common.util.concurrent.Executors;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -84,8 +84,8 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       // TODO: this needs to handle retrying and filtering
       return Futures.compose(ConcurrentUtils.makeListenable(urlFetchService
-               .fetchAsync(convertToGaeRequest.apply(command.getRequest())), Executors
-               .sameThreadExecutor()), convertToJcloudsResponse);
+               .fetchAsync(convertToGaeRequest.apply(command.getRequest())), sameThreadExecutor()),
+               convertToJcloudsResponse);
    }
 
    @Singleton

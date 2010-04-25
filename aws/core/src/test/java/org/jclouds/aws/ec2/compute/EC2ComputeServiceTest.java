@@ -111,8 +111,8 @@ public class EC2ComputeServiceTest {
    }
 
    private TemplateBuilder newTemplateBuilder() {
-      Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null, true);
-      Image image = new ImageImpl("ami-image", "image", "us-east-1", null, Maps
+      Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
+      Image image = new ImageImpl("ami-image", "image", location, null, Maps
                .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
                Architecture.X86_64, new Credentials("root", null));
 

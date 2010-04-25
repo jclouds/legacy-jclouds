@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -25,11 +26,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.reference.AWSConstants;
@@ -131,6 +134,8 @@ public class KeyPairAsyncClientTest extends RestClientTest<KeyPairAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder(new Properties())
+                     .build(), "properties"));
             bind(URI.class).annotatedWith(EC2.class).toInstance(
                      URI.create("https://ec2.amazonaws.com"));
             bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(

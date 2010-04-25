@@ -18,11 +18,13 @@
  */
 package org.jclouds.vcloud.hostingdotcom;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -34,7 +36,9 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.VCloudApi;
@@ -93,6 +97,8 @@ public class HostingDotComVCloudAsyncClientTest extends
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(
+                     new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)
                      .toInstance("http://catalogItem");

@@ -51,7 +51,7 @@ public class ContainerToResourceList implements
          public StorageMetadata apply(BlobMetadata input) {
             if (input.getContentType().equals("application/directory")) {
                return new StorageMetadataImpl(StorageType.RELATIVE_PATH, input.getId(), input
-                        .getName(), input.getLocationId(), input.getUri(), input.getETag(), input
+                        .getName(), input.getLocation(), input.getUri(), input.getETag(), input
                         .getSize(), input.getLastModified(), input.getUserMetadata());
             }
             return input;

@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.Location;
 
 /**
  * @author Adrian Cole
@@ -52,11 +53,11 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    private final Credentials defaultCredentials;
 
 
-   public ImageImpl(String id, String name, String locationId, URI uri,
+   public ImageImpl(String id, String name, Location location, URI uri,
             Map<String, String> userMetadata, String description, String version,
             @Nullable OsFamily osFamily, String osDescription, Architecture architecture,
             Credentials defaultCredentials) {
-      super(ComputeType.IMAGE, id, name, locationId, uri, userMetadata);
+      super(ComputeType.IMAGE, id, name, location, uri, userMetadata);
       this.version = checkNotNull(version, "version");
       this.osFamily = osFamily;
       this.description = checkNotNull(description, "description");
@@ -115,7 +116,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
 
     @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", locationId=" + getLocationId()
+      return "[id=" + getId() + ", name=" + getName() + ", locationId=" + getLocation()
                + ", architecture=" + architecture + ", osDescription=" + osDescription
                + ", osFamily=" + osFamily + ", version=" + version + "]";
    }

@@ -83,7 +83,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
                .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
-      map.put("name", "CentOS 01");
+      map.put("name", "my-vapp");
       map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       binder.bindToRequest(request, map);
       verify(request);
@@ -107,7 +107,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
                .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
-      map.put("name", "CentOS 01");
+      map.put("name", "my-vapp");
       map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       map.put("network", "https://vcloud.safesecureweb.com/network/1990");
 
@@ -137,7 +137,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
                .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
-      map.put("name", "CentOS 01");
+      map.put("name", "my-vapp");
       map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       map.put("network", "https://vcloud.safesecureweb.com/network/1990");
       map.put("networkName", "aloha");

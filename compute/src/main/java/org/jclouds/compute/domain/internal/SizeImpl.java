@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
 
 import com.google.common.collect.ComparisonChain;
@@ -47,7 +48,7 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
 
    private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
 
-   public SizeImpl(String id, String name, @Nullable String location, URI uri,
+   public SizeImpl(String id, String name, @Nullable Location location, URI uri,
             Map<String, String> userMetadata, double cores, int ram, int disk,
             Iterable<Architecture> supportedArchitectures) {
       super(ComputeType.SIZE, id, name, location, uri, userMetadata);

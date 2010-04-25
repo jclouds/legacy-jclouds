@@ -18,7 +18,7 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.config;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;

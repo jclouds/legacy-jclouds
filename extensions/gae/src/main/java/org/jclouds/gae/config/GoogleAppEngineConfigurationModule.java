@@ -18,6 +18,8 @@
  */
 package org.jclouds.gae.config;
 
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -30,7 +32,6 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.common.util.concurrent.Executors;
 import com.google.inject.Provides;
 
 /**
@@ -44,7 +45,7 @@ import com.google.inject.Provides;
 public class GoogleAppEngineConfigurationModule extends ExecutorServiceModule {
 
    public GoogleAppEngineConfigurationModule() {
-      super(Executors.sameThreadExecutor(), Executors.sameThreadExecutor());
+      super(sameThreadExecutor(), sameThreadExecutor());
    }
 
    @Override

@@ -18,6 +18,7 @@
  */
 package org.jclouds.mezeo.pcs2;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
@@ -56,6 +58,7 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -71,7 +74,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "pcs2.PCSClientTest")
-public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
+public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("list");
@@ -298,6 +301,8 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
                      new TypeLiteral<PCSAsyncClient>() {
                      }, new TypeLiteral<PCSClient>() {
                      }));
+            Jsr330.bindProperties(binder(), checkNotNull(new PCSPropertiesBuilder(
+                     new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(PCS.class)
                      .toInstance(URI.create("http://localhost:8080"));
             bind(URI.class).annotatedWith(RootContainer.class).toInstance(

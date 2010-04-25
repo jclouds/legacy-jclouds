@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.domain.Location;
 import org.jclouds.domain.internal.ResourceMetadataImpl;
 
 import com.google.inject.internal.Nullable;
@@ -48,7 +49,7 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
    private final Date lastModified;
 
    public StorageMetadataImpl(StorageType type, @Nullable String id, @Nullable String name,
-            @Nullable String location, @Nullable URI uri, @Nullable String eTag,
+            @Nullable Location location, @Nullable URI uri, @Nullable String eTag,
             @Nullable Long size, @Nullable Date lastModified, Map<String, String> userMetadata) {
       super(type, id, name, location, uri, userMetadata);
       this.eTag = eTag;

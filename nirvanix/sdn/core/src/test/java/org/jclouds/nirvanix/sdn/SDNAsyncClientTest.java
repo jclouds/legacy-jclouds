@@ -36,7 +36,6 @@ import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
 import org.jclouds.nirvanix.sdn.filters.InsertUserContextIntoPath;
 import org.jclouds.nirvanix.sdn.functions.ParseMetadataFromJsonResponse;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
-import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -55,7 +54,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "sdn.SDNClient")
-public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
+public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testGetStorageNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getStorageNode", String.class, long.class);
@@ -186,6 +185,8 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
                      new TypeLiteral<SDNAsyncClient>() {
                      }, new TypeLiteral<SDNClient>() {
                      }));
+            Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("appKey", "appname",
+                     "username", "password").build());
             bind(URI.class).annotatedWith(SDN.class).toInstance(URI.create("http://stub:8080"));
             bind(String.class).annotatedWith(SessionToken.class).toInstance("sessiontoken");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
@@ -193,12 +194,6 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
                   return Logger.NULL;
                }
             });
-            bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_APPKEY)).to(
-                     "appKey");
-            bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_APPNAME)).to(
-                     "appname");
-            bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_USERNAME)).to(
-                     "username");
          }
 
       };

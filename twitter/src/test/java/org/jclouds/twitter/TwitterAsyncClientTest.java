@@ -35,6 +35,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -48,7 +49,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "twitter.TwitterClientTest")
-public class TwitterClientTest extends RestClientTest<TwitterAsyncClient> {
+public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
 
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TwitterAsyncClient.class.getMethod("getMyMentions");
@@ -82,6 +83,9 @@ public class TwitterClientTest extends RestClientTest<TwitterAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330
+                     .bindProperties(this.binder(), new TwitterPropertiesBuilder("foo", "bar")
+                              .build());
             bind(URI.class).annotatedWith(Twitter.class).toInstance(
                      URI.create("http://twitter.com"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

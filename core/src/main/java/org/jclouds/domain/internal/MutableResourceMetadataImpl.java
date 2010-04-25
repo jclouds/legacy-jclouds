@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.domain.Location;
 import org.jclouds.domain.MutableResourceMetadata;
 import org.jclouds.domain.ResourceMetadata;
 
@@ -41,7 +42,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
    private T type;
    private String id;
    private String name;
-   private String location;
+   private Location location;
    private URI uri;
    private Map<String, String> userMetadata;
 
@@ -53,7 +54,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
       this.type = from.getType();
       this.id = from.getId();
       this.name = from.getName();
-      this.location = from.getLocationId();
+      this.location = from.getLocation();
       this.uri = from.getUri();
       this.userMetadata = from.getUserMetadata();
    }
@@ -152,7 +153,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
     * {@inheritDoc}
     */
    @Override
-   public void setLocationId(String location) {
+   public void setLocation(Location location) {
       this.location = location;
    }
 
@@ -160,7 +161,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
     * {@inheritDoc}
     */
    @Override
-   public String getLocationId() {
+   public Location getLocation() {
       return location;
    }
 

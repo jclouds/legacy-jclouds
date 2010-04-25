@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.strategy.impl.OneByOneRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ImplementedBy;
@@ -34,7 +34,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(OneByOneRunNodesAndAddToSetStrategy.class)
+@ImplementedBy(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class)
 public interface RunNodesAndAddToSetStrategy {
 
    Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template,

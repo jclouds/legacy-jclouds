@@ -18,12 +18,14 @@
  */
 package org.jclouds.vcloud;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -34,6 +36,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.testng.annotations.Test;
@@ -83,6 +86,8 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(
+                     new VCloudPropertiesBuilder(new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(org.jclouds.vcloud.endpoints.VCloudLogin.class)
                      .toInstance(URI.create("http://localhost:8080/login"));
             try {

@@ -49,6 +49,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
    @Override
    public void setServiceDefaults() {
       service = "terremark";
+      tag = "trmk";
    }
 
    @Test

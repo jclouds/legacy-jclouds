@@ -55,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Singleton
-public class OneByOneRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
+public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -66,7 +66,7 @@ public class OneByOneRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetS
    protected final ExecutorService executor;
 
    @Inject
-   protected OneByOneRunNodesAndAddToSetStrategy(AddNodeWithTagStrategy addNodeWithTagStrategy,
+   protected EncodeTagIntoNameRunNodesAndAddToSetStrategy(AddNodeWithTagStrategy addNodeWithTagStrategy,
             ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
@@ -77,11 +77,15 @@ public class OneByOneRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetS
       this.executor = executor;
    }
 
+   /**
+    * This implementation gets a list of acceptable node names to encode the tag into, then it
+    * simultaneously runs the nodes and applies options to them.
+    */
    @Override
    public Map<?, ListenableFuture<Void>> execute(final String tag, final int count,
             final Template template, final Set<NodeMetadata> nodes) {
       Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
-      for (final String name : getNextNames(tag, count)) {
+      for (final String name : getNextNames(tag, template, count)) {
          responses.put(name, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -104,18 +108,39 @@ public class OneByOneRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetS
       return responses;
    }
 
-   protected Set<String> getNextNames(final String tag, int count) {
+   /**
+    * Find the next node names that can be used. These will be derived from the tag and the
+    * template. We will pre-allocate a specified quantity, and attempt to verify that there is no
+    * name conflict with the current service.
+    * 
+    * @param tag
+    * @param count
+    * @param template
+    * @return
+    */
+   protected Set<String> getNextNames(final String tag, final Template template, int count) {
       Set<String> names = Sets.newHashSet();
-      int nodeIndex = new SecureRandom().nextInt(8096);
       Map<String, ? extends ComputeMetadata> currentNodes = Maps.uniqueIndex(listNodesStrategy
                .execute(GetNodesOptions.NONE), BaseComputeService.METADATA_TO_NAME);
       while (names.size() < count) {
-         String name = String.format(nodeNamingConvention, tag, nodeIndex++);
+         String name = getNextName(tag, template);
          if (!currentNodes.containsKey(name)) {
             names.add(name);
          }
       }
       return names;
+   }
+
+   /**
+    * Get a name using a random mechanism that still ties all nodes in a tag together.
+    * 
+    * This implementation will pass the tag and a hex formatted random number to the configured
+    * naming convention.
+    * 
+    */
+   protected String getNextName(final String tag, final Template template) {
+      return String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom()
+               .nextInt(4095)));
    }
 
 }

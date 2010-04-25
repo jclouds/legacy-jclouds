@@ -19,7 +19,7 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 
 import java.util.ArrayList;
 import java.util.Arrays;

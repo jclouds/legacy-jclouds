@@ -31,6 +31,7 @@ import org.jclouds.aws.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsFo
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.Location;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -51,14 +52,16 @@ public class ImageParserTest extends BaseHandlerTest {
       Set<Image> result = parseImages(is);
       assertEquals(result.size(), 6);
 
-      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
+      ImageParser parser = new ImageParser(
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableMap
+                        .<String, Location> of());
       org.jclouds.compute.domain.Image ubuntuHardy = parser.apply(Iterables.get(result, 0));
 
       assertEquals(ubuntuHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(ubuntuHardy.getDescription(),
                "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
       assertEquals(ubuntuHardy.getId(), "ami-7e28ca17");
-      assertEquals(ubuntuHardy.getLocationId(), "default");
+      assertEquals(ubuntuHardy.getLocation(), null);
       assertEquals(ubuntuHardy.getName(), "8.04");
       assertEquals(ubuntuHardy.getOsDescription(),
                "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
@@ -73,7 +76,7 @@ public class ImageParserTest extends BaseHandlerTest {
       assertEquals(alesticKarmic.getDescription(),
                "alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml");
       assertEquals(alesticKarmic.getId(), "ami-19a34270");
-      assertEquals(alesticKarmic.getLocationId(), "default");
+      assertEquals(alesticKarmic.getLocation(), null);
       assertEquals(alesticKarmic.getName(), "9.10");
       assertEquals(alesticKarmic.getOsDescription(),
                "alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml");
@@ -88,7 +91,7 @@ public class ImageParserTest extends BaseHandlerTest {
       assertEquals(ubuntuKarmic.getDescription(),
                "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
       assertEquals(ubuntuKarmic.getId(), "ami-bb709dd2");
-      assertEquals(ubuntuKarmic.getLocationId(), "default");
+      assertEquals(ubuntuKarmic.getLocation(), null);
       assertEquals(ubuntuKarmic.getName(), "9.10");
       assertEquals(ubuntuKarmic.getOsDescription(),
                "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
@@ -106,7 +109,7 @@ public class ImageParserTest extends BaseHandlerTest {
       assertEquals(alesticHardy.getDescription(),
                "alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml");
       assertEquals(alesticHardy.getId(), "ami-c0fa1ea9");
-      assertEquals(alesticHardy.getLocationId(), "default");
+      assertEquals(alesticHardy.getLocation(), null);
       assertEquals(alesticHardy.getName(), "8.04");
       assertEquals(alesticHardy.getOsDescription(),
                "alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml");
@@ -124,7 +127,9 @@ public class ImageParserTest extends BaseHandlerTest {
 
       Set<Image> result = parseImages(is);
 
-      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy());
+      ImageParser parser = new ImageParser(
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableMap
+                        .<String, Location> of());
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -132,7 +137,7 @@ public class ImageParserTest extends BaseHandlerTest {
       assertEquals(image.getDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");
       assertEquals(image.getId(), "ami-870de2ee");
-      assertEquals(image.getLocationId(), "default");
+      assertEquals(image.getLocation(), null);
       assertEquals(image.getName(), "");
       assertEquals(image.getOsDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");

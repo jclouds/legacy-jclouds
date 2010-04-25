@@ -25,7 +25,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -345,8 +344,7 @@ public class GoGridLiveTest {
       Credentials instanceCredentials = credsMap.get(createdServer.getName());
       assertNotNull(instanceCredentials);
 
-      InetSocketAddress socket = new InetSocketAddress(InetAddress.getByName(createdServer.getIp()
-               .getIp()), 22);
+      InetSocketAddress socket = new InetSocketAddress(createdServer.getIp().getIp(), 22);
 
       Predicate<InetSocketAddress> socketOpen = new RetryablePredicate<InetSocketAddress>(
                new SocketOpen(), 180, 5, TimeUnit.SECONDS);

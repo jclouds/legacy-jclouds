@@ -51,6 +51,8 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
                "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
+      properties.setProperty("jclouds.dns_name_length_min", "1");
+      properties.setProperty("jclouds.dns_name_length_max", "80");
       return properties;
    }
 

@@ -22,6 +22,8 @@ import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.domain.Credentials;
 
 /**
@@ -38,6 +40,12 @@ public interface NodeMetadata extends ComputeMetadata {
     * 
     */
    String getTag();
+
+   /**
+    * The image this node was created from, if possible to correlate.
+    */
+   @Nullable
+   Image getImage();
 
    /**
     * Current State of the node

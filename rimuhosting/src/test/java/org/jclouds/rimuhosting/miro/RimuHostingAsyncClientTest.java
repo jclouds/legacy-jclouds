@@ -18,11 +18,13 @@
  */
 package org.jclouds.rimuhosting.miro;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
@@ -33,6 +35,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -81,6 +84,8 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(new RimuHostingPropertiesBuilder(
+                     new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(RimuHosting.class).toInstance(
                      URI.create("https://rimuhosting.com/r"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

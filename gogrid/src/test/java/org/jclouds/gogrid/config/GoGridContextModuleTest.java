@@ -18,14 +18,16 @@
  */
 package org.jclouds.gogrid.config;
 
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.gogrid.handlers.GoGridErrorHandler;
+import org.jclouds.gogrid.reference.GoGridConstants;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
@@ -35,9 +37,7 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.gogrid.reference.GoGridConstants;
 import org.jclouds.util.Jsr330;
-import org.jclouds.Constants;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;

@@ -18,11 +18,13 @@
  */
 package org.jclouds.vcloud;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -32,6 +34,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
@@ -54,7 +57,8 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient
       GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod = processor.createRequest(method);
 
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.vcloud+xml\n");
+      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+               + ": application/vnd.vmware.vcloud.vcloud+xml\n");
       assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -80,6 +84,8 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(
+                     new VCloudPropertiesBuilder(new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(VCloud.class).toInstance(
                      URI.create("http://localhost:8080"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

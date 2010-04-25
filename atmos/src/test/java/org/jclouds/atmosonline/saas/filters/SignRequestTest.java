@@ -18,7 +18,7 @@
  */
 package org.jclouds.atmosonline.saas.filters;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;

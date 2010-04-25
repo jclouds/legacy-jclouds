@@ -40,6 +40,8 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_MEMORY, "512");
       properties.setProperty(PROPERTY_VCLOUD_ENDPOINT,
                "https://services.vcloudexpress.terremark.com/api");
+      properties.setProperty("jclouds.dns_name_length_min", "1");
+      properties.setProperty("jclouds.dns_name_length_max", "15");
       return properties;
    }
 

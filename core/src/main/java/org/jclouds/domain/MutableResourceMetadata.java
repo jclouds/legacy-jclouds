@@ -49,9 +49,9 @@ public interface MutableResourceMetadata<T extends Enum<T>> extends ResourceMeta
    void setName(String name);
 
    /**
-    * @see #getLocationId
+    * @see #getLocation
     */
-   void setLocationId(String location);
+   void setLocation(Location location);
 
    /**
     * @see #getUri
@@ -62,6 +62,5 @@ public interface MutableResourceMetadata<T extends Enum<T>> extends ResourceMeta
     * @see #getUserMetadata
     */
    void setUserMetadata(Map<String, String> userMetadata);
-
 
 }

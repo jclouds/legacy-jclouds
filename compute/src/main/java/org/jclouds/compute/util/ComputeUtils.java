@@ -387,8 +387,8 @@ public class ComputeUtils {
     * returns a new instance of {@link NodeMetadata} that has new credentials
     */
    public static NodeMetadata installNewCredentials(NodeMetadata node, Credentials newCredentials) {
-      return new NodeMetadataImpl(node.getId(), node.getName(), node.getLocationId(),
-               node.getUri(), node.getUserMetadata(), node.getTag(), node.getState(), node
+      return new NodeMetadataImpl(node.getId(), node.getName(), node.getLocation(), node.getUri(),
+               node.getUserMetadata(), node.getTag(), node.getImage(), node.getState(), node
                         .getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(),
                newCredentials);
    }

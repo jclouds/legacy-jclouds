@@ -18,6 +18,7 @@
  */
 package org.jclouds.gogrid.services;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -25,11 +26,13 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.GoGridPropertiesBuilder;
 import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
@@ -39,6 +42,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -159,6 +163,8 @@ public class GridJobAsyncClientTest extends RestClientTest<GridJobAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Jsr330.bindProperties(binder(), checkNotNull(new GoGridPropertiesBuilder(
+                     new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(GoGrid.class).toInstance(
                      URI.create("https://api.gogrid.com/api"));
             bind(Logger.LoggerFactory.class).toInstance(new Logger.LoggerFactory() {

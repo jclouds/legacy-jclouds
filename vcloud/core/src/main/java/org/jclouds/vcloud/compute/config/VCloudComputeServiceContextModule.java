@@ -23,10 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -65,6 +63,7 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -79,10 +78,11 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.compute.functions.GetExtra;
+import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
+import org.jclouds.vcloud.compute.strategy.EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -128,6 +128,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    protected void configure() {
       super.configure();
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(
+               EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
@@ -138,7 +140,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention() {
-      return "%s-%d";
+      return "%s-%s%s";
    }
 
    @Singleton
@@ -206,8 +208,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
       protected NodeMetadata newCreateNodeResponse(String tag, Template template,
                Map<String, String> metaMap, VApp vApp) {
-         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), template.getLocation().getId(),
-                  vApp.getLocation(), ImmutableMap.<String, String> of(), tag,
+         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), template.getLocation(), vApp
+                  .getLocation(), ImmutableMap.<String, String> of(), tag, template.getImage(),
                   vAppStatusToNodeState.get(vApp.getStatus()), computeClient
                            .getPublicAddresses(vApp.getId()), computeClient
                            .getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(),
@@ -224,8 +226,9 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
       @Inject
       protected VCloudListNodesStrategy(VCloudClient client, VCloudComputeClient computeClient,
-               Map<VAppStatus, NodeState> vAppStatusToNodeState) {
-         super(client, computeClient, vAppStatusToNodeState);
+               Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
+               Map<String, ? extends Location> locations, Map<String, ? extends Image> images) {
+         super(client, computeClient, vAppStatusToNodeState, getExtra, locations, images);
       }
 
       @Override
@@ -264,62 +267,20 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
       @Inject
       protected VCloudGetNodeMetadataStrategy(VCloudClient client,
-               VCloudComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
-         super(client, computeClient, vAppStatusToNodeState);
+               VCloudComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState,
+               GetExtra getExtra, Map<String, ? extends Location> locations,
+               Map<String, ? extends Image> images) {
+         super(client, computeClient, vAppStatusToNodeState, getExtra, locations, images);
       }
 
       @Override
       public NodeMetadata execute(ComputeMetadata node) {
          checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
                   + node.getType());
-         return getNodeMetadataByIdInVDC(checkNotNull(node.getLocationId(), "location"),
+         return getNodeMetadataByIdInVDC(checkNotNull(node.getLocation(), "location").getId(),
                   checkNotNull(node.getId(), "node.id"));
       }
 
-   }
-
-   @Singleton
-   public static class VCloudGetNodeMetadata {
-
-      protected final VCloudClient client;
-      protected final VCloudComputeClient computeClient;
-
-      protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
-
-      @Inject
-      protected VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
-               Map<VAppStatus, NodeState> vAppStatusToNodeState) {
-         this.client = client;
-         this.computeClient = computeClient;
-         this.vAppStatusToNodeState = vAppStatusToNodeState;
-      }
-
-      protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
-         VApp vApp = client.getVApp(id);
-         String tag = vApp.getName().replaceAll("-[0-9]+", "");
-         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vDCId, vApp.getLocation(),
-                  ImmutableMap.<String, String> of(), tag, vAppStatusToNodeState.get(vApp
-                           .getStatus()), computeClient.getPublicAddresses(id), computeClient
-                           .getPrivateAddresses(id), getExtra(vApp), null);
-      }
-   }
-
-   private static Map<String, String> getExtra(VApp vApp) {
-      Map<String, String> extra = Maps.newHashMap();
-      extra.put("memory/mb", Iterables.getOnlyElement(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity()
-               + "");
-      extra.put("processor/count", Iterables.getOnlyElement(
-               vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)).getVirtualQuantity()
-               + "");
-      for (ResourceAllocation disk : vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)) {
-         extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity() + "");
-      }
-
-      for (Entry<String, InetAddress> net : vApp.getNetworkToAddresses().entries()) {
-         extra.put(String.format("network/%s/ip", net.getKey()), net.getValue().getHostAddress());
-      }
-      return extra;
    }
 
    @Provides
@@ -347,7 +308,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Singleton
    protected Map<String, ? extends Image> provideImages(final VCloudClient client,
             final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            final Map<String, ? extends Location> locations, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
@@ -372,10 +334,11 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                               Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
                                        : Architecture.X86_64;
                               VAppTemplate template = client.getVAppTemplate(resource.getId());
-                              images.add(new ImageImpl(resource.getId(), template.getName(), vDC
-                                       .getId(), template.getLocation(), ImmutableMap
-                                       .<String, String> of(), template.getDescription(), "", myOs,
-                                       template.getName(), arch, new Credentials("root", null)));
+                              images.add(new ImageImpl(resource.getId(), template.getName(),
+                                       locations.get(vDC.getId()), template.getLocation(),
+                                       ImmutableMap.<String, String> of(), template
+                                                .getDescription(), "", myOs, template.getName(),
+                                       arch, new Credentials("root", null)));
                               return null;
                            }
                         }), executor));
@@ -408,7 +371,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          @Override
          public Location apply(NamedResource from) {
             VDC vdc = client.getVDC(from.getId());
-            return new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc.getName(), null, true);
+            return new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc.getName(), null);
          }
 
       }), new Function<Location, String>() {

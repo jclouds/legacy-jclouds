@@ -152,9 +152,9 @@ public class ComputeTask extends Task {
          log(String
                   .format(
                            "   image location=%s, id=%s, name=%s, version=%s, arch=%s, osfam=%s, osdesc=%s, desc=%s",
-                           image.getLocationId(), image.getId(), image.getName(), image
-                                    .getVersion(), image.getArchitecture(), image.getOsFamily(),
-                           image.getOsDescription(), image.getDescription()));
+                           image.getLocation(), image.getId(), image.getName(), image.getVersion(),
+                           image.getArchitecture(), image.getOsFamily(), image.getOsDescription(),
+                           image.getDescription()));
       }
    }
 
@@ -169,17 +169,16 @@ public class ComputeTask extends Task {
    private void listLocations(ComputeService computeService) {
       log("list locations");
       for (Location location : computeService.getLocations().values()) {// TODO
-         log(String.format("   location id=%s, scope=%s, description=%s, parent=%s, assignable=%s",
-                  location.getId(), location.getScope(), location.getDescription(), location
-                           .getParent(), location.isAssignable()));
+         log(String.format("   location id=%s, scope=%s, description=%s, parent=%s", location
+                  .getId(), location.getScope(), location.getDescription(), location.getParent()));
       }
    }
 
    private void list(ComputeService computeService) {
       log("list");
       for (ComputeMetadata node : computeService.getNodes().values()) {
-         log(String.format("   location=%s, id=%s, tag=%s", node.getLocationId(), node.getId(),
-                  node.getName()));
+         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getId(), node
+                  .getName()));
       }
    }
 
@@ -231,7 +230,7 @@ public class ComputeTask extends Task {
                .format(
                         "   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
                         metadata.getId(), metadata.getName(), metadata.getTag(), metadata
-                                 .getLocationId(), metadata.getState(), ComputeTaskUtils
+                                 .getLocation(), metadata.getState(), ComputeTaskUtils
                                  .ipOrEmptyString(metadata.getPublicAddresses()),
                         ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getExtra()));
    }

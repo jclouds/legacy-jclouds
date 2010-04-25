@@ -51,7 +51,8 @@ public class BindVirtualIpPortPairToQueryParams implements Binder {
       checkNotNull(ipPortPair.getIp().getIp(), "There must be an IP address defined in Ip object");
       checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-      generatedRequest.addQueryParam(VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp());
+      generatedRequest.addQueryParam(VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp()
+               .getHostAddress());
       generatedRequest.addQueryParam(VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()));
    }
 }

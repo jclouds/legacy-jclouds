@@ -49,7 +49,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       for (Entry<String, ? extends ComputeMetadata> node : client.getNodes().entrySet()) {
          assertEquals(node.getKey(), node.getValue().getId());
          assert node.getValue().getId() != null;
-         assert node.getValue().getLocationId() != null;
+         assert node.getValue().getLocation() != null;
          assertEquals(node.getValue().getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getValue());
          assert allData.getExtra().get("processor/count") != null;

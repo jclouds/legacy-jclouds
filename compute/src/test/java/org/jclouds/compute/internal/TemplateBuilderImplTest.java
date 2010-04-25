@@ -42,7 +42,7 @@ public class TemplateBuilderImplTest {
    public void testImageIdNullsEverythingElse() {
       TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableMap.<String, Location> of(),
                ImmutableMap.<String, Image> of(), ImmutableMap.<String, Size> of(),
-               new LocationImpl(LocationScope.REGION, " id", "description", null, true));
+               new LocationImpl(LocationScope.REGION, " id", "description", null));
       template.architecture(Architecture.X86_32);
       template.imageDescriptionMatches("imageDescriptionMatches");
       template.imageNameMatches("imageNameMatches");

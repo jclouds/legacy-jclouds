@@ -23,8 +23,21 @@
  */
 package org.jclouds.gogrid.services;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOOKUP_LIST_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.NAME_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.POWER_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.SERVER_ID_OR_NAME_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.SERVER_RAM_KEY;
 
+import java.net.InetAddress;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -43,18 +56,20 @@ import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponse;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
-import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 
-import java.util.Map;
-import java.util.Set;
-
-import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
-import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to GoGrid via their REST API.
  * <p/>
- *
+ * 
  * @see GridServerClient
  * @see <a href="http://wiki.gogrid.com/wiki/index.php/API" />
  * @author Adrian Cole
@@ -65,81 +80,92 @@ import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 @QueryParams(keys = VERSION, values = "1.3")
 public interface GridServerAsyncClient {
 
-    /**
+   /**
     * @see GridServerClient#getServerList(org.jclouds.gogrid.options.GetServerListOptions...)
     */
-    @GET
-    @ResponseParser(ParseServerListFromJsonResponse.class)
-    @Path("/grid/server/list")
-    ListenableFuture<Set<Server>> getServerList(GetServerListOptions... getServerListOptions);
+   @GET
+   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @Path("/grid/server/list")
+   ListenableFuture<Set<Server>> getServerList(GetServerListOptions... getServerListOptions);
 
-    /**
+   /**
     * @see GridServerClient#getServersByName(String...)
     */
-    @GET
-    @ResponseParser(ParseServerListFromJsonResponse.class)
-    @Path("/grid/server/get")
-    ListenableFuture<Set<Server>> getServersByName(@BinderParam(BindNamesToQueryParams.class) String... names);
+   @GET
+   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @Path("/grid/server/get")
+   ListenableFuture<Set<Server>> getServersByName(
+            @BinderParam(BindNamesToQueryParams.class) String... names);
 
-    /**
+   /**
     * @see GridServerClient#getServersById(Long...)
     */
-    @GET
-    @ResponseParser(ParseServerListFromJsonResponse.class)
-    @Path("/grid/server/get")
-    ListenableFuture<Set<Server>> getServersById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
+   @GET
+   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @Path("/grid/server/get")
+   ListenableFuture<Set<Server>> getServersById(
+            @BinderParam(BindIdsToQueryParams.class) Long... ids);
 
-    /**
+   /**
     * @see GridServerClient#getServerCredentialsList
     */
-    @GET
-    @ResponseParser(ParseServerNameToCredentialsMapFromJsonResponse.class)
-    @Path("/support/password/list")
-    ListenableFuture<Map<String, Credentials>> getServerCredentialsList();
+   @GET
+   @ResponseParser(ParseServerNameToCredentialsMapFromJsonResponse.class)
+   @Path("/support/password/list")
+   ListenableFuture<Map<String, Credentials>> getServerCredentialsList();
 
-    /**
-    * @see GridServerClient#addServer(String, String, String, String, org.jclouds.gogrid.options.AddServerOptions...)
+   /**
+    * @see GridServerClient#addServer(String, String, String, String,
+    *      org.jclouds.gogrid.options.AddServerOptions...)
     */
-    @GET
-    @ResponseParser(ParseServerFromJsonResponse.class)
-    @Path("/grid/server/add")
-    ListenableFuture<Server> addServer(@QueryParam(NAME_KEY) String name,
-                                            @QueryParam(IMAGE_KEY) String image,
-                                            @QueryParam(SERVER_RAM_KEY) String ram,
-                                            @QueryParam(IP_KEY) String ip,
-                                            AddServerOptions... addServerOptions);
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/add")
+   ListenableFuture<Server> addServer(@QueryParam(NAME_KEY) String name,
+            @QueryParam(IMAGE_KEY) String image, @QueryParam(SERVER_RAM_KEY) String ram,
+            @QueryParam(IP_KEY) @ParamParser(InetAddressHostName.class) InetAddress ip,
+            AddServerOptions... addServerOptions);
 
-    /**
+   @Singleton
+   public static class InetAddressHostName implements Function<Object, String> {
+
+      public String apply(Object from) {
+         return ((InetAddress) from).getHostAddress();
+      }
+
+   }
+
+   /**
     * @see GridServerClient#power(String, org.jclouds.gogrid.domain.PowerCommand)
     */
-    @GET
-    @ResponseParser(ParseServerFromJsonResponse.class)
-    @Path("/grid/server/power")
-    ListenableFuture<Server> power(@QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName,
-                                   @QueryParam(POWER_KEY) PowerCommand power);
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/power")
+   ListenableFuture<Server> power(@QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName,
+            @QueryParam(POWER_KEY) PowerCommand power);
 
-    /**
+   /**
     * @see GridServerClient#deleteById(Long)
     */
-    @GET
-    @ResponseParser(ParseServerFromJsonResponse.class)
-    @Path("/grid/server/delete")
-    ListenableFuture<Server> deleteById(@QueryParam(ID_KEY) Long id);
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/delete")
+   ListenableFuture<Server> deleteById(@QueryParam(ID_KEY) Long id);
 
-    /**
-    * @see GridServerClient#deleteByName(String)     
+   /**
+    * @see GridServerClient#deleteByName(String)
     */
-    @GET
-    @ResponseParser(ParseServerFromJsonResponse.class)
-    @Path("/grid/server/delete")
-    ListenableFuture<Server> deleteByName(@QueryParam(NAME_KEY) String name);
+   @GET
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @Path("/grid/server/delete")
+   ListenableFuture<Server> deleteByName(@QueryParam(NAME_KEY) String name);
 
-    /**
-     * @see GridServerClient#getRamSizes
-     */
-    @GET
-    @ResponseParser(ParseOptionsFromJsonResponse.class)
-    @Path("/common/lookup/list")
-    @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.ram")
-    ListenableFuture<Set<Option>> getRamSizes();
+   /**
+    * @see GridServerClient#getRamSizes
+    */
+   @GET
+   @ResponseParser(ParseOptionsFromJsonResponse.class)
+   @Path("/common/lookup/list")
+   @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.ram")
+   ListenableFuture<Set<Option>> getRamSizes();
 }

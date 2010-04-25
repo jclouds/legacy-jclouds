@@ -60,15 +60,6 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
    String getName();
 
    /**
-    * Physical location of the resource.
-    * 
-    * ex. us-west-1
-    * 
-    */
-   @Override
-   String getLocationId();
-
-   /**
     * URI used to access this resource
     */
    @Override

@@ -18,13 +18,8 @@
  */
 package org.jclouds.vcloud.terremark;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CPUCOUNT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_MEMORY;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.disabled;
 import static org.testng.Assert.assertEquals;
 
@@ -50,7 +45,6 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.VCloudApi;
@@ -564,16 +558,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
          @Override
          protected void configure() {
             Properties props = new Properties();
-            props.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
-            props.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
-            props.setProperty(PROPERTY_VCLOUD_DEFAULT_CPUCOUNT, "1");
-            props.setProperty(PROPERTY_VCLOUD_DEFAULT_MEMORY, "512");
             props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
                      "https://vcloud.safesecureweb.com/network/1990");
-            props.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
-            props.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
-                     "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-            Jsr330.bindProperties(binder(), props);
+            Jsr330.bindProperties(binder(), checkNotNull(
+                     new TerremarkVCloudPropertiesBuilder(props).build(), "properties"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)
                      .toInstance("http://catalogItem");

@@ -110,8 +110,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       @Override
       public boolean apply(ComputeMetadata input) {
          boolean returnVal = true;
-         if (locationId != null && input.getLocationId() != null)
-            returnVal = locationId.equals(input.getLocationId());
+         if (locationId != null && input.getLocation() != null)
+            returnVal = locationId.equals(input.getLocation().getId());
          return returnVal;
       }
    };
@@ -302,8 +302,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder fromSize(Size size) {
-      if (size.getLocationId() != null)
-         this.locationId = size.getLocationId();
+      if (size.getLocation() != null)
+         this.locationId = size.getLocation().getId();
       this.minCores = size.getCores();
       this.minRam = size.getRam();
       return this;
@@ -314,8 +314,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder fromImage(Image image) {
-      if (image.getLocationId() != null)
-         this.locationId = image.getLocationId();
+      if (image.getLocation() != null)
+         this.locationId = image.getLocation().getId();
       if (image.getOsFamily() != null)
          this.os = image.getOsFamily();
       if (image.getName() != null)

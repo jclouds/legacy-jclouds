@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.config;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
@@ -62,7 +62,7 @@ public class EC2ContextModuleTest {
    void testM1SMALLIsSmallest() {
       // TODO
    }
-   
+
    @Test
    void testContextImpl() {
       RestContext<EC2AsyncClient, EC2Client> handler = createInjector().getInstance(

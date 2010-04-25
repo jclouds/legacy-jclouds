@@ -18,15 +18,13 @@
  */
 package org.jclouds.rest;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -34,11 +32,9 @@ import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -47,7 +43,25 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.internal.Nullable;
 
 public abstract class RestClientTest<T> {
-
+//   , new AbstractModule() {
+//
+//      @Override
+//      protected void configure() {
+//         Jsr330.bindProperties(binder(), new PropertiesBuilder() {
+//
+//            @Override
+//            public PropertiesBuilder withCredentials(String account, String key) {
+//               return null;
+//            }
+//
+//            @Override
+//            public PropertiesBuilder withEndpoint(URI endpoint) {
+//               return null;
+//            }
+//         }.build());
+//      }
+//
+//   }
    protected RestAnnotationProcessor<T> processor;
    protected Injector injector;
 
@@ -60,25 +74,8 @@ public abstract class RestClientTest<T> {
    @BeforeClass
    protected void setupFactory() {
 
-      injector = Guice.createInjector(createModule(), new AbstractModule() {
-
-         @Override
-         protected void configure() {
-            Jsr330.bindProperties(binder(), new PropertiesBuilder() {
-
-               @Override
-               public PropertiesBuilder withCredentials(String account, String key) {
-                  return null;
-               }
-
-               @Override
-               public PropertiesBuilder withEndpoint(URI endpoint) {
-                  return null;
-               }
-            }.build());
-         }
-
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
+      injector = Guice.createInjector(createModule(), new RestModule(), new ExecutorServiceModule(
+               sameThreadExecutor(), sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
 
       processor = injector.getInstance(Key.get(createTypeLiteral()));

@@ -18,6 +18,7 @@
  */
 package org.jclouds.concurrent;
 
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 import static org.jclouds.util.Utils.propagateOrNull;
 import static org.testng.Assert.assertEquals;
@@ -33,7 +34,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -43,7 +43,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Test(groups = "unit", testName = "concurrent.ListenableFutureExceptionParserTest")
 public class FutureExceptionParserTest {
-   ExecutorService executorService = Executors.sameThreadExecutor();
+   ExecutorService executorService = sameThreadExecutor();
 
    @Test
    public void testGet() throws InterruptedException, ExecutionException {

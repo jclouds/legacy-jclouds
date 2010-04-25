@@ -18,7 +18,7 @@
  */
 package org.jclouds.azure.storage.blob;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;

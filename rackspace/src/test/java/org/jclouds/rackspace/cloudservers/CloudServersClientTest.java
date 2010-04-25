@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
@@ -82,7 +83,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.util.concurrent.Executors;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -1036,8 +1036,8 @@ public class CloudServersClientTest {
                }
             };
          }
-      }, new RestModule(), new ExecutorServiceModule(Executors.sameThreadExecutor(), Executors
-               .sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule());
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
+               new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {
                }));

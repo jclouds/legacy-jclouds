@@ -41,6 +41,7 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -110,7 +111,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    @Override
    protected Map<String, ? extends Image> provideImages(final VCloudClient client,
             final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            final Map<String, ? extends Location> locations, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
@@ -139,11 +141,11 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
                                        : Architecture.X86_64;
                               VAppTemplate template = client.getVAppTemplate(item.getEntity()
                                        .getId());
-                              images.add(new ImageImpl(resource.getId(), template.getName(), vDC
-                                       .getId(), template.getLocation(), ImmutableMap
-                                       .<String, String> of(), template.getDescription(), "", myOs,
-                                       template.getName(), arch, credentialsProvider
-                                                .execute(template)));
+                              images.add(new ImageImpl(resource.getId(), template.getName(),
+                                       locations.get(vDC.getId()), template.getLocation(),
+                                       ImmutableMap.<String, String> of(), template
+                                                .getDescription(), "", myOs, template.getName(),
+                                       arch, credentialsProvider.execute(template)));
                               return null;
                            }
                         }), executor));

@@ -36,11 +36,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -263,7 +265,7 @@ public interface VCloudAsyncClient {
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@PathParam("vDCId") String vDCId,
-            @MapPayloadParam("name") String appName,
+            @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
@@ -276,5 +278,6 @@ public interface VCloudAsyncClient {
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
    ListenableFuture<? extends Task> cloneVAppInVDC(@PathParam("vDCId") String vDCId,
             @MapPayloadParam("vApp") @ParamParser(VAppIdToUri.class) String vAppIdToClone,
-            @MapPayloadParam("newName") String newName, CloneVAppOptions... options);
+            @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
+            CloneVAppOptions... options);
 }

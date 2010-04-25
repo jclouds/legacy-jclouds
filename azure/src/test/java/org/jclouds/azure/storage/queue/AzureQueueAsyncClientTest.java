@@ -38,7 +38,6 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -249,11 +248,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
          protected void configure() {
             bind(URI.class).annotatedWith(AzureQueue.class).toInstance(
                      URI.create("http://localhost:8080"));
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                     Base64.encodeBytes("key".getBytes()));
+            Jsr330.bindProperties(this.binder(), new AzureQueuePropertiesBuilder("user", "key")
+                     .build());
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

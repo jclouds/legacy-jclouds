@@ -26,6 +26,7 @@ import java.util.Map;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.domain.Location;
 
 import com.google.inject.internal.Nullable;
 
@@ -41,7 +42,7 @@ public class BlobMetadataImpl extends StorageMetadataImpl implements Serializabl
    private final String contentType;
    private final byte[] contentMD5;
 
-   public BlobMetadataImpl(String id, String name, @Nullable String location, URI uri,
+   public BlobMetadataImpl(String id, String name, @Nullable Location location, URI uri,
             String eTag, Long size, Date lastModified, Map<String, String> userMetadata,
             String contentType, byte[] contentMD5) {
       super(StorageType.BLOB, id, name, location, uri, eTag, size, lastModified, userMetadata);

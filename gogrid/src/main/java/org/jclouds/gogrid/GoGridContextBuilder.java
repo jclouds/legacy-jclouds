@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.gogrid.config.GoGridComputeServiceContextModule;
+import org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.gogrid.config.internal.GoGridResolveImagesModule;
 

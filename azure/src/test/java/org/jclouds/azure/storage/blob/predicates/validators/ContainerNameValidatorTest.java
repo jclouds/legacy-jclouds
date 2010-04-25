@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.azure.storage.predicates.validators;
+package org.jclouds.azure.storage.blob.predicates.validators;
 
 import org.testng.annotations.Test;
 import org.jclouds.azure.storage.blob.predicates.validators.ContainerNameValidator;

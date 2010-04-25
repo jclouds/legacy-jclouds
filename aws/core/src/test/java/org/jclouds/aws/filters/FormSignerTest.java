@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.filters;
 
-import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
@@ -36,7 +36,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.util.concurrent.Executors;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -65,8 +64,8 @@ public class FormSignerTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(Executors
-               .sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
+      injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(
+               sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
 
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(

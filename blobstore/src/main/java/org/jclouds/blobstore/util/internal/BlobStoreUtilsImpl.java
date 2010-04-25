@@ -111,7 +111,7 @@ public class BlobStoreUtilsImpl implements BlobStoreUtils {
       blob.getMetadata().setETag(blobMeta.getETag());
       blob.getMetadata().setId(blobMeta.getId());
       blob.getMetadata().setLastModified(blobMeta.getLastModified());
-      blob.getMetadata().setLocationId(blobMeta.getLocationId());
+      blob.getMetadata().setLocation(blobMeta.getLocation());
       blob.getMetadata().setUri(blobMeta.getUri());
       blob.getMetadata().setUserMetadata(blobMeta.getUserMetadata());
       return blob;
