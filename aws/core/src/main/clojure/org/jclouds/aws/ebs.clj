@@ -214,7 +214,8 @@
   "Creates a new volume given a set of options:
 
    - one of :zone (keyword, string, or AvailabilityZone) or :node (NodeMetadata)
-   - one or both of :snapshot (keyword or string) or :size (string, keyword, or number)
+   - one or both of :snapshot (keyword, string, or Snapshot instance) or :size
+     (string, keyword, or number)
    - :device (string or keyword) provided *only* when you want to attach the new volume to
      the :node you specified!
 
@@ -234,12 +235,14 @@
           (create-volume :node node-instance :size 250)
           (create-volume :node node-instance :size 250 :device \"/dev/sdj\")
           (create-volume :zone :eu-west-1b :snapshot \"snap-252310af\")
+          (create-volume :zone :eu-west-1b :snapshot snapshot-instance)
           (create-volume :zone :eu-west-1b :snapshot \"snap-252310af\" :size :1024))"
   [& options]
   (when (-> options count odd?)
     (throw (IllegalArgumentException. "Must provide key-value pairs, e.g. :zone :us-east-1d :size 200")))
   (let [options (apply hash-map options)
         snapshot (get-string options :snapshot)
+        snapshot (if (snapshot? snapshot) (.getId snapshot) snapshot)
         size (-?> (get-string options :size) as-int)
         #^NodeMetadata node (:node options)
         zone (or node (get-string options :zone))
