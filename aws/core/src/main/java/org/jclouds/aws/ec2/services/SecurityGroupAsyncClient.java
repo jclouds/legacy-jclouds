@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.SortedSet;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -65,7 +66,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateSecurityGroup")
    ListenableFuture<Void> createSecurityGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("GroupName") String name, @FormParam("GroupDescription") String description);
 
    /**
@@ -76,7 +77,7 @@ public interface SecurityGroupAsyncClient {
    @FormParams(keys = ACTION, values = "DeleteSecurityGroup")
    @ExceptionParser(ReturnVoidOnGroupNotFound.class)
    ListenableFuture<Void> deleteSecurityGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("GroupName") String name);
 
    /**
@@ -87,53 +88,53 @@ public interface SecurityGroupAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
    @XMLResponseParser(DescribeSecurityGroupsResponseHandler.class)
    ListenableFuture<? extends SortedSet<SecurityGroup>> describeSecurityGroupsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @BinderParam(BindGroupNameToIndexedFormParams.class) String... securityGroupNames);
 
    /**
-    * @see BaseEC2Client#authorizeSecurityGroupIngressInRegion(Region, String,UserIdGroupPair)
+    * @see BaseEC2Client#authorizeSecurityGroupIngressInRegion(@Nullable Region, String,UserIdGroupPair)
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
    ListenableFuture<Void> authorizeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("GroupName") String groupName,
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
 
    /**
-    * @see BaseEC2Client#authorizeSecurityGroupIngressInRegion(Region,
+    * @see BaseEC2Client#authorizeSecurityGroupIngressInRegion(@Nullable Region,
     *      String,IpProtocol,int,int,String)
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
    ListenableFuture<Void> authorizeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("GroupName") String groupName,
             @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
             @FormParam("ToPort") int toPort, @FormParam("CidrIp") String cidrIp);
 
    /**
-    * @see BaseEC2Client#revokeSecurityGroupIngressInRegion(Region, String,UserIdGroupPair)
+    * @see BaseEC2Client#revokeSecurityGroupIngressInRegion(@Nullable Region, String,UserIdGroupPair)
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
    ListenableFuture<Void> revokeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("GroupName") String groupName,
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
 
    /**
-    * @see BaseEC2Client#revokeSecurityGroupIngressInRegion(Region,
+    * @see BaseEC2Client#revokeSecurityGroupIngressInRegion(@Nullable Region,
     *      String,IpProtocol,int,int,String)
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
    ListenableFuture<Void> revokeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("GroupName") String groupName,
             @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
             @FormParam("ToPort") int toPort, @FormParam("CidrIp") String cidrIp);

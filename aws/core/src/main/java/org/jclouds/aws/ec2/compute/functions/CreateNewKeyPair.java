@@ -19,6 +19,8 @@
 
 package org.jclouds.aws.ec2.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.security.SecureRandom;
 
 import javax.annotation.Resource;
@@ -58,6 +60,8 @@ public class CreateNewKeyPair implements Function<RegionTag, KeyPair> {
    }
 
    private KeyPair createNewKeyPairInRegion(Region region, String tag) {
+      checkNotNull(region, "region");
+      checkNotNull(tag, "tag");
       logger.debug(">> creating keyPair region(%s) tag(%s)", region, tag);
       KeyPair keyPair = null;
       while (keyPair == null) {

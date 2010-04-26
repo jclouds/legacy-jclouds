@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.s3.util;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -29,8 +30,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.aws.domain.AWSError;
+import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.config.S3RestClientModule;
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
@@ -66,15 +67,8 @@ public class S3UtilsTest {
                   @Override
                   protected void configure() {
                      bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
-                     // bind(new TypeLiteral<ClearListStrategy<S3Object>>(){}).to
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
-                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
-                              .to("https://s3.amazonaws.com");
+                     Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user", "key")
+                     .build(), "properties"));
                      bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
 

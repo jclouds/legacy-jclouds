@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_EXPIREINTERVAL;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.aws.sqs.reference.SQSConstants.PROPERTY_SQS_ENDPOINT;
 import static org.jclouds.aws.sqs.reference.SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1;
 import static org.jclouds.aws.sqs.reference.SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1;
 import static org.jclouds.aws.sqs.reference.SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1;
@@ -40,9 +41,12 @@ public class SQSPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_SQS_ENDPOINT, "https://queue.amazonaws.com");
       properties.setProperty(PROPERTY_SQS_ENDPOINT_US_EAST_1, "https://queue.amazonaws.com");
-      properties.setProperty(PROPERTY_SQS_ENDPOINT_US_WEST_1, "https://us-west-1.queue.amazonaws.com");
-      properties.setProperty(PROPERTY_SQS_ENDPOINT_EU_WEST_1, "https://eu-west-1.queue.amazonaws.com");
+      properties.setProperty(PROPERTY_SQS_ENDPOINT_US_WEST_1,
+               "https://us-west-1.queue.amazonaws.com");
+      properties.setProperty(PROPERTY_SQS_ENDPOINT_EU_WEST_1,
+               "https://eu-west-1.queue.amazonaws.com");
       properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, "60");
       return properties;
    }
@@ -64,7 +68,7 @@ public class SQSPropertiesBuilder extends PropertiesBuilder {
    }
 
    public SQSPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_SQS_ENDPOINT_US_EAST_1, checkNotNull(endpoint, "endpoint").toString());
+      properties.setProperty(PROPERTY_SQS_ENDPOINT, checkNotNull(endpoint, "endpoint").toString());
       return this;
    }
 

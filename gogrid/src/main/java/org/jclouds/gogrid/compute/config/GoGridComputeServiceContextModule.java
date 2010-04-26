@@ -18,12 +18,10 @@
  */
 package org.jclouds.gogrid.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -45,7 +43,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
@@ -67,13 +64,11 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.compute.functions.ServerToNodeMetadata;
+import org.jclouds.gogrid.compute.strategy.GoGridAddNodeWithTagStrategy;
 import org.jclouds.gogrid.config.GoGridContextModule;
-import org.jclouds.gogrid.domain.Ip;
-import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
-import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
@@ -84,7 +79,6 @@ import org.jclouds.ssh.SshClient;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -120,62 +114,6 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
    @Singleton
    String provideNamingConvention() {
       return "%s-%s";
-   }
-
-   @Singleton
-   public static class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-      private final GoGridClient client;
-      private final Function<Size, String> sizeToRam;
-      private final Function<Server, NodeMetadata> serverToNodeMetadata;
-      private RetryablePredicate<Server> serverLatestJobCompleted;
-      private RetryablePredicate<Server> serverLatestJobCompletedShort;
-
-      @Inject
-      protected GoGridAddNodeWithTagStrategy(GoGridClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata, Function<Size, String> sizeToRam) {
-         this.client = client;
-         this.serverToNodeMetadata = serverToNodeMetadata;
-         this.sizeToRam = sizeToRam;
-         this.serverLatestJobCompleted = new RetryablePredicate<Server>(
-                  new ServerLatestJobCompleted(client.getJobServices()), 800, 20, TimeUnit.SECONDS);
-         this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(
-                  new ServerLatestJobCompleted(client.getJobServices()), 60, 20, TimeUnit.SECONDS);
-      }
-
-      @Override
-      public NodeMetadata execute(String tag, String name, Template template) {
-         Server addedServer = null;
-         boolean notStarted = true;
-         int numOfRetries = 20;
-         // lock-free consumption of a shared resource: IP address pool
-         while (notStarted) { // TODO: replace with Predicate-based thread collision avoidance for
-            // simplicity
-            Set<Ip> availableIps = client.getIpServices().getIpList(
-                     new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC));
-            if (availableIps.size() == 0)
-               throw new RuntimeException("No public IPs available on this account.");
-            int ipIndex = new SecureRandom().nextInt(availableIps.size());
-            Ip availableIp = Iterables.get(availableIps, ipIndex);
-            try {
-               addedServer = client.getServerServices().addServer(name,
-                        checkNotNull(template.getImage().getId()),
-                        sizeToRam.apply(template.getSize()), availableIp.getIp());
-               notStarted = false;
-            } catch (Exception e) {
-               if (--numOfRetries == 0)
-                  Throwables.propagate(e);
-               notStarted = true;
-            }
-         }
-         serverLatestJobCompleted.apply(addedServer);
-
-         client.getServerServices().power(addedServer.getName(), PowerCommand.START);
-         serverLatestJobCompletedShort.apply(addedServer);
-
-         addedServer = Iterables.getOnlyElement(client.getServerServices().getServersByName(
-                  addedServer.getName()));
-         return serverToNodeMetadata.apply(addedServer);
-      }
    }
 
    @Singleton

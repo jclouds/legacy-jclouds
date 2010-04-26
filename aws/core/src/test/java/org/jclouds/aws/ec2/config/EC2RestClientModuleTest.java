@@ -24,8 +24,7 @@ import static org.testng.Assert.assertEquals;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.Constants;
-import org.jclouds.aws.ec2.reference.EC2Constants;
+import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -52,18 +51,8 @@ public class EC2RestClientModuleTest {
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_EC2_ENDPOINT))
-                              .to("http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL)).to(30);
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
+                     Jsr330.bindProperties(this.binder(), new EC2PropertiesBuilder("user", "key")
+                              .build());
                      bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });

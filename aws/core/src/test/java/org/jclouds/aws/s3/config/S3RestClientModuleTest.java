@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.s3.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -25,11 +26,10 @@ import static org.testng.Assert.assertFalse;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
@@ -55,18 +55,8 @@ public class S3RestClientModuleTest {
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
-                              .to("http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
+                     Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user",
+                              "key").build(), "properties"));
                      bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });

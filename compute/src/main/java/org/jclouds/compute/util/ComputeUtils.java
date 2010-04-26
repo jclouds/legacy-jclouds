@@ -23,12 +23,16 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -61,8 +65,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
+
 
 /**
  * 
@@ -392,4 +398,32 @@ public class ComputeUtils {
                         .getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(),
                newCredentials);
    }
+   
+   /**
+    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds).
+    * Uses compute.properties to populate the set.
+    * 
+    * XXX: Pass in extra properties to support ones that aren't in compute.properties
+    */
+	public static Set<String> getSupportedProviders() {
+		Properties properties = new Properties();
+		try {
+			properties.load(Resources.newInputStreamSupplier(
+					Resources.getResource("compute.properties")).getInput());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		Set<Object> keys = properties.keySet();
+
+		Set<String> providers = new HashSet<String>();
+
+		for (Object key : keys) {
+			String keyString = key.toString();
+			if (keyString.endsWith(".contextbuilder")) {
+				providers.add(keyString.substring(0, keyString.length()
+						- ".contextbuilder".length()));
+			}
+		}
+		return providers;
+	}
 }

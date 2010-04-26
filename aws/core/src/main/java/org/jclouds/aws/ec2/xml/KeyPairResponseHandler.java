@@ -18,6 +18,10 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import javax.inject.Inject;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
@@ -30,15 +34,19 @@ import org.jclouds.http.functions.ParseSax;
  * @author Adrian Cole
  */
 public class KeyPairResponseHandler extends ParseSax.HandlerWithResult<KeyPair> {
-
+   @Inject
+   @EC2
+   Region defaultRegion;
    private StringBuilder currentText = new StringBuilder();
    private String keyFingerprint;
    private String keyMaterial;
    private String keyName;
 
    public KeyPair getResult() {
-      return new KeyPair(EC2Utils.findRegionInArgsOrNull(request), keyName, keyFingerprint,
-               keyMaterial);
+      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      if (region == null)
+         region = defaultRegion;
+      return new KeyPair(region, keyName, keyFingerprint, keyMaterial);
    }
 
    public void endElement(String uri, String name, String qName) {

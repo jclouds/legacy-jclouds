@@ -22,6 +22,8 @@ import java.net.InetAddress;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
@@ -47,7 +49,7 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AllocateAddress.html"
     */
-   InetAddress allocateAddressInRegion(Region region);
+   InetAddress allocateAddressInRegion(@Nullable Region region);
 
    /**
     * Associates an elastic IP address with an instance. If the IP address is currently assigned to
@@ -67,7 +69,7 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-AssociateAddress.html"
     */
-   void associateAddressInRegion(Region region, InetAddress publicIp, String instanceId);
+   void associateAddressInRegion(@Nullable Region region, InetAddress publicIp, String instanceId);
 
    /**
     * Disassociates the specified elastic IP address from the instance to which it is assigned. This
@@ -85,7 +87,7 @@ public interface ElasticIPAddressClient {
     * @see #associateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisdisassociateAddress.html"
     */
-   void disassociateAddressInRegion(Region region, InetAddress publicIp);
+   void disassociateAddressInRegion(@Nullable Region region, InetAddress publicIp);
 
    /**
     * Releases an elastic IP address associated with your account.
@@ -101,7 +103,7 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-ReleaseAddress.html"
     */
-   void releaseAddressInRegion(Region region, InetAddress publicIp);
+   void releaseAddressInRegion(@Nullable Region region, InetAddress publicIp);
 
    /**
     * Lists elastic IP addresses assigned to your account or provides information about a specific
@@ -119,7 +121,7 @@ public interface ElasticIPAddressClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAddresses.html"
     *      />
     */
-   Set<PublicIpInstanceIdPair> describeAddressesInRegion(Region region,
+   Set<PublicIpInstanceIdPair> describeAddressesInRegion(@Nullable Region region,
             InetAddress... publicIps);
 
 }

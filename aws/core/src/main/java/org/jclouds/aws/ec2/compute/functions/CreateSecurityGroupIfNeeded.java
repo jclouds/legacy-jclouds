@@ -1,5 +1,7 @@
 package org.jclouds.aws.ec2.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +38,8 @@ public class CreateSecurityGroupIfNeeded implements Function<PortsRegionTag, Str
    }
 
    private void createSecurityGroupInRegion(Region region, String name, int... ports) {
+      checkNotNull(region, "region");
+      checkNotNull(name, "name");
       logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
       try {
          ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
@@ -47,11 +51,13 @@ public class CreateSecurityGroupIfNeeded implements Function<PortsRegionTag, Str
                      name, IpProtocol.TCP, port, port, "0.0.0.0/0");
             logger.debug("<< authorized securityGroup(%s)", name);
          }
-         logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself", region, name);
-         String myOwnerId = Iterables.get(ec2Client.getSecurityGroupServices()
-             .describeSecurityGroupsInRegion(region),0).getOwnerId();
-         ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name, 
-             new UserIdGroupPair(myOwnerId, name));
+         logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself",
+                  region, name);
+         String myOwnerId = Iterables.get(
+                  ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region), 0)
+                  .getOwnerId();
+         ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name,
+                  new UserIdGroupPair(myOwnerId, name));
          logger.debug("<< authorized securityGroup(%s)", name);
 
       } catch (AWSResponseException e) {

@@ -32,6 +32,7 @@ Here's a quick example of how to view blob resources in rackspace
     (def blobstore-name \"cloudfiles\")
 
     (with-blobstore [blobstore-name user password]
+      (pprint (locations))
       (pprint (containers))
       (pprint (blobs blobstore your_container_name)))
 
@@ -130,14 +131,20 @@ Options can also be specified for extension modules
       (.list blobstore container-name list-options))
     (apply list-container *blobstore* blobstore args)))
 
+(defn locations
+  "Retrieve the available container locations for the blobstore context."
+  ([] (locations *blobstore*))
+  ([#^BlobStore blobstore]
+     (seq-from-immutable-set (.getLocations blobstore))))
+
 (defn create-container
   "Create a container."
   ([container-name]
-     (create-container container-name "default" *blobstore*))
-  ([container-name location-name]
-     (create-container container-name location-name *blobstore*))
-  ([container-name location-name blobstore]
-     (.createContainerInLocation blobstore location-name container-name)))
+     (create-container container-name nil *blobstore*))
+  ([container-name location]
+     (create-container container-name location *blobstore*))
+  ([container-name location blobstore]
+     (.createContainerInLocation blobstore location container-name)))
 
 (defn clear-container
   "Clear a container."

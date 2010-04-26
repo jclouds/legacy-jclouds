@@ -22,6 +22,8 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.date.DateService;
 
@@ -40,8 +42,8 @@ public class DescribeInstancesResponseHandler extends
    private SortedSet<Reservation> reservations = Sets.newTreeSet();
 
    @Inject
-   DescribeInstancesResponseHandler(DateService dateService) {
-      super(dateService);
+   DescribeInstancesResponseHandler(DateService dateService, @EC2 Region defaultRegion) {
+      super(dateService, defaultRegion);
    }
 
    @Override

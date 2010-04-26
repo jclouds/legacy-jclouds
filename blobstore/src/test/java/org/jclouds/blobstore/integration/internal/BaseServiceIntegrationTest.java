@@ -20,9 +20,14 @@ package org.jclouds.blobstore.integration.internal;
 
 import java.util.Set;
 
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
+import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -36,4 +41,31 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
       assert !list.contains(new MutableStorageMetadataImpl());
    }
 
+   @Test(groups = { "integration", "live" })
+   public void testAllLocations() throws InterruptedException {
+      for (final Location location : context.getBlobStore().getLocations().values()) {
+         final String containerName = getScratchContainerName();
+         try {
+
+            context.getBlobStore().createContainerInLocation(location, containerName);
+            assertConsistencyAware(new Runnable() {
+
+               @Override
+               public void run() {
+                  PageSet<? extends StorageMetadata> list = context.getBlobStore().list();
+                  assert Iterables.any(list, new Predicate<StorageMetadata>() {
+                     public boolean apply(StorageMetadata md) {
+                        return containerName.equals(md.getName())
+                                 && location.equals(md.getLocation());
+                     }
+                  }) : String.format("container %s/%s not found in list %s", location,
+                           containerName, list);
+               }
+
+            });
+         } finally {
+            recycleContainer(containerName);
+         }
+      }
+   }
 }

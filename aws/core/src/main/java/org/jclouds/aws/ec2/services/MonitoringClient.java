@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.services;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.concurrent.Timeout;
@@ -48,7 +50,7 @@ public interface MonitoringClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-MonitorInstances.html"
     *      />
     */
-   Map<String, MonitoringState> monitorInstancesInRegion(Region region, String instanceId,
+   Map<String, MonitoringState> monitorInstancesInRegion(@Nullable Region region, String instanceId,
             String... instanceIds);
 
    /**
@@ -65,6 +67,6 @@ public interface MonitoringClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-UnmonitorInstances.html"
     *      />
     */
-   Map<String, MonitoringState> unmonitorInstancesInRegion(Region region, String instanceId,
+   Map<String, MonitoringState> unmonitorInstancesInRegion(@Nullable Region region, String instanceId,
             String... instanceIds);
 }

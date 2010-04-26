@@ -47,6 +47,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -89,6 +90,7 @@ public class SQSRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @SQS
    Map<Region, URI> provideRegions(
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1) String useast,
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1) String uswest,
@@ -99,15 +101,22 @@ public class SQSRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RequestSigner provideRequestSigner(FormSigner in) {
-      return in;
+   @SQS
+   protected URI provideURI(@Named(SQSConstants.PROPERTY_SQS_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
    }
 
    @Provides
    @Singleton
    @SQS
-   protected URI provideURI(@Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1) String endpoint) {
-      return URI.create(endpoint);
+   Region getDefaultRegion(@SQS URI uri, @SQS Map<Region, URI> map) {
+      return ImmutableBiMap.copyOf(map).inverse().get(uri);
+   }
+
+   @Provides
+   @Singleton
+   RequestSigner provideRequestSigner(FormSigner in) {
+      return in;
    }
 
    protected void bindErrorHandlers() {

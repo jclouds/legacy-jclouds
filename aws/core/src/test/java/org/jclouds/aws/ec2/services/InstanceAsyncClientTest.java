@@ -18,21 +18,11 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
 import org.jclouds.aws.ec2.domain.InstanceType;
@@ -48,24 +38,12 @@ import org.jclouds.aws.ec2.xml.InstanceTypeHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.StringValueHandler;
 import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
-import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -74,12 +52,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.InstanceAsyncClientTest")
-public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient> {
+public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
                Region.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT);
+               (Region) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -97,8 +75,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
                Region.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "2");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -117,8 +95,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("terminateInstancesInRegion",
                Region.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "2");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -137,8 +115,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
       Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", Region.class,
                AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, null, "ami-voo", 1, 1);
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               null, "ami-voo", 1, 1);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -181,8 +159,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
    public void testStopInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("stopInstancesInRegion", Region.class,
                boolean.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, true, "1", "2");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               true, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -200,8 +178,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
    public void testRebootInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("rebootInstancesInRegion", Region.class,
                Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "2");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -219,8 +197,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
    public void testStartInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("startInstancesInRegion", Region.class,
                Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "2");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -239,8 +217,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getUserDataForInstanceInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -259,8 +237,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getRootDeviceNameForInstanceInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -279,8 +257,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("getRamdiskForInstanceInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -299,8 +277,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
                "isApiTerminationDisabledForInstanceInRegion", Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -319,8 +297,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("getKernelForInstanceInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -339,8 +317,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getInstanceTypeForInstanceInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -360,8 +338,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
       Method method = InstanceAsyncClient.class.getMethod(
                "getInstanceInitiatedShutdownBehaviorForInstanceInRegion", Region.class,
                String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -381,8 +359,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
                "getBlockDeviceMappingForInstanceInRegion", Region.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -401,8 +379,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setUserDataForInstanceInRegion",
                Region.class, String.class, Array.newInstance(byte.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "test".getBytes());
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "test".getBytes());
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -426,8 +404,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("setRamdiskForInstanceInRegion",
                Region.class, String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "test");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "test");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -445,8 +423,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("setKernelForInstanceInRegion",
                Region.class, String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "test");
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", "test");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -465,8 +443,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
       Method method = InstanceAsyncClient.class.getMethod(
                "setApiTerminationDisabledForInstanceInRegion", Region.class, String.class,
                boolean.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", true);
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", true);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -486,8 +464,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion",
                Region.class, String.class, InstanceType.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", InstanceType.C1_MEDIUM);
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", InstanceType.C1_MEDIUM);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -508,8 +486,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
       Method method = InstanceAsyncClient.class.getMethod(
                "setInstanceInitiatedShutdownBehaviorForInstanceInRegion", Region.class,
                String.class, InstanceInitiatedShutdownBehavior.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", InstanceInitiatedShutdownBehavior.TERMINATE);
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", InstanceInitiatedShutdownBehavior.TERMINATE);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -534,8 +512,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
       blockDeviceMapping.addEbsBlockDevice("/dev/sda1", new RunningInstance.EbsBlockDevice(
                "vol-test1", true));
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", blockDeviceMapping);
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
+               "1", blockDeviceMapping);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -556,62 +534,8 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<InstanceAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
-   }
-
-   @Override
    protected TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>>() {
-      };
-   }
-
-   private FormSigner filter;
-
-   @Override
-   @BeforeTest
-   protected void setupFactory() {
-      super.setupFactory();
-      this.filter = injector.getInstance(FormSigner.class);
-   }
-
-   @Override
-   protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder(new Properties())
-                     .build(), "properties"));
-            bind(URI.class).annotatedWith(EC2.class).toInstance(
-                     URI.create("https://ec2.amazonaws.com"));
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String provide() {
-            return "2009-11-08T15:54:08.897Z";
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
-                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
-                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
-         }
       };
    }
 }

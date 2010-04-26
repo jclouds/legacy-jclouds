@@ -27,12 +27,10 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -45,20 +43,19 @@ import com.google.common.collect.ImmutableSortedSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.DescribeSecurityGroupsHandlerTest")
-public class DescribeSecurityGroupsResponseHandlerTest extends BaseHandlerTest {
+public class DescribeSecurityGroupsResponseHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
 
       InputStream is = getClass().getResourceAsStream("/ec2/describe_securitygroups.xml");
 
-      SortedSet<SecurityGroup> expected = ImmutableSortedSet.of(new SecurityGroup(Region.DEFAULT,
+      SortedSet<SecurityGroup> expected = ImmutableSortedSet.of(new SecurityGroup(defaultRegion,
                "WebServers", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Web Servers", ImmutableSortedSet
                         .of(new IpPermission(80, 80, ImmutableSortedSet.<UserIdGroupPair> of(),
                                  IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0")))),
-               new SecurityGroup(Region.DEFAULT, "RangedPortsBySource",
-                        "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Group A", ImmutableSortedSet
-                                 .of(new IpPermission(6000, 7000, ImmutableSortedSet
-                                          .<UserIdGroupPair> of(), IpProtocol.TCP,
-                                          ImmutableSortedSet.<String> of()))));
+               new SecurityGroup(defaultRegion, "RangedPortsBySource", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM",
+                        "Group A", ImmutableSortedSet.of(new IpPermission(6000, 7000,
+                                 ImmutableSortedSet.<UserIdGroupPair> of(), IpProtocol.TCP,
+                                 ImmutableSortedSet.<String> of()))));
 
       DescribeSecurityGroupsResponseHandler handler = injector
                .getInstance(DescribeSecurityGroupsResponseHandler.class);
@@ -70,7 +67,7 @@ public class DescribeSecurityGroupsResponseHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

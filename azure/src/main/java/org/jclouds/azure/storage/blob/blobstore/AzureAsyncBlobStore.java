@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -52,6 +53,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
@@ -75,12 +77,14 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            Location defaultLocation, Map<String, ? extends Location> locations,
+
             AzureBlobAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList,
             AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
             BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(context, blobUtils, service);
+      super(context, blobUtils, service, defaultLocation, locations);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
@@ -130,7 +134,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     *           container name
     */
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
       return async.createContainer(container);
    }
 

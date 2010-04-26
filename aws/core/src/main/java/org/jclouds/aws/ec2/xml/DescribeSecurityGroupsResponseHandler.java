@@ -20,6 +20,10 @@ package org.jclouds.aws.ec2.xml;
 
 import java.util.SortedSet;
 
+import javax.inject.Inject;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
@@ -39,6 +43,9 @@ import com.google.common.collect.Sets;
  */
 public class DescribeSecurityGroupsResponseHandler extends
          ParseSax.HandlerWithResult<SortedSet<SecurityGroup>> {
+   @Inject
+   @EC2
+   Region defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
    private SortedSet<SecurityGroup> securtyGroups = Sets.newTreeSet();
@@ -111,8 +118,11 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.userId = null;
             this.userIdGroupName = null;
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {
-            securtyGroups.add(new SecurityGroup(EC2Utils.findRegionInArgsOrNull(request),
-                     groupName, ownerId, groupDescription, ipPermissions));
+            Region region = EC2Utils.findRegionInArgsOrNull(request);
+            if (region == null)
+               region = defaultRegion;
+            securtyGroups.add(new SecurityGroup(region, groupName, ownerId, groupDescription,
+                     ipPermissions));
             this.groupName = null;
             this.ownerId = null;
             this.groupDescription = null;

@@ -26,6 +26,7 @@ import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.http.functions.ParseSax;
 
@@ -46,7 +47,7 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
    private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   QueueHandler(Provider<UriBuilder> uriBuilderProvider, Map<Region, URI> regionMap) {
+   QueueHandler(Provider<UriBuilder> uriBuilderProvider, @SQS Map<Region, URI> regionMap) {
       this.uriBuilderProvider = uriBuilderProvider;
       this.regionBiMap = ImmutableBiMap.copyOf(regionMap);
    }

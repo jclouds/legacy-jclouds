@@ -16,36 +16,42 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.functions;
+package org.jclouds.rackspace.config;
 
-import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.http.RequiresHttp;
 
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
+ * Configures the locations used in Rackspace services
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class RegionToEndpoint implements Function<Object, URI> {
-   private final Map<Region, URI> regionToEndpoint;
-   private final URI defaultUri;
+@RequiresHttp
+public class RackspaceLocationsModule extends AbstractModule {
 
-   @Inject
-   public RegionToEndpoint(@EC2 Map<Region, URI> regionToEndpoint, @EC2 URI defaultUri) {
-      this.regionToEndpoint = regionToEndpoint;
-      this.defaultUri = defaultUri;
+   @Override
+   protected void configure() {
    }
 
-   public URI apply(Object from) {
-      return from == null ? defaultUri : regionToEndpoint.get(from);
+   @Provides
+   @Singleton
+   Location getLocation() {
+      return new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", null);
    }
 
+   @Provides
+   @Singleton
+   Map<String, ? extends Location> provideLocations(Location location) {
+      return ImmutableMap.of(location.getId(), location);
+   }
 }

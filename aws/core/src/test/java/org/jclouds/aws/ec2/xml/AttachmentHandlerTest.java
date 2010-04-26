@@ -18,15 +18,15 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.date.DateService;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -37,13 +37,13 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.AttachmentHandlerTest")
-public class AttachmentHandlerTest extends BaseHandlerTest {
+public class AttachmentHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);
       InputStream is = getClass().getResourceAsStream("/ec2/attach.xml");
 
-      Attachment expected = new Attachment(Region.DEFAULT, "vol-4d826724", "i-6058a509",
-               "/dev/sdh", Attachment.Status.ATTACHING, dateService
+      Attachment expected = new Attachment(defaultRegion, "vol-4d826724", "i-6058a509", "/dev/sdh",
+               Attachment.Status.ATTACHING, dateService
                         .iso8601DateParse("2008-05-07T11:51:50.000Z"));
 
       AttachmentHandler handler = injector.getInstance(AttachmentHandler.class);
@@ -55,7 +55,7 @@ public class AttachmentHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT });
+      expect(request.getArgs()).andReturn(new Object[] { null });
       replay(request);
       handler.setContext(request);
    }

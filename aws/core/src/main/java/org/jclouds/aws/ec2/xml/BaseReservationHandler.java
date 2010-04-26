@@ -26,7 +26,10 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
@@ -43,12 +46,20 @@ import org.xml.sax.Attributes;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
 
    protected final DateService dateService;
 
-   public BaseReservationHandler(DateService dateService) {
+   protected final Region defaultRegion;
+
+   @Inject
+   public BaseReservationHandler(DateService dateService, @EC2 Region defaultRegion) {
       this.dateService = dateService;
+      this.defaultRegion = defaultRegion;
    }
 
    @Resource
@@ -197,11 +208,14 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          this.attachTime = null;
          this.deleteOnTermination = true;
       } else if (inInstances && !inProductCodes && !inBlockDeviceMapping) {
-         instances.add(new RunningInstance(EC2Utils.findRegionInArgsOrNull(request),
-                  amiLaunchIndex, dnsName, imageId, instanceId, instanceState, instanceType,
-                  ipAddress, kernelId, keyName, launchTime, monitoring, availabilityZone, platform,
-                  privateDnsName, privateIpAddress, productCodes, ramdiskId, reason, subnetId,
-                  vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
+         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         if (region == null)
+            region = defaultRegion;
+         instances.add(new RunningInstance(region, amiLaunchIndex, dnsName, imageId, instanceId,
+                  instanceState, instanceType, ipAddress, kernelId, keyName, launchTime,
+                  monitoring, availabilityZone, platform, privateDnsName, privateIpAddress,
+                  productCodes, ramdiskId, reason, subnetId, vpcId, rootDeviceType, rootDeviceName,
+                  ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -247,8 +261,11 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    }
 
    protected Reservation newReservation() {
-      Reservation info = new Reservation(EC2Utils.findRegionInArgsOrNull(request), groupIds,
-               instances, ownerId, requesterId, reservationId);
+      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      if (region == null)
+         region = defaultRegion;
+      Reservation info = new Reservation(region, groupIds, instances, ownerId, requesterId,
+               reservationId);
       this.groupIds = Sets.newTreeSet();
       this.instances = Sets.newTreeSet();
       this.ownerId = null;

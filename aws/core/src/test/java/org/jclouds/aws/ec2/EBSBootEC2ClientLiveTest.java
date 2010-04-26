@@ -37,8 +37,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.domain.*;
+import org.jclouds.aws.ec2.domain.Attachment;
+import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
+import org.jclouds.aws.ec2.domain.Image;
+import org.jclouds.aws.ec2.domain.InstanceState;
+import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.aws.ec2.domain.IpProtocol;
+import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
+import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.domain.Snapshot;
+import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
@@ -147,18 +157,18 @@ public class EBSBootEC2ClientLiveTest {
       securityGroupName = INSTANCE_PREFIX + "ingress";
 
       try {
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT,
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
                   securityGroupName);
       } catch (Exception e) {
       }
 
-      client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT,
+      client.getSecurityGroupServices().createSecurityGroupInRegion(null,
                securityGroupName, securityGroupName);
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
                securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
                securityGroupName, IpProtocol.TCP, 443, 443, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
                securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
    }
 
@@ -166,12 +176,12 @@ public class EBSBootEC2ClientLiveTest {
    void testCreateKeyPair() {
       String keyName = INSTANCE_PREFIX + "1";
       try {
-         client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, keyName);
+         client.getKeyPairServices().deleteKeyPairInRegion(null, keyName);
       } catch (Exception e) {
 
       }
 
-      keyPair = client.getKeyPairServices().createKeyPairInRegion(Region.DEFAULT, keyName);
+      keyPair = client.getKeyPairServices().createKeyPairInRegion(null, keyName);
       assertNotNull(keyPair);
       assertNotNull(keyPair.getKeyMaterial());
       assertNotNull(keyPair.getKeyFingerprint());
@@ -190,7 +200,7 @@ public class EBSBootEC2ClientLiveTest {
          try {
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
             Reservation reservation = client.getInstanceServices().runInstancesInRegion(
-                     Region.DEFAULT, null, // allow ec2 to chose an availability zone
+                     null, null, // allow ec2 to chose an availability zone
                      imageId, 1, // minimum instances
                      1, // maximum instances
                      withKeyName(keyPair.getKeyName())// key I created above
@@ -412,39 +422,39 @@ public class EBSBootEC2ClientLiveTest {
    }
 
    private void setUserDataForInstanceInRegion() {
-      client.getInstanceServices().setUserDataForInstanceInRegion(Region.DEFAULT,
+      client.getInstanceServices().setUserDataForInstanceInRegion(null,
                ebsInstance.getId(), "test".getBytes());
       assertEquals("test", client.getInstanceServices().getUserDataForInstanceInRegion(
-               Region.DEFAULT, ebsInstance.getId()));
+               null, ebsInstance.getId()));
    }
 
    private void setRamdiskForInstanceInRegion() {
-      String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(Region.DEFAULT,
+      String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(null,
                ebsInstance.getId());
-      client.getInstanceServices().setRamdiskForInstanceInRegion(Region.DEFAULT,
+      client.getInstanceServices().setRamdiskForInstanceInRegion(null,
                ebsInstance.getId(), ramdisk);
       assertEquals(ramdisk, client.getInstanceServices().getRamdiskForInstanceInRegion(
-               Region.DEFAULT, ebsInstance.getId()));
+               null, ebsInstance.getId()));
    }
 
    private void setKernelForInstanceInRegion() {
-      String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(Region.DEFAULT,
+      String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(null,
                ebsInstance.getId());
-      client.getInstanceServices().setKernelForInstanceInRegion(Region.DEFAULT,
+      client.getInstanceServices().setKernelForInstanceInRegion(null,
                ebsInstance.getId(), oldKernel);
       assertEquals(oldKernel, client.getInstanceServices().getKernelForInstanceInRegion(
-               Region.DEFAULT, ebsInstance.getId()));
+               null, ebsInstance.getId()));
    }
 
    private void setInstanceTypeForInstanceInRegion() {
-      client.getInstanceServices().setInstanceTypeForInstanceInRegion(Region.DEFAULT,
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
                ebsInstance.getId(), InstanceType.C1_MEDIUM);
       assertEquals(InstanceType.C1_MEDIUM, client.getInstanceServices()
-               .getInstanceTypeForInstanceInRegion(Region.DEFAULT, ebsInstance.getId()));
-      client.getInstanceServices().setInstanceTypeForInstanceInRegion(Region.DEFAULT,
+               .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
                ebsInstance.getId(), InstanceType.M1_SMALL);
       assertEquals(InstanceType.M1_SMALL, client.getInstanceServices()
-               .getInstanceTypeForInstanceInRegion(Region.DEFAULT, ebsInstance.getId()));
+               .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
    }
 
    private void setBlockDeviceMappingForInstanceInRegion() {
@@ -454,11 +464,11 @@ public class EBSBootEC2ClientLiveTest {
       blockDeviceMapping.addEbsBlockDevice
                         ("/dev/sda1", new RunningInstance.EbsBlockDevice(volumeId, false));
       try {
-         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null,
                   ebsInstance.getId(), blockDeviceMapping);
 
           Map<String, RunningInstance.EbsBlockDevice> devices = client
-                  .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
+                  .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(null,
                            ebsInstance.getId());
           assertEquals(devices.size(), 1);
           String deviceName = Iterables.getOnlyElement(devices.keySet());
@@ -480,16 +490,16 @@ public class EBSBootEC2ClientLiveTest {
       try {
 
          client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-                  Region.DEFAULT, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.STOP);
+                  null, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.STOP);
 
          assertEquals(InstanceInitiatedShutdownBehavior.STOP, client.getInstanceServices()
-                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region.DEFAULT,
+                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
                            ebsInstance.getId()));
          client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-                  Region.DEFAULT, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
+                  null, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
 
          assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client.getInstanceServices()
-                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region.DEFAULT,
+                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
                            ebsInstance.getId()));
          System.out.println("OK: setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
       } catch (Exception e) {
@@ -618,7 +628,7 @@ public class EBSBootEC2ClientLiveTest {
       }
       if (securityGroupName != null) {
          try {
-            client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT,
+            client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
                      securityGroupName);
          } catch (Exception e) {
             e.printStackTrace();

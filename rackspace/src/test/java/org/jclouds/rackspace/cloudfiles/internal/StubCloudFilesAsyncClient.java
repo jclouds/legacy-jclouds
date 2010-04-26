@@ -98,7 +98,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    }
 
    public ListenableFuture<Boolean> createContainer(String container) {
-      return blobStore.createContainerInLocation("default", container);
+      return blobStore.createContainerInLocation(null, container);
    }
 
    public ListenableFuture<Boolean> deleteContainerIfEmpty(String container) {

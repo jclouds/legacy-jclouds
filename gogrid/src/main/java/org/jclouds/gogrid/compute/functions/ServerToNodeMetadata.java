@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,7 +38,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.services.GridServerClient;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -47,6 +48,8 @@ import com.google.common.collect.ImmutableSet;
  */
 @Singleton
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
+   public static final Pattern ALL_BEFORE_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
+
    private final Map<String, NodeState> serverStateToNodeState;
    private final GridServerClient client;
    private final Location location;
@@ -63,7 +66,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Server from) {
-      String tag = CharMatcher.JAVA_LETTER.retainFrom(from.getName());
+      Matcher matcher = ALL_BEFORE_HYPHEN_HEX.matcher(from.getName());
+      final String tag = matcher.find() ? matcher.group(1) : null;
       Set<InetAddress> ipSet = ImmutableSet.of(from.getIp().getIp());
       NodeState state = serverStateToNodeState.get(from.getState().getName());
       Credentials creds = client.getServerCredentialsList().get(from.getName());

@@ -108,7 +108,7 @@ public class MainApp {
       try {
          String id = findInstanceByKeyName(client, name).getId();
          System.out.printf("%d: %s terminating instance%n", System.currentTimeMillis(), id);
-         client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT,
+         client.getInstanceServices().terminateInstancesInRegion(null,
                   findInstanceByKeyName(client, name).getId());
       } catch (NoSuchElementException e) {
       } catch (Exception e) {
@@ -117,14 +117,14 @@ public class MainApp {
 
       try {
          System.out.printf("%d: %s deleting keypair%n", System.currentTimeMillis(), name);
-         client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, name);
+         client.getKeyPairServices().deleteKeyPairInRegion(null, name);
       } catch (Exception e) {
          e.printStackTrace();
       }
 
       try {
          System.out.printf("%d: %s deleting group%n", System.currentTimeMillis(), name);
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT, name);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, name);
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -144,16 +144,16 @@ public class MainApp {
 
    static void createSecurityGroupAndAuthorizePorts(EC2Client client, String name) {
       System.out.printf("%d: creating security group: %s%n", System.currentTimeMillis(), name);
-      client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT, name, name);
+      client.getSecurityGroupServices().createSecurityGroupInRegion(null, name, name);
       for (int port : new int[] { 80, 8080, 443, 22 }) {
-         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
                   name, IpProtocol.TCP, port, port, "0.0.0.0/0");
       }
    }
 
    static KeyPair createKeyPair(EC2Client client, String name) {
       System.out.printf("%d: creating keypair: %s%n", System.currentTimeMillis(), name);
-      return client.getKeyPairServices().createKeyPairInRegion(Region.DEFAULT, name);
+      return client.getKeyPairServices().createKeyPairInRegion(null, name);
    }
 
    static RunningInstance runInstance(EC2Client client, String securityGroupName, String keyPairName) {
@@ -164,7 +164,7 @@ public class MainApp {
                .build(OsFamily.UNIX);
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
-      Reservation reservation = client.getInstanceServices().runInstancesInRegion(Region.DEFAULT,
+      Reservation reservation = client.getInstanceServices().runInstancesInRegion(null,
                null, // allow ec2 to chose an availability zone
                "ami-ccf615a5", // alestic ami allows auto-invoke of user data scripts
                1, // minimum instances
@@ -214,7 +214,7 @@ public class MainApp {
    private static RunningInstance findInstanceById(EC2Client client, String instanceId) {
       // search my account for the instance I just created
       Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               Region.DEFAULT, instanceId); // last parameter (ids) narrows the search
+               null, instanceId); // last parameter (ids) narrows the search
 
       // since we refined by instanceId there should only be one instance
       return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
@@ -223,7 +223,7 @@ public class MainApp {
    private static RunningInstance findInstanceByKeyName(EC2Client client, final String keyName) {
       // search my account for the instance I just created
       Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               Region.DEFAULT);
+               null);
 
       // extract all the instances from all reservations
       Set<RunningInstance> allInstances = Sets.newHashSet();

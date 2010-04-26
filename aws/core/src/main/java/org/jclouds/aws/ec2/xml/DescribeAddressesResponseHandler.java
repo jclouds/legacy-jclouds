@@ -23,7 +23,10 @@ import java.net.UnknownHostException;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
@@ -43,7 +46,9 @@ public class DescribeAddressesResponseHandler extends
    private Set<PublicIpInstanceIdPair> pairs = Sets.newLinkedHashSet();
    private InetAddress ipAddress;
    private StringBuilder currentText = new StringBuilder();
-
+   @Inject
+   @EC2
+   Region defaultRegion;
    private String instanceId;
 
    protected String currentOrNull() {
@@ -57,8 +62,10 @@ public class DescribeAddressesResponseHandler extends
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("item")) {
-         pairs.add(new PublicIpInstanceIdPair(EC2Utils.findRegionInArgsOrNull(request), ipAddress,
-                  instanceId));
+         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         if (region == null)
+            region = defaultRegion;
+         pairs.add(new PublicIpInstanceIdPair(region, ipAddress, instanceId));
          ipAddress = null;
          instanceId = null;
       }

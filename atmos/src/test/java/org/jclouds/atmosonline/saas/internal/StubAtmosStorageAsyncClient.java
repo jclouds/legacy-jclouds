@@ -94,7 +94,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
          container = directoryName;
          path = null;
       }
-      return Futures.compose(blobStore.createContainerInLocation("default", container),
+      return Futures.compose(blobStore.createContainerInLocation(null, container),
                new Function<Boolean, URI>() {
 
                   public URI apply(Boolean from) {

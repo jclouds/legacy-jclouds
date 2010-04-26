@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions;
@@ -47,7 +49,7 @@ public interface AvailabilityZoneAndRegionClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAvailabilityZones.html"
     *      />
     */
-   Set<AvailabilityZoneInfo> describeAvailabilityZonesInRegion(Region region,
+   Set<AvailabilityZoneInfo> describeAvailabilityZonesInRegion(@Nullable Region region,
             DescribeAvailabilityZonesOptions... options);
 
    /**

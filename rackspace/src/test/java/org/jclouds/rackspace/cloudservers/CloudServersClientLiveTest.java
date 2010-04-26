@@ -250,7 +250,7 @@ public class CloudServersClientLiveTest {
       assert client.getSharedIpGroup(12312987) == null;
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testCreateSharedIpGroup() throws Exception {
       SharedIpGroup sharedIpGroup = null;
       while (sharedIpGroup == null) {
@@ -282,6 +282,7 @@ public class CloudServersClientLiveTest {
    private String adminPass2;
    private int imageId;
 
+   @Test(enabled = false)
    public void testCreateServer() throws Exception {
       int imageId = 14362;
       int flavorId = 1;
@@ -333,7 +334,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testServerDetails() throws Exception {
       Server server = client.getServer(serverId);
 
@@ -403,7 +404,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testRenameServer() throws Exception {
       Server server = client.getServer(serverId);
       String oldName = server.getName();
@@ -412,7 +413,7 @@ public class CloudServersClientLiveTest {
       assertEquals(oldName + "new", client.getServer(serverId).getName());
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testChangePassword() throws Exception {
       client.changeAdminPass(serverId, "elmo");
       blockUntilServerActive(serverId);
@@ -420,7 +421,7 @@ public class CloudServersClientLiveTest {
       this.adminPass = "elmo";
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSharedIpGroup")
+   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSharedIpGroup")
    public void testCreateServerIp() throws Exception {
       int imageId = 14362;
       int flavorId = 1;
@@ -460,7 +461,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
    public void testUnshare() throws Exception {
       client.unshareIp(ip, serverId2);
       blockUntilServerActive(serverId2);
@@ -481,7 +482,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
    public void testShareConfig() throws Exception {
       client.shareIp(ip, serverId2, sharedIpGroupId, true);
       blockUntilServerActive(serverId2);
@@ -491,7 +492,7 @@ public class CloudServersClientLiveTest {
       testUnshare();
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
    public void testShareNoConfig() throws Exception {
       client.shareIp(ip, serverId2, sharedIpGroupId, false);
       blockUntilServerActive(serverId2);
@@ -501,7 +502,7 @@ public class CloudServersClientLiveTest {
       testUnshare();
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
    public void testBackup() throws Exception {
       assertEquals(new BackupSchedule(), client.getBackupSchedule(serverId));
       BackupSchedule dailyWeekly = new BackupSchedule();
@@ -514,7 +515,7 @@ public class CloudServersClientLiveTest {
       assertEquals(client.getBackupSchedule(serverId).isEnabled(), false);
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
    public void testCreateImage() throws Exception {
       Image image = client.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
@@ -523,7 +524,7 @@ public class CloudServersClientLiveTest {
       blockUntilImageActive(imageId);
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
    public void testRebuildServer() throws Exception {
       client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId));
       blockUntilServerActive(serverId);
@@ -531,19 +532,19 @@ public class CloudServersClientLiveTest {
       // assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
    public void testRebootHard() throws Exception {
       client.rebootServer(serverId, RebootType.HARD);
       blockUntilServerActive(serverId);
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
    public void testRebootSoft() throws Exception {
       client.rebootServer(serverId, RebootType.SOFT);
       blockUntilServerActive(serverId);
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    public void testRevertResize() throws Exception {
       client.resizeServer(serverId, 2);
       blockUntilServerVerifyResize(serverId);
@@ -552,7 +553,7 @@ public class CloudServersClientLiveTest {
       assertEquals(new Integer(1), client.getServer(serverId).getFlavorId());
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    public void testConfirmResize() throws Exception {
       client.resizeServer(serverId2, 2);
       blockUntilServerVerifyResize(serverId2);
@@ -561,8 +562,8 @@ public class CloudServersClientLiveTest {
       assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
-            "testConfirmResize" })
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft",
+            "testRevertResize", "testConfirmResize" })
    void deleteServer2() {
       if (serverId2 > 0) {
          client.deleteServer(serverId2);
@@ -570,7 +571,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2")
    void testDeleteImage() {
       if (imageId > 0) {
          client.deleteImage(imageId);
@@ -578,7 +579,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage")
    void deleteServer1() {
       if (serverId > 0) {
          client.deleteServer(serverId);
@@ -586,7 +587,7 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" })
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" })
    void testDeleteSharedIpGroup() {
       if (sharedIpGroupId > 0) {
          client.deleteSharedIpGroup(sharedIpGroupId);

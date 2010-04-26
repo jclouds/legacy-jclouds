@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
@@ -47,7 +46,6 @@ import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.xml.AccessControlListHandler;
 import org.jclouds.aws.s3.xml.BucketLoggingHandler;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
@@ -385,7 +383,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", Region.class,
                String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
       GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "bucket");
+               (Region) null, "bucket");
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 0\nHost: bucket.stub\n");
@@ -546,13 +544,10 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
                      }, new TypeLiteral<S3Client>() {
                      }));
             install(new S3ObjectModule());
-            Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder(new Properties())
-            .build(), "properties"));
+            Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user", "key")
+                     .build(), "properties"));
             bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("http://stub:8080"));
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
+            bind(Region.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

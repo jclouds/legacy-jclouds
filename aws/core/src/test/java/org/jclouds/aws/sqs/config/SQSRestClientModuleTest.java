@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.sqs.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
@@ -28,12 +29,12 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.aws.sqs.reference.SQSConstants;
+import org.jclouds.aws.sqs.SQS;
+import org.jclouds.aws.sqs.SQSPropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
@@ -59,25 +60,8 @@ public class SQSRestClientModuleTest {
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(SQSConstants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(SQSConstants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1)).to(
-                              "http://default");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1)).to(
-                              "http://uswest");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1)).to(
-                              "http://euwest");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(SQSConstants.PROPERTY_AWS_EXPIREINTERVAL)).to(30);
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
+                     Jsr330.bindProperties(binder(), checkNotNull(new SQSPropertiesBuilder("user",
+                              "key").build(), "properties"));
                      bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
@@ -91,11 +75,12 @@ public class SQSRestClientModuleTest {
 
    @Test
    void testRegions() {
-      Map<Region, URI> regionMap = createInjector().getInstance(new Key<Map<Region, URI>>() {
+      Map<Region, URI> regionMap = createInjector().getInstance(new Key<Map<Region, URI>>(SQS.class) {
       });
       assertEquals(regionMap, ImmutableMap.<Region, URI> of(Region.US_EAST_1, URI
-               .create("http://default"), Region.US_WEST_1, URI.create("http://uswest"),
-               Region.EU_WEST_1, URI.create("http://euwest")));
+               .create("https://queue.amazonaws.com"), Region.US_WEST_1, URI
+               .create("https://us-west-1.queue.amazonaws.com"), Region.EU_WEST_1, URI
+               .create("https://eu-west-1.queue.amazonaws.com")));
    }
 
    @Test

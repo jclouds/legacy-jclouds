@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -62,7 +63,7 @@ public interface KeyPairAsyncClient {
    @FormParams(keys = ACTION, values = "CreateKeyPair")
    @XMLResponseParser(KeyPairResponseHandler.class)
    ListenableFuture<KeyPair> createKeyPairInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("KeyName") String keyName);
 
    // map resourcenotfoundexception to empty set
@@ -74,7 +75,7 @@ public interface KeyPairAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeKeyPairs")
    @XMLResponseParser(DescribeKeyPairsResponseHandler.class)
    ListenableFuture<? extends Set<KeyPair>> describeKeyPairsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
 
    /**
@@ -84,7 +85,7 @@ public interface KeyPairAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteKeyPair")
    ListenableFuture<Void> deleteKeyPairInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("KeyName") String keyName);
 
 }

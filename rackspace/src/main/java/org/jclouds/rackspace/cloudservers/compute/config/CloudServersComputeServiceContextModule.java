@@ -63,8 +63,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
@@ -76,6 +74,7 @@ import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
+import org.jclouds.rackspace.config.RackspaceLocationsModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
@@ -102,6 +101,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Override
    protected void configure() {
       super.configure();
+      install(new RackspaceLocationsModule());
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
       bind(AddNodeWithTagStrategy.class).to(CloudServersAddNodeWithTagStrategy.class);
@@ -280,18 +280,6 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
       return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   Location getRegion() {
-      return new LocationImpl(LocationScope.ZONE, "DALLAS", "Dallas, TX", null);
-   }
-
-   @Provides
-   @Singleton
-   Map<String, ? extends Location> provideLocations(Location location) {
-      return ImmutableMap.of(location.getId(), location);
    }
 
    @Provides
