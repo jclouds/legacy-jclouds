@@ -38,6 +38,8 @@ public class TemplateOptions {
 
    private int seconds = -1;
 
+   private boolean includeMetadata;
+
    public int getPort() {
       return port;
    }
@@ -64,6 +66,10 @@ public class TemplateOptions {
 
    public boolean shouldDestroyOnError() {
       return destroyOnError;
+   }
+
+   public boolean isIncludeMetadata() {
+      return includeMetadata;
    }
 
    /**
@@ -127,6 +133,11 @@ public class TemplateOptions {
       return this;
    }
 
+   public TemplateOptions withMetadata() {
+      this.includeMetadata = true;
+      return this;
+   }
+
    public static class Builder {
       /**
        * @see TemplateOptions#destroyOnError
@@ -176,6 +187,11 @@ public class TemplateOptions {
          return options.authorizePublicKey(rsaKey);
       }
 
+      public static TemplateOptions withDetails() {
+         TemplateOptions options = new TemplateOptions();
+         return options.withMetadata();
+      }
+
    }
 
    @Override
@@ -183,6 +199,6 @@ public class TemplateOptions {
       return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
                + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
                + (script != null) + ", destroyOnError=" + destroyOnError + ", port:seconds=" + port
-               + ":" + seconds + "]";
+               + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
    }
 }

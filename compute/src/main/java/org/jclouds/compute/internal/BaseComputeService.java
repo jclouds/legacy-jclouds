@@ -374,6 +374,10 @@ public class BaseComputeService implements ComputeService {
             // don't override
             checkNotNull(node.getCredentials(),
                      "If the default credentials need to be used, they can't be null");
+            checkNotNull(node.getCredentials().account, "Account name for ssh authentication must be " +
+                                                         "specified. Try passing RunScriptOptions with new credentials");
+            checkNotNull(node.getCredentials().key, "Key or password for ssh authentication must be " +
+                                                       "specified. Try passing RunScriptOptions with new credentials"); 
          }
 
          ComputeUtils.SshCallable<?> callable;

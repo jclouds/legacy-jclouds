@@ -47,6 +47,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpResponseException;
@@ -314,6 +315,14 @@ public abstract class BaseComputeServiceLiveTest {
    public void testReboot() throws Exception {
       client.rebootNodesWithTag(tag);
       testGet();
+   }
+
+   @Test(enabled = true/*, dependsOnMethods = "testTemplateMatch"*/)
+   public void testTemplateOptions() throws Exception {
+      TemplateOptions options = new TemplateOptions().withMetadata();
+      Template t = client.templateBuilder().smallest().options(options).build();
+      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " +
+                                                  "for the created template";
    }
 
    public void testListNodes() throws Exception {
