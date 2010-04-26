@@ -20,6 +20,7 @@ package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
@@ -67,14 +69,15 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, CloudFilesClient sync,
-            ContainerToResourceMetadata container2ResourceMd,
+   CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
+            Location defaultLocation, Map<String, ? extends Location> locations,
+            CloudFilesClient sync, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
             BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-      super(context, blobUtils);
+      super(context, blobUtils, defaultLocation, locations);
       this.sync = sync;
       this.container2ResourceMd = container2ResourceMd;
       this.container2ContainerListOptions = container2ContainerListOptions;
@@ -121,7 +124,7 @@ public class CloudFilesBlobStore extends BaseBlobStore {
     *           container name
     */
    @Override
-   public boolean createContainerInLocation(String location, String container) {
+   public boolean createContainerInLocation(Location location, String container) {
       return sync.createContainer(container);
    }
 

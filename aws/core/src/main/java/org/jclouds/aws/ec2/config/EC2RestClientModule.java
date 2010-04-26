@@ -115,7 +115,7 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @EC2
-   Region provideCurrentRegion(Map<Region, URI> regionMap, @EC2 URI currentUri) {
+   Region provideCurrentRegion(@EC2 Map<Region, URI> regionMap, @EC2 URI currentUri) {
       ImmutableBiMap<URI, Region> map = ImmutableBiMap.copyOf(regionMap).inverse();
       Region region = map.get(currentUri);
       assert region != null : currentUri + " not in " + map;
@@ -124,6 +124,7 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @EC2
    Map<Region, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
       return client.describeRegions();
    }
@@ -131,7 +132,7 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    Map<AvailabilityZone, Region> provideAvailabilityZoneToRegions(
-            AvailabilityZoneAndRegionClient client, Map<Region, URI> regions) {
+            AvailabilityZoneAndRegionClient client, @EC2 Map<Region, URI> regions) {
       Map<AvailabilityZone, Region> map = Maps.newHashMap();
       for (Region region : regions.keySet()) {
          for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {

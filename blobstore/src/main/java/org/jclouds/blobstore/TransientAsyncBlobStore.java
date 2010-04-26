@@ -67,6 +67,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.date.DateService;
+import org.jclouds.domain.Location;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
@@ -97,6 +98,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final DateService dateService;
    protected final EncryptionService encryptionService;
    protected final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
+   protected final ConcurrentMap<String, Location> containerToLocation;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    protected final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
    protected final Factory blobFactory;
@@ -105,17 +107,21 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService,
             EncryptionService encryptionService,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+            ConcurrentMap<String, Location> containerToLocation,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory,
             BlobStoreUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
-      super(context, blobUtils, service);
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            Location defaultLocation, Map<String, Location> locations) {
+      super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.encryptionService = encryptionService;
       this.containerToBlobs = containerToBlobs;
+      this.containerToLocation = containerToLocation;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.ifDirectoryReturnName = ifDirectoryReturnName;
+      getContainerToLocation().put("stub", defaultLocation);
       getContainerToBlobs().put("stub", new ConcurrentHashMap<String, Blob>());
    }
 
@@ -333,6 +339,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
                      MutableStorageMetadata cmd = create();
                      cmd.setName(name);
                      cmd.setType(StorageType.CONTAINER);
+                     cmd.setLocation(getContainerToLocation().get(name));
                      return cmd;
                   }
                }), null));
@@ -346,10 +353,11 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(final String location,
+   public ListenableFuture<Boolean> createContainerInLocation(final Location location,
             final String name) {
       if (!getContainerToBlobs().containsKey(name)) {
          getContainerToBlobs().put(name, new ConcurrentHashMap<String, Blob>());
+         getContainerToLocation().put(name, location != null ? location : defaultLocation);
       }
       return immediateFuture(getContainerToBlobs().containsKey(name));
    }
@@ -630,6 +638,10 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected boolean deleteAndVerifyContainerGone(String container) {
       getContainerToBlobs().remove(container);
       return getContainerToBlobs().containsKey(container);
+   }
+
+   public ConcurrentMap<String, Location> getContainerToLocation() {
+      return containerToLocation;
    }
 
 }

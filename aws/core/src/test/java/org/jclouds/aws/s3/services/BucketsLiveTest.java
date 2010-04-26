@@ -149,8 +149,9 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
    public void testPublicReadAccessPolicy() throws Exception {
       String bucketName = getScratchContainerName();
       try {
-         getApi().putBucketInRegion(Region.DEFAULT, bucketName,
-                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
+         getApi()
+                  .putBucketInRegion(null, bucketName,
+                           withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          AccessControlList acl = getApi().getBucketACL(bucketName);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
          // TODO: I believe that the following should work based on the above acl assertion passing.
@@ -175,9 +176,12 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    public void testDefaultBucketLocation() throws Exception {
+
       String bucketName = getContainerName();
       try {
-         assertEquals(Region.US_STANDARD, getApi().getBucketLocation(bucketName));
+         Region location = getApi().getBucketLocation(bucketName);
+         assert location.equals(Region.US_STANDARD) : "bucket: " + bucketName + " location: "
+                  + location;
       } finally {
          returnContainer(bucketName);
       }

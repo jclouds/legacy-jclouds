@@ -20,7 +20,6 @@ package org.jclouds.aws.ec2.xml;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +28,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Volume;
@@ -52,6 +52,9 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    protected Logger logger = Logger.NULL;
    @Inject
    protected DateService dateService;
+   @Inject
+   @EC2
+   Region defaultRegion;
    @Inject
    protected Map<AvailabilityZone, Region> availabilityZoneToRegion;
 
@@ -128,8 +131,8 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
          attachTime = dateService.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("item")) {
          if (inAttachmentSet) {
-            attachments.add(new Attachment(EC2Utils.findRegionInArgsOrNull(request), volumeId,
-                     instanceId, device, attachmentStatus, attachTime));
+            attachments.add(new Attachment(region, volumeId, instanceId, device, attachmentStatus,
+                     attachTime));
             volumeId = null;
             instanceId = null;
             device = null;
@@ -163,10 +166,13 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
       super.setContext(request);
       region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null) {
-         AvailabilityZone zone = checkNotNull(EC2Utils.findAvailabilityZoneInArgsOrNull(request),
-                  "zone not in args: " + Arrays.asList(request.getArgs()));
-         region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
-                  "zone %s not in %s", zone, availabilityZoneToRegion));
+         AvailabilityZone zone = EC2Utils.findAvailabilityZoneInArgsOrNull(request);
+         if (zone != null) {
+            region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
+                     "zone %s not in %s", zone, availabilityZoneToRegion));
+         } else {
+            region = defaultRegion;
+         }
       }
    }
 }

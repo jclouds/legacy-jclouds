@@ -18,12 +18,17 @@
  */
 package org.jclouds.blobstore;
 
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.domain.Location;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,6 +49,11 @@ public interface AsyncBlobStore {
    Blob newBlob(String name);
 
    /**
+    * @see BlobStore#getLocations
+    */
+   ListenableFuture<? extends Map<String, ? extends Location>> getLocations();
+
+   /**
     * @see BlobStore#list
     */
    ListenableFuture<? extends PageSet<? extends StorageMetadata>> list();
@@ -54,9 +64,9 @@ public interface AsyncBlobStore {
    ListenableFuture<Boolean> containerExists(String container);
 
    /**
-    * @see BlobStore#createContainerInLocation(String, String)
+    * @see BlobStore#createContainerInLocation(Location, String)
     */
-   ListenableFuture<Boolean> createContainerInLocation(String location, String container);
+   ListenableFuture<Boolean> createContainerInLocation(@Nullable Location location, String container);
 
    /**
     * @see BlobStore#list(String)

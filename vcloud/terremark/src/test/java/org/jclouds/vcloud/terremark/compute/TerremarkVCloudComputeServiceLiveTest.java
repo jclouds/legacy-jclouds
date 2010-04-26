@@ -84,7 +84,8 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
          // image.getValue().getLocationId() can be null, if it is a location-free image
          assertEquals(image.getValue().getType(), ComputeType.IMAGE);
          assert image.getValue().getDefaultCredentials().account != null : image;
-         assert image.getValue().getDefaultCredentials().key != null : image;
+         if (image.getValue().getOsFamily() != OsFamily.WINDOWS)
+            assert image.getValue().getDefaultCredentials().key != null : image;
       }
    }
 

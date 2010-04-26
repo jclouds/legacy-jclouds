@@ -64,7 +64,7 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", Region.class, Array
                .newInstance(ListQueuesOptions.class, 0).getClass());
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT);
+               (Region) null);
 
       assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -82,8 +82,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
             IOException {
       Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", Region.class, Array
                .newInstance(ListQueuesOptions.class, 0).getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, ListQueuesOptions.Builder.queuePrefix("prefix"));
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
+               ListQueuesOptions.Builder.queuePrefix("prefix"));
 
       assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -101,8 +101,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
             IOException {
       Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", Region.class,
                String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "queueName");
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
+               "queueName");
 
       assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -120,9 +120,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
             IOException {
       Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", Region.class,
                String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor
-               .createRequest(method, Region.DEFAULT, "queueName", CreateQueueOptions.Builder
-                        .defaultVisibilityTimeout(45));
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
+               "queueName", CreateQueueOptions.Builder.defaultVisibilityTimeout(45));
 
       assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -178,11 +177,12 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
+         @SQS
          Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
-                     Region.EU_WEST_1, URI.create("https://sqs.eu-west-1.amazonaws.com"),
-                     Region.US_EAST_1, URI.create("https://sqs.us-east-1.amazonaws.com"),
-                     Region.US_WEST_1, URI.create("https://sqs.us-west-1.amazonaws.com"));
+            return ImmutableMap.<Region, URI> of(Region.EU_WEST_1, URI
+                     .create("https://sqs.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
+                     .create("https://sqs.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
+                     .create("https://sqs.us-west-1.amazonaws.com"));
          }
       };
    }

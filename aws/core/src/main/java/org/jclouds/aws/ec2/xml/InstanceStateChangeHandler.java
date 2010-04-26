@@ -20,6 +20,10 @@ package org.jclouds.aws.ec2.xml;
 
 import java.util.SortedSet;
 
+import javax.inject.Inject;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.util.EC2Utils;
@@ -45,6 +49,9 @@ import com.google.common.collect.Sets;
  */
 public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<InstanceStateChange>> {
    private StringBuilder currentText = new StringBuilder();
+   @Inject
+   @EC2
+   Region defaultRegion;
 
    SortedSet<InstanceStateChange> instances = Sets.newTreeSet();
    private InstanceState shutdownState;
@@ -83,8 +90,10 @@ public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<Inst
             previousState = InstanceState.fromValue(currentOrNull());
          }
       } else if (qName.equals("item")) {
-         instances.add(new InstanceStateChange(EC2Utils.findRegionInArgsOrNull(request),
-                  instanceId, shutdownState, previousState));
+         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         if (region == null)
+            region = defaultRegion;
+         instances.add(new InstanceStateChange(region, instanceId, shutdownState, previousState));
          this.instanceId = null;
          this.shutdownState = null;
          this.previousState = null;

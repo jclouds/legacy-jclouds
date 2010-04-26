@@ -22,7 +22,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
@@ -49,7 +52,9 @@ import com.google.common.collect.Sets;
 public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Set<Image>> {
    @Resource
    protected Logger logger = Logger.NULL;
-
+   @Inject
+   @EC2
+   Region defaultRegion;
    private Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
 
@@ -142,7 +147,10 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
             this.deleteOnTermination = true;
          } else if (!inProductCodes) {
             try {
-               contents.add(new Image(EC2Utils.findRegionInArgsOrNull(request), architecture,
+               Region region = EC2Utils.findRegionInArgsOrNull(request);
+               if (region == null)
+                  region = defaultRegion;
+               contents.add(new Image(region, architecture,
                         this.name, description, imageId, imageLocation, imageOwnerId, imageState,
                         imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
                         rootDeviceType, rootDeviceName, ebsBlockDevices));

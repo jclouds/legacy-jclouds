@@ -18,22 +18,13 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.executableBy;
-import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RegisterImageBackedByEbsOptions;
@@ -43,25 +34,13 @@ import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.ImageIdHandler;
 import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
-import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -70,14 +49,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.AMIAsyncClientTest")
-public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
+public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
    public void testCreateImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("createImageInRegion", Region.class,
                String.class, String.class, Array.newInstance(CreateImageOptions.class, 0)
                         .getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "name", "instanceId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "name", "instanceId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -96,9 +75,9 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       Method method = AMIAsyncClient.class.getMethod("createImageInRegion", Region.class,
                String.class, String.class, Array.newInstance(CreateImageOptions.class, 0)
                         .getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "name", "instanceId", new CreateImageOptions().withDescription(
-                        "description").noReboot());
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "name", "instanceId", new CreateImageOptions().withDescription("description")
+                        .noReboot());
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -118,7 +97,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       Method method = AMIAsyncClient.class.getMethod("describeImagesInRegion", Region.class, Array
                .newInstance(DescribeImagesOptions.class, 0).getClass());
       GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT);
+               (Region) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -140,8 +119,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("describeImagesInRegion", Region.class, Array
                .newInstance(DescribeImagesOptions.class, 0).getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, executableBy("me").ownedBy("fred", "nancy").imageIds("1", "2"));
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               executableBy("me").ownedBy("fred", "nancy").imageIds("1", "2"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -160,8 +139,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
    public void testDeregisterImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("deregisterImageInRegion", Region.class,
                String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -180,8 +159,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       Method method = AMIAsyncClient.class.getMethod("registerImageFromManifestInRegion",
                Region.class, String.class, String.class, Array.newInstance(
                         RegisterImageOptions.class, 0).getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "name", "pathToManifest");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "name", "pathToManifest");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -200,9 +179,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       Method method = AMIAsyncClient.class.getMethod("registerImageFromManifestInRegion",
                Region.class, String.class, String.class, Array.newInstance(
                         RegisterImageOptions.class, 0).getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "name", "pathToManifest", new RegisterImageOptions()
-                        .withDescription("description"));
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "name", "pathToManifest", new RegisterImageOptions().withDescription("description"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -223,8 +201,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       Method method = AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion",
                Region.class, String.class, String.class, Array.newInstance(
                         RegisterImageBackedByEbsOptions.class, 0).getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageName", "snapshotId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageName", "snapshotId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -244,11 +222,10 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       Method method = AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion",
                Region.class, String.class, String.class, Array.newInstance(
                         RegisterImageBackedByEbsOptions.class, 0).getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageName", "snapshotId", new RegisterImageBackedByEbsOptions()
-                        .withDescription("description").addBlockDeviceFromSnapshot("/dev/device",
-                                 null, "snapshot").addNewBlockDevice("/dev/newdevice", "newblock",
-                                 100));
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageName", "snapshotId", new RegisterImageBackedByEbsOptions().withDescription(
+                        "description").addBlockDeviceFromSnapshot("/dev/device", null, "snapshot")
+                        .addNewBlockDevice("/dev/newdevice", "newblock", 100));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -268,8 +245,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("getProductCodesForImageInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -288,8 +265,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("getBlockDeviceMappingsForImageInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -308,8 +285,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -328,8 +305,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("addLaunchPermissionsToImageInRegion",
                Region.class, Iterable.class, Iterable.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, ImmutableList.of("bob", "sue"), ImmutableList.of("all"), "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               ImmutableList.of("bob", "sue"), ImmutableList.of("all"), "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -353,8 +330,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("removeLaunchPermissionsFromImageInRegion",
                Region.class, Iterable.class, Iterable.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, ImmutableList.of("bob", "sue"), ImmutableList.of("all"), "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               ImmutableList.of("bob", "sue"), ImmutableList.of("all"), "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -373,8 +350,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("resetLaunchPermissionsOnImageInRegion",
                Region.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -392,8 +369,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("addProductCodesToImageInRegion",
                Region.class, Iterable.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, ImmutableList.of("code1", "code2"), "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               ImmutableList.of("code1", "code2"), "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -413,8 +390,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
             IOException {
       Method method = AMIAsyncClient.class.getMethod("removeProductCodesFromImageInRegion",
                Region.class, Iterable.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, ImmutableList.of("code1", "code2"), "imageId");
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, null,
+               ImmutableList.of("code1", "code2"), "imageId");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -431,62 +408,9 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<AMIAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
-   }
-
-   @Override
    protected TypeLiteral<RestAnnotationProcessor<AMIAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<AMIAsyncClient>>() {
       };
    }
 
-   private FormSigner filter;
-
-   @Override
-   @BeforeTest
-   protected void setupFactory() {
-      super.setupFactory();
-      this.filter = injector.getInstance(FormSigner.class);
-   }
-
-   @Override
-   protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder(new Properties())
-                     .build(), "properties"));
-            bind(URI.class).annotatedWith(EC2.class).toInstance(
-                     URI.create("https://ec2.amazonaws.com"));
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String provide() {
-            return "2009-11-08T15:54:08.897Z";
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
-                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
-                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
-         }
-      };
-   }
 }

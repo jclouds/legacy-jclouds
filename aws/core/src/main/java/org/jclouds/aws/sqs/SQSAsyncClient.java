@@ -23,6 +23,7 @@ import static org.jclouds.aws.sqs.reference.SQSParameters.VERSION;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -64,7 +65,7 @@ public interface SQSAsyncClient {
    @FormParams(keys = ACTION, values = "ListQueues")
    @ResponseParser(RegexListQueuesResponseHandler.class)
    ListenableFuture<? extends Set<Queue>> listQueuesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             ListQueuesOptions... options);
 
    /**
@@ -75,7 +76,7 @@ public interface SQSAsyncClient {
    @FormParams(keys = ACTION, values = "CreateQueue")
    @ResponseParser(RegexQueueHandler.class)
    ListenableFuture<Queue> createQueueInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("QueueName") String queueName, CreateQueueOptions... options);
 
    /**

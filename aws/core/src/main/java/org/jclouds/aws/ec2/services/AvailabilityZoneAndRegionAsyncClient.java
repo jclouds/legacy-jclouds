@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -65,7 +66,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeAvailabilityZones")
    @XMLResponseParser(DescribeAvailabilityZonesResponseHandler.class)
    ListenableFuture<? extends Set<AvailabilityZoneInfo>> describeAvailabilityZonesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             DescribeAvailabilityZonesOptions... options);
 
    /**

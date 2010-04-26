@@ -21,6 +21,8 @@ package org.jclouds.azure.storage.blob.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -44,6 +46,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
@@ -64,13 +67,14 @@ public class AzureBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, AzureBlobClient sync,
+   AzureBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
+            Map<String, ? extends Location> locations, AzureBlobClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList,
             AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
             BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(context, blobUtils);
+      super(context, blobUtils, defaultLocation, locations);
       this.sync = checkNotNull(sync, "sync");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
@@ -118,7 +122,7 @@ public class AzureBlobStore extends BaseBlobStore {
     *           container name
     */
    @Override
-   public boolean createContainerInLocation(String location, String container) {
+   public boolean createContainerInLocation(Location location, String container) {
       return sync.createContainer(container);
    }
 

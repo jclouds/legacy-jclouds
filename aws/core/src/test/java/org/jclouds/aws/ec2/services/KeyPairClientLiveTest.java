@@ -61,7 +61,7 @@ public class KeyPairClientLiveTest {
 
    @Test
    void testDescribeKeyPairs() {
-      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
+      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
 
          SortedSet<KeyPair> allResults = Sets.newTreeSet(client.describeKeyPairsInRegion(region));
@@ -83,20 +83,20 @@ public class KeyPairClientLiveTest {
    void testCreateKeyPair() {
       String keyName = PREFIX + "1";
       try {
-         client.deleteKeyPairInRegion(Region.DEFAULT, keyName);
+         client.deleteKeyPairInRegion(null, keyName);
       } catch (Exception e) {
 
       }
-      client.deleteKeyPairInRegion(Region.DEFAULT, keyName);
+      client.deleteKeyPairInRegion(null, keyName);
 
-      KeyPair result = client.createKeyPairInRegion(Region.DEFAULT, keyName);
+      KeyPair result = client.createKeyPairInRegion(null, keyName);
       assertNotNull(result);
       assertNotNull(result.getKeyMaterial());
       assertNotNull(result.getKeyFingerprint());
       assertEquals(result.getKeyName(), keyName);
 
       SortedSet<KeyPair> twoResults = Sets.newTreeSet(client.describeKeyPairsInRegion(
-               Region.DEFAULT, keyName));
+               null, keyName));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();

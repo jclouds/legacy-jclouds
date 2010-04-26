@@ -68,7 +68,7 @@ public class AvailabilityZoneAndRegionClientLiveTest {
    }
 
    public void testDescribeAvailabilityZones() {
-      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
+      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<AvailabilityZoneInfo> allResults = Sets.newTreeSet(client
                   .describeAvailabilityZonesInRegion(region));

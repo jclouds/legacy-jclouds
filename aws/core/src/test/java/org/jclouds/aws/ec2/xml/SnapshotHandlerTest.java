@@ -25,10 +25,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.date.DateService;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -39,14 +37,14 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.SnapshotHandlerTest")
-public class SnapshotHandlerTest extends BaseHandlerTest {
+public class SnapshotHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);
       InputStream is = getClass().getResourceAsStream("/ec2/created_snapshot.xml");
 
-      Snapshot expected = new Snapshot(Region.DEFAULT, "snap-78a54011", "vol-4d826724", 10, Snapshot.Status.PENDING,
-               dateService.iso8601DateParse("2008-05-07T12:51:50.000Z"), 60, "213457642086",
-               "Daily Backup", null);
+      Snapshot expected = new Snapshot(defaultRegion, "snap-78a54011", "vol-4d826724", 10,
+               Snapshot.Status.PENDING, dateService.iso8601DateParse("2008-05-07T12:51:50.000Z"),
+               60, "213457642086", "Daily Backup", null);
 
       SnapshotHandler handler = injector.getInstance(SnapshotHandler.class);
       addDefaultRegionToHandler(handler);
@@ -56,7 +54,7 @@ public class SnapshotHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

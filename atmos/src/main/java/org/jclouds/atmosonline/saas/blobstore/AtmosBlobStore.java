@@ -20,6 +20,8 @@ package org.jclouds.atmosonline.saas.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -42,6 +44,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
 
@@ -61,13 +64,14 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   AtmosBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, AtmosStorageClient sync,
+   AtmosBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
+            Map<String, ? extends Location> locations, AtmosStorageClient sync,
             ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
             EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-      super(context, blobUtils);
+      super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
@@ -107,7 +111,7 @@ public class AtmosBlobStore extends BaseBlobStore {
     *           directory name
     */
    @Override
-   public boolean createContainerInLocation(String location, String container) {
+   public boolean createContainerInLocation(Location location, String container) {
       sync.createDirectory(container);
       return true;
    }

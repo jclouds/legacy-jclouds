@@ -45,7 +45,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AzureBlobClient {
    public org.jclouds.azure.storage.blob.domain.AzureBlob newBlob();
 

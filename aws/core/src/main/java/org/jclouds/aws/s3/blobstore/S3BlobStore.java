@@ -20,6 +20,7 @@ package org.jclouds.aws.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -48,6 +49,7 @@ import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.Utils;
 
@@ -72,14 +74,15 @@ public class S3BlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   S3BlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, S3Client sync,
+   S3BlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
+            Map<String, ? extends Location> locations, S3Client sync,
             BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-      super(context, blobUtils);
+      super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
@@ -127,8 +130,9 @@ public class S3BlobStore extends BaseBlobStore {
     *           bucket name
     */
    @Override
-   public boolean createContainerInLocation(String location, String container) {
-      return sync.putBucketInRegion(Region.fromValue(location), container);
+   public boolean createContainerInLocation(Location location, String container) {
+      location = location != null ? location : defaultLocation;
+      return sync.putBucketInRegion(Region.fromValue(location.getId()), container);
    }
 
    /**

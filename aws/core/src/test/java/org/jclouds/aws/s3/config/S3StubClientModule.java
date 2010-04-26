@@ -19,9 +19,11 @@
 package org.jclouds.aws.s3.config;
 
 import java.net.URI;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
@@ -33,6 +35,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.internal.ImmutableSet;
 
 /**
  * adds a stub alternative to invoking S3
@@ -47,6 +51,10 @@ public class S3StubClientModule extends AbstractModule {
       install(new TransientBlobStoreModule());
       bind(S3AsyncClient.class).to(StubS3AsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
+      bind(Region.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
+      bind(new TypeLiteral<Set<Region>>() {
+      }).annotatedWith(S3.class).toInstance(
+               ImmutableSet.of(Region.US_STANDARD, Region.US_WEST_1, Region.EU_WEST_1));
    }
 
    @Provides

@@ -18,6 +18,13 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Singleton;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
@@ -29,7 +36,14 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -50,5 +64,27 @@ public class S3BlobStoreContextModule extends S3ContextModule {
       bind(BlobStoreContext.class).to(
                new TypeLiteral<BlobStoreContextImpl<S3AsyncClient, S3Client>>() {
                }).in(Scopes.SINGLETON);
+   }
+
+   @Provides
+   @Singleton
+   Location getDefaultLocation(@S3 Region region, Map<String, ? extends Location> locations) {
+      return locations.get(region.toString());
+   }
+
+   @Provides
+   @Singleton
+   Map<String, ? extends Location> provideLocations(@S3 Set<Region> regions) {
+      Set<Location> locations = Sets.newHashSet();
+      for (Region zone : regions) {
+         locations
+                  .add(new LocationImpl(LocationScope.ZONE, zone.toString(), zone.toString(), null));
+      }
+      return Maps.uniqueIndex(locations, new Function<Location, String>() {
+         @Override
+         public String apply(Location from) {
+            return from.getId();
+         }
+      });
    }
 }

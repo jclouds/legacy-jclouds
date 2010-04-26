@@ -28,7 +28,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
@@ -38,7 +37,6 @@ import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.date.DateService;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
@@ -54,7 +52,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.DescribeInstancesResponseHandlerTest")
-public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
+public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    private DateService dateService;
 
@@ -71,8 +69,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/describe_instances_running.xml");
       Set<Reservation> contents = Sets.newTreeSet();
 
-      contents.add(new Reservation(Region.DEFAULT, ImmutableSet.of("adriancole.ec2ingress"),
-               ImmutableSet.of(new RunningInstance(Region.DEFAULT, "0",
+      contents.add(new Reservation(defaultRegion, ImmutableSet.of("adriancole.ec2ingress"),
+               ImmutableSet.of(new RunningInstance(defaultRegion, "0",
                         "ec2-174-129-81-68.compute-1.amazonaws.com", "ami-1fd73376", "i-0799056f",
                         InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
                                  .getByName("174.129.81.68"), "aki-a71cf9ce", "adriancole.ec21",
@@ -93,8 +91,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/describe_instances.xml");
       Set<Reservation> contents = Sets.newTreeSet();
 
-      contents.add(new Reservation(Region.DEFAULT, ImmutableSet.of("default"), ImmutableSet.of(
-               new RunningInstance(Region.DEFAULT, "23", "ec2-72-44-33-4.compute-1.amazonaws.com",
+      contents.add(new Reservation(defaultRegion, ImmutableSet.of("default"), ImmutableSet.of(
+               new RunningInstance(defaultRegion, "23", "ec2-72-44-33-4.compute-1.amazonaws.com",
                         "ami-6ea54007", "i-28a64341", InstanceState.RUNNING, InstanceType.M1_LARGE,
                         (InetAddress) null, "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
@@ -102,7 +100,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
                         ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        Region.DEFAULT, "23", "ec2-72-44-33-6.compute-1.amazonaws.com",
+                        defaultRegion, "23", "ec2-72-44-33-6.compute-1.amazonaws.com",
                         "ami-6ea54007", "i-28a64435", InstanceState.RUNNING, InstanceType.M1_LARGE,
                         (InetAddress) null, "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
@@ -122,8 +120,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/describe_instances_ebs.xml");
       Set<Reservation> contents = Sets.newTreeSet();
 
-      contents.add(new Reservation(Region.DEFAULT, ImmutableSet.of("adriancole.ec2ebsingress"),
-               ImmutableSet.of(new RunningInstance(Region.DEFAULT, "0",
+      contents.add(new Reservation(defaultRegion, ImmutableSet.of("adriancole.ec2ebsingress"),
+               ImmutableSet.of(new RunningInstance(defaultRegion, "0",
                         "ec2-75-101-203-146.compute-1.amazonaws.com", "ami-849875ed", "i-e564438d",
                         InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
                                  .getByName("75.101.203.146"), "aki-a71cf9ce",
@@ -153,7 +151,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

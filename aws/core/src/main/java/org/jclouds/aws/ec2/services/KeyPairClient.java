@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.concurrent.Timeout;
@@ -53,7 +55,7 @@ public interface KeyPairClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateKeyPair.html"
     *      />
     */
-   KeyPair createKeyPairInRegion(Region region, String keyName);
+   KeyPair createKeyPairInRegion(@Nullable Region region, String keyName);
 
    /**
     * Returns information about key pairs available to you. If you specify key pairs, information
@@ -70,7 +72,7 @@ public interface KeyPairClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html"
     *      />
     */
-   Set<KeyPair> describeKeyPairsInRegion(Region region, String... keyPairNames);
+   Set<KeyPair> describeKeyPairsInRegion(@Nullable Region region, String... keyPairNames);
 
    /**
     * Deletes the specified key pair, by removing the public key from Amazon EC2. You must own the
@@ -88,6 +90,6 @@ public interface KeyPairClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteKeyPair.html"
     *      />
     */
-   void deleteKeyPairInRegion(Region region, String keyName);
+   void deleteKeyPairInRegion(@Nullable Region region, String keyName);
 
 }

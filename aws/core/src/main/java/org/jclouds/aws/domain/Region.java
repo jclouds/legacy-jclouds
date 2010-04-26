@@ -34,11 +34,6 @@ import com.google.common.base.CaseFormat;
 public enum Region {
 
    /**
-    * Allow the default region to be chosen based on the user-configured endpoint.
-    */
-   DEFAULT,
-
-   /**
     * Region returned is unknown.
     */
    UNKNOWN,

@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.ContainerProperties;
@@ -25,6 +26,7 @@ import org.jclouds.blobstore.domain.MutableStorageMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
+import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
 
@@ -33,9 +35,17 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ContainerToResourceMetadata implements Function<ContainerProperties, StorageMetadata> {
+   private Location defaultLocation;
+
+   @Inject
+   ContainerToResourceMetadata(Location defaultLocation) {
+      this.defaultLocation = defaultLocation;
+   }
+
    public StorageMetadata apply(ContainerProperties from) {
       MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
+      to.setLocation(defaultLocation);
       to.setETag(from.getETag());
       to.setLastModified(from.getLastModified());
       to.setUri(from.getUrl());

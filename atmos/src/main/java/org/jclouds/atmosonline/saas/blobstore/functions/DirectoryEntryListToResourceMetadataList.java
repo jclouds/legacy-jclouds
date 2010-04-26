@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.functions;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.BoundedSet;
@@ -29,6 +30,7 @@ import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
+import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -40,6 +42,12 @@ import com.google.common.collect.Maps;
 @Singleton
 public class DirectoryEntryListToResourceMetadataList implements
          Function<BoundedSet<? extends DirectoryEntry>, PageSet<? extends StorageMetadata>> {
+   private Location defaultLocation;
+
+   @Inject
+   DirectoryEntryListToResourceMetadataList(Location defaultLocation) {
+      this.defaultLocation = defaultLocation;
+   }
 
    public PageSet<? extends StorageMetadata> apply(BoundedSet<? extends DirectoryEntry> from) {
 
@@ -51,12 +59,12 @@ public class DirectoryEntryListToResourceMetadataList implements
                               : StorageType.BLOB;
                      if (type == StorageType.FOLDER)
                         return new StorageMetadataImpl(type, from.getObjectID(), from
-                                 .getObjectName(), null, null, null, null, null, Maps
+                                 .getObjectName(), defaultLocation, null, null, null, null, Maps
                                  .<String, String> newHashMap());
                      else
-                        return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), null,
-                                 null, null, null, null, Maps.<String, String> newHashMap(), null,
-                                 null);
+                        return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(),
+                                 defaultLocation, null, null, null, null, Maps
+                                          .<String, String> newHashMap(), null, null);
                   }
 
                }), from.getToken());

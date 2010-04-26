@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
@@ -59,7 +58,7 @@ public class MonitoringClientLiveTest {
    // TODO get instance
    public void testMonitorInstances() {
       Map<String, MonitoringState> monitoringState = client.monitorInstancesInRegion(
-               Region.DEFAULT, DEFAULT_INSTANCE);
+               null, DEFAULT_INSTANCE);
       assertEquals(monitoringState.get(DEFAULT_INSTANCE), MonitoringState.PENDING);
    }
 
@@ -67,7 +66,7 @@ public class MonitoringClientLiveTest {
    // TODO get instance
    public void testUnmonitorInstances() {
       Map<String, MonitoringState> monitoringState = client.unmonitorInstancesInRegion(
-               Region.DEFAULT, DEFAULT_INSTANCE);
+               null, DEFAULT_INSTANCE);
       assertEquals(monitoringState.get(DEFAULT_INSTANCE), MonitoringState.PENDING);
    }
 

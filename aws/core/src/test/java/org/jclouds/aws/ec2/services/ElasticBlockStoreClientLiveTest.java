@@ -72,7 +72,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeVolumes() {
-      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
+      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
@@ -96,7 +96,7 @@ public class ElasticBlockStoreClientLiveTest {
 
       this.volumeId = expected.getId();
 
-      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(Region.DEFAULT,
+      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null,
                expected.getId()));
       assertNotNull(result);
       assertEquals(result.size(), 1);
@@ -106,7 +106,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateVolumeInAvailabilityZone")
    void testCreateSnapshotInRegion() {
-      Snapshot snapshot = client.createSnapshotInRegion(Region.DEFAULT, volumeId);
+      Snapshot snapshot = client.createSnapshotInRegion(null, volumeId);
       Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(
                client), 600, 10, TimeUnit.SECONDS);
       assert snapshotted.apply(snapshot);
@@ -171,7 +171,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeSnapshots() {
-      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
+      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<Snapshot> allResults = Sets.newTreeSet(client.describeSnapshotsInRegion(region));
          assertNotNull(allResults);
@@ -187,21 +187,21 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(enabled = false)
    public void testAddCreateVolumePermissionsToSnapshot() {
-      // TODO client.addCreateVolumePermissionsToSnapshotInRegion(Region.DEFAULT, userIds,
+      // TODO client.addCreateVolumePermissionsToSnapshotInRegion(null, userIds,
       // userGroups,
       // snapshotId);
    }
 
    @Test(enabled = false)
    public void testRemoveCreateVolumePermissionsFromSnapshot() {
-      // TODO client.removeCreateVolumePermissionsFromSnapshotInRegion(Region.DEFAULT, userIds,
+      // TODO client.removeCreateVolumePermissionsFromSnapshotInRegion(null, userIds,
       // userGroups,
       // snapshotId);
    }
 
    @Test(enabled = false)
    public void testResetCreateVolumePermissionsOnSnapshot() {
-      // TODO client.resetCreateVolumePermissionsOnSnapshotInRegion(Region.DEFAULT, snapshotId);
+      // TODO client.resetCreateVolumePermissionsOnSnapshotInRegion(null, snapshotId);
    }
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
@@ -212,8 +212,8 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testDeleteVolumeInRegion() {
-      client.deleteVolumeInRegion(Region.DEFAULT, volumeId);
-      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(Region.DEFAULT,
+      client.deleteVolumeInRegion(null, volumeId);
+      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null,
                volumeId));
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();

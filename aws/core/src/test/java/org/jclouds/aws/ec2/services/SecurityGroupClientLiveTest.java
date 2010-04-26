@@ -69,8 +69,7 @@ public class SecurityGroupClientLiveTest {
 
    @Test
    void testDescribe() {
-      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
          SortedSet<SecurityGroup> allResults = Sets.newTreeSet(client
                   .describeSecurityGroupsInRegion(region));
          assertNotNull(allResults);
@@ -90,13 +89,13 @@ public class SecurityGroupClientLiveTest {
       String groupName = PREFIX + "1";
       String groupDescription = PREFIX + "1 description";
       try {
-         client.deleteSecurityGroupInRegion(Region.DEFAULT, groupName);
+         client.deleteSecurityGroupInRegion(null, groupName);
       } catch (Exception e) {
 
       }
-      client.deleteSecurityGroupInRegion(Region.DEFAULT, groupName);
+      client.deleteSecurityGroupInRegion(null, groupName);
 
-      client.createSecurityGroupInRegion(Region.DEFAULT, groupName, groupDescription);
+      client.createSecurityGroupInRegion(null, groupName, groupDescription);
 
       verifySecurityGroup(groupName, groupDescription);
    }
@@ -107,25 +106,24 @@ public class SecurityGroupClientLiveTest {
       String groupName = PREFIX + "ingress";
 
       try {
-         client.deleteSecurityGroupInRegion(Region.DEFAULT, groupName);
+         client.deleteSecurityGroupInRegion(null, groupName);
       } catch (Exception e) {
       }
 
-      client.createSecurityGroupInRegion(Region.DEFAULT, groupName, groupName);
-      client.authorizeSecurityGroupIngressInRegion(Region.DEFAULT, groupName, IpProtocol.TCP, 80,
-               80, "0.0.0.0/0");
+      client.createSecurityGroupInRegion(null, groupName, groupName);
+      client.authorizeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80,
+               "0.0.0.0/0");
       assertEventually(new GroupHasPermission(client, groupName, new IpPermission(80, 80, Sets
                .<UserIdGroupPair> newTreeSet(), IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0"))));
 
-      client.revokeSecurityGroupIngressInRegion(Region.DEFAULT, groupName, IpProtocol.TCP, 80, 80,
+      client.revokeSecurityGroupIngressInRegion(null, groupName, IpProtocol.TCP, 80, 80,
                "0.0.0.0/0");
       assertEventually(new GroupHasNoPermissions(client, groupName));
 
    }
 
    private void verifySecurityGroup(String groupName, String description) {
-      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(Region.DEFAULT,
-               groupName);
+      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       SecurityGroup listPair = oneResult.iterator().next();
@@ -140,38 +138,37 @@ public class SecurityGroupClientLiveTest {
       String group2Name = PREFIX + "ingress2";
 
       try {
-         client.deleteSecurityGroupInRegion(Region.DEFAULT, group1Name);
+         client.deleteSecurityGroupInRegion(null, group1Name);
       } catch (Exception e) {
 
       }
       try {
-         client.deleteSecurityGroupInRegion(Region.DEFAULT, group2Name);
+         client.deleteSecurityGroupInRegion(null, group2Name);
       } catch (Exception e) {
 
       }
 
-      client.createSecurityGroupInRegion(Region.DEFAULT, group1Name, group1Name);
-      client.createSecurityGroupInRegion(Region.DEFAULT, group2Name, group2Name);
+      client.createSecurityGroupInRegion(null, group1Name, group1Name);
+      client.createSecurityGroupInRegion(null, group2Name, group2Name);
       ensureGroupsExist(group1Name, group2Name);
-      client.authorizeSecurityGroupIngressInRegion(Region.DEFAULT, group1Name, IpProtocol.TCP, 80,
-               80, "0.0.0.0/0");
+      client.authorizeSecurityGroupIngressInRegion(null, group1Name, IpProtocol.TCP, 80, 80,
+               "0.0.0.0/0");
       assertEventually(new GroupHasPermission(client, group2Name, new IpPermission(80, 80, Sets
                .<UserIdGroupPair> newTreeSet(), IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0"))));
 
-      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(Region.DEFAULT,
-               group1Name);
+      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group1Name);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       SecurityGroup group = oneResult.iterator().next();
       assertEquals(group.getName(), group1Name);
 
-      client.authorizeSecurityGroupIngressInRegion(Region.DEFAULT, group2Name, new UserIdGroupPair(
-               group.getOwnerId(), group1Name));
+      client.authorizeSecurityGroupIngressInRegion(null, group2Name, new UserIdGroupPair(group
+               .getOwnerId(), group1Name));
       assertEventually(new GroupHasPermission(client, group2Name, new IpPermission(80, 80, Sets
                .<UserIdGroupPair> newTreeSet(), IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0"))));
 
-      client.revokeSecurityGroupIngressInRegion(Region.DEFAULT, group2Name, new UserIdGroupPair(
-               group.getOwnerId(), group1Name));
+      client.revokeSecurityGroupIngressInRegion(null, group2Name, new UserIdGroupPair(group
+               .getOwnerId(), group1Name));
       assertEventually(new GroupHasNoPermissions(client, group2Name));
    }
 
@@ -188,8 +185,7 @@ public class SecurityGroupClientLiveTest {
 
       public void run() {
          try {
-            SortedSet<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(
-                     Region.DEFAULT, group);
+            SortedSet<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group);
             assertNotNull(oneResult);
             assertEquals(oneResult.size(), 1);
             SecurityGroup listPair = oneResult.iterator().next();
@@ -211,8 +207,7 @@ public class SecurityGroupClientLiveTest {
 
       public void run() {
          try {
-            Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(Region.DEFAULT,
-                     group);
+            Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group);
             assertNotNull(oneResult);
             assertEquals(oneResult.size(), 1);
             SecurityGroup listPair = oneResult.iterator().next();
@@ -224,8 +219,8 @@ public class SecurityGroupClientLiveTest {
    }
 
    private void ensureGroupsExist(String group1Name, String group2Name) {
-      SortedSet<SecurityGroup> twoResults = client.describeSecurityGroupsInRegion(Region.DEFAULT,
-               group1Name, group2Name);
+      SortedSet<SecurityGroup> twoResults = client.describeSecurityGroupsInRegion(null, group1Name,
+               group2Name);
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);
       Iterator<SecurityGroup> iterator = twoResults.iterator();

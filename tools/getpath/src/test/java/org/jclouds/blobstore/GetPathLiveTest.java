@@ -91,10 +91,9 @@ public class GetPathLiveTest {
                .getProperty(PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY), "s3", container, path));
 
-      BlobStoreContext cfContext = CloudFilesContextFactory.createContext(checkNotNull(
-               System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System
-               .getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY),
-               new Log4JLoggingModule());
+      BlobStoreContext cfContext = CloudFilesContextFactory.createContext(checkNotNull(System
+               .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
+               PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY), new Log4JLoggingModule());
       urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
                .getProperty(PROPERTY_RACKSPACE_USER), System.getProperty(PROPERTY_RACKSPACE_KEY),
                "cloudfiles", container, path));
@@ -124,7 +123,7 @@ public class GetPathLiveTest {
       for (BlobStoreContext context : contexts) {
          System.err.printf("creating container %s at %s%n", container, context
                   .getProviderSpecificContext().getEndPoint());
-         context.getBlobStore().createContainerInLocation("default", container);
+         context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
          System.err.println("sleeping 5 seconds to allow containers to create");

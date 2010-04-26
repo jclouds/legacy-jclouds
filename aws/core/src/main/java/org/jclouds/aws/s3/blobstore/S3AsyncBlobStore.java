@@ -21,6 +21,7 @@ package org.jclouds.aws.s3.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 
@@ -55,6 +56,7 @@ import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
@@ -81,14 +83,15 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    S3AsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, S3AsyncClient async,
-            S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            Location defaultLocation, Map<String, ? extends Location> locations,
+            S3AsyncClient async, S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-      super(context, blobUtils, service);
+      super(context, blobUtils, service, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.async = checkNotNull(async, "async");
       this.sync = checkNotNull(sync, "sync");
@@ -139,8 +142,9 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     *           bucket name
     */
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
-      return async.putBucketInRegion(Region.fromValue(location), container);
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
+      location = location != null ? location : defaultLocation;
+      return async.putBucketInRegion(Region.fromValue(location.getId()), container);
    }
 
    /**

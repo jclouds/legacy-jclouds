@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.xml.internal.BaseRegexQueueHandler;
 import org.jclouds.http.HttpResponse;
@@ -45,7 +46,7 @@ import com.google.inject.internal.Iterables;
 public class RegexQueueHandler extends BaseRegexQueueHandler implements
          Function<HttpResponse, Queue> {
    @Inject
-   RegexQueueHandler(Map<Region, URI> regionMap) {
+   RegexQueueHandler(@SQS Map<Region, URI> regionMap) {
       super(regionMap);
    }
 

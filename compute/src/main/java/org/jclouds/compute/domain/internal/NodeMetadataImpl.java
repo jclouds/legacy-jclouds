@@ -129,9 +129,9 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public String toString() {
       return "[id=" + getId() + ", tag=" + getTag() + ", name=" + getName() + ", location="
-               + getLocation() + ", uri=" + getUri() + ", userMetadata=" + getUserMetadata()
-               + ", state=" + getState() + ", privateAddresses=" + privateAddresses
-               + ", publicAddresses=" + publicAddresses + "]";
+               + getLocation() + ", uri=" + getUri() + ", image=" + getImage() + ", userMetadata="
+               + getUserMetadata() + ", state=" + getState() + ", privateAddresses="
+               + privateAddresses + ", publicAddresses=" + publicAddresses + "]";
    }
 
    @Override
@@ -141,6 +141,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+      result = prime * result + ((image == null) ? 0 : image.hashCode());
       return result;
    }
 
@@ -167,6 +168,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.tag != null)
             return false;
       } else if (!tag.equals(other.tag))
+         return false;
+      if (image == null) {
+         if (other.image != null)
+            return false;
+      } else if (!image.equals(other.image))
          return false;
       return true;
    }

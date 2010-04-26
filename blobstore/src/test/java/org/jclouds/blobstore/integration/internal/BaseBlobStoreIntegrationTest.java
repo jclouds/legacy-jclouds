@@ -231,7 +231,7 @@ public class BaseBlobStoreIntegrationTest {
 
    protected static void createContainerAndEnsureEmpty(BlobStoreContext context,
             final String containerName) throws InterruptedException {
-      context.getBlobStore().createContainerInLocation("default", containerName);
+      context.getBlobStore().createContainerInLocation(null, containerName);
       if (context.getConsistencyModel() == ConsistencyModel.EVENTUAL)
          Thread.sleep(1000);
       context.getBlobStore().clearContainer(containerName);

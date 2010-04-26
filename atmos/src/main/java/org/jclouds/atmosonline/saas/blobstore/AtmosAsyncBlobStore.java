@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -53,6 +54,7 @@ import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.concurrent.ConcurrentUtils;
+import org.jclouds.domain.Location;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
 
@@ -78,13 +80,15 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            Location defaultLocation, Map<String, ? extends Location> locations,
+
             AtmosStorageAsyncClient async, AtmosStorageClient sync, ObjectToBlob object2Blob,
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
             EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-      super(context, blobUtils, service);
+      super(context, blobUtils, service, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.async = checkNotNull(async, "async");
@@ -119,7 +123,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     * Note location is ignored
     */
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(String location, String container) {
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
       return compose(async.createDirectory(container), new Function<URI, Boolean>() {
 
          public Boolean apply(URI from) {

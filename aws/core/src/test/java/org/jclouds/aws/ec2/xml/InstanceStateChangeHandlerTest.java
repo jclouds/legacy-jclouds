@@ -26,11 +26,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.date.DateService;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
@@ -44,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.InstanceStateChangeHandlerTest")
-public class InstanceStateChangeHandlerTest extends BaseHandlerTest {
+public class InstanceStateChangeHandlerTest extends BaseEC2HandlerTest {
 
    private DateService dateService;
 
@@ -60,7 +58,7 @@ public class InstanceStateChangeHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/terminate_instances.xml");
 
-      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(Region.DEFAULT,
+      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(defaultRegion,
                "i-3ea74257", InstanceState.SHUTTING_DOWN, InstanceState.RUNNING));
 
       InstanceStateChangeHandler handler = injector.getInstance(InstanceStateChangeHandler.class);
@@ -73,7 +71,7 @@ public class InstanceStateChangeHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/start_instances.xml");
 
-      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(Region.DEFAULT,
+      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(defaultRegion,
                "i-10a64379", InstanceState.PENDING, InstanceState.STOPPED));
       InstanceStateChangeHandler handler = injector.getInstance(InstanceStateChangeHandler.class);
       addDefaultRegionToHandler(handler);
@@ -85,7 +83,7 @@ public class InstanceStateChangeHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/stop_instances.xml");
 
-      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(Region.DEFAULT,
+      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(defaultRegion,
                "i-10a64379", InstanceState.STOPPING, InstanceState.RUNNING));
 
       InstanceStateChangeHandler handler = injector.getInstance(InstanceStateChangeHandler.class);
@@ -96,7 +94,7 @@ public class InstanceStateChangeHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

@@ -75,7 +75,7 @@ public class AMIClientLiveTest {
    }
 
    public void testDescribeImages() {
-      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
+      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<Image> allResults = Sets.newTreeSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
@@ -95,11 +95,11 @@ public class AMIClientLiveTest {
 
    @Test(enabled = false)
    public void testRegisterImageFromManifest() {
-      String imageRegisteredId = client.registerImageFromManifestInRegion(Region.DEFAULT,
+      String imageRegisteredId = client.registerImageFromManifestInRegion(null,
                "jcloudstest1", DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
       Image imageRegisteredFromManifest = Iterables.getOnlyElement(client.describeImagesInRegion(
-               Region.DEFAULT, imageIds(imageRegisteredId)));
+               null, imageIds(imageRegisteredId)));
       assertEquals(imageRegisteredFromManifest.getName(), "jcloudstest1");
       assertEquals(imageRegisteredFromManifest.getImageLocation(), DEFAULT_MANIFEST);
       assertEquals(imageRegisteredFromManifest.getImageType(), ImageType.MACHINE);
@@ -110,10 +110,10 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    public void testRegisterImageFromManifestOptions() {
       String imageRegisteredWithOptionsId = client.registerImageFromManifestInRegion(
-               Region.DEFAULT, "jcloudstest2", DEFAULT_MANIFEST, withDescription("adrian"));
+               null, "jcloudstest2", DEFAULT_MANIFEST, withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredFromManifestWithOptions = Iterables.getOnlyElement(client
-               .describeImagesInRegion(Region.DEFAULT, imageIds(imageRegisteredWithOptionsId)));
+               .describeImagesInRegion(null, imageIds(imageRegisteredWithOptionsId)));
       assertEquals(imageRegisteredFromManifestWithOptions.getName(), "jcloudstest2");
       assertEquals(imageRegisteredFromManifestWithOptions.getImageLocation(), DEFAULT_MANIFEST);
       assertEquals(imageRegisteredFromManifestWithOptions.getImageType(), ImageType.MACHINE);
@@ -126,11 +126,11 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBS() {
-      String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(Region.DEFAULT,
+      String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(null,
                "jcloudstest1", DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
       Image imageRegistered = Iterables.getOnlyElement(client.describeImagesInRegion(
-               Region.DEFAULT, imageIds(imageRegisteredId)));
+               null, imageIds(imageRegisteredId)));
       assertEquals(imageRegistered.getName(), "jcloudstest1");
       assertEquals(imageRegistered.getImageType(), ImageType.MACHINE);
       assertEquals(imageRegistered.getRootDeviceType(), RootDeviceType.EBS);
@@ -141,11 +141,11 @@ public class AMIClientLiveTest {
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBSOptions() {
       String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(
-               Region.DEFAULT, "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2",
+               null, "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2",
                         "myvirtual", 1).withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredWithOptions = Iterables.getOnlyElement(client.describeImagesInRegion(
-               Region.DEFAULT, imageIds(imageRegisteredWithOptionsId)));
+               null, imageIds(imageRegisteredWithOptionsId)));
       assertEquals(imageRegisteredWithOptions.getName(), "jcloudstest2");
       assertEquals(imageRegisteredWithOptions.getImageType(), ImageType.MACHINE);
       assertEquals(imageRegisteredWithOptions.getRootDeviceType(), RootDeviceType.EBS);
@@ -158,48 +158,48 @@ public class AMIClientLiveTest {
 
    @Test(enabled = false)
    public void testCreateImage() {
-      // TODO client.createImageInRegion(Region.DEFAULT, name, instanceId, options);
+      // TODO client.createImageInRegion(null, name, instanceId, options);
    }
 
    @Test(enabled = false)
    public void testAddProductCodesToImage() {
-      // TODO client.addProductCodesToImageInRegion(Region.DEFAULT, productCodes, imageId);
+      // TODO client.addProductCodesToImageInRegion(null, productCodes, imageId);
    }
 
    @Test(enabled = false)
    public void testAddLaunchPermissionsToImage() {
-      // TODO client.addLaunchPermissionsToImageInRegion(Region.DEFAULT, userIds, userGroups,
+      // TODO client.addLaunchPermissionsToImageInRegion(null, userIds, userGroups,
       // imageId);
    }
 
    @Test(enabled = false)
    public void testRemoveLaunchPermissionsFromImage() {
-      // TODO client.removeLaunchPermissionsFromImageInRegion(Region.DEFAULT, userIds, userGroups,
+      // TODO client.removeLaunchPermissionsFromImageInRegion(null, userIds, userGroups,
       // imageId);
    }
 
    @Test(enabled = false)
    public void testResetLaunchPermissionsOnImage() {
-      // TODO client.resetLaunchPermissionsOnImageInRegion(Region.DEFAULT, imageId);
+      // TODO client.resetLaunchPermissionsOnImageInRegion(null, imageId);
    }
 
    public void testGetLaunchPermissionForImage() {
-      System.out.println(client.getLaunchPermissionForImageInRegion(Region.DEFAULT, imageId));
+      System.out.println(client.getLaunchPermissionForImageInRegion(null, imageId));
    }
 
    public void testGetProductCodesForImage() {
-      System.out.println(client.getProductCodesForImageInRegion(Region.DEFAULT, imageId));
+      System.out.println(client.getProductCodesForImageInRegion(null, imageId));
    }
 
    @Test(enabled = false)
    // awaiting ebs support
    public void testGetBlockDeviceMappingsForImage() {
-      System.out.println(client.getBlockDeviceMappingsForImageInRegion(Region.DEFAULT, imageId));
+      System.out.println(client.getBlockDeviceMappingsForImageInRegion(null, imageId));
    }
 
    @AfterTest
    public void deregisterImages() {
       for (String imageId : imagesToDeregister)
-         client.deregisterImageInRegion(Region.DEFAULT, imageId);
+         client.deregisterImageInRegion(null, imageId);
    }
 }
