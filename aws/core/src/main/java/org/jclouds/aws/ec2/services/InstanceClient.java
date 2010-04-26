@@ -61,7 +61,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
     */
-   Set<Reservation> describeInstancesInRegion(Region region, String... instanceIds);
+   Set<Reservation> describeInstancesInRegion(@Nullable Region region, String... instanceIds);
 
    /**
     * Launches a specified number of instances of an AMI for which you have permissions.
@@ -134,7 +134,7 @@ public interface InstanceClient {
     *      />
     * @see RunInstancesOptions
     */
-   Reservation runInstancesInRegion(Region region,
+   Reservation runInstancesInRegion(@Nullable Region region,
             @Nullable AvailabilityZone nullableAvailabilityZone, String imageId, int minCount,
             int maxCount, RunInstancesOptions... options);
 
@@ -153,7 +153,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html"
     *      />
     */
-   Set<InstanceStateChange> terminateInstancesInRegion(Region region, String... instanceIds);
+   Set<InstanceStateChange> terminateInstancesInRegion(@Nullable Region region, String... instanceIds);
 
    /**
     * Stops an instance that uses an Amazon EBS volume as its root device.
@@ -189,7 +189,7 @@ public interface InstanceClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StopInstances.html"
     *      />
     */
-   Set<InstanceStateChange> stopInstancesInRegion(Region region, boolean force,
+   Set<InstanceStateChange> stopInstancesInRegion(@Nullable Region region, boolean force,
             String... instanceIds);
 
    /**
@@ -214,7 +214,7 @@ public interface InstanceClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StopInstances.html"
     *      />
     */
-   void rebootInstancesInRegion(Region region, String... instanceIds);
+   void rebootInstancesInRegion(@Nullable Region region, String... instanceIds);
 
    /**
     * Starts an instance that uses an Amazon EBS volume as its root device.
@@ -244,7 +244,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StartInstances.html"
     *      />
     */
-   Set<InstanceStateChange> startInstancesInRegion(Region region, String... instanceIds);
+   Set<InstanceStateChange> startInstancesInRegion(@Nullable Region region, String... instanceIds);
 
    /**
     * 
@@ -255,7 +255,7 @@ public interface InstanceClient {
     *           which instance to describe the attribute of
     * @return unencoded user data
     */
-   String getUserDataForInstanceInRegion(Region region, String instanceId);
+   String getUserDataForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -266,7 +266,7 @@ public interface InstanceClient {
     *           which instance to describe the attribute of
     * @return The root device name (e.g., /dev/sda1).
     */
-   String getRootDeviceNameForInstanceInRegion(Region region, String instanceId);
+   String getRootDeviceNameForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -277,7 +277,7 @@ public interface InstanceClient {
     *           which instance to describe the attribute of
     * @return the ID of the RAM disk associated with the AMI.
     */
-   String getRamdiskForInstanceInRegion(Region region, String instanceId);
+   String getRamdiskForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -288,7 +288,7 @@ public interface InstanceClient {
     *           which instance to describe the attribute of
     * @return the ID of the kernel associated with the AMI.
     */
-   String getKernelForInstanceInRegion(Region region, String instanceId);
+   String getKernelForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -300,7 +300,7 @@ public interface InstanceClient {
     * @return Specifies whether the instance can be terminated using the APIs. You must modify this
     *         attribute before you can terminate any "locked" instances from the APIs.
     */
-   boolean isApiTerminationDisabledForInstanceInRegion(Region region, String instanceId);
+   boolean isApiTerminationDisabledForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -311,7 +311,7 @@ public interface InstanceClient {
     *           which instance to describe the attribute of
     * @return The instance type of the instance.
     */
-   InstanceType getInstanceTypeForInstanceInRegion(Region region, String instanceId);
+   InstanceType getInstanceTypeForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -336,7 +336,7 @@ public interface InstanceClient {
     * @return Describes the mapping that defines native device names to use when exposing virtual
     *         devices.
     */
-   Map<String, EbsBlockDevice> getBlockDeviceMappingForInstanceInRegion(Region region,
+   Map<String, EbsBlockDevice> getBlockDeviceMappingForInstanceInRegion(@Nullable Region region,
             String instanceId);
 
    /**
@@ -349,7 +349,7 @@ public interface InstanceClient {
     *           which instance to reset the attribute of
     * @return the ID of the RAM disk associated with the AMI.
     */
-   String resetRamdiskForInstanceInRegion(Region region, String instanceId);
+   String resetRamdiskForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * Resets an attribute of an instance to its default value.
@@ -361,7 +361,7 @@ public interface InstanceClient {
     *           which instance to reset the attribute of
     * @return the ID of the kernel associated with the AMI.
     */
-   String resetKernelForInstanceInRegion(Region region, String instanceId);
+   String resetKernelForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * Sets the userData used for starting the instance.
@@ -383,7 +383,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setUserDataForInstanceInRegion(Region region, String instanceId, byte[] unencodedData);
+   void setUserDataForInstanceInRegion(@Nullable Region region, String instanceId, byte[] unencodedData);
 
    /**
     * Sets the ramdisk used for starting the instance.
@@ -405,7 +405,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setRamdiskForInstanceInRegion(Region region, String instanceId, String ramdisk);
+   void setRamdiskForInstanceInRegion(@Nullable Region region, String instanceId, String ramdisk);
 
    /**
     * Sets the kernelId used for starting the instance.
@@ -427,7 +427,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setKernelForInstanceInRegion(Region region, String instanceId, String kernel);
+   void setKernelForInstanceInRegion(@Nullable Region region, String instanceId, String kernel);
 
    /**
     * This command works while the instance is running and controls whether or not the api can be
@@ -443,7 +443,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setApiTerminationDisabledForInstanceInRegion(Region region, String instanceId,
+   void setApiTerminationDisabledForInstanceInRegion(@Nullable Region region, String instanceId,
             boolean apiTerminationDisabled);
 
    /**
@@ -466,7 +466,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setInstanceTypeForInstanceInRegion(Region region, String instanceId,
+   void setInstanceTypeForInstanceInRegion(@Nullable Region region, String instanceId,
             InstanceType instanceType);
 
    /**
@@ -491,7 +491,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region region, String instanceId,
+   void setInstanceInitiatedShutdownBehaviorForInstanceInRegion(@Nullable Region region, String instanceId,
             InstanceInitiatedShutdownBehavior instanceInitiatedShutdownBehavior);
 
    /**
@@ -538,6 +538,6 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
     *      />
     */
-   void setBlockDeviceMappingForInstanceInRegion(Region region, String instanceId,
+   void setBlockDeviceMappingForInstanceInRegion(@Nullable Region region, String instanceId,
                                                     BlockDeviceMapping blockDeviceMapping);
 }

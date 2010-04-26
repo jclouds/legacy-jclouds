@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -67,6 +68,9 @@ import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.date.DateService;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
@@ -93,17 +97,20 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final ResourceToBucketList resource2BucketList;
    private final ExecutorService executorService;
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
+   private final ConcurrentMap<String, Location> containerToLocation;
 
    @Inject
    private StubS3AsyncClient(TransientAsyncBlobStore blobStore,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
-            DateService dateService, S3Object.Factory objectProvider, Blob.Factory blobProvider,
+            ConcurrentMap<String, Location> containerToLocation, DateService dateService,
+            S3Object.Factory objectProvider, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, BlobToObjectMetadata blob2ObjectMetadata,
             BucketToContainerListOptions bucket2ContainerListOptions,
             ResourceToBucketList resource2BucketList,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executorService) {
       this.containerToBlobs = containerToBlobs;
+      this.containerToLocation = containerToLocation;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.blobProvider = blobProvider;
@@ -120,7 +127,6 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
    public static final String TEST_ACL_EMAIL = "james@misterm.org";
-   private static Map<String, Region> bucketToLocation = new ConcurrentHashMap<String, Region>();
 
    /**
     * An S3 item's "ACL" may be a {@link CannedAccessPolicy} or an {@link AccessControlList}.
@@ -130,13 +136,14 @@ public class StubS3AsyncClient implements S3AsyncClient {
    public static final String DEFAULT_OWNER_ID = "abc123";
 
    @Override
-   public ListenableFuture<Boolean> putBucketInRegion(Region region, String name,
+   public ListenableFuture<Boolean> putBucketInRegion(@Nullable Region region, String name,
             PutBucketOptions... optionsList) {
+      region = region == null ? Region.US_STANDARD : region;
       final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions()
                : optionsList[0];
-      bucketToLocation.put(name, region);
       keyToAcl.put(name, options.getAcl());
-      return blobStore.createContainerInLocation(region.value(), name);
+      return blobStore.createContainerInLocation(new LocationImpl(LocationScope.REGION, region
+               .value(), region.value(), null), name);
    }
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name,
@@ -309,7 +316,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    @Override
    public ListenableFuture<Region> getBucketLocation(String bucketName) {
-      return immediateFuture(bucketToLocation.get(bucketName));
+      Location location = containerToLocation.get(bucketName);
+      return immediateFuture(Region.fromValue(location.getId()));
    }
 
    @Override

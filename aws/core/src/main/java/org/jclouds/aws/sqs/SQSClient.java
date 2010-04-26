@@ -21,6 +21,8 @@ package org.jclouds.aws.sqs;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
@@ -49,7 +51,7 @@ public interface SQSClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2009-02-01/APIReference/Query_QueryListQueues.html"
     *      />
     */
-   Set<Queue> listQueuesInRegion(Region region, ListQueuesOptions... options);
+   Set<Queue> listQueuesInRegion(@Nullable Region region, ListQueuesOptions... options);
 
    /**
     * 
@@ -79,7 +81,7 @@ public interface SQSClient {
     * @param options
     *           like the visibility timeout (in seconds) to use for this queue.
     */
-   Queue createQueueInRegion(Region region, String queueName, CreateQueueOptions... options);
+   Queue createQueueInRegion(@Nullable Region region, String queueName, CreateQueueOptions... options);
 
    /**
     * The DeleteQueue action deletes the queue specified by the queue URL, regardless of whether the

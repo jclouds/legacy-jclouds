@@ -38,7 +38,7 @@ public class ServerToNodeMetadataTest {
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
-      expect(server.getName()).andReturn("tag").atLeastOnce();
+      expect(server.getName()).andReturn("tag-ff").atLeastOnce();
       expect(server.getState()).andReturn(new Option("RUNNING")).atLeastOnce();
 
       expect(serverStateToNodeState.get("RUNNING")).andReturn(NodeState.RUNNING);
@@ -46,7 +46,7 @@ public class ServerToNodeMetadataTest {
 
       Map<String, Credentials> credentialsMap = createMock(Map.class);
       expect(client.getServerCredentialsList()).andReturn(credentialsMap);
-      expect(credentialsMap.get("tag")).andReturn(new Credentials("user", "pass"));
+      expect(credentialsMap.get("tag-ff")).andReturn(new Credentials("user", "pass"));
 
       expect(server.getIp()).andReturn(
                new Ip(InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 })));
@@ -55,11 +55,9 @@ public class ServerToNodeMetadataTest {
       expect(server.getImage()).andReturn(image).atLeastOnce();
       expect(image.getId()).andReturn(2000l).atLeastOnce();
 
-      
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
       expect(images.get("2000")).andReturn(jcImage);
-      
-      
+
       replay(client);
       replay(serverStateToNodeState);
       replay(server);

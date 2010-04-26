@@ -50,6 +50,10 @@
   (is (create-container "fred"))
   (is (container-exists? "fred")))
 
+(deftest locations-test
+  (is (not (empty? (locations))))
+  (is (create-container "fred" (first (locations)))))
+
 (deftest containers-test
   (is (empty? (containers)))
   (is (create-container "fred"))

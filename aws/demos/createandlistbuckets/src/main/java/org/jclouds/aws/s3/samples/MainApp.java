@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.blobstore.BlobStore;
@@ -64,7 +63,7 @@ public class MainApp {
 
          // Create Container
          BlobStore blobStore = context.getBlobStore();
-         blobStore.createContainerInLocation(Region.DEFAULT.toString(), containerName);
+         blobStore.createContainerInLocation(null, containerName);
 
          // Add Blob
          Blob blob = blobStore.newBlob("test");

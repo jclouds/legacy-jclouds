@@ -49,7 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CloudFilesClient {
 
    CFObject newCFObject();
@@ -113,7 +113,6 @@ public interface CloudFilesClient {
 
    boolean deleteContainerIfEmpty(String container);
 
-   @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
    PageSet<ObjectInfo> listObjects(String container, ListContainerOptions... options);
 
    boolean containerExists(String container);

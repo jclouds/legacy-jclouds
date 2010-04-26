@@ -20,6 +20,10 @@ package org.jclouds.aws.ec2.xml;
 
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
@@ -34,6 +38,9 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<Set<KeyPair>> {
+   @Inject
+   @EC2
+   Region defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
    private Set<KeyPair> keyPairs = Sets.newLinkedHashSet();
@@ -49,8 +56,10 @@ public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<
       if (qName.equals("keyFingerprint")) {
          this.keyFingerprint = currentText.toString().trim();
       } else if (qName.equals("item")) {
-         keyPairs.add(new KeyPair(EC2Utils.findRegionInArgsOrNull(request), keyName,
-                  keyFingerprint, null));
+         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         if (region == null)
+            region = defaultRegion;
+         keyPairs.add(new KeyPair(region, keyName, keyFingerprint, null));
       } else if (qName.equals("keyName")) {
          this.keyName = currentText.toString().trim();
       }

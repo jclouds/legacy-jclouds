@@ -32,7 +32,7 @@ import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
  * import static org.jclouds.aws.ec2.options.DetachVolumeOptions.Builder.*
  * <p/>
  * EC2Client client = // get connection
- * client.getElasticBlockStoreServices().detachVolumeInRegion(Region.DEFAULT, id, fromDevice("123125").force());
+ * client.getElasticBlockStoreServices().detachVolumeInRegion(null, id, fromDevice("123125").force());
  * <code>
  * 
  * @author Adrian Cole

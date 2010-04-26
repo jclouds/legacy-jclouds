@@ -19,11 +19,14 @@
 package org.jclouds.aws.s3.config;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -47,6 +50,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -97,8 +102,33 @@ public class S3RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @S3
+   Map<Region, URI> provideRegions(
+            @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_STANDARD) String usstandard,
+            @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_WEST_1) String uswest,
+            @Named(S3Constants.PROPERTY_S3_ENDPOINT_EU_WEST_1) String euwest) {
+      return ImmutableMap.<Region, URI> of(Region.US_STANDARD, URI.create(usstandard),
+               Region.US_WEST_1, URI.create(uswest), Region.EU_WEST_1, URI.create(euwest));
+   }
+
+   @Provides
+   @Singleton
+   @S3
+   Set<Region> provideRegions(@S3 Map<Region, URI> map) {
+      return map.keySet();
+   }
+
+   @Provides
+   @Singleton
+   @S3
    protected URI provideS3URI(@Named(S3Constants.PROPERTY_S3_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   @S3
+   Region getDefaultRegion(@S3 URI uri, @S3 Map<Region, URI> map) {
+      return ImmutableBiMap.copyOf(map).inverse().get(uri);
    }
 
    @Provides

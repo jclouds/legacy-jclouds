@@ -26,10 +26,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.date.DateService;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -42,13 +40,13 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.DescribeSnapshotsResponseHandlerTest")
-public class DescribeSnapshotsResponseHandlerTest extends BaseHandlerTest {
+public class DescribeSnapshotsResponseHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);
       InputStream is = getClass().getResourceAsStream("/ec2/describe_snapshots.xml");
 
       Set<Snapshot> expected = Sets.newLinkedHashSet();
-      expected.add(new Snapshot(Region.DEFAULT, "snap-78a54011", "vol-4d826724", 10,
+      expected.add(new Snapshot(defaultRegion, "snap-78a54011", "vol-4d826724", 10,
                Snapshot.Status.PENDING, dateService.iso8601DateParse("2008-05-07T12:51:50.000Z"),
                80, "218213537122", "Daily Backup", null));
 
@@ -62,7 +60,7 @@ public class DescribeSnapshotsResponseHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT });
+      expect(request.getArgs()).andReturn(new Object[] { null });
       replay(request);
       handler.setContext(request);
    }

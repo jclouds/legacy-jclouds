@@ -26,13 +26,12 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.aws.ec2.domain.Image;
+import org.jclouds.aws.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -44,7 +43,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "compute.ImageParserTest")
-public class ImageParserTest extends BaseHandlerTest {
+public class ImageParserTest extends BaseEC2HandlerTest {
 
    public void testParseAlesticCanonicalImage() {
       InputStream is = getClass().getResourceAsStream("/ec2/alestic_canonical.xml");
@@ -158,7 +157,7 @@ public class ImageParserTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

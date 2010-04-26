@@ -38,7 +38,7 @@ public class ServerToNodeMetadataTest {
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(10000).atLeastOnce();
-      expect(server.getName()).andReturn("adrian-tag-100").atLeastOnce();
+      expect(server.getName()).andReturn("adriancole-cloudservers-ea3").atLeastOnce();
       expect(server.getMetadata()).andReturn(ImmutableMap.<String, String> of()).atLeastOnce();
 
       expect(server.getStatus()).andReturn(ServerStatus.ACTIVE).atLeastOnce();
@@ -74,7 +74,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(metadata.getLocation(), location);
       assertEquals(metadata.getImage(), jcImage);
       assert metadata.getUserMetadata() != null;
-      assertEquals(metadata.getTag(), "tag");
+      assertEquals(metadata.getTag(), "cloudservers");
       assertEquals(metadata.getCredentials(), null);
 
       assertEquals(metadata.getPrivateAddresses(), privateAddresses);

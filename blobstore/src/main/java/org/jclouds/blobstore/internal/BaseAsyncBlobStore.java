@@ -24,6 +24,7 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -40,6 +41,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
+import org.jclouds.domain.Location;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -55,13 +57,18 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    protected final BlobStoreContext context;
    protected final BlobStoreUtils blobUtils;
    protected final ExecutorService service;
+   protected final Location defaultLocation;
+   protected final Map<String, ? extends Location> locations;
 
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            Location defaultLocation, Map<String, ? extends Location> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
+      this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
+      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
@@ -261,6 +268,11 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
       } catch (InterruptedException e) {
          new IllegalStateException(container + " interrupted during deletion!", e);
       }
+   }
+
+   @Override
+   public ListenableFuture<? extends Map<String, ? extends Location>> getLocations() {
+      return immediateFuture(locations);
    }
 
    protected abstract boolean deleteAndVerifyContainerGone(String container);

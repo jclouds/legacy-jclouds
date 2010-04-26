@@ -41,7 +41,8 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
-   public static final Pattern TAG_PATTERN = Pattern.compile("[^-]+-([^-]+)-[0-9]+");
+   public static final Pattern SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern
+            .compile("[^-]+-([^-]+)-[0-9a-f]+");
    private final Location location;
    private final Map<ServerStatus, NodeState> serverToNodeState;
    private final Map<String, ? extends Image> images;
@@ -56,7 +57,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Server from) {
-      Matcher matcher = TAG_PATTERN.matcher(from.getName());
+      Matcher matcher = SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from
+               .getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
       return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null, from
                .getMetadata(), tag, images.get(from.getImageId().toString()), serverToNodeState

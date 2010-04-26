@@ -20,11 +20,12 @@
 package org.jclouds.aws.s3.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.s3.S3;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
 
@@ -39,16 +40,23 @@ import org.jclouds.rest.binders.BindToStringPayload;
 @Singleton
 public class BindRegionToXmlPayload extends BindToStringPayload {
 
+   private final Region defaultRegion;
+
+   @Inject
+   BindRegionToXmlPayload(@S3 Region defaultRegion) {
+      this.defaultRegion = defaultRegion;
+   }
+
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof Region,
-               "this binder is only valid for Region!");
+      input = input == null ? defaultRegion : input;
+      checkArgument(input instanceof Region, "this binder is only valid for Region!");
       Region constraint = (Region) input;
       String value = null;
       switch (constraint) {
          case US_STANDARD:
          case US_EAST_1:
-         case DEFAULT:// TODO get this from the url
+            // nothing to bind as this is default.
             return;
          case EU_WEST_1:
             value = "EU";
@@ -59,12 +67,11 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
          default:
             throw new IllegalStateException("unimplemented location: " + this);
       }
-      super
-               .bindToRequest(
-                        request,
-                        String
-                                 .format(
-                                          "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-                                          value));
+      String payload = String
+               .format(
+                        "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+                        value);
+      super.bindToRequest(request, payload);
+
    }
 }

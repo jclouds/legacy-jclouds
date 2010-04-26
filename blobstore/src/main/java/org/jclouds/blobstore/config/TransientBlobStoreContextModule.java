@@ -13,6 +13,9 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -38,15 +41,20 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(TransientAsyncBlobStore.class).asEagerSingleton();
-      bind(BlobStoreContext.class)
-               .to(
-                        new TypeLiteral<BlobStoreContextImpl<AsyncBlobStore, BlobStore>>() {
-                        }).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(
+               new TypeLiteral<BlobStoreContextImpl<AsyncBlobStore, BlobStore>>() {
+               }).in(Scopes.SINGLETON);
    }
 
    @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
    private static interface TransientBlobStore extends BlobStore {
 
+   }
+
+   @Provides
+   @Singleton
+   Location provideDefaultLocation() {
+      return new LocationImpl(LocationScope.ZONE, "default", "description", null);
    }
 
    @Provides

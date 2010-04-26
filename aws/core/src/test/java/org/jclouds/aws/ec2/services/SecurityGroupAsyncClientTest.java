@@ -18,42 +18,21 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.EC2PropertiesBuilder;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
-import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.CloseContentAndReturn;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rest.RestClientTest;
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -62,14 +41,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.SecurityGroupAsyncClientTest")
-public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAsyncClient> {
+public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<SecurityGroupAsyncClient> {
 
    public void testDeleteSecurityGroup() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("deleteSecurityGroupInRegion",
                Region.class, String.class);
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "name");
+               null, "name");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -89,7 +68,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
       Method method = SecurityGroupAsyncClient.class.getMethod("createSecurityGroupInRegion",
                Region.class, String.class, String.class);
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "name", "description");
+               null, "name", "description");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -109,7 +88,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
       Method method = SecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegion",
                Region.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT);
+               (Region) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -128,7 +107,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
       Method method = SecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegion",
                Region.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "1", "2");
+               null, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -149,7 +128,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                "authorizeSecurityGroupIngressInRegion", Region.class, String.class,
                UserIdGroupPair.class);
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
+               null, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -171,7 +150,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                "authorizeSecurityGroupIngressInRegion", Region.class, String.class,
                IpProtocol.class, int.class, int.class, String.class);
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
+               null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -193,7 +172,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                "revokeSecurityGroupIngressInRegion", Region.class, String.class,
                UserIdGroupPair.class);
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
+               null, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -215,7 +194,7 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
                "revokeSecurityGroupIngressInRegion", Region.class, String.class, IpProtocol.class,
                int.class, int.class, String.class);
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
+               null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -232,53 +211,9 @@ public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAs
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
-   }
-
-   @Override
    protected TypeLiteral<RestAnnotationProcessor<SecurityGroupAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<SecurityGroupAsyncClient>>() {
       };
    }
 
-   @Override
-   protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder(new Properties())
-                     .build(), "properties"));
-            bind(URI.class).annotatedWith(EC2.class).toInstance(
-                     URI.create("https://ec2.amazonaws.com"));
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String provide() {
-            return "2009-11-08T15:54:08.897Z";
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
-                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
-                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
-         }
-      };
-   }
 }

@@ -94,7 +94,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
 
    public ListenableFuture<Boolean> createContainer(String container,
             CreateContainerOptions... options) {
-      return blobStore.createContainerInLocation("default", container);
+      return blobStore.createContainerInLocation(null, container);
    }
 
    public ListenableFuture<Boolean> createRootContainer(CreateContainerOptions... options) {

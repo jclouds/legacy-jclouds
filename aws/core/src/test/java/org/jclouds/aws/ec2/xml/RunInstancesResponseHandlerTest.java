@@ -26,7 +26,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.InetAddress;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
@@ -35,7 +34,6 @@ import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.date.DateService;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
@@ -52,7 +50,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.RunInstancesResponseHandlerTest")
-public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
+public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    private DateService dateService;
 
@@ -68,8 +66,8 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/run_instances.xml");
 
-      Reservation expected = new Reservation(Region.DEFAULT, ImmutableSortedSet.of("default"),
-               ImmutableSet.of(new RunningInstance(Region.DEFAULT, "0", null, "ami-60a54009",
+      Reservation expected = new Reservation(defaultRegion, ImmutableSortedSet.of("default"),
+               ImmutableSet.of(new RunningInstance(defaultRegion, "0", null, "ami-60a54009",
                         "i-2ba64342", InstanceState.PENDING, InstanceType.M1_SMALL,
                         (InetAddress) null, null, "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
@@ -77,7 +75,7 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
                                  .<String> newTreeSet(), null, null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        Region.DEFAULT, "1", null, "ami-60a54009", "i-2bc64242",
+                        defaultRegion, "1", null, "ami-60a54009", "i-2bc64242",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
                         "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
@@ -85,7 +83,7 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
                                  .<String> newTreeSet(), null, null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        Region.DEFAULT, "2", null, "ami-60a54009", "i-2be64332",
+                        defaultRegion, "2", null, "ami-60a54009", "i-2be64332",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
                         "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
@@ -104,7 +102,7 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

@@ -18,12 +18,17 @@
  */
 package org.jclouds.blobstore;
 
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.domain.Location;
 
 /**
  * Synchronous access to a BlobStore such as Amazon S3
@@ -43,6 +48,14 @@ public interface BlobStore {
     * creates a new blob with the specified name.
     */
    Blob newBlob(String name);
+
+   /**
+    * The get locations command returns all the valid locations for containers. A location has a scope,
+    * which is typically region or zone. A region is a general area, like eu-west, where a zone is
+    * similar to a datacenter. If a location has a parent, that implies it is within that location.
+    * For example a location can be a rack, whose parent is likely to be a zone.
+    */
+   Map<String, ? extends Location> getLocations();
 
    /**
     * Lists all root-level resources available to the account.
@@ -67,12 +80,12 @@ public interface BlobStore {
     * 
     * @param location
     *           some blobstores allow you to specify a location, such as US-EAST, for where this
-    *           container will exist.
+    *           container will exist. null will choose a default location
     * @param container
     *           namespace. Typically constrained to lowercase alpha-numeric and hyphens.
     * @return true if the container was created, false if it already existed.
     */
-   boolean createContainerInLocation(String location, String container);
+   boolean createContainerInLocation(@Nullable Location location, String container);
 
    /**
     * Lists all resources in a container non-recursive.

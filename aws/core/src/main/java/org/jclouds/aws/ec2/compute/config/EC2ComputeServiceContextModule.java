@@ -297,7 +297,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Singleton
    protected Map<String, ? extends Image> provideImages(final EC2Client sync,
-            Map<Region, URI> regionMap, LogHolder holder,
+            @EC2 Map<Region, URI> regionMap, LogHolder holder,
             Function<ComputeMetadata, String> indexer,
             @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, ImageParser parser)
             throws InterruptedException, ExecutionException, TimeoutException {

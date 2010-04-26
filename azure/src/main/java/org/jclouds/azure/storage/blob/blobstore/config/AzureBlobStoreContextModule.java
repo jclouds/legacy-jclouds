@@ -18,6 +18,10 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.config;
 
+import java.util.Map;
+
+import javax.inject.Singleton;
+
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.AzureAsyncBlobStore;
@@ -31,7 +35,12 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -55,4 +64,15 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
    }
 
+   @Provides
+   @Singleton
+   Location getLocation() {
+      return new LocationImpl(LocationScope.ZONE, "UNKNOWN", "TODO", null);
+   }
+
+   @Provides
+   @Singleton
+   Map<String, ? extends Location> provideLocations(Location location) {
+      return ImmutableMap.of(location.getId(), location);
+   }
 }

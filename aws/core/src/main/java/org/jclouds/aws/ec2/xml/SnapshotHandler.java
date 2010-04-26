@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Snapshot.Status;
 import org.jclouds.aws.ec2.util.EC2Utils;
@@ -35,8 +37,9 @@ import org.jclouds.http.functions.ParseSax;
 public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
    private StringBuilder currentText = new StringBuilder();
 
-   @Inject
-   protected DateService dateService;
+   protected final DateService dateService;
+   protected final Region defaultRegion;
+
    private String id;
    private String volumeId;
    private int volumeSize;
@@ -47,9 +50,18 @@ public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
    private String description;
    private String ownerAlias;
 
+   @Inject
+   public SnapshotHandler(DateService dateService, @EC2 Region defaultRegion) {
+      this.dateService = dateService;
+      this.defaultRegion = defaultRegion;
+   }
+
    public Snapshot getResult() {
-      Snapshot snapshot = new Snapshot(EC2Utils.findRegionInArgsOrNull(request), id, volumeId,
-               volumeSize, status, startTime, progress, ownerId, description, ownerAlias);
+      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      if (region == null)
+         region = defaultRegion;
+      Snapshot snapshot = new Snapshot(region, id, volumeId, volumeSize, status, startTime,
+               progress, ownerId, description, ownerAlias);
       this.id = null;
       this.volumeId = null;
       this.volumeSize = 0;

@@ -39,13 +39,13 @@ public class RegionToEndpoint implements Function<Object, URI> {
    private final URI defaultUri;
 
    @Inject
-   public RegionToEndpoint(Map<Region, URI> regionToEndpoint, @SQS URI defaultUri) {
+   public RegionToEndpoint(@SQS Map<Region, URI> regionToEndpoint, @SQS URI defaultUri) {
       this.regionToEndpoint = regionToEndpoint;
       this.defaultUri = defaultUri;
    }
 
    public URI apply(Object from) {
-      return from.equals(Region.DEFAULT) ? defaultUri : regionToEndpoint.get(from);
+      return from == null ? defaultUri : regionToEndpoint.get(from);
    }
 
 }

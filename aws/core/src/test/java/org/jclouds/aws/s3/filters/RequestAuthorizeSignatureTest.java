@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.s3.filters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
@@ -28,9 +29,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.Constants;
+import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.config.S3RestClientModule;
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
@@ -144,18 +144,8 @@ public class RequestAuthorizeSignatureTest {
                new AbstractModule() {
 
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("foo");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("bar");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
-                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
-                              .to("https://s3.amazonaws.com");
+                     Jsr330.bindProperties(binder(), checkNotNull(
+                              new S3PropertiesBuilder("foo", "bar")).build());
                      bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });

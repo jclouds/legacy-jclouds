@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -61,7 +62,7 @@ public interface MonitoringAsyncClient {
    @FormParams(keys = ACTION, values = "MonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
    ListenableFuture<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -73,7 +74,7 @@ public interface MonitoringAsyncClient {
    @FormParams(keys = ACTION, values = "UnmonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
    ListenableFuture<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 }

@@ -611,9 +611,12 @@ public class RestAnnotationProcessor<T> {
                   .next();
          int index = map.keySet().iterator().next();
          Function<Object, URI> parser = injector.getInstance(annotation.parser());
-         Object arg = checkNotNull(args[index], String.format("argument at index %d on method %s",
-                  index, method));
-         return parser.apply(arg);
+         try {
+            return parser.apply(args[index]);
+         } catch (NullPointerException e) {
+            logger.error("argument at index %d on method %s", index, method);
+            throw e;
+         }
       }
       return null;
    }

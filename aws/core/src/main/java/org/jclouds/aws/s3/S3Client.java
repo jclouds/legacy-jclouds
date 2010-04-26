@@ -22,6 +22,8 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketLogging;
@@ -194,7 +196,7 @@ public interface S3Client {
     * 
     */
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
-   boolean putBucketInRegion(Region region, String bucketName, PutBucketOptions... options);
+   boolean putBucketInRegion(@Nullable Region region, String bucketName, PutBucketOptions... options);
 
    /**
     * Deletes the bucket, if it is empty.

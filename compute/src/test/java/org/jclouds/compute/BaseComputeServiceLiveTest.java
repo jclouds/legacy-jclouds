@@ -64,6 +64,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -288,26 +289,26 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(client.getNodesWithTag(tag)
-               .values());
+      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(client
+               .getNodesWithTag(tag).values(), Predicates.not(new Predicate<NodeMetadata>() {
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getState() == NodeState.TERMINATED;
+         }
+      })));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node);
          assertEquals(metadata.getId(), node.getId());
          assertEquals(metadata.getTag(), node.getTag());
-         assertEquals(metadata.getLocation(), template.getLocation());
+         assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
          assertEquals(metadata.getImage(), template.getImage());
          assertEquals(metadata.getState(), NodeState.RUNNING);
          assertEquals(metadata.getPrivateAddresses(), node.getPrivateAddresses());
          assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());
       }
-      assert Iterables.all(metadataSet, new Predicate<NodeMetadata>() {
-         @Override
-         public boolean apply(NodeMetadata input) {
-            return input.getState() == NodeState.TERMINATED;
-         }
-      }) : metadataSet;
-
+      assert metadataSet.size() == 0 : String.format(
+               "nodes left in set: [%s] which didn't match set: [%s]", metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")

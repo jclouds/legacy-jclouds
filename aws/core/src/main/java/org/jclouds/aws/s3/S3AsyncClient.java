@@ -23,6 +23,7 @@ import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -166,7 +167,7 @@ public interface S3AsyncClient {
    @ExceptionParser(ReturnFalseIfBucketAlreadyOwnedByYou.class)
    ListenableFuture<Boolean> putBucketInRegion(
             // TODO endpoint based on region
-            @BinderParam(BindRegionToXmlPayload.class) Region region,
+            @BinderParam(BindRegionToXmlPayload.class) @Nullable Region region,
             @HostPrefixParam String bucketName, PutBucketOptions... options);
 
    /**

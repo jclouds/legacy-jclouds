@@ -28,9 +28,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -43,7 +41,7 @@ import com.google.common.collect.ImmutableList;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.DescribeAddressesResponseHandlerTest")
-public class DescribeAddressesResponseHandlerTest extends BaseHandlerTest {
+public class DescribeAddressesResponseHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() throws UnknownHostException {
 
       InputStream is = getClass().getResourceAsStream("/ec2/describe_addresses.xml");
@@ -54,14 +52,14 @@ public class DescribeAddressesResponseHandlerTest extends BaseHandlerTest {
 
       Set<PublicIpInstanceIdPair> result = factory.create(handler).parse(is);
 
-      assertEquals(result, ImmutableList.of(new PublicIpInstanceIdPair(Region.DEFAULT, InetAddress
+      assertEquals(result, ImmutableList.of(new PublicIpInstanceIdPair(defaultRegion, InetAddress
                .getByName("67.202.55.255"), "i-f15ebb98"), new PublicIpInstanceIdPair(
-               Region.DEFAULT, InetAddress.getByName("67.202.55.233"), null)));
+               defaultRegion, InetAddress.getByName("67.202.55.233"), null)));
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }
