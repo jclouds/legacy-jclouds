@@ -377,7 +377,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
             sizes.add(new SizeImpl(from.getId(), from.getId(), locations.get(from.getDataCenter()
-                     .getId()), null, ImmutableMap.<String, String> of(), from.getDiskSize(), from
+                     .getId()), null, ImmutableMap.<String, String> of(), 1, from
                      .getRam(), from.getDiskSize(), ImmutableSet.<Architecture> of(
                      Architecture.X86_32, Architecture.X86_64)));
          } catch (NullPointerException e) {
