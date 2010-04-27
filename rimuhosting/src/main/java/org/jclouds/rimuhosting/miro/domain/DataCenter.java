@@ -30,7 +30,9 @@ public class DataCenter implements Comparable<DataCenter> {
    private String id;
    @SerializedName("data_center_location_name")
    private String name;
-
+   @SerializedName("data_center_location_country_2ltr")
+   private String code;
+   
    public String getId() {
       return id;
    }
@@ -49,6 +51,14 @@ public class DataCenter implements Comparable<DataCenter> {
 
    @Override
    public int compareTo(DataCenter dataCenter) {
-     return id.compareTo(dataCenter.getId());
+      return id.compareTo(dataCenter.getId());
+   }
+
+   public void setCode(String code) {
+   	this.code = code;
+   }
+   
+   public String getCode() {
+      return code;
    }
 }

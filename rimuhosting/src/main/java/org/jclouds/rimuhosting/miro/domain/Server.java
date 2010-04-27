@@ -57,11 +57,13 @@ public class Server implements Comparable<Server> {
    private String slug;
    @SerializedName("vps_parameters")
    private ServerParameters serverParameters;
-
+   
+   private DataCenter location;
+   
    //Object returned back with
    private transient NewServerData serverDataRequest;
 
-
+ 
    public IpAddresses getIpAddresses() {
       return ipAddresses;
    }
@@ -177,5 +179,13 @@ public class Server implements Comparable<Server> {
    @Override
    public int compareTo(Server server) {
       return name.compareTo(server.getName());
+   }
+
+   public void setLocation(DataCenter location) {
+      this.location = location;
+   }
+
+   public DataCenter getLocation() {
+      return location;
    }
 }

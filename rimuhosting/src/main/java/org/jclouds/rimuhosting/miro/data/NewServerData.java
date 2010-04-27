@@ -18,7 +18,11 @@
  */
 package org.jclouds.rimuhosting.miro.data;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
+
+import org.jclouds.rimuhosting.miro.domain.MetaData;
 import org.jclouds.rimuhosting.miro.domain.ServerParameters;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
@@ -115,6 +119,9 @@ public class NewServerData implements PostData{
    @SerializedName("vps_paramters")
    private ServerParameters serverParameters;
 
+   @SerializedName("meta_data")
+   private List<MetaData> metaData;
+   
    public Long getBillingId() {
       return billingId;
    }
@@ -197,5 +204,13 @@ public class NewServerData implements PostData{
 	   if(this.serverParameters != null){
 		  this.serverParameters.validate();
 	   }
+   }
+
+   public void setMetaData(List<MetaData> metaData) {
+      this.metaData = metaData;
+   }
+
+   public List<MetaData> getMetaData() {
+      return metaData;
    }
 }

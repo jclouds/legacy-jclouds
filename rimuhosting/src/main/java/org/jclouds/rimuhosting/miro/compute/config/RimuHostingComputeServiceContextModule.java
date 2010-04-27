@@ -274,7 +274,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
       @Override
       public NodeMetadata apply(Server from) {
-         Location location = new LocationImpl(LocationScope.ZONE, "//TODO", null, null);
+    	  
+         Location location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(), from.getLocation().getName(), null);
          String tag = from.getName().replaceAll("-[0-9]+", "");
          Credentials creds = null;
          NodeState state = runningStateToNodeState.get(from.getState());
