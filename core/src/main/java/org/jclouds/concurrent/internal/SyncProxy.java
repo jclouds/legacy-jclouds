@@ -43,6 +43,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("deprecation")
 @Singleton
 public class SyncProxy implements InvocationHandler {
 
@@ -60,7 +61,7 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
-   private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
+   private static final Set<Method> objectMethods = ImmutableSet.of(Object.class.getMethods());
 
    @Inject
    public SyncProxy(Class<?> declaring, Object delegate) throws SecurityException,

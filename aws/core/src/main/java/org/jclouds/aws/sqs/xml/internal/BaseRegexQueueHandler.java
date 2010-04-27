@@ -46,7 +46,7 @@ public class BaseRegexQueueHandler {
 
    @Inject
    protected BaseRegexQueueHandler(Map<Region, URI> regionMap) {
-      this.uriToRegion = ImmutableBiMap.copyOf(regionMap).inverse();
+      this.uriToRegion = ImmutableBiMap.<Region, URI> builder().putAll(regionMap).build().inverse();
    }
 
    public Set<Queue> parse(String in) {

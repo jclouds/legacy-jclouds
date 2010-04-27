@@ -110,7 +110,7 @@ public class SQSRestClientModule extends AbstractModule {
    @Singleton
    @SQS
    Region getDefaultRegion(@SQS URI uri, @SQS Map<Region, URI> map) {
-      return ImmutableBiMap.copyOf(map).inverse().get(uri);
+      return ImmutableBiMap.<Region, URI> builder().putAll(map).build().inverse().get(uri);
    }
 
    @Provides

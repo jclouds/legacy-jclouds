@@ -116,7 +116,8 @@ public class EC2RestClientModule extends AbstractModule {
    @Singleton
    @EC2
    Region provideCurrentRegion(@EC2 Map<Region, URI> regionMap, @EC2 URI currentUri) {
-      ImmutableBiMap<URI, Region> map = ImmutableBiMap.copyOf(regionMap).inverse();
+      ImmutableBiMap<URI, Region> map = ImmutableBiMap.<Region, URI> builder().putAll(regionMap)
+               .build().inverse();
       Region region = map.get(currentUri);
       assert region != null : currentUri + " not in " + map;
       return region;

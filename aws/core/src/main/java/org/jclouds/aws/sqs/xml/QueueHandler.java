@@ -49,7 +49,7 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
    @Inject
    QueueHandler(Provider<UriBuilder> uriBuilderProvider, @SQS Map<Region, URI> regionMap) {
       this.uriBuilderProvider = uriBuilderProvider;
-      this.regionBiMap = ImmutableBiMap.copyOf(regionMap);
+      this.regionBiMap = ImmutableBiMap.<Region, URI> builder().putAll(regionMap).build();
    }
 
    public Queue getResult() {

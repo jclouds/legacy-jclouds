@@ -128,7 +128,7 @@ public class S3RestClientModule extends AbstractModule {
    @Singleton
    @S3
    Region getDefaultRegion(@S3 URI uri, @S3 Map<Region, URI> map) {
-      return ImmutableBiMap.copyOf(map).inverse().get(uri);
+      return ImmutableBiMap.<Region, URI> builder().putAll(map).build().inverse().get(uri);
    }
 
    @Provides
