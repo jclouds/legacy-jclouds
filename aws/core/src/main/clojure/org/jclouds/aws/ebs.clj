@@ -16,7 +16,7 @@
 ;; ====================================================================
 ;;
 
-(ns
+(ns 
   #^{:author "Chas Emerick, cemerick@snowtide.com"
      :doc "A clojure binding to the jclouds EBS service interface."}
   org.jclouds.aws.ebs
@@ -26,6 +26,16 @@
     org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.aws.ec2.domain Volume Snapshot AvailabilityZone)
     (org.jclouds.aws.ec2.options DescribeSnapshotsOptions DetachVolumeOptions CreateSnapshotOptions)))
+
+(defn snapshot?
+  "Returns true iff the argument is a org.jclouds.aws.ec2.domain.Snapshot."
+  [s]
+  (instance? Snapshot s))
+
+(defn volume?
+  "Returns true iff the argument is a org.jclouds.aws.ec2.domain.Volume."
+  [v]
+  (instance? Volume v))
 
 (defn #^org.jclouds.aws.ec2.services.ElasticBlockStoreClient
   ebs-service
@@ -40,16 +50,17 @@
    keyword or already a Region instance. An optional second argument
    is returned if the first cannot be coerced into a Region.
    Returns nil otherwise."
-  [v & [default-region]]
-  (cond
-    (keyword? v) (Region/fromValue (name v))
-    (instance? Region v) v
-    (instance? NodeMetadata v) (let [zone (.getLocationId v)]
-                                 ; no easier way to go from zone -> region?
-                                 (Region/fromValue (if (> (.indexOf zone "-") -1)
-                                                     (subs zone 0 (-> zone count dec))
-                                                     zone)))
-    :else default-region))
+  ([v] (get-region v nil))
+  ([v default-region]
+    (cond
+      (keyword? v) (Region/fromValue (name v))
+      (instance? Region v) v
+      (instance? NodeMetadata v) (let [zone (.getLocationId v)]
+                                   ; no easier way to go from zone -> region?
+                                   (Region/fromValue (if (> (.indexOf zone "-") -1)
+                                                       (subs zone 0 (-> zone count dec))
+                                                       zone)))
+    :else default-region)))
 
 (defn get-volume-id
   "Returns a string volume ID taken from the given string, keyword, or Volume argument."
@@ -70,7 +81,7 @@
   [& [region & volume-ids]]
   (set
     (.describeVolumesInRegion (ebs-service)
-      (get-region region Region/DEFAULT)
+      (get-region region)
       (into-array String (map get-volume-id
                            (if (get-region region)
                              volume-ids
@@ -124,7 +135,7 @@
         options (snapshot-options (dissoc options :region))]
     (set
       (.describeSnapshotsInRegion (ebs-service)
-        (get-region region Region/DEFAULT)
+        (get-region region)
         (into-array DescribeSnapshotsOptions [options])))))
 
 (defn create-snapshot
