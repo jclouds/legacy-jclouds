@@ -193,6 +193,15 @@
             </roles>
             <timezone>-8</timezone>
         </developer>
+        <developer>
+            <name>Chas Emerick</name>
+            <id>cemerick</id>
+            <email>cemerick -at- snowtide -dot- com</email>
+            <roles>
+                <role>Clojure Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
     </developers>
 
     <properties>
@@ -238,13 +247,13 @@
            <groupId>org.clojure</groupId>
            <artifactId>clojure</artifactId>
            <version>1.1.0</version>
-           <scope>test</scope>
+           <optional>true</optional>
         </dependency>
         <dependency>
            <groupId>org.clojure</groupId>
            <artifactId>clojure-contrib</artifactId>
            <version>1.1.0</version>
-           <scope>test</scope>
+           <optional>true</optional>
         </dependency>
         <dependency>
           <groupId>swank-clojure</groupId>
@@ -278,6 +287,13 @@
           <version>1.3.2</version>
           <executions>
             <execution>
+              <id>compile-clojure</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+            <execution>
               <id>test-clojure</id>
               <phase>test</phase>
               <goals>
@@ -286,9 +302,10 @@
             </execution>
           </executions>
           <configuration>
+            <!-- we want the AOT compile sanity check, but still only ship source -->
+            <outputDirectory>${project.build.directory}/clojure-classes</outputDirectory>
             <clojureOptions>-Xms128m -Xmx512m</clojureOptions>
-            <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
-            <testDeclaredNamespaceOnly>true</testDeclaredNamespaceOnly>
+            <testDeclaredNamespaceOnly>false</testDeclaredNamespaceOnly>
           </configuration>
         </plugin>
             <plugin>
@@ -625,11 +642,13 @@ pageTracker._trackPageview();
 	      <groupId>org.clojure</groupId>
 	      <artifactId>clojure</artifactId>
 	      <version>1.2.0-master-SNAPSHOT</version>
+          <optional>true</optional>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.clojure</groupId>
 	      <artifactId>clojure-contrib</artifactId>
 	      <version>1.2.0-SNAPSHOT</version>
+          <optional>true</optional>
 	    </dependency>
 	  </dependencies>
 	</profile>
