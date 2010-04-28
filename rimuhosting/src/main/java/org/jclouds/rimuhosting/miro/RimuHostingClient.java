@@ -19,6 +19,7 @@
 package org.jclouds.rimuhosting.miro;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
 import org.jclouds.rimuhosting.miro.domain.*;
 
 import java.util.List;
@@ -36,19 +37,59 @@ import java.util.concurrent.TimeUnit;
 @Timeout(duration = 40, timeUnit = TimeUnit.MINUTES)
 public interface RimuHostingClient {
 
+   /**
+    * This operation returns a list of images that can be used for  server creation.
+    *c
+    * @see Image
+    */
    SortedSet<Image> getImageList();
 
+   /**
+    * Returns a list of servers that belong to this account. 
+    * 
+    * @return An empty set if there are no servers.
+    * @see Server
+    */
    SortedSet<Server> getServerList();
 
+   /**
+    * Returns a list of pricing plans that can be used for server creation.
+    * @see PricingPlan
+    */
    SortedSet<PricingPlan> getPricingPlanList();
 
-   NewServerResponse createServer(String name, String imageId, String planId);
-   
-   NewServerResponse createServer(String name, String imageId, String planId, String password);
+   /**
+    * This operation creates a node based on its name, imageId and planId.
+    * 
+    * A password can be specified with the option {@link CreateServerOptions#withPassword(String) | withPassword()}
+    * 
+    * Key-Value @{link {@link MetaData | metadata} can be included with the option {@link CreateServerOptions#withMetaData(List) | withMetaData()}
+    * 
+    * @see CreateServerOptions
+    * 
+    * TODO: add more CreateServerOptions
+    */
+   NewServerResponse createServer(String name, String imageId, String planId, CreateServerOptions ... options);
 
+   /**
+    * Gets a server based on its id.
+    * 
+    * @return null if server id is invalid.
+    * @see Server
+    */
    Server getServer(Long id);
    
+   /**
+    * Restarts a server.
+    * 
+    * @return State of the server.
+    */
    ServerInfo restartServer(Long id);
    
+   /**
+    * Destroys a server. This an async operation.
+    *
+    * @return A list of messages that have something to do with the shutdown. Can ignore safely.
+    */
    List<String> destroyServer(Long id);
 }
