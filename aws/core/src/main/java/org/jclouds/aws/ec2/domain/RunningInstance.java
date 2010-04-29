@@ -123,7 +123,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final String imageId;
    private final String instanceId;
    private final InstanceState instanceState;
-   private final InstanceType instanceType;
+   private final String instanceType;
    @Nullable
    private final InetAddress ipAddress;
    @Nullable
@@ -159,7 +159,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
    public RunningInstance(Region region, @Nullable String amiLaunchIndex, @Nullable String dnsName,
             String imageId, String instanceId, InstanceState instanceState,
-            InstanceType instanceType, @Nullable InetAddress ipAddress, @Nullable String kernelId,
+            String instanceType, @Nullable InetAddress ipAddress, @Nullable String kernelId,
             @Nullable String keyName, Date launchTime, boolean monitoring,
             AvailabilityZone availabilityZone, @Nullable String platform,
             @Nullable String privateDnsName, @Nullable InetAddress privateIpAddress,
@@ -242,7 +242,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * The instance type.
     */
-   public InstanceType getInstanceType() {
+   public String getInstanceType() {
       return instanceType;
    }
 

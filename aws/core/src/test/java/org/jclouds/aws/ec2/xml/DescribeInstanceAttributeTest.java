@@ -49,7 +49,7 @@ public class DescribeInstanceAttributeTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/instanceType.xml");
 
       InstanceTypeHandler handler = injector.getInstance(InstanceTypeHandler.class);
-      InstanceType result = factory.create(handler).parse(is);
+      String result = factory.create(handler).parse(is);
 
       assertEquals(result, InstanceType.M1_SMALL);
    }

@@ -311,7 +311,7 @@ public interface InstanceClient {
     *           which instance to describe the attribute of
     * @return The instance type of the instance.
     */
-   InstanceType getInstanceTypeForInstanceInRegion(@Nullable Region region, String instanceId);
+   String getInstanceTypeForInstanceInRegion(@Nullable Region region, String instanceId);
 
    /**
     * 
@@ -467,7 +467,7 @@ public interface InstanceClient {
     *      />
     */
    void setInstanceTypeForInstanceInRegion(@Nullable Region region, String instanceId,
-            InstanceType instanceType);
+            String instanceType);
 
    /**
     * Specifies whether the instance's Amazon EBS volumes are stopped or terminated when the

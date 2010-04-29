@@ -18,6 +18,8 @@
  */
 package org.jclouds.rimuhosting.miro.domain;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.data.NewServerData;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
@@ -30,11 +32,8 @@ import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
  */
 public class Server implements Comparable<Server> {
 
-
    @SerializedName("allocated_ips")
    private IpAddresses ipAddresses;
-//   @SerializedName("billing_info")
-//   private BillingData billingData;
    @SerializedName("billing_oid")
    private Long billingId;
    @SerializedName("data_transfer_allowance")
@@ -59,7 +58,9 @@ public class Server implements Comparable<Server> {
    private ServerParameters serverParameters;
    
    private DataCenter location;
-   
+
+   @SerializedName("meta_data")
+   private List<MetaData> metaData;
    //Object returned back with
    private transient NewServerData serverDataRequest;
 
@@ -71,14 +72,6 @@ public class Server implements Comparable<Server> {
    public void setIpAddresses(IpAddresses ipAddresses) {
       this.ipAddresses = ipAddresses;
    }
-
-//   public BillingData getBillingData() {
-//      return billingData;
-//   }
-//
-//   public void setBillingData(BillingData billingData) {
-//      this.billingData = billingData;
-//   }
 
    public Long getBillingId() {
       return billingId;
@@ -187,5 +180,13 @@ public class Server implements Comparable<Server> {
 
    public DataCenter getLocation() {
       return location;
+   }
+
+   public void setMetaData(List<MetaData> metaData) {
+      this.metaData = metaData;
+   }
+
+   public List<MetaData> getMetaData() {
+      return metaData;
    }
 }

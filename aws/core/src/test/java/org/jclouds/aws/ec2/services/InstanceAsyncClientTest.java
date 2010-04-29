@@ -463,7 +463,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetInstanceTypeForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion",
-               Region.class, String.class, InstanceType.class);
+               Region.class, String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", InstanceType.C1_MEDIUM);
 

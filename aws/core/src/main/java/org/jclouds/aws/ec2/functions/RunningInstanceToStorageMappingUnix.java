@@ -45,10 +45,10 @@ public class RunningInstanceToStorageMappingUnix implements Function<RunningInst
 
    @Override
    public Map<String, String> apply(RunningInstance instance) {
-      final InstanceType instanceType = instance.getInstanceType();
+      final String instanceType = instance.getInstanceType();
 
       Map<String, String> mapping = Maps.newHashMap();
-      
+
       //root partition
       mapping.put(String.format(LOCAL_PARTITION_GB_PATTERN, ROOT_PARTITION_NAME_UNIX),
               getRootPartitionSizeForInstanceType(instanceType) + "");
@@ -79,20 +79,20 @@ public class RunningInstanceToStorageMappingUnix implements Function<RunningInst
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2009-11-30/UserGuide/index.html?instance-storage-concepts.html" />
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?instance-types.html" />
     */
-   public int getRootPartitionSizeForInstanceType(InstanceType instanceType) {
+   public int getRootPartitionSizeForInstanceType(String instanceType) {
       /* per documentation at
       http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?instance-types.html
       M2 XLARGE doesn't have the root partition
       TODO verify
       */
-      if(InstanceType.M2_XLARGE == instanceType) return 0;
+      if(InstanceType.M2_XLARGE.equals(instanceType)) return 0;
 
       //other types have 10 GB root partition
       return 10;
    }
 
-   public static String getPrimaryPartitionDeviceName(InstanceType instanceType) {
-      if(InstanceType.M1_SMALL == instanceType || InstanceType.C1_MEDIUM == instanceType)
+   public static String getPrimaryPartitionDeviceName(String instanceType) {
+      if(InstanceType.M1_SMALL.equals(instanceType) || InstanceType.C1_MEDIUM.equals(instanceType))
          return "/dev/sda2";
       return "/dev/sdb";
    }
@@ -106,32 +106,23 @@ public class RunningInstanceToStorageMappingUnix implements Function<RunningInst
     * @param instanceType for which the primary partition size is to be determined
     * @return size in GB
     */
-   public static int getPrimaryPartitionSizeForInstanceType(InstanceType instanceType) {
-      switch(instanceType) {
-         case M1_SMALL:
-            return 150;
-
-         case M1_LARGE:
-            return 420;
-
-         case M1_XLARGE:
-            return 420;
-
-         case C1_MEDIUM:
-            return 340;
-
-         case C1_XLARGE:
-            return 420;
-
-         case M2_XLARGE:
-            return 420;
-
-         case M2_2XLARGE:
-            return 840;
-
-         case M2_4XLARGE:
-            return 840;
-      }
+   public static int getPrimaryPartitionSizeForInstanceType(String instanceType) {
+      if(InstanceType.M1_SMALL.equals(instanceType)) {
+         return 150;
+      } else if (InstanceType.M1_LARGE.equals(instanceType)) {
+         return 420;
+      } else if (InstanceType.M1_XLARGE.equals(instanceType)) {
+         return 420;
+      } else if (InstanceType.C1_MEDIUM.equals(instanceType)) {
+         return 340;
+      } else if (InstanceType.C1_XLARGE.equals(instanceType)) {
+         return 420;
+      } else if (InstanceType.M2_XLARGE.equals(instanceType)) {
+         return 420;
+      } else if (InstanceType.M2_2XLARGE.equals(instanceType)) {
+         return 840;
+      } else if (InstanceType.M2_4XLARGE.equals(instanceType))
+         return 840;
       throw new RuntimeException("Unknown instance type");
    }
 
@@ -144,34 +135,30 @@ public class RunningInstanceToStorageMappingUnix implements Function<RunningInst
     *
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?concepts-amis-and-instances.html#instance-types" />
     */
-   public static Map<String, Integer> getAdditionalPartitionsMapping(InstanceType instanceType) {
+   public static Map<String, Integer> getAdditionalPartitionsMapping(String instanceType) {
       Map<String, Integer> mapping = Maps.newHashMap();
 
       int size = 0;
-      switch(instanceType) {
-         case M1_LARGE:
-         case M1_XLARGE:
-         case C1_XLARGE:
-            size = 420;
-            break;
-
-         case M2_4XLARGE:
-            size = 840;
-            break;
+      if(InstanceType.M1_LARGE.equals(instanceType) ||
+              InstanceType.M1_XLARGE.equals(instanceType) ||
+              InstanceType.C1_XLARGE.equals(instanceType)) {
+         size = 420;
+      } else if (InstanceType.M2_4XLARGE.equals(instanceType)) {
+         size = 840;
       }
 
       //m1.large, m1.xlarge, and c1.xlarge
-      if(InstanceType.M1_LARGE == instanceType || InstanceType.M1_XLARGE == instanceType ||
-              InstanceType.C1_XLARGE == instanceType || InstanceType.M2_4XLARGE == instanceType) {
+      if(InstanceType.M1_LARGE.equals(instanceType) || InstanceType.M1_XLARGE.equals(instanceType) ||
+              InstanceType.C1_XLARGE.equals(instanceType) || InstanceType.M2_4XLARGE.equals(instanceType)) {
 
          mapping.put("/dev/sdc", size);
       }
 
-      if(InstanceType.M1_XLARGE == instanceType || InstanceType.C1_XLARGE == instanceType) {
+      if(InstanceType.M1_XLARGE.equals(instanceType) || InstanceType.C1_XLARGE.equals(instanceType)) {
          mapping.put("/dev/sdd", size);
       }
 
-      if(InstanceType.M1_XLARGE == instanceType || InstanceType.C1_XLARGE == instanceType) {
+      if(InstanceType.M1_XLARGE.equals(instanceType) || InstanceType.C1_XLARGE.equals(instanceType)) {
          mapping.put("/dev/sde", size);
       }
 

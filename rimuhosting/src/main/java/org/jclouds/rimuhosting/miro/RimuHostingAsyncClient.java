@@ -38,7 +38,7 @@ import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rimuhosting.miro.binder.RimuHostingCreateInstanceBinder;
+import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
 import org.jclouds.rimuhosting.miro.binder.RimuHostingRebootJsonBinder;
 import org.jclouds.rimuhosting.miro.domain.Image;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
@@ -69,6 +69,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Endpoint(RimuHosting.class)
 public interface RimuHostingAsyncClient {
 
+   /**
+    * @see RimuHostingClient#getImageList
+    */
    @GET
    @Path("/distributions")
    @ResponseParser(ParseImagesFromJsonResponse.class)
@@ -77,6 +80,9 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<SortedSet<Image>> getImageList();
 
+   /**
+    * @see RimuHostingClient#getServerList
+    */
    @GET
    @Path("/orders")
    @ResponseParser(ParseInstancesFromJsonResponse.class)
@@ -85,7 +91,10 @@ public interface RimuHostingAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<SortedSet<Server>> getServerList();
-
+   
+   /**
+    * @see RimuHostingClient#getPricingPlanList
+    */
    @GET
    @Path("/pricing-plans")
    @MatrixParams(keys = "server-type", values = "VPS")
@@ -94,33 +103,22 @@ public interface RimuHostingAsyncClient {
    @ResponseParser(ParsePricingPlansFromJsonResponse.class)
    ListenableFuture<SortedSet<PricingPlan>> getPricingPlanList();
 
+   /**
+    * @see RimuHostingClient#createServer
+    */
    @POST
    @Path("/orders/new-vps")
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
-   @MapBinder(RimuHostingCreateInstanceBinder.class)
+   @MapBinder(CreateServerOptions.class)
    ListenableFuture<NewServerResponse> createServer(@MapPayloadParam("name") String name,
-            @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId);
+            @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId, CreateServerOptions ... options);
 
-   @POST
-   @Path("/orders/new-vps")
-   @Produces(MediaType.APPLICATION_JSON)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ParseRimuHostingException.class)
-   @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
-   @MapBinder(RimuHostingCreateInstanceBinder.class)
-   ListenableFuture<NewServerResponse> createServer(@MapPayloadParam("name") String name,
-            @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId,
-            @MapPayloadParam("password") String password);
-
-   @GET
-   @Path("/orders/order-{id}-blah/vps")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseInstanceInfoFromJsonResponse.class)
-   ListenableFuture<ServerInfo> getServerInfo(@PathParam("id") Long id);
-
+   /**
+    * @see RimuHostingClient#getServer
+    */
    @GET
    @Path("/orders/order-{id}-blah")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -128,6 +126,9 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<Server> getServer(@PathParam("id") Long id);
 
+   /**
+    * @see RimuHostingClient#restartServer
+    */
    @PUT
    @Path("/orders/order-{id}-blah/vps/running-state")
    @Produces(MediaType.APPLICATION_JSON)
@@ -137,6 +138,9 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<ServerInfo> restartServer(@PathParam("id") Long id);
 
+   /**
+    * @see RimuHostingClient#destoryServer
+    */
    @DELETE
    @Path("/orders/order-{id}-blah/vps")
    @Consumes(MediaType.APPLICATION_JSON)

@@ -23,16 +23,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 
 /**
- * 
+ *
  * The type of the instance. Description accurate as of 8-15-2009 release.
- * 
+ *
  * @author Adrian Cole
  * @see EC2AsyncClient#describeInstances
  * @see EC2AsyncClient#runInstances
  * @see EC2AsyncClient#terminateInstances
- * 
+ *
  */
-public enum InstanceType {
+public class InstanceType {
    /**
     * Small Instance
     * <ul>
@@ -43,7 +43,7 @@ public enum InstanceType {
     * <li>I/O Performance: Moderate</li>
     * </ul>
     */
-   M1_SMALL,
+   public static final String M1_SMALL = "m1.small";
    /**
     * Large Instance
     * <ul>
@@ -54,7 +54,7 @@ public enum InstanceType {
     * <li>I/O Performance: High</li>
     * </ul>
     */
-   M1_LARGE,
+   public static final String M1_LARGE = "m1.large";
    /**
     * Extra Large Instance
     * <ul>
@@ -65,7 +65,7 @@ public enum InstanceType {
     * <li>I/O Performance: High</li>
     * </ul>
     */
-   M1_XLARGE,
+   public static final String M1_XLARGE = "m1.xlarge";
    /**
     * High-Memory Extra Large Instance
     * <ul>
@@ -76,7 +76,7 @@ public enum InstanceType {
     * <li>I/O Performance: Moderate</li>
     * </ul>
     */
-   M2_XLARGE,
+   public static final String M2_XLARGE = "m2.xlarge";
    /**
     * High-Memory Double Extra Large Instance
     * <ul>
@@ -87,7 +87,7 @@ public enum InstanceType {
     * <li>I/O Performance: High</li>
     * </ul>
     */
-   M2_2XLARGE,
+   public static final String M2_2XLARGE = "m2.2xlarge";
    /**
     * High-Memory Quadruple Extra Large Instance
     * <ul>
@@ -98,7 +98,7 @@ public enum InstanceType {
     * <li>I/O Performance: High</li>
     * </ul>
     */
-   M2_4XLARGE,
+   public static final String M2_4XLARGE = "m2.4xlarge";
    /**
     * High-CPU Medium Instance
     * <ul>
@@ -109,7 +109,7 @@ public enum InstanceType {
     * <li>I/O Performance: Moderate</li>
     * </ul>
     */
-   C1_MEDIUM,
+   public static final String C1_MEDIUM = "c1.medium";
    /**
     * High-CPU Extra Large Instance
     * <ul>
@@ -120,18 +120,14 @@ public enum InstanceType {
     * <li>I/O Performance: High</li>
     * </ul>
     */
-   C1_XLARGE;
-   public String value() {
-      return name().toLowerCase().replaceAll("_", ".");
+   public static final String C1_XLARGE = "c1.xlarge";
+
+   public static String fromValue(String type) {
+      return checkNotNull(type, "type").replaceAll("\\.", "_").toUpperCase();
    }
 
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static InstanceType fromValue(String type) {
-      return valueOf(checkNotNull(type, "type").replaceAll("\\.", "_").toUpperCase());
+   public static String toDotSeparatorLowercaseNotation(String type) {
+      return checkNotNull(type, "type").replaceAll("_", "\\.").toLowerCase();
    }
 
 }

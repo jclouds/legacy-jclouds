@@ -32,16 +32,17 @@ import com.google.common.collect.ImmutableSet;
 public class EC2Size extends SizeImpl {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8605688733788974797L;
-   private final InstanceType instanceType;
+   private final String instanceType;
 
-   EC2Size(InstanceType instanceType, Double cores, Integer ram, Integer disk,
+   EC2Size(String instanceType, Double cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
-      super(instanceType.toString(), instanceType.toString(), null, null, ImmutableMap
-               .<String, String> of(),cores, ram, disk, supportedArchitectures);
+      super(instanceType,
+            instanceType, null, null,
+            ImmutableMap.<String, String> of(),cores, ram, disk, supportedArchitectures);
       this.instanceType = instanceType;
    }
 
-   EC2Size(InstanceType instanceType, Integer cores, Integer ram, Integer disk,
+   EC2Size(String instanceType, Integer cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
       this(instanceType, cores.doubleValue(), ram, disk, supportedArchitectures);
    }
@@ -49,7 +50,7 @@ public class EC2Size extends SizeImpl {
    /**
     * Returns the EC2 InstanceType associated with this size.
     */
-   public InstanceType getInstanceType() {
+   public String getInstanceType() {
       return instanceType;
    }
 

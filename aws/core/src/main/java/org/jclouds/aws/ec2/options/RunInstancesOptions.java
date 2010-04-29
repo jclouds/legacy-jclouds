@@ -108,8 +108,8 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    /**
     * Specifies the instance type. default small;
     */
-   public RunInstancesOptions asType(InstanceType type) {
-      formParameters.put("InstanceType", checkNotNull(type, "type").toString());
+   public RunInstancesOptions asType(String type) {
+      formParameters.put("InstanceType", checkNotNull(type, "type"));
       return this;
    }
 
@@ -230,7 +230,7 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       /**
        * @see RunInstancesOptions#asType(InstanceType)
        */
-      public static RunInstancesOptions asType(InstanceType instanceType) {
+      public static RunInstancesOptions asType(String instanceType) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.asType(instanceType);
       }

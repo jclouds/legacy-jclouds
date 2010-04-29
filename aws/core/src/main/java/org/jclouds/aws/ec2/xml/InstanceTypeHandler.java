@@ -28,18 +28,18 @@ import org.jclouds.http.functions.ParseSax;
  * @author Adrian Cole
  */
 public class InstanceTypeHandler extends
-         ParseSax.HandlerWithResult<InstanceType> {
+         ParseSax.HandlerWithResult<String> {
 
    private StringBuilder currentText = new StringBuilder();
-   private InstanceType type;
+   private String type;
 
-   public InstanceType getResult() {
+   public String getResult() {
       return type;
    }
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equalsIgnoreCase("value")) {
-         this.type = InstanceType.fromValue(currentText.toString().trim());
+         this.type = currentText.toString().trim();
       }
       currentText = new StringBuilder();
    }

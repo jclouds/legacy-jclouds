@@ -202,7 +202,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
             "instanceType" })
    @XMLResponseParser(InstanceTypeHandler.class)
-   ListenableFuture<InstanceType> getInstanceTypeForInstanceInRegion(
+   ListenableFuture<String> getInstanceTypeForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("InstanceId") String instanceId);
 
@@ -302,7 +302,7 @@ public interface InstanceAsyncClient {
    ListenableFuture<Void> setInstanceTypeForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
             @FormParam("InstanceId") String instanceId,
-            @FormParam("Value") InstanceType instanceType);
+            @FormParam("Value") String instanceType);
 
    /**
     * @see AMIClient#setInstanceInitiatedShutdownBehaviorForInstanceInRegion

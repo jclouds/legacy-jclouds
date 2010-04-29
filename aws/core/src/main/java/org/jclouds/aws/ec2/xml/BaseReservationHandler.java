@@ -75,7 +75,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private String imageId;
    private String instanceId;
    private InstanceState instanceState;
-   private InstanceType instanceType;
+   private String instanceType;
    private InetAddress ipAddress;
    private String kernelId;
    private String keyName;
@@ -141,7 +141,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("name")) {
          instanceState = InstanceState.fromValue(currentOrNull());
       } else if (qName.equals("instanceType")) {
-         instanceType = InstanceType.fromValue(currentOrNull());
+         instanceType = currentOrNull();
       } else if (qName.equals("ipAddress")) {
          ipAddress = parseInetAddress(currentOrNull());
       } else if (qName.equals("kernelId")) {
