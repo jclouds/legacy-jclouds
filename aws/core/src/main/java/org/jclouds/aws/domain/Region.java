@@ -78,7 +78,9 @@ public enum Region {
     * for PUTS of new objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS
     * and DELETES.
     */
-   US_WEST_1;
+   US_WEST_1,
+   
+   AP_SOUTHEAST_1;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());

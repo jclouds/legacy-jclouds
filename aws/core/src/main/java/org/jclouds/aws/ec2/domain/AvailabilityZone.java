@@ -30,7 +30,7 @@ import com.google.common.base.CaseFormat;
  */
 public enum AvailabilityZone {
 
-   UNKNOWN, EU_WEST_1A, EU_WEST_1B, US_EAST_1A, US_EAST_1B, US_EAST_1C, US_EAST_1D, US_WEST_1A, US_WEST_1B;
+   UNKNOWN, EU_WEST_1A, EU_WEST_1B, US_EAST_1A, US_EAST_1B, US_EAST_1C, US_EAST_1D, US_WEST_1A, US_WEST_1B, AP_SOUTHEAST_1A, AP_SOUTHEAST_1B;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());

@@ -34,8 +34,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
@@ -81,6 +79,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.util.Jsr330;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -91,7 +90,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
-import org.jclouds.util.Jsr330;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
@@ -109,9 +109,9 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
-      bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>(){}).
-              annotatedWith(Jsr330.named("volumeMapping")).
-              to(RunningInstanceToStorageMappingUnix.class).in(Scopes.SINGLETON);      
+      bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
+      }).annotatedWith(Jsr330.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
+               .in(Scopes.SINGLETON);
    }
 
    @Provides
@@ -258,21 +258,16 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Singleton
    Map<String, ? extends Location> provideLocations(Map<AvailabilityZone, Region> map) {
-      Set<Location> locations = Sets.newHashSet();
+      Map<String, Location> locations = Maps.newLinkedHashMap();
       for (AvailabilityZone zone : map.keySet()) {
-         locations.add(new LocationImpl(LocationScope.ZONE, zone.toString(), zone.toString(), map
-                  .get(zone).toString()));
+         locations.put(zone.toString(), new LocationImpl(LocationScope.ZONE, zone.toString(), zone
+                  .toString(), map.get(zone).toString()));
       }
       for (Region region : map.values()) {
-         locations.add(new LocationImpl(LocationScope.REGION, region.toString(), region.toString(),
-                  null));
+         locations.put(region.toString(), new LocationImpl(LocationScope.REGION, region.toString(),
+                  region.toString(), null));
       }
-      return Maps.uniqueIndex(locations, new Function<Location, String>() {
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-      });
+      return locations;
    }
 
    @Provides
