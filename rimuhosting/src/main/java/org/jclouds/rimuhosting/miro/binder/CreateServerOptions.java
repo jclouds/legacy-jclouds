@@ -21,6 +21,7 @@ package org.jclouds.rimuhosting.miro.binder;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
@@ -31,15 +32,30 @@ import org.jclouds.rimuhosting.miro.domain.MetaData;
 /**
  * @author Ivan Meredith
  */
-public class RimuHostingCreateInstanceBinder extends RimuHostingJsonBinder{
+public class CreateServerOptions extends RimuHostingJsonBinder{
+   
+   private String password;
+   private List<MetaData> metaData = new ArrayList<MetaData>();
+   
+   @Override
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
       String name = checkNotNull(postParams.get("name"));
       String imageId = checkNotNull(postParams.get("imageId"));
       String planId = checkNotNull(postParams.get("planId"));
       //There will be cases when the password is null.
-      String password = postParams.get("password");
+      String password = this.password;
       NewServerData newServerData = new NewServerData(new CreateOptions(name, password, imageId), planId);
-      newServerData.setMetaData(new ArrayList<MetaData>());
+      newServerData.setMetaData(metaData);
       bindToRequest(request, newServerData);
    }   
+   
+   public CreateServerOptions withPassword(String password){
+      this.password = password;
+      return this;
+   }
+   
+   public CreateServerOptions withMetaData(List<MetaData> metaData){
+      this.metaData = metaData;
+      return this;
+   }
 }
