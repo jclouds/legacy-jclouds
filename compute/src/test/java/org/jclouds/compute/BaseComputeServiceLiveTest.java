@@ -146,6 +146,15 @@ public abstract class BaseComputeServiceLiveTest {
 
    abstract protected Module getSshModule();
 
+   public void testImagesCache() throws Exception {
+      client.getImages();
+      long time = System.currentTimeMillis();
+      client.getImages();
+      long duration = System.currentTimeMillis() - time;
+      assert duration < 1000 : String.format("%dms to get images", duration);
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testImagesCache")
    public void testTemplateMatch() throws Exception {
       template = buildTemplate(client.templateBuilder());
       Template toMatch = client.templateBuilder().imageId(template.getImage().getId()).build();
@@ -318,12 +327,12 @@ public abstract class BaseComputeServiceLiveTest {
       testGet();
    }
 
-   @Test(enabled = true/*, dependsOnMethods = "testTemplateMatch"*/)
+   @Test(enabled = true/* , dependsOnMethods = "testTemplateMatch" */)
    public void testTemplateOptions() throws Exception {
       TemplateOptions options = new TemplateOptions().withMetadata();
       Template t = client.templateBuilder().smallest().options(options).build();
-      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " +
-                                                  "for the created template";
+      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' "
+               + "for the created template";
    }
 
    public void testListNodes() throws Exception {
