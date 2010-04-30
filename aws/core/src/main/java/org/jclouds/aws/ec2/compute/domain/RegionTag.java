@@ -18,17 +18,15 @@
  */
 package org.jclouds.aws.ec2.compute.domain;
 
-import org.jclouds.aws.domain.Region;
-
 /**
  * 
  * @author Adrian Cole
  */
 public class RegionTag {
-   protected final Region region;
+   protected final String region;
    protected final String tag;
 
-   public RegionTag(Region region, String tag) {
+   public RegionTag(String region, String tag) {
       this.region = region;
       this.tag = tag;
    }
@@ -64,7 +62,7 @@ public class RegionTag {
       return true;
    }
 
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

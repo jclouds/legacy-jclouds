@@ -32,13 +32,13 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  */
 public class KeyPair implements Comparable<KeyPair> {
-   private final Region region;
+   private final String region;
    private final String keyName;
    private final String keyFingerprint;
    @Nullable
    private final String keyMaterial;
 
-   public KeyPair(Region region, String keyName, String keyFingerprint, @Nullable String keyMaterial) {
+   public KeyPair(String region, String keyName, String keyFingerprint, @Nullable String keyMaterial) {
       this.region = checkNotNull(region, "region");
       this.keyName = checkNotNull(keyName, "keyName");
       this.keyFingerprint = checkNotNull(keyFingerprint, "keyFingerprint");
@@ -48,7 +48,7 @@ public class KeyPair implements Comparable<KeyPair> {
    /**
     * Key pairs (to connect to instances) are Region-specific.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

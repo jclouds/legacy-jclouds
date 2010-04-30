@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
@@ -41,7 +40,7 @@ import com.google.inject.TypeLiteral;
 public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncClient> {
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = KeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", Region.class,
+      Method method = KeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class,
                String.class);
       GeneratedHttpRequest<KeyPairAsyncClient> httpMethod = processor.createRequest(method, null,
                "mykey");
@@ -59,10 +58,10 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
    }
 
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", Region.class,
+      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
                Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<KeyPairAsyncClient> httpMethod = processor.createRequest(method,
-               (Region) null);
+               (String) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -78,7 +77,7 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
 
    public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", Region.class,
+      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
                Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<KeyPairAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");

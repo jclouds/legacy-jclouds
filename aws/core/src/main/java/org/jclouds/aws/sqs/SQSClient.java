@@ -51,7 +51,7 @@ public interface SQSClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2009-02-01/APIReference/Query_QueryListQueues.html"
     *      />
     */
-   Set<Queue> listQueuesInRegion(@Nullable Region region, ListQueuesOptions... options);
+   Set<Queue> listQueuesInRegion(@Nullable String region, ListQueuesOptions... options);
 
    /**
     * 
@@ -81,7 +81,7 @@ public interface SQSClient {
     * @param options
     *           like the visibility timeout (in seconds) to use for this queue.
     */
-   Queue createQueueInRegion(@Nullable Region region, String queueName, CreateQueueOptions... options);
+   Queue createQueueInRegion(@Nullable String region, String queueName, CreateQueueOptions... options);
 
    /**
     * The DeleteQueue action deletes the queue specified by the queue URL, regardless of whether the

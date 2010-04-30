@@ -42,7 +42,7 @@ public class DescribeInstancesResponseHandler extends
    private SortedSet<Reservation> reservations = Sets.newTreeSet();
 
    @Inject
-   DescribeInstancesResponseHandler(DateService dateService, @EC2 Region defaultRegion) {
+   DescribeInstancesResponseHandler(DateService dateService, @EC2 String defaultRegion) {
       super(dateService, defaultRegion);
    }
 

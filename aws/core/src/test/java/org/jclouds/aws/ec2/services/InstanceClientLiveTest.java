@@ -61,7 +61,7 @@ public class InstanceClientLiveTest {
 
    @Test
    void testDescribeInstances() {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          Set<Reservation> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);

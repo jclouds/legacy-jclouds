@@ -115,10 +115,10 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @EC2
-   Region provideCurrentRegion(@EC2 Map<Region, URI> regionMap, @EC2 URI currentUri) {
-      ImmutableBiMap<URI, Region> map = ImmutableBiMap.<Region, URI> builder().putAll(regionMap)
+   String provideCurrentRegion(@EC2 Map<String, URI> regionMap, @EC2 URI currentUri) {
+      ImmutableBiMap<URI, String> map = ImmutableBiMap.<String, URI> builder().putAll(regionMap)
                .build().inverse();
-      Region region = map.get(currentUri);
+      String region = map.get(currentUri);
       assert region != null : currentUri + " not in " + map;
       return region;
    }
@@ -126,16 +126,16 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @EC2
-   Map<Region, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
+   Map<String, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
       return client.describeRegions();
    }
 
    @Provides
    @Singleton
-   Map<AvailabilityZone, Region> provideAvailabilityZoneToRegions(
-            AvailabilityZoneAndRegionClient client, @EC2 Map<Region, URI> regions) {
-      Map<AvailabilityZone, Region> map = Maps.newHashMap();
-      for (Region region : regions.keySet()) {
+   Map<AvailabilityZone, String> provideAvailabilityZoneToRegions(
+            AvailabilityZoneAndRegionClient client, @EC2 Map<String, URI> regions) {
+      Map<AvailabilityZone, String> map = Maps.newHashMap();
+      for (String region : regions.keySet()) {
          for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {
             map.put(zoneInfo.getZone(), region);
          }

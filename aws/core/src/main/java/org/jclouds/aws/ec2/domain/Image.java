@@ -38,7 +38,7 @@ import com.google.inject.internal.Nullable;
  */
 public class Image implements Comparable<Image> {
 
-   private final Region region;
+   private final String region;
    private final Architecture architecture;
    @Nullable
    private final String name;
@@ -62,7 +62,7 @@ public class Image implements Comparable<Image> {
    private final String rootDeviceName;
    private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
 
-   public Image(Region region, Architecture architecture, @Nullable String name,
+   public Image(String region, Architecture architecture, @Nullable String name,
             @Nullable String description, String imageId, String imageLocation,
             String imageOwnerId, ImageState imageState, ImageType imageType, boolean isPublic,
             Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
@@ -200,7 +200,7 @@ public class Image implements Comparable<Image> {
     * AMIs are tied to the Region where its files are located within Amazon S3.
     * 
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

@@ -69,7 +69,7 @@ public class SecurityGroupClientLiveTest {
 
    @Test
    void testDescribe() {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
          SortedSet<SecurityGroup> allResults = Sets.newTreeSet(client
                   .describeSecurityGroupsInRegion(region));
          assertNotNull(allResults);

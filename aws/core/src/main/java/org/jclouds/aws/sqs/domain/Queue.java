@@ -31,11 +31,11 @@ import org.jclouds.aws.domain.Region;
  * @author Adrian Cole
  */
 public class Queue implements Comparable<Queue> {
-   private final Region region;
+   private final String region;
    private final String name;
    private final URI location;
 
-   public Queue(Region region, String name, URI location) {
+   public Queue(String region, String name, URI location) {
       this.region = checkNotNull(region,"region");
       this.location = checkNotNull(location, "location");
       this.name = checkNotNull(name, "name");
@@ -46,7 +46,7 @@ public class Queue implements Comparable<Queue> {
       return location.toASCIIString().compareTo(o.location.toASCIIString());
    }
 
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
    

@@ -36,12 +36,12 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class AvailabilityZoneToEndpoint implements Function<Object, URI> {
-   private final Map<AvailabilityZone, Region> availabilityZoneToRegion;
-   private final Map<Region, URI> regionToEndpoint;
+   private final Map<AvailabilityZone, String> availabilityZoneToRegion;
+   private final Map<String, URI> regionToEndpoint;
 
    @Inject
-   public AvailabilityZoneToEndpoint(@EC2 Map<Region, URI> regionToEndpoint,
-            Map<AvailabilityZone, Region> availabilityZoneToRegion) {
+   public AvailabilityZoneToEndpoint(@EC2 Map<String, URI> regionToEndpoint,
+            Map<AvailabilityZone, String> availabilityZoneToRegion) {
       this.regionToEndpoint = regionToEndpoint;
       this.availabilityZoneToRegion = availabilityZoneToRegion;
    }

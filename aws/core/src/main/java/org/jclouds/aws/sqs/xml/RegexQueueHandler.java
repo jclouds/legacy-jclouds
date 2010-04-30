@@ -46,7 +46,7 @@ import com.google.inject.internal.Iterables;
 public class RegexQueueHandler extends BaseRegexQueueHandler implements
          Function<HttpResponse, Queue> {
    @Inject
-   RegexQueueHandler(@SQS Map<Region, URI> regionMap) {
+   RegexQueueHandler(@SQS Map<String, URI> regionMap) {
       super(regionMap);
    }
 

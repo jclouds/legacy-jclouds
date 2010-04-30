@@ -43,13 +43,13 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
    private StringBuilder currentText = new StringBuilder();
    Queue queue;
 
-   private final ImmutableBiMap<Region, URI> regionBiMap;
+   private final ImmutableBiMap<String, URI> regionBiMap;
    private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   QueueHandler(Provider<UriBuilder> uriBuilderProvider, @SQS Map<Region, URI> regionMap) {
+   QueueHandler(Provider<UriBuilder> uriBuilderProvider, @SQS Map<String, URI> regionMap) {
       this.uriBuilderProvider = uriBuilderProvider;
-      this.regionBiMap = ImmutableBiMap.<Region, URI> builder().putAll(regionMap).build();
+      this.regionBiMap = ImmutableBiMap.<String, URI> builder().putAll(regionMap).build();
    }
 
    public Queue getResult() {
@@ -63,7 +63,7 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
          String queueName = uriText.substring(uriText.lastIndexOf('/') + 1);
          URI location = URI.create(uriText);
          URI regionURI = uriBuilderProvider.get().uri(location).replacePath("").build();
-         Region region = regionBiMap.inverse().get(regionURI);
+         String region = regionBiMap.inverse().get(regionURI);
          this.queue = new Queue(region, queueName, location);
       }
       currentText = new StringBuilder();

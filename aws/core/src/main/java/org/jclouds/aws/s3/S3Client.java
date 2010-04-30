@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
@@ -196,7 +195,7 @@ public interface S3Client {
     * 
     */
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
-   boolean putBucketInRegion(@Nullable Region region, String bucketName, PutBucketOptions... options);
+   boolean putBucketInRegion(@Nullable String region, String bucketName, PutBucketOptions... options);
 
    /**
     * Deletes the bucket, if it is empty.
@@ -359,7 +358,7 @@ public interface S3Client {
     *      "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTBucketLocationGET.html"
     *      />
     */
-   Region getBucketLocation(String bucketName);
+   String getBucketLocation(String bucketName);
 
    /**
     * A GET request operation on a requestPayment resource returns the request payment configuration

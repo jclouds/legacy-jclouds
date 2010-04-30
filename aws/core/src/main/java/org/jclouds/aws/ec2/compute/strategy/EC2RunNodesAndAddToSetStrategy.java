@@ -127,8 +127,8 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
                : null;
 
       // if the location has a parent, it must be an availability zone.
-      Region region = zone == null ? Region.fromValue(template.getLocation().getId()) : Region
-               .fromValue(template.getLocation().getParent());
+      String region = zone == null ? template.getLocation().getId() :
+              template.getLocation().getParent();
 
       // get or create incidental resources
       // TODO race condition. we were using MapMaker, but it doesn't seem to refresh properly when
@@ -188,7 +188,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       return responses;
    }
 
-   private Iterable<RunningInstance> getInstances(Region region, Iterable<String> ids) {
+   private Iterable<RunningInstance> getInstances(String region, Iterable<String> ids) {
       return Iterables.concat(ec2Client.getInstanceServices().describeInstancesInRegion(region,
                Iterables.toArray(ids, String.class)));
    }

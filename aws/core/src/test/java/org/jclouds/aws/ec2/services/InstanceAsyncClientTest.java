@@ -55,9 +55,9 @@ import com.google.inject.TypeLiteral;
 public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
-               Region.class, Array.newInstance(String.class, 0).getClass());
+               String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               (Region) null);
+               (String) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -74,7 +74,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testDescribeInstancesArgs() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
-               Region.class, Array.newInstance(String.class, 0).getClass());
+               String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
@@ -94,7 +94,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testTerminateInstances() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("terminateInstancesInRegion",
-               Region.class, Array.newInstance(String.class, 0).getClass());
+               String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
@@ -112,7 +112,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    }
 
    public void testRunInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", Region.class,
+      Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class,
                AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
@@ -133,7 +133,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", Region.class,
+      Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class,
                AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
@@ -157,7 +157,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    }
 
    public void testStopInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("stopInstancesInRegion", Region.class,
+      Method method = InstanceAsyncClient.class.getMethod("stopInstancesInRegion", String.class,
                boolean.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                true, "1", "2");
@@ -176,7 +176,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    }
 
    public void testRebootInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("rebootInstancesInRegion", Region.class,
+      Method method = InstanceAsyncClient.class.getMethod("rebootInstancesInRegion", String.class,
                Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
@@ -195,7 +195,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    }
 
    public void testStartInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("startInstancesInRegion", Region.class,
+      Method method = InstanceAsyncClient.class.getMethod("startInstancesInRegion", String.class,
                Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
@@ -216,7 +216,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetUserDataForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getUserDataForInstanceInRegion",
-               Region.class, String.class);
+               String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -236,7 +236,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetRootDeviceNameForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getRootDeviceNameForInstanceInRegion",
-               Region.class, String.class);
+               String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -256,7 +256,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("getRamdiskForInstanceInRegion",
-               Region.class, String.class);
+               String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -276,7 +276,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetDisableApiTerminationForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
-               "isApiTerminationDisabledForInstanceInRegion", Region.class, String.class);
+               "isApiTerminationDisabledForInstanceInRegion", String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -296,7 +296,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("getKernelForInstanceInRegion",
-               Region.class, String.class);
+               String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -316,7 +316,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetInstanceTypeForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getInstanceTypeForInstanceInRegion",
-               Region.class, String.class);
+               String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -336,7 +336,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetInstanceInitiatedShutdownBehaviorForInstanceInRegion()
             throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
-               "getInstanceInitiatedShutdownBehaviorForInstanceInRegion", Region.class,
+               "getInstanceInitiatedShutdownBehaviorForInstanceInRegion", String.class,
                String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
@@ -358,7 +358,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetBlockDeviceMappingForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
-               "getBlockDeviceMappingForInstanceInRegion", Region.class, String.class);
+               "getBlockDeviceMappingForInstanceInRegion", String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
@@ -378,7 +378,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetUserDataForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setUserDataForInstanceInRegion",
-               Region.class, String.class, Array.newInstance(byte.class, 0).getClass());
+               String.class, String.class, Array.newInstance(byte.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "test".getBytes());
 
@@ -403,7 +403,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("setRamdiskForInstanceInRegion",
-               Region.class, String.class, String.class);
+               String.class, String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "test");
 
@@ -422,7 +422,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("setKernelForInstanceInRegion",
-               Region.class, String.class, String.class);
+               String.class, String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "test");
 
@@ -441,7 +441,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetApiTerminationDisabledForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
-               "setApiTerminationDisabledForInstanceInRegion", Region.class, String.class,
+               "setApiTerminationDisabledForInstanceInRegion", String.class, String.class,
                boolean.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", true);
@@ -463,7 +463,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetInstanceTypeForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion",
-               Region.class, String.class, String.class);
+               String.class, String.class, String.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", InstanceType.C1_MEDIUM);
 
@@ -484,7 +484,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetInstanceInitiatedShutdownBehaviorForInstanceInRegion()
             throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
-               "setInstanceInitiatedShutdownBehaviorForInstanceInRegion", Region.class,
+               "setInstanceInitiatedShutdownBehaviorForInstanceInRegion", String.class,
                String.class, InstanceInitiatedShutdownBehavior.class);
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", InstanceInitiatedShutdownBehavior.TERMINATE);
@@ -506,7 +506,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetBlockDeviceMappingForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
-               "setBlockDeviceMappingForInstanceInRegion", Region.class, String.class,
+               "setBlockDeviceMappingForInstanceInRegion", String.class, String.class,
                BlockDeviceMapping.class);
 
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();

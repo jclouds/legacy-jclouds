@@ -136,14 +136,14 @@ public class StubS3AsyncClient implements S3AsyncClient {
    public static final String DEFAULT_OWNER_ID = "abc123";
 
    @Override
-   public ListenableFuture<Boolean> putBucketInRegion(@Nullable Region region, String name,
+   public ListenableFuture<Boolean> putBucketInRegion(@Nullable String region, String name,
             PutBucketOptions... optionsList) {
       region = region == null ? Region.US_STANDARD : region;
       final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions()
                : optionsList[0];
       keyToAcl.put(name, options.getAcl());
-      return blobStore.createContainerInLocation(new LocationImpl(LocationScope.REGION, region
-               .value(), region.value(), null), name);
+      return blobStore.createContainerInLocation(new LocationImpl(LocationScope.REGION, region,
+              region, null), name);
    }
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name,
@@ -315,9 +315,9 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    @Override
-   public ListenableFuture<Region> getBucketLocation(String bucketName) {
+   public ListenableFuture<String> getBucketLocation(String bucketName) {
       Location location = containerToLocation.get(bucketName);
-      return immediateFuture(Region.fromValue(location.getId()));
+      return immediateFuture(location.getId());
    }
 
    @Override

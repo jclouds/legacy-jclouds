@@ -35,11 +35,11 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class RegionToEndpoint implements Function<Object, URI> {
-   private final Map<Region, URI> regionToEndpoint;
+   private final Map<String, URI> regionToEndpoint;
    private final URI defaultUri;
 
    @Inject
-   public RegionToEndpoint(@EC2 Map<Region, URI> regionToEndpoint, @EC2 URI defaultUri) {
+   public RegionToEndpoint(@EC2 Map<String, URI> regionToEndpoint, @EC2 URI defaultUri) {
       this.regionToEndpoint = regionToEndpoint;
       this.defaultUri = defaultUri;
    }

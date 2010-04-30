@@ -66,7 +66,7 @@ public class SQSClientLiveTest {
 
    @Test
    void testListQueuesInRegion() throws InterruptedException {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
          SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -82,7 +82,7 @@ public class SQSClientLiveTest {
    void testCreateQueue() throws InterruptedException {
       String queueName = PREFIX + "1";
 
-      for (final Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
+      for (final String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          try {
             SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region,
@@ -125,7 +125,7 @@ public class SQSClientLiveTest {
       }
    }
 
-   private void assertQueueInList(final Region region, Queue queue) throws InterruptedException {
+   private void assertQueueInList(final String region, Queue queue) throws InterruptedException {
       final Queue finalQ = queue;
       assertEventually(new Runnable() {
          public void run() {

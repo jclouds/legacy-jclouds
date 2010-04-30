@@ -31,12 +31,7 @@ import com.google.common.base.CaseFormat;
  *      "http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?LocationSelection.html" />
  * 
  */
-public enum Region {
-
-   /**
-    * Region returned is unknown.
-    */
-   UNKNOWN,
+public class Region {
 
    /**
     * EU (Ireland)
@@ -46,7 +41,7 @@ public enum Region {
     * In Amazon S3, the EU (Ireland) Region provides read-after-write consistency for PUTS of new
     * objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS and DELETES.
     */
-   EU_WEST_1,
+   public static final String EU_WEST_1 = "eu-west-1";
 
    /**
     * 
@@ -60,12 +55,12 @@ public enum Region {
     * with the lowest latency. To use this region, do not set the LocationConstraint bucket
     * parameter. The US Standard Region provides eventual consistency for all requests.
     */
-   US_STANDARD,
+   public static final String US_STANDARD = "us-standard";
    
    /**
     * 
     */
-   US_EAST_1,
+   public static final String US_EAST_1 = "us-east-1";
 
    /**
     * US-West (Northern California) <h3>S3</h3> Uses Amazon S3 servers in Northern California
@@ -78,21 +73,11 @@ public enum Region {
     * for PUTS of new objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS
     * and DELETES.
     */
-   US_WEST_1,
-   
-   AP_SOUTHEAST_1;
+   public static final String US_WEST_1 = "us-west-1";
 
-   public String value() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
-   }
-
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static Region fromValue(String region) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(region,
-               "region")));
-   }
+   /**
+    * Region in Singapore, launched April 28, 2010.
+    * This region improves latency for Asia-based users
+    */
+   public static final String AP_SOUTHEAST_1 = "ap-southeast-1";
 }

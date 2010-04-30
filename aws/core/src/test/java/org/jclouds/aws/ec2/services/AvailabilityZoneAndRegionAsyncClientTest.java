@@ -50,7 +50,7 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
    public void testDescribeAvailabilityZones() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = AvailabilityZoneAndRegionAsyncClient.class.getMethod(
-               "describeAvailabilityZonesInRegion", Region.class, Array.newInstance(
+               "describeAvailabilityZonesInRegion", String.class, Array.newInstance(
                         DescribeAvailabilityZonesOptions.class, 0).getClass());
       GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
                .createRequest(method, Region.US_WEST_1);
@@ -71,7 +71,7 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
    public void testDescribeAvailabilityZonesOptions() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = AvailabilityZoneAndRegionAsyncClient.class.getMethod(
-               "describeAvailabilityZonesInRegion", Region.class, Array.newInstance(
+               "describeAvailabilityZonesInRegion", String.class, Array.newInstance(
                         DescribeAvailabilityZonesOptions.class, 0).getClass());
       GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
                .createRequest(method, Region.US_EAST_1, availabilityZones(

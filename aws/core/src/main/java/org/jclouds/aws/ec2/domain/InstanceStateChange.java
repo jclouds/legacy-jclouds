@@ -31,7 +31,7 @@ import org.jclouds.aws.domain.Region;
  */
 public class InstanceStateChange implements Comparable<InstanceStateChange> {
 
-   private final Region region;
+   private final String region;
    private final String instanceId;
    private final InstanceState currentState;
    private final InstanceState previousState;
@@ -40,7 +40,7 @@ public class InstanceStateChange implements Comparable<InstanceStateChange> {
       return (this == o) ? 0 : getInstanceId().compareTo(o.getInstanceId());
    }
 
-   public InstanceStateChange(Region region, String instanceId, InstanceState currentState,
+   public InstanceStateChange(String region, String instanceId, InstanceState currentState,
             InstanceState previousState) {
       this.region = checkNotNull(region, "region");
       this.instanceId = instanceId;
@@ -51,7 +51,7 @@ public class InstanceStateChange implements Comparable<InstanceStateChange> {
    /**
     * Instances are tied to Availability Zones. However, the instance ID is tied to the Region.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

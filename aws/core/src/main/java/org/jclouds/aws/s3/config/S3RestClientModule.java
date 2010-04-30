@@ -102,18 +102,18 @@ public class S3RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @S3
-   Map<Region, URI> provideRegions(
+   Map<String, URI> provideRegions(
             @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_STANDARD) String usstandard,
             @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_WEST_1) String uswest,
             @Named(S3Constants.PROPERTY_S3_ENDPOINT_EU_WEST_1) String euwest) {
-      return ImmutableMap.<Region, URI> of(Region.US_STANDARD, URI.create(usstandard),
+      return ImmutableMap.<String, URI> of(Region.US_STANDARD, URI.create(usstandard),
                Region.US_WEST_1, URI.create(uswest), Region.EU_WEST_1, URI.create(euwest));
    }
 
    @Provides
    @Singleton
    @S3
-   Set<Region> provideRegions(@S3 Map<Region, URI> map) {
+   Set<String> provideRegions(@S3 Map<String, URI> map) {
       return map.keySet();
    }
 
@@ -127,8 +127,8 @@ public class S3RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @S3
-   Region getDefaultRegion(@S3 URI uri, @S3 Map<Region, URI> map) {
-      return ImmutableBiMap.<Region, URI> builder().putAll(map).build().inverse().get(uri);
+   String getDefaultRegion(@S3 URI uri, @S3 Map<String, URI> map) {
+      return ImmutableBiMap.<String, URI> builder().putAll(map).build().inverse().get(uri);
    }
 
    @Provides

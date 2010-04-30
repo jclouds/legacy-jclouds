@@ -62,12 +62,12 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/regionEndpoints.xml");
 
-      Map<Region, URI> expected = ImmutableMap.<Region, URI> of(Region.EU_WEST_1, URI
+      Map<String, URI> expected = ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
                .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
                .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
                .create("https://ec2.us-west-1.amazonaws.com"));
 
-      Map<Region, URI> result = factory.create(
+      Map<String, URI> result = factory.create(
                injector.getInstance(DescribeRegionsResponseHandler.class)).parse(is);
 
       assertEquals(result, expected);
@@ -77,13 +77,13 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/regionEndpoints-additional.xml");
 
-      Map<Region, URI> expected = ImmutableMap.<Region, URI> of(Region.UNKNOWN, URI
+      Map<String, URI> expected = ImmutableMap.<String, URI> of("jp-west-1", URI
                .create("https://ec2.jp-west-1.amazonaws.com"), Region.EU_WEST_1, URI
                .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
                .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
                .create("https://ec2.us-west-1.amazonaws.com"));
 
-      Map<Region, URI> result = factory.create(
+      Map<String, URI> result = factory.create(
                injector.getInstance(DescribeRegionsResponseHandler.class)).parse(is);
 
       assertEquals(result, expected);

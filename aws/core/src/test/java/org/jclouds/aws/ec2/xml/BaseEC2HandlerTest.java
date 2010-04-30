@@ -40,7 +40,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class BaseEC2HandlerTest extends BaseHandlerTest {
-   protected Region defaultRegion = Region.US_EAST_1;
+   protected String defaultRegion = Region.US_EAST_1;
 
    public BaseEC2HandlerTest() {
       super();
@@ -60,15 +60,15 @@ public class BaseEC2HandlerTest extends BaseHandlerTest {
          @Singleton
          @Provides
          @EC2
-         Region provideDefaultRegion() {
+         String provideDefaultRegion() {
             return defaultRegion;
          }
 
          @SuppressWarnings("unused")
          @Singleton
          @Provides
-         Map<AvailabilityZone, Region> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<AvailabilityZone, Region> of(AvailabilityZone.US_EAST_1A,
+         Map<AvailabilityZone, String> provideAvailabilityZoneRegionMap() {
+            return ImmutableMap.<AvailabilityZone, String> of(AvailabilityZone.US_EAST_1A,
                      Region.US_EAST_1);
          }
       });

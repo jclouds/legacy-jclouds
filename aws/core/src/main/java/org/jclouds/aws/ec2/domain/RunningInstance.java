@@ -116,7 +116,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
    }
 
-   private final Region region;
+   private final String region;
    private final String amiLaunchIndex;
    @Nullable
    private final String dnsName;
@@ -157,7 +157,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
-   public RunningInstance(Region region, @Nullable String amiLaunchIndex, @Nullable String dnsName,
+   public RunningInstance(String region, @Nullable String amiLaunchIndex, @Nullable String dnsName,
             String imageId, String instanceId, InstanceState instanceState,
             String instanceType, @Nullable InetAddress ipAddress, @Nullable String kernelId,
             @Nullable String keyName, Date launchTime, boolean monitoring,
@@ -195,7 +195,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * Instance Ids are scoped to the region.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

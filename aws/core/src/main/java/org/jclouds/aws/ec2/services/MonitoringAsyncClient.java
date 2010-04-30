@@ -62,7 +62,7 @@ public interface MonitoringAsyncClient {
    @FormParams(keys = ACTION, values = "MonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
    ListenableFuture<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -74,7 +74,7 @@ public interface MonitoringAsyncClient {
    @FormParams(keys = ACTION, values = "UnmonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
    ListenableFuture<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 }

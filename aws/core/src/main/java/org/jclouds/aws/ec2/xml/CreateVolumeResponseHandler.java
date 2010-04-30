@@ -54,9 +54,9 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    protected DateService dateService;
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
    @Inject
-   protected Map<AvailabilityZone, Region> availabilityZoneToRegion;
+   protected Map<AvailabilityZone, String> availabilityZoneToRegion;
 
    private String id;
    private int size;
@@ -74,7 +74,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
 
    private boolean inAttachmentSet;
 
-   private Region region;
+   private String region;
 
    public Volume getResult() {
       return newVolume();

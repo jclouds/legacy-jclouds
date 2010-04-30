@@ -117,7 +117,7 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("deleteVolumeInRegion",
-               Region.class, String.class);
+               String.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "id");
 
@@ -135,9 +135,9 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testDescribeVolumes() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion",
-               Region.class, Array.newInstance(String.class, 0).getClass());
+               String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
-               method, (Region) null);
+               method, (String) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -154,7 +154,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testDescribeVolumesArgs() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion",
-               Region.class, Array.newInstance(String.class, 0).getClass());
+               String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "1", "2");
 
@@ -173,7 +173,7 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("attachVolumeInRegion",
-               Region.class, String.class, String.class, String.class);
+               String.class, String.class, String.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "id", "instanceId", "/device");
 
@@ -192,7 +192,7 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
-               Region.class, String.class, boolean.class, Array.newInstance(
+               String.class, String.class, boolean.class, Array.newInstance(
                         DetachVolumeOptions.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "id", false);
@@ -213,7 +213,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testDetachVolumeOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
-               Region.class, String.class, boolean.class, Array.newInstance(
+               String.class, String.class, boolean.class, Array.newInstance(
                         DetachVolumeOptions.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "id", true, fromInstance("instanceId").fromDevice("/device"));
@@ -234,7 +234,7 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testCreateSnapshot() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion",
-               Region.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
+               String.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
                         .getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "volumeId");
@@ -254,7 +254,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testCreateSnapshotOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion",
-               Region.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
+               String.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
                         .getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "volumeId", CreateSnapshotOptions.Builder
@@ -275,9 +275,9 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testDescribeSnapshots() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion",
-               Region.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
+               String.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
-               method, (Region) null);
+               method, (String) null);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -294,7 +294,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testDescribeSnapshotsArgs() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion",
-               Region.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
+               String.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, ownedBy("o1", "o2").restorableBy("r1", "r2").snapshotIds("s1", "s2"));
 
@@ -315,7 +315,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testGetCreateVolumePermissionForSnapshot() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "getCreateVolumePermissionForSnapshotInRegion", Region.class, String.class);
+               "getCreateVolumePermissionForSnapshotInRegion", String.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "snapshotId");
 
@@ -336,7 +336,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testAddCreateVolumePermissionsToSnapshot() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "addCreateVolumePermissionsToSnapshotInRegion", Region.class, Iterable.class,
+               "addCreateVolumePermissionsToSnapshotInRegion", String.class, Iterable.class,
                Iterable.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, ImmutableList.of("bob", "sue"), ImmutableList.of("all"), "snapshotId");
@@ -358,7 +358,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testRemoveCreateVolumePermissionsFromSnapshot() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "removeCreateVolumePermissionsFromSnapshotInRegion", Region.class, Iterable.class,
+               "removeCreateVolumePermissionsFromSnapshotInRegion", String.class, Iterable.class,
                Iterable.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, ImmutableList.of("bob", "sue"), ImmutableList.of("all"), "snapshotId");
@@ -379,7 +379,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testResetCreateVolumePermissionsOnSnapshot() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "resetCreateVolumePermissionsOnSnapshotInRegion", Region.class, String.class);
+               "resetCreateVolumePermissionsOnSnapshotInRegion", String.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, null, "snapshotId");
 

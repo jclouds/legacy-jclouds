@@ -51,7 +51,7 @@ public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<Inst
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
 
    SortedSet<InstanceStateChange> instances = Sets.newTreeSet();
    private InstanceState shutdownState;
@@ -90,7 +90,7 @@ public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<Inst
             previousState = InstanceState.fromValue(currentOrNull());
          }
       } else if (qName.equals("item")) {
-         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         String region = EC2Utils.findRegionInArgsOrNull(request);
          if (region == null)
             region = defaultRegion;
          instances.add(new InstanceStateChange(region, instanceId, shutdownState, previousState));

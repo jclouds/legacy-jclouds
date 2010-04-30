@@ -36,14 +36,14 @@ import org.jclouds.http.functions.ParseSax;
 public class KeyPairResponseHandler extends ParseSax.HandlerWithResult<KeyPair> {
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
    private StringBuilder currentText = new StringBuilder();
    private String keyFingerprint;
    private String keyMaterial;
    private String keyName;
 
    public KeyPair getResult() {
-      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      String region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null)
          region = defaultRegion;
       return new KeyPair(region, keyName, keyFingerprint, keyMaterial);

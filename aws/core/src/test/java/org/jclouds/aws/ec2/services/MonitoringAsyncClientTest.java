@@ -42,7 +42,7 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
    public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion",
-               Region.class, String.class, Array.newInstance(String.class, 0).getClass());
+               String.class, String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<MonitoringAsyncClient> httpMethod = processor.createRequest(method,
                null, "instance1", "instance2");
 
@@ -61,7 +61,7 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
 
    public void testMonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion",
-               Region.class, String.class, Array.newInstance(String.class, 0).getClass());
+               String.class, String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<MonitoringAsyncClient> httpMethod = processor.createRequest(method,
                null, "instance1", "instance2");
 

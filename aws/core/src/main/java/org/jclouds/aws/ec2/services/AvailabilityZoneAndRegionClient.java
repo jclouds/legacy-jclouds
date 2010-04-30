@@ -49,7 +49,7 @@ public interface AvailabilityZoneAndRegionClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAvailabilityZones.html"
     *      />
     */
-   Set<AvailabilityZoneInfo> describeAvailabilityZonesInRegion(@Nullable Region region,
+   Set<AvailabilityZoneInfo> describeAvailabilityZonesInRegion(@Nullable String region,
             DescribeAvailabilityZonesOptions... options);
 
    /**
@@ -62,5 +62,5 @@ public interface AvailabilityZoneAndRegionClient {
     *      />
     */
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-   Map<Region, URI> describeRegions(DescribeRegionsOptions... options);
+   Map<String, URI> describeRegions(DescribeRegionsOptions... options);
 }

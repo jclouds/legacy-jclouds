@@ -66,7 +66,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateSecurityGroup")
    ListenableFuture<Void> createSecurityGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("GroupName") String name, @FormParam("GroupDescription") String description);
 
    /**
@@ -77,7 +77,7 @@ public interface SecurityGroupAsyncClient {
    @FormParams(keys = ACTION, values = "DeleteSecurityGroup")
    @ExceptionParser(ReturnVoidOnGroupNotFound.class)
    ListenableFuture<Void> deleteSecurityGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("GroupName") String name);
 
    /**
@@ -88,7 +88,7 @@ public interface SecurityGroupAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
    @XMLResponseParser(DescribeSecurityGroupsResponseHandler.class)
    ListenableFuture<? extends SortedSet<SecurityGroup>> describeSecurityGroupsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindGroupNameToIndexedFormParams.class) String... securityGroupNames);
 
    /**
@@ -98,7 +98,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
    ListenableFuture<Void> authorizeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("GroupName") String groupName,
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
 
@@ -110,7 +110,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
    ListenableFuture<Void> authorizeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("GroupName") String groupName,
             @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
             @FormParam("ToPort") int toPort, @FormParam("CidrIp") String cidrIp);
@@ -122,7 +122,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
    ListenableFuture<Void> revokeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("GroupName") String groupName,
             @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
 
@@ -134,7 +134,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
    ListenableFuture<Void> revokeSecurityGroupIngressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("GroupName") String groupName,
             @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
             @FormParam("ToPort") int toPort, @FormParam("CidrIp") String cidrIp);

@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
 public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<Set<KeyPair>> {
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
    private Set<KeyPair> keyPairs = Sets.newLinkedHashSet();
@@ -56,7 +56,7 @@ public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<
       if (qName.equals("keyFingerprint")) {
          this.keyFingerprint = currentText.toString().trim();
       } else if (qName.equals("item")) {
-         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         String region = EC2Utils.findRegionInArgsOrNull(request);
          if (region == null)
             region = defaultRegion;
          keyPairs.add(new KeyPair(region, keyName, keyFingerprint, null));

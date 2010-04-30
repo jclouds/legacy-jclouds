@@ -40,31 +40,25 @@ import org.jclouds.rest.binders.BindToStringPayload;
 @Singleton
 public class BindRegionToXmlPayload extends BindToStringPayload {
 
-   private final Region defaultRegion;
+   private final String defaultRegion;
 
    @Inject
-   BindRegionToXmlPayload(@S3 Region defaultRegion) {
+   BindRegionToXmlPayload(@S3 String defaultRegion) {
       this.defaultRegion = defaultRegion;
    }
 
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
       input = input == null ? defaultRegion : input;
-      checkArgument(input instanceof Region, "this binder is only valid for Region!");
-      Region constraint = (Region) input;
+      checkArgument(input instanceof String, "this binder is only valid for Region!");
+      String constraint = (String) input;
       String value = null;
-      switch (constraint) {
-         case US_STANDARD:
-         case US_EAST_1:
-            // nothing to bind as this is default.
-            return;
-         case EU_WEST_1:
-            value = "EU";
-            break;
-         case US_WEST_1:
-            value = "us-west-1";
-            break;
-         default:
+      if(Region.US_STANDARD.equals(constraint) || Region.US_EAST_1.equals(constraint)) {
+         // nothing to bind as this is default.
+         return;
+      } else if(Region.EU_WEST_1.equals(constraint)) value = "EU";
+      else if(Region.US_WEST_1.equals(constraint)) value = "us-west-1";
+      else {
             throw new IllegalStateException("unimplemented location: " + this);
       }
       String payload = String

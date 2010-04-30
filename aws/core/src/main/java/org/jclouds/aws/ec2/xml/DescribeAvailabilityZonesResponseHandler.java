@@ -44,7 +44,7 @@ public class DescribeAvailabilityZonesResponseHandler extends
    private AvailabilityZone zone;
    @Resource
    protected Logger logger = Logger.NULL;
-   private Region region;
+   private String region;
    private String zoneName;
    private State zoneState;
    private boolean inMessageSet;
@@ -71,10 +71,10 @@ public class DescribeAvailabilityZonesResponseHandler extends
          }
       } else if (qName.equals("regionName")) {
          try {
-            region = Region.fromValue(currentText.toString().trim());
+            region = currentText.toString().trim();
          } catch (IllegalArgumentException e) {
             logger.warn(e, "unsupported region: %s", currentText.toString().trim());
-            region = Region.UNKNOWN;
+            region = "UNKNOWN";
          }
       } else if (qName.equals("zoneState")) {
          try {

@@ -75,9 +75,9 @@ public class SQSRestClientModuleTest {
 
    @Test
    void testRegions() {
-      Map<Region, URI> regionMap = createInjector().getInstance(new Key<Map<Region, URI>>(SQS.class) {
+      Map<String, URI> regionMap = createInjector().getInstance(new Key<Map<String, URI>>(SQS.class) {
       });
-      assertEquals(regionMap, ImmutableMap.<Region, URI> of(Region.US_EAST_1, URI
+      assertEquals(regionMap, ImmutableMap.<String, URI> of(Region.US_EAST_1, URI
                .create("https://queue.amazonaws.com"), Region.US_WEST_1, URI
                .create("https://us-west-1.queue.amazonaws.com"), Region.EU_WEST_1, URI
                .create("https://eu-west-1.queue.amazonaws.com")));

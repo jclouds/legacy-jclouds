@@ -132,7 +132,7 @@ public class S3BlobStore extends BaseBlobStore {
    @Override
    public boolean createContainerInLocation(Location location, String container) {
       location = location != null ? location : defaultLocation;
-      return sync.putBucketInRegion(Region.fromValue(location.getId()), container);
+      return sync.putBucketInRegion(location.getId(), container);
    }
 
    /**

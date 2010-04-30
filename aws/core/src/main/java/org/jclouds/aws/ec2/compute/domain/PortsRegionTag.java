@@ -19,8 +19,6 @@
 
 package org.jclouds.aws.ec2.compute.domain;
 
-import org.jclouds.aws.domain.Region;
-
 /**
  * 
  * @author Adrian Cole
@@ -28,7 +26,7 @@ import org.jclouds.aws.domain.Region;
 public class PortsRegionTag extends RegionTag {
    private final int[] ports;
 
-   public PortsRegionTag(Region region, String tag, int[] ports) {
+   public PortsRegionTag(String region, String tag, int[] ports) {
       super(region, tag);
       this.ports = ports;
    }

@@ -33,27 +33,22 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<Map<Region, URI>> {
+public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<Map<String, URI>> {
    private StringBuilder currentText = new StringBuilder();
 
-   private Map<Region, URI> regionEndpoints = Maps.newHashMap();
-   private Region region;
+   private Map<String, URI> regionEndpoints = Maps.newHashMap();
+   private String region;
    private URI regionEndpoint;
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public Map<Region, URI> getResult() {
+   public Map<String, URI> getResult() {
       return regionEndpoints;
    }
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("regionName")) {
-         try {
-            region = Region.fromValue(currentText.toString().trim());
-         } catch (IllegalArgumentException e) {
-            logger.warn(e, "unsupported region: %s", currentText.toString().trim());
-            region = Region.UNKNOWN;
-         }
+         region = currentText.toString().trim();
       } else if (qName.equals("regionEndpoint")) {
          regionEndpoint = URI.create(String.format("https://%s", currentText.toString().trim()));
       } else if (qName.equals("item")) {

@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
@@ -58,7 +57,7 @@ public interface AMIClient {
     * @see DescribeImagesOptions
     */
    @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-   Set<Image> describeImagesInRegion(@Nullable Region region, DescribeImagesOptions... options);
+   Set<Image> describeImagesInRegion(@Nullable String region, DescribeImagesOptions... options);
 
    /**
     * Returns the Product Codes of an image.
@@ -74,7 +73,7 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   Set<String> getProductCodesForImageInRegion(@Nullable Region region, String imageId);
+   Set<String> getProductCodesForImageInRegion(@Nullable String region, String imageId);
 
    /**
     * Returns a map of device name to block device for the image.
@@ -90,7 +89,7 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   Map<String, EbsBlockDevice> getBlockDeviceMappingsForImageInRegion(@Nullable Region region, String imageId);
+   Map<String, EbsBlockDevice> getBlockDeviceMappingsForImageInRegion(@Nullable String region, String imageId);
 
    /**
     * Creates an AMI that uses an Amazon EBS root device from a "running" or "stopped" instance.
@@ -114,7 +113,7 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html"
     *      />
     */
-   String createImageInRegion(@Nullable Region region, String name, String instanceId,
+   String createImageInRegion(@Nullable String region, String name, String instanceId,
             CreateImageOptions... options);
 
    /**
@@ -134,7 +133,7 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeregisterImage.html"
     *      />
     */
-   void deregisterImageInRegion(@Nullable Region region, String imageId);
+   void deregisterImageInRegion(@Nullable String region, String imageId);
 
    /**
     * Registers an AMI with Amazon EC2. Images must be registered before they can be launched. To
@@ -164,7 +163,7 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RegisterImage.html"
     *      />
     */
-   String registerImageFromManifestInRegion(@Nullable Region region, String name, String pathToManifest,
+   String registerImageFromManifestInRegion(@Nullable String region, String name, String pathToManifest,
             RegisterImageOptions... options);
 
    /**
@@ -199,7 +198,7 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RegisterImage.html"
     *      />
     */
-   String registerUnixImageBackedByEbsInRegion(@Nullable Region region, String name, String ebsSnapshotId,
+   String registerUnixImageBackedByEbsInRegion(@Nullable String region, String name, String ebsSnapshotId,
             RegisterImageBackedByEbsOptions... options);
    
    /**
@@ -216,7 +215,7 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   Permission getLaunchPermissionForImageInRegion(@Nullable Region region, String imageId);
+   Permission getLaunchPermissionForImageInRegion(@Nullable String region, String imageId);
 
    /**
     * Adds {@code launchPermission}s to an AMI.
@@ -236,7 +235,7 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void addLaunchPermissionsToImageInRegion(@Nullable Region region, Iterable<String> userIds,
+   void addLaunchPermissionsToImageInRegion(@Nullable String region, Iterable<String> userIds,
             Iterable<String> userGroups, String imageId);
 
    /**
@@ -253,7 +252,7 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ResetImageAttribute.html"
     *      />
     */
-   void resetLaunchPermissionsOnImageInRegion(@Nullable Region region, String imageId);
+   void resetLaunchPermissionsOnImageInRegion(@Nullable String region, String imageId);
 
    /**
     * Removes {@code launchPermission}s from an AMI.
@@ -273,7 +272,7 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void removeLaunchPermissionsFromImageInRegion(@Nullable Region region, Iterable<String> userIds,
+   void removeLaunchPermissionsFromImageInRegion(@Nullable String region, Iterable<String> userIds,
             Iterable<String> userGroups, String imageId);
 
    /**
@@ -292,7 +291,7 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void addProductCodesToImageInRegion(@Nullable Region region, Iterable<String> productCodes, String imageId);
+   void addProductCodesToImageInRegion(@Nullable String region, Iterable<String> productCodes, String imageId);
 
    /**
     * Removes {@code productCode}s from an AMI.
@@ -310,6 +309,6 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void removeProductCodesFromImageInRegion(@Nullable Region region, Iterable<String> productCodes,
+   void removeProductCodesFromImageInRegion(@Nullable String region, Iterable<String> productCodes,
             String imageId);
 }

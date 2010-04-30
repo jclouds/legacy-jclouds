@@ -36,7 +36,7 @@ import org.jclouds.date.DateService;
 public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation> {
 
    @Inject
-   RunInstancesResponseHandler(DateService dateService, @EC2 Region defaultRegion) {
+   RunInstancesResponseHandler(DateService dateService, @EC2 String defaultRegion) {
       super(dateService, defaultRegion);
    }
 

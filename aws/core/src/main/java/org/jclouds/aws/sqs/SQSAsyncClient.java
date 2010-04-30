@@ -65,7 +65,7 @@ public interface SQSAsyncClient {
    @FormParams(keys = ACTION, values = "ListQueues")
    @ResponseParser(RegexListQueuesResponseHandler.class)
    ListenableFuture<? extends Set<Queue>> listQueuesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             ListQueuesOptions... options);
 
    /**
@@ -76,7 +76,7 @@ public interface SQSAsyncClient {
    @FormParams(keys = ACTION, values = "CreateQueue")
    @ResponseParser(RegexQueueHandler.class)
    ListenableFuture<Queue> createQueueInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("QueueName") String queueName, CreateQueueOptions... options);
 
    /**

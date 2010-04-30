@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.options;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
@@ -46,10 +47,8 @@ public class DescribeRegionsOptions extends BaseEC2RequestOptions {
    /**
     * Name of a Region.
     */
-   public DescribeRegionsOptions regions(Region... regions) {
-      String[] regionStrings = new String[regions.length];
-      for (int i = 0; i < regionStrings.length; i++)
-         regionStrings[i] = regions[i].value();
+   public DescribeRegionsOptions regions(String... regions) {
+      String[] regionStrings = Arrays.copyOf(regions, regions.length, String[].class);
       indexFormValuesWithPrefix("RegionName", regionStrings);
       return this;
    }
@@ -63,7 +62,7 @@ public class DescribeRegionsOptions extends BaseEC2RequestOptions {
       /**
        * @see DescribeRegionsOptions#regions(Region[] )
        */
-      public static DescribeRegionsOptions regions(Region... regions) {
+      public static DescribeRegionsOptions regions(String... regions) {
          DescribeRegionsOptions options = new DescribeRegionsOptions();
          return options.regions(regions);
       }

@@ -91,11 +91,11 @@ public class SQSRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @SQS
-   Map<Region, URI> provideRegions(
+   Map<String, URI> provideRegions(
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1) String useast,
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1) String uswest,
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1) String euwest) {
-      return ImmutableMap.<Region, URI> of(Region.US_EAST_1, URI.create(useast), Region.US_WEST_1,
+      return ImmutableMap.<String, URI> of(Region.US_EAST_1, URI.create(useast), Region.US_WEST_1,
                URI.create(uswest), Region.EU_WEST_1, URI.create(euwest));
    }
 
@@ -109,8 +109,8 @@ public class SQSRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @SQS
-   Region getDefaultRegion(@SQS URI uri, @SQS Map<Region, URI> map) {
-      return ImmutableBiMap.<Region, URI> builder().putAll(map).build().inverse().get(uri);
+   String getDefaultRegion(@SQS URI uri, @SQS Map<String, URI> map) {
+      return ImmutableBiMap.<String, URI> builder().putAll(map).build().inverse().get(uri);
    }
 
    @Provides

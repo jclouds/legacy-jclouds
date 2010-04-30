@@ -48,14 +48,14 @@ public class Attachment implements Comparable<Attachment> {
       }
    }
 
-   private final Region region;
+   private final String region;
    private final String volumeId;
    private final String instanceId;
    private final String device;
    private final Status status;
    private final Date attachTime;
 
-   public Attachment(Region region, String volumeId, String instanceId, String device,
+   public Attachment(String region, String volumeId, String instanceId, String device,
             Status status, Date attachTime) {
       this.region = checkNotNull(region, "region");
       this.volumeId = volumeId;
@@ -69,7 +69,7 @@ public class Attachment implements Comparable<Attachment> {
     * Snapshots are tied to Regions and can only be used for volumes within the same Region.
     * 
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 
