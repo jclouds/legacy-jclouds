@@ -55,7 +55,8 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.GetNodesOptions;
-import org.jclouds.compute.predicates.RunScriptRunning;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -76,7 +77,6 @@ import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
-import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -274,8 +274,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
       @Override
       public NodeMetadata apply(Server from) {
-    	  
-         Location location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(), from.getLocation().getName(), null);
+
+         Location location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(), from
+                  .getLocation().getName(), null);
          String tag = from.getName().replaceAll("-[0-9]+", "");
          Credentials creds = null;
          NodeState state = runningStateToNodeState.get(from.getState());
@@ -320,8 +321,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    @Provides
    @Singleton
    @Named("NOT_RUNNING")
-   protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
-      return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
+   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
+      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
    }
 
@@ -378,9 +379,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
             sizes.add(new SizeImpl(from.getId(), from.getId(), locations.get(from.getDataCenter()
-                     .getId()), null, ImmutableMap.<String, String> of(), 1, from
-                     .getRam(), from.getDiskSize(), ImmutableSet.<Architecture> of(
-                     Architecture.X86_32, Architecture.X86_64)));
+                     .getId()), null, ImmutableMap.<String, String> of(), 1, from.getRam(), from
+                     .getDiskSize(), ImmutableSet.<Architecture> of(Architecture.X86_32,
+                     Architecture.X86_64)));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }

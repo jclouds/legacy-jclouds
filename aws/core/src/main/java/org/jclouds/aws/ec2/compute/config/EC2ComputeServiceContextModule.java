@@ -65,7 +65,8 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.GetNodesOptions;
-import org.jclouds.compute.predicates.RunScriptRunning;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -78,7 +79,6 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.SshClient;
 import org.jclouds.util.Jsr330;
 
 import com.google.common.base.Function;
@@ -208,8 +208,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Singleton
    @Named("NOT_RUNNING")
-   protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
-      return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
+   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
+      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
    }
 

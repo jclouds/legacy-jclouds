@@ -47,6 +47,7 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
@@ -69,7 +70,6 @@ import com.google.common.io.Resources;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
-
 /**
  * 
  * @author Adrian Cole
@@ -80,7 +80,7 @@ public class ComputeUtils {
    protected Logger logger = Logger.NULL;
    @Inject(optional = true)
    private SshClient.Factory sshFactory;
-   protected final Predicate<SshClient> runScriptNotRunning;
+   protected final Predicate<CommandUsingClient> runScriptNotRunning;
    private final Predicate<InetSocketAddress> socketTester;
    private final ExecutorService executor;
 
@@ -88,7 +88,7 @@ public class ComputeUtils {
 
    @Inject
    public ComputeUtils(Predicate<InetSocketAddress> socketTester,
-            @Named("NOT_RUNNING") Predicate<SshClient> runScriptNotRunning,
+            @Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.socketTester = socketTester;
       this.runScriptNotRunning = runScriptNotRunning;
@@ -245,14 +245,14 @@ public class ComputeUtils {
 
    public static class RunScriptOnNode implements SshCallable<ExecResponse> {
       private SshClient ssh;
-      protected final Predicate<SshClient> runScriptNotRunning;
+      protected final Predicate<CommandUsingClient> runScriptNotRunning;
       private final NodeMetadata node;
       private final String scriptName;
       private final byte[] script;
       private final boolean runAsRoot;
       private Logger logger = Logger.NULL;
 
-      RunScriptOnNode(@Named("NOT_RUNNING") Predicate<SshClient> runScriptNotRunning,
+      RunScriptOnNode(@Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
                NodeMetadata node, String scriptName, byte[] script) {
          this.runScriptNotRunning = runScriptNotRunning;
          this.node = checkNotNull(node, "node");
@@ -264,7 +264,7 @@ public class ComputeUtils {
          this.runAsRoot = true;
       }
 
-      RunScriptOnNode(@Named("NOT_RUNNING") Predicate<SshClient> runScriptNotRunning,
+      RunScriptOnNode(@Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
                NodeMetadata node, String scriptName, byte[] script, boolean runAsRoot) {
          this.runScriptNotRunning = runScriptNotRunning;
          this.node = checkNotNull(node, "node");
@@ -286,7 +286,7 @@ public class ComputeUtils {
             returnVal = runScriptAsRoot();
          else
             returnVal = runScriptAsDefaultUser();
-         runScriptNotRunning.apply(ssh);
+         runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName + " status", ssh));
          logger.debug("<< complete(%d)", returnVal.getExitCode());
          return returnVal;
       }
@@ -398,32 +398,31 @@ public class ComputeUtils {
                         .getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(),
                newCredentials);
    }
-   
+
    /**
-    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds).
-    * Uses compute.properties to populate the set.
+    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
+    * compute.properties to populate the set.
     * 
     * XXX: Pass in extra properties to support ones that aren't in compute.properties
     */
-	public static Set<String> getSupportedProviders() {
-		Properties properties = new Properties();
-		try {
-			properties.load(Resources.newInputStreamSupplier(
-					Resources.getResource("compute.properties")).getInput());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		Set<Object> keys = properties.keySet();
+   public static Set<String> getSupportedProviders() {
+      Properties properties = new Properties();
+      try {
+         properties.load(Resources.newInputStreamSupplier(
+                  Resources.getResource("compute.properties")).getInput());
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+      Set<Object> keys = properties.keySet();
 
-		Set<String> providers = new HashSet<String>();
+      Set<String> providers = new HashSet<String>();
 
-		for (Object key : keys) {
-			String keyString = key.toString();
-			if (keyString.endsWith(".contextbuilder")) {
-				providers.add(keyString.substring(0, keyString.length()
-						- ".contextbuilder".length()));
-			}
-		}
-		return providers;
-	}
+      for (Object key : keys) {
+         String keyString = key.toString();
+         if (keyString.endsWith(".contextbuilder")) {
+            providers.add(keyString.substring(0, keyString.length() - ".contextbuilder".length()));
+         }
+      }
+      return providers;
+   }
 }

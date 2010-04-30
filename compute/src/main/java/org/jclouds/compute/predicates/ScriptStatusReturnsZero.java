@@ -34,23 +34,36 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class RunScriptRunning implements Predicate<SshClient> {
+public class ScriptStatusReturnsZero implements
+         Predicate<ScriptStatusReturnsZero.CommandUsingClient> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public boolean apply(SshClient ssh) {
-      logger.trace("looking for runscript state on %s@%s", ssh.getUsername(), ssh.getHostAddress());
-      ExecResponse response = refresh(ssh);
+   @Override
+   public boolean apply(CommandUsingClient commandUsingClient) {
+      logger.trace("looking for [%s] state on %s@%s", commandUsingClient.command,
+               commandUsingClient.client.getUsername(), commandUsingClient.client.getHostAddress());
+      ExecResponse response = refresh(commandUsingClient);
       while (response.getExitCode() == -1)
-         response = refresh(ssh);
-      logger.trace("%s@%s: looking for exit code 0: currently: %s", ssh.getUsername(), ssh
-               .getHostAddress(), response.getExitCode());
+         response = refresh(commandUsingClient);
+      logger.trace("%s@%s: looking for exit code 0: currently: %s", commandUsingClient.client
+               .getUsername(), commandUsingClient.client.getHostAddress(), response.getExitCode());
       return 0 == response.getExitCode();
-
    }
 
-   private ExecResponse refresh(SshClient ssh) {
-      return ssh.exec("./runscript.sh status");
+   private ExecResponse refresh(CommandUsingClient commandUsingClient) {
+      return commandUsingClient.client.exec(commandUsingClient.command);
+   }
+
+   public static class CommandUsingClient {
+
+      public CommandUsingClient(String command, SshClient client) {
+         this.command = command;
+         this.client = client;
+      }
+
+      private final String command;
+      private final SshClient client;
    }
 }

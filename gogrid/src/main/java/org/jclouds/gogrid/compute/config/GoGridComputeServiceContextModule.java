@@ -49,7 +49,8 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.GetNodesOptions;
-import org.jclouds.compute.predicates.RunScriptRunning;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -74,7 +75,6 @@ import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -267,8 +267,8 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
    @Provides
    @Singleton
    @Named("NOT_RUNNING")
-   protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
-      return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
+   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
+      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
    }
 
