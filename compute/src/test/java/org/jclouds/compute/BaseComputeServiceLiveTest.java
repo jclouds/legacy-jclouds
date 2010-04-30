@@ -54,6 +54,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -146,6 +147,12 @@ public abstract class BaseComputeServiceLiveTest {
 
    abstract protected Module getSshModule();
 
+   @Test(enabled = true, expectedExceptions = AuthorizationException.class)
+   public void testCorrectAuthException() throws Exception {
+      new ComputeServiceContextFactory().createContext(service, "MOMMA", "MIA").close();
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesCache() throws Exception {
       client.getImages();
       long time = System.currentTimeMillis();

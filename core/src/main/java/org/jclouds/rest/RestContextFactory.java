@@ -29,11 +29,14 @@ import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.domain.Credentials;
+import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.inject.Module;
+import com.google.inject.ProvisionException;
 
 /**
  * Helper class to instantiate {@code RestContext} instances. "blobstore.properties"
@@ -175,8 +178,15 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
          B contextBuilder = (B) contextBuilderClass.getConstructor(Properties.class).newInstance(
                   builder.build()).withModules(Iterables.toArray(modules, Module.class));
          return build(contextBuilder);
+      } catch (ProvisionException e) {
+         Throwable throwable = Utils.firstRootCauseOrOriginalException(e);
+         Throwables.propagate(throwable);
+         assert false : "exception should have propogated " + e;
+         return null;
       } catch (Exception e) {
-         throw new RuntimeException("error instantiating " + contextBuilderClassName, e);
+         Throwables.propagate(Throwables.getRootCause(e));
+         assert false : "exception should have propogated " + e;
+         return null;
       }
    }
 

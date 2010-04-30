@@ -18,19 +18,32 @@
  */
 package org.jclouds.util;
 
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
+import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.ProvisionException;
+import com.google.inject.internal.ImmutableList;
+import com.google.inject.spi.Message;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "jclouds.UtilsTest")
 public class UtilsTest {
+
+   public void testGetCause() {
+      AuthorizationException aex = createMock(AuthorizationException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
+      assertEquals(Utils.firstRootCauseOrOriginalException(pex), aex);
+   }
 
    public void testReplaceTokens() throws UnsupportedEncodingException {
       assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")),

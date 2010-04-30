@@ -45,6 +45,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.OutputSupplier;
+import com.google.inject.ProvisionException;
+import com.google.inject.spi.Message;
 
 /**
  * General utilities used in jclouds code.
@@ -65,6 +67,16 @@ public class Utils {
       Throwables.propagate(from);
       assert false : "exception should have propogated";
       return null;
+   }
+
+   public static Throwable firstRootCauseOrOriginalException(ProvisionException e) {
+      for (Message message : e.getErrorMessages()) {
+         Throwable cause = Throwables.getRootCause(message.getCause());
+         if (cause instanceof ProvisionException)
+            return firstRootCauseOrOriginalException(ProvisionException.class.cast(cause));
+         return cause;
+      }
+      return e;
    }
 
    public static String replaceTokens(String value, Collection<Entry<String, String>> tokenValues) {
