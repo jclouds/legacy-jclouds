@@ -48,7 +48,7 @@ public class DescribeAddressesResponseHandler extends
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
    private String instanceId;
 
    protected String currentOrNull() {
@@ -62,7 +62,7 @@ public class DescribeAddressesResponseHandler extends
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("item")) {
-         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         String region = EC2Utils.findRegionInArgsOrNull(request);
          if (region == null)
             region = defaultRegion;
          pairs.add(new PublicIpInstanceIdPair(region, ipAddress, instanceId));

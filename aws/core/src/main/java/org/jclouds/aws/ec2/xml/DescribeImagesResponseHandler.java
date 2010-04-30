@@ -54,7 +54,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
    protected Logger logger = Logger.NULL;
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
    private Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
 
@@ -147,7 +147,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
             this.deleteOnTermination = true;
          } else if (!inProductCodes) {
             try {
-               Region region = EC2Utils.findRegionInArgsOrNull(request);
+               String region = EC2Utils.findRegionInArgsOrNull(request);
                if (region == null)
                   region = defaultRegion;
                contents.add(new Image(region, architecture,

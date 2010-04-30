@@ -31,7 +31,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.binders.BindACLToXMLPayload;
 import org.jclouds.aws.s3.binders.BindBucketLoggingToXmlPayload;
 import org.jclouds.aws.s3.binders.BindNoBucketLoggingToXmlPayload;
@@ -167,7 +166,7 @@ public interface S3AsyncClient {
    @ExceptionParser(ReturnFalseIfBucketAlreadyOwnedByYou.class)
    ListenableFuture<Boolean> putBucketInRegion(
             // TODO endpoint based on region
-            @BinderParam(BindRegionToXmlPayload.class) @Nullable Region region,
+            @BinderParam(BindRegionToXmlPayload.class) @Nullable String region,
             @HostPrefixParam String bucketName, PutBucketOptions... options);
 
    /**
@@ -194,7 +193,7 @@ public interface S3AsyncClient {
    @QueryParams(keys = "location")
    @Path("/")
    @XMLResponseParser(LocationConstraintHandler.class)
-   ListenableFuture<Region> getBucketLocation(@HostPrefixParam String bucketName);
+   ListenableFuture<String> getBucketLocation(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#getBucketPayer

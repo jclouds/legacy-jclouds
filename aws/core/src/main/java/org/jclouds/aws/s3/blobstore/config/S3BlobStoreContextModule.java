@@ -68,15 +68,15 @@ public class S3BlobStoreContextModule extends S3ContextModule {
 
    @Provides
    @Singleton
-   Location getDefaultLocation(@S3 Region region, Map<String, ? extends Location> locations) {
+   Location getDefaultLocation(@S3 String region, Map<String, ? extends Location> locations) {
       return locations.get(region.toString());
    }
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(@S3 Set<Region> regions) {
+   Map<String, ? extends Location> provideLocations(@S3 Set<String> regions) {
       Set<Location> locations = Sets.newHashSet();
-      for (Region zone : regions) {
+      for (String zone : regions) {
          locations
                   .add(new LocationImpl(LocationScope.ZONE, zone.toString(), zone.toString(), null));
       }

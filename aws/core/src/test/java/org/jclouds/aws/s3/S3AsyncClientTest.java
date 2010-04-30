@@ -380,10 +380,10 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
    public void testPutBucketDefault() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", Region.class,
+      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class,
                String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
       GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
-               (Region) null, "bucket");
+               (String) null, "bucket");
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 0\nHost: bucket.stub\n");
@@ -398,7 +398,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
    public void testPutBucketEu() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", Region.class,
+      Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class,
                String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
       GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
                Region.EU_WEST_1, "bucket");
@@ -547,7 +547,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
             Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user", "key")
                      .build(), "properties"));
             bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("http://stub:8080"));
-            bind(Region.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
+            bind(String.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

@@ -59,7 +59,7 @@ public class CreateNewKeyPair implements Function<RegionTag, KeyPair> {
       return createNewKeyPairInRegion(from.getRegion(), from.getTag());
    }
 
-   private KeyPair createNewKeyPairInRegion(Region region, String tag) {
+   private KeyPair createNewKeyPairInRegion(String region, String tag) {
       checkNotNull(region, "region");
       checkNotNull(tag, "tag");
       logger.debug(">> creating keyPair region(%s) tag(%s)", region, tag);

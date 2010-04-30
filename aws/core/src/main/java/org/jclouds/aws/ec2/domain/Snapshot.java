@@ -47,7 +47,7 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   private final Region region;
+   private final String region;
    private final String id;
    private final String volumeId;
    private final int volumeSize;
@@ -58,7 +58,7 @@ public class Snapshot implements Comparable<Snapshot> {
    private final String description;
    private final String ownerAlias;
 
-   public Snapshot(Region region, String id, String volumeId, int volumeSize, Status status,
+   public Snapshot(String region, String id, String volumeId, int volumeSize, Status status,
             Date startTime, int progress, String ownerId, String description, String ownerAlias) {
       this.region = checkNotNull(region, "region");
       this.id = id;
@@ -75,7 +75,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * Snapshots are tied to Regions and can only be used for volumes within the same Region.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

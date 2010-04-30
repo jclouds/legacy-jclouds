@@ -51,8 +51,8 @@ public class S3StubClientModule extends AbstractModule {
       install(new TransientBlobStoreModule());
       bind(S3AsyncClient.class).to(StubS3AsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
-      bind(Region.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
-      bind(new TypeLiteral<Set<Region>>() {
+      bind(String.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
+      bind(new TypeLiteral<Set<String>>() {
       }).annotatedWith(S3.class).toInstance(
                ImmutableSet.of(Region.US_STANDARD, Region.US_WEST_1, Region.EU_WEST_1));
    }

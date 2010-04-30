@@ -38,7 +38,7 @@ public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
    private StringBuilder currentText = new StringBuilder();
 
    protected final DateService dateService;
-   protected final Region defaultRegion;
+   protected final String defaultRegion;
 
    private String id;
    private String volumeId;
@@ -51,13 +51,13 @@ public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
    private String ownerAlias;
 
    @Inject
-   public SnapshotHandler(DateService dateService, @EC2 Region defaultRegion) {
+   public SnapshotHandler(DateService dateService, @EC2 String defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }
 
    public Snapshot getResult() {
-      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      String region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null)
          region = defaultRegion;
       Snapshot snapshot = new Snapshot(region, id, volumeId, volumeSize, status, startTime,

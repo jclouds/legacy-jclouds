@@ -79,7 +79,7 @@ public class Volume implements Comparable<Volume> {
       }
    }
 
-   private final Region region;
+   private final String region;
    private final String id;
    private final int size;
    @Nullable
@@ -89,7 +89,7 @@ public class Volume implements Comparable<Volume> {
    private final Date createTime;
    private final Set<Attachment> attachments = Sets.newLinkedHashSet();
 
-   public Volume(Region region, String id, int size, String snapshotId,
+   public Volume(String region, String id, int size, String snapshotId,
             AvailabilityZone availabilityZone, Volume.Status status, Date createTime,
             Iterable<Attachment> attachments) {
       this.region = checkNotNull(region, "region");
@@ -106,7 +106,7 @@ public class Volume implements Comparable<Volume> {
     * An Amazon EBS volume must be located within the same Availability Zone as the instance to
     * which it attaches.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

@@ -134,7 +134,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       @Override
       public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
          Set<NodeMetadata> nodes = Sets.newHashSet();
-         for (Region region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
+         for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
             Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
                      .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
          }
@@ -144,11 +144,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    }
 
    @Singleton
-   public static class GetRegionFromNodeOrDefault implements Function<ComputeMetadata, Region> {
-      public Region apply(ComputeMetadata node) {
+   public static class GetRegionFromNodeOrDefault implements Function<ComputeMetadata, String> {
+      public String apply(ComputeMetadata node) {
          Location location = node.getLocation();
-         Region region = location.getScope() == LocationScope.REGION ? Region.fromValue(location
-                  .getId()) : Region.fromValue(location.getParent());
+         String region = location.getScope() == LocationScope.REGION ? location
+                  .getId() : location.getParent();
          return region;
       }
    }
@@ -171,7 +171,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
       @Override
       public NodeMetadata execute(ComputeMetadata node) {
-         Region region = getRegionFromNodeOrDefault.apply(node);
+         String region = getRegionFromNodeOrDefault.apply(node);
          RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
                   client, region, node.getId()));
          return runningInstanceToNodeMetadata.apply(runningInstance);
@@ -180,7 +180,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    }
 
    public static Iterable<RunningInstance> getAllRunningInstancesInRegion(InstanceClient client,
-            Region region, String id) {
+            String region, String id) {
       return Iterables.concat(client.describeInstancesInRegion(region, id));
    }
 
@@ -198,7 +198,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
       @Override
       public boolean execute(ComputeMetadata node) {
-         Region region = getRegionFromNodeOrDefault.apply(node);
+         String region = getRegionFromNodeOrDefault.apply(node);
          client.rebootInstancesInRegion(region, node.getId());
          return true;
       }
@@ -257,23 +257,23 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(Map<AvailabilityZone, Region> map) {
+   Map<String, ? extends Location> provideLocations(Map<AvailabilityZone, String> availabilityZoneToRegionMap) {
       Map<String, Location> locations = Maps.newLinkedHashMap();
-      for (AvailabilityZone zone : map.keySet()) {
+      for (AvailabilityZone zone : availabilityZoneToRegionMap.keySet()) {
          locations.put(zone.toString(), new LocationImpl(LocationScope.ZONE, zone.toString(), zone
-                  .toString(), map.get(zone).toString()));
+                  .toString(), availabilityZoneToRegionMap.get(zone)));
       }
-      for (Region region : map.values()) {
-         locations.put(region.toString(), new LocationImpl(LocationScope.REGION, region.toString(),
-                  region.toString(), null));
+      for (String region : availabilityZoneToRegionMap.values()) {
+         locations.put(region, new LocationImpl(LocationScope.REGION, region,
+                  region, null));
       }
       return locations;
    }
 
    @Provides
    @Singleton
-   Location getDefaultLocation(@EC2 Region region, Map<String, ? extends Location> map) {
-      return map.get(region.toString());
+   Location getDefaultLocation(@EC2 String region, Map<String, ? extends Location> map) {
+      return map.get(region);
    }
 
    private static class LogHolder {
@@ -292,14 +292,14 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Singleton
    protected Map<String, ? extends Image> provideImages(final EC2Client sync,
-            @EC2 Map<Region, URI> regionMap, LogHolder holder,
+            @EC2 Map<String, URI> regionMap, LogHolder holder,
             Function<ComputeMetadata, String> indexer,
             @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, ImageParser parser)
             throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
 
-      for (final Region region : regionMap.keySet()) {
+      for (final String region : regionMap.keySet()) {
          for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
                   .describeImagesInRegion(region, ownedBy(amiOwners))) {
             Image image = parser.apply(from);

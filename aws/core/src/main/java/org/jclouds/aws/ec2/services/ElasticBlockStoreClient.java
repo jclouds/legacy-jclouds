@@ -138,7 +138,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html"
     *      />
     */
-   Set<Volume> describeVolumesInRegion(@Nullable Region region, String... volumeIds);
+   Set<Volume> describeVolumesInRegion(@Nullable String region, String... volumeIds);
 
    /**
     * Deletes an Amazon EBS volume that you own. For more information about Amazon EBS, go to the
@@ -159,7 +159,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteVolume.html"
     *      />
     */
-   void deleteVolumeInRegion(@Nullable Region region, String volumeId);
+   void deleteVolumeInRegion(@Nullable String region, String volumeId);
 
    /**
     * Attaches an Amazon EBS volume to a running instance and exposes it as the specified device.
@@ -199,7 +199,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DetachVolume.html"
     *      />
     */
-   void detachVolumeInRegion(@Nullable Region region, String volumeId, boolean force,
+   void detachVolumeInRegion(@Nullable String region, String volumeId, boolean force,
             DetachVolumeOptions... options);
 
    /**
@@ -232,7 +232,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AttachVolume.html"
     *      />
     */
-   Attachment attachVolumeInRegion(@Nullable Region region, String volumeId, String instanceId, String device);
+   Attachment attachVolumeInRegion(@Nullable String region, String volumeId, String instanceId, String device);
 
    /**
     * Creates a snapshot of an Amazon EBS volume and stores it in Amazon S3. You can use snapshots
@@ -269,7 +269,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSnapshot.html"
     *      />
     */
-   Snapshot createSnapshotInRegion(@Nullable Region region, String volumeId, CreateSnapshotOptions... options);
+   Snapshot createSnapshotInRegion(@Nullable String region, String volumeId, CreateSnapshotOptions... options);
 
    /**
     * Returns information about Amazon EBS snapshots available to the user. Information returned
@@ -330,7 +330,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSnapshots.html"
     *      />
     */
-   Set<Snapshot> describeSnapshotsInRegion(@Nullable Region region, DescribeSnapshotsOptions... options);
+   Set<Snapshot> describeSnapshotsInRegion(@Nullable String region, DescribeSnapshotsOptions... options);
 
    /**
     * Deletes a snapshot of an Amazon EBS volume that you own. For more information, go to the
@@ -347,7 +347,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSnapshot.html"
     *      />
     */
-   void deleteSnapshotInRegion(@Nullable Region region, String snapshotId);
+   void deleteSnapshotInRegion(@Nullable String region, String snapshotId);
 
    /**
     * Returns the {@link Permission}s of an snapshot.
@@ -363,7 +363,7 @@ public interface ElasticBlockStoreClient {
     *      />
     * @see DescribeSnapshotsOptions
     */
-   Permission getCreateVolumePermissionForSnapshotInRegion(@Nullable Region region, String snapshotId);
+   Permission getCreateVolumePermissionForSnapshotInRegion(@Nullable String region, String snapshotId);
 
    /**
     * Adds {@code createVolumePermission}s to an EBS snapshot.
@@ -384,7 +384,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifySnapshotAttribute.html"
     *      />
     */
-   void addCreateVolumePermissionsToSnapshotInRegion(@Nullable Region region, Iterable<String> userIds,
+   void addCreateVolumePermissionsToSnapshotInRegion(@Nullable String region, Iterable<String> userIds,
             Iterable<String> userGroups, String snapshotId);
 
    /**
@@ -402,7 +402,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ResetSnapshotAttribute.html"
     *      />
     */
-   void resetCreateVolumePermissionsOnSnapshotInRegion(@Nullable Region region, String snapshotId);
+   void resetCreateVolumePermissionsOnSnapshotInRegion(@Nullable String region, String snapshotId);
 
    /**
     * Removes {@code createVolumePermission}s from an EBS snapshot.
@@ -423,6 +423,6 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifySnapshotAttribute.html"
     *      />
     */
-   void removeCreateVolumePermissionsFromSnapshotInRegion(@Nullable Region region, Iterable<String> userIds,
+   void removeCreateVolumePermissionsFromSnapshotInRegion(@Nullable String region, Iterable<String> userIds,
             Iterable<String> userGroups, String snapshotId);
 }

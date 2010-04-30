@@ -87,8 +87,8 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
          @Provides
          @Singleton
          @SQS
-         Map<Region, URI> provideRegions() {
-            return ImmutableMap.<Region, URI> of(Region.EU_WEST_1, URI
+         Map<String, URI> provideRegions() {
+            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
                      .create("https://eu-west-1.queue.amazonaws.com"));
          }
 

@@ -55,10 +55,16 @@ public class EC2Utils {
       }
    }
 
-   public static Region findRegionInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   public static String findRegionInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof Region) {
-            return (Region) arg;
+         if (arg instanceof String) {
+            String regionName = (String) arg;
+            if(Region.EU_WEST_1.equals(regionName) ||
+                    Region.US_WEST_1.equals(regionName) ||
+                    Region.US_EAST_1.equals(regionName) ||
+                    Region.US_STANDARD.equals(regionName) ||
+                    Region.AP_SOUTHEAST_1.equals(regionName)
+                    ) return regionName;
          }
       }
       return null;

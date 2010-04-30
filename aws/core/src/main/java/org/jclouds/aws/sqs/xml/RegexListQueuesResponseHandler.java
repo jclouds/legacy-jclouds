@@ -46,7 +46,7 @@ import com.google.common.base.Throwables;
 public class RegexListQueuesResponseHandler extends BaseRegexQueueHandler implements
          Function<HttpResponse, Set<Queue>> {
    @Inject
-   RegexListQueuesResponseHandler(@SQS Map<Region, URI> regionMap) {
+   RegexListQueuesResponseHandler(@SQS Map<String, URI> regionMap) {
       super(regionMap);
    }
 

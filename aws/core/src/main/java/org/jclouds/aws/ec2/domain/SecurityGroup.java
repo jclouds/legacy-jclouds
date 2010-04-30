@@ -32,13 +32,13 @@ import org.jclouds.aws.domain.Region;
  */
 public class SecurityGroup implements Comparable<SecurityGroup> {
 
-   private final Region region;
+   private final String region;
    private final String name;
    private final String ownerId;
    private final String description;
    private final Set<IpPermission> ipPermissions;
 
-   public SecurityGroup(Region region, String name, String ownerId, String description,
+   public SecurityGroup(String region, String name, String ownerId, String description,
             Set<IpPermission> ipPermissions) {
       this.region = checkNotNull(region, "region");
       this.name = name;
@@ -52,7 +52,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
     * with instances outside the Region using group-based firewall rules. Traffic from instances in
     * another Region is seen as WAN bandwidth.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

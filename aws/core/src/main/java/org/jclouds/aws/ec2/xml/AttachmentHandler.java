@@ -44,7 +44,7 @@ public class AttachmentHandler extends ParseSax.HandlerWithResult<Attachment> {
    protected DateService dateService;
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
    private String volumeId;
    private String instanceId;
    private String device;
@@ -52,7 +52,7 @@ public class AttachmentHandler extends ParseSax.HandlerWithResult<Attachment> {
    private Date attachTime;
 
    public Attachment getResult() {
-      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      String region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null)
          region = defaultRegion;
       return new Attachment(region, volumeId, instanceId, device, attachmentStatus, attachTime);

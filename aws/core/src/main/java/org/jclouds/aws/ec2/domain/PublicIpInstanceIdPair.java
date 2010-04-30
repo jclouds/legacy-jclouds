@@ -34,12 +34,12 @@ import com.google.inject.internal.Nullable;
  */
 public class PublicIpInstanceIdPair implements Comparable<PublicIpInstanceIdPair> {
 
-   private final Region region;
+   private final String region;
    @Nullable
    private final String instanceId;
    private final InetAddress publicIp;
 
-   public PublicIpInstanceIdPair(Region region, InetAddress publicIp, @Nullable String instanceId) {
+   public PublicIpInstanceIdPair(String region, InetAddress publicIp, @Nullable String instanceId) {
       this.region = checkNotNull(region, "region");
       this.instanceId = instanceId;
       this.publicIp = checkNotNull(publicIp, "publicIp");
@@ -48,7 +48,7 @@ public class PublicIpInstanceIdPair implements Comparable<PublicIpInstanceIdPair
    /**
     * Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

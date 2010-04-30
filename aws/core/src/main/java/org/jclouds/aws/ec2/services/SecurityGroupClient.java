@@ -61,7 +61,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSecurityGroup.html"
     *      />
     */
-   void createSecurityGroupInRegion(@Nullable Region region, String name, String description);
+   void createSecurityGroupInRegion(@Nullable String region, String name, String description);
 
    /**
     * Deletes a security group that you own.
@@ -81,7 +81,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSecurityGroup.html"
     *      />
     */
-   void deleteSecurityGroupInRegion(@Nullable Region region, String name);
+   void deleteSecurityGroupInRegion(@Nullable String region, String name);
 
    /**
     * Returns information about security groups that you own.
@@ -101,7 +101,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSecurityGroups.html"
     *      />
     */
-   SortedSet<SecurityGroup> describeSecurityGroupsInRegion(@Nullable Region region,
+   SortedSet<SecurityGroup> describeSecurityGroupsInRegion(@Nullable String region,
             String... securityGroupNames);
 
    /**
@@ -125,7 +125,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html"
     * 
     */
-   void authorizeSecurityGroupIngressInRegion(@Nullable Region region, String groupName,
+   void authorizeSecurityGroupIngressInRegion(@Nullable String region, String groupName,
             UserIdGroupPair sourceSecurityGroup);
 
    /**
@@ -164,7 +164,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html"
     * 
     */
-   void authorizeSecurityGroupIngressInRegion(@Nullable Region region, String groupName,
+   void authorizeSecurityGroupIngressInRegion(@Nullable String region, String groupName,
             IpProtocol ipProtocol, int fromPort, int toPort, String cidrIp);
 
    /**
@@ -189,7 +189,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html"
     * 
     */
-   void revokeSecurityGroupIngressInRegion(@Nullable Region region, String groupName,
+   void revokeSecurityGroupIngressInRegion(@Nullable String region, String groupName,
             UserIdGroupPair sourceSecurityGroup);
 
    /**
@@ -229,6 +229,6 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html"
     * 
     */
-   void revokeSecurityGroupIngressInRegion(@Nullable Region region, String groupName, IpProtocol ipProtocol,
+   void revokeSecurityGroupIngressInRegion(@Nullable String region, String groupName, IpProtocol ipProtocol,
             int fromPort, int toPort, String cidrIp);
 }

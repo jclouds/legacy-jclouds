@@ -66,7 +66,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeAvailabilityZones")
    @XMLResponseParser(DescribeAvailabilityZonesResponseHandler.class)
    ListenableFuture<? extends Set<AvailabilityZoneInfo>> describeAvailabilityZonesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             DescribeAvailabilityZonesOptions... options);
 
    /**
@@ -77,6 +77,6 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeRegions")
    @XMLResponseParser(DescribeRegionsResponseHandler.class)
-   ListenableFuture<? extends Map<Region, URI>> describeRegions(DescribeRegionsOptions... options);
+   ListenableFuture<? extends Map<String, URI>> describeRegions(DescribeRegionsOptions... options);
 
 }

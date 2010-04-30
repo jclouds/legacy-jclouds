@@ -112,7 +112,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeVolumes")
    @XMLResponseParser(DescribeVolumesResponseHandler.class)
    ListenableFuture<? extends Set<Volume>> describeVolumesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindVolumeIdsToIndexedFormParams.class) String... volumeIds);
 
    /**
@@ -122,7 +122,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteVolume")
    ListenableFuture<Void> deleteVolumeInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("VolumeId") String volumeId);
 
    /**
@@ -133,7 +133,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "DetachVolume")
    @ExceptionParser(ReturnVoidOnVolumeAvailable.class)
    ListenableFuture<Void> detachVolumeInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("VolumeId") String volumeId, @FormParam("Force") boolean force,
             DetachVolumeOptions... options);
 
@@ -145,7 +145,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "AttachVolume")
    @XMLResponseParser(AttachmentHandler.class)
    ListenableFuture<Attachment> attachVolumeInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("VolumeId") String volumeId, @FormParam("InstanceId") String instanceId,
             @FormParam("Device") String device);
 
@@ -157,7 +157,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateSnapshot")
    @XMLResponseParser(SnapshotHandler.class)
    ListenableFuture<Snapshot> createSnapshotInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("VolumeId") String volumeId, CreateSnapshotOptions... options);
 
    /**
@@ -168,7 +168,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeSnapshots")
    @XMLResponseParser(DescribeSnapshotsResponseHandler.class)
    ListenableFuture<? extends Set<Snapshot>> describeSnapshotsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             DescribeSnapshotsOptions... options);
 
    /**
@@ -178,7 +178,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteSnapshot")
    ListenableFuture<Void> deleteSnapshotInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("SnapshotId") String snapshotId);
 
    /**
@@ -189,7 +189,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = {
             "ModifySnapshotAttribute", "add", "createVolumePermission" })
    ListenableFuture<Void> addCreateVolumePermissionsToSnapshotInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
             @FormParam("SnapshotId") String snapshotId);
@@ -202,7 +202,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = {
             "ModifySnapshotAttribute", "remove", "createVolumePermission" })
    ListenableFuture<Void> removeCreateVolumePermissionsFromSnapshotInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
             @FormParam("SnapshotId") String snapshotId);
@@ -216,7 +216,7 @@ public interface ElasticBlockStoreAsyncClient {
             "createVolumePermission" })
    @XMLResponseParser(PermissionHandler.class)
    ListenableFuture<Permission> getCreateVolumePermissionForSnapshotInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("SnapshotId") String snapshotId);
 
    /**
@@ -227,7 +227,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute",
             "createVolumePermission" })
    ListenableFuture<Void> resetCreateVolumePermissionsOnSnapshotInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable Region region,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("SnapshotId") String snapshotId);
 
 }

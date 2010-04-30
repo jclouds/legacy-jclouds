@@ -179,7 +179,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
       String bucketName = getContainerName();
       try {
-         Region location = getApi().getBucketLocation(bucketName);
+         String location = getApi().getBucketLocation(bucketName);
          assert location.equals(Region.US_STANDARD) : "bucket: " + bucketName + " location: "
                   + location;
       } finally {

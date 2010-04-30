@@ -45,7 +45,7 @@ public class DescribeSecurityGroupsResponseHandler extends
          ParseSax.HandlerWithResult<SortedSet<SecurityGroup>> {
    @Inject
    @EC2
-   Region defaultRegion;
+   String defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
    private SortedSet<SecurityGroup> securtyGroups = Sets.newTreeSet();
@@ -118,7 +118,7 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.userId = null;
             this.userIdGroupName = null;
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {
-            Region region = EC2Utils.findRegionInArgsOrNull(request);
+            String region = EC2Utils.findRegionInArgsOrNull(request);
             if (region == null)
                region = defaultRegion;
             securtyGroups.add(new SecurityGroup(region, groupName, ownerId, groupDescription,

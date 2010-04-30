@@ -29,11 +29,11 @@ import org.jclouds.http.functions.ParseSax;
  * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html" />
  * @author Adrian Cole
  */
-public class LocationConstraintHandler extends ParseSax.HandlerWithResult<Region> {
+public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String> {
    private StringBuilder currentText = new StringBuilder();
-   private Region region;
+   private String region;
 
-   public Region getResult() {
+   public String getResult() {
       return region;
    }
 
@@ -46,7 +46,7 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<Region
     * <p/>
     * {@code US_STANDARD} is returned as "" xml documents.
     */
-   public static Region fromValue(String v) {
+   public static String fromValue(String v) {
       if (v.equals(""))
          return Region.US_STANDARD;
       if (v.equals("EU"))

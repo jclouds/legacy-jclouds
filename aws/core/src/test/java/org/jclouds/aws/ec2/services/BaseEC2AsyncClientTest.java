@@ -79,7 +79,7 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
                      .build(), "properties"));
             bind(URI.class).annotatedWith(EC2.class).toInstance(
                      URI.create("https://ec2.amazonaws.com"));
-            bind(Region.class).annotatedWith(EC2.class).toInstance(Region.US_EAST_1);
+            bind(String.class).annotatedWith(EC2.class).toInstance(Region.US_EAST_1);
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
@@ -98,8 +98,8 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
          @Singleton
          @Provides
          @EC2
-         Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.EU_WEST_1, URI
+         Map<String, URI> provideMap() {
+            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
                      .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
                      .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
                      .create("https://ec2.us-west-1.amazonaws.com"));
@@ -108,8 +108,8 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
-         Map<AvailabilityZone, Region> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<AvailabilityZone, Region> of(AvailabilityZone.US_EAST_1A,
+         Map<AvailabilityZone, String> provideAvailabilityZoneRegionMap() {
+            return ImmutableMap.<AvailabilityZone, String> of(AvailabilityZone.US_EAST_1A,
                      Region.US_EAST_1);
          }
       };

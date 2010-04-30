@@ -72,7 +72,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeVolumes() {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
@@ -171,7 +171,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeSnapshots() {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<Snapshot> allResults = Sets.newTreeSet(client.describeSnapshotsInRegion(region));
          assertNotNull(allResults);

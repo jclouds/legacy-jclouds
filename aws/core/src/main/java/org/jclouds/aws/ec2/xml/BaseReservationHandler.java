@@ -54,10 +54,10 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
 
    protected final DateService dateService;
 
-   protected final Region defaultRegion;
+   protected final String defaultRegion;
 
    @Inject
-   public BaseReservationHandler(DateService dateService, @EC2 Region defaultRegion) {
+   public BaseReservationHandler(DateService dateService, @EC2 String defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }
@@ -208,7 +208,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          this.attachTime = null;
          this.deleteOnTermination = true;
       } else if (inInstances && !inProductCodes && !inBlockDeviceMapping) {
-         Region region = EC2Utils.findRegionInArgsOrNull(request);
+         String region = EC2Utils.findRegionInArgsOrNull(request);
          if (region == null)
             region = defaultRegion;
          instances.add(new RunningInstance(region, amiLaunchIndex, dnsName, imageId, instanceId,
@@ -261,7 +261,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    }
 
    protected Reservation newReservation() {
-      Region region = EC2Utils.findRegionInArgsOrNull(request);
+      String region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null)
          region = defaultRegion;
       Reservation info = new Reservation(region, groupIds, instances, ownerId, requesterId,

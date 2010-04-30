@@ -86,7 +86,7 @@ public class EC2ComputeService extends BaseComputeService {
       this.instanceStateTerminated = instanceStateTerminated;
    }
 
-   private void deleteSecurityGroup(Region region, String tag) {
+   private void deleteSecurityGroup(String region, String tag) {
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, tag).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", tag);
          ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, tag);
@@ -96,7 +96,7 @@ public class EC2ComputeService extends BaseComputeService {
       }
    }
 
-   private void deleteKeyPair(Region region, String tag) {
+   private void deleteKeyPair(String region, String tag) {
       for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
          if (keyPair.getKeyName().matches(tag + "-[0-9]+")) {
             logger.debug(">> deleting keyPair(%s)", tag);
@@ -119,7 +119,7 @@ public class EC2ComputeService extends BaseComputeService {
                   }
                });
       if (Iterables.size(nodes) > 0) {
-         Region region = getRegionFromNodeOrDefault.apply(Iterables.get(nodes, 0));
+         String region = getRegionFromNodeOrDefault.apply(Iterables.get(nodes, 0));
          deleteKeyPair(region, tag);
          deleteSecurityGroup(region, tag);
       }

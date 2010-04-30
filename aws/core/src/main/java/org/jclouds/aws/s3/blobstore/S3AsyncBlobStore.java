@@ -137,14 +137,14 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     * This implementation invokes {@link S3AsyncClient#putBucketInRegion}
     * 
     * @param location
-    *           corresponds to {@link Region#fromValue}
+    *           corresponds to {@link Region}
     * @param container
     *           bucket name
     */
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
       location = location != null ? location : defaultLocation;
-      return async.putBucketInRegion(Region.fromValue(location.getId()), container);
+      return async.putBucketInRegion(location.getId(), container);
    }
 
    /**

@@ -54,11 +54,11 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
    private final String zoneName;
    private final AvailabilityZone zone;
    private final State state;
-   private final Region region;
+   private final String region;
    private final Set<String> messages = Sets.newHashSet();
 
    public AvailabilityZoneInfo(String zoneName, AvailabilityZone zone, State zoneState,
-            Region region, Iterable<String> messages) {
+            String region, Iterable<String> messages) {
       this.zoneName = checkNotNull(zoneName, "zoneName");
       this.zone = checkNotNull(zone, "zone");
       this.state = checkNotNull(zoneState, "zoneState");
@@ -90,7 +90,7 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
    /**
     * Name of the Region.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

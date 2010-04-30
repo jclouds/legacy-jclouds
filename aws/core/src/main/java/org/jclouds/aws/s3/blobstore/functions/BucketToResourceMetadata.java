@@ -59,7 +59,7 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
       to.setName(from.getName());
       to.setType(StorageType.CONTAINER);
       try {
-         Region region = client.getBucketLocation(from.getName());
+         String region = client.getBucketLocation(from.getName());
          if (region != null) {
             Location location = locations.get(region.toString());
             if (location == null)

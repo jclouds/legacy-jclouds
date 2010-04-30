@@ -49,7 +49,7 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AllocateAddress.html"
     */
-   InetAddress allocateAddressInRegion(@Nullable Region region);
+   InetAddress allocateAddressInRegion(@Nullable String region);
 
    /**
     * Associates an elastic IP address with an instance. If the IP address is currently assigned to
@@ -69,7 +69,7 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-AssociateAddress.html"
     */
-   void associateAddressInRegion(@Nullable Region region, InetAddress publicIp, String instanceId);
+   void associateAddressInRegion(@Nullable String region, InetAddress publicIp, String instanceId);
 
    /**
     * Disassociates the specified elastic IP address from the instance to which it is assigned. This
@@ -87,7 +87,7 @@ public interface ElasticIPAddressClient {
     * @see #associateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisdisassociateAddress.html"
     */
-   void disassociateAddressInRegion(@Nullable Region region, InetAddress publicIp);
+   void disassociateAddressInRegion(@Nullable String region, InetAddress publicIp);
 
    /**
     * Releases an elastic IP address associated with your account.
@@ -103,7 +103,7 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-ReleaseAddress.html"
     */
-   void releaseAddressInRegion(@Nullable Region region, InetAddress publicIp);
+   void releaseAddressInRegion(@Nullable String region, InetAddress publicIp);
 
    /**
     * Lists elastic IP addresses assigned to your account or provides information about a specific
@@ -121,7 +121,7 @@ public interface ElasticIPAddressClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAddresses.html"
     *      />
     */
-   Set<PublicIpInstanceIdPair> describeAddressesInRegion(@Nullable Region region,
+   Set<PublicIpInstanceIdPair> describeAddressesInRegion(@Nullable String region,
             InetAddress... publicIps);
 
 }

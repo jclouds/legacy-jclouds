@@ -67,7 +67,7 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
    public boolean execute(ComputeMetadata metadata) {
       NodeMetadata node = metadata instanceof NodeMetadata ? NodeMetadata.class.cast(metadata)
                : getNodeMetadataStrategy.execute(metadata);
-      Region region = getRegionFromNodeOrDefault.apply(node);
+      String region = getRegionFromNodeOrDefault.apply(node);
 
       ec2Client.getInstanceServices().terminateInstancesInRegion(region, node.getId());
       return instanceStateTerminated.apply(Iterables.getOnlyElement(Iterables.concat(ec2Client

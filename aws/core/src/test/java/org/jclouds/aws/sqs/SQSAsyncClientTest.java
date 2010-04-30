@@ -61,10 +61,10 @@ import com.google.inject.TypeLiteral;
 public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
    public void testListQueuesInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", Region.class, Array
+      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", String.class, Array
                .newInstance(ListQueuesOptions.class, 0).getClass());
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method,
-               (Region) null);
+               (String) null);
 
       assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -80,7 +80,7 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
    public void testListQueuesInRegionOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", Region.class, Array
+      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", String.class, Array
                .newInstance(ListQueuesOptions.class, 0).getClass());
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
                ListQueuesOptions.Builder.queuePrefix("prefix"));
@@ -99,7 +99,7 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
    public void testCreateQueueInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", Region.class,
+      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class,
                String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
                "queueName");
@@ -118,7 +118,7 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
    public void testCreateQueueInRegionOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", Region.class,
+      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class,
                String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
                "queueName", CreateQueueOptions.Builder.defaultVisibilityTimeout(45));
@@ -178,8 +178,8 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
          @Singleton
          @Provides
          @SQS
-         Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.EU_WEST_1, URI
+         Map<String, URI> provideMap() {
+            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
                      .create("https://sqs.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
                      .create("https://sqs.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
                      .create("https://sqs.us-west-1.amazonaws.com"));

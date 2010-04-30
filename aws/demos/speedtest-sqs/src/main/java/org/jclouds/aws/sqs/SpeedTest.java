@@ -130,7 +130,7 @@ public class SpeedTest {
 
    private static void createQueues(String queueName,
             RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext, Set<Queue> queues) {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
          System.out.printf("creating queue: %s in region %s%n", queueName, region);
          queues.add(nullLoggingDefaultContext.getApi().createQueueInRegion(region, queueName));
       }
@@ -139,7 +139,7 @@ public class SpeedTest {
    private static boolean purgeQueues(String queueName,
             RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext) {
       boolean deleted = false;
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
          try {
             SortedSet<Queue> result = Sets.newTreeSet(nullLoggingDefaultContext.getApi()
                      .listQueuesInRegion(region, queuePrefix(queueName)));

@@ -75,7 +75,7 @@ public class AMIClientLiveTest {
    }
 
    public void testDescribeImages() {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<Image> allResults = Sets.newTreeSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);

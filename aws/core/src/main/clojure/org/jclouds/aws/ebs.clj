@@ -53,13 +53,13 @@
   ([v] (get-region v nil))
   ([v default-region]
     (cond
-      (keyword? v) (Region/fromValue (name v))
+      (keyword? v) (name v)
       (instance? Region v) v
       (instance? NodeMetadata v) (let [zone (.getLocationId v)]
                                    ; no easier way to go from zone -> region?
-                                   (Region/fromValue (if (> (.indexOf zone "-") -1)
+                                   (if (> (.indexOf zone "-") -1)
                                                        (subs zone 0 (-> zone count dec))
-                                                       zone)))
+                                                       zone))
     :else default-region)))
 
 (defn get-volume-id

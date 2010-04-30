@@ -40,7 +40,7 @@ public class Reservation extends LinkedHashSet<RunningInstance> implements Compa
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -9051777593518861395L;
-   private final Region region;
+   private final String region;
    private final Set<String> groupIds = Sets.newLinkedHashSet();
    private final @Nullable
    String ownerId;
@@ -49,7 +49,7 @@ public class Reservation extends LinkedHashSet<RunningInstance> implements Compa
    private final @Nullable
    String reservationId;
 
-   public Reservation(Region region, Iterable<String> groupIds,
+   public Reservation(String region, Iterable<String> groupIds,
             Iterable<RunningInstance> instances, @Nullable String ownerId,
             @Nullable String requesterId, @Nullable String reservationId) {
       this.region = checkNotNull(region, "region");
@@ -63,7 +63,7 @@ public class Reservation extends LinkedHashSet<RunningInstance> implements Compa
    /**
     * Instances are tied to Availability Zones. However, the instance ID is tied to the Region.
     */
-   public Region getRegion() {
+   public String getRegion() {
       return region;
    }
 

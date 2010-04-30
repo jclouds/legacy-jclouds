@@ -68,7 +68,7 @@ public class AvailabilityZoneAndRegionClientLiveTest {
    }
 
    public void testDescribeAvailabilityZones() {
-      for (Region region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
          SortedSet<AvailabilityZoneInfo> allResults = Sets.newTreeSet(client
                   .describeAvailabilityZonesInRegion(region));
@@ -88,14 +88,14 @@ public class AvailabilityZoneAndRegionClientLiveTest {
    }
 
    public void testDescribeRegions() {
-      SortedMap<Region, URI> allResults = Maps.newTreeMap();
+      SortedMap<String, URI> allResults = Maps.newTreeMap();
       allResults.putAll(client.describeRegions());
       assertNotNull(allResults);
       assert allResults.size() >= 2 : allResults.size();
-      Iterator<Entry<Region, URI>> iterator = allResults.entrySet().iterator();
-      Region r1 = iterator.next().getKey();
-      Region r2 = iterator.next().getKey();
-      SortedMap<Region, URI> twoResults = Maps.newTreeMap();
+      Iterator<Entry<String, URI>> iterator = allResults.entrySet().iterator();
+      String r1 = iterator.next().getKey();
+      String r2 = iterator.next().getKey();
+      SortedMap<String, URI> twoResults = Maps.newTreeMap();
       twoResults.putAll(client.describeRegions(regions(r1, r2)));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);

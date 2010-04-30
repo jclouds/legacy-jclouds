@@ -37,7 +37,7 @@ public class CreateSecurityGroupIfNeeded implements Function<PortsRegionTag, Str
       return from.getTag();
    }
 
-   private void createSecurityGroupInRegion(Region region, String name, int... ports) {
+   private void createSecurityGroupInRegion(String region, String name, int... ports) {
       checkNotNull(region, "region");
       checkNotNull(name, "name");
       logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);

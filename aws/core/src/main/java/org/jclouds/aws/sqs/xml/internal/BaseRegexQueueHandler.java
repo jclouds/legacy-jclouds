@@ -41,12 +41,12 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class BaseRegexQueueHandler {
-   private final ImmutableBiMap<URI, Region> uriToRegion;
+   private final ImmutableBiMap<URI, String> uriToRegion;
    Pattern pattern = Pattern.compile("<QueueUrl>(https://[\\S&&[^<]]+)</QueueUrl>");
 
    @Inject
-   protected BaseRegexQueueHandler(Map<Region, URI> regionMap) {
-      this.uriToRegion = ImmutableBiMap.<Region, URI> builder().putAll(regionMap).build().inverse();
+   protected BaseRegexQueueHandler(Map<String, URI> regionMap) {
+      this.uriToRegion = ImmutableBiMap.<String, URI> builder().putAll(regionMap).build().inverse();
    }
 
    public Set<Queue> parse(String in) {
@@ -58,7 +58,7 @@ public class BaseRegexQueueHandler {
          URI location = URI.create(uriText);
          String regionString = uriText.substring(0, uriText.indexOf(".com/") + 4);
          URI regionURI = URI.create(regionString);
-         Region region = uriToRegion.get(regionURI);
+         String region = uriToRegion.get(regionURI);
          queues.add(new Queue(region, queueName, location));
       }
       return queues;
