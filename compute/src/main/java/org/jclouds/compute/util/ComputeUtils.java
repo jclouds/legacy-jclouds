@@ -310,7 +310,7 @@ public class ComputeUtils {
             logger.debug(">> running sudo -S %s as %s@%s", scriptName,
                      node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0)
                               .getHostAddress());
-            return ssh.exec(String.format("echo %s|sudo -S ./%s", node.getCredentials().key,
+            return ssh.exec(String.format("echo '%s'|sudo -S ./%s", node.getCredentials().key,
                      scriptName + " start"));
          }
       }

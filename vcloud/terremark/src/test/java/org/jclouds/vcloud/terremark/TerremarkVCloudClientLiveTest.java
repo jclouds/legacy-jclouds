@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -41,9 +40,9 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
@@ -256,7 +255,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    }
 
    @Test(dependsOnMethods = { "testInstantiateAndPowerOn" })
-   public void testCloneVApp() {
+   public void testCloneVApp() throws IOException {
       assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
 
@@ -265,7 +264,10 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       String vAppIdToClone = vApp.getId();
 
-      String newName = vApp.getName() + "clone";
+      StringBuffer name = new StringBuffer();
+      for (int i = 0; i < 15; i++)
+         name.append("b");
+      String newName = name.toString();
 
       CloneVAppOptions options = deploy().powerOn()
                .withDescription("The description of " + newName);
@@ -295,7 +297,22 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
             IOException {
       node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()),
                vApp.getName() + "-SSH", 22);
-      doCheckPass(publicIp);
+      loopAndCheckPass();
+   }
+
+   private void loopAndCheckPass() throws IOException {
+      for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
+         try {
+            doCheckPass(publicIp);
+            return;
+         } catch (SshException e) {
+            try {
+               Thread.sleep(10 * 1000);
+            } catch (InterruptedException e1) {
+            }
+            continue;
+         }
+      }
    }
 
    // 400 errors
@@ -347,7 +364,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       vApp = tmClient.getVApp(vApp.getId());
 
       Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1024)
-               .changeProcessorCountTo(2).addDisk(1048576));
+               .changeProcessorCountTo(2).addDisk(25 * 1048576).addDisk(25 * 1048576));
 
       assert successTester.apply(task.getId());
 
@@ -360,7 +377,13 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(Iterables.getOnlyElement(
                vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
                1024);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE).size(), 2);
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE).size(), 3);
+
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
+      
+      loopAndCheckPass();
+
+      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
 
       // extract the disks on the vApp sorted by addressOnParent
       List<ResourceAllocation> disks = Lists.newArrayList(vApp.getResourceAllocationByType().get(
@@ -373,7 +396,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assert successTester.apply(task.getId());
 
       assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
-
+      loopAndCheckPass();
    }
 
    private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,
@@ -406,12 +429,13 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assert socketTester.apply(socket);
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), socket);
 
-      SshClient connection = sshFactory.create(socket, "vcloud", "p4ssw0rd");
+      SshClient connection = sshFactory.create(socket, "vcloud", "$Ep455l0ud!2");
       try {
          connection.connect();
          System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), socket);
-         InputStream etcPasswd = connection.get("/etc/passwd");
-         Utils.toStringAndClose(etcPasswd);
+         System.out.println(connection.exec("df -h"));
+         System.out.println(connection.exec("ls -al /dev/sd*"));
+         System.out.println(connection.exec("echo '$Ep455l0ud!2'|sudo -S fdisk -l"));
       } finally {
          if (connection != null)
             connection.disconnect();
@@ -459,7 +483,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                .getInstance(SocketOpen.class), 130, 10, TimeUnit.SECONDS);// make it longer then
       // default internet
       // service timeout
-      successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 450,
+      successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 650,
                10, TimeUnit.SECONDS);
    }
 

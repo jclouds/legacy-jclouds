@@ -90,6 +90,7 @@ public class VAppConfiguration {
     */
    public VAppConfiguration addDisk(long kilobytes) {
       checkArgument(kilobytes % 1048576 == 0, "disk must be an interval of 1048576");
+      checkArgument(kilobytes >= 25 *1048576, "disk must be at least 25GB");
       checkArgument(kilobytes <= 524288000, "disk must be no more than 500GB");
       checkArgument(disks.size() < 14, "you can only add up to 14 disks for a total of 15");
       this.disks.add(kilobytes);
