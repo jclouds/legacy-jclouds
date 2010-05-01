@@ -51,7 +51,7 @@ Here's an example of creating and running a small linux node with the tag webser
 
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
-        clojure.contrib.logging)
+        (clojure.contrib logging core))
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
@@ -304,7 +304,7 @@ See http://code.google.com/p/jclouds for details."
 (defn location
   "Returns the compute node's location id"
   [#^ComputeMetadata node]
-  (.getLocationId node))
+  (-?> node .getLocation .getId))
 
 (define-accessors Template image size location options)
 (define-accessors Image version os-family os-description architecture)

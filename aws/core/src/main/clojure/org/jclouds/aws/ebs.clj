@@ -24,7 +24,7 @@
   (:use (clojure.contrib def core))
   (:import org.jclouds.aws.domain.Region
     org.jclouds.compute.domain.NodeMetadata
-    (org.jclouds.aws.ec2.domain Volume Snapshot AvailabilityZone)
+    (org.jclouds.aws.ec2.domain Volume Volume$Status Snapshot Snapshot$Status AvailabilityZone)
     (org.jclouds.aws.ec2.options DescribeSnapshotsOptions DetachVolumeOptions CreateSnapshotOptions)))
 
 (defn snapshot?
@@ -46,16 +46,16 @@
     .getContext .getProviderSpecificContext .getApi .getElasticBlockStoreServices))
 
 (defn get-region
-  "Returns the first argument as the corresponding Region if it is a
-   keyword or already a Region instance. An optional second argument
-   is returned if the first cannot be coerced into a Region.
+  "Coerces the first parameter into a Region string; strings, keywords, and
+   NodeMetadata instances are acceptable arguments. An optional second argument
+   is returned if the first cannot be coerced into a region string.
    Returns nil otherwise."
   ([v] (get-region v nil))
   ([v default-region]
     (cond
+      (string? v) v
       (keyword? v) (name v)
-      (instance? Region v) v
-      (instance? NodeMetadata v) (let [zone (.getLocationId v)]
+      (instance? NodeMetadata v) (let [zone (compute/location v)]
                                    ; no easier way to go from zone -> region?
                                    (if (> (.indexOf zone "-") -1)
                                                        (subs zone 0 (-> zone count dec))
@@ -119,7 +119,7 @@
   "Returns a set of org.jclouds.aws.ec2.domain.Snapshot instances that match
    the criteria provided.  Options include:
 
-   :region - region string or keyword
+   :region - region string, keyword, or NodeMetadata
    :owner - AWS account id (or \"amazon\" or \"self\")
    :restorable-by - AWS account id
 
@@ -172,7 +172,7 @@
   [v]
   (cond
     (instance? AvailabilityZone v) v
-    (instance? NodeMetadata v) (.getLocationId #^NodeMetadata v)
+    (instance? NodeMetadata v) (compute/location #^NodeMetadata v)
     (string? v) v
     (keyword? v) (name v)
     :else (throw (IllegalArgumentException.
@@ -283,3 +283,36 @@
     (.deleteVolumeInRegion (ebs-service)
       (get-region region)
       (as-string volume-id))))
+
+(defn status
+  "Returns the status of the given entity; works for Volumes and Snapshots."
+  [k]
+  (.getStatus k))
+
+(defn status-available?
+  [#^Volume v]
+  (= Volume$Status/AVAILABLE (status v)))
+
+(defn status-creating?
+  [#^Volume v]
+  (= Volume$Status/CREATING (status v)))
+
+(defn status-deleting?
+  [#^Volume v]
+  (= Volume$Status/DELETING (status v)))
+
+(defn status-in-use?
+  [#^Volume v]
+  (= Volume$Status/IN_USE (status v)))
+
+(defn status-completed?
+  [#^Snapshot s]
+  (= Snapshot$Status/COMPLETED (status s)))
+
+(defn status-error?
+  [#^Snapshot s]
+  (= Snapshot$Status/ERROR (status s)))
+
+(defn status-pending?
+  [#^Snapshot s]
+  (= Snapshot$Status/PENDING (status s)))
