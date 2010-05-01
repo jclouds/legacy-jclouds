@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -41,10 +40,10 @@ public class IfNotNullBindAvailabilityZoneToFormParam implements Binder {
       if (input != null) {
          checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                   "this binder is only valid for GeneratedHttpRequests!");
-         checkArgument(input instanceof AvailabilityZone,
+         checkArgument(input instanceof String,
                   "this binder is only valid for AvailabilityZone!");
          ((GeneratedHttpRequest<?>) request).addFormParam("Placement.AvailabilityZone",
-                  ((AvailabilityZone) input).value());
+                  (String) input);
       }
    }
 

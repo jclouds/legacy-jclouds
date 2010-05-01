@@ -49,7 +49,6 @@ import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
@@ -257,11 +256,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(Map<AvailabilityZone, String> availabilityZoneToRegionMap) {
+   Map<String, ? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap) {
       Map<String, Location> locations = Maps.newLinkedHashMap();
-      for (AvailabilityZone zone : availabilityZoneToRegionMap.keySet()) {
-         locations.put(zone.toString(), new LocationImpl(LocationScope.ZONE, zone.toString(), zone
-                  .toString(), availabilityZoneToRegionMap.get(zone)));
+      for (String zone : availabilityZoneToRegionMap.keySet()) {
+         locations.put(zone, new LocationImpl(LocationScope.ZONE, zone, zone,
+                 availabilityZoneToRegionMap.get(zone)));
       }
       for (String region : availabilityZoneToRegionMap.values()) {
          locations.put(region, new LocationImpl(LocationScope.REGION, region,

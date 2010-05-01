@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
@@ -57,7 +56,7 @@ public class ElasticBlockStoreAsyncClientTest extends
 
    public void testCreateVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "createVolumeInAvailabilityZone", AvailabilityZone.class, int.class);
+               "createVolumeInAvailabilityZone", String.class, int.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, AvailabilityZone.US_EAST_1A, 20);
 
@@ -77,7 +76,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testCreateVolumeFromSnapShot() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "createVolumeFromSnapshotInAvailabilityZone", AvailabilityZone.class, String.class);
+               "createVolumeFromSnapshotInAvailabilityZone", String.class, String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, AvailabilityZone.US_EAST_1A, "snapshotId");
 
@@ -97,7 +96,7 @@ public class ElasticBlockStoreAsyncClientTest extends
    public void testCreateVolumeFromSnapShotWithSize() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "createVolumeFromSnapshotInAvailabilityZone", AvailabilityZone.class, int.class,
+               "createVolumeFromSnapshotInAvailabilityZone", String.class, int.class,
                String.class);
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
                method, AvailabilityZone.US_EAST_1A, 15, "snapshotId");

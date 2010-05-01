@@ -134,7 +134,7 @@ public interface InstanceClient {
     * @see RunInstancesOptions
     */
    Reservation runInstancesInRegion(@Nullable String region,
-            @Nullable AvailabilityZone nullableAvailabilityZone, String imageId, int minCount,
+            @Nullable String nullableAvailabilityZone, String imageId, int minCount,
             int maxCount, RunInstancesOptions... options);
 
    /**

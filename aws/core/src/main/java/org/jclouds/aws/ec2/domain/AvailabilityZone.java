@@ -18,9 +18,9 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.inject.internal.ImmutableSet;
 
-import com.google.common.base.CaseFormat;
+import java.util.Set;
 
 /**
  * 
@@ -28,21 +28,21 @@ import com.google.common.base.CaseFormat;
  * 
  * @author Adrian Cole
  */
-public enum AvailabilityZone {
+public class AvailabilityZone {
 
-   UNKNOWN, EU_WEST_1A, EU_WEST_1B, US_EAST_1A, US_EAST_1B, US_EAST_1C, US_EAST_1D, US_WEST_1A, US_WEST_1B, AP_SOUTHEAST_1A, AP_SOUTHEAST_1B;
+   public static final String EU_WEST_1A = "eu-west-1a";
+   public static final String EU_WEST_1B = "eu-west-1b";
+   public static final String US_EAST_1A = "us-east-1a";
+   public static final String US_EAST_1B = "us-east-1b";
+   public static final String US_EAST_1C = "us-east-1c";
+   public static final String US_EAST_1D = "us-east-1d";
+   public static final String US_WEST_1A = "us-west-1a";
+   public static final String US_WEST_1B = "us-west-1b";
+   public static final String AP_SOUTHEAST_1A = "ap-southeast-1a";
+   public static final String AP_SOUTHEAST_1B = "ap-southeast-1b";
 
-   public String value() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
-   }
+   public static final Set<String> zones = ImmutableSet.of(EU_WEST_1A, EU_WEST_1B,
+           US_EAST_1A, US_EAST_1B, US_EAST_1C, US_EAST_1D,
+           US_WEST_1A, US_WEST_1B, AP_SOUTHEAST_1A, AP_SOUTHEAST_1B);
 
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static AvailabilityZone fromValue(String availablilityZone) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(
-               availablilityZone, "availablilityZone")));
-   }
 }

@@ -34,7 +34,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
@@ -42,7 +41,6 @@ import org.jclouds.aws.ec2.compute.domain.RegionTag;
 import org.jclouds.aws.ec2.compute.functions.CreateNewKeyPair;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -122,8 +120,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
       // parse the availability zone of the request
-      AvailabilityZone zone = template.getLocation().getScope() == LocationScope.ZONE ? AvailabilityZone
-               .fromValue(template.getLocation().getId())
+      String zone = template.getLocation().getScope() == LocationScope.ZONE ? template.getLocation().getId()
                : null;
 
       // if the location has a parent, it must be an availability zone.

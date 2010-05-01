@@ -108,8 +108,8 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
-         Map<AvailabilityZone, String> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<AvailabilityZone, String> of(AvailabilityZone.US_EAST_1A,
+         Map<String, String> provideAvailabilityZoneRegionMap() {
+            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A,
                      Region.US_EAST_1);
          }
       };

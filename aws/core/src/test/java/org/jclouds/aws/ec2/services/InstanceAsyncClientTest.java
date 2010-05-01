@@ -113,7 +113,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testRunInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class,
-               AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
+               String.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                null, "ami-voo", 1, 1);
@@ -134,7 +134,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class,
-               AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
+               String.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
                Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, "ami-voo", 1, 5,

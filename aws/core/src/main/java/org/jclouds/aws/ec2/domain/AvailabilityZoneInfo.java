@@ -51,15 +51,13 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
       }
    }
 
-   private final String zoneName;
-   private final AvailabilityZone zone;
+   private final String zone;
    private final State state;
    private final String region;
    private final Set<String> messages = Sets.newHashSet();
 
-   public AvailabilityZoneInfo(String zoneName, AvailabilityZone zone, State zoneState,
+   public AvailabilityZoneInfo(String zone, State zoneState,
             String region, Iterable<String> messages) {
-      this.zoneName = checkNotNull(zoneName, "zoneName");
       this.zone = checkNotNull(zone, "zone");
       this.state = checkNotNull(zoneState, "zoneState");
       this.region = checkNotNull(region, "region");
@@ -67,16 +65,9 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
    }
 
    /**
-    * Name of the Availability Zone.
-    */
-   public String getZoneName() {
-      return zoneName;
-   }
-
-   /**
     * the Availability Zone.
     */
-   public AvailabilityZone getZone() {
+   public String getZone() {
       return zone;
    }
 
@@ -109,7 +100,6 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
       result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((zone == null) ? 0 : zone.hashCode());
-      result = prime * result + ((zoneName == null) ? 0 : zoneName.hashCode());
       return result;
    }
 
@@ -142,23 +132,18 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
             return false;
       } else if (!zone.equals(other.zone))
          return false;
-      if (zoneName == null) {
-         if (other.zoneName != null)
-            return false;
-      } else if (!zoneName.equals(other.zoneName))
-         return false;
       return true;
    }
 
    @Override
    public String toString() {
       return "AvailabilityZoneInfo [messages=" + messages + ", region=" + region + ", state="
-               + state + ", zone=" + zone + ", zoneName=" + zoneName + "]";
+               + state + ", zone=" + zone + "]";
    }
 
    @Override
    public int compareTo(AvailabilityZoneInfo that) {
-      return zoneName.compareTo(that.zoneName);
+      return zone.compareTo(that.zone);
    }
 
 }

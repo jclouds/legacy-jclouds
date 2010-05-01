@@ -34,7 +34,6 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -75,8 +74,8 @@ public class AvailabilityZoneAndRegionClientLiveTest {
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
          Iterator<AvailabilityZoneInfo> iterator = allResults.iterator();
-         AvailabilityZone id1 = iterator.next().getZone();
-         AvailabilityZone id2 = iterator.next().getZone();
+         String id1 = iterator.next().getZone();
+         String id2 = iterator.next().getZone();
          SortedSet<AvailabilityZoneInfo> twoResults = Sets.newTreeSet(client
                   .describeAvailabilityZonesInRegion(region, availabilityZones(id1, id2)));
          assertNotNull(twoResults);

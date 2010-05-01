@@ -18,9 +18,9 @@
  */
 package org.jclouds.aws.ec2.options;
 
+import java.util.Arrays;
 import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
 
 /**
@@ -46,10 +46,8 @@ public class DescribeAvailabilityZonesOptions extends BaseEC2RequestOptions {
    /**
     * Availability Zone name.
     */
-   public DescribeAvailabilityZonesOptions zones(AvailabilityZone... zones) {
-      String[] zoneStrings = new String[zones.length];
-      for (int i = 0; i < zoneStrings.length; i++)
-         zoneStrings[i] = zones[i].value();
+   public DescribeAvailabilityZonesOptions zones(String... zones) {
+      String[] zoneStrings = Arrays.copyOf(zones, zones.length, String[].class);
       indexFormValuesWithPrefix("ZoneName", zoneStrings);
       return this;
    }
@@ -61,9 +59,9 @@ public class DescribeAvailabilityZonesOptions extends BaseEC2RequestOptions {
    public static class Builder {
 
       /**
-       * @see DescribeAvailabilityZonesOptions#zones(AvailabilityZone[] )
+       * @see DescribeAvailabilityZonesOptions#zones(String...)
        */
-      public static DescribeAvailabilityZonesOptions availabilityZones(AvailabilityZone... zones) {
+      public static DescribeAvailabilityZonesOptions availabilityZones(String... zones) {
          DescribeAvailabilityZonesOptions options = new DescribeAvailabilityZonesOptions();
          return options.zones(zones);
       }

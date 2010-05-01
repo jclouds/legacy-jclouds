@@ -132,7 +132,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final String keyName;
    private final Date launchTime;
    private final boolean monitoring;
-   private final AvailabilityZone availabilityZone;
+   private final String availabilityZone;
    @Nullable
    private final String platform;
    @Nullable
@@ -161,7 +161,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
             String imageId, String instanceId, InstanceState instanceState,
             String instanceType, @Nullable InetAddress ipAddress, @Nullable String kernelId,
             @Nullable String keyName, Date launchTime, boolean monitoring,
-            AvailabilityZone availabilityZone, @Nullable String platform,
+            String availabilityZone, @Nullable String platform,
             @Nullable String privateDnsName, @Nullable InetAddress privateIpAddress,
             Set<String> productCodes, @Nullable String ramdiskId, @Nullable String reason,
             @Nullable String subnetId, @Nullable String vpcId, RootDeviceType rootDeviceType,
@@ -284,7 +284,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * The location where the instance launched.
     */
-   public AvailabilityZone getAvailabilityZone() {
+   public String getAvailabilityZone() {
       return availabilityZone;
    }
 

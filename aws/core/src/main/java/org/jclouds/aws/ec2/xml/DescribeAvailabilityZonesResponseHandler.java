@@ -22,8 +22,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo.State;
 import org.jclouds.http.functions.ParseSax;
@@ -41,11 +39,10 @@ public class DescribeAvailabilityZonesResponseHandler extends
    private StringBuilder currentText = new StringBuilder();
 
    private Set<AvailabilityZoneInfo> availablilityZones = Sets.newLinkedHashSet();
-   private AvailabilityZone zone;
+   private String zone;
    @Resource
    protected Logger logger = Logger.NULL;
    private String region;
-   private String zoneName;
    private State zoneState;
    private boolean inMessageSet;
    private Set<String> messages = Sets.newHashSet();
@@ -62,13 +59,7 @@ public class DescribeAvailabilityZonesResponseHandler extends
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("zoneName")) {
-         zoneName = currentText.toString().trim();
-         try {
-            zone = AvailabilityZone.fromValue(zoneName);
-         } catch (IllegalArgumentException e) {
-            logger.warn(e, "unsupported region: %s", zoneName);
-            zone = AvailabilityZone.UNKNOWN;
-         }
+         zone = currentText.toString().trim();
       } else if (qName.equals("regionName")) {
          try {
             region = currentText.toString().trim();
@@ -88,10 +79,9 @@ public class DescribeAvailabilityZonesResponseHandler extends
       } else if (qName.equals("messageSet")) {
          inMessageSet = false;
       } else if (qName.equals("item") && !inMessageSet) {
-         availablilityZones.add(new AvailabilityZoneInfo(zoneName, zone, zoneState, region,
+         availablilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region,
                   messages));
          this.zone = null;
-         this.zoneName = null;
          this.region = null;
          this.zoneState = null;
          this.messages = Sets.newHashSet();

@@ -172,9 +172,9 @@
   [v]
   (cond
     (instance? AvailabilityZone v) v
-    (instance? NodeMetadata v) (AvailabilityZone/fromValue (.getLocationId #^NodeMetadata v))
-    (string? v) (AvailabilityZone/fromValue v)
-    (keyword? v) (AvailabilityZone/fromValue (name v))
+    (instance? NodeMetadata v) (.getLocationId #^NodeMetadata v)
+    (string? v) v
+    (keyword? v) (name v)
     :else (throw (IllegalArgumentException.
                    (str "Can't obtain zone from argument of type " (class v))))))
 
