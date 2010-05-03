@@ -32,7 +32,6 @@
       :lognull 'org.jclouds.logging.config.NullLoggingModule
       :ssh 'org.jclouds.ssh.jsch.config.JschSshClientModule
       :enterprise 'org.jclouds.enterprise.config.EnterpriseConfigurationModule
-      :httpnio 'org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule
       :apachehc 'org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule
       :bouncycastle 'org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule
       :joda 'org.jclouds.date.joda.config.JodaDateServiceModule

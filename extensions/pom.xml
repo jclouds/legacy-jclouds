@@ -33,7 +33,6 @@
     <name>jclouds extensions project</name>
     <modules>
         <module>gae</module>
-        <module>httpnio</module>
         <module>apachehc</module>
         <module>joda</module>
         <module>bouncycastle</module>
