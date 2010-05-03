@@ -42,28 +42,26 @@ import com.google.inject.Module;
  */
 public class BlueLockVCloudContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new BlueLockVCloudContextBuilder(
-               new BlueLockVCloudPropertiesBuilder(properties).build()).withModules(modules)
-               .buildComputeServiceContext();
+      return new BlueLockVCloudContextBuilder("bluelock", new BlueLockVCloudPropertiesBuilder(
+               properties).build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(String user, String key, Module... modules) {
-      return new BlueLockVCloudContextBuilder(
-               new BlueLockVCloudPropertiesBuilder(user, key).build()).withModules(modules)
-               .buildComputeServiceContext();
+      return new BlueLockVCloudContextBuilder("bluelock", new BlueLockVCloudPropertiesBuilder(user,
+               key).build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(Properties properties, String user,
             String key, Module... modules) {
-      return new BlueLockVCloudContextBuilder(
-               new BlueLockVCloudPropertiesBuilder(properties).withCredentials(user, key)
-                        .build()).withModules(modules).buildComputeServiceContext();
+      return new BlueLockVCloudContextBuilder("bluelock", new BlueLockVCloudPropertiesBuilder(
+               properties).withCredentials(user, key).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(URI endpoint, String user, String key,
             Module... modules) {
-      return new BlueLockVCloudContextBuilder(
-               new BlueLockVCloudPropertiesBuilder(user, key).withEndpoint(endpoint).build())
-               .withModules(modules).buildComputeServiceContext();
+      return new BlueLockVCloudContextBuilder("bluelock", new BlueLockVCloudPropertiesBuilder(user,
+               key).withEndpoint(endpoint).build()).withModules(modules)
+               .buildComputeServiceContext();
    }
 }

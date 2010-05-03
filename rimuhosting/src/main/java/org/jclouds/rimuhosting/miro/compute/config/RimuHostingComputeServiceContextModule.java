@@ -97,6 +97,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class RimuHostingComputeServiceContextModule extends RimuHostingContextModule {
+   private final String providerName;
+
+   public RimuHostingComputeServiceContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
@@ -338,10 +343,11 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
             Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
+      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
             locations.add(new LocationImpl(LocationScope.ZONE, from.getDataCenter().getId(), from
-                     .getDataCenter().getName(), null));
+                     .getDataCenter().getName(), provider));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }

@@ -64,6 +64,8 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
@@ -97,11 +99,16 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class CloudServersComputeServiceContextModule extends CloudServersContextModule {
+   private final String providerName;
+
+   public CloudServersComputeServiceContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
       super.configure();
-      install(new RackspaceLocationsModule());
+      install(new RackspaceLocationsModule(providerName));
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
       bind(AddNodeWithTagStrategy.class).to(CloudServersAddNodeWithTagStrategy.class);
@@ -187,11 +194,12 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          Server server = client.createServer(name, Integer.parseInt(template.getImage().getId()),
                   Integer.parseInt(template.getSize().getId()));
          serverActive.apply(server);
-         return new NodeMetadataImpl(server.getId() + "", name, template.getLocation(), null,
-                  server.getMetadata(), tag, template.getImage(), NodeState.RUNNING, server
-                           .getAddresses().getPublicAddresses(), server.getAddresses()
-                           .getPrivateAddresses(), ImmutableMap.<String, String> of(),
-                  new Credentials("root", server.getAdminPass()));
+         return new NodeMetadataImpl(server.getId() + "", name, new LocationImpl(
+                  LocationScope.HOST, server.getHostId(), server.getHostId(), template
+                           .getLocation()), null, server.getMetadata(), tag, template.getImage(),
+                  NodeState.RUNNING, server.getAddresses().getPublicAddresses(), server
+                           .getAddresses().getPrivateAddresses(), ImmutableMap
+                           .<String, String> of(), new Credentials("root", server.getAdminPass()));
       }
 
    }
@@ -336,6 +344,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          osDescription = from.getName();
          if (from.getName().indexOf("Red Hat EL") != -1) {
             os = OsFamily.RHEL;
+         } else if (from.getName().indexOf("Oracle EL") != -1) {
+            os = OsFamily.OEL;
          } else if (matcher.find()) {
             try {
                os = OsFamily.fromValue(matcher.group(2).toLowerCase());

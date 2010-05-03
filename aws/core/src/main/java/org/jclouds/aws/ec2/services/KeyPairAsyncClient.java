@@ -28,7 +28,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;

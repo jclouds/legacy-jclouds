@@ -41,27 +41,27 @@ import com.google.inject.Module;
  */
 public class S3ContextFactory {
 
-   public static BlobStoreContext createContext(Properties properties,
-            Module... modules) {
-      return new S3ContextBuilder(new S3PropertiesBuilder(properties).build()).withModules(modules)
+   public static BlobStoreContext createContext(Properties properties, Module... modules) {
+      return new S3ContextBuilder("s3", new S3PropertiesBuilder(properties).build()).withModules(
+               modules).buildBlobStoreContext();
+   }
+
+   public static BlobStoreContext createContext(Properties properties, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder("s3", new S3PropertiesBuilder(properties).withCredentials(
+               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules)
                .buildBlobStoreContext();
    }
 
-   public static BlobStoreContext createContext(Properties properties,
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new S3ContextBuilder(new S3PropertiesBuilder(properties).withCredentials(
-               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildBlobStoreContext();
-   }
-
-   public static BlobStoreContext createContext(String awsAccessKeyId,
-            String awsSecretAccessKey, Module... modules) {
-      return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
+   public static BlobStoreContext createContext(String awsAccessKeyId, String awsSecretAccessKey,
+            Module... modules) {
+      return new S3ContextBuilder("s3", new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .build()).withModules(modules).buildBlobStoreContext();
    }
 
-   public static BlobStoreContext createContext(URI endpoint,
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
+   public static BlobStoreContext createContext(URI endpoint, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder("s3", new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
    }
 }

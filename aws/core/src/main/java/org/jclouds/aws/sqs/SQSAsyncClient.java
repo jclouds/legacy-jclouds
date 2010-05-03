@@ -28,7 +28,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.functions.QueueLocation;

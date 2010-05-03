@@ -118,11 +118,11 @@ public class VCloudVersionsLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new RestContextBuilder<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(
-               new TypeLiteral<VCloudVersionsAsyncClient>() {
+               "vcloud", new TypeLiteral<VCloudVersionsAsyncClient>() {
                }, new TypeLiteral<VCloudVersionsAsyncClient>() {
                }, new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
 
-         public void addContextModule(List<Module> modules) {
+         public void addContextModule(String providerName, List<Module> modules) {
 
             modules.add(new VCloudVersionsContextModule());
          }

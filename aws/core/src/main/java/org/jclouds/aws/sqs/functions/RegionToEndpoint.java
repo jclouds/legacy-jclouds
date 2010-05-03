@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.SQS;
 
 import com.google.common.base.Function;

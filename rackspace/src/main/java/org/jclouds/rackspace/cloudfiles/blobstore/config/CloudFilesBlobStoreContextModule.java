@@ -29,6 +29,7 @@ import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
+import org.jclouds.rackspace.config.RackspaceLocationsModule;
 
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -40,10 +41,16 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class CloudFilesBlobStoreContextModule extends CloudFilesContextModule {
+   private final String providerName;
+
+   public CloudFilesBlobStoreContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
       super.configure();
+      install(new RackspaceLocationsModule(providerName));
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).in(Scopes.SINGLETON);

@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 
-import org.jclouds.aws.domain.Region;
-
 import com.google.inject.internal.Nullable;
 
 /**

@@ -47,15 +47,15 @@ import com.google.inject.TypeLiteral;
 public class AzureQueueContextBuilder extends
          RestContextBuilder<AzureQueueAsyncClient, AzureQueueClient> {
 
-   public AzureQueueContextBuilder(Properties properties) {
-      super(new TypeLiteral<AzureQueueAsyncClient>() {
+   public AzureQueueContextBuilder(String providerName, Properties properties) {
+      super(providerName, new TypeLiteral<AzureQueueAsyncClient>() {
       }, new TypeLiteral<AzureQueueClient>() {
       }, properties);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new AzureQueueContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new AzureQueueContextModule(providerName));
    }
 
    @Override

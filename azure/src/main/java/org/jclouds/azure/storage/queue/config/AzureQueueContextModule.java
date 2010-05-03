@@ -38,6 +38,9 @@ import com.google.inject.Provides;
 @RequiresHttp
 public class AzureQueueContextModule extends AbstractModule {
 
+   public AzureQueueContextModule(String providerName) {
+   }
+
    @Override
    protected void configure() {
    }

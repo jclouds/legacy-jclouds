@@ -135,7 +135,7 @@ Options can also be specified for extension modules
   "Retrieve the available container locations for the blobstore context."
   ([] (locations *blobstore*))
   ([#^BlobStore blobstore]
-     (seq-from-immutable-set (.getLocations blobstore))))
+     (seq-from-immutable-set (.getAssignableLocations blobstore))))
 
 (defn create-container
   "Create a container."

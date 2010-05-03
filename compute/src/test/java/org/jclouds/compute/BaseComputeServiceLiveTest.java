@@ -50,6 +50,7 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
@@ -200,7 +201,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    void assertLocationSameOrChild(Location test, Location expected) {
       if (!test.equals(expected)) {
-         assertEquals(test.getParent(), expected.getId());
+         assertEquals(test.getParent().getId(), expected.getId());
       } else {
          assertEquals(test, expected);
       }
@@ -248,11 +249,19 @@ public abstract class BaseComputeServiceLiveTest {
 
    private Map<String, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
             Credentials creds) {
-      return client.runScriptOnNodesWithTag(tag, buildScript(osFamily).getBytes(),
-               RunScriptOptions.Builder.overrideCredentialsWith(creds));
+      try {
+         return client.runScriptOnNodesWithTag(tag, buildScript(osFamily).getBytes(),
+                  RunScriptOptions.Builder.overrideCredentialsWith(creds));
+      } catch (SshException e) {
+         if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
+            System.err.printf("bad credentials: %s:%s for %s", creds.account, creds.key, client
+                     .getNodesWithTag(tag));
+         }
+         throw e;
+      }
    }
 
-   private void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
+   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getId());
          assertNotNull(node.getTag());
@@ -381,13 +390,42 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   public void testListLocations() throws Exception {
-      for (Entry<String, ? extends Location> image : client.getLocations().entrySet()) {
-         assertEquals(image.getKey(), image.getValue().getId());
-         assert image.getValue().getId() != null : image;
-         assert image.getValue().getId() != image.getValue().getParent() : image;
-         assert image.getValue().getScope() != null : image;
+   @Test(groups = { "integration", "live" })
+   public void testGetAssignableLocations() throws Exception {
+      for (Entry<String, ? extends Location> location : client.getAssignableLocations().entrySet()) {
+         System.err.printf("location %s%n", location.getValue());
+         assertEquals(location.getKey(), location.getValue().getId());
+         assert location.getValue().getId() != null : location;
+         assert location.getValue() != location.getValue().getParent() : location;
+         assert location.getValue().getScope() != null : location;
+         switch (location.getValue().getScope()) {
+            case PROVIDER:
+               assertProvider(location.getValue());
+               break;
+            case REGION:
+               assertProvider(location.getValue().getParent());
+               break;
+            case ZONE:
+               Location provider = location.getValue().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getValue().getParent();
+               assertProvider(provider);
+               break;
+            case HOST:
+               Location provider2 = location.getValue().getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getValue().getParent().getParent();
+               assertProvider(provider2);
+               break;
+         }
       }
+   }
+
+   private void assertProvider(Location provider) {
+      assertEquals(provider.getScope(), LocationScope.PROVIDER);
+      assertEquals(provider.getParent(), null);
    }
 
    public void testListSizes() throws Exception {

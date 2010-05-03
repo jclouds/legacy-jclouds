@@ -288,6 +288,15 @@ public class ComputeUtils {
             returnVal = runScriptAsDefaultUser();
          runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName + " status", ssh));
          logger.debug("<< complete(%d)", returnVal.getExitCode());
+         if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
+            logger.debug("<< stdout from %s as %s@%s\n%s", scriptName,
+                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0)
+                              .getHostAddress(), ssh.exec("./" + scriptName + " tail").getOutput());
+            logger.debug("<< stderr from %s as %s@%s\n%s", scriptName,
+                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0)
+                              .getHostAddress(), ssh.exec("./" + scriptName + " tailerr")
+                              .getOutput());
+         }
          return returnVal;
       }
 

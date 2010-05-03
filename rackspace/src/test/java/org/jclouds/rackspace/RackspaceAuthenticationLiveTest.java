@@ -119,7 +119,7 @@ public class RackspaceAuthenticationLiveTest {
    @BeforeClass
    void setupFactory() {
       context = new RestContextBuilder<RackspaceAuthentication, RackspaceAuthentication>(
-               new TypeLiteral<RackspaceAuthentication>() {
+               "rackspace", new TypeLiteral<RackspaceAuthentication>() {
                }, new TypeLiteral<RackspaceAuthentication>() {
                }, new RackspacePropertiesBuilder(account, key).build()) {
          @Override
@@ -128,8 +128,10 @@ public class RackspaceAuthenticationLiveTest {
             modules.add(new RackspaceAuthenticationRestModule());
          }
 
-         public void addContextModule(List<Module> modules) {
+         @Override
+         protected void addContextModule(String providerName, List<Module> modules) {
             modules.add(new RackspaceAuthenticationContextModule());
+
          }
       }.withModules(new Log4JLoggingModule(),
                new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))

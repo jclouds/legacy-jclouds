@@ -37,8 +37,8 @@ import com.google.inject.TypeLiteral;
  */
 public class TwitterContextBuilder extends RestContextBuilder<TwitterAsyncClient, TwitterClient> {
 
-   public TwitterContextBuilder(Properties props) {
-      super(new TypeLiteral<TwitterAsyncClient>() {
+   public TwitterContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<TwitterAsyncClient>() {
       }, new TypeLiteral<TwitterClient>() {
       }, props);
       checkNotNull(properties.getProperty(TwitterConstants.PROPERTY_TWITTER_USER));
@@ -50,8 +50,8 @@ public class TwitterContextBuilder extends RestContextBuilder<TwitterAsyncClient
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new TwitterContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new TwitterContextModule(providerName));
    }
 
 }

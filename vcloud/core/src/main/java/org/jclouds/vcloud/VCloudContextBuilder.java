@@ -50,15 +50,15 @@ import com.google.inject.TypeLiteral;
 public class VCloudContextBuilder extends
          ComputeServiceContextBuilder<VCloudAsyncClient, VCloudClient> {
 
-   public VCloudContextBuilder(Properties props) {
-      super(new TypeLiteral<VCloudAsyncClient>() {
+   public VCloudContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<VCloudAsyncClient>() {
       }, new TypeLiteral<VCloudClient>() {
       }, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new VCloudComputeServiceContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new VCloudComputeServiceContextModule(providerName));
    }
 
    @Override

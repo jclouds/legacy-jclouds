@@ -43,9 +43,9 @@ public class BlueLockVCloudClientLiveTest extends VCloudClientLiveTest {
    public void setupClient() {
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new BlueLockVCloudContextBuilder(new BlueLockVCloudPropertiesBuilder(
-               account, key).build()).withModules(new Log4JLoggingModule(),
-               new JschSshClientModule()).buildInjector();
+      Injector injector = new BlueLockVCloudContextBuilder("bluelock",
+               new BlueLockVCloudPropertiesBuilder(account, key).build()).withModules(
+               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
 
       connection = injector.getInstance(VCloudClient.class);
    }

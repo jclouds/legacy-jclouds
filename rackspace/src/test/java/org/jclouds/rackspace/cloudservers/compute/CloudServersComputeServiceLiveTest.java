@@ -21,11 +21,15 @@ package org.jclouds.rackspace.cloudservers.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rest.RestContext;
@@ -66,5 +70,13 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       @SuppressWarnings("unused")
       RestContext<CloudServersAsyncClient, CloudServersClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
+   }
+
+   @Override
+   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
+      super.checkNodes(nodes, tag);
+      for (NodeMetadata node : nodes) {
+         assertEquals(node.getLocation().getScope(), LocationScope.HOST);
+      }
    }
 }

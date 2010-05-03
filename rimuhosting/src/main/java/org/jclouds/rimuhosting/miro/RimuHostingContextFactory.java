@@ -41,8 +41,8 @@ import com.google.inject.Module;
  */
 public class RimuHostingContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(properties).build())
-               .withModules(modules).buildComputeServiceContext();
+      return new RimuHostingContextBuilder("rimuhosting", new RimuHostingPropertiesBuilder(
+               properties).build()).withModules(modules).buildComputeServiceContext();
    }
 
    /**
@@ -50,12 +50,12 @@ public class RimuHostingContextFactory {
     */
    public static ComputeServiceContext createContext(String apiKey, String apiKey1,
             Module... modules) {
-      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(apiKey).build())
-               .withModules(modules).buildComputeServiceContext();
+      return new RimuHostingContextBuilder("rimuhosting", new RimuHostingPropertiesBuilder(apiKey)
+               .build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(String apiKey, Module... modules) {
-      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(apiKey).build())
-               .withModules(modules).buildComputeServiceContext();
+      return new RimuHostingContextBuilder("rimuhosting", new RimuHostingPropertiesBuilder(apiKey)
+               .build()).withModules(modules).buildComputeServiceContext();
    }
 }

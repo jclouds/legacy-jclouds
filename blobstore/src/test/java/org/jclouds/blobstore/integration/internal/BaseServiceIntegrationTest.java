@@ -18,12 +18,16 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -43,11 +47,13 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testAllLocations() throws InterruptedException {
-      for (final Location location : context.getBlobStore().getLocations().values()) {
+      for (final Location location : context.getBlobStore().getAssignableLocations().values()) {
          final String containerName = getScratchContainerName();
          try {
-
+            System.err.printf(" >> creating container in location %s%n", location);
             context.getBlobStore().createContainerInLocation(location, containerName);
+            System.err.printf(" << call complete.. checking%n");
+
             assertConsistencyAware(new Runnable() {
 
                @Override
@@ -68,4 +74,44 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
          }
       }
    }
+
+   @Test(groups = { "integration", "live" })
+   public void testGetAssignableLocations() throws Exception {
+      for (Entry<String, ? extends Location> location : context.getBlobStore()
+               .getAssignableLocations().entrySet()) {
+         System.err.printf("location %s%n", location.getValue());
+         assertEquals(location.getKey(), location.getValue().getId());
+         assert location.getValue().getId() != null : location;
+         assert location.getValue() != location.getValue().getParent() : location;
+         assert location.getValue().getScope() != null : location;
+         switch (location.getValue().getScope()) {
+            case PROVIDER:
+               assertProvider(location.getValue());
+               break;
+            case REGION:
+               assertProvider(location.getValue().getParent());
+               break;
+            case ZONE:
+               Location provider = location.getValue().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getValue().getParent();
+               assertProvider(provider);
+               break;
+            case HOST:
+               Location provider2 = location.getValue().getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getValue().getParent().getParent();
+               assertProvider(provider2);
+               break;
+         }
+      }
+   }
+
+   public void assertProvider(Location provider) {
+      assertEquals(provider.getScope(), LocationScope.PROVIDER);
+      assertEquals(provider.getParent(), null);
+   }
+
 }

@@ -31,6 +31,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 
@@ -60,7 +62,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Matcher matcher = SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from
                .getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null, from
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), new LocationImpl(
+               LocationScope.HOST, from.getHostId(), from.getHostId(), location), null, from
                .getMetadata(), tag, images.get(from.getImageId().toString()), serverToNodeState
                .get(from.getStatus()), from.getAddresses().getPublicAddresses(), from
                .getAddresses().getPrivateAddresses(), ImmutableMap.<String, String> of(), null);

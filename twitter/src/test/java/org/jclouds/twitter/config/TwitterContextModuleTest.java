@@ -50,20 +50,21 @@ import com.google.inject.Injector;
 public class TwitterContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new TwitterRestClientModule(), new TwitterContextModule() {
-         @Override
-         protected void configure() {
-            Jsr330.bindProperties(this.binder(), new TwitterPropertiesBuilder("user", "pass")
-                     .build());
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            bind(UriBuilder.class).to(UriBuilderImpl.class);
-            super.configure();
-         }
-      }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
+      return Guice.createInjector(new TwitterRestClientModule(),
+               new TwitterContextModule("twitter") {
+                  @Override
+                  protected void configure() {
+                     Jsr330.bindProperties(this.binder(), new TwitterPropertiesBuilder("user",
+                              "pass").build());
+                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+                        public Logger getLogger(String category) {
+                           return Logger.NULL;
+                        }
+                     });
+                     bind(UriBuilder.class).to(UriBuilderImpl.class);
+                     super.configure();
+                  }
+               }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
                new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
    }
 

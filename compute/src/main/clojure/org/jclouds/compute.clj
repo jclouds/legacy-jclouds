@@ -117,7 +117,7 @@ See http://code.google.com/p/jclouds for details."
   "Retrieve the available compute locations for the compute context."
   ([] (locations *compute*))
   ([#^ComputeService compute]
-     (seq-from-immutable-set (.getLocations compute))))
+     (seq-from-immutable-set (.getAssignableLocations compute))))
 
 (defn nodes-with-tag
   [#^String tag #^ComputeService compute]

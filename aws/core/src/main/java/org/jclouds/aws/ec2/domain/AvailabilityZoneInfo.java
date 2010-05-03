@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 

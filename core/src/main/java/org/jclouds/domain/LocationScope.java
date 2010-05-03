@@ -25,6 +25,6 @@ package org.jclouds.domain;
  */
 public enum LocationScope {
 
-   REGION, ZONE, RACK, HOST;
+   PROVIDER, REGION, ZONE, RACK, HOST;
 
 }

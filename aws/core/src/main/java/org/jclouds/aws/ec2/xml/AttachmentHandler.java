@@ -23,7 +23,6 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.util.EC2Utils;

@@ -24,14 +24,15 @@ import java.util.Properties;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.bluelock.compute.config.BlueLockVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.bluelock.config.BlueLockVCloudRestClientModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link BlueLockVCloudComputeServiceContext} or {@link Injector} instances based on
- * the most commonly requested arguments.
+ * Creates {@link BlueLockVCloudComputeServiceContext} or {@link Injector} instances based on the
+ * most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -42,11 +43,15 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see BlueLockVCloudComputeServiceContext
  */
-public class BlueLockVCloudContextBuilder extends
-         VCloudContextBuilder {
+public class BlueLockVCloudContextBuilder extends VCloudContextBuilder {
 
-   public BlueLockVCloudContextBuilder(Properties props) {
-      super(props);
+   public BlueLockVCloudContextBuilder(String providerName, Properties props) {
+      super(providerName, props);
+   }
+
+   @Override
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new BlueLockVCloudComputeServiceContextModule(providerName));
    }
 
    @Override

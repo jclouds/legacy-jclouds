@@ -50,7 +50,7 @@ import com.google.inject.Injector;
 public class PCSContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new PCSRestClientModule(), new PCSContextModule() {
+      return Guice.createInjector(new PCSRestClientModule(), new PCSContextModule("mezeo") {
          @Override
          protected void configure() {
             Jsr330.bindProperties(this.binder(), new PCSPropertiesBuilder(URI

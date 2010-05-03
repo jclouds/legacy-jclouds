@@ -67,7 +67,7 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
    @Provides
    @Singleton
    Location getLocation() {
-      return new LocationImpl(LocationScope.ZONE, "UNKNOWN", "TODO", null);
+      return new LocationImpl(LocationScope.PROVIDER, "azureblob", "azureblob", null);
    }
 
    @Provides

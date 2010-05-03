@@ -50,6 +50,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
+   private final String providerName;
+
+   public AtmosBlobStoreContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
@@ -68,7 +73,7 @@ public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
    @Provides
    @Singleton
    Location getLocation() {
-      return new LocationImpl(LocationScope.ZONE, "UNKNOWN", "TODO", null);
+      return new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
    }
 
    @Provides

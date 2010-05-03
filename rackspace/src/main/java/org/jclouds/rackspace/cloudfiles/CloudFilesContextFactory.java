@@ -42,18 +42,18 @@ import com.google.inject.Module;
  */
 public class CloudFilesContextFactory {
    public static BlobStoreContext createContext(Properties properties, Module... modules) {
-      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(properties)
+      return new CloudFilesContextBuilder("cloudfiles", new CloudFilesPropertiesBuilder(properties)
                .build()).withModules(modules).buildBlobStoreContext();
    }
 
    public static BlobStoreContext createContext(String user, String key, Module... modules) {
-      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(user, key)
+      return new CloudFilesContextBuilder("cloudfiles", new CloudFilesPropertiesBuilder(user, key)
                .build()).withModules(modules).buildBlobStoreContext();
    }
 
    public static BlobStoreContext createContext(URI endpoint, String user, String key,
             Module... modules) {
-      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(user, key)
+      return new CloudFilesContextBuilder("cloudfiles", new CloudFilesPropertiesBuilder(user, key)
                .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
    }
 }

@@ -48,16 +48,16 @@ import com.google.inject.TypeLiteral;
 public class CloudServersContextBuilder extends
          ComputeServiceContextBuilder<CloudServersAsyncClient, CloudServersClient> {
 
-   public CloudServersContextBuilder(Properties props) {
-      super(new TypeLiteral<CloudServersAsyncClient>() {
+   public CloudServersContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<CloudServersAsyncClient>() {
       }, new TypeLiteral<CloudServersClient>() {
       }, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
+   protected void addContextModule(String providerName, List<Module> modules) {
       modules.add(new RackspaceAuthenticationRestModule());
-      modules.add(new CloudServersComputeServiceContextModule());
+      modules.add(new CloudServersComputeServiceContextModule(providerName));
    }
 
    @Override

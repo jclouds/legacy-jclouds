@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.xml.internal.BaseRegexQueueHandler;

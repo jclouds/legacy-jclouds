@@ -42,25 +42,25 @@ import com.google.inject.Module;
  */
 public class TerremarkVCloudContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+      return new TerremarkVCloudContextBuilder("terremark", new TerremarkVCloudPropertiesBuilder(
                properties).build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(String user, String key, Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+      return new TerremarkVCloudContextBuilder("terremark", new TerremarkVCloudPropertiesBuilder(
                user, key).build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(Properties properties, String user,
             String key, Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+      return new TerremarkVCloudContextBuilder("terremark", new TerremarkVCloudPropertiesBuilder(
                properties).withCredentials(user, key).build()).withModules(modules)
                .buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(URI endpoint, String user, String key,
             Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+      return new TerremarkVCloudContextBuilder("terremark", new TerremarkVCloudPropertiesBuilder(
                user, key).withEndpoint(endpoint).build()).withModules(modules)
                .buildComputeServiceContext();
    }

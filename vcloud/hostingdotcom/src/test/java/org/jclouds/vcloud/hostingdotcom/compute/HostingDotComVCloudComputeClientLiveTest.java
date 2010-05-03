@@ -51,15 +51,14 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new HostingDotComVCloudContextBuilder(
+      Injector injector = new HostingDotComVCloudContextBuilder("hostingdotcom",
                new HostingDotComVCloudPropertiesBuilder(account, key).build()).withModules(
                new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       computeClient = injector.getInstance(HostingDotComVCloudComputeClient.class);
       client = injector.getInstance(HostingDotComVCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
       }));
-      expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(
-               OsFamily.CENTOS,
+      expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
       service = "vcloudtest";
       templateId = "3";

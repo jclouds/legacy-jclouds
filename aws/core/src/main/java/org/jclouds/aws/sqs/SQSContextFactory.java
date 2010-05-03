@@ -43,25 +43,26 @@ public class SQSContextFactory {
 
    public static RestContext<SQSAsyncClient, SQSClient> createContext(Properties properties,
             Module... modules) {
-      return new SQSContextBuilder(new SQSPropertiesBuilder(properties).build()).withModules(
-               modules).buildContext();
+      return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
    }
 
-   public static RestContext<SQSAsyncClient, SQSClient> createContext(Properties properties, String awsAccessKeyId,
-            String awsSecretAccessKey, Module... modules) {
-      return new SQSContextBuilder(new SQSPropertiesBuilder(properties).withCredentials(awsAccessKeyId, awsSecretAccessKey)
-               .build()).withModules(modules).buildContext();
+   public static RestContext<SQSAsyncClient, SQSClient> createContext(Properties properties,
+            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
+      return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(properties).withCredentials(
+               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildContext();
    }
-   
+
    public static RestContext<SQSAsyncClient, SQSClient> createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
-      return new SQSContextBuilder(new SQSPropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
-               .build()).withModules(modules).buildContext();
+      return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(awsAccessKeyId,
+               awsSecretAccessKey).build()).withModules(modules).buildContext();
    }
 
    public static RestContext<SQSAsyncClient, SQSClient> createContext(URI endpoint,
             String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new SQSContextBuilder(new SQSPropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
-               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
+      return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(awsAccessKeyId,
+               awsSecretAccessKey).withEndpoint(endpoint).build()).withModules(modules)
+               .buildContext();
    }
 }

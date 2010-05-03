@@ -41,18 +41,18 @@ import com.google.inject.Module;
  */
 public class AtmosStorageContextFactory {
    public static BlobStoreContext createContext(Properties properties, Module... modules) {
-      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(properties).build())
-               .withModules(modules).buildBlobStoreContext();
+      return new AtmosStorageContextBuilder("atmosstorage", new AtmosStoragePropertiesBuilder(
+               properties).build()).withModules(modules).buildBlobStoreContext();
    }
 
    public static BlobStoreContext createContext(String uid, String key, Module... modules) {
-      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(uid, key).build())
-               .withModules(modules).buildBlobStoreContext();
+      return new AtmosStorageContextBuilder("atmosstorage", new AtmosStoragePropertiesBuilder(uid,
+               key).build()).withModules(modules).buildBlobStoreContext();
    }
 
    public static BlobStoreContext createContext(URI endpoint, String uid, String key,
             Module... modules) {
-      return new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(uid, key)
-               .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
+      return new AtmosStorageContextBuilder("atmosstorage", new AtmosStoragePropertiesBuilder(uid,
+               key).withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
    }
 }

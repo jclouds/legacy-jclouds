@@ -42,6 +42,10 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class PCSContextModule extends AbstractModule {
+   public PCSContextModule(String providerName) {
+
+   }
+
    @Override
    protected void configure() {
       install(new BlobStoreObjectModule<PCSAsyncClient, PCSClient>(

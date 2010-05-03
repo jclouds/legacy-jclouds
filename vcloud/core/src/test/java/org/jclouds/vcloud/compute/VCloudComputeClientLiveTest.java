@@ -146,8 +146,8 @@ public class VCloudComputeClientLiveTest {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint");
-      Injector injector = new VCloudContextBuilder(new VCloudPropertiesBuilder(
-               URI.create(endpoint), account, key).build()).withModules(new Log4JLoggingModule(),
+      Injector injector = new VCloudContextBuilder("vcloud", new VCloudPropertiesBuilder(URI
+               .create(endpoint), account, key).build()).withModules(new Log4JLoggingModule(),
                new JschSshClientModule()).buildInjector();
       computeClient = injector.getInstance(VCloudComputeClient.class);
       client = injector.getInstance(VCloudClient.class);

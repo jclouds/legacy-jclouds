@@ -43,7 +43,8 @@ public class CloudFilesBlobStoreModuleTest {
    Injector createInjector() {
       return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
                sameThreadExecutor()), new JDKLoggingModule(), new CloudFilesStubClientModule(),
-               new StubRackspaceAuthenticationModule(), new CloudFilesBlobStoreContextModule() {
+               new StubRackspaceAuthenticationModule(), new CloudFilesBlobStoreContextModule(
+                        "cloudfiles") {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(

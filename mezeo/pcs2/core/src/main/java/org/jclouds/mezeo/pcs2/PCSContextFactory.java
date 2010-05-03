@@ -43,12 +43,12 @@ public class PCSContextFactory {
 
    public static RestContext<PCSAsyncClient,PCSClient> createContext(URI endpoint, String user, String key,
             Module... modules) {
-      return new PCSContextBuilder(new PCSPropertiesBuilder(endpoint, user, key).build())
+      return new PCSContextBuilder("mezeo", new PCSPropertiesBuilder(endpoint, user, key).build())
                .withModules(modules).buildContext();
    }
 
    public static RestContext<PCSAsyncClient,PCSClient> createContext(Properties properties, Module... modules) {
-      return new PCSContextBuilder(new PCSPropertiesBuilder(properties).build()).withModules(
+      return new PCSContextBuilder("mezeo", new PCSPropertiesBuilder(properties).build()).withModules(
                modules).buildContext();
    }
 

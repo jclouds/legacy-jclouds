@@ -55,7 +55,7 @@ public interface BlobStore {
     * similar to a datacenter. If a location has a parent, that implies it is within that location.
     * For example a location can be a rack, whose parent is likely to be a zone.
     */
-   Map<String, ? extends Location> getLocations();
+   Map<String, ? extends Location> getAssignableLocations();
 
    /**
     * Lists all root-level resources available to the account.

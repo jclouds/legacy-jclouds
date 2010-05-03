@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.concurrent.Timeout;
 

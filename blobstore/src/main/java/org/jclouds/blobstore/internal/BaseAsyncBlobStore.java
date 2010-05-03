@@ -271,7 +271,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    }
 
    @Override
-   public ListenableFuture<? extends Map<String, ? extends Location>> getLocations() {
+   public ListenableFuture<? extends Map<String, ? extends Location>> getAssignableLocations() {
       return immediateFuture(locations);
    }
 

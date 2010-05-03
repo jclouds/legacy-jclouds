@@ -18,7 +18,9 @@
  */
 package org.jclouds.vcloud.bluelock.compute.config;
 
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.vcloud.bluelock.compute.BlueLockVCloudComputeClient;
+import org.jclouds.vcloud.bluelock.compute.strategy.DefaultLoginCredentialsFromBlueLockFAQ;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
@@ -30,10 +32,16 @@ import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
  */
 public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
+   public BlueLockVCloudComputeServiceContextModule(String providerName) {
+      super(providerName);
+   }
+
    @Override
    protected void configure() {
       super.configure();
       bind(VCloudComputeClient.class).to(BlueLockVCloudComputeClient.class);
+      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
+               DefaultLoginCredentialsFromBlueLockFAQ.class);
    }
 
 }

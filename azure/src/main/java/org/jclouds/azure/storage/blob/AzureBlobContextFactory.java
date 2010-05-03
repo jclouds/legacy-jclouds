@@ -41,18 +41,19 @@ import com.google.inject.Module;
  */
 public class AzureBlobContextFactory {
    public static BlobStoreContext createContext(Properties properties, Module... modules) {
-      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
-               .withModules(modules).buildBlobStoreContext();
+      return new AzureBlobContextBuilder("azureblob", new AzureBlobPropertiesBuilder(properties)
+               .build()).withModules(modules).buildBlobStoreContext();
    }
 
    public static BlobStoreContext createContext(String user, String encodedKey, Module... modules) {
-      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
-               .build()).withModules(modules).buildBlobStoreContext();
+      return new AzureBlobContextBuilder("azureblob", new AzureBlobPropertiesBuilder(user,
+               encodedKey).build()).withModules(modules).buildBlobStoreContext();
    }
 
    public static BlobStoreContext createContext(URI endpoint, String user, String encodedKey,
             Module... modules) {
-      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
-               .withEndpoint(endpoint).build()).withModules(modules).buildBlobStoreContext();
+      return new AzureBlobContextBuilder("azureblob", new AzureBlobPropertiesBuilder(user,
+               encodedKey).withEndpoint(endpoint).build()).withModules(modules)
+               .buildBlobStoreContext();
    }
 }

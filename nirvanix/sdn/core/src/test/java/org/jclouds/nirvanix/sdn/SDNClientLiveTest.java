@@ -59,8 +59,8 @@ public class SDNClientLiveTest {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = new SDNContextBuilder(new SDNPropertiesBuilder(appid, appname, user, password)
-               .build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
+      connection = new SDNContextBuilder("nirvanix", new SDNPropertiesBuilder(appid, appname, user,
+               password).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
    }
 
    public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException {

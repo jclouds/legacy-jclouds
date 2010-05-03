@@ -53,7 +53,7 @@ public class AzureQueueClientLiveTest {
    public void setupClient() {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      Injector injector = new AzureQueueContextBuilder(
+      Injector injector = new AzureQueueContextBuilder("azurequeue",
                new AzureQueuePropertiesBuilder(account, key).build()).withModules(
                new Log4JLoggingModule()).buildInjector();
       connection = injector.getInstance(AzureQueueClient.class);
@@ -104,13 +104,13 @@ public class AzureQueueClientLiveTest {
       assertEquals(privateQueue, response.getPrefix());
       assertEquals(1, response.getMaxResults());
    }
+
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateQueue" })
    public void testPutMessage() throws Exception {
-      connection.putMessage(privateQueue,"holycow",PutMessageOptions.Builder.withTTL(4));
+      connection.putMessage(privateQueue, "holycow", PutMessageOptions.Builder.withTTL(4));
       // TODO loop for up to 30 seconds checking if they are really gone
    }
-   
-   
+
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testPutMessage" })
    public void testDeleteQueue() throws Exception {
       connection.clearMessages(privateQueue);

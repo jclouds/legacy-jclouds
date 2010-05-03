@@ -35,8 +35,8 @@ import com.google.inject.TypeLiteral;
  */
 public class SDNContextBuilder extends RestContextBuilder<SDNAsyncClient, SDNClient> {
 
-   public SDNContextBuilder(Properties props) {
-      super(new TypeLiteral<SDNAsyncClient>() {
+   public SDNContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<SDNAsyncClient>() {
       }, new TypeLiteral<SDNClient>() {
       }, props);
    }
@@ -48,8 +48,8 @@ public class SDNContextBuilder extends RestContextBuilder<SDNAsyncClient, SDNCli
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new SDNContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new SDNContextModule(providerName));
    }
 
 }

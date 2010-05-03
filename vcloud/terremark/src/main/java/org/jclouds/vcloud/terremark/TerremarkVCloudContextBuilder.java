@@ -45,13 +45,13 @@ import com.google.inject.Module;
  */
 public class TerremarkVCloudContextBuilder extends VCloudContextBuilder {
 
-   public TerremarkVCloudContextBuilder(Properties props) {
-      super(props);
+   public TerremarkVCloudContextBuilder(String providerName, Properties props) {
+      super(providerName, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new TerremarkVCloudComputeServiceContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new TerremarkVCloudComputeServiceContextModule(providerName));
    }
 
    @Override

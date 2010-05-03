@@ -82,9 +82,9 @@ public class CloudServersClientLiveTest {
    public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new CloudServersContextBuilder(new RackspacePropertiesBuilder(user,
-               password).build()).withModules(new Log4JLoggingModule(), new JschSshClientModule())
-               .buildInjector();
+      Injector injector = new CloudServersContextBuilder("cloudservers",
+               new RackspacePropertiesBuilder(user, password).build()).withModules(
+               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

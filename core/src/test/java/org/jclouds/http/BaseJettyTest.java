@@ -74,15 +74,15 @@ public abstract class BaseJettyTest {
             RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> {
       private final int testPort;
 
-      public IntegrationContextBuilder(Properties properties, int testPort) {
-         super(new TypeLiteral<IntegrationTestAsyncClient>() {
+      public IntegrationContextBuilder(String providerName, Properties properties, int testPort) {
+         super(providerName, new TypeLiteral<IntegrationTestAsyncClient>() {
          }, new TypeLiteral<IntegrationTestClient>() {
          }, properties);
          this.testPort = testPort;
       }
 
       @Override
-      protected void addContextModule(List<Module> modules) {
+      protected void addContextModule(String providerName, List<Module> modules) {
          modules.add(new JettyContextModule(testPort));
       }
 
@@ -190,19 +190,20 @@ public abstract class BaseJettyTest {
                if (failEveryTenRequests(request, response))
                   return;
                if (request.getContentLength() > 0) {
-                  if(request.getHeader("Content-MD5") != null) {
-                       String expectedMd5 = request.getHeader("Content-MD5");
-                       String realMd5FromRequest = Base64.encodeBytes(new JCEEncryptionService().md5(request.getInputStream()));
-                       boolean matched = expectedMd5.equals(realMd5FromRequest);
-                       if(matched) {
-                           response.setContentType("text/xml");
-                           response.setStatus(HttpServletResponse.SC_OK);
-                           response.getWriter().println("created");
-                       }
+                  if (request.getHeader("Content-MD5") != null) {
+                     String expectedMd5 = request.getHeader("Content-MD5");
+                     String realMd5FromRequest = Base64.encodeBytes(new JCEEncryptionService()
+                              .md5(request.getInputStream()));
+                     boolean matched = expectedMd5.equals(realMd5FromRequest);
+                     if (matched) {
+                        response.setContentType("text/xml");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getWriter().println("created");
+                     }
                   } else {
-                       response.setStatus(HttpServletResponse.SC_OK);
-                       response.getWriter().println(
-                           Utils.toStringAndClose(request.getInputStream()) + "POST");
+                     response.setStatus(HttpServletResponse.SC_OK);
+                     response.getWriter().println(
+                              Utils.toStringAndClose(request.getInputStream()) + "POST");
                   }
                } else {
                   handleAction(request, response);
@@ -214,8 +215,9 @@ public abstract class BaseJettyTest {
                response.setStatus(HttpServletResponse.SC_OK);
                response.getWriter().println("test");
             } else if (request.getMethod().equals("HEAD")) {
-               /* NOTE: by HTML specification, HEAD response MUST NOT
-                        include a body */
+               /*
+                * NOTE: by HTML specification, HEAD response MUST NOT include a body
+                */
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
             } else {
@@ -245,26 +247,28 @@ public abstract class BaseJettyTest {
                }
             } else if (request.getMethod().equals("POST")) {
                if (request.getContentLength() > 0) {
-                  if(request.getHeader("Content-MD5") != null) {
-                       String expectedMd5 = request.getHeader("Content-MD5");
-                       String realMd5FromRequest = Base64.encodeBytes(new JCEEncryptionService().md5(request.getInputStream()));
-                       boolean matched = expectedMd5.equals(realMd5FromRequest);
-                       if(matched) {
-                           response.setContentType("text/xml");
-                           response.setStatus(HttpServletResponse.SC_OK);
-                           response.getWriter().println("created");
-                       }
-                  } else {
+                  if (request.getHeader("Content-MD5") != null) {
+                     String expectedMd5 = request.getHeader("Content-MD5");
+                     String realMd5FromRequest = Base64.encodeBytes(new JCEEncryptionService()
+                              .md5(request.getInputStream()));
+                     boolean matched = expectedMd5.equals(realMd5FromRequest);
+                     if (matched) {
+                        response.setContentType("text/xml");
                         response.setStatus(HttpServletResponse.SC_OK);
-                        response.getWriter().println(
-                           Utils.toStringAndClose(request.getInputStream()) + "POST");
+                        response.getWriter().println("created");
+                     }
+                  } else {
+                     response.setStatus(HttpServletResponse.SC_OK);
+                     response.getWriter().println(
+                              Utils.toStringAndClose(request.getInputStream()) + "POST");
                   }
                } else {
                   handleAction(request, response);
                }
             } else if (request.getMethod().equals("HEAD")) {
-               /* NOTE: by HTML specification, HEAD response MUST NOT
-                        include a body */
+               /*
+                * NOTE: by HTML specification, HEAD response MUST NOT include a body
+                */
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
             } else {
@@ -318,7 +322,8 @@ public abstract class BaseJettyTest {
 
    public static RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> newBuilder(
             final int testPort, final Properties properties, Module connectionModule) {
-      return new IntegrationContextBuilder(properties, testPort).withModules(connectionModule);
+      return new IntegrationContextBuilder("integration-test", properties, testPort)
+               .withModules(connectionModule);
    }
 
    @AfterTest
@@ -334,7 +339,7 @@ public abstract class BaseJettyTest {
 
    /**
     * Fails every 10 requests.
-    *
+    * 
     * @param request
     * @param response
     * @return

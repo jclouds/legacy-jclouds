@@ -53,8 +53,8 @@ public class BindCFObjectToPayloadTest {
    private BlobToObject blob2Object;
 
    public BindCFObjectToPayloadTest() {
-      Injector injector = new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder("id",
-               "secret").build()).buildInjector();
+      Injector injector = new CloudFilesContextBuilder("cloudfiles",
+               new CloudFilesPropertiesBuilder("id", "secret").build()).buildInjector();
 
       blobProvider = injector.getInstance(Blob.Factory.class);
       binderProvider = injector.getInstance(Key

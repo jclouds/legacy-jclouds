@@ -46,15 +46,15 @@ import com.google.inject.TypeLiteral;
  */
 public class SQSContextBuilder extends RestContextBuilder<SQSAsyncClient, SQSClient> {
 
-   public SQSContextBuilder(Properties props) {
-      super(new TypeLiteral<SQSAsyncClient>() {
+   public SQSContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<SQSAsyncClient>() {
       }, new TypeLiteral<SQSClient>() {
       }, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new SQSContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new SQSContextModule(providerName));
    }
 
    @Override

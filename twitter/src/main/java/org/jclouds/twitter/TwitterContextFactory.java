@@ -44,13 +44,13 @@ public class TwitterContextFactory {
 
    public static RestContext<TwitterAsyncClient, TwitterClient> createContext(String user,
             String password, Module... modules) {
-      return new TwitterContextBuilder(new TwitterPropertiesBuilder(user, password).build())
-               .withModules(modules).buildContext();
+      return new TwitterContextBuilder("twitter", new TwitterPropertiesBuilder(user, password)
+               .build()).withModules(modules).buildContext();
    }
 
    public static RestContext<TwitterAsyncClient, TwitterClient> createContext(
             Properties properties, Module... modules) {
-      return new TwitterContextBuilder(new TwitterPropertiesBuilder(properties).build())
+      return new TwitterContextBuilder("twitter", new TwitterPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 

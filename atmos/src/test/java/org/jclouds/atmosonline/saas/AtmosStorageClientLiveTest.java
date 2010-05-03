@@ -35,6 +35,7 @@ import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -49,6 +50,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code AtmosStorageClient}
@@ -109,12 +112,12 @@ public class AtmosStorageClientLiveTest {
    URI container2;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
       String uid = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      BlobStoreContext blobStoreContext = new AtmosStorageContextBuilder(
-               new AtmosStoragePropertiesBuilder(uid, key).build()).withModules(
-               new Log4JLoggingModule()).buildBlobStoreContext();
+      BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(
+               "atmosstorage", uid, key, ImmutableSet.<Module> of(new Log4JLoggingModule()));
       RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = blobStoreContext
                .getProviderSpecificContext();
       connection = context.getApi();

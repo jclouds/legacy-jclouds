@@ -37,18 +37,18 @@ public class TransientBlobStoreContextBuilder extends
     * This is only to have the same syntax.
     * 
     */
-   public TransientBlobStoreContextBuilder(Properties props) {
+   public TransientBlobStoreContextBuilder(String providerName, Properties props) {
       this();
    }
 
    public TransientBlobStoreContextBuilder() {
-      super(new TypeLiteral<AsyncBlobStore>() {
+      super("transient", new TypeLiteral<AsyncBlobStore>() {
       }, new TypeLiteral<BlobStore>() {
       });
    }
 
    @Override
-   public void addContextModule(List<Module> modules) {
+   public void addContextModule(String providerName, List<Module> modules) {
       modules.add(new TransientBlobStoreContextModule());
    }
 

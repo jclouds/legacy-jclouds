@@ -135,12 +135,12 @@ public class VCloudLoginLiveTest {
                + "/v0.8/login";
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(
+      context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>("vcloud",
                new TypeLiteral<VCloudLoginAsyncClient>() {
                }, new TypeLiteral<VCloudLoginAsyncClient>() {
                }, new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
 
-         public void addContextModule(List<Module> modules) {
+         public void addContextModule(String providerName, List<Module> modules) {
             modules.add(new VCloudLoginContextModule());
          }
 

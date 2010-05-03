@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 
 import com.google.common.collect.ImmutableBiMap;

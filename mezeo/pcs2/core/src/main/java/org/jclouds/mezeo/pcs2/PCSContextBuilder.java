@@ -37,8 +37,8 @@ import com.google.inject.TypeLiteral;
  */
 public class PCSContextBuilder extends RestContextBuilder<PCSAsyncClient, PCSClient> {
 
-   public PCSContextBuilder(Properties props) {
-      super(new TypeLiteral<PCSAsyncClient>() {
+   public PCSContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<PCSAsyncClient>() {
       }, new TypeLiteral<PCSClient>() {
       }, props);
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_USER));
@@ -51,8 +51,8 @@ public class PCSContextBuilder extends RestContextBuilder<PCSAsyncClient, PCSCli
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new PCSContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new PCSContextModule(providerName));
    }
 
 }

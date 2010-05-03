@@ -38,6 +38,11 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 public class RackspaceLocationsModule extends AbstractModule {
+   private final String providerName;
+
+   public RackspaceLocationsModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
@@ -46,7 +51,8 @@ public class RackspaceLocationsModule extends AbstractModule {
    @Provides
    @Singleton
    Location getLocation() {
-      return new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", null);
+      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+      return new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider);
    }
 
    @Provides

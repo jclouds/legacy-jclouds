@@ -93,8 +93,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new EC2ContextBuilder(new EC2PropertiesBuilder(user, password).build())
-               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+      Injector injector = new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(user, password)
+               .build()).withModules(new Log4JLoggingModule(), new JschSshClientModule())
+               .buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client
@@ -111,13 +112,12 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       securityGroupName = instancePrefix + "ingress";
 
       try {
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
-                  securityGroupName);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, securityGroupName);
       } catch (Exception e) {
       }
 
-      client.getSecurityGroupServices().createSecurityGroupInRegion(null,
-               securityGroupName, securityGroupName);
+      client.getSecurityGroupServices().createSecurityGroupInRegion(null, securityGroupName,
+               securityGroupName);
       for (int port : new int[] { 80, 443, 22 }) {
          client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
                   securityGroupName, IpProtocol.TCP, port, port, "0.0.0.0/0");
@@ -154,8 +154,13 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
          try {
 
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
-            Reservation reservation = client.getInstanceServices().runInstancesInRegion(
-                     null, null, // allow ec2 to chose an availability zone
+            Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
+                                                                                                    // ec2
+                                                                                                    // to
+                                                                                                    // chose
+                                                                                                    // an
+                                                                                                    // availability
+                                                                                                    // zone
                      "ami-ccf615a5", // alestic ami allows auto-invoke of user data scripts
                      1, // minimum instances
                      1, // maximum instances
@@ -185,11 +190,11 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private void verifyInstanceProperties(String script) {
-      assertEquals(script, client.getInstanceServices().getUserDataForInstanceInRegion(
-               null, instanceId));
+      assertEquals(script, client.getInstanceServices().getUserDataForInstanceInRegion(null,
+               instanceId));
 
-      assertEquals(null, client.getInstanceServices().getRootDeviceNameForInstanceInRegion(
-               null, instanceId));
+      assertEquals(null, client.getInstanceServices().getRootDeviceNameForInstanceInRegion(null,
+               instanceId));
 
       assert client.getInstanceServices().getRamdiskForInstanceInRegion(null, instanceId)
                .startsWith("ari-");
@@ -211,12 +216,12 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private void setApiTerminationDisabledForInstanceInRegion() {
-      client.getInstanceServices().setApiTerminationDisabledForInstanceInRegion(null,
-               instanceId, true);
+      client.getInstanceServices().setApiTerminationDisabledForInstanceInRegion(null, instanceId,
+               true);
       assertEquals(true, client.getInstanceServices().isApiTerminationDisabledForInstanceInRegion(
                null, instanceId));
-      client.getInstanceServices().setApiTerminationDisabledForInstanceInRegion(null,
-               instanceId, false);
+      client.getInstanceServices().setApiTerminationDisabledForInstanceInRegion(null, instanceId,
+               false);
       assertEquals(false, client.getInstanceServices().isApiTerminationDisabledForInstanceInRegion(
                null, instanceId));
    }
@@ -243,10 +248,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private void setRamdiskForInstanceInRegion() {
       try {
-         String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(
-                  null, instanceId);
-         client.getInstanceServices().setRamdiskForInstanceInRegion(null, instanceId,
-                  ramdisk);
+         String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(null,
+                  instanceId);
+         client.getInstanceServices().setRamdiskForInstanceInRegion(null, instanceId, ramdisk);
          assert false : "shouldn't be allowed, as instance needs to be stopped";
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
@@ -255,10 +259,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private void setKernelForInstanceInRegion() {
       try {
-         String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(
-                  null, instanceId);
-         client.getInstanceServices().setKernelForInstanceInRegion(null, instanceId,
-                  oldKernel);
+         String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(null,
+                  instanceId);
+         client.getInstanceServices().setKernelForInstanceInRegion(null, instanceId, oldKernel);
          assert false : "shouldn't be allowed, as instance needs to be stopped";
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
@@ -267,8 +270,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private void setInstanceTypeForInstanceInRegion() {
       try {
-         client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
-                  instanceId, InstanceType.C1_MEDIUM);
+         client.getInstanceServices().setInstanceTypeForInstanceInRegion(null, instanceId,
+                  InstanceType.C1_MEDIUM);
          assert false : "shouldn't be allowed, as instance needs to be stopped";
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
@@ -278,8 +281,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    private void setBlockDeviceMappingForInstanceInRegion() {
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
       try {
-         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null,
-                  instanceId, blockDeviceMapping);
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null, instanceId,
+                  blockDeviceMapping);
          assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
       } catch (AWSResponseException e) {
          assertEquals("InvalidParameterCombination", e.getError().getCode());
@@ -288,8 +291,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private void setInstanceInitiatedShutdownBehaviorForInstanceInRegion() {
       try {
-         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-                  null, instanceId, InstanceInitiatedShutdownBehavior.STOP);
+         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                  instanceId, InstanceInitiatedShutdownBehavior.STOP);
          assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
       } catch (AWSResponseException e) {
          assertEquals("UnsupportedInstanceAttribute", e.getError().getCode());
@@ -328,8 +331,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
 
-      client.getElasticIPAddressServices().associateAddressInRegion(null, address,
-               instanceId);
+      client.getElasticIPAddressServices().associateAddressInRegion(null, address, instanceId);
 
       compare = Iterables.getLast(client.getElasticIPAddressServices().describeAddressesInRegion(
                null, address));
@@ -390,8 +392,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private RunningInstance getInstance(String instanceId) {
       // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               null, instanceId); // last parameter (ids) narrows the search
+      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(null,
+               instanceId); // last parameter (ids) narrows the search
 
       return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
    }
@@ -439,8 +441,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       if (keyPair != null)
          client.getKeyPairServices().deleteKeyPairInRegion(null, keyPair.getKeyName());
       if (securityGroupName != null)
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
-                  securityGroupName);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, securityGroupName);
    }
 
 }

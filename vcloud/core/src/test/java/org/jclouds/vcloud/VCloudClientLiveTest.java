@@ -160,8 +160,9 @@ public class VCloudClientLiveTest {
                "jclouds.test.endpoint");
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      connection = new VCloudContextBuilder(new VCloudPropertiesBuilder(URI.create(endpoint),
-               account, key).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
+      connection = new VCloudContextBuilder("vcloud", new VCloudPropertiesBuilder(URI
+               .create(endpoint), account, key).build()).withModules(new Log4JLoggingModule())
+               .buildContext().getApi();
    }
 
 }

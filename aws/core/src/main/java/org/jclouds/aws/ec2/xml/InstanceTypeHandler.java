@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.http.functions.ParseSax;
 
 /**

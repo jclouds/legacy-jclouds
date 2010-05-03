@@ -47,14 +47,14 @@ import com.google.inject.TypeLiteral;
 public class AzureBlobContextBuilder extends
          BlobStoreContextBuilder<AzureBlobAsyncClient, AzureBlobClient> {
 
-   public AzureBlobContextBuilder(Properties props) {
-      super(new TypeLiteral<AzureBlobAsyncClient>() {
+   public AzureBlobContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<AzureBlobAsyncClient>() {
       }, new TypeLiteral<AzureBlobClient>() {
       }, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
+   protected void addContextModule(String providerName, List<Module> modules) {
       modules.add(new AzureBlobStoreContextModule());
    }
 

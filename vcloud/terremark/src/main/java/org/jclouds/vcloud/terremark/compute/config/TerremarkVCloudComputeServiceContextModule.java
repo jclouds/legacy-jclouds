@@ -73,6 +73,10 @@ import com.google.inject.Provides;
  */
 public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
+   public TerremarkVCloudComputeServiceContextModule(String providerName) {
+      super(providerName);
+   }
+
    @Override
    protected void configure() {
       super.configure();

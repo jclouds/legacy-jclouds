@@ -82,9 +82,9 @@ import com.google.inject.internal.ImmutableMap;
  * Adapted from the following sources: {@link http://gist.github.com/249915}, {@link http
  * ://www.capsunlock.net/2009/12/create-ebs-boot-ami.html}
  * <p/>
- *
+ * 
  * Generally disabled, as it incurs higher fees.
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = false, sequential = true, testName = "ec2.EBSBootEC2ClientLiveTest")
@@ -120,8 +120,9 @@ public class EBSBootEC2ClientLiveTest {
    public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new EC2ContextBuilder(new EC2PropertiesBuilder(user, password).build())
-               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+      Injector injector = new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(user, password)
+               .build()).withModules(new Log4JLoggingModule(), new JschSshClientModule())
+               .buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
@@ -157,13 +158,12 @@ public class EBSBootEC2ClientLiveTest {
       securityGroupName = INSTANCE_PREFIX + "ingress";
 
       try {
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
-                  securityGroupName);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, securityGroupName);
       } catch (Exception e) {
       }
 
-      client.getSecurityGroupServices().createSecurityGroupInRegion(null,
-               securityGroupName, securityGroupName);
+      client.getSecurityGroupServices().createSecurityGroupInRegion(null, securityGroupName,
+               securityGroupName);
       client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
                securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
       client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
@@ -199,8 +199,13 @@ public class EBSBootEC2ClientLiveTest {
       while (instance == null) {
          try {
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
-            Reservation reservation = client.getInstanceServices().runInstancesInRegion(
-                     null, null, // allow ec2 to chose an availability zone
+            Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
+                                                                                                    // ec2
+                                                                                                    // to
+                                                                                                    // chose
+                                                                                                    // an
+                                                                                                    // availability
+                                                                                                    // zone
                      imageId, 1, // minimum instances
                      1, // maximum instances
                      withKeyName(keyPair.getKeyName())// key I created above
@@ -422,37 +427,37 @@ public class EBSBootEC2ClientLiveTest {
    }
 
    private void setUserDataForInstanceInRegion() {
-      client.getInstanceServices().setUserDataForInstanceInRegion(null,
-               ebsInstance.getId(), "test".getBytes());
-      assertEquals("test", client.getInstanceServices().getUserDataForInstanceInRegion(
-               null, ebsInstance.getId()));
+      client.getInstanceServices().setUserDataForInstanceInRegion(null, ebsInstance.getId(),
+               "test".getBytes());
+      assertEquals("test", client.getInstanceServices().getUserDataForInstanceInRegion(null,
+               ebsInstance.getId()));
    }
 
    private void setRamdiskForInstanceInRegion() {
       String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(null,
                ebsInstance.getId());
-      client.getInstanceServices().setRamdiskForInstanceInRegion(null,
-               ebsInstance.getId(), ramdisk);
-      assertEquals(ramdisk, client.getInstanceServices().getRamdiskForInstanceInRegion(
-               null, ebsInstance.getId()));
+      client.getInstanceServices()
+               .setRamdiskForInstanceInRegion(null, ebsInstance.getId(), ramdisk);
+      assertEquals(ramdisk, client.getInstanceServices().getRamdiskForInstanceInRegion(null,
+               ebsInstance.getId()));
    }
 
    private void setKernelForInstanceInRegion() {
       String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(null,
                ebsInstance.getId());
-      client.getInstanceServices().setKernelForInstanceInRegion(null,
-               ebsInstance.getId(), oldKernel);
-      assertEquals(oldKernel, client.getInstanceServices().getKernelForInstanceInRegion(
-               null, ebsInstance.getId()));
+      client.getInstanceServices().setKernelForInstanceInRegion(null, ebsInstance.getId(),
+               oldKernel);
+      assertEquals(oldKernel, client.getInstanceServices().getKernelForInstanceInRegion(null,
+               ebsInstance.getId()));
    }
 
    private void setInstanceTypeForInstanceInRegion() {
-      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
-               ebsInstance.getId(), InstanceType.C1_MEDIUM);
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null, ebsInstance.getId(),
+               InstanceType.C1_MEDIUM);
       assertEquals(InstanceType.C1_MEDIUM, client.getInstanceServices()
                .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
-      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
-               ebsInstance.getId(), InstanceType.M1_SMALL);
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null, ebsInstance.getId(),
+               InstanceType.M1_SMALL);
       assertEquals(InstanceType.M1_SMALL, client.getInstanceServices()
                .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
    }
@@ -461,22 +466,21 @@ public class EBSBootEC2ClientLiveTest {
       String volumeId = ebsInstance.getEbsBlockDevices().get("/dev/sda1").getVolumeId();
 
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
-      blockDeviceMapping.addEbsBlockDevice
-                        ("/dev/sda1", new RunningInstance.EbsBlockDevice(volumeId, false));
+      blockDeviceMapping.addEbsBlockDevice("/dev/sda1", new RunningInstance.EbsBlockDevice(
+               volumeId, false));
       try {
          client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null,
                   ebsInstance.getId(), blockDeviceMapping);
 
-          Map<String, RunningInstance.EbsBlockDevice> devices = client
-                  .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(null,
-                           ebsInstance.getId());
-          assertEquals(devices.size(), 1);
-          String deviceName = Iterables.getOnlyElement(devices.keySet());
-          RunningInstance.EbsBlockDevice device = Iterables.getOnlyElement(devices.values());
+         Map<String, RunningInstance.EbsBlockDevice> devices = client.getInstanceServices()
+                  .getBlockDeviceMappingForInstanceInRegion(null, ebsInstance.getId());
+         assertEquals(devices.size(), 1);
+         String deviceName = Iterables.getOnlyElement(devices.keySet());
+         RunningInstance.EbsBlockDevice device = Iterables.getOnlyElement(devices.values());
 
-          assertEquals(device.getVolumeId(), volumeId);
-          assertEquals(deviceName, "/dev/sda1");
-          assertEquals(device.isDeleteOnTermination(), false);
+         assertEquals(device.getVolumeId(), volumeId);
+         assertEquals(deviceName, "/dev/sda1");
+         assertEquals(device.isDeleteOnTermination(), false);
 
          System.out.println("OK: setBlockDeviceMappingForInstanceInRegion");
       } catch (Exception e) {
@@ -489,14 +493,14 @@ public class EBSBootEC2ClientLiveTest {
    private void setInstanceInitiatedShutdownBehaviorForInstanceInRegion() {
       try {
 
-         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-                  null, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.STOP);
+         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                  ebsInstance.getId(), InstanceInitiatedShutdownBehavior.STOP);
 
          assertEquals(InstanceInitiatedShutdownBehavior.STOP, client.getInstanceServices()
                   .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
                            ebsInstance.getId()));
-         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-                  null, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
+         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                  ebsInstance.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
 
          assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client.getInstanceServices()
                   .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
@@ -510,7 +514,7 @@ public class EBSBootEC2ClientLiveTest {
 
    /**
     * this tests "personality" as the file looked up was sent during instance creation
-    *
+    * 
     * @throws UnknownHostException
     */
    private void sshPing(RunningInstance newDetails) throws UnknownHostException {
@@ -628,8 +632,7 @@ public class EBSBootEC2ClientLiveTest {
       }
       if (securityGroupName != null) {
          try {
-            client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
-                     securityGroupName);
+            client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, securityGroupName);
          } catch (Exception e) {
             e.printStackTrace();
          }

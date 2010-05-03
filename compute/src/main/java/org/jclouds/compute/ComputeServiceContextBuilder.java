@@ -37,13 +37,14 @@ import com.google.inject.util.Types;
  */
 public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuilder<A, S> {
 
-   public ComputeServiceContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType) {
-      this(asyncClientType, syncClientType, new Properties());
+   public ComputeServiceContextBuilder(String providerName, TypeLiteral<A> asyncClientType,
+            TypeLiteral<S> syncClientType) {
+      this(providerName, asyncClientType, syncClientType, new Properties());
    }
 
-   public ComputeServiceContextBuilder(TypeLiteral<A> asyncClientType,
+   public ComputeServiceContextBuilder(String providerName, TypeLiteral<A> asyncClientType,
             TypeLiteral<S> syncClientType, Properties properties) {
-      super(asyncClientType, syncClientType, properties);
+      super(providerName, asyncClientType, syncClientType, properties);
 
    }
 

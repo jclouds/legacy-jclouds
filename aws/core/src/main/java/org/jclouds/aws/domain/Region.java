@@ -18,9 +18,6 @@
  */
 package org.jclouds.aws.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.base.CaseFormat;
 
 /**
  * 

@@ -33,7 +33,11 @@ import com.google.common.base.CaseFormat;
  * @author Adrian Cole
  */
 public enum OsFamily {
-   CENTOS, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, GENTOO, WINDOWS;
+   CENTOS,
+   /**
+    * Oracle Enterprise Linux
+    */
+   OEL, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, GENTOO, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }

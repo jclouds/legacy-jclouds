@@ -54,7 +54,7 @@ public class TransientBlobStoreContextModule extends AbstractModule {
    @Provides
    @Singleton
    Location provideDefaultLocation() {
-      return new LocationImpl(LocationScope.ZONE, "default", "description", null);
+      return new LocationImpl(LocationScope.PROVIDER, "transient", "transient", null);
    }
 
    @Provides

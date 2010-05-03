@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
@@ -53,6 +52,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class S3BlobStoreContextModule extends S3ContextModule {
+   private final String providerName;
+
+   public S3BlobStoreContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
@@ -76,9 +80,10 @@ public class S3BlobStoreContextModule extends S3ContextModule {
    @Singleton
    Map<String, ? extends Location> provideLocations(@S3 Set<String> regions) {
       Set<Location> locations = Sets.newHashSet();
+      Location s3 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (String zone : regions) {
          locations
-                  .add(new LocationImpl(LocationScope.ZONE, zone.toString(), zone.toString(), null));
+                  .add(new LocationImpl(LocationScope.REGION, zone.toString(), zone.toString(), s3));
       }
       return Maps.uniqueIndex(locations, new Function<Location, String>() {
          @Override

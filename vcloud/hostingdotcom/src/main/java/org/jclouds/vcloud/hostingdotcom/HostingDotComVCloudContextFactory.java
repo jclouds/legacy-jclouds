@@ -42,27 +42,27 @@ import com.google.inject.Module;
  */
 public class HostingDotComVCloudContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new HostingDotComVCloudContextBuilder(
+      return new HostingDotComVCloudContextBuilder("hostingdotcom",
                new HostingDotComVCloudPropertiesBuilder(properties).build()).withModules(modules)
                .buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(String user, String key, Module... modules) {
-      return new HostingDotComVCloudContextBuilder(
+      return new HostingDotComVCloudContextBuilder("hostingdotcom",
                new HostingDotComVCloudPropertiesBuilder(user, key).build()).withModules(modules)
                .buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(Properties properties, String user,
             String key, Module... modules) {
-      return new HostingDotComVCloudContextBuilder(
+      return new HostingDotComVCloudContextBuilder("hostingdotcom",
                new HostingDotComVCloudPropertiesBuilder(properties).withCredentials(user, key)
                         .build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(URI endpoint, String user, String key,
             Module... modules) {
-      return new HostingDotComVCloudContextBuilder(
+      return new HostingDotComVCloudContextBuilder("hostingdotcom",
                new HostingDotComVCloudPropertiesBuilder(user, key).withEndpoint(endpoint).build())
                .withModules(modules).buildComputeServiceContext();
    }

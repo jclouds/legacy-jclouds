@@ -281,7 +281,7 @@ public class BaseComputeService implements ComputeService {
    }
 
    @Override
-   public Map<String, ? extends Location> getLocations() {
+   public Map<String, ? extends Location> getAssignableLocations() {
       return locations.get();
    }
 

@@ -40,9 +40,9 @@ public class LocationImpl implements Location, Serializable {
    private final LocationScope scope;
    private final String id;
    private final String description;
-   private final String parent;
+   private final Location parent;
 
-   public LocationImpl(LocationScope scope, String id, String description, @Nullable String parent) {
+   public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent) {
       this.scope = checkNotNull(scope, "scope");
       this.id = checkNotNull(id, "id");
       this.description = checkNotNull(description, "description");
@@ -61,7 +61,7 @@ public class LocationImpl implements Location, Serializable {
       return description;
    }
 
-   public String getParent() {
+   public Location getParent() {
       return parent;
    }
 
@@ -111,7 +111,7 @@ public class LocationImpl implements Location, Serializable {
    @Override
    public String toString() {
       return "[id=" + id + ", scope=" + scope + ", description=" + description + ", parent="
-               + parent + "]";
+               + ((parent == null) ? null : parent.getId()) + "]";
    }
 
 }

@@ -50,8 +50,8 @@ import com.google.inject.TypeLiteral;
 public class RimuHostingContextBuilder extends
          ComputeServiceContextBuilder<RimuHostingAsyncClient, RimuHostingClient> {
 
-   public RimuHostingContextBuilder(Properties props) {
-      super(new TypeLiteral<RimuHostingAsyncClient>() {
+   public RimuHostingContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<RimuHostingAsyncClient>() {
       }, new TypeLiteral<RimuHostingClient>() {
       }, props);
    }
@@ -62,8 +62,8 @@ public class RimuHostingContextBuilder extends
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new RimuHostingComputeServiceContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new RimuHostingComputeServiceContextModule(providerName));
    }
 
    @Override

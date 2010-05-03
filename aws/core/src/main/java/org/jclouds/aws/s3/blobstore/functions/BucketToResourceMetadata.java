@@ -24,7 +24,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.blobstore.ContainerNotFoundException;

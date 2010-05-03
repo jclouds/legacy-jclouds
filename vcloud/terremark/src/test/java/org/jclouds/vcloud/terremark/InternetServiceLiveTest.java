@@ -104,7 +104,7 @@ public class InternetServiceLiveTest {
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+      Injector injector = new TerremarkVCloudContextBuilder("terremark", new TerremarkVCloudPropertiesBuilder(
                account, key).build()).withModules(new Log4JLoggingModule(),
                new JschSshClientModule()).buildInjector();
 

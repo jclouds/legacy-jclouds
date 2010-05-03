@@ -45,7 +45,7 @@ public class AtmosBlobStoreModuleTest {
    Injector createInjector() {
       return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
                sameThreadExecutor()), new JDKLoggingModule(), new AtmosStorageStubClientModule(),
-               new AtmosBlobStoreContextModule() {
+               new AtmosBlobStoreContextModule("atmos") {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(

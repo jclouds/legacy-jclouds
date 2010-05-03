@@ -46,15 +46,15 @@ import com.google.inject.TypeLiteral;
  */
 public class S3ContextBuilder extends BlobStoreContextBuilder<S3AsyncClient, S3Client> {
 
-   public S3ContextBuilder(Properties props) {
-      super(new TypeLiteral<S3AsyncClient>() {
+   public S3ContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<S3AsyncClient>() {
       }, new TypeLiteral<S3Client>() {
       }, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new S3BlobStoreContextModule());
+   protected void addContextModule(String providerName,List<Module> modules) {
+      modules.add(new S3BlobStoreContextModule(providerName));
    }
 
    @Override

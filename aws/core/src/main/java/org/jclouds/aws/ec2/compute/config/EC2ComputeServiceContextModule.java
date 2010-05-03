@@ -99,6 +99,12 @@ import com.google.inject.TypeLiteral;
  */
 public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
+   private final String providerName;
+
+   public EC2ComputeServiceContextModule(String providerName) {
+      this.providerName = providerName;
+   }
+
    @Override
    protected void configure() {
       super.configure();
@@ -146,8 +152,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    public static class GetRegionFromNodeOrDefault implements Function<ComputeMetadata, String> {
       public String apply(ComputeMetadata node) {
          Location location = node.getLocation();
-         String region = location.getScope() == LocationScope.REGION ? location
-                  .getId() : location.getParent();
+         String region = location.getScope() == LocationScope.REGION ? location.getId() : location
+                  .getParent().getId();
          return region;
       }
    }
@@ -257,14 +263,15 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Singleton
    Map<String, ? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap) {
+      Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       Map<String, Location> locations = Maps.newLinkedHashMap();
-      for (String zone : availabilityZoneToRegionMap.keySet()) {
-         locations.put(zone, new LocationImpl(LocationScope.ZONE, zone, zone,
-                 availabilityZoneToRegionMap.get(zone)));
-      }
       for (String region : availabilityZoneToRegionMap.values()) {
-         locations.put(region, new LocationImpl(LocationScope.REGION, region,
-                  region, null));
+         locations.put(region, new LocationImpl(LocationScope.REGION, region, region, ec2));
+      }
+
+      for (String zone : availabilityZoneToRegionMap.keySet()) {
+         locations.put(zone, new LocationImpl(LocationScope.ZONE, zone, zone, locations
+                  .get(availabilityZoneToRegionMap.get(zone))));
       }
       return locations;
    }

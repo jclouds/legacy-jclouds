@@ -48,15 +48,15 @@ import com.google.inject.TypeLiteral;
 public class CloudFilesContextBuilder extends
          BlobStoreContextBuilder<CloudFilesAsyncClient, CloudFilesClient> {
 
-   public CloudFilesContextBuilder(Properties props) {
-      super(new TypeLiteral<CloudFilesAsyncClient>() {
+   public CloudFilesContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<CloudFilesAsyncClient>() {
       }, new TypeLiteral<CloudFilesClient>() {
       }, props);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new CloudFilesBlobStoreContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new CloudFilesBlobStoreContextModule(providerName));
    }
 
    @Override

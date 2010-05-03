@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.aws.ec2.options.DescribeRegionsOptions;

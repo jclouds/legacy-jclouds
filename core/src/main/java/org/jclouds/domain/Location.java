@@ -48,8 +48,8 @@ public interface Location {
    String getDescription();
 
    /**
-    * The Id of the parent, or null, if top-level
+    * The parent, or null, if top-level
     */
-   String getParent();
+   Location getParent();
 
 }

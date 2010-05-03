@@ -22,7 +22,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Snapshot.Status;

@@ -28,7 +28,6 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
-import org.jclouds.rackspace.config.RackspaceLocationsModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -52,7 +51,6 @@ public class CloudFilesContextModule extends AbstractModule {
                }, new TypeLiteral<CloudFilesClient>() {
                }));
       install(new CFObjectModule());
-      install(new RackspaceLocationsModule());
    }
 
    @Provides

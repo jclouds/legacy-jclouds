@@ -41,7 +41,7 @@ public class HostingDotComVCloudClientLiveTest extends VCloudClientLiveTest {
    public void setupClient() {
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new HostingDotComVCloudContextBuilder(
+      Injector injector = new HostingDotComVCloudContextBuilder("hostingdotcom",
                new HostingDotComVCloudPropertiesBuilder(account, key).build())
                .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
 

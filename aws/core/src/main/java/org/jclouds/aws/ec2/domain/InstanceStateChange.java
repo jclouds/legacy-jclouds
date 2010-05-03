@@ -20,8 +20,6 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.domain.Region;
-
 
 /**
  * 

@@ -45,11 +45,10 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see EC2ComputeServiceContext
  */
-public class EC2ContextBuilder extends
-         ComputeServiceContextBuilder<EC2AsyncClient, EC2Client> {
+public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2AsyncClient, EC2Client> {
 
-   public EC2ContextBuilder(Properties props) {
-      super(new TypeLiteral<EC2AsyncClient>() {
+   public EC2ContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<EC2AsyncClient>() {
       }, new TypeLiteral<EC2Client>() {
       }, props);
    }
@@ -60,8 +59,8 @@ public class EC2ContextBuilder extends
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new EC2ComputeServiceContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new EC2ComputeServiceContextModule(providerName));
    }
 
    @Override
@@ -69,8 +68,8 @@ public class EC2ContextBuilder extends
       modules.add(new EC2RestClientModule());
    }
 
-    @Override
-    protected void addImageResolutionModule() {
-        modules.add(new EC2ResolveImagesModule());
-    }
+   @Override
+   protected void addImageResolutionModule() {
+      modules.add(new EC2ResolveImagesModule());
+   }
 }

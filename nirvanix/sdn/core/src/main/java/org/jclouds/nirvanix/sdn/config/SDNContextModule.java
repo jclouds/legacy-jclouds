@@ -39,6 +39,10 @@ import com.google.inject.TypeLiteral;
 
 @RequiresHttp
 public class SDNContextModule extends AbstractModule {
+   public SDNContextModule(String providerName) {
+
+   }
+
    @Override
    protected void configure() {
       // for converters to work.

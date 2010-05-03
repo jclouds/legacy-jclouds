@@ -43,25 +43,25 @@ public class AzureQueueContextFactory {
 
    public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(
             Properties properties, Module... modules) {
-      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
+      return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(properties)
+               .build()).withModules(modules).buildContext();
    }
 
    public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(
             Properties properties, String account, String encodedKey, Module... modules) {
-      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(properties)
+      return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(properties)
                .withCredentials(account, encodedKey).build()).withModules(modules).buildContext();
    }
 
    public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(String account,
             String encodedKey, Module... modules) {
-      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(account, encodedKey)
-               .build()).withModules(modules).buildContext();
+      return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(account,
+               encodedKey).build()).withModules(modules).buildContext();
    }
 
    public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(URI endpoint,
             String account, String encodedKey, Module... modules) {
-      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(account, encodedKey)
-               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
+      return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(account,
+               encodedKey).withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }
 }

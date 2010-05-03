@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

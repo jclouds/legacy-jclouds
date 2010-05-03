@@ -49,9 +49,9 @@ public interface AsyncBlobStore {
    Blob newBlob(String name);
 
    /**
-    * @see BlobStore#getLocations
+    * @see BlobStore#getAssignableLocations
     */
-   ListenableFuture<? extends Map<String, ? extends Location>> getLocations();
+   ListenableFuture<? extends Map<String, ? extends Location>> getAssignableLocations();
 
    /**
     * @see BlobStore#list

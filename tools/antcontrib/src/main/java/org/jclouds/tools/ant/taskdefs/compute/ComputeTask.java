@@ -168,7 +168,7 @@ public class ComputeTask extends Task {
 
    private void listLocations(ComputeService computeService) {
       log("list locations");
-      for (Location location : computeService.getLocations().values()) {// TODO
+      for (Location location : computeService.getAssignableLocations().values()) {// TODO
          log(String.format("   location id=%s, scope=%s, description=%s, parent=%s", location
                   .getId(), location.getScope(), location.getDescription(), location.getParent()));
       }

@@ -125,7 +125,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
       // if the location has a parent, it must be an availability zone.
       String region = zone == null ? template.getLocation().getId() :
-              template.getLocation().getParent();
+              template.getLocation().getParent().getId();
 
       // get or create incidental resources
       // TODO race condition. we were using MapMaker, but it doesn't seem to refresh properly when

@@ -213,7 +213,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    @Override
-   public Map<String, ? extends Location> getLocations() {
+   public Map<String, ? extends Location> getAssignableLocations() {
       return locations;
    }
 

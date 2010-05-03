@@ -91,6 +91,11 @@ import com.google.inject.TypeLiteral;
  * @author Oleksiy Yarmula
  */
 public class GoGridComputeServiceContextModule extends GoGridContextModule {
+   private final String providerName;
+
+   public GoGridComputeServiceContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Override
    protected void configure() {
@@ -284,8 +289,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
-      locations
-               .add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA", null));
+      Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+      locations.add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA",
+               parent));
       holder.logger.debug("<< locations(%d)", locations.size());
       return Maps.uniqueIndex(locations, new Function<Location, String>() {
 

@@ -87,7 +87,7 @@ public class RestContextBuilderTest {
    class TestRestContextBuilder extends RestContextBuilder<String, String> {
 
       protected TestRestContextBuilder(Properties properties) {
-         super(new TypeLiteral<String>() {
+         super("test", new TypeLiteral<String>() {
          }, new TypeLiteral<String>() {
          }, properties);
       }
@@ -98,7 +98,7 @@ public class RestContextBuilderTest {
       }
 
       @Override
-      protected void addContextModule(List<Module> modules) {
+      protected void addContextModule(String providerName, List<Module> modules) {
          // ignored as we add it directly above without use of injection
       }
 

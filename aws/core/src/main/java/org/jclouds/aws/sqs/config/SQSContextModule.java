@@ -42,6 +42,9 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class SQSContextModule extends AbstractModule {
+   public SQSContextModule(String providerName) {
+   }
+
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(CDateAdapter.class);

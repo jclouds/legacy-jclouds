@@ -98,46 +98,46 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
       this.properties = properties;
    }
 
-   public T createContext(URI blobStore, Iterable<? extends Module> modules, Properties overrides) {
-      return createContext(blobStore, Credentials.parse(blobStore), modules, overrides);
+   public T createContext(URI contextUri, Iterable<? extends Module> modules, Properties overrides) {
+      return createContext(contextUri, Credentials.parse(contextUri), modules, overrides);
    }
 
-   public T createContext(URI blobStore) {
-      return createContext(blobStore, ImmutableSet.<Module> of(), NO_PROPERTIES);
+   public T createContext(URI contextUri) {
+      return createContext(contextUri, ImmutableSet.<Module> of(), NO_PROPERTIES);
    }
 
-   public T createContext(URI blobStore, Credentials creds, Iterable<? extends Module> modules,
+   public T createContext(URI contextUri, Credentials creds, Iterable<? extends Module> modules,
             Properties overrides) {
-      return createContext(checkNotNull(blobStore.getHost(), "host"), checkNotNull(creds.account,
+      return createContext(checkNotNull(contextUri.getHost(), "host"), checkNotNull(creds.account,
                "account"), checkNotNull(creds.key, "key"), checkNotNull(modules, "modules"),
                checkNotNull(overrides, "overrides"));
    }
 
-   public T createContext(URI blobStore, Credentials creds) {
-      return createContext(blobStore, creds, ImmutableSet.<Module> of(), NO_PROPERTIES);
+   public T createContext(URI contextUri, Credentials creds) {
+      return createContext(contextUri, creds, ImmutableSet.<Module> of(), NO_PROPERTIES);
    }
 
-   public T createContext(String hint, String account, String key) {
-      return createContext(hint, account, key, ImmutableSet.<Module> of(), NO_PROPERTIES);
+   public T createContext(String provider, String account, String key) {
+      return createContext(provider, account, key, ImmutableSet.<Module> of(), NO_PROPERTIES);
    }
 
-   public T createContext(String hint, Properties overrides) {
-      return createContext(hint, null, null, ImmutableSet.<Module> of(), overrides);
+   public T createContext(String provider, Properties overrides) {
+      return createContext(provider, null, null, ImmutableSet.<Module> of(), overrides);
    }
 
-   public T createContext(String hint, Iterable<? extends Module> modules, Properties overrides) {
-      return createContext(hint, null, null, modules, overrides);
+   public T createContext(String provider, Iterable<? extends Module> modules, Properties overrides) {
+      return createContext(provider, null, null, modules, overrides);
    }
 
-   public T createContext(String hint, @Nullable String account, @Nullable String key,
+   public T createContext(String provider, @Nullable String account, @Nullable String key,
             Iterable<? extends Module> modules) {
-      return createContext(hint, account, key, modules, new Properties());
+      return createContext(provider, account, key, modules, new Properties());
    }
 
    /**
     * Creates a new remote context.
     * 
-    * @param hint
+    * @param provider
     * @param account
     *           nullable, if credentials are present in the overrides
     * @param key
@@ -150,20 +150,20 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
     * @return initialized context ready for use
     */
    @SuppressWarnings("unchecked")
-   public T createContext(String hint, @Nullable String account, @Nullable String key,
+   public T createContext(String provider, @Nullable String account, @Nullable String key,
             Iterable<? extends Module> modules, Properties overrides) {
-      checkNotNull(hint, "hint");
+      checkNotNull(provider, "provider");
       checkNotNull(modules, "modules");
       checkNotNull(overrides, "overrides");
-      String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
+      String propertiesBuilderKey = String.format("%s.propertiesbuilder", provider);
       String propertiesBuilderClassName = checkNotNull(
-               properties.getProperty(propertiesBuilderKey), hint + " service not supported");
+               properties.getProperty(propertiesBuilderKey), provider + " service not supported");
 
-      String contextBuilderKey = String.format("%s.contextbuilder", hint);
+      String contextBuilderKey = String.format("%s.contextbuilder", provider);
       String contextBuilderClassName = checkNotNull(properties.getProperty(contextBuilderKey),
                contextBuilderKey);
 
-      String endpointKey = String.format("%s.endpoint", hint);
+      String endpointKey = String.format("%s.endpoint", provider);
       String endpoint = properties.getProperty(endpointKey);
       try {
          Class<PropertiesBuilder> propertiesBuilderClass = (Class<PropertiesBuilder>) Class
@@ -175,8 +175,9 @@ public abstract class RestContextFactory<T, B extends RestContextBuilder<?, ?>> 
             builder.withCredentials(account, key);
          if (endpoint != null)
             builder.withEndpoint(URI.create(endpoint));
-         B contextBuilder = (B) contextBuilderClass.getConstructor(Properties.class).newInstance(
-                  builder.build()).withModules(Iterables.toArray(modules, Module.class));
+         B contextBuilder = (B) contextBuilderClass.getConstructor(String.class, Properties.class)
+                  .newInstance(provider, builder.build()).withModules(
+                           Iterables.toArray(modules, Module.class));
          return build(contextBuilder);
       } catch (ProvisionException e) {
          Throwable throwable = Utils.firstRootCauseOrOriginalException(e);

@@ -64,13 +64,15 @@ import com.google.inject.util.Types;
  */
 public abstract class RestContextBuilder<A, S> {
 
+   protected final String providerName;
    protected final Properties properties;
    protected final List<Module> modules = new ArrayList<Module>(3);
    protected final TypeLiteral<A> asyncClientType;
    protected final TypeLiteral<S> syncClientType;
 
-   protected RestContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType,
-            Properties properties) {
+   protected RestContextBuilder(String providerName, TypeLiteral<A> asyncClientType,
+            TypeLiteral<S> syncClientType, Properties properties) {
+      this.providerName = providerName;
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
       this.properties = properties;
@@ -83,7 +85,7 @@ public abstract class RestContextBuilder<A, S> {
 
    public Injector buildInjector() {
 
-      addContextModule(modules);
+      addContextModule(providerName, modules);
       addClientModuleIfNotPresent(modules);
       addLoggingModuleIfNotPresent(modules);
       addHttpModuleIfNeededAndNotPresent(modules);
@@ -124,7 +126,7 @@ public abstract class RestContextBuilder<A, S> {
    }
 
    @VisibleForTesting
-   protected abstract void addContextModule(List<Module> modules);
+   protected abstract void addContextModule(String providerName, List<Module> modules);
 
    @VisibleForTesting
    protected void ifHttpConfigureRestOtherwiseGuiceClientFactory(final List<Module> modules) {

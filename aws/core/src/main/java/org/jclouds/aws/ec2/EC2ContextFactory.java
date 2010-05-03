@@ -42,26 +42,26 @@ import com.google.inject.Module;
  */
 public class EC2ContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new EC2ContextBuilder(new EC2PropertiesBuilder(properties).build())
+      return new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(properties).build())
                .withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
-      return new EC2ContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId,
+      return new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(awsAccessKeyId,
                awsSecretAccessKey).build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(Properties properties, String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
-      return new EC2ContextBuilder(new EC2PropertiesBuilder(properties)
-               .withCredentials(awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules)
+      return new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(properties).withCredentials(
+               awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules)
                .buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(URI endpoint, String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
-      return new EC2ContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId,
+      return new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(awsAccessKeyId,
                awsSecretAccessKey).withEndpoint(endpoint).build()).withModules(modules)
                .buildComputeServiceContext();
    }

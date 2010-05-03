@@ -43,26 +43,26 @@ import com.google.inject.Module;
  */
 public class CloudServersContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(properties).build())
-               .withModules(modules).buildComputeServiceContext();
+      return new CloudServersContextBuilder("cloudservers", new RackspacePropertiesBuilder(
+               properties).build()).withModules(modules).buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext createContext(String user,
-            String password, Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user,
+   public static ComputeServiceContext createContext(String user, String password,
+            Module... modules) {
+      return new CloudServersContextBuilder("cloudservers", new RackspacePropertiesBuilder(user,
                password).build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(Properties properties, String user,
             String password, Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(properties)
-               .withCredentials(user, password).build()).withModules(modules)
+      return new CloudServersContextBuilder("cloudservers", new RackspacePropertiesBuilder(
+               properties).withCredentials(user, password).build()).withModules(modules)
                .buildComputeServiceContext();
    }
 
-   public static ComputeServiceContext createContext(URI endpoint, String user,
-            String password, Module... modules) {
-      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user,
+   public static ComputeServiceContext createContext(URI endpoint, String user, String password,
+            Module... modules) {
+      return new CloudServersContextBuilder("cloudservers", new RackspacePropertiesBuilder(user,
                password).withEndpoint(endpoint).build()).withModules(modules)
                .buildComputeServiceContext();
    }

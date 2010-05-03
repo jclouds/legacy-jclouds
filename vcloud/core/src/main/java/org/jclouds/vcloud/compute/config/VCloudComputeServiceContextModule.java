@@ -87,16 +87,16 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -109,6 +109,12 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class VCloudComputeServiceContextModule extends VCloudContextModule {
+
+   private final String providerName;
+
+   public VCloudComputeServiceContextModule(String providerName) {
+      this.providerName = providerName;
+   }
 
    @Singleton
    @Provides
@@ -364,24 +370,20 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(final VCloudClient client) {
-      return Maps.uniqueIndex(Iterables.transform(client.getDefaultOrganization().getVDCs()
-               .values(), new Function<NamedResource, Location>() {
+   Map<String, ? extends Location> provideLocations(Supplier<VCloudSession> cache,
+            VCloudClient client) {
+      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+      Map<String, Location> locations = Maps.newLinkedHashMap();
 
-         @Override
-         public Location apply(NamedResource from) {
-            VDC vdc = client.getVDC(from.getId());
-            return new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc.getName(), null);
+      for (NamedResource org : cache.get().getOrgs().values()) {
+         Location orgL = new LocationImpl(LocationScope.REGION, org.getId(), org.getName(),
+                  provider);
+         for (NamedResource vdc : client.getOrganization(org.getId()).getVDCs().values()) {
+            locations.put(vdc.getId(), new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc
+                     .getName(), orgL));
          }
-
-      }), new Function<Location, String>() {
-
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-
-      });
+      }
+      return locations;
    }
 
    @Provides
