@@ -39,12 +39,14 @@ public class ServerToNodeMetadataTest {
 
       expect(server.getId()).andReturn(10000).atLeastOnce();
       expect(server.getName()).andReturn("adriancole-cloudservers-ea3").atLeastOnce();
+      expect(server.getHostId()).andReturn("AHOST").atLeastOnce();
       expect(server.getMetadata()).andReturn(ImmutableMap.<String, String> of()).atLeastOnce();
 
       expect(server.getStatus()).andReturn(ServerStatus.ACTIVE).atLeastOnce();
 
       expect(serverStateToNodeState.get(ServerStatus.ACTIVE)).andReturn(NodeState.RUNNING);
-      Location location = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
+      Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
+      Location location = new LocationImpl(LocationScope.HOST, "AHOST", "AHOST", provider);
 
       Addresses addresses = createMock(Addresses.class);
       expect(server.getAddresses()).andReturn(addresses).atLeastOnce();
@@ -68,7 +70,7 @@ public class ServerToNodeMetadataTest {
       replay(images);
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, images,
-               location);
+               provider);
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);
