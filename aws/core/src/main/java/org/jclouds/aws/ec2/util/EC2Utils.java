@@ -70,10 +70,11 @@ public class EC2Utils {
       return null;
    }
 
-   public static AvailabilityZone findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   public static String findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof AvailabilityZone) {
-            return (AvailabilityZone) arg;
+         if (arg instanceof String) {
+            String zone = (String) arg;
+            if(AvailabilityZone.zones.contains(zone)) return zone;
          }
       }
       return null;

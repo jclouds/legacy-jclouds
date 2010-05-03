@@ -102,7 +102,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
       Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
 
-      String locationId = instance.getAvailabilityZone().toString();
+      String locationId = instance.getAvailabilityZone();
 
       Map<String, String> extra = getExtra(instance);
 

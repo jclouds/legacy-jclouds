@@ -27,9 +27,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
@@ -132,9 +130,9 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Map<AvailabilityZone, String> provideAvailabilityZoneToRegions(
+   Map<String, String> provideAvailabilityZoneToRegions(
             AvailabilityZoneAndRegionClient client, @EC2 Map<String, URI> regions) {
-      Map<AvailabilityZone, String> map = Maps.newHashMap();
+      Map<String, String> map = Maps.newHashMap();
       for (String region : regions.keySet()) {
          for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {
             map.put(zoneInfo.getZone(), region);

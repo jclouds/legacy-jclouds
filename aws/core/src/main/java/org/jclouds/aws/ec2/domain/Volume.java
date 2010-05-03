@@ -84,13 +84,13 @@ public class Volume implements Comparable<Volume> {
    private final int size;
    @Nullable
    private final String snapshotId;
-   private final AvailabilityZone availabilityZone;
+   private final String availabilityZone;
    private final Status status;
    private final Date createTime;
    private final Set<Attachment> attachments = Sets.newLinkedHashSet();
 
    public Volume(String region, String id, int size, String snapshotId,
-            AvailabilityZone availabilityZone, Volume.Status status, Date createTime,
+            String availabilityZone, Volume.Status status, Date createTime,
             Iterable<Attachment> attachments) {
       this.region = checkNotNull(region, "region");
       this.id = id;
@@ -122,7 +122,7 @@ public class Volume implements Comparable<Volume> {
       return snapshotId;
    }
 
-   public AvailabilityZone getAvailabilityZone() {
+   public String getAvailabilityZone() {
       return availabilityZone;
    }
 

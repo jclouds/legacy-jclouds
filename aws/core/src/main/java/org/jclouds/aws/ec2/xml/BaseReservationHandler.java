@@ -28,12 +28,9 @@ import java.util.SortedSet;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -81,7 +78,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private String keyName;
    private Date launchTime;
    private boolean monitoring;
-   private AvailabilityZone availabilityZone;
+   private String availabilityZone;
    private String platform;
    private String privateDnsName;
    private InetAddress privateIpAddress;
@@ -153,7 +150,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("enabled")) {
          monitoring = Boolean.parseBoolean(currentOrNull());
       } else if (qName.equals("availabilityZone")) {
-         availabilityZone = AvailabilityZone.fromValue(currentOrNull());
+         availabilityZone = currentOrNull();
       } else if (qName.equals("platform")) {
          platform = currentOrNull();
       } else if (qName.equals("privateDnsName")) {

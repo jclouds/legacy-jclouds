@@ -44,15 +44,19 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
       InputStream is = getClass().getResourceAsStream("/ec2/availabilityZones.xml");
 
       Set<AvailabilityZoneInfo> expected = ImmutableSet.<AvailabilityZoneInfo> of(
-               new AvailabilityZoneInfo("us-east-1a", AvailabilityZone.US_EAST_1A,
-                        AvailabilityZoneInfo.State.AVAILABLE, Region.US_EAST_1, ImmutableSet
-                                 .<String> of()), new AvailabilityZoneInfo("us-east-1b",
-                        AvailabilityZone.US_EAST_1B, AvailabilityZoneInfo.State.AVAILABLE,
-                        Region.US_EAST_1, ImmutableSet.<String> of()), new AvailabilityZoneInfo(
-                        "us-east-1c", AvailabilityZone.US_EAST_1C,
-                        AvailabilityZoneInfo.State.AVAILABLE, Region.US_EAST_1, ImmutableSet
-                                 .<String> of("our service is awesome")), new AvailabilityZoneInfo(
-                        "us-east-1d", AvailabilityZone.US_EAST_1D,
+
+                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1A,
+                                AvailabilityZoneInfo.State.AVAILABLE, Region.US_EAST_1, ImmutableSet
+                                .<String> of()),
+                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1B,
+                                AvailabilityZoneInfo.State.AVAILABLE,
+                                Region.US_EAST_1, ImmutableSet.<String> of()),
+
+                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1C,
+                                AvailabilityZoneInfo.State.AVAILABLE, Region.US_EAST_1, ImmutableSet
+                                .<String> of("our service is awesome")),
+
+                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1D,
                         AvailabilityZoneInfo.State.UNKNOWN, Region.US_EAST_1, ImmutableSet
                                  .<String> of()));
       Set<AvailabilityZoneInfo> result = factory.create(

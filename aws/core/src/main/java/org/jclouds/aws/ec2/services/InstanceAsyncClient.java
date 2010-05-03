@@ -88,7 +88,7 @@ public interface InstanceAsyncClient {
    @XMLResponseParser(RunInstancesResponseHandler.class)
    ListenableFuture<Reservation> runInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) AvailabilityZone nullableAvailabilityZone,
+            @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) String nullableAvailabilityZone,
             @FormParam("ImageId") String imageId, @FormParam("MinCount") int minCount,
             @FormParam("MaxCount") int maxCount, RunInstancesOptions... options);
 

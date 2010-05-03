@@ -27,10 +27,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
@@ -56,12 +54,12 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    @EC2
    String defaultRegion;
    @Inject
-   protected Map<AvailabilityZone, String> availabilityZoneToRegion;
+   protected Map<String, String> availabilityZoneToRegion;
 
    private String id;
    private int size;
    private String snapshotId;
-   private AvailabilityZone availabilityZone;
+   private String availabilityZone;
    private Volume.Status volumeStatus;
    private Date createTime;
    private Set<Attachment> attachments = Sets.newLinkedHashSet();
@@ -96,13 +94,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
       } else if (qName.equals("size")) {
          size = Integer.parseInt(currentText.toString().trim());
       } else if (qName.equals("availabilityZone")) {
-         String availabilityZoneName = currentText.toString().trim();
-         try {
-            availabilityZone = AvailabilityZone.fromValue(availabilityZoneName);
-         } catch (IllegalArgumentException e) {
-            logger.warn(e, "unsupported availability zone: %s", availabilityZoneName);
-            availabilityZone = AvailabilityZone.UNKNOWN;
-         }
+         availabilityZone = currentText.toString().trim();
       } else if (qName.equals("volumeId")) {
          if (inAttachmentSet) {
             volumeId = currentText.toString().trim();
@@ -166,7 +158,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
       super.setContext(request);
       region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null) {
-         AvailabilityZone zone = EC2Utils.findAvailabilityZoneInArgsOrNull(request);
+         String zone = EC2Utils.findAvailabilityZoneInArgsOrNull(request);
          if (zone != null) {
             region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
                      "zone %s not in %s", zone, availabilityZoneToRegion));

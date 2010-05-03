@@ -23,9 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
@@ -65,7 +63,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
     *      />
     */
-   Volume createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone availabilityZone,
+   Volume createVolumeFromSnapshotInAvailabilityZone(String availabilityZone,
             String snapshotId);
 
    /**
@@ -95,7 +93,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
     *      />
     */
-   Volume createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone availabilityZone,
+   Volume createVolumeFromSnapshotInAvailabilityZone(String availabilityZone,
             int size, String snapshotId);
 
    /**
@@ -120,7 +118,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
     *      />
     */
-   Volume createVolumeInAvailabilityZone(AvailabilityZone availabilityZone, int size);
+   Volume createVolumeInAvailabilityZone(String availabilityZone, int size);
 
    /**
     * Describes the specified Amazon EBS volumes that you own. If you do not specify one or more

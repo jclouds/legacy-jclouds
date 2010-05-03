@@ -28,12 +28,10 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindVolumeIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
@@ -79,7 +77,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
    ListenableFuture<Volume> createVolumeFromSnapshotInAvailabilityZone(
-            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
+            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
             @FormParam("SnapshotId") String snapshotId);
 
    /**
@@ -90,7 +88,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
    ListenableFuture<Volume> createVolumeFromSnapshotInAvailabilityZone(
-            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
+            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
             @FormParam("Size") int size, @FormParam("SnapshotId") String snapshotId);
 
    /**
@@ -101,7 +99,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
    ListenableFuture<Volume> createVolumeInAvailabilityZone(
-            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
+            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
             @FormParam("Size") int size);
 
    /**
