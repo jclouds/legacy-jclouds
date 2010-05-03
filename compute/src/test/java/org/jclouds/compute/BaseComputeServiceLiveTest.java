@@ -214,7 +214,7 @@ public abstract class BaseComputeServiceLiveTest {
                .values());
       checkNodes(nodes, tag);
       NodeMetadata node = nodes.first();
-
+      this.nodes.add(node);
       assertEquals(nodes.size(), 1);
       assertLocationSameOrChild(node.getLocation(), template.getLocation());
       assertEquals(node.getImage(), template.getImage());
@@ -224,7 +224,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String tag = this.tag + "run";
       Template simpleTemplate = buildTemplate(client.templateBuilder());
-      simpleTemplate.getOptions().blockOnPort(22, 60);
+      simpleTemplate.getOptions().blockOnPort(22, 120);
       try {
          Map<String, ? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, simpleTemplate);
          Credentials good = nodes.values().iterator().next().getCredentials();
@@ -254,7 +254,7 @@ public abstract class BaseComputeServiceLiveTest {
                   RunScriptOptions.Builder.overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
-            System.err.printf("bad credentials: %s:%s for %s", creds.account, creds.key, client
+            System.err.printf("bad credentials: %s:%s for %s%n", creds.account, creds.key, client
                      .getNodesWithTag(tag));
          }
          throw e;
@@ -370,12 +370,14 @@ public abstract class BaseComputeServiceLiveTest {
          assert node.getValue() instanceof NodeMetadata;
          NodeMetadata nodeMetadata = (NodeMetadata) node.getValue();
          assert nodeMetadata.getId() != null : nodeMetadata;
-         assert nodeMetadata.getImage() != null : node;
+         // nullable
+         // assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
          // assert nodeMetadata.getName() != null : nodeMetadata;
          if (nodeMetadata.getState() != NodeState.TERMINATED) {
             assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
-            assert nodeMetadata.getPublicAddresses().size() > 0 : nodeMetadata;
+            assert nodeMetadata.getPublicAddresses().size() > 0
+                     || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
             assertNotNull(nodeMetadata.getPrivateAddresses());
          }
       }

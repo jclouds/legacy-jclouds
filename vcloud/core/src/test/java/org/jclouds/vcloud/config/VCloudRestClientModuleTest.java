@@ -37,12 +37,12 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.util.Jsr330;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.Test;
@@ -142,14 +142,14 @@ public class VCloudRestClientModuleTest {
    void testServerErrorHandler() {
       DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
       assertEquals(handler.getServerErrorHandler().getClass(),
-               CloseContentAndSetExceptionErrorHandler.class);
+               ParseVCloudErrorFromHttpResponse.class);
    }
 
    @Test
    void testClientErrorHandler() {
       DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
       assertEquals(handler.getClientErrorHandler().getClass(),
-               CloseContentAndSetExceptionErrorHandler.class);
+               ParseVCloudErrorFromHttpResponse.class);
    }
 
    @Test

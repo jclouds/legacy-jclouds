@@ -94,7 +94,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    @Override
    protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
-      return template.imageNameMatches(".*JeOS.*");
+      return template.osFamily(OsFamily.UBUNTU);
    }
 
    private static final ComputeOptionsToSize sizeConverter = new ComputeOptionsToSize();

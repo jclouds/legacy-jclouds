@@ -144,7 +144,7 @@ public class ComputeUtils {
       if (passed)
          logger.debug("<< port %s:%d opened", inetAddress, port);
       else
-         logger.warn("<< port %s:%d didn't open after %d seconds", seconds, inetAddress, port);
+         logger.warn("<< port %s:%d didn't open after %d seconds", inetAddress, port, seconds);
    }
 
    public InstallRSAPrivateKey installKeyOnNode(NodeMetadata node, String privateKey) {

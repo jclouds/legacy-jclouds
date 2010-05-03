@@ -205,7 +205,6 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          InstantiateVAppTemplateOptions options = processorCount(
                   Double.valueOf(template.getSize().getCores()).intValue()).memory(
                   template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
-
          Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
                   template.getImage().getId(), options, template.getOptions().getInboundPorts());
          VApp vApp = client.getVApp(metaMap.get("id"));

@@ -73,6 +73,7 @@ import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.functions.ParseTaskFromLocationHeader;
+import org.jclouds.vcloud.terremark.functions.ReturnEmptySetOnUnauthorized;
 import org.jclouds.vcloud.terremark.functions.ReturnVoidOnDeleteDefaultIp;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
@@ -290,6 +291,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}/nodes")
    @XMLResponseParser(NodesHandler.class)
+   @ExceptionParser(ReturnEmptySetOnUnauthorized.class)
    @Consumes(APPLICATION_XML)
    ListenableFuture<? extends SortedSet<Node>> getNodes(
             @PathParam("internetServiceId") int internetServiceId);

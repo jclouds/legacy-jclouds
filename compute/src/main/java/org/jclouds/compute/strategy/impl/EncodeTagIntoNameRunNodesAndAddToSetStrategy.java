@@ -66,8 +66,8 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
    protected final ExecutorService executor;
 
    @Inject
-   protected EncodeTagIntoNameRunNodesAndAddToSetStrategy(AddNodeWithTagStrategy addNodeWithTagStrategy,
-            ListNodesStrategy listNodesStrategy,
+   protected EncodeTagIntoNameRunNodesAndAddToSetStrategy(
+            AddNodeWithTagStrategy addNodeWithTagStrategy, ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.addNodeWithTagStrategy = addNodeWithTagStrategy;
@@ -98,6 +98,8 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
                   logger.debug("<< options applied node(%s)", node.getId());
                   nodes.add(node);
                } catch (Exception e) {
+                  logger.error(e, "<< error applying options (%s) on node (%s)", template
+                           .getOptions(), node.getId());
                   if (!template.getOptions().shouldDestroyOnError())
                      nodes.add(node);
                }

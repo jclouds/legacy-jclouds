@@ -20,35 +20,30 @@ package org.jclouds.vcloud.terremark.functions;
 
 import static org.jclouds.util.Utils.propagateOrNull;
 
-import java.util.regex.Pattern;
+import java.util.SortedSet;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.vcloud.terremark.domain.Node;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * There's no current way to determine if an IP is the default outbound one. In this case, we may
- * get errors on deleting an IP, which are ok.
+ * There's a bug where calling get after delete throws an unauthorized exception.
+ * <p/>
+ * https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60/p/264/876.aspx#876
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnVoidOnDeleteDefaultIp implements Function<Exception, Void> {
-   public static final Pattern MESSAGE_PATTERN = Pattern
-            .compile(".*Cannot release this Public IP as it is default oubound IP.*");
-
-   public Void apply(Exception from) {
-      if (from instanceof HttpResponseException) {
-         HttpResponseException hre = (HttpResponseException) from;
-         if (hre.getResponse().getStatusCode() == 503 || hre.getResponse().getStatusCode() == 401
-                  || MESSAGE_PATTERN.matcher(hre.getMessage()).matches())
-            return null;
-      } else if (from instanceof AuthorizationException) {
-         return null;
+public class ReturnEmptySetOnUnauthorized implements Function<Exception, SortedSet<Node>> {
+   @SuppressWarnings("unchecked")
+   public SortedSet<Node> apply(Exception from) {
+      if (from instanceof AuthorizationException) {
+         return ImmutableSortedSet.<Node> of();
       }
-      return Void.class.cast(propagateOrNull(from));
+      return SortedSet.class.cast(propagateOrNull(from));
    }
 }

@@ -44,7 +44,11 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.AddressReachable;
@@ -69,6 +73,7 @@ import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
+import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
@@ -121,6 +126,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @Override
    protected void configure() {
       requestInjection(this);
+      bindErrorHandlers();
    }
 
    @VCloudToken
@@ -278,6 +284,15 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    String provideDefaultNetworkString(@Network URI network) {
       return network.toASCIIString();
+   }
+
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               ParseVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               ParseVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ParseVCloudErrorFromHttpResponse.class);
    }
 
    @Provides
