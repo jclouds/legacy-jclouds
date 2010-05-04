@@ -31,10 +31,12 @@ import java.net.InetSocketAddress;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jclouds.Constants;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -44,6 +46,7 @@ import org.jclouds.util.Utils;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Closeables;
+import com.google.inject.Inject;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -78,7 +81,9 @@ public class JschSshClient implements SshClient {
    private final int port;
    private final String username;
    private final String password;
-   private int sshRetries = 3;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_MAX_RETRIES)
+   private int sshRetries = 5;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -86,27 +91,21 @@ public class JschSshClient implements SshClient {
    private final byte[] privateKey;
    final byte[] emptyPassPhrase = new byte[0];
    private final int timeout;
+   private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
-   @Inject
-   public JschSshClient(InetSocketAddress socket, int timeout, String username, String password) {
+   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler,
+            InetSocketAddress socket, int timeout, String username, String password,
+            byte[] privateKey) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
+      checkArgument(password != null || privateKey != null, "you must specify a password or a key");
       this.port = socket.getPort();
       this.username = checkNotNull(username, "username");
-      this.password = checkNotNull(password, "password");
+      this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler,
+               "backoffLimitedRetryHandler");
       this.timeout = timeout;
-      this.privateKey = null;
-   }
-
-   @Inject
-   public JschSshClient(InetSocketAddress socket, int timeout, String username, byte[] privateKey) {
-      this.host = checkNotNull(socket, "socket").getAddress();
-      checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
-      this.port = socket.getPort();
-      this.username = checkNotNull(username, "username");
-      this.timeout = timeout;
-      this.password = null;
-      this.privateKey = checkNotNull(privateKey, "privateKey");
+      this.password = password;
+      this.privateKey = privateKey;
    }
 
    public InputStream get(String path) {
@@ -162,6 +161,31 @@ public class JschSshClient implements SshClient {
    @PostConstruct
    public void connect() {
       disconnect();
+      RETRY_LOOP: for (int i = 0; i < sshRetries; i++) {
+         try {
+            newSession();
+            break RETRY_LOOP;
+         } catch (Exception from) {
+            disconnect();
+            String rootMessage = Throwables.getRootCause(from).getMessage();
+            if (i + 1 == sshRetries)
+               throw propagate(from);
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
+                     ConnectException.class)) >= 1
+                     || rootMessage.indexOf("Auth fail") != -1// auth fail sometimes happens in EC2
+                     || rootMessage.indexOf("invalid data") != -1
+                     || rootMessage.indexOf("invalid privatekey") != -1) {
+               backoffLimitedRetryHandler.imposeBackoffExponentialDelay(i + 1, String.format(
+                        "%s@%s:%d: connection error: %s", username, host.getHostAddress(), port,
+                        from.getMessage()));
+               continue;
+            }
+            throw propagate(from);
+         }
+      }
+   }
+
+   private void newSession() throws JSchException {
       JSch jsch = new JSch();
       session = null;
       try {
@@ -181,29 +205,7 @@ public class JschSshClient implements SshClient {
       java.util.Properties config = new java.util.Properties();
       config.put("StrictHostKeyChecking", "no");
       session.setConfig(config);
-      RETRY_LOOP: for (int i = 0; i < sshRetries; i++) {
-         try {
-            session.connect();
-            break RETRY_LOOP;
-         } catch (Exception from) {
-            String rootMessage = Throwables.getRootCause(from).getMessage();
-            if (i + 1 == sshRetries)
-               throw propagate(from);
-            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
-                     ConnectException.class)) >= 1
-                     || rootMessage.indexOf("Auth fail") != -1// auth fail sometimes happens in EC2
-                     || rootMessage.indexOf("invalid data") != -1
-                     || rootMessage.indexOf("invalid privatekey") != -1) {
-               try {
-                  Thread.sleep(100);
-               } catch (InterruptedException e) {
-                  throw propagate(e);
-               }
-               continue;
-            }
-            throw propagate(from);
-         }
-      }
+      session.connect();
       logger.debug("%s@%s:%d: Session connected.", username, host.getHostAddress(), port);
    }
 

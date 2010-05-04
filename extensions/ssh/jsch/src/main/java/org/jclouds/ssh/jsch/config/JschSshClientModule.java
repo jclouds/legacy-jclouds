@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
@@ -33,6 +34,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -51,15 +53,31 @@ public class JschSshClientModule extends AbstractModule {
 
    private static class Factory implements SshClient.Factory {
       @Named(Constants.PROPERTY_CONNECTION_TIMEOUT)
-      @Inject(optional=true)
+      @Inject(optional = true)
       int timeout = 60000;
-      
+
+      private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
+      private final Injector injector;
+
+      @SuppressWarnings("unused")
+      @Inject
+      public Factory(BackoffLimitedRetryHandler backoffLimitedRetryHandler, Injector injector) {
+         this.backoffLimitedRetryHandler = backoffLimitedRetryHandler;
+         this.injector = injector;
+      }
+
       public SshClient create(InetSocketAddress socket, String username, String password) {
-         return new JschSshClient(socket, timeout, username, password);
+         SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, timeout,
+                  username, password, null);
+         injector.injectMembers(client);// add logger
+         return client;
       }
 
       public SshClient create(InetSocketAddress socket, String username, byte[] privateKey) {
-         return new JschSshClient(socket, timeout, username, privateKey);
+         SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, timeout,
+                  username, null, privateKey);
+         injector.injectMembers(client);// add logger
+         return client;
       }
 
       @Override

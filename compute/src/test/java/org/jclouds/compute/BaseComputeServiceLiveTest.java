@@ -232,7 +232,7 @@ public abstract class BaseComputeServiceLiveTest {
             Map<NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, simpleTemplate
                      .getImage().getOsFamily(), new Credentials(good.account, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
-         } catch (SshException e) {
+         } catch (RunScriptOnNodesException e) {
             assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 

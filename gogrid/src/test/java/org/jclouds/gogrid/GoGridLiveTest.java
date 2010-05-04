@@ -53,6 +53,7 @@ import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
@@ -351,8 +352,8 @@ public class GoGridLiveTest {
 
       socketOpen.apply(socket);
 
-      SshClient sshClient = new JschSshClient(socket, 60000, instanceCredentials.account,
-               instanceCredentials.key);
+      SshClient sshClient = new JschSshClient(new BackoffLimitedRetryHandler(), socket, 60000,
+               instanceCredentials.account, instanceCredentials.key, null);
       sshClient.connect();
       String output = sshClient.exec("df").getOutput();
       assertTrue(output.contains("Filesystem"),
