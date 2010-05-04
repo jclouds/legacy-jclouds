@@ -23,13 +23,17 @@
  */
 package org.jclouds.gogrid;
 
-import org.jclouds.PropertiesBuilder;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.gogrid.reference.GoGridConstants.*;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_ENDPOINT;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_PASSWORD;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_SESSIONINTERVAL;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_USER;
 
 import java.net.URI;
 import java.util.Properties;
+
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in GoGrid Clients
@@ -44,7 +48,7 @@ public class GoGridPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_GOGRID_ENDPOINT, "https://api.gogrid.com/api");
       properties.setProperty(PROPERTY_GOGRID_SESSIONINTERVAL, 60 + "");
-
+      properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "SANFRANCISCO");
       return properties;
    }
 

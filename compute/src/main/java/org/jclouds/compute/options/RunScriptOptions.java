@@ -83,4 +83,10 @@ public class RunScriptOptions {
 
    }
 
+   @Override
+   public String toString() {
+      return "RunScriptOptions [overridingCredentials=" + (overridingCredentials != null)
+               + ", runAsRoot=" + runAsRoot + "]";
+   }
+
 }

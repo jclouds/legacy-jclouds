@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -112,7 +113,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory,
             BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Map<String, Location> locations) {
+            Location defaultLocation, Set<Location> locations) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;

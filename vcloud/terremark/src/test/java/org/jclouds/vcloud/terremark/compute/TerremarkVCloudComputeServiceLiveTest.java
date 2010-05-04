@@ -21,8 +21,6 @@ package org.jclouds.vcloud.terremark.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Map.Entry;
-
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeType;
@@ -78,14 +76,13 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
 
    @Override
    public void testListImages() throws Exception {
-      for (Entry<String, ? extends Image> image : client.getImages().entrySet()) {
-         assertEquals(image.getKey(), image.getValue().getId());
-         assert image.getValue().getId() != null : image;
-         // image.getValue().getLocationId() can be null, if it is a location-free image
-         assertEquals(image.getValue().getType(), ComputeType.IMAGE);
-         assert image.getValue().getDefaultCredentials().account != null : image;
-         if (image.getValue().getOsFamily() != OsFamily.WINDOWS)
-            assert image.getValue().getDefaultCredentials().key != null : image;
+      for (Image image : client.listImages()) {
+         assert image.getId() != null : image;
+         // image.getLocationId() can be null, if it is a location-free image
+         assertEquals(image.getType(), ComputeType.IMAGE);
+         assert image.getDefaultCredentials().account != null : image;
+         if (image.getOsFamily() != OsFamily.WINDOWS)
+            assert image.getDefaultCredentials().key != null : image;
       }
    }
 

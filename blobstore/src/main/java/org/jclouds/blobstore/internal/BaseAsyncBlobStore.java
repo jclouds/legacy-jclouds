@@ -24,7 +24,7 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -58,12 +58,12 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    protected final BlobStoreUtils blobUtils;
    protected final ExecutorService service;
    protected final Location defaultLocation;
-   protected final Map<String, ? extends Location> locations;
+   protected final Set<? extends Location> locations;
 
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Map<String, ? extends Location> locations) {
+            Location defaultLocation, Set<? extends Location> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
@@ -271,7 +271,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    }
 
    @Override
-   public ListenableFuture<? extends Map<String, ? extends Location>> getAssignableLocations() {
+   public ListenableFuture<? extends Set<? extends Location>> listAssignableLocations() {
       return immediateFuture(locations);
    }
 

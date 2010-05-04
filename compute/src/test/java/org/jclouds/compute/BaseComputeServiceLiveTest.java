@@ -31,7 +31,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -155,9 +154,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesCache() throws Exception {
-      client.getImages();
+      client.listImages();
       long time = System.currentTimeMillis();
-      client.getImages();
+      client.listImages();
       long duration = System.currentTimeMillis() - time;
       assert duration < 1000 : String.format("%dms to get images", duration);
    }
@@ -183,7 +182,7 @@ public abstract class BaseComputeServiceLiveTest {
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(
                keyPair.get("public")).runScript(
                buildScript(template.getImage().getOsFamily()).getBytes());
-      nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template).values());
+      nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
       assertEquals(nodes.size(), 2);
       checkNodes(nodes, tag);
       NodeMetadata node1 = nodes.first();
@@ -210,8 +209,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
-      TreeSet<NodeMetadata> nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 1, template)
-               .values());
+      TreeSet<NodeMetadata> nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 1, template));
       checkNodes(nodes, tag);
       NodeMetadata node = nodes.first();
       this.nodes.add(node);
@@ -226,13 +224,13 @@ public abstract class BaseComputeServiceLiveTest {
       Template simpleTemplate = buildTemplate(client.templateBuilder());
       simpleTemplate.getOptions().blockOnPort(22, 120);
       try {
-         Map<String, ? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, simpleTemplate);
-         Credentials good = nodes.values().iterator().next().getCredentials();
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, simpleTemplate);
+         Credentials good = nodes.iterator().next().getCredentials();
          assert good.account != null;
 
          try {
-            Map<String, ExecResponse> responses = runScriptWithCreds(tag, simpleTemplate.getImage()
-                     .getOsFamily(), new Credentials(good.account, "romeo"));
+            Map<NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, simpleTemplate
+                     .getImage().getOsFamily(), new Credentials(good.account, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (SshException e) {
             assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
@@ -240,22 +238,22 @@ public abstract class BaseComputeServiceLiveTest {
 
          runScriptWithCreds(tag, simpleTemplate.getImage().getOsFamily(), good);
 
-         checkNodes(nodes.values(), tag);
+         checkNodes(nodes, tag);
 
       } finally {
          client.destroyNodesWithTag(tag);
       }
    }
 
-   private Map<String, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
-            Credentials creds) {
+   private Map<NodeMetadata, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
+            Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesWithTag(tag, buildScript(osFamily).getBytes(),
                   RunScriptOptions.Builder.overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
             System.err.printf("bad credentials: %s:%s for %s%n", creds.account, creds.key, client
-                     .getNodesWithTag(tag));
+                     .listNodesWithTag(tag));
          }
          throw e;
       }
@@ -316,7 +314,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
       Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(client
-               .getNodesWithTag(tag).values(), Predicates.not(new Predicate<NodeMetadata>() {
+               .listNodesWithTag(tag), Predicates.not(new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata input) {
             return input.getState() == NodeState.TERMINATED;
@@ -352,23 +350,20 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testListNodes() throws Exception {
-      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes().entrySet()) {
-         assertEquals(node.getKey(), node.getValue().getId());
-         assert node.getValue().getId() != null;
-         assert node.getValue().getLocation() != null;
-         assertEquals(node.getValue().getType(), ComputeType.NODE);
+      for (ComputeMetadata node : client.listNodes()) {
+         assert node.getId() != null;
+         assert node.getLocation() != null;
+         assertEquals(node.getType(), ComputeType.NODE);
       }
    }
 
    public void testGetNodesWithDetails() throws Exception {
-      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes(
-               new GetNodesOptions().withDetails()).entrySet()) {
-         assertEquals(node.getKey(), node.getValue().getId());
-         assert node.getValue().getId() != null : node;
-         assert node.getValue().getLocation() != null : node;
-         assertEquals(node.getValue().getType(), ComputeType.NODE);
-         assert node.getValue() instanceof NodeMetadata;
-         NodeMetadata nodeMetadata = (NodeMetadata) node.getValue();
+      for (ComputeMetadata node : client.listNodes(new GetNodesOptions().withDetails())) {
+         assert node.getId() != null : node;
+         assert node.getLocation() != null : node;
+         assertEquals(node.getType(), ComputeType.NODE);
+         assert node instanceof NodeMetadata;
+         NodeMetadata nodeMetadata = (NodeMetadata) node;
          assert nodeMetadata.getId() != null : nodeMetadata;
          // nullable
          // assert nodeMetadata.getImage() != null : node;
@@ -384,41 +379,39 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testListImages() throws Exception {
-      for (Entry<String, ? extends Image> image : client.getImages().entrySet()) {
-         assertEquals(image.getKey(), image.getValue().getId());
-         assert image.getValue().getId() != null : image;
-         // image.getValue().getLocationId() can be null, if it is a location-free image
-         assertEquals(image.getValue().getType(), ComputeType.IMAGE);
+      for (Image image : client.listImages()) {
+         assert image.getId() != null : image;
+         // image.getLocationId() can be null, if it is a location-free image
+         assertEquals(image.getType(), ComputeType.IMAGE);
       }
    }
 
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
-      for (Entry<String, ? extends Location> location : client.getAssignableLocations().entrySet()) {
-         System.err.printf("location %s%n", location.getValue());
-         assertEquals(location.getKey(), location.getValue().getId());
-         assert location.getValue().getId() != null : location;
-         assert location.getValue() != location.getValue().getParent() : location;
-         assert location.getValue().getScope() != null : location;
-         switch (location.getValue().getScope()) {
+      for (Location location : client.listAssignableLocations()) {
+         System.err.printf("location %s%n", location);
+         assert location.getId() != null : location;
+         assert location != location.getParent() : location;
+         assert location.getScope() != null : location;
+         switch (location.getScope()) {
             case PROVIDER:
-               assertProvider(location.getValue());
+               assertProvider(location);
                break;
             case REGION:
-               assertProvider(location.getValue().getParent());
+               assertProvider(location.getParent());
                break;
             case ZONE:
-               Location provider = location.getValue().getParent().getParent();
+               Location provider = location.getParent().getParent();
                // zone can be a direct descendant of provider
                if (provider == null)
-                  provider = location.getValue().getParent();
+                  provider = location.getParent();
                assertProvider(provider);
                break;
             case HOST:
-               Location provider2 = location.getValue().getParent().getParent().getParent();
+               Location provider2 = location.getParent().getParent().getParent();
                // zone can be a direct descendant of provider
                if (provider2 == null)
-                  provider2 = location.getValue().getParent().getParent();
+                  provider2 = location.getParent().getParent();
                assertProvider(provider2);
                break;
          }
@@ -431,14 +424,13 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testListSizes() throws Exception {
-      for (Entry<String, ? extends Size> size : client.getSizes().entrySet()) {
-         assertEquals(size.getKey(), size.getValue().getId());
-         assert size.getValue().getId() != null;
-         assert size.getValue().getCores() > 0;
-         assert size.getValue().getDisk() > 0;
-         assert size.getValue().getRam() > 0;
-         assert size.getValue().getSupportedArchitectures() != null;
-         assertEquals(size.getValue().getType(), ComputeType.SIZE);
+      for (Size size : client.listSizes()) {
+         assert size.getId() != null;
+         assert size.getCores() > 0;
+         assert size.getDisk() > 0;
+         assert size.getRam() > 0;
+         assert size.getSupportedArchitectures() != null;
+         assertEquals(size.getType(), ComputeType.SIZE);
       }
    }
 
@@ -480,7 +472,7 @@ public abstract class BaseComputeServiceLiveTest {
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
          client.destroyNodesWithTag(tag);
-         for (NodeMetadata node : client.getNodesWithTag(tag).values()) {
+         for (NodeMetadata node : client.listNodesWithTag(tag)) {
             assert node.getState() == NodeState.TERMINATED : node;
          }
       }

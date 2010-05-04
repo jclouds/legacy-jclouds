@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.compute;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -64,10 +65,9 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context,
-            Provider<Map<String, ? extends Image>> images,
-            Provider<Map<String, ? extends Size>> sizes,
-            Provider<Map<String, ? extends Location>> locations,
-            ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Provider<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
@@ -101,7 +101,7 @@ public class EC2ComputeService extends BaseComputeService {
             logger.debug(">> deleting keyPair(%s)", tag);
             ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
             credentialsMap.remove(new RegionTag(region, keyPair.getKeyName())); // TODO: test this
-                                                                                // clear happens
+            // clear happens
             logger.debug("<< deleted keyPair(%s)", keyPair.getKeyName());
          }
       }
@@ -110,7 +110,7 @@ public class EC2ComputeService extends BaseComputeService {
    @Override
    public void destroyNodesWithTag(String tag) {
       super.destroyNodesWithTag(tag);
-      Iterable<? extends NodeMetadata> nodes = Iterables.filter(getNodesWithTag(tag).values(),
+      Iterable<? extends NodeMetadata> nodes = Iterables.filter(listNodesWithTag(tag),
                new Predicate<NodeMetadata>() {
                   @Override
                   public boolean apply(NodeMetadata input) {

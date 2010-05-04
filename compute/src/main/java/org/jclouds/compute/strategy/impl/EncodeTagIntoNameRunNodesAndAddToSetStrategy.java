@@ -36,7 +36,6 @@ import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -45,6 +44,8 @@ import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -83,7 +84,8 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
     */
    @Override
    public Map<?, ListenableFuture<Void>> execute(final String tag, final int count,
-            final Template template, final Set<NodeMetadata> nodes) {
+            final Template template, final Set<NodeMetadata> nodes,
+            final Map<NodeMetadata, Exception> badNodes) {
       Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
       for (final String name : getNextNames(tag, template, count)) {
          responses.put(name, makeListenable(executor.submit(new Callable<Void>() {
@@ -100,8 +102,7 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
                } catch (Exception e) {
                   logger.error(e, "<< error applying options (%s) on node (%s)", template
                            .getOptions(), node.getId());
-                  if (!template.getOptions().shouldDestroyOnError())
-                     nodes.add(node);
+                  badNodes.put(node, e);
                }
                return null;
             }
@@ -122,11 +123,20 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
     */
    protected Set<String> getNextNames(final String tag, final Template template, int count) {
       Set<String> names = Sets.newHashSet();
-      Map<String, ? extends ComputeMetadata> currentNodes = Maps.uniqueIndex(listNodesStrategy
-               .execute(GetNodesOptions.NONE), BaseComputeService.METADATA_TO_NAME);
-      while (names.size() < count) {
-         String name = getNextName(tag, template);
-         if (!currentNodes.containsKey(name)) {
+      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy
+               .execute(GetNodesOptions.NONE);
+      int maxTries = 100;
+      int currentTries = 0;
+      while (names.size() < count && currentTries++ < maxTries) {
+         final String name = getNextName(tag, template);
+         if (!Iterables.any(currentNodes, new Predicate<ComputeMetadata>() {
+
+            @Override
+            public boolean apply(ComputeMetadata input) {
+               return name.equals(input.getName());
+            }
+
+         })) {
             names.add(name);
          }
       }

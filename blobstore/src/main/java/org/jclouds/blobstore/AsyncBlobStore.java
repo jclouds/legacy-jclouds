@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -49,9 +49,9 @@ public interface AsyncBlobStore {
    Blob newBlob(String name);
 
    /**
-    * @see BlobStore#getAssignableLocations
+    * @see BlobStore#listAssignableLocations
     */
-   ListenableFuture<? extends Map<String, ? extends Location>> getAssignableLocations();
+   ListenableFuture<? extends Set<? extends Location>> listAssignableLocations();
 
    /**
     * @see BlobStore#list

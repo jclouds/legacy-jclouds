@@ -19,6 +19,7 @@
 package org.jclouds.gogrid.compute.config;
 
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -82,7 +83,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -279,13 +279,21 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
 
    @Provides
    @Singleton
-   Location getDefaultLocation(Map<String, ? extends Location> locations) {
-      return locations.get("SANFRANCISCO");
+   Location getDefaultLocation(@Named(PROPERTY_GOGRID_DEFAULT_DC) final String defaultDC,
+            Set<? extends Location> locations) {
+      return Iterables.find(locations, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(defaultDC);
+         }
+
+      });
    }
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> getDefaultLocations(GoGridClient sync, LogHolder holder,
+   Set<? extends Location> getDefaultLocations(GoGridClient sync, LogHolder holder,
             Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
@@ -293,13 +301,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       locations.add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA",
                parent));
       holder.logger.debug("<< locations(%d)", locations.size());
-      return Maps.uniqueIndex(locations, new Function<Location, String>() {
-
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-      });
+      return locations;
    }
 
    @Provides
@@ -315,10 +317,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Size> provideSizes(GoGridClient sync,
-            Map<String, ? extends Image> images, LogHolder holder,
-            Function<ComputeMetadata, String> indexer) throws InterruptedException,
-            TimeoutException, ExecutionException {
+   protected Set<? extends Size> provideSizes(GoGridClient sync, Set<? extends Image> images,
+            LogHolder holder, Function<ComputeMetadata, String> indexer)
+            throws InterruptedException, TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
 
@@ -333,7 +334,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       sizes.add(new SizeImpl("5", "5", null, null, ImmutableMap.<String, String> of(), 6, 8192,
                462, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return Maps.uniqueIndex(sizes, indexer);
+      return sizes;
    }
 
    private static class LogHolder {
@@ -346,7 +347,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Image> provideImages(final GoGridClient sync, LogHolder holder,
+   protected Set<? extends Image> provideImages(final GoGridClient sync, LogHolder holder,
             Function<ComputeMetadata, String> indexer, Location location,
             PopulateDefaultLoginCredentialsForImageStrategy authenticator)
             throws InterruptedException, ExecutionException, TimeoutException {
@@ -375,6 +376,6 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
                   osDescription, arch, defaultCredentials));
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return Maps.uniqueIndex(images, indexer);
+      return images;
    }
 }

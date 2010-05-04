@@ -21,7 +21,7 @@ package org.jclouds.blobstore.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -48,11 +48,11 @@ public abstract class BaseBlobStore implements BlobStore {
    protected final BlobStoreContext context;
    protected final BlobStoreUtils blobUtils;
    protected final Location defaultLocation;
-   protected final Map<String, ? extends Location> locations;
+   protected final Set<? extends Location> locations;
 
    @Inject
    protected BaseBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
-            Location defaultLocation, Map<String, ? extends Location> locations) {
+            Location defaultLocation, Set<? extends Location> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
@@ -213,7 +213,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    @Override
-   public Map<String, ? extends Location> getAssignableLocations() {
+   public Set<? extends Location> listAssignableLocations() {
       return locations;
    }
 

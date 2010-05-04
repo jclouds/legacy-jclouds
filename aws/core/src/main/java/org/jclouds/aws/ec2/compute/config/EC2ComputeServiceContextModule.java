@@ -254,32 +254,37 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Size> provideSizes(Function<ComputeMetadata, String> indexer) {
-      return Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE,
-               EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE,
-               EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE), indexer);
+   Set<? extends Size> provideSizes() {
+      return ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
+               EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
+               EC2Size.M2_4XLARGE);
    }
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap) {
+   Set<? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap) {
       Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      Map<String, Location> locations = Maps.newLinkedHashMap();
-      for (String region : availabilityZoneToRegionMap.values()) {
-         locations.put(region, new LocationImpl(LocationScope.REGION, region, region, ec2));
-      }
-
+      Set<Location> locations = Sets.newLinkedHashSet();
       for (String zone : availabilityZoneToRegionMap.keySet()) {
-         locations.put(zone, new LocationImpl(LocationScope.ZONE, zone, zone, locations
-                  .get(availabilityZoneToRegionMap.get(zone))));
+         Location region = new LocationImpl(LocationScope.REGION, availabilityZoneToRegionMap
+                  .get(zone), availabilityZoneToRegionMap.get(zone), ec2);
+         locations.add(region);
+         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, region));
       }
       return locations;
    }
 
    @Provides
    @Singleton
-   Location getDefaultLocation(@EC2 String region, Map<String, ? extends Location> map) {
-      return map.get(region);
+   Location getDefaultLocation(@EC2 final String region, Set<? extends Location> set) {
+      return Iterables.find(set, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(region);
+         }
+
+      });
    }
 
    private static class LogHolder {
@@ -297,7 +302,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Image> provideImages(final EC2Client sync,
+   protected Set<? extends Image> provideImages(final EC2Client sync,
             @EC2 Map<String, URI> regionMap, LogHolder holder,
             Function<ComputeMetadata, String> indexer,
             @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, ImageParser parser)
@@ -316,6 +321,6 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          }
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return Maps.uniqueIndex(images, indexer);
+      return images;
    }
 }

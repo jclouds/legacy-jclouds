@@ -32,11 +32,14 @@ import org.jclouds.aws.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -52,15 +55,15 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(result.size(), 6);
 
       ImageParser parser = new ImageParser(
-               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableMap
-                        .<String, Location> of());
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableSet
+                        .<Location> of(defaultLocation), defaultLocation);
       org.jclouds.compute.domain.Image ubuntuHardy = parser.apply(Iterables.get(result, 0));
 
       assertEquals(ubuntuHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(ubuntuHardy.getDescription(),
                "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
       assertEquals(ubuntuHardy.getId(), "ami-7e28ca17");
-      assertEquals(ubuntuHardy.getLocation(), null);
+      assertEquals(ubuntuHardy.getLocation(), defaultLocation);
       assertEquals(ubuntuHardy.getName(), "8.04");
       assertEquals(ubuntuHardy.getOsDescription(),
                "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
@@ -75,7 +78,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(alesticKarmic.getDescription(),
                "alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml");
       assertEquals(alesticKarmic.getId(), "ami-19a34270");
-      assertEquals(alesticKarmic.getLocation(), null);
+      assertEquals(alesticKarmic.getLocation(), defaultLocation);
       assertEquals(alesticKarmic.getName(), "9.10");
       assertEquals(alesticKarmic.getOsDescription(),
                "alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml");
@@ -90,7 +93,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuKarmic.getDescription(),
                "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
       assertEquals(ubuntuKarmic.getId(), "ami-bb709dd2");
-      assertEquals(ubuntuKarmic.getLocation(), null);
+      assertEquals(ubuntuKarmic.getLocation(), defaultLocation);
       assertEquals(ubuntuKarmic.getName(), "9.10");
       assertEquals(ubuntuKarmic.getOsDescription(),
                "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
@@ -108,7 +111,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(alesticHardy.getDescription(),
                "alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml");
       assertEquals(alesticHardy.getId(), "ami-c0fa1ea9");
-      assertEquals(alesticHardy.getLocation(), null);
+      assertEquals(alesticHardy.getLocation(), defaultLocation);
       assertEquals(alesticHardy.getName(), "8.04");
       assertEquals(alesticHardy.getOsDescription(),
                "alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml");
@@ -121,14 +124,17 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assert parser.apply(Iterables.get(result, 5)) == null;
    }
 
+   private Location defaultLocation = new LocationImpl(LocationScope.REGION, "us-east-1",
+            "us-east-1", null);
+
    public void testParseVostokImage() {
       InputStream is = getClass().getResourceAsStream("/ec2/vostok.xml");
 
       Set<Image> result = parseImages(is);
 
       ImageParser parser = new ImageParser(
-               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableMap
-                        .<String, Location> of());
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableSet
+                        .<Location> of(defaultLocation), defaultLocation);
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -136,7 +142,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");
       assertEquals(image.getId(), "ami-870de2ee");
-      assertEquals(image.getLocation(), null);
+      assertEquals(image.getLocation(), defaultLocation);
       assertEquals(image.getName(), "");
       assertEquals(image.getOsDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");

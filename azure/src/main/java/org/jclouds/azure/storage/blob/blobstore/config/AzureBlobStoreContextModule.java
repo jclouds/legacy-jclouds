@@ -18,7 +18,7 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.config;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -39,7 +39,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -72,7 +72,7 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(Location location) {
-      return ImmutableMap.of(location.getId(), location);
+   Set<? extends Location> provideLocations(Location location) {
+      return ImmutableSet.of(location);
    }
 }

@@ -24,8 +24,10 @@ import static org.jclouds.util.Utils.nullSafeSet;
 import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -43,9 +45,11 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -55,6 +59,27 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class RunningInstanceToNodeMetadata implements Function<RunningInstance, NodeMetadata> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   private static class FindImageForInstance implements Predicate<Image> {
+      private final Location location;
+      private final RunningInstance instance;
+
+      private FindImageForInstance(Location location, RunningInstance instance) {
+         this.location = location;
+         this.instance = instance;
+      }
+
+      @Override
+      public boolean apply(Image input) {
+         return input.getId().equals(instance.getImageId())
+                  && (input.getLocation() == null || input.getLocation().equals(location) || input
+                           .getLocation().equals(location.getParent()));
+      }
+   }
+
    private static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
             .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
             .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN,
@@ -63,14 +88,17 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    private final AMIClient amiClient;
    private final Map<RegionTag, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
-   private final Map<String, ? extends Image> images;
-   private final Map<String, ? extends Location> locations;
+   private final Set<? extends Image> images;
+   private final Set<? extends Location> locations;
    private final Function<RunningInstance, Map<String, String>> instanceToStorageMapping;
 
    @Inject
-   RunningInstanceToNodeMetadata(AMIClient amiClient, Map<RegionTag, KeyPair> credentialsMap,
+   RunningInstanceToNodeMetadata(
+            AMIClient amiClient,
+            Map<RegionTag, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Map<String, ? extends Image> images, Map<String, ? extends Location> locations,
+            Set<? extends Image> images,
+            Set<? extends Location> locations,
             @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
       this.amiClient = checkNotNull(amiClient, "amiClient");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
@@ -81,7 +109,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    }
 
    @Override
-   public NodeMetadata apply(RunningInstance instance) {
+   public NodeMetadata apply(final RunningInstance instance) {
       String id = checkNotNull(instance, "instance").getId();
       String name = null; // user doesn't determine a node name;
       URI uri = null; // no uri to get rest access to host info
@@ -102,13 +130,28 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
       Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
 
-      String locationId = instance.getAvailabilityZone();
+      final String locationId = instance.getAvailabilityZone();
 
       Map<String, String> extra = getExtra(instance);
 
-      return new NodeMetadataImpl(id, name, locations.get(locationId), uri, userMetadata, tag,
-               images.get(instance.getImageId()), state, publicAddresses, privateAddresses, extra,
-               credentials);
+      final Location location = Iterables.find(locations, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(locationId);
+         }
+
+      });
+
+      Image image = null;
+      try {
+         image = Iterables.find(images, new FindImageForInstance(location, instance));
+      } catch (NoSuchElementException e) {
+         logger.warn("could not find a matching image for instance %s in location %s", instance,
+                  location);
+      }
+      return new NodeMetadataImpl(id, name, location, uri, userMetadata, tag, image, state,
+               publicAddresses, privateAddresses, extra, credentials);
    }
 
    /**

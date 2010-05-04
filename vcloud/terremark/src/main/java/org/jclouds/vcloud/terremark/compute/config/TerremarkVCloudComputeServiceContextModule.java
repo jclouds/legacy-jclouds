@@ -113,9 +113,9 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
     * query the catalog.
     */
    @Override
-   protected Map<String, ? extends Image> provideImages(final VCloudClient client,
+   protected Set<? extends Image> provideImages(final VCloudClient client,
             final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            final Map<String, ? extends Location> locations, LogHolder holder,
+            LogHolder holder, final FindLocationForResourceInVDC findLocationForResourceInVDC,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {
@@ -145,11 +145,15 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
                                        : Architecture.X86_64;
                               VAppTemplate template = client.getVAppTemplate(item.getEntity()
                                        .getId());
+
+                              Location location = findLocationForResourceInVDC.apply(resource, vDC
+                                       .getId());
+
                               images.add(new ImageImpl(resource.getId(), template.getName(),
-                                       locations.get(vDC.getId()), template.getLocation(),
-                                       ImmutableMap.<String, String> of(), template
-                                                .getDescription(), "", myOs, template.getName(),
-                                       arch, credentialsProvider.execute(template)));
+                                       location, template.getLocation(), ImmutableMap
+                                                .<String, String> of(), template.getDescription(),
+                                       "", myOs, template.getName(), arch, credentialsProvider
+                                                .execute(template)));
                               return null;
                            }
                         }), executor));
@@ -158,20 +162,19 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       }
       ConcurrentUtils.awaitCompletion(responses, executor, null, holder.logger, "vAppTemplates in "
                + vDC);
-      return Maps.uniqueIndex(images, indexer);
+      return images;
    }
 
    @Override
-   protected Map<String, ? extends Size> provideSizes(Function<ComputeMetadata, String> indexer,
-            VCloudClient client, Map<String, ? extends Image> images, LogHolder holder,
+   protected Set<? extends Size> provideSizes(Function<ComputeMetadata, String> indexer,
+            VCloudClient client, Set<? extends Image> images, LogHolder holder,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
             throws InterruptedException, TimeoutException, ExecutionException {
-      Image anyImage = Iterables.get(images.values(), 0);
+      Image anyImage = Iterables.get(images, 0);
       holder.logger.debug(">> providing sizes");
       SortedSet<Size> sizes = Sets.newTreeSet(Iterables.transform(TerremarkVCloudClient.class.cast(
                client).getComputeOptionsOfCatalogItem(anyImage.getId()), sizeConverter));
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return Maps.uniqueIndex(sizes, indexer);
+      return sizes;
    }
-
 }

@@ -20,7 +20,6 @@ package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -70,7 +69,7 @@ public class CloudFilesBlobStore extends BaseBlobStore {
 
    @Inject
    CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
-            Location defaultLocation, Map<String, ? extends Location> locations,
+            Location defaultLocation, Set<? extends Location> locations,
             CloudFilesClient sync, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,

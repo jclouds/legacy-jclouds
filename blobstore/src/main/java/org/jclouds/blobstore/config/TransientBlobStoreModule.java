@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.config;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -30,7 +30,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.domain.Location;
 import org.jclouds.util.Jsr330;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -55,7 +55,7 @@ public class TransientBlobStoreModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Map<String, Location> provideLocations(Location defaultLocation) {
-      return ImmutableMap.<String, Location> of(defaultLocation.getId(), defaultLocation);
+   Set<Location> provideLocations(Location defaultLocation) {
+      return ImmutableSet.of( defaultLocation);
    }
 }

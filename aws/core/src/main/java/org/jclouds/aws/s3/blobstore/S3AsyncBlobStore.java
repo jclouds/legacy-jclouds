@@ -21,7 +21,7 @@ package org.jclouds.aws.s3.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 
@@ -84,8 +84,8 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    S3AsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Map<String, ? extends Location> locations,
-            S3AsyncClient async, S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
+            Location defaultLocation, Set<? extends Location> locations, S3AsyncClient async,
+            S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,

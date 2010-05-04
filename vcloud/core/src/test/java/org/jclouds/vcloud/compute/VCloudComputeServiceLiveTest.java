@@ -3,8 +3,6 @@ package org.jclouds.vcloud.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Map.Entry;
-
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -46,12 +44,11 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Override
    public void testListNodes() throws Exception {
-      for (Entry<String, ? extends ComputeMetadata> node : client.getNodes().entrySet()) {
-         assertEquals(node.getKey(), node.getValue().getId());
-         assert node.getValue().getId() != null;
-         assert node.getValue().getLocation() != null;
-         assertEquals(node.getValue().getType(), ComputeType.NODE);
-         NodeMetadata allData = client.getNodeMetadata(node.getValue());
+      for (ComputeMetadata node : client.listNodes()) {
+         assert node.getId() != null;
+         assert node.getLocation() != null;
+         assertEquals(node.getType(), ComputeType.NODE);
+         NodeMetadata allData = client.getNodeMetadata(node);
          assert allData.getExtra().get("processor/count") != null;
          assert allData.getExtra().get("disk_drive/1/kb") != null;
          assert allData.getExtra().get("memory/mb") != null;

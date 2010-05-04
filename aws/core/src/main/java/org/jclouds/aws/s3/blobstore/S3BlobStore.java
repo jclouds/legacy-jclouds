@@ -20,7 +20,7 @@ package org.jclouds.aws.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -75,7 +75,7 @@ public class S3BlobStore extends BaseBlobStore {
 
    @Inject
    S3BlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
-            Map<String, ? extends Location> locations, S3Client sync,
+            Set<? extends Location> locations, S3Client sync,
             BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,

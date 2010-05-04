@@ -41,7 +41,6 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
@@ -116,10 +115,10 @@ public class EC2ComputeServiceTest {
                .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
                Architecture.X86_64, new Credentials("root", null));
 
-      return new TemplateBuilderImpl(ImmutableMap.of("us-east-1", location), ImmutableMap.of(
-               "ami-image", image), Maps.uniqueIndex(ImmutableSet.of(EC2Size.C1_MEDIUM,
-               EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE,
-               EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE), indexer()), location) {
+      return new TemplateBuilderImpl(ImmutableSet.of(location), ImmutableSet.of(image),
+               ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
+                        EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
+                        EC2Size.M2_4XLARGE), location) {
       };
    }
 

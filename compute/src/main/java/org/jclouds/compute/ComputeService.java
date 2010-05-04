@@ -19,6 +19,7 @@
 package org.jclouds.compute;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -54,14 +55,14 @@ public interface ComputeService {
    TemplateBuilder templateBuilder();
 
    /**
-    * The get sizes command shows you the options including virtual cpu count, memory, and disks.
+    * The list sizes command shows you the options including virtual cpu count, memory, and disks.
     * cpu count is not a portable quantity across clouds, as they are measured differently. However,
     * it is a good indicator of relative speed within a cloud. memory is measured in megabytes and
     * disks in gigabytes.
     * 
     * @return a map of sizes by ID, conceding that in some clouds the "id" is not used.
     */
-   Map<String, ? extends Size> getSizes();
+   Set<? extends Size> listSizes();
 
    /**
     * Images define the operating system and metadata related to a node. In some clouds, Images are
@@ -70,27 +71,27 @@ public interface ComputeService {
     * TemplateBuilder as opposed to choosing an image explicitly. The getImages() command returns a
     * map of images by id.
     */
-   Map<String, ? extends Image> getImages();
+   Set<? extends Image> listImages();
 
    /**
     * all nodes available to the current user by id. If possible, the returned set will include
     * {@link NodeMetadata} objects.
     */
-   Map<String, ? extends ComputeMetadata> getNodes();
+   Set<? extends ComputeMetadata> listNodes();
 
-     /**
+   /**
     * all nodes available to the current user by id. If possible, the returned set will include
     * {@link NodeMetadata} objects.
     */
-   Map<String, ? extends ComputeMetadata> getNodes(GetNodesOptions options);
+   Set<? extends ComputeMetadata> listNodes(GetNodesOptions options);
 
    /**
-    * The get locations command returns all the valid locations for nodes. A location has a scope,
+    * The list locations command returns all the valid locations for nodes. A location has a scope,
     * which is typically region or zone. A region is a general area, like eu-west, where a zone is
     * similar to a datacenter. If a location has a parent, that implies it is within that location.
     * For example a location can be a rack, whose parent is likely to be a zone.
     */
-   Map<String, ? extends Location> getAssignableLocations();
+   Set<? extends Location> listAssignableLocations();
 
    /**
     * 
@@ -122,8 +123,13 @@ public interface ComputeService {
     * @param template
     *           - how to configure the nodes
     * @return all of the nodes the api was able to launch in a running state.
+    * 
+    * @throws RunNodesException
+    *            when there's a problem applying options to nodes. Note that successful and failed
+    *            nodes are a part of this exception, so be sure to inspect this carefully.
     */
-   Map<String, ? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template);
+   Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template)
+            throws RunNodesException;
 
    /**
     * destroy the node. If it is the only node in a tag set, the dependent resources will also be
@@ -159,27 +165,32 @@ public interface ComputeService {
     * 
     * @param tag
     */
-   Map<String, ? extends NodeMetadata> getNodesWithTag(String tag);
-
-    /**
-     * Runs the script without any additional options
-     * 
-     * @see #runScriptOnNodesWithTag(String,
-     *                              byte[], org.jclouds.compute.options.RunScriptOptions)
-     */
-   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag,
-                                                             byte[] runScript);
+   Set<? extends NodeMetadata> listNodesWithTag(String tag);
 
    /**
-     * Run the script on all nodes with the specific tag.
-     *
-     * @param tag tag to look up the nodes
-     * @param runScript script to run in byte format. If the script is a string, use
-     *                  {@link String#getBytes()} to retrieve the bytes
-     * @param options nullable options to how to run the script
-     * @return map with node identifiers and corresponding responses
-     */
-   Map<String, ExecResponse> runScriptOnNodesWithTag(String tag,
-                                                             byte[] runScript, RunScriptOptions options);
+    * Runs the script without any additional options
+    * 
+    * @see #runScriptOnNodesWithTag(String, byte[], org.jclouds.compute.options.RunScriptOptions)
+    */
+   Map<NodeMetadata, ExecResponse> runScriptOnNodesWithTag(String tag, byte[] runScript)
+            throws RunScriptOnNodesException;
+
+   /**
+    * Run the script on all nodes with the specific tag.
+    * 
+    * @param tag
+    *           tag to look up the nodes
+    * @param runScript
+    *           script to run in byte format. If the script is a string, use
+    *           {@link String#getBytes()} to retrieve the bytes
+    * @param options
+    *           nullable options to how to run the script
+    * @return map with node identifiers and corresponding responses
+    * @throws RunScriptOnNodesException
+    *            when there's a problem running the script on the nodes. Note that successful and
+    *            failed nodes are a part of this exception, so be sure to inspect this carefully.
+    */
+   Map<NodeMetadata, ExecResponse> runScriptOnNodesWithTag(String tag, byte[] runScript,
+            RunScriptOptions options) throws RunScriptOnNodesException;
 
 }

@@ -34,7 +34,9 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplySetsTagFromNameAndSetsMetadata() throws UnknownHostException {
       Map<ServerStatus, NodeState> serverStateToNodeState = createMock(Map.class);
-      Map<String, org.jclouds.compute.domain.Image> images = createMock(Map.class);
+      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(10000).atLeastOnce();
@@ -60,14 +62,13 @@ public class ServerToNodeMetadataTest {
       expect(addresses.getPrivateAddresses()).andReturn(privateAddresses);
 
       expect(server.getImageId()).andReturn(2000).atLeastOnce();
-
-      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
-      expect(images.get("2000")).andReturn(jcImage);
+      expect(jcImage.getId()).andReturn("2000").atLeastOnce();
+      expect(jcImage.getLocation()).andReturn(provider).atLeastOnce();
 
       replay(addresses);
+      replay(jcImage);
       replay(serverStateToNodeState);
       replay(server);
-      replay(images);
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, images,
                provider);
@@ -85,7 +86,7 @@ public class ServerToNodeMetadataTest {
       verify(addresses);
       verify(serverStateToNodeState);
       verify(server);
-      verify(images);
+      verify(jcImage);
    }
 
 }

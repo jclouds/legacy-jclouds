@@ -49,13 +49,18 @@ import com.google.common.collect.Sets;
  *      />
  */
 public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Set<Image>> {
+
+   @Inject
+   public DescribeImagesResponseHandler(@EC2 String defaultRegion) {
+      this.defaultRegion = defaultRegion;
+   }
+
    @Resource
    protected Logger logger = Logger.NULL;
-   @Inject
-   @EC2
-   String defaultRegion;
+
    private Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
+   private final String defaultRegion;
 
    private Architecture architecture;
    private String name;
@@ -149,10 +154,10 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
                String region = EC2Utils.findRegionInArgsOrNull(request);
                if (region == null)
                   region = defaultRegion;
-               contents.add(new Image(region, architecture,
-                        this.name, description, imageId, imageLocation, imageOwnerId, imageState,
-                        imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
-                        rootDeviceType, rootDeviceName, ebsBlockDevices));
+               contents.add(new Image(region, architecture, this.name, description, imageId,
+                        imageLocation, imageOwnerId, imageState, imageType, isPublic, productCodes,
+                        kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName,
+                        ebsBlockDevices));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }

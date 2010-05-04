@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
@@ -40,6 +41,8 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
@@ -75,6 +78,7 @@ public class JschSshClient implements SshClient {
    private final int port;
    private final String username;
    private final String password;
+   private int sshRetries = 3;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -177,13 +181,35 @@ public class JschSshClient implements SshClient {
       java.util.Properties config = new java.util.Properties();
       config.put("StrictHostKeyChecking", "no");
       session.setConfig(config);
-      try {
-         session.connect();
-      } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to session.", username,
-                  host.getHostAddress(), port), e);
+      RETRY_LOOP: for (int i = 0; i < sshRetries; i++) {
+         try {
+            session.connect();
+            break RETRY_LOOP;
+         } catch (Exception from) {
+            String rootMessage = Throwables.getRootCause(from).getMessage();
+            if (i + 1 == sshRetries)
+               throw propagate(from);
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
+                     ConnectException.class)) >= 1
+                     || rootMessage.indexOf("Auth fail") != -1// auth fail sometimes happens in EC2
+                     || rootMessage.indexOf("invalid data") != -1
+                     || rootMessage.indexOf("invalid privatekey") != -1) {
+               try {
+                  Thread.sleep(100);
+               } catch (InterruptedException e) {
+                  throw propagate(e);
+               }
+               continue;
+            }
+            throw propagate(from);
+         }
       }
       logger.debug("%s@%s:%d: Session connected.", username, host.getHostAddress(), port);
+   }
+
+   private SshException propagate(Exception e) {
+      throw new SshException(String.format("%s@%s:%d: Error connecting to session.", username, host
+               .getHostAddress(), port), e);
    }
 
    @PreDestroy

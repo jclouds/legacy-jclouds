@@ -117,11 +117,11 @@ See http://code.google.com/p/jclouds for details."
   "Retrieve the available compute locations for the compute context."
   ([] (locations *compute*))
   ([#^ComputeService compute]
-     (seq-from-immutable-set (.getAssignableLocations compute))))
+     (seq (.listAssignableLocations compute))))
 
 (defn nodes-with-tag
   [#^String tag #^ComputeService compute]
-    (seq-from-immutable-set (.getNodesWithTag compute tag)))
+    (seq (.listNodesWithTag compute tag)))
 
 (def #^{:private true} list-nodes-map
   { :with-details #(when %2 (.withDetails %1)) })
@@ -139,20 +139,20 @@ See http://code.google.com/p/jclouds for details."
                               ((list-nodes-map k) lno v)
                               lno)
                             (GetNodesOptions.) options)]
-         (seq-from-immutable-set (.getNodes compute-or-tag list-nodes-options)))
+         (seq (.listNodes compute-or-tag list-nodes-options)))
        (nodes-with-tag compute-or-tag *compute*))))
 
 (defn images
   "Retrieve the available images for the compute context."
   ([] (images *compute*))
   ([#^ComputeService compute]
-     (seq-from-immutable-set (.getImages compute))))
+     (seq (.listImages compute))))
 
 (defn sizes
   "Retrieve the available node sizes for the compute context."
   ([] (sizes *compute*))
   ([#^ComputeService compute]
-     (seq-from-immutable-set (.getSizes compute))))
+     (seq (.listSizes compute))))
 
 (defn default-template
   ([] (default-template *compute*))
@@ -193,7 +193,7 @@ See http://code.google.com/p/jclouds for details."
         tag count (default-template compute-or-template) compute-or-template)
        (run-nodes tag count compute-or-template *compute*)))
   ([tag count template #^ComputeService compute]
-     (seq-from-immutable-set
+     (seq
       (.runNodesWithTag compute tag count template))))
 
 (defn run-node

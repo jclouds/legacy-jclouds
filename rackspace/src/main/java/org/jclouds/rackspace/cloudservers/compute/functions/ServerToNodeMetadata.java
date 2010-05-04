@@ -21,9 +21,12 @@ package org.jclouds.rackspace.cloudservers.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Image;
@@ -33,11 +36,14 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -47,11 +53,31 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
             .compile("[^-]+-([^-]+)-[0-9a-f]+");
    private final Location location;
    private final Map<ServerStatus, NodeState> serverToNodeState;
-   private final Map<String, ? extends Image> images;
+   private final Set<? extends Image> images;
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   private static class FindImageForServer implements Predicate<Image> {
+      private final Location location;
+      private final Server instance;
+
+      private FindImageForServer(Location location, Server instance) {
+         this.location = location;
+         this.instance = instance;
+      }
+
+      @Override
+      public boolean apply(Image input) {
+         return input.getId().equals(instance.getImageId() + "")
+                  && (input.getLocation() == null || input.getLocation().equals(
+                           location.getParent()));
+      }
+   }
 
    @Inject
    ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState,
-            Map<String, ? extends Image> images, Location location) {
+            Set<? extends Image> images, Location location) {
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -62,10 +88,19 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Matcher matcher = SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from
                .getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), new LocationImpl(
-               LocationScope.HOST, from.getHostId(), from.getHostId(), location), null, from
-               .getMetadata(), tag, images.get(from.getImageId().toString()), serverToNodeState
-               .get(from.getStatus()), from.getAddresses().getPublicAddresses(), from
-               .getAddresses().getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
+      Location host = new LocationImpl(LocationScope.HOST, from.getHostId(), from.getHostId(),
+               location);
+      Image image = null;
+      try {
+         image = Iterables.find(images, new FindImageForServer(host, from));
+      } catch (NoSuchElementException e) {
+         logger
+                  .warn("could not find a matching image for server %s in location %s", from,
+                           location);
+      }
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), host, null,
+               from.getMetadata(), tag, image, serverToNodeState.get(from.getStatus()), from
+                        .getAddresses().getPublicAddresses(), from.getAddresses()
+                        .getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
    }
 }

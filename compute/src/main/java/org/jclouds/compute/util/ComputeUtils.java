@@ -24,15 +24,16 @@ import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -84,7 +85,28 @@ public class ComputeUtils {
    private final Predicate<InetSocketAddress> socketTester;
    private final ExecutorService executor;
 
-   private int sshRetries = 3;
+   public static String createExecutionErrorMessage(Map<?, Exception> executionExceptions) {
+      Formatter fmt = new Formatter().format("Execution failures:%n%n");
+      int index = 1;
+      for (Entry<?, Exception> errorMessage : executionExceptions.entrySet()) {
+         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
+                  .getSimpleName(), errorMessage.getKey(), Throwables
+                  .getStackTraceAsString(errorMessage.getValue()));
+      }
+      return fmt.format("%s error[s]", executionExceptions.size()).toString();
+   }
+
+   public static String createNodeErrorMessage(
+            Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
+      Formatter fmt = new Formatter().format("Node failures:%n%n");
+      int index = 1;
+      for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
+         fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
+                  .getSimpleName(), errorMessage.getKey().getId(), Throwables
+                  .getStackTraceAsString(errorMessage.getValue()));
+      }
+      return fmt.format("%s error[s]", failedNodes.size()).toString();
+   }
 
    @Inject
    public ComputeUtils(Predicate<InetSocketAddress> socketTester,
@@ -117,7 +139,7 @@ public class ComputeUtils {
    public void runOptionsOnNode(NodeMetadata node, TemplateOptions options) {
       List<SshCallable<?>> callables = Lists.newArrayList();
       if (options.getRunScript() != null) {
-         callables.add(runScriptOnNode(node, "runscript.sh", options.getRunScript()));
+         callables.add(runScriptOnNode(node, "runscript", options.getRunScript()));
       }
       if (options.getPublicKey() != null) {
          callables.add(authorizeKeyOnNode(node, options.getPublicKey()));
@@ -168,60 +190,60 @@ public class ComputeUtils {
             Iterable<? extends SshCallable<?>> parallel, @Nullable SshCallable<?> last) {
       checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
       checkNotNull(node.getCredentials().key, "credentials.key for node " + node.getId());
+      SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
+      try {
+         ssh.connect();
+         return runTasksUsingSshClient(parallel, last, ssh);
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+   }
 
+   private Map<SshCallable<?>, ?> runTasksUsingSshClient(
+            Iterable<? extends SshCallable<?>> parallel, SshCallable<?> last, SshClient ssh) {
+      Map<SshCallable<?>, Object> responses = Maps.newHashMap();
+      if (Iterables.size(parallel) > 0) {
+         responses.putAll(runCallablesUsingSshClient(parallel, ssh));
+      }
+      if (last != null) {
+         last.setConnection(ssh, logger);
+         try {
+            responses.put(last, last.call());
+         } catch (Exception e) {
+            Throwables.propagate(e);
+         }
+      }
+      return responses;
+   }
+
+   public SshClient createSshClientOncePortIsListeningOnNode(NodeMetadata node) {
       InetSocketAddress socket = new InetSocketAddress(Iterables.get(node.getPublicAddresses(), 0),
                22);
       socketTester.apply(socket);
       SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().account,
                node.getCredentials().key.getBytes()) : sshFactory.create(socket, node
                .getCredentials().account, node.getCredentials().key);
-      for (int i = 0; i < sshRetries; i++) {
-         try {
-            ssh.connect();
-            Map<SshCallable<?>, ListenableFuture<?>> responses = Maps.newHashMap();
+      return ssh;
+   }
 
-            for (SshCallable<?> callable : parallel) {
-               callable.setConnection(ssh, logger);
-               responses.put(callable, ConcurrentUtils.makeListenable(executor.submit(callable),
-                        executor));
-            }
+   private Map<SshCallable<?>, Object> runCallablesUsingSshClient(
+            Iterable<? extends SshCallable<?>> parallel, SshClient ssh) {
+      Map<SshCallable<?>, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
 
-            Map<SshCallable<?>, Exception> exceptions = awaitCompletion(responses, executor, null,
-                     logger, "ssh");
-            if (exceptions.size() > 0)
-               throw new RuntimeException(String.format("error invoking callables on host %s: %s",
-                        socket, exceptions));
-            if (last != null) {
-               last.setConnection(ssh, logger);
-               try {
-                  last.call();
-               } catch (Exception e) {
-                  Throwables.propagate(e);
-               }
-            }
-            return transform(responses);
-         } catch (RuntimeException from) {
-            if (i + 1 == sshRetries)
-               throw Throwables.propagate(from);
-            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
-                     ConnectException.class)) >= 1// auth fail sometimes happens in EC2
-                     || Throwables.getRootCause(from).getMessage().indexOf("Auth fail") != -1
-                     || Throwables.getRootCause(from).getMessage().indexOf("invalid privatekey") != -1) {
-               try {
-                  Thread.sleep(100);
-               } catch (InterruptedException e) {
-                  throw Throwables.propagate(e);
-               }
-               continue;
-            }
-            throw Throwables.propagate(from);
-         } finally {
-            if (ssh != null)
-               ssh.disconnect();
-         }
+      for (SshCallable<?> callable : parallel) {
+         callable.setConnection(ssh, logger);
+         parallelResponses.put(callable, ConcurrentUtils.makeListenable(executor.submit(callable),
+                  executor));
       }
-      throw new RuntimeException(String.format("Couldn't connect to node %s and run the script",
-               node.getId()));
+
+      Map<SshCallable<?>, Exception> exceptions = awaitCompletion(parallelResponses, executor,
+               null, logger, "ssh");
+      if (exceptions.size() > 0)
+         throw new RuntimeException(String.format("error invoking callables on nodes: %s",
+                  exceptions));
+      Map<SshCallable<?>, Object> newresponses = transform(parallelResponses);
+      return newresponses;
    }
 
    @SuppressWarnings("unchecked")
@@ -240,6 +262,8 @@ public class ComputeUtils {
    }
 
    public static interface SshCallable<T> extends Callable<T> {
+      NodeMetadata getNode();
+
       void setConnection(SshClient ssh, Logger logger);
    }
 
@@ -254,14 +278,7 @@ public class ComputeUtils {
 
       RunScriptOnNode(@Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
                NodeMetadata node, String scriptName, byte[] script) {
-         this.runScriptNotRunning = runScriptNotRunning;
-         this.node = checkNotNull(node, "node");
-         this.scriptName = checkNotNull(scriptName, "scriptName");
-         this.script = new InitBuilder("runscript", "/tmp", "/tmp", ImmutableMap
-                  .<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
-                  new String(checkNotNull(script, "script"))), String.class)).build(OsFamily.UNIX)
-                  .getBytes();
-         this.runAsRoot = true;
+         this(runScriptNotRunning, node, scriptName, script, true);
       }
 
       RunScriptOnNode(@Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
@@ -269,10 +286,10 @@ public class ComputeUtils {
          this.runScriptNotRunning = runScriptNotRunning;
          this.node = checkNotNull(node, "node");
          this.scriptName = checkNotNull(scriptName, "scriptName");
-         this.script = new InitBuilder("runscript", "/tmp", "/tmp", ImmutableMap
-                  .<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
-                  new String(checkNotNull(script, "script"))), String.class)).build(OsFamily.UNIX)
-                  .getBytes();
+         this.script = new InitBuilder(scriptName, "/tmp/" + scriptName, "/tmp/" + scriptName,
+                  ImmutableMap.<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
+                           new String(checkNotNull(script, "script"))), String.class)).build(
+                  OsFamily.UNIX).getBytes();
          this.runAsRoot = runAsRoot;
       }
 
@@ -329,6 +346,11 @@ public class ComputeUtils {
                   Iterables.get(node.getPublicAddresses(), 0).getHostAddress());
          return ssh.exec(String.format("./%s", scriptName + " start"));
       }
+
+      @Override
+      public NodeMetadata getNode() {
+         return node;
+      }
    }
 
    public static class InstallRSAPrivateKey implements SshCallable<ExecResponse> {
@@ -358,6 +380,10 @@ public class ComputeUtils {
          this.ssh = checkNotNull(ssh, "ssh");
       }
 
+      @Override
+      public NodeMetadata getNode() {
+         return node;
+      }
    }
 
    public static class AuthorizeRSAPublicKey implements SshCallable<ExecResponse> {
@@ -390,6 +416,10 @@ public class ComputeUtils {
          this.ssh = checkNotNull(ssh, "ssh");
       }
 
+      @Override
+      public NodeMetadata getNode() {
+         return node;
+      }
    }
 
    public static boolean isKeyAuth(NodeMetadata createdNode) {
@@ -434,4 +464,5 @@ public class ComputeUtils {
       }
       return providers;
    }
+
 }

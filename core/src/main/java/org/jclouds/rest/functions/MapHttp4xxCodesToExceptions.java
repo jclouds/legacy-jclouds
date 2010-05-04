@@ -38,6 +38,8 @@ public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> 
          switch (responseException.getResponse().getStatusCode()) {
             case 401:
                throw new AuthorizationException(from);
+            case 403:
+               throw new AuthorizationException(from);
             case 404:
                throw new ResourceNotFoundException(from);
          }

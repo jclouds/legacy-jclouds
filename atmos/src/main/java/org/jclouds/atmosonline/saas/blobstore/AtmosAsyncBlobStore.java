@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
 import java.net.URI;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -80,7 +80,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Map<String, ? extends Location> locations,
+            Location defaultLocation, Set<? extends Location> locations,
 
             AtmosStorageAsyncClient async, AtmosStorageClient sync, ObjectToBlob object2Blob,
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,

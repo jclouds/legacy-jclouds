@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudfiles.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -81,7 +80,7 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    CloudFilesAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Map<String, ? extends Location> locations,
+            Location defaultLocation, Set<? extends Location> locations,
             CloudFilesClient sync, CloudFilesAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,

@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,10 +40,14 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -61,18 +67,21 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
             .build();
 
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
-   private final Map<String, ? extends Location> locations;
+   private final Set<? extends Location> locations;
+
+   private final Location defaultLocation;
 
    @Inject
    ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Map<String, ? extends Location> locations) {
+            Set<? extends Location> locations, Location defaultLocation) {
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
+      this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
 
    }
 
    @Override
-   public Image apply(org.jclouds.aws.ec2.domain.Image from) {
+   public Image apply(final org.jclouds.aws.ec2.domain.Image from) {
       if (from.getImageLocation().indexOf("test") != -1) {
          logger.trace("skipping test image(%s)", from.getId());
          return null;
@@ -102,10 +111,26 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
       }
       Credentials defaultCredentials = credentialProvider.execute(from);
 
+      Location location = null;
+      try {
+         location = Iterables.find(locations, new Predicate<Location>() {
+
+            @Override
+            public boolean apply(Location input) {
+               return input.getId().equals(from.getRegion());
+            }
+
+         });
+      } catch (NoSuchElementException e) {
+         System.err.printf("unknown region %s for image %s; not in %s", from.getRegion(), from
+                  .getId(), locations);
+         location = new LocationImpl(LocationScope.REGION, from.getRegion(), from.getRegion(),
+                  defaultLocation.getParent());
+      }
       return new ImageImpl(
                from.getId(),
                name,
-               locations.get(from.getRegion()),
+               location,
                null,
                ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
                description,
@@ -114,5 +139,6 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
                osDescription,
                from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
                         : Architecture.X86_64, defaultCredentials);
+
    }
 }

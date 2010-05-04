@@ -24,6 +24,7 @@ import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -97,6 +98,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -145,7 +147,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
-   String provideNamingConvention() {
+   protected String provideNamingConvention() {
       return "%s-%s%s";
    }
 
@@ -232,8 +234,10 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       @Inject
       protected VCloudListNodesStrategy(VCloudClient client, VCloudComputeClient computeClient,
                Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-               Map<String, ? extends Location> locations, Map<String, ? extends Image> images) {
-         super(client, computeClient, vAppStatusToNodeState, getExtra, locations, images);
+               FindLocationForResourceInVDC findLocationForResourceInVDC,
+               Set<? extends Image> images) {
+         super(client, computeClient, vAppStatusToNodeState, getExtra,
+                  findLocationForResourceInVDC, images);
       }
 
       @Override
@@ -273,9 +277,10 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       @Inject
       protected VCloudGetNodeMetadataStrategy(VCloudClient client,
                VCloudComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState,
-               GetExtra getExtra, Map<String, ? extends Location> locations,
-               Map<String, ? extends Image> images) {
-         super(client, computeClient, vAppStatusToNodeState, getExtra, locations, images);
+               GetExtra getExtra, FindLocationForResourceInVDC findLocationForResourceInVDC,
+               Set<? extends Image> images) {
+         super(client, computeClient, vAppStatusToNodeState, getExtra,
+                  findLocationForResourceInVDC, images);
       }
 
       @Override
@@ -311,9 +316,9 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Image> provideImages(final VCloudClient client,
+   protected Set<? extends Image> provideImages(final VCloudClient client,
             final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            final Map<String, ? extends Location> locations, LogHolder holder,
+            LogHolder holder, final FindLocationForResourceInVDC findLocationForResourceInVDC,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             ExecutionException, TimeoutException {
@@ -339,11 +344,15 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                               Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
                                        : Architecture.X86_64;
                               VAppTemplate template = client.getVAppTemplate(resource.getId());
+
+                              Location location = findLocationForResourceInVDC.apply(resource, vDC
+                                       .getId());
+
                               images.add(new ImageImpl(resource.getId(), template.getName(),
-                                       locations.get(vDC.getId()), template.getLocation(),
-                                       ImmutableMap.<String, String> of(), template
-                                                .getDescription(), "", myOs, template.getName(),
-                                       arch, new Credentials("root", null)));
+                                       location, template.getLocation(), ImmutableMap
+                                                .<String, String> of(), template.getDescription(),
+                                       "", myOs, template.getName(), arch, new Credentials("root",
+                                                null)));
                               return null;
                            }
                         }), executor));
@@ -353,7 +362,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          ConcurrentUtils.awaitCompletion(responses, executor, null, holder.logger,
                   "vAppTemplates in " + vDC);
       }
-      return Maps.uniqueIndex(images, indexer);
+      return images;
    }
 
    @Provides
@@ -369,17 +378,15 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(Supplier<VCloudSession> cache,
-            VCloudClient client) {
+   Set<? extends Location> provideLocations(Supplier<VCloudSession> cache, VCloudClient client) {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      Map<String, Location> locations = Maps.newLinkedHashMap();
+      Set<Location> locations = Sets.newLinkedHashSet();
 
       for (NamedResource org : cache.get().getOrgs().values()) {
          Location orgL = new LocationImpl(LocationScope.REGION, org.getId(), org.getName(),
                   provider);
          for (NamedResource vdc : client.getOrganization(org.getId()).getVDCs().values()) {
-            locations.put(vdc.getId(), new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc
-                     .getName(), orgL));
+            locations.add(new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc.getName(), orgL));
          }
       }
       return locations;
@@ -387,14 +394,22 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
    @Provides
    @Singleton
-   Location getVDC(VCloudClient client, Map<String, ? extends Location> locations) {
-      return locations.get(client.getDefaultVDC().getId());
+   Location getVDC(VCloudClient client, Set<? extends Location> locations) {
+      final String vdc = client.getDefaultVDC().getId();
+      return Iterables.find(locations, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(vdc);
+         }
+
+      });
    }
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Size> provideSizes(Function<ComputeMetadata, String> indexer,
-            VCloudClient client, Map<String, ? extends Image> images, LogHolder holder,
+   protected Set<? extends Size> provideSizes(Function<ComputeMetadata, String> indexer,
+            VCloudClient client, Set<? extends Image> images, LogHolder holder,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
             throws InterruptedException, TimeoutException, ExecutionException {
       Set<Size> sizes = Sets.newHashSet();
@@ -403,6 +418,42 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
             sizes.add(new SizeImpl(String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10), null,
                      null, null, ImmutableMap.<String, String> of(), cpus, ram, 10, ImmutableSet
                               .<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      return Maps.uniqueIndex(sizes, indexer);
+      return sizes;
+   }
+
+   public static class FindLocationForResourceInVDC {
+
+      @Resource
+      protected Logger logger = Logger.NULL;
+
+      final Set<? extends Location> locations;
+      final Location defaultLocation;
+
+      @Inject
+      public FindLocationForResourceInVDC(Set<? extends Location> locations,
+               Location defaultLocation) {
+         this.locations = locations;
+         this.defaultLocation = defaultLocation;
+      }
+
+      public Location apply(final NamedResource resource, final String vdcId) {
+         Location location = null;
+         try {
+            location = Iterables.find(locations, new Predicate<Location>() {
+
+               @Override
+               public boolean apply(Location input) {
+                  return input.getId().equals(vdcId);
+               }
+
+            });
+         } catch (NoSuchElementException e) {
+            logger.error("unknown vdc %s for %s %s; not in %s", vdcId, resource.getType(), resource
+                     .getId(), locations);
+            location = new LocationImpl(LocationScope.ZONE, vdcId, vdcId, defaultLocation
+                     .getParent());
+         }
+         return location;
+      }
    }
 }

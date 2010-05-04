@@ -22,6 +22,7 @@ package org.jclouds.vcloud.bluelock.compute;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
@@ -54,7 +55,7 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
    @Override
    public void testListImages() throws Exception {
       super.testListImages();
-      Map<String, ? extends Image> images = client.getImages();
+      Set<? extends Image> images = client.listImages();
       assertEquals(images.size(), 5);
       // TODO verify parsing works
    }

@@ -42,12 +42,15 @@ import com.google.common.base.Strings;
 public class EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy extends
          EncodeTagIntoNameRunNodesAndAddToSetStrategy {
 
+   private final SecureRandom random;
+
    @Inject
    protected EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy(
             AddNodeWithTagStrategy addNodeWithTagStrategy, ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor);
+      this.random = new SecureRandom();
    }
 
    /**
@@ -59,6 +62,6 @@ public class EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy extends
    protected String getNextName(final String tag, final Template template) {
       return String.format(nodeNamingConvention, tag, Strings.padStart(Integer.toHexString(Integer
                .parseInt(template.getImage().getId())), 3, '0'), Strings.padStart(Integer
-               .toHexString(new SecureRandom().nextInt(255)), 2, '0'));
+               .toHexString(random.nextInt(255)), 2, '0'));
    }
 }

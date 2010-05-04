@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -77,7 +77,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Map<String, ? extends Location> locations,
+            Location defaultLocation, Set<? extends Location> locations,
 
             AzureBlobAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,

@@ -38,5 +38,5 @@ import com.google.inject.ImplementedBy;
 public interface RunNodesAndAddToSetStrategy {
 
    Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template,
-            Set<NodeMetadata> nodes);
+            Set<NodeMetadata> nodes, Map<NodeMetadata, Exception> badNodes);
 }

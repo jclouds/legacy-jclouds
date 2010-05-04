@@ -29,7 +29,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -40,8 +40,8 @@ public class TemplateBuilderImplTest {
 
    @Test
    public void testImageIdNullsEverythingElse() {
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableMap.<String, Location> of(),
-               ImmutableMap.<String, Image> of(), ImmutableMap.<String, Size> of(),
+      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
+               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(),
                new LocationImpl(LocationScope.REGION, " id", "description", null));
       template.architecture(Architecture.X86_32);
       template.imageDescriptionMatches("imageDescriptionMatches");

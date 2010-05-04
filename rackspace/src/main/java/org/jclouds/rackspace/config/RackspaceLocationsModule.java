@@ -18,7 +18,7 @@
  */
 package org.jclouds.rackspace.config;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -27,7 +27,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.http.RequiresHttp;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -57,7 +57,7 @@ public class RackspaceLocationsModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(Location location) {
-      return ImmutableMap.of(location.getId(), location);
+   Set<? extends Location> provideLocations(Location location) {
+      return ImmutableSet.of(location);
    }
 }

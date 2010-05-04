@@ -20,10 +20,12 @@ package org.jclouds.rimuhosting.miro.compute.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -85,7 +87,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -259,17 +260,37 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
    @Singleton
    private static class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
+
+      @Resource
+      protected Logger logger = Logger.NULL;
       private final Function<Server, Iterable<InetAddress>> getPublicAddresses;
       private final Map<RunningState, NodeState> runningStateToNodeState;
-      private final Map<String, ? extends Image> images;
+      private final Set<? extends Image> images;
       @SuppressWarnings("unused")
-      private final Map<String, ? extends Location> locations;
+      private final Set<? extends Location> locations;
+
+      private static class FindImageForServer implements Predicate<Image> {
+         private final Location location;
+         private final Server instance;
+
+         private FindImageForServer(Location location, Server instance) {
+            this.location = location;
+            this.instance = instance;
+         }
+
+         @Override
+         public boolean apply(Image input) {
+            return input.getId().equals(instance.getImageId())
+                     && (input.getLocation() == null || input.getLocation().equals(location) || input
+                              .getLocation().equals(location.getParent()));
+         }
+      }
 
       @SuppressWarnings("unused")
       @Inject
       ServerToNodeMetadata(Function<Server, Iterable<InetAddress>> getPublicAddresses,
-               Map<RunningState, NodeState> runningStateToNodeState,
-               Map<String, ? extends Image> images, Map<String, ? extends Location> locations) {
+               Map<RunningState, NodeState> runningStateToNodeState, Set<? extends Image> images,
+               Set<? extends Location> locations) {
          this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
          this.runningStateToNodeState = checkNotNull(runningStateToNodeState,
                   "serverStateToNodeState");
@@ -284,10 +305,18 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
                   .getLocation().getName(), null);
          String tag = from.getName().replaceAll("-[0-9]+", "");
          Credentials creds = null;
+
+         Image image = null;
+         try {
+            image = Iterables.find(images, new FindImageForServer(location, from));
+         } catch (NoSuchElementException e) {
+            logger.warn("could not find a matching image for server %s in location %s", from,
+                     location);
+         }
          NodeState state = runningStateToNodeState.get(from.getState());
          return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null,
-                  ImmutableMap.<String, String> of(), tag, images.get(from.getImageId()), state,
-                  getPublicAddresses.apply(from), ImmutableList.<InetAddress> of(), ImmutableMap
+                  ImmutableMap.<String, String> of(), tag, image, state, getPublicAddresses
+                           .apply(from), ImmutableList.<InetAddress> of(), ImmutableMap
                            .<String, String> of(), creds);
 
       }
@@ -333,13 +362,21 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
    @Provides
    @Singleton
-   Location getDefaultLocation(Map<String, ? extends Location> locations) {
-      return locations.get("DCDALLAS");
+   Location getDefaultLocation(@Named(PROPERTY_RIMUHOSTING_DEFAULT_DC) final String defaultDC,
+            Set<? extends Location> locations) {
+      return Iterables.find(locations, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(defaultDC);
+         }
+
+      });
    }
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> getDefaultLocations(RimuHostingClient sync, LogHolder holder,
+   Set<? extends Location> getDefaultLocations(RimuHostingClient sync, LogHolder holder,
             Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
@@ -353,13 +390,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
          }
       }
       holder.logger.debug("<< locations(%d)", locations.size());
-      return Maps.uniqueIndex(locations, new Function<Location, String>() {
-
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-      });
+      return locations;
    }
 
    @Provides
@@ -375,25 +406,33 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Size> provideSizes(RimuHostingClient sync,
-            Map<String, ? extends Image> images, Map<String, ? extends Location> locations,
-            LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+   protected Set<? extends Size> provideSizes(RimuHostingClient sync, Set<? extends Image> images,
+            Set<? extends Location> locations, LogHolder holder,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
-            sizes.add(new SizeImpl(from.getId(), from.getId(), locations.get(from.getDataCenter()
-                     .getId()), null, ImmutableMap.<String, String> of(), 1, from.getRam(), from
-                     .getDiskSize(), ImmutableSet.<Architecture> of(Architecture.X86_32,
-                     Architecture.X86_64)));
+
+            final Location location = Iterables.find(locations, new Predicate<Location>() {
+
+               @Override
+               public boolean apply(Location input) {
+                  return input.getId().equals(from.getDataCenter().getId());
+               }
+
+            });
+            sizes.add(new SizeImpl(from.getId(), from.getId(), location, null, ImmutableMap
+                     .<String, String> of(), 1, from.getRam(), from.getDiskSize(), ImmutableSet
+                     .<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return Maps.uniqueIndex(sizes, indexer);
+      return sizes;
    }
 
    private static class LogHolder {
@@ -406,9 +445,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Image> provideImages(final RimuHostingClient sync,
-            LogHolder holder, Function<ComputeMetadata, String> indexer)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Set<? extends Image> provideImages(final RimuHostingClient sync, LogHolder holder,
+            Function<ComputeMetadata, String> indexer) throws InterruptedException,
+            ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       for (final org.jclouds.rimuhosting.miro.domain.Image from : sync.getImageList()) {
@@ -434,7 +473,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
                   new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return Maps.uniqueIndex(images, indexer);
+      return images;
    }
 
 }

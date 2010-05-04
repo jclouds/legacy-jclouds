@@ -114,18 +114,19 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    @Override
    public Map<?, ListenableFuture<Void>> execute(final String tag, final int count,
-            final Template template, final Set<NodeMetadata> nodes) {
+            final Template template, final Set<NodeMetadata> nodes,
+            final Map<NodeMetadata, Exception> badNodes) {
       checkArgument(template.getSize() instanceof EC2Size,
                "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
       EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
       // parse the availability zone of the request
-      String zone = template.getLocation().getScope() == LocationScope.ZONE ? template.getLocation().getId()
-               : null;
+      String zone = template.getLocation().getScope() == LocationScope.ZONE ? template
+               .getLocation().getId() : null;
 
       // if the location has a parent, it must be an availability zone.
-      String region = zone == null ? template.getLocation().getId() :
-              template.getLocation().getParent().getId();
+      String region = zone == null ? template.getLocation().getId() : template.getLocation()
+               .getParent().getId();
 
       // get or create incidental resources
       // TODO race condition. we were using MapMaker, but it doesn't seem to refresh properly when
@@ -174,8 +175,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
                } catch (Exception e) {
                   logger.error(e, "<< problem applying options to node(%s): ", node.getId(),
                            Throwables.getRootCause(e).getMessage());
-                  if (!template.getOptions().shouldDestroyOnError())
-                     nodes.add(computeService.getNodeMetadata(node));
+                  badNodes.put(computeService.getNodeMetadata(node), e);
                }
                return null;
             }

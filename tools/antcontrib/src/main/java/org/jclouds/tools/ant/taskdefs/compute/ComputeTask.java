@@ -34,6 +34,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -90,14 +91,19 @@ public class ComputeTask extends Task {
          for (String action : Splitter.on(',').split(actions)) {
             Action act = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
                      action));
-            invokeActionOnService(act, context.getComputeService());
+            try {
+               invokeActionOnService(act, context.getComputeService());
+            } catch (RunNodesException e) {
+               throw new BuildException(e);
+            }
          }
       } finally {
          context.close();
       }
    }
 
-   private void invokeActionOnService(Action action, ComputeService computeService) {
+   private void invokeActionOnService(Action action, ComputeService computeService)
+            throws RunNodesException {
       switch (action) {
          case CREATE:
          case GET:
@@ -140,7 +146,7 @@ public class ComputeTask extends Task {
 
    private void listDetails(ComputeService computeService) {
       log("list details");
-      for (ComputeMetadata node : computeService.getNodes().values()) {// TODO
+      for (ComputeMetadata node : computeService.listNodes()) {// TODO
          // parallel
          logDetails(computeService, node);
       }
@@ -148,7 +154,7 @@ public class ComputeTask extends Task {
 
    private void listImages(ComputeService computeService) {
       log("list images");
-      for (Image image : computeService.getImages().values()) {// TODO
+      for (Image image : computeService.listImages()) {// TODO
          log(String
                   .format(
                            "   image location=%s, id=%s, name=%s, version=%s, arch=%s, osfam=%s, osdesc=%s, desc=%s",
@@ -160,7 +166,7 @@ public class ComputeTask extends Task {
 
    private void listSizes(ComputeService computeService) {
       log("list sizes");
-      for (Size size : computeService.getSizes().values()) {// TODO
+      for (Size size : computeService.listSizes()) {// TODO
          log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getId(), size
                   .getCores(), size.getRam(), size.getDisk()));
       }
@@ -168,7 +174,7 @@ public class ComputeTask extends Task {
 
    private void listLocations(ComputeService computeService) {
       log("list locations");
-      for (Location location : computeService.getAssignableLocations().values()) {// TODO
+      for (Location location : computeService.listAssignableLocations()) {// TODO
          log(String.format("   location id=%s, scope=%s, description=%s, parent=%s", location
                   .getId(), location.getScope(), location.getDescription(), location.getParent()));
       }
@@ -176,13 +182,13 @@ public class ComputeTask extends Task {
 
    private void list(ComputeService computeService) {
       log("list");
-      for (ComputeMetadata node : computeService.getNodes().values()) {
+      for (ComputeMetadata node : computeService.listNodes()) {
          log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getId(), node
                   .getName()));
       }
    }
 
-   private void create(ComputeService computeService) {
+   private void create(ComputeService computeService) throws RunNodesException {
       String tag = nodeElement.getTag();
 
       log(String.format("create tag: %s, count: %d, size: %s, os: %s", tag, nodeElement.getCount(),
@@ -191,7 +197,7 @@ public class ComputeTask extends Task {
       Template template = createTemplateFromElement(nodeElement, computeService);
 
       for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(),
-               template).values()) {
+               template)) {
          logDetails(computeService, createdNode);
          addNodeDetailsAsProjectProperties(createdNode);
       }
@@ -218,7 +224,7 @@ public class ComputeTask extends Task {
 
    private void get(ComputeService computeService) {
       log(String.format("get tag: %s", nodeElement.getTag()));
-      for (ComputeMetadata node : computeService.getNodesWithTag(nodeElement.getTag()).values()) {
+      for (ComputeMetadata node : computeService.listNodesWithTag(nodeElement.getTag())) {
          logDetails(computeService, node);
       }
    }

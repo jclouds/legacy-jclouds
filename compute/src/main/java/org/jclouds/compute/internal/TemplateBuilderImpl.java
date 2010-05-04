@@ -18,11 +18,10 @@
  */
 package org.jclouds.compute.internal;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -61,9 +60,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Map<String, ? extends Image> images;
-   private final Map<String, ? extends Size> sizes;
-   private final Map<String, ? extends Location> locations;
+   private final Set<? extends Image> images;
+   private final Set<? extends Size> sizes;
+   private final Set<? extends Location> locations;
    @VisibleForTesting
    OsFamily os;
    @VisibleForTesting
@@ -97,9 +96,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private TemplateOptions options = TemplateOptions.NONE;
 
    @Inject
-   protected TemplateBuilderImpl(Map<String, ? extends Location> locations,
-            Map<String, ? extends Image> images, Map<String, ? extends Size> sizes,
-            Location defaultLocation) {
+   protected TemplateBuilderImpl(Set<? extends Location> locations, Set<? extends Image> images,
+            Set<? extends Size> sizes, Location defaultLocation) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
@@ -363,8 +361,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder locationId(final String locationId) {
-      checkArgument(locations.get(checkNotNull(locationId, "locationId")) != null, "locationId "
-               + locationId + " not configured in: " + locations.keySet());
       this.locationId = locationId;
       return this;
    }
@@ -395,7 +391,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       logger.debug(">> searching params(%s)", this);
       Image image;
       try {
-         image = DEFAULT_IMAGE_ORDERING.max(Iterables.filter(images.values(), imagePredicate));
+         image = DEFAULT_IMAGE_ORDERING.max(Iterables.filter(images, imagePredicate));
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
       }
@@ -410,12 +406,19 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          sizeOrdering = Ordering.compound(ImmutableList.of(BY_CORES_ORDERING, sizeOrdering));
       Size size;
       try {
-         size = sizeOrdering.max(Iterables.filter(sizes.values(), sizePredicate));
+         size = sizeOrdering.max(Iterables.filter(sizes, sizePredicate));
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes);
       }
       logger.debug("<<   matched size(%s)", size);
-      Location location = locations.get(locationId);
+      Location location = Iterables.find(locations, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(locationId);
+         }
+
+      });
       logger.debug("<<   matched location(%s)", location);
       return new TemplateImpl(image, size, location, options);
    }

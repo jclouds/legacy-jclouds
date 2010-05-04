@@ -9,6 +9,7 @@ import static org.testng.Assert.assertEquals;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -23,6 +24,8 @@ import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.services.GridServerClient;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * @author Adrian Cole
  */
@@ -34,7 +37,9 @@ public class ServerToNodeMetadataTest {
    public void testApplySetsTagFromNameAndCredentialsFromName() throws UnknownHostException {
       GridServerClient client = createMock(GridServerClient.class);
       Map<String, NodeState> serverStateToNodeState = createMock(Map.class);
-      Map<String, org.jclouds.compute.domain.Image> images = createMock(Map.class);
+      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
@@ -54,16 +59,15 @@ public class ServerToNodeMetadataTest {
       ServerImage image = createMock(ServerImage.class);
       expect(server.getImage()).andReturn(image).atLeastOnce();
       expect(image.getId()).andReturn(2000l).atLeastOnce();
-
-      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
-      expect(images.get("2000")).andReturn(jcImage);
+      expect(jcImage.getId()).andReturn("2000").atLeastOnce();
+      expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       replay(client);
       replay(serverStateToNodeState);
       replay(server);
       replay(image);
+      replay(jcImage);
       replay(credentialsMap);
-      replay(images);
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, client,
                images, location);
@@ -79,7 +83,8 @@ public class ServerToNodeMetadataTest {
       verify(image);
       verify(credentialsMap);
       verify(server);
-      verify(images);
+      verify(jcImage);
+
    }
 
 }

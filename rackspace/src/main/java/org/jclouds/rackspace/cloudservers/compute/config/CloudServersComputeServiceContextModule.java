@@ -87,7 +87,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -303,8 +302,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Size> provideSizes(CloudServersClient sync,
-            Map<String, ? extends Image> images, Location location, LogHolder holder,
+   protected Set<? extends Size> provideSizes(CloudServersClient sync, Set<? extends Image> images,
+            Location location, LogHolder holder,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Function<ComputeMetadata, String> indexer) throws InterruptedException,
             TimeoutException, ExecutionException {
@@ -316,7 +315,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                   ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return Maps.uniqueIndex(sizes, indexer);
+      return sizes;
    }
 
    private static class LogHolder {
@@ -329,8 +328,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Image> provideImages(final CloudServersClient sync,
-            Location location, LogHolder holder, Function<ComputeMetadata, String> indexer)
+   protected Set<? extends Image> provideImages(final CloudServersClient sync, Location location,
+            LogHolder holder, Function<ComputeMetadata, String> indexer)
             throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
@@ -358,6 +357,6 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                   new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
-      return Maps.uniqueIndex(images, indexer);
+      return images;
    }
 }

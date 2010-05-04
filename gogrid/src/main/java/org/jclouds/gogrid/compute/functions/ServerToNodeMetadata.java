@@ -22,10 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,11 +39,14 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.services.GridServerClient;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Oleksiy Yarmula
@@ -50,14 +55,33 @@ import com.google.common.collect.ImmutableSet;
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    public static final Pattern ALL_BEFORE_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
 
+   @Resource
+   protected Logger logger = Logger.NULL;
    private final Map<String, NodeState> serverStateToNodeState;
    private final GridServerClient client;
    private final Location location;
-   private final Map<String, ? extends Image> images;
+   private final Set<? extends Image> images;
+
+   private static class FindImageForServer implements Predicate<Image> {
+      private final Location location;
+      private final Server instance;
+
+      private FindImageForServer(Location location, Server instance) {
+         this.location = location;
+         this.instance = instance;
+      }
+
+      @Override
+      public boolean apply(Image input) {
+         return input.getId().equals(instance.getImage().getId() + "")
+                  && (input.getLocation() == null || input.getLocation().equals(location) || input
+                           .getLocation().equals(location.getParent()));
+      }
+   }
 
    @Inject
    ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState, GridServerClient client,
-            Map<String, ? extends Image> images, Location location) {
+            Set<? extends Image> images, Location location) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
@@ -71,8 +95,16 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Set<InetAddress> ipSet = ImmutableSet.of(from.getIp().getIp());
       NodeState state = serverStateToNodeState.get(from.getState().getName());
       Credentials creds = client.getServerCredentialsList().get(from.getName());
+      Image image = null;
+      try {
+         image = Iterables.find(images, new FindImageForServer(location, from));
+      } catch (NoSuchElementException e) {
+         logger
+                  .warn("could not find a matching image for server %s in location %s", from,
+                           location);
+      }
       return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null, ImmutableMap
-               .<String, String> of(), tag, images.get(from.getImage().getId() + ""), state, ipSet,
-               ImmutableList.<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
+               .<String, String> of(), tag, image, state, ipSet, ImmutableList.<InetAddress> of(),
+               ImmutableMap.<String, String> of(), creds);
    }
 }

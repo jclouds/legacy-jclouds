@@ -32,8 +32,6 @@ public class TemplateOptions {
 
    private String publicKey;
 
-   private boolean destroyOnError;
-
    private int port = -1;
 
    private int seconds = -1;
@@ -64,10 +62,6 @@ public class TemplateOptions {
       return publicKey;
    }
 
-   public boolean shouldDestroyOnError() {
-      return destroyOnError;
-   }
-
    public boolean isIncludeMetadata() {
       return includeMetadata;
    }
@@ -80,14 +74,6 @@ public class TemplateOptions {
       checkArgument(seconds > 0, "seconds must be a positive integer");
       this.port = port;
       this.seconds = seconds;
-      return this;
-   }
-
-   /**
-    * If there is an error applying options after creating the node, destroy it.
-    */
-   public TemplateOptions destroyOnError() {
-      this.destroyOnError = true;
       return this;
    }
 
@@ -139,13 +125,6 @@ public class TemplateOptions {
    }
 
    public static class Builder {
-      /**
-       * @see TemplateOptions#destroyOnError
-       */
-      public static TemplateOptions destroyOnError() {
-         TemplateOptions options = new TemplateOptions();
-         return options.destroyOnError();
-      }
 
       /**
        * @see TemplateOptions#inboundPorts
@@ -198,7 +177,7 @@ public class TemplateOptions {
    public String toString() {
       return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
                + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
-               + (script != null) + ", destroyOnError=" + destroyOnError + ", port:seconds=" + port
-               + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
+               + (script != null) + ", port:seconds=" + port + ":" + seconds
+               + ", metadata/details: " + includeMetadata + "]";
    }
 }

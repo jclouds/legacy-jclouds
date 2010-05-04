@@ -57,9 +57,6 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
                   (filter (complement nil?)
                           (map (comp instantiate module-lookup) modules)))))
 
-(defn seq-from-immutable-set [#^ImmutableSet set]
-  (map #(.getValue %) set))
-
 (defn dashed [a]
   (apply str (interpose "-" (map string/lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
 

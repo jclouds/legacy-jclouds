@@ -44,7 +44,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test
    public void testTemplateBuilderCanUseImageId() {
-      client.templateBuilder().imageId(Iterables.get(client.getImages().keySet(), 0)).build();
+      client.templateBuilder().imageId(Iterables.get(client.listImages(), 0).getId()).build();
    }
 
    @Test

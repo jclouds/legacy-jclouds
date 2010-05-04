@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -39,8 +38,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -72,24 +71,26 @@ public class S3BlobStoreContextModule extends S3ContextModule {
 
    @Provides
    @Singleton
-   Location getDefaultLocation(@S3 String region, Map<String, ? extends Location> locations) {
-      return locations.get(region.toString());
+   Location getDefaultLocation(@S3 final String region, Set<? extends Location> locations) {
+      return Iterables.find(locations, new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(region);
+         }
+
+      });
    }
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> provideLocations(@S3 Set<String> regions) {
+   Set<? extends Location> provideLocations(@S3 Set<String> regions) {
       Set<Location> locations = Sets.newHashSet();
       Location s3 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (String zone : regions) {
          locations
                   .add(new LocationImpl(LocationScope.REGION, zone.toString(), zone.toString(), s3));
       }
-      return Maps.uniqueIndex(locations, new Function<Location, String>() {
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-      });
+      return locations;
    }
 }

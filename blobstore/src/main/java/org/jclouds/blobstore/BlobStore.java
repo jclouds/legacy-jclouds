@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -50,12 +50,12 @@ public interface BlobStore {
    Blob newBlob(String name);
 
    /**
-    * The get locations command returns all the valid locations for containers. A location has a scope,
-    * which is typically region or zone. A region is a general area, like eu-west, where a zone is
-    * similar to a datacenter. If a location has a parent, that implies it is within that location.
-    * For example a location can be a rack, whose parent is likely to be a zone.
+    * The get locations command returns all the valid locations for containers. A location has a
+    * scope, which is typically region or zone. A region is a general area, like eu-west, where a
+    * zone is similar to a datacenter. If a location has a parent, that implies it is within that
+    * location. For example a location can be a rack, whose parent is likely to be a zone.
     */
-   Map<String, ? extends Location> getAssignableLocations();
+   Set<? extends Location> listAssignableLocations();
 
    /**
     * Lists all root-level resources available to the account.

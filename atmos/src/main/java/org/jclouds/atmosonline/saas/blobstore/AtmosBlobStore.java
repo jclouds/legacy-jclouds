@@ -20,7 +20,7 @@ package org.jclouds.atmosonline.saas.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -65,8 +65,8 @@ public class AtmosBlobStore extends BaseBlobStore {
 
    @Inject
    AtmosBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
-            Map<String, ? extends Location> locations, AtmosStorageClient sync,
-            ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
+            Set<? extends Location> locations, AtmosStorageClient sync, ObjectToBlob object2Blob,
+            ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
             EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions,

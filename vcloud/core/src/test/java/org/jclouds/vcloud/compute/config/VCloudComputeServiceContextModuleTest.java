@@ -37,8 +37,11 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule.FindLocationForResourceInVDC;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -52,7 +55,7 @@ import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -108,21 +111,25 @@ public class VCloudComputeServiceContextModuleTest {
       expect(computeClient.getPublicAddresses("10")).andReturn(Sets.<InetAddress> newHashSet());
       expect(computeClient.getPrivateAddresses("10")).andReturn(
                Sets.newHashSet(InetAddress.getLocalHost()));
-      
+
       replay(client);
       replay(computeClient);
-      
-      Map<String, ? extends Location> locations = ImmutableMap.of();
-      Map<String, ? extends Image> images= ImmutableMap.of();
+
+      Location vdcL = new LocationImpl(LocationScope.ZONE, "1", "1", null);
+      Set<? extends Location> locations = ImmutableSet.of(vdcL);
+
+      Set<? extends Image> images = ImmutableSet.of();
+      FindLocationForResourceInVDC findLocationForResourceInVDC = new FindLocationForResourceInVDC(
+               locations, null);
       VCloudListNodesStrategy strategy = new VCloudListNodesStrategy(client, computeClient,
-               vAppStatusToNodeState, getExtra, locations, images);
+               vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);
 
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       NamedResource vdc = new NamedResourceImpl("1", null, null, null);
       NamedResource resource = new NamedResourceImpl("10", null, null, null);
 
       strategy.addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
-      
+
       verify(client);
       verify(computeClient);
    }

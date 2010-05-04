@@ -21,7 +21,7 @@ package org.jclouds.azure.storage.blob.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -68,7 +68,7 @@ public class AzureBlobStore extends BaseBlobStore {
 
    @Inject
    AzureBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
-            Map<String, ? extends Location> locations, AzureBlobClient sync,
+            Set<? extends Location> locations, AzureBlobClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList,
