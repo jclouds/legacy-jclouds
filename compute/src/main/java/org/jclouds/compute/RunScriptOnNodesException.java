@@ -46,7 +46,7 @@ public class RunScriptOnNodesException extends Exception {
             @Nullable final RunScriptOptions options,
             Map<NodeMetadata, ExecResponse> successfulNodes, Map<?, Exception> executionExceptions,
             Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
-      super(String.format("error runScript on node tag(%s) options(%s) exceptions: %s", tag,
+      super(String.format("error runScript on node tag(%s) options(%s)%n%s%n%s", tag,
                options, ComputeUtils.createExecutionErrorMessage(executionExceptions), ComputeUtils
                         .createNodeErrorMessage(failedNodes)));
       this.tag = tag;
