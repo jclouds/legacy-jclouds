@@ -51,8 +51,10 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
          return Region.US_STANDARD;
       if (v.equals("EU"))
          return Region.EU_WEST_1;
-      else if (v.equals("us-west-1"))
+      else if (v.equals(Region.US_WEST_1))
          return Region.US_WEST_1;
+      else if (v.equals(Region.AP_SOUTHEAST_1))
+         return Region.AP_SOUTHEAST_1;
       throw new IllegalStateException("unimplemented location: " + v);
    }
 

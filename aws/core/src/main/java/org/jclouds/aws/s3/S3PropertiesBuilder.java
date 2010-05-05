@@ -23,10 +23,11 @@ import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_EU_WEST_1;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_US_STANDARD;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_US_WEST_1;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
@@ -51,7 +52,8 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_S3_ENDPOINT_US_STANDARD, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_ENDPOINT_US_WEST_1, "https://s3-us-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_S3_ENDPOINT_EU_WEST_1, "https://s3-eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
+      properties.setProperty(PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1,
+               "https://s3-ap-southeast-1.amazonaws.com");
       properties.setProperty(PROPERTY_S3_SESSIONINTERVAL, "60");
       properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
       return properties;
