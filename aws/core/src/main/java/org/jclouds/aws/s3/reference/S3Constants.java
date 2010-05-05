@@ -44,5 +44,6 @@ public interface S3Constants extends AWSConstants, S3Headers {
    public static final String PROPERTY_S3_ENDPOINT_EU_WEST_1 = "jclouds.s3.endpoint.eu_west_1";
    public static final String PROPERTY_S3_ENDPOINT_US_STANDARD = "jclouds.s3.endpoint.us_standard";
    public static final String PROPERTY_S3_ENDPOINT_US_WEST_1 = "jclouds.s3.endpoint.us_west_1";
+   public static final String PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1 = "jclouds.s3.endpoint.ap_southeast_1";
 
 }

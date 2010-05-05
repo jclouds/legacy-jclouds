@@ -53,13 +53,17 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
       checkArgument(input instanceof String, "this binder is only valid for Region!");
       String constraint = (String) input;
       String value = null;
-      if(Region.US_STANDARD.equals(constraint) || Region.US_EAST_1.equals(constraint)) {
+      if (Region.US_STANDARD.equals(constraint) || Region.US_EAST_1.equals(constraint)) {
          // nothing to bind as this is default.
          return;
-      } else if(Region.EU_WEST_1.equals(constraint)) value = "EU";
-      else if(Region.US_WEST_1.equals(constraint)) value = "us-west-1";
+      } else if (Region.EU_WEST_1.equals(constraint))
+         value = "EU";
+      else if (Region.US_WEST_1.equals(constraint))
+         value = "us-west-1";
+      else if (Region.AP_SOUTHEAST_1.equals(constraint))
+         value = "ap-southeast-1";
       else {
-            throw new IllegalStateException("unimplemented location: " + this);
+         throw new IllegalStateException("unimplemented location: " + this);
       }
       String payload = String
                .format(

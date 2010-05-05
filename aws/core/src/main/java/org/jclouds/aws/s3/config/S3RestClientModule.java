@@ -105,9 +105,11 @@ public class S3RestClientModule extends AbstractModule {
    Map<String, URI> provideRegions(
             @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_STANDARD) String usstandard,
             @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_WEST_1) String uswest,
+            @Named(S3Constants.PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1) String southeast,
             @Named(S3Constants.PROPERTY_S3_ENDPOINT_EU_WEST_1) String euwest) {
       return ImmutableMap.<String, URI> of(Region.US_STANDARD, URI.create(usstandard),
-               Region.US_WEST_1, URI.create(uswest), Region.EU_WEST_1, URI.create(euwest));
+               Region.AP_SOUTHEAST_1, URI.create(southeast), Region.US_WEST_1, URI.create(uswest),
+               Region.EU_WEST_1, URI.create(euwest));
    }
 
    @Provides
