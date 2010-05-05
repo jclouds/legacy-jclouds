@@ -323,16 +323,16 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
 
-      sizes.add(new SizeImpl("1", "1", null, null, ImmutableMap.<String, String> of(), 1, 512, 28,
+      sizes.add(new SizeImpl("1", "1", null, null, ImmutableMap.<String, String> of(), 0.5, 512,
+               30, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes.add(new SizeImpl("2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 60,
                ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 57,
-               ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("3", "3", null, null, ImmutableMap.<String, String> of(), 1, 2048,
-               113, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("4", "4", null, null, ImmutableMap.<String, String> of(), 3, 4096,
-               233, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("5", "5", null, null, ImmutableMap.<String, String> of(), 6, 8192,
-               462, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes.add(new SizeImpl("3", "3", null, null, ImmutableMap.<String, String> of(), 2, 2048,
+               120, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes.add(new SizeImpl("4", "4", null, null, ImmutableMap.<String, String> of(), 4, 4096,
+               240, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes.add(new SizeImpl("5", "5", null, null, ImmutableMap.<String, String> of(), 8, 8192,
+               480, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
    }

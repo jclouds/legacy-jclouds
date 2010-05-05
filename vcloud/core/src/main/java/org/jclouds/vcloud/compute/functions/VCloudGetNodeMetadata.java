@@ -69,9 +69,9 @@ public class VCloudGetNodeMetadata {
 
    // hex [][][] are templateId, last two are instanceId
    public static final Pattern TAG_PATTERN_WITH_TEMPLATE = Pattern
-            .compile("([^-]+)-?([0-9a-f][0-9a-f][0-9a-f])[0-9a-f]+");
+            .compile("([^-]+)-([0-9a-f][0-9a-f][0-9a-f])[0-9a-f]+");
 
-   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-?[0-9]+");
+   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-[0-9]+");
 
    @Inject
    protected VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
