@@ -513,31 +513,31 @@
             <outputDirectory>extensions/bouncycastle</outputDirectory>            
         </fileSet>
                 
-        <!-- profiles: enterprise -->
+        <!-- extensions: enterprise -->
         <fileSet>
             <directory>extensions/enterprise/target</directory>
             <includes>
                 <include>jclouds-enterprise-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>profiles/enterprise/lib</outputDirectory>
+            <outputDirectory>extensions/enterprise/lib</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>extensions/enterprise/target</directory>
             <includes>
                 <include>jclouds-enterprise-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>profiles/enterprise/src</outputDirectory>
+            <outputDirectory>extensions/enterprise/src</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>extensions/enterprise/target/apidocs</directory>
-            <outputDirectory>profiles/enterprise/docs</outputDirectory>
+            <outputDirectory>extensions/enterprise/docs</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>extensions/enterprise</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>profiles/enterprise</outputDirectory>
+            <outputDirectory>extensions/enterprise</outputDirectory>
         </fileSet>
 
         <!-- extensions: gae -->
@@ -623,29 +623,29 @@
         
         <!-- extensions: jsch -->
         <fileSet>
-            <directory>extensions/jsch/target</directory>
+            <directory>extensions/ssh/jsch/target</directory>
             <includes>
                 <include>jclouds-jsch-${project.version}.jar</include>
             </includes>
-            <outputDirectory>extensions/ssh/jsch/lib</outputDirectory>
+            <outputDirectory>extensions/jsch/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/jsch/target</directory>
+            <directory>extensions/ssh/jsch/target</directory>
             <includes>
                 <include>jclouds-jsch-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/ssh/jsch/src</outputDirectory>
+            <outputDirectory>extensions/jsch/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/jsch/target/apidocs</directory>
-            <outputDirectory>extensions/ssh/jsch/docs</outputDirectory>            
+            <directory>extensions/ssh/jsch/target/apidocs</directory>
+            <outputDirectory>extensions/jsch/docs</outputDirectory>            
         </fileSet>
         <fileSet>
-            <directory>extensions/jsch</directory>
+            <directory>extensions/ssh/jsch</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/ssh/jsch</outputDirectory>            
+            <outputDirectory>extensions/jsch</outputDirectory>            
         </fileSet>
         
         <!-- extensions: log4j -->
