@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-pcs2-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-beta-5</version>
     </parent>
     <artifactId>jclouds-pcs2</artifactId>
     <name>jclouds mezeo cloud storage platform v2 core</name>

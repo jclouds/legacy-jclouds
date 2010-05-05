@@ -37,10 +37,10 @@
   <artifact:dependencies pathId="shrinkwrap.classpath">
     <dependency groupId="org.jboss.shrinkwrap" artifactId="shrinkwrap-impl-base" version="1.0.0-alpha-9" />
     <dependency groupId="org.jruby" artifactId="jruby" version="1.4.0"/>
-    <dependency groupId="org.jclouds" artifactId="jclouds-aws" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-atmos" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-azure" version="1.0-SNAPSHOT" />
-    <dependency groupId="org.jclouds" artifactId="jclouds-rackspace" version="1.0-SNAPSHOT" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-aws" version="1.0-beta-5" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-atmos" version="1.0-beta-5" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-azure" version="1.0-beta-5" />
+    <dependency groupId="org.jclouds" artifactId="jclouds-rackspace" version="1.0-beta-5" />
     <remoteRepository refid="shrinkwrap.repository" />
     <remoteRepository refid="jclouds-snapshot.repository" />
     <localRepository refid="local.repository" />

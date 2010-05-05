@@ -351,6 +351,33 @@
             <outputDirectory>providers/rackspace</outputDirectory>            
         </fileSet> 
         
+        <!-- providers: gogrid -->
+        <fileSet>
+            <directory>gogrid/target</directory>
+            <includes>
+                <include>jclouds-gogrid-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/gogrid/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>gogrid/target</directory>
+            <includes>
+                <include>jclouds-gogrid-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/gogrid/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>gogrid/target/apidocs</directory>
+            <outputDirectory>providers/gogrid/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>gogrid</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/gogrid</outputDirectory>            
+        </fileSet> 
+        
         <!-- providers: rimuhosting -->
         <fileSet>
             <directory>rimuhosting/target</directory>
@@ -403,6 +430,33 @@
                 <include>README.txt</include>
             </includes>
             <outputDirectory>providers/terremark</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: bluelock -->
+        <fileSet>
+            <directory>vcloud/bluelock/target</directory>
+            <includes>
+                <include>jclouds-bluelock-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock/target</directory>
+            <includes>
+                <include>jclouds-bluelock-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock/target/apidocs</directory>
+            <outputDirectory>providers/bluelock/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/bluelock</outputDirectory>            
         </fileSet>     
         
         <!-- providers: twitter -->
@@ -540,31 +594,31 @@
             <outputDirectory>extensions/joda</outputDirectory>            
         </fileSet>
 
-        <!-- extensions: httpnio -->
+        <!-- extensions: apachehc -->
         <fileSet>
-            <directory>extensions/httpnio/target</directory>
+            <directory>extensions/apachehc/target</directory>
             <includes>
-                <include>jclouds-httpnio-${project.version}.jar</include>
+                <include>jclouds-apachehc-${project.version}.jar</include>
             </includes>
-            <outputDirectory>extensions/httpnio/lib</outputDirectory>
+            <outputDirectory>extensions/apachehc/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/httpnio/target</directory>
+            <directory>extensions/apachehc/target</directory>
             <includes>
-                <include>jclouds-httpnio-${project.version}-sources.jar</include>
+                <include>jclouds-apachehc-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/httpnio/src</outputDirectory>
+            <outputDirectory>extensions/apachehc/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/httpnio/target/apidocs</directory>
-            <outputDirectory>extensions/httpnio/docs</outputDirectory>            
+            <directory>extensions/apachehc/target/apidocs</directory>
+            <outputDirectory>extensions/apachehc/docs</outputDirectory>            
         </fileSet>
         <fileSet>
-            <directory>extensions/httpnio</directory>
+            <directory>extensions/apachehc</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/httpnio</outputDirectory>            
+            <outputDirectory>extensions/apachehc</outputDirectory>            
         </fileSet>
         
         <!-- extensions: jsch -->
