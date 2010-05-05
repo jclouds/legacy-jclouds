@@ -1,18 +1,18 @@
 Overview:
  
 jclouds is an open source framework that helps you get started in the cloud
-and reuse your java development skills. Our api allows you to freedom to use
-portable abstractions or cloud-specific features.
+and reuse your java and clojure development skills. Our api allows you to 
+freedom to use portable abstractions or cloud-specific features.
  
-our current version is 1.0-beta-4
+our current version is 1.0-beta-5
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: ec2, rackspace, rimuhosting, vcloud, terremark, 
-                          hosting.com
-our blobstore api supports: s3, rackspace, azure, atmos online
+our compute api supports: ec2, gogrid, rackspace, rimuhosting, vcloud, terremark, 
+                          hosting.com, bluelock
+our blobstore api supports: s3, rackspace, azure, atmos online, att synaptic,
+                          transient (in-memory)
  
- 
-BlobStore Example:
+BlobStore Example (Java):
   // init
   context = new BlobStoreContextFactory().createContext(
                   "s3",
@@ -21,14 +21,14 @@ BlobStore Example:
   blobStore = context.getBlobStore();
  
   // create container
-  blobStore.createContainerInLocation("default", "mycontainer");
+  blobStore.createContainerInLocation(null, "mycontainer");
   
   // add blob
   blob = blobStore.newBlob("test");
   blob.setPayload("testdata");
   blobStore.putBlob(containerName, blob);
  
-Compute Example:
+Compute Example (Java):
   // init
   context = new ComputeServiceContextFactory().createContext(
                   "ec2",
@@ -45,7 +45,7 @@ Compute Example:
   nodes = client.runNodesWithTag("mycluster", 2, template);
  
 Downloads:
-  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-4.zip
+  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-5.zip
   * maven repo: http://jclouds.googlecode.com/svn/repo 
   * snapshot repo: http://jclouds.rimuhosting.com/maven2/snapshots
  
