@@ -48,6 +48,7 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
       properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_ENDPOINT_US_STANDARD, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_ENDPOINT_US_WEST_1, "https://s3-us-west-1.amazonaws.com");
