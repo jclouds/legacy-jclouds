@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.util.ComputeUtils;
@@ -35,21 +36,19 @@ public class RunScriptOnNodesException extends Exception {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -2272965726680821281L;
-   private final String tag;
    private final byte[] runScript;
    private final RunScriptOptions options;
    private final Map<NodeMetadata, ExecResponse> successfulNodes;
    private final Map<? extends NodeMetadata, ? extends Throwable> failedNodes;
    private final Map<?, Exception> executionExceptions;
 
-   public RunScriptOnNodesException(String tag, final byte[] runScript,
+   public RunScriptOnNodesException(final byte[] runScript,
             @Nullable final RunScriptOptions options,
             Map<NodeMetadata, ExecResponse> successfulNodes, Map<?, Exception> executionExceptions,
             Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
-      super(String.format("error runScript on node tag(%s) options(%s)%n%s%n%s", tag,
+      super(String.format("error runScript on filtered nodes options(%s)%n%s%n%s",
                options, ComputeUtils.createExecutionErrorMessage(executionExceptions), ComputeUtils
                         .createNodeErrorMessage(failedNodes)));
-      this.tag = tag;
       this.runScript = runScript;
       this.options = options;
       this.successfulNodes = successfulNodes;
@@ -58,7 +57,6 @@ public class RunScriptOnNodesException extends Exception {
    }
 
    /**
-    * 
     * @return Nodes that performed ssh without error
     */
    public Map<NodeMetadata, ExecResponse> getSuccessfulNodes() {
@@ -79,10 +77,6 @@ public class RunScriptOnNodesException extends Exception {
     */
    public Map<? extends NodeMetadata, ? extends Throwable> getNodeErrors() {
       return failedNodes;
-   }
-
-   public String getTag() {
-      return tag;
    }
 
    public byte[] getRunScript() {

@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import com.google.common.base.Function;
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -464,5 +465,4 @@ public class ComputeUtils {
       }
       return providers;
    }
-
 }

@@ -21,6 +21,7 @@ package org.jclouds.compute;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -170,27 +171,26 @@ public interface ComputeService {
    /**
     * Runs the script without any additional options
     * 
-    * @see #runScriptOnNodesWithTag(String, byte[], org.jclouds.compute.options.RunScriptOptions)
+    * @see #runScriptOnNodesMatching(Predicate, byte[], org.jclouds.compute.options.RunScriptOptions)
     */
-   Map<NodeMetadata, ExecResponse> runScriptOnNodesWithTag(String tag, byte[] runScript)
+   Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript)
             throws RunScriptOnNodesException;
 
    /**
     * Run the script on all nodes with the specific tag.
-    * 
-    * @param tag
-    *           tag to look up the nodes
+    *
+    * @param filter
+    *           Predicate-based filter to define on which nodes the script is to be
+    *           executed
     * @param runScript
     *           script to run in byte format. If the script is a string, use
     *           {@link String#getBytes()} to retrieve the bytes
     * @param options
-    *           nullable options to how to run the script
+    *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
-    * @throws RunScriptOnNodesException
-    *            when there's a problem running the script on the nodes. Note that successful and
-    *            failed nodes are a part of this exception, so be sure to inspect this carefully.
+    * @throws RunScriptOnNodesException if anything goes wrong during script execution
     */
-   Map<NodeMetadata, ExecResponse> runScriptOnNodesWithTag(String tag, byte[] runScript,
+   Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript,
             RunScriptOptions options) throws RunScriptOnNodesException;
 
 }

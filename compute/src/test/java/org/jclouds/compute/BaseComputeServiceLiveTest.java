@@ -77,6 +77,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import javax.annotation.Nullable;
+
 /**
  * 
  * @author Adrian Cole
@@ -247,8 +249,15 @@ public abstract class BaseComputeServiceLiveTest {
 
    private Map<NodeMetadata, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
             Credentials creds) throws RunScriptOnNodesException {
+      Predicate<NodeMetadata> filter = new Predicate<NodeMetadata>() {
+         @Override
+         public boolean apply(@Nullable NodeMetadata nodeMetadata) {
+            return true; /*accept all*/
+         }
+      };
+      
       try {
-         return client.runScriptOnNodesWithTag(tag, buildScript(osFamily).getBytes(),
+         return client.runScriptOnNodesMatching(filter, buildScript(osFamily).getBytes(),
                   RunScriptOptions.Builder.overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
