@@ -71,6 +71,7 @@ Downloads:
 Links:
   * project page: http://code.google.com/p/jclouds/
   * javadocs: http://jclouds.rimuhosting.com/apidocs/
+  * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
   * user group: http://groups.google.com/group/jclouds
   * dev group: http://groups.google.com/group/jclouds-dev
   * twitter: http://twitter.com/jclouds
