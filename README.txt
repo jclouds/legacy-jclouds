@@ -26,8 +26,15 @@ BlobStore Example (Java):
   // add blob
   blob = blobStore.newBlob("test");
   blob.setPayload("testdata");
-  blobStore.putBlob(containerName, blob);
- 
+  blobStore.putBlob("mycontainer", blob);
+
+BlobStore Example (Clojure):
+  (use 'org.jclouds.blobstore)
+
+  (with-blobstore ["azureblob" account encodedkey]
+    (create-container "mycontainer")
+    (upload-blob "mycontainer" "test" "testdata"))
+
 Compute Example (Java):
   // init
   context = new ComputeServiceContextFactory().createContext(
@@ -43,6 +50,18 @@ Compute Example (Java):
  
   // these nodes will be accessible via ssh when the call returns
   nodes = client.runNodesWithTag("mycluster", 2, template);
+
+Compute Example (Clojure):
+  (use 'org.jclouds.compute)
+
+  ; create a compute service using ssh and log4j extensions
+  (def compute 
+    (compute-service "terremark" "user" "password" :ssh :log4j))
+
+  ; use the default node template and launch a couple nodes
+  ; these will have your ~/.ssh/id_rsa.pub authorized when complete
+  (with-compute-service [compute]
+    (run-nodes "mycluster" 2))
  
 Downloads:
   * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-5.zip
