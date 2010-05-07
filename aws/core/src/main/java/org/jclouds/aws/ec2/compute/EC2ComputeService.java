@@ -18,15 +18,21 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromNodeOrDefault;
@@ -41,6 +47,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -65,19 +72,19 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context,
-            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Provider<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy,
-            RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-            GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
-            Map<RegionTag, KeyPair> credentialsMap, Map<PortsRegionTag, String> securityGroupMap,
-            @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated) {
+                               Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+                               Provider<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+                               GetNodeMetadataStrategy getNodeMetadataStrategy,
+                               RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+                               RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+                               Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
+                               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
+                               GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
+                               Map<RegionTag, KeyPair> credentialsMap, Map<PortsRegionTag, String> securityGroupMap,
+                               @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
-               templateBuilderProvider, utils, executor);
+              runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
+              templateBuilderProvider, utils, executor);
       this.ec2Client = ec2Client;
       this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
       this.credentialsMap = credentialsMap;
@@ -110,15 +117,14 @@ public class EC2ComputeService extends BaseComputeService {
    @Override
    public void destroyNodesWithTag(String tag) {
       super.destroyNodesWithTag(tag);
-      Iterable<? extends NodeMetadata> nodes = Iterables.filter(listNodesWithTag(tag),
-               new Predicate<NodeMetadata>() {
-                  @Override
-                  public boolean apply(NodeMetadata input) {
-                     return input.getState() == NodeState.TERMINATED;
-                  }
-               });
-      if (Iterables.size(nodes) > 0) {
-         String region = getRegionFromNodeOrDefault.apply(Iterables.get(nodes, 0));
+      Set<String> regions = Sets.newHashSet(Iterables.transform(listNodesWithTag(tag),
+              new Function<NodeMetadata, String>() {
+                 @Override
+                 public String apply(@Nullable NodeMetadata nodeMetadata) {
+                    return getRegionFromNodeOrDefault.apply(nodeMetadata);
+                 }
+              }));
+      for(String region : regions) {
          deleteKeyPair(region, tag);
          deleteSecurityGroup(region, tag);
       }
