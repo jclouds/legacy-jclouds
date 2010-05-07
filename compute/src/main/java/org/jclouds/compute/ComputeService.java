@@ -18,6 +18,7 @@
  */
 package org.jclouds.compute;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -142,6 +143,8 @@ public interface ComputeService {
     * nodes which are tagged are treated as a logical set. Using the delete command, you can save
     * time by removing the nodes in parallel. When the last node in a set is destroyed, any indirect
     * resources it uses, such as keypairs, are also destroyed.
+    *
+    * @return list of nodes destroyed
     */
    void destroyNodesWithTag(String tag);
 
@@ -172,6 +175,7 @@ public interface ComputeService {
     * Runs the script without any additional options
     * 
     * @see #runScriptOnNodesMatching(Predicate, byte[], org.jclouds.compute.options.RunScriptOptions)
+    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
     */
    Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript)
             throws RunScriptOnNodesException;
@@ -189,6 +193,8 @@ public interface ComputeService {
     *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
     * @throws RunScriptOnNodesException if anything goes wrong during script execution
+    *
+    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
     */
    Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript,
             RunScriptOptions options) throws RunScriptOnNodesException;

@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -40,6 +41,8 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -55,6 +58,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -74,6 +78,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import static org.jclouds.compute.predicates.NodePredicates.withTag;
 
 /**
  *
@@ -99,20 +104,6 @@ public class BaseComputeService implements ComputeService {
    protected final ComputeUtils utils;
    protected final ExecutorService executor;
    protected final ComputeMetadataToNodeMetadata computeMetadataToNodeMetadata;
-
-   private static class NodeMatchesTag implements Predicate<NodeMetadata> {
-      private final String tag;
-
-      public NodeMatchesTag(String tag) {
-         this.tag = tag;
-      }
-
-      @Override
-      public boolean apply(NodeMetadata from) {
-         return from.getTag().equals(tag);
-      }
-
-   };
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context,
@@ -180,19 +171,15 @@ public class BaseComputeService implements ComputeService {
    public void destroyNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> destroying nodes by tag(%s)", tag);
       Iterable<? extends NodeMetadata> nodesToDestroy = Iterables.filter(doListNodesWithTag(tag),
-              new Predicate<NodeMetadata>() {
-                 @Override
-                 public boolean apply(NodeMetadata input) {
-                    return input.getState() != NodeState.TERMINATED;
-
-                 }
-              });
+              Predicates.not(NodePredicates.TERMINATED));
       Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+      final List<NodeMetadata> destroyedNodes = Lists.newArrayList();
       for (final NodeMetadata node : nodesToDestroy) {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                destroyNode(node);
+               destroyedNodes.add(node);
                return null;
             }
          }), executor));
@@ -224,7 +211,7 @@ public class BaseComputeService implements ComputeService {
     */
    protected Set<? extends NodeMetadata> doListNodesWithTag(final String tag) {
       return Sets.newHashSet(Iterables.filter(Iterables.transform(listNodesStrategy
-              .execute(GetNodesOptions.NONE), computeMetadataToNodeMetadata), new NodeMatchesTag(tag)));
+              .execute(GetNodesOptions.NONE), computeMetadataToNodeMetadata), withTag(tag)));
    }
 
    class ComputeMetadataToNodeMetadata
@@ -287,13 +274,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> rebooting nodes by tag(%s)", tag);
       Iterable<? extends NodeMetadata> nodesToReboot = Iterables.filter(doListNodesWithTag(tag),
-              new Predicate<NodeMetadata>() {
-                 @Override
-                 public boolean apply(NodeMetadata input) {
-                    return input.getState() != NodeState.TERMINATED;
-
-                 }
-              });
+              Predicates.not(NodePredicates.TERMINATED));
       Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
       for (final NodeMetadata node : nodesToReboot) {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
@@ -311,6 +292,7 @@ public class BaseComputeService implements ComputeService {
    /**
     * @throws RunScriptOnNodesException
     * @see #runScriptOnNodesMatching(Predicate, byte[], org.jclouds.compute.options.RunScriptOptions)
+    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String) 
     */
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript)
            throws RunScriptOnNodesException {
@@ -330,6 +312,8 @@ public class BaseComputeService implements ComputeService {
     *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
     * @throws RunScriptOnNodesException if anything goes wrong during script execution
+    *
+    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
     */
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
                                                                    final byte[] runScript, @Nullable final RunScriptOptions options)

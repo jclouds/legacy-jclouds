@@ -47,6 +47,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -249,15 +250,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    private Map<NodeMetadata, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
             Credentials creds) throws RunScriptOnNodesException {
-      Predicate<NodeMetadata> filter = new Predicate<NodeMetadata>() {
-         @Override
-         public boolean apply(@Nullable NodeMetadata nodeMetadata) {
-            return true; /*accept all*/
-         }
-      };
-      
       try {
-         return client.runScriptOnNodesMatching(filter, buildScript(osFamily).getBytes(),
+         return client.runScriptOnNodesMatching(Predicates.<NodeMetadata>alwaysTrue(),
+                  buildScript(osFamily).getBytes(),
                   RunScriptOptions.Builder.overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
@@ -323,12 +318,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
       Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(client
-               .listNodesWithTag(tag), Predicates.not(new Predicate<NodeMetadata>() {
-         @Override
-         public boolean apply(NodeMetadata input) {
-            return input.getState() == NodeState.TERMINATED;
-         }
-      })));
+               .listNodesWithTag(tag), Predicates.not(NodePredicates.TERMINATED)));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node);
