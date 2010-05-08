@@ -78,8 +78,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-import javax.annotation.Nullable;
-
 /**
  * 
  * @author Adrian Cole
@@ -248,12 +246,17 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   private Map<NodeMetadata, ExecResponse> runScriptWithCreds(String tag, OsFamily osFamily,
+   private Map<NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
             Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(Predicates.<NodeMetadata>alwaysTrue(),
-                  buildScript(osFamily).getBytes(),
-                  RunScriptOptions.Builder.overrideCredentialsWith(creds));
+         return client.runScriptOnNodesMatching(new Predicate<NodeMetadata>() {
+
+            @Override
+            public boolean apply(NodeMetadata arg0) {
+               return arg0.getState() == NodeState.RUNNING && tag.equals(arg0.getTag());
+            }
+         }, buildScript(osFamily).getBytes(), RunScriptOptions.Builder
+                  .overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
             System.err.printf("bad credentials: %s:%s for %s%n", creds.account, creds.key, client

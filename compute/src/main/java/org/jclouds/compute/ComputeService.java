@@ -18,11 +18,9 @@
  */
 package org.jclouds.compute;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Predicate;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -35,6 +33,7 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ssh.ExecResponse;
 
+import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
 /**

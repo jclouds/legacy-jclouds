@@ -25,6 +25,7 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.predicates.NodePredicates.withTag;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
@@ -41,8 +42,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -52,7 +51,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -74,14 +72,15 @@ import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
-import static org.jclouds.compute.predicates.NodePredicates.withTag;
 
 /**
- *
+ * 
  * @author Adrian Cole
  */
 @Singleton
@@ -107,26 +106,26 @@ public class BaseComputeService implements ComputeService {
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context,
-                                Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-                                Provider<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-                                GetNodeMetadataStrategy getNodeMetadataStrategy,
-                                RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-                                RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-                                Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
-                                @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Provider<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy,
+            RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.images = checkNotNull(images, "images");
       this.sizes = checkNotNull(sizes, "sizes");
       this.locations = checkNotNull(locations, "locations");
       this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
       this.getNodeMetadataStrategy = checkNotNull(getNodeMetadataStrategy,
-              "getNodeMetadataStrategy");
+               "getNodeMetadataStrategy");
       this.runNodesAndAddToSetStrategy = checkNotNull(runNodesAndAddToSetStrategy,
-              "runNodesAndAddToSetStrategy");
+               "runNodesAndAddToSetStrategy");
       this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
       this.destroyNodeStrategy = checkNotNull(destroyNodeStrategy, "destroyNodeStrategy");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider,
-              "templateBuilderProvider");
+               "templateBuilderProvider");
       this.utils = checkNotNull(utils, "utils");
       this.executor = checkNotNull(executor, "executor");
       this.computeMetadataToNodeMetadata = new ComputeMetadataToNodeMetadata();
@@ -139,18 +138,18 @@ public class BaseComputeService implements ComputeService {
 
    @Override
    public Set<? extends NodeMetadata> runNodesWithTag(final String tag, int count,
-                                                      final Template template) throws RunNodesException {
+            final Template template) throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)",
-              count, count > 1 ? "s" : "", tag, template.getLocation().getId(), template
-                      .getImage().getId(), template.getSize().getId(), template.getOptions());
+               count, count > 1 ? "s" : "", tag, template.getLocation().getId(), template
+                        .getImage().getId(), template.getSize().getId(), template.getOptions());
       final Set<NodeMetadata> nodes = Sets.newHashSet();
       final Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Map<?, ListenableFuture<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count,
-              template, nodes, badNodes);
+               template, nodes, badNodes);
       Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger,
-              "starting nodes");
+               "starting nodes");
       if (executionExceptions.size() > 0 || badNodes.size() > 0) {
          throw new RunNodesException(tag, count, template, nodes, executionExceptions, badNodes);
       }
@@ -160,7 +159,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public void destroyNode(ComputeMetadata node) {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-              + node.getType());
+               + node.getType());
       checkNotNull(node.getId(), "node.id");
       logger.debug(">> destroying node(%s)", node.getId());
       boolean successful = destroyNodeStrategy.execute(node);
@@ -171,7 +170,7 @@ public class BaseComputeService implements ComputeService {
    public void destroyNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> destroying nodes by tag(%s)", tag);
       Iterable<? extends NodeMetadata> nodesToDestroy = Iterables.filter(doListNodesWithTag(tag),
-              Predicates.not(NodePredicates.TERMINATED));
+               Predicates.not(NodePredicates.TERMINATED));
       Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
       final List<NodeMetadata> destroyedNodes = Lists.newArrayList();
       for (final NodeMetadata node : nodesToDestroy) {
@@ -200,7 +199,7 @@ public class BaseComputeService implements ComputeService {
          options = GetNodesOptions.NONE;
       }
       Set<? extends ComputeMetadata> set = Sets
-              .newLinkedHashSet(listNodesStrategy.execute(options));
+               .newLinkedHashSet(listNodesStrategy.execute(options));
       logger.debug("<< list(%d)", set.size());
       return set;
    }
@@ -211,19 +210,17 @@ public class BaseComputeService implements ComputeService {
     */
    protected Set<? extends NodeMetadata> doListNodesWithTag(final String tag) {
       return Sets.newHashSet(Iterables.filter(Iterables.transform(listNodesStrategy
-              .execute(GetNodesOptions.NONE), computeMetadataToNodeMetadata), withTag(tag)));
+               .execute(GetNodesOptions.NONE), computeMetadataToNodeMetadata), withTag(tag)));
    }
 
-   class ComputeMetadataToNodeMetadata
-           implements Function<ComputeMetadata, NodeMetadata> {
+   class ComputeMetadataToNodeMetadata implements Function<ComputeMetadata, NodeMetadata> {
 
       @Override
       public NodeMetadata apply(ComputeMetadata from) {
          return from instanceof NodeMetadata ? NodeMetadata.class.cast(from)
-                 : getNodeMetadata(from);
+                  : getNodeMetadata(from);
       }
    }
-
 
    @Override
    public Set<? extends NodeMetadata> listNodesWithTag(String tag) {
@@ -256,14 +253,14 @@ public class BaseComputeService implements ComputeService {
    @Override
    public NodeMetadata getNodeMetadata(ComputeMetadata node) {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-              + node.getType());
+               + node.getType());
       return getNodeMetadataStrategy.execute(node);
    }
 
    @Override
    public void rebootNode(ComputeMetadata node) {
       checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-              + node.getType());
+               + node.getType());
       checkNotNull(node.getId(), "node.id");
       logger.debug(">> rebooting node(%s)", node.getId());
       boolean successful = rebootNodeStrategy.execute(node);
@@ -274,7 +271,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNodesWithTag(String tag) { // TODO parallel
       logger.debug(">> rebooting nodes by tag(%s)", tag);
       Iterable<? extends NodeMetadata> nodesToReboot = Iterables.filter(doListNodesWithTag(tag),
-              Predicates.not(NodePredicates.TERMINATED));
+               Predicates.not(NodePredicates.TERMINATED));
       Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
       for (final NodeMetadata node : nodesToReboot) {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
@@ -291,35 +288,36 @@ public class BaseComputeService implements ComputeService {
 
    /**
     * @throws RunScriptOnNodesException
-    * @see #runScriptOnNodesMatching(Predicate, byte[], org.jclouds.compute.options.RunScriptOptions)
-    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String) 
+    * @see #runScriptOnNodesMatching(Predicate, byte[],
+    *      org.jclouds.compute.options.RunScriptOptions)
+    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
     */
-   public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript)
-           throws RunScriptOnNodesException {
+   public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
+            byte[] runScript) throws RunScriptOnNodesException {
       return runScriptOnNodesMatching(filter, runScript, RunScriptOptions.NONE);
    }
 
    /**
     * Run the script on all nodes with the specific tag.
-    *
+    * 
     * @param filter
-    *           Predicate-based filter to define on which nodes the script is to be
-    *           executed
+    *           Predicate-based filter to define on which nodes the script is to be executed
     * @param runScript
     *           script to run in byte format. If the script is a string, use
     *           {@link String#getBytes()} to retrieve the bytes
     * @param options
     *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
-    * @throws RunScriptOnNodesException if anything goes wrong during script execution
-    *
+    * @throws RunScriptOnNodesException
+    *            if anything goes wrong during script execution
+    * 
     * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
     */
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-                                                                   final byte[] runScript, @Nullable final RunScriptOptions options)
-           throws RunScriptOnNodesException {
+            final byte[] runScript, @Nullable final RunScriptOptions options)
+            throws RunScriptOnNodesException {
       Iterable<? extends NodeMetadata> nodes = verifyParametersAndGetNodes(filter, runScript,
-              (options != null) ? options : RunScriptOptions.NONE);
+               (options != null) ? options : RunScriptOptions.NONE);
 
       final Map<NodeMetadata, ExecResponse> execs = Maps.newHashMap();
 
@@ -357,7 +355,7 @@ public class BaseComputeService implements ComputeService {
 
       }
       Map<?, Exception> exceptions = awaitCompletion(responses, executor, null, logger,
-              "starting nodes");
+               "starting nodes");
       if (exceptions.size() > 0 || badNodes.size() > 0) {
          throw new RunScriptOnNodesException(runScript, options, execs, exceptions, badNodes);
       }
@@ -365,36 +363,35 @@ public class BaseComputeService implements ComputeService {
 
    }
 
-   private Iterable<? extends NodeMetadata> verifyParametersAndGetNodes(Predicate<NodeMetadata> filter,
-                                                                        byte[] runScript, final RunScriptOptions options) {
+   private Iterable<? extends NodeMetadata> verifyParametersAndGetNodes(
+            Predicate<NodeMetadata> filter, byte[] runScript, final RunScriptOptions options) {
       checkNotNull(filter, "Filter must be provided");
       checkNotNull(runScript,
-              "The script (represented by bytes array - use \"script\".getBytes() must be provided");
+               "The script (represented by bytes array - use \"script\".getBytes() must be provided");
       checkNotNull(options, "options");
-      Iterable<? extends NodeMetadata> nodes = Iterables.filter(
-                           Iterables.transform(listNodes(), computeMetadataToNodeMetadata),
-                           filter);
-      
+      Iterable<? extends NodeMetadata> nodes = Iterables.filter(Iterables.transform(listNodes(),
+               computeMetadataToNodeMetadata), filter);
+
       return Iterables.transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
 
          @Override
          public NodeMetadata apply(NodeMetadata node) {
 
             checkArgument(node.getPublicAddresses().size() > 0, "no public ip addresses on node: "
-                    + node);
+                     + node);
             if (options.getOverrideCredentials() != null) {
                // override the credentials with provided to this method
                node = ComputeUtils.installNewCredentials(node, options.getOverrideCredentials());
             } else {
                // don't override
                checkNotNull(node.getCredentials(),
-                       "If the default credentials need to be used, they can't be null");
+                        "If the default credentials need to be used, they can't be null");
                checkNotNull(node.getCredentials().account,
-                       "Account name for ssh authentication must be "
-                               + "specified. Try passing RunScriptOptions with new credentials");
+                        "Account name for ssh authentication must be "
+                                 + "specified. Try passing RunScriptOptions with new credentials");
                checkNotNull(node.getCredentials().key,
-                       "Key or password for ssh authentication must be "
-                               + "specified. Try passing RunScriptOptions with new credentials");
+                        "Key or password for ssh authentication must be "
+                                 + "specified. Try passing RunScriptOptions with new credentials");
             }
             return node;
          }

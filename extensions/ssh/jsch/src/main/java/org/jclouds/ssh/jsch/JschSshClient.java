@@ -55,6 +55,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 /**
+ * This class needs refactoring. It is not thread safe.
  * 
  * @author Adrian Cole
  */
@@ -168,16 +169,22 @@ public class JschSshClient implements SshClient {
          } catch (Exception from) {
             disconnect();
             String rootMessage = Throwables.getRootCause(from).getMessage();
-            if (i + 1 == sshRetries)
+            if (i == sshRetries)
                throw propagate(from);
             if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
                      ConnectException.class)) >= 1
-                     || rootMessage.indexOf("Auth fail") != -1// auth fail sometimes happens in EC2
+                     || Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
+                              IOException.class)) >= 1
+                     || rootMessage.indexOf("invalid privatekey") != -1
+                     || rootMessage.indexOf("Auth fail") != -1// auth fail sometimes happens in EC2,
+                     // as the script that injects the
+                     // authorized key executes after ssh
+                     // has started
                      || rootMessage.indexOf("invalid data") != -1
-                     || rootMessage.indexOf("invalid privatekey") != -1) {
-               backoffLimitedRetryHandler.imposeBackoffExponentialDelay(i + 1, String.format(
-                        "%s@%s:%d: connection error: %s", username, host.getHostAddress(), port,
-                        from.getMessage()));
+                     || rootMessage.indexOf("End of IO Stream Read") != -1) {
+               backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, i + 1, String
+                        .format("%s@%s:%d: connection error: %s", username, host.getHostAddress(),
+                                 port, from.getMessage()));
                continue;
             }
             throw propagate(from);
