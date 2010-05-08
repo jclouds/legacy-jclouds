@@ -339,7 +339,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testGet")
    public void testReboot() throws Exception {
-      client.rebootNodesWithTag(tag);
+      client.rebootNodesWithTag(tag);// TODO test validation
       testGet();
    }
 

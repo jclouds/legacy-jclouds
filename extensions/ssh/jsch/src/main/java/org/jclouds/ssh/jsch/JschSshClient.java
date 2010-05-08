@@ -162,11 +162,14 @@ public class JschSshClient implements SshClient {
    @PostConstruct
    public void connect() {
       disconnect();
+      Exception e = null;
       RETRY_LOOP: for (int i = 0; i < sshRetries; i++) {
          try {
             newSession();
+            e = null;
             break RETRY_LOOP;
          } catch (Exception from) {
+            e = from;
             disconnect();
             String rootMessage = Throwables.getRootCause(from).getMessage();
             if (i == sshRetries)
@@ -190,6 +193,8 @@ public class JschSshClient implements SshClient {
             throw propagate(from);
          }
       }
+      if (e != null)
+         throw propagate(e);
    }
 
    private void newSession() throws JSchException {
