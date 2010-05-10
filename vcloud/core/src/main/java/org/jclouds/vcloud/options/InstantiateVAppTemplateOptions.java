@@ -76,7 +76,7 @@ public class InstantiateVAppTemplateOptions {
    }
 
    public InstantiateVAppTemplateOptions memory(long megabytes) {
-      checkArgument(megabytes % 512 == 0, "megabytes must be in an increment of 512");
+      checkArgument(megabytes >= 1, "megabytes must be positive");
       this.memorySizeMegabytes = megabytes + "";
       return this;
    }

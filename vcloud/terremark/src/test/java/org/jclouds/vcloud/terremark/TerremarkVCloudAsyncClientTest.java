@@ -182,7 +182,7 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
                         InstantiateVAppTemplateOptions.class, 0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
                "1", "name", 3 + "", TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(
-                        1).memory(512).inRow("row").inGroup("group").withPassword("password")
+                        2).memory(512).inRow("row").inGroup("group").withPassword("password")
                         .inNetwork(URI.create("http://network")));
 
       assertRequestLineEquals(httpMethod,

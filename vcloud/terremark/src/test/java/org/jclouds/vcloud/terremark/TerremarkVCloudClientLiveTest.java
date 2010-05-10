@@ -71,6 +71,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
@@ -176,7 +177,15 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       // determine the cheapest configuration size
       SortedSet<ComputeOptions> sizeOptions = tmClient.getComputeOptionsOfCatalogItem(itemId);
-      ComputeOptions cheapestOption = sizeOptions.first();
+
+      ComputeOptions cheapestOption = Iterables.find(sizeOptions, new Predicate<ComputeOptions>() {
+
+         @Override
+         public boolean apply(ComputeOptions arg0) {
+            return arg0.getProcessorCount() == 2;
+         }
+
+      });
 
       // create an options object to collect the configuration we want.
       TerremarkInstantiateVAppTemplateOptions instantiateOptions = processorCount(
@@ -363,8 +372,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1024)
-               .changeProcessorCountTo(2).addDisk(25 * 1048576).addDisk(25 * 1048576));
+      Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1536)
+               .changeProcessorCountTo(1).addDisk(25 * 1048576).addDisk(25 * 1048576));
 
       assert successTester.apply(task.getId());
 
@@ -373,14 +382,14 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(
                Iterables.getOnlyElement(
                         vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
-                        .getVirtualQuantity(), 2);
+                        .getVirtualQuantity(), 1);
       assertEquals(Iterables.getOnlyElement(
                vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
-               1024);
+               1536);
       assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE).size(), 3);
 
       assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
-      
+
       loopAndCheckPass();
 
       assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
@@ -473,8 +482,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       Injector injector = new TerremarkVCloudContextBuilder("terremark",
-               new TerremarkVCloudPropertiesBuilder(               account, key).build()).withModules(new Log4JLoggingModule(),
-               new JschSshClientModule()).buildInjector();
+               new TerremarkVCloudPropertiesBuilder(account, key).build()).withModules(
+               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
 
       connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
 

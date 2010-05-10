@@ -85,11 +85,6 @@ public class InstantiateVAppTemplateOptionsTest {
       assertEquals(options.getMemorySizeMegabytes(), "512");
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testRamStaticWrong() {
-      memory(511);
-   }
-
    @Test
    public void testDisk() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();

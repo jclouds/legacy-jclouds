@@ -18,28 +18,58 @@
  */
 package org.jclouds.compute.predicates;
 
-import com.google.common.base.Predicate;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.checkNotEmpty;
+
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 
-import javax.annotation.Nullable;
-import static org.jclouds.util.Utils.checkNotEmpty;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 
 /**
  * Container for node filters (predicates).
- *
+ * 
  * This class has static methods that create customized predicates to use with
  * {@link org.jclouds.compute.ComputeService}.
- *
+ * 
  * @author Oleksiy Yarmula
  */
 public class NodePredicates {
 
    /**
-    * Return nodes with specified tag.
-    * Note: returns all nodes, regardless of the state.
-    *
-    * @param tag tag to match the items
+    * Return nodes with the specific ids Note: returns all nodes, regardless of the state.
+    * 
+    * @param ids
+    *           ids of the resources
+    * @return predicate
+    */
+   public static Predicate<ComputeMetadata> withIds(String... ids) {
+      checkNotNull(ids, "ids must be defined");
+      final Set<String> search = Sets.newHashSet(ids);
+      return new Predicate<ComputeMetadata>() {
+         @Override
+         public boolean apply(@Nullable ComputeMetadata nodeMetadata) {
+            return search.contains(nodeMetadata.getId());
+         }
+
+         @Override
+         public String toString() {
+            return "withIds(" + search + ")";
+         }
+      };
+   }
+
+   /**
+    * Return nodes with specified tag. Note: returns all nodes, regardless of the state.
+    * 
+    * @param tag
+    *           tag to match the items
     * @return predicate
     */
    public static Predicate<NodeMetadata> withTag(final String tag) {
@@ -49,12 +79,19 @@ public class NodePredicates {
          public boolean apply(@Nullable NodeMetadata nodeMetadata) {
             return tag.equals(nodeMetadata.getTag());
          }
+
+         @Override
+         public String toString() {
+            return "withTag(" + tag + ")";
+         }
       };
    }
 
    /**
     * Return nodes with specified tag that are in the RUNNING state.
-    * @param tag tag to match the items
+    * 
+    * @param tag
+    *           tag to match the items
     * @return predicate
     */
    public static Predicate<NodeMetadata> activeWithTag(final String tag) {
@@ -62,7 +99,13 @@ public class NodePredicates {
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(@Nullable NodeMetadata nodeMetadata) {
-            return tag.equals(nodeMetadata.getTag()) && nodeMetadata.getState() == NodeState.RUNNING;
+            return tag.equals(nodeMetadata.getTag())
+                     && nodeMetadata.getState() == NodeState.RUNNING;
+         }
+
+         @Override
+         public String toString() {
+            return "activeWithTag(" + tag + ")";
          }
       };
    }
@@ -75,6 +118,11 @@ public class NodePredicates {
       public boolean apply(@Nullable NodeMetadata nodeMetadata) {
          return nodeMetadata.getState() == NodeState.RUNNING;
       }
+
+      @Override
+      public String toString() {
+         return "ACTIVE";
+      }
    };
 
    /**
@@ -84,6 +132,11 @@ public class NodePredicates {
       @Override
       public boolean apply(@Nullable NodeMetadata nodeMetadata) {
          return nodeMetadata.getState() == NodeState.TERMINATED;
+      }
+
+      @Override
+      public String toString() {
+         return "TERMINATED";
       }
    };
 

@@ -19,9 +19,9 @@
 package org.jclouds.vcloud.terremark.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
@@ -37,62 +37,41 @@ public class VAppConfiguration {
    private List<Long> disks = Lists.newArrayList();
    private List<Integer> disksToDelete = Lists.newArrayList();
 
-   public static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z][-a-zA-Z0-9]+");
-
    /**
-    * The vApp name has the following requirements: Name can use uppercase and/or lowercase letters.
-    * Name can contain numbers or hyphens (-). Name may only begin with a letter. A maximum of 15
-    * characters are allowed
+    * The vApp name
     * 
     */
    public VAppConfiguration changeNameTo(String name) {
-      checkArgument(
-               NAME_PATTERN.matcher(name).matches(),
-               "Name can use uppercase and/or lowercase letters, numbers or hyphens (-). Name may only begin with a letter.");
-      checkArgument(name.length() <= 15, "A maximum of 15 characters are allowed.");
+      checkNotEmpty(name, "name must be specified");
       this.name = name;
       return this;
    }
 
    /**
-    * the number of virtual CPUs. You can set this to “1,” “2,” “4,” or “8.”
+    * the number of virtual CPUs.
     */
    public VAppConfiguration changeProcessorCountTo(int cpus) {
-      checkArgument(cpus == 1 || cpus == 2 || cpus == 4 || cpus == 8,
-               "cpu count must be in 1,2,4,8");
+      checkArgument(cpus >= 1, "cpu count must be positive");
       this.processorCount = cpus;
       return this;
    }
 
    /**
-    * number of MB of memory. This should be either 512 or a multiple of 1024 (1 GB).
+    * number of MB of memory.
     */
    public VAppConfiguration changeMemoryTo(long megabytes) {
-      checkArgument(megabytes == 512 || megabytes % 1024 == 0,
-               "memory must be 512 or an interval of 1024");
-      checkArgument(megabytes <= 16384, "memory must be no more than 16GB");
+      checkArgument(megabytes >= 1, "megabytes must be positive");
       this.memory = megabytes;
       return this;
    }
 
    /**
     * To define a new disk, all you need to define is the size of the disk. The allowed values are a
-    * multiple of 1048576. <br/>
-    * For example: <br/>
-    * 1048576 (1 GB) <br/>
-    * 2097152 (2 GB) <br/>
-    * 3145728 (3 GB) <br/>
-    * 4194304 (4 GB) <br/>
-    * 5242880 (5 GB) <br/>
-    * ... <br/>
-    * 524288000 (500 GB) <br/>
-    * You can have a total of 15 disks. Each disk can contain up to 500 GB of storage.
+    * multiple of 1048576.
     */
    public VAppConfiguration addDisk(long kilobytes) {
+      checkArgument(kilobytes > 0, "kilobytes must be positive");
       checkArgument(kilobytes % 1048576 == 0, "disk must be an interval of 1048576");
-      checkArgument(kilobytes >= 25 *1048576, "disk must be at least 25GB");
-      checkArgument(kilobytes <= 524288000, "disk must be no more than 500GB");
-      checkArgument(disks.size() < 14, "you can only add up to 14 disks for a total of 15");
       this.disks.add(kilobytes);
       return this;
    }

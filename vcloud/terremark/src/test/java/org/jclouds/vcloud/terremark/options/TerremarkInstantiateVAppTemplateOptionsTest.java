@@ -123,11 +123,6 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testMegabytesStaticWrong() {
-      memory(511);
-   }
-
-   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testDiskSizeKilobytes() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
       options.disk(512);

@@ -75,7 +75,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(
-               new Object[] { TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(1)
+               new Object[] { TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2)
                         .memory(512).inRow("row").inGroup("group").withPassword(
                                  "password").inNetwork(URI.create("http://network")) })
                .atLeastOnce();
