@@ -21,12 +21,18 @@ package org.jclouds.ssh.jsch;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.base.Predicates.or;
+import static com.google.common.base.Throwables.getCausalChain;
+import static com.google.common.base.Throwables.getRootCause;
+import static com.google.common.collect.Iterables.any;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -35,7 +41,6 @@ import javax.inject.Named;
 
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.jclouds.Constants;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.ExecResponse;
@@ -43,7 +48,9 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Throwables;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
@@ -82,10 +89,21 @@ public class JschSshClient implements SshClient {
    private final int port;
    private final String username;
    private final String password;
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_MAX_RETRIES)
-   private int sshRetries = 5;
 
+   @Inject(optional = true)
+   @Named("jclouds.ssh.max_retries")
+   @VisibleForTesting
+   int sshRetries = 5;
+
+   @Inject(optional = true)
+   @Named("jclouds.ssh.retryable_messages")
+   @VisibleForTesting
+   String retryableMessages = "invalid data,End of IO Stream Read,Connection reset";
+
+   @Inject(optional = true)
+   @Named("jclouds.ssh.retry_predicate")
+   private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectException.class),
+            instanceOf(IOException.class));
    @Resource
    protected Logger logger = Logger.NULL;
    private Session session;
@@ -171,30 +189,40 @@ public class JschSshClient implements SshClient {
          } catch (Exception from) {
             e = from;
             disconnect();
-            String rootMessage = Throwables.getRootCause(from).getMessage();
+
             if (i == sshRetries)
                throw propagate(from);
-            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
-                     ConnectException.class)) >= 1
-                     || Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
-                              IOException.class)) >= 1
-                     || rootMessage.indexOf("invalid privatekey") != -1
-                     || rootMessage.indexOf("Auth fail") != -1// auth fail sometimes happens in EC2,
-                     // as the script that injects the
-                     // authorized key executes after ssh
-                     // has started
-                     || rootMessage.indexOf("invalid data") != -1
-                     || rootMessage.indexOf("End of IO Stream Read") != -1) {
-               backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, i + 1, String
-                        .format("%s@%s:%d: connection error: %s", username, host.getHostAddress(),
-                                 port, from.getMessage()));
+
+            if (shouldRetry(from)) {
+               backoffForAttempt(i + 1, from.getMessage());
                continue;
             }
+
             throw propagate(from);
          }
       }
       if (e != null)
          throw propagate(e);
+   }
+
+   @VisibleForTesting
+   boolean shouldRetry(Exception from) {
+      final String rootMessage = getRootCause(from).getMessage();
+      return any(getCausalChain(from), retryPredicate)
+               || Iterables.any(Splitter.on(",").split(retryableMessages), new Predicate<String>() {
+
+                  @Override
+                  public boolean apply(String input) {
+                     return rootMessage.indexOf(input) != -1;
+                  }
+
+               });
+   }
+
+   private void backoffForAttempt(int retryAttempt, String rootMessage) {
+      backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, retryAttempt, sshRetries,
+               String.format("%s@%s:%d: connection error: %s", username, host.getHostAddress(),
+                        port, rootMessage));
    }
 
    private void newSession() throws JSchException {
@@ -208,7 +236,9 @@ public class JschSshClient implements SshClient {
          if (password != null) {
             session.setPassword(password);
          } else {
-            jsch.addIdentity(username, privateKey, null, emptyPassPhrase);
+            // jsch wipes out your private key
+            jsch.addIdentity(username, Arrays.copyOf(privateKey, privateKey.length), null,
+                     emptyPassPhrase);
          }
       } catch (JSchException e) {
          throw new SshException(String.format("%s@%s:%d: Error creating session.", username, host
@@ -228,8 +258,10 @@ public class JschSshClient implements SshClient {
 
    @PreDestroy
    public void disconnect() {
-      if (session != null && session.isConnected())
+      if (session != null && session.isConnected()) {
          session.disconnect();
+         session = null;
+      }
    }
 
    public ExecResponse exec(String command) {

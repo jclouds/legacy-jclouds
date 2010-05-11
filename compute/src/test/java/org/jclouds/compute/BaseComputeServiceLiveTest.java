@@ -183,7 +183,13 @@ public abstract class BaseComputeServiceLiveTest {
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(
                keyPair.get("public")).runScript(
                buildScript(template.getImage().getOsFamily()).getBytes());
-      nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
+      try {
+         nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
+      } catch (RunNodesException e) {
+         nodes = Sets.newTreeSet(Iterables.concat(e.getSuccessfulNodes(), e.getNodeErrors()
+                  .keySet()));
+         throw e;
+      }
       assertEquals(nodes.size(), 2);
       checkNodes(nodes, tag);
       NodeMetadata node1 = nodes.first();

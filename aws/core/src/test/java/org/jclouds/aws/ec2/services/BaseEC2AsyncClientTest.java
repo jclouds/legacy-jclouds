@@ -114,5 +114,4 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
          }
       };
    }
-
 }

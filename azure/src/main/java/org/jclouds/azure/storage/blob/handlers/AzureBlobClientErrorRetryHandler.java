@@ -78,8 +78,8 @@ public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
                AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response,
                         new ByteArrayInputStream(content));
                if ("ContainerBeingDeleted".equals(error.getCode())) {
-                  backoffHandler.imposeBackoffExponentialDelay(100L, 3, command.getFailureCount(),
-                           command.toString());
+                  backoffHandler.imposeBackoffExponentialDelay(100L, 3, retryCountLimit, command
+                           .getFailureCount(), command.toString());
                   return true;
                }
             } catch (HttpException e) {

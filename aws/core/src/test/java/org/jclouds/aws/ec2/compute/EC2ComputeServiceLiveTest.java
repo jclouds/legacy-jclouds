@@ -24,6 +24,7 @@ import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -65,6 +66,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    protected JschSshClientModule getSshModule() {
       return new JschSshClientModule();
+   }
+
+   @Override
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      return templateBuilder.imageId("ami-714ba518").build();
    }
 
 }
