@@ -67,25 +67,25 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/run_instances.xml");
 
       Reservation expected = new Reservation(defaultRegion, ImmutableSortedSet.of("default"),
-               ImmutableSet.of(new RunningInstance(defaultRegion, "0", null, "ami-60a54009",
-                        "i-2ba64342", InstanceState.PENDING, InstanceType.M1_SMALL,
+               ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSortedSet.of("default"),
+                        "0", null, "ami-60a54009", "i-2ba64342", InstanceState.PENDING,
+                        InstanceType.M1_SMALL, (InetAddress) null, null, "example-key-name",
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
+                        AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
+                                 .<String> newTreeSet(), null, null, null, null,
+                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
+                                 .<String, EbsBlockDevice> of()), new RunningInstance(
+                        defaultRegion, ImmutableSortedSet.of("default"), "1", null, "ami-60a54009",
+                        "i-2bc64242", InstanceState.PENDING, InstanceType.M1_SMALL,
                         (InetAddress) null, null, "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
                         AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
                                  .<String> newTreeSet(), null, null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        defaultRegion, "1", null, "ami-60a54009", "i-2bc64242",
-                        InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
-                        "example-key-name", dateService
-                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
-                        AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
-                                 .<String> newTreeSet(), null, null, null, null,
-                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
-                                 .<String, EbsBlockDevice> of()), new RunningInstance(
-                        defaultRegion, "2", null, "ami-60a54009", "i-2be64332",
-                        InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
-                        "example-key-name", dateService
+                        defaultRegion, ImmutableSortedSet.of("default"), "2", null, "ami-60a54009",
+                        "i-2be64332", InstanceState.PENDING, InstanceType.M1_SMALL,
+                        (InetAddress) null, null, "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
                         AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
                                  .<String> newTreeSet(), null, null, null, null,

@@ -70,7 +70,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       Set<Reservation> contents = Sets.newTreeSet();
 
       contents.add(new Reservation(defaultRegion, ImmutableSet.of("adriancole.ec2ingress"),
-               ImmutableSet.of(new RunningInstance(defaultRegion, "0",
+               ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet
+                        .of("adriancole.ec2ingress"), "0",
                         "ec2-174-129-81-68.compute-1.amazonaws.com", "ami-1fd73376", "i-0799056f",
                         InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
                                  .getByName("174.129.81.68"), "aki-a71cf9ce", "adriancole.ec21",
@@ -92,17 +93,19 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       Set<Reservation> contents = Sets.newTreeSet();
 
       contents.add(new Reservation(defaultRegion, ImmutableSet.of("default"), ImmutableSet.of(
-               new RunningInstance(defaultRegion, "23", "ec2-72-44-33-4.compute-1.amazonaws.com",
-                        "ami-6ea54007", "i-28a64341", InstanceState.RUNNING, InstanceType.M1_LARGE,
-                        (InetAddress) null, "aki-ba3adfd3", "example-key-name", dateService
+               new RunningInstance(defaultRegion, ImmutableSet.of("default"), "23",
+                        "ec2-72-44-33-4.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64341",
+                        InstanceState.RUNNING, InstanceType.M1_LARGE, (InetAddress) null,
+                        "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
                         AvailabilityZone.US_EAST_1B, null, "10-251-50-132.ec2.internal", null,
                         ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
-                        defaultRegion, "23", "ec2-72-44-33-6.compute-1.amazonaws.com",
-                        "ami-6ea54007", "i-28a64435", InstanceState.RUNNING, InstanceType.M1_LARGE,
-                        (InetAddress) null, "aki-ba3adfd3", "example-key-name", dateService
+                        defaultRegion, ImmutableSet.of("default"), "23",
+                        "ec2-72-44-33-6.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64435",
+                        InstanceState.RUNNING, InstanceType.M1_LARGE, (InetAddress) null,
+                        "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
                         AvailabilityZone.US_EAST_1B, null, "10-251-50-134.ec2.internal", null,
                         ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null,
@@ -121,7 +124,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       Set<Reservation> contents = Sets.newTreeSet();
 
       contents.add(new Reservation(defaultRegion, ImmutableSet.of("adriancole.ec2ebsingress"),
-               ImmutableSet.of(new RunningInstance(defaultRegion, "0",
+               ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet
+                        .of("adriancole.ec2ebsingress"), "0",
                         "ec2-75-101-203-146.compute-1.amazonaws.com", "ami-849875ed", "i-e564438d",
                         InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
                                  .getByName("75.101.203.146"), "aki-a71cf9ce",

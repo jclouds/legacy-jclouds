@@ -48,6 +48,7 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
+import static org.jclouds.util.Utils.*;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -88,19 +89,21 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    private void deleteSecurityGroup(String region, String tag) {
-      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, tag).size() > 0) {
-         logger.debug(">> deleting securityGroup(%s)", tag);
-         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, tag);
+      checkNotEmpty(tag, "tag");
+      String group = "jclouds#" + tag;
+      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, group).size() > 0) {
+         logger.debug(">> deleting securityGroup(%s)", group);
+         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, group);
          securityGroupMap.remove(new PortsRegionTag(region, tag, null)); // TODO: test this clear
          // happens
-         logger.debug("<< deleted securityGroup(%s)", tag);
+         logger.debug("<< deleted securityGroup(%s)", group);
       }
    }
 
    private void deleteKeyPair(String region, String tag) {
       for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
-         if (keyPair.getKeyName().matches(tag + "-[0-9]+")) {
-            logger.debug(">> deleting keyPair(%s)", tag);
+         if (keyPair.getKeyName().matches("jclouds#" + tag + "-[0-9]+")) {
+            logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
             ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
             credentialsMap.remove(new RegionTag(region, keyPair.getKeyName())); // TODO: test this
             // clear happens

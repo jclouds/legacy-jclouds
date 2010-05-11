@@ -208,11 +208,11 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          String region = EC2Utils.findRegionInArgsOrNull(request);
          if (region == null)
             region = defaultRegion;
-         instances.add(new RunningInstance(region, amiLaunchIndex, dnsName, imageId, instanceId,
-                  instanceState, instanceType, ipAddress, kernelId, keyName, launchTime,
-                  monitoring, availabilityZone, platform, privateDnsName, privateIpAddress,
-                  productCodes, ramdiskId, reason, subnetId, vpcId, rootDeviceType, rootDeviceName,
-                  ebsBlockDevices));
+         instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId,
+                  instanceId, instanceState, instanceType, ipAddress, kernelId, keyName,
+                  launchTime, monitoring, availabilityZone, platform, privateDnsName,
+                  privateIpAddress, productCodes, ramdiskId, reason, subnetId, vpcId,
+                  rootDeviceType, rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;

@@ -27,7 +27,9 @@ import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.Attachment.Status;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -45,7 +47,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       private final boolean deleteOnTermination;
 
       public EbsBlockDevice(String volumeId, Status attachmentStatus, Date attachTime,
-                            boolean deleteOnTermination) {
+               boolean deleteOnTermination) {
          super();
          this.volumeId = volumeId;
          this.attachmentStatus = attachmentStatus;
@@ -116,6 +118,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    private final String region;
+   private final Set<String> groupIds = Sets.newLinkedHashSet();
+
    private final String amiLaunchIndex;
    @Nullable
    private final String dnsName;
@@ -156,15 +160,17 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
-   public RunningInstance(String region, @Nullable String amiLaunchIndex, @Nullable String dnsName,
-            String imageId, String instanceId, InstanceState instanceState,
-            String instanceType, @Nullable InetAddress ipAddress, @Nullable String kernelId,
-            @Nullable String keyName, Date launchTime, boolean monitoring,
-            String availabilityZone, @Nullable String platform,
-            @Nullable String privateDnsName, @Nullable InetAddress privateIpAddress,
-            Set<String> productCodes, @Nullable String ramdiskId, @Nullable String reason,
-            @Nullable String subnetId, @Nullable String vpcId, RootDeviceType rootDeviceType,
-            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices) {
+   public RunningInstance(String region, Iterable<String> groupIds,
+            @Nullable String amiLaunchIndex, @Nullable String dnsName, String imageId,
+            String instanceId, InstanceState instanceState, String instanceType,
+            @Nullable InetAddress ipAddress, @Nullable String kernelId, @Nullable String keyName,
+            Date launchTime, boolean monitoring, String availabilityZone,
+            @Nullable String platform, @Nullable String privateDnsName,
+            @Nullable InetAddress privateIpAddress, Set<String> productCodes,
+            @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
+            @Nullable String vpcId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
+            Map<String, EbsBlockDevice> ebsBlockDevices) {
+      Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
       this.region = checkNotNull(region, "region");
       this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
       this.dnsName = dnsName; // nullable on runinstances.
@@ -351,12 +357,19 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public String getRootDeviceName() {
       return rootDeviceName;
    }
-   
+
    /**
     * EBS volumes associated with the instance.
     */
    public Map<String, EbsBlockDevice> getEbsBlockDevices() {
       return ebsBlockDevices;
+   }
+
+   /**
+    * Names of the security groups.
+    */
+   public Set<String> getGroupIds() {
+      return groupIds;
    }
 
    @Override
@@ -367,6 +380,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
       result = prime * result + ((dnsName == null) ? 0 : dnsName.hashCode());
       result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
+      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((instanceState == null) ? 0 : instanceState.hashCode());
@@ -416,6 +430,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
          if (other.ebsBlockDevices != null)
             return false;
       } else if (!ebsBlockDevices.equals(other.ebsBlockDevices))
+         return false;
+      if (groupIds == null) {
+         if (other.groupIds != null)
+            return false;
+      } else if (!groupIds.equals(other.groupIds))
          return false;
       if (imageId == null) {
          if (other.imageId != null)
@@ -511,15 +530,15 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public String toString() {
       return "RunningInstance [amiLaunchIndex=" + amiLaunchIndex + ", availabilityZone="
                + availabilityZone + ", dnsName=" + dnsName + ", ebsBlockDevices=" + ebsBlockDevices
-               + ", imageId=" + imageId + ", instanceId=" + instanceId + ", instanceState="
-               + instanceState + ", instanceType=" + instanceType + ", ipAddress=" + ipAddress
-               + ", kernelId=" + kernelId + ", keyName=" + keyName + ", launchTime=" + launchTime
-               + ", monitoring=" + monitoring + ", platform=" + platform + ", privateDnsName="
-               + privateDnsName + ", privateIpAddress=" + privateIpAddress + ", productCodes="
-               + productCodes + ", ramdiskId=" + ramdiskId + ", reason=" + reason + ", region="
-               + region + ", rootDeviceName=" + rootDeviceName + ", rootDeviceType="
-               + rootDeviceType + ", subnetId=" + subnetId + ", vpcId=" + vpcId + "]";
+               + ", groupIds=" + groupIds + ", imageId=" + imageId + ", instanceId=" + instanceId
+               + ", instanceState=" + instanceState + ", instanceType=" + instanceType
+               + ", ipAddress=" + ipAddress + ", kernelId=" + kernelId + ", keyName=" + keyName
+               + ", launchTime=" + launchTime + ", monitoring=" + monitoring + ", platform="
+               + platform + ", privateDnsName=" + privateDnsName + ", privateIpAddress="
+               + privateIpAddress + ", productCodes=" + productCodes + ", ramdiskId=" + ramdiskId
+               + ", reason=" + reason + ", region=" + region + ", rootDeviceName=" + rootDeviceName
+               + ", rootDeviceType=" + rootDeviceType + ", subnetId=" + subnetId + ", vpcId="
+               + vpcId + "]";
    }
-
 
 }

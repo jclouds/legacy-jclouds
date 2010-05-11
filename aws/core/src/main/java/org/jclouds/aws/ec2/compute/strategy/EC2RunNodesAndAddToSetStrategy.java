@@ -139,7 +139,8 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       credentialsMap.put(new RegionTag(region, keyPair.getKeyName()), keyPair);
 
       TemplateOptions options = template.getOptions();
-      PortsRegionTag portsRegionTag = new PortsRegionTag(region, tag, options.getInboundPorts());
+      String group = "jclouds#" +tag;
+      PortsRegionTag portsRegionTag = new PortsRegionTag(region, group, options.getInboundPorts());
       if (!securityGroupMap.containsKey(portsRegionTag)) {
          securityGroupMap.put(portsRegionTag, createSecurityGroupIfNeeded.apply(portsRegionTag));
       }
@@ -148,10 +149,10 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
                .debug(
                         ">> running %d instance region(%s) zone(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
                         count, region, zone, template.getImage().getId(),
-                        ec2Size.getInstanceType(), tag, tag);
+                        ec2Size.getInstanceType(), keyPair.getKeyName(), group);
       RunInstancesOptions instanceOptions = withKeyName(keyPair.getKeyName())// key
                .asType(ec2Size.getInstanceType())// instance size
-               .withSecurityGroup(tag)// group I created above
+               .withSecurityGroup(group)// group I created above
                .withAdditionalInfo(tag);
 
       Reservation reservation = ec2Client.getInstanceServices().runInstancesInRegion(region, zone,

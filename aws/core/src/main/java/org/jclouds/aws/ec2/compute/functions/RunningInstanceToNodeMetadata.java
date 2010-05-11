@@ -114,11 +114,29 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       String name = null; // user doesn't determine a node name;
       URI uri = null; // no uri to get rest access to host info
 
+      String tag = String.format("NOTAG-%s", instance.getId());// default
+      try {
+         tag = Iterables.getOnlyElement(
+                  Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
+
+                     @Override
+                     public boolean apply(String input) {
+                        return input.startsWith("jclouds#");
+                     }
+
+                  })).substring(8);
+      } catch (NoSuchElementException e) {
+         logger
+                  .warn("no tag parsed from %s's groups: %s", instance.getId(), instance
+                           .getGroupIds());
+      } catch (IllegalArgumentException e) {
+         logger.warn("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(),
+                  instance.getGroupIds());
+      }
+
       Credentials credentials = null;// default if no keypair exists
-      String tag = String.format("NOTAG-%s", instance.getId());// default if no keypair exists
 
       if (instance.getKeyName() != null) {
-         tag = instance.getKeyName().replaceAll("-[0-9]+", "");
          credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance,
                   tag));
       }

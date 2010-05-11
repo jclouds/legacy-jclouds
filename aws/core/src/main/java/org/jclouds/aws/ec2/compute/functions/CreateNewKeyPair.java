@@ -66,7 +66,7 @@ public class CreateNewKeyPair implements Function<RegionTag, KeyPair> {
       while (keyPair == null) {
          try {
             keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region,
-                     tag + "-" + new SecureRandom().nextInt(100));
+                     "jclouds#" + tag + "-" + new SecureRandom().nextInt(100));
             logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
          } catch (AWSResponseException e) {
             if (!e.getError().getCode().equals("InvalidKeyPair.Duplicate")) {
