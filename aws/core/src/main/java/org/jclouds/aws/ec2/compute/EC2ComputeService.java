@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static org.jclouds.util.Utils.checkNotEmpty;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -31,10 +33,9 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromNodeOrDefault;
-import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
-import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.compute.domain.RegionAndName;
+import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -48,10 +49,8 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
-import static org.jclouds.util.Utils.*;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -60,11 +59,10 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class EC2ComputeService extends BaseComputeService {
-   protected final EC2Client ec2Client;
-   protected final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
-   protected final Map<RegionTag, KeyPair> credentialsMap;
-   protected final Map<PortsRegionTag, String> securityGroupMap;
-   protected final Predicate<RunningInstance> instanceStateTerminated;
+   private final EC2Client ec2Client;
+   private final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+   private final Map<RegionAndName, KeyPair> credentialsMap;
+   private final Map<RegionAndName, String> securityGroupMap;
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context,
@@ -76,8 +74,8 @@ public class EC2ComputeService extends BaseComputeService {
             Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
             GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
-            Map<RegionTag, KeyPair> credentialsMap, Map<PortsRegionTag, String> securityGroupMap,
-            @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated) {
+            Map<RegionAndName, KeyPair> credentialsMap,
+            Map<RegionAndName, String> securityGroupMap) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                templateBuilderProvider, utils, executor);
@@ -85,7 +83,6 @@ public class EC2ComputeService extends BaseComputeService {
       this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
-      this.instanceStateTerminated = instanceStateTerminated;
    }
 
    private void deleteSecurityGroup(String region, String tag) {
@@ -94,8 +91,8 @@ public class EC2ComputeService extends BaseComputeService {
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, group).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", group);
          ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, group);
-         securityGroupMap.remove(new PortsRegionTag(region, tag, null)); // TODO: test this clear
-         // happens
+         // TODO: test this clear happens
+         securityGroupMap.remove(new RegionNameAndIngressRules(region, tag, null, false));
          logger.debug("<< deleted securityGroup(%s)", group);
       }
    }
@@ -105,8 +102,8 @@ public class EC2ComputeService extends BaseComputeService {
          if (keyPair.getKeyName().matches("jclouds#" + tag + "-[0-9]+")) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
             ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
-            credentialsMap.remove(new RegionTag(region, keyPair.getKeyName())); // TODO: test this
-            // clear happens
+            // TODO: test this clear happens
+            credentialsMap.remove(new RegionAndName(region, keyPair.getKeyName()));
             logger.debug("<< deleted keyPair(%s)", keyPair.getKeyName());
          }
       }

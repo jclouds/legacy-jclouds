@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -86,7 +86,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
                      NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
    private final AMIClient amiClient;
-   private final Map<RegionTag, KeyPair> credentialsMap;
+   private final Map<RegionAndName, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Set<? extends Image> images;
    private final Set<? extends Location> locations;
@@ -95,7 +95,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @Inject
    RunningInstanceToNodeMetadata(
             AMIClient amiClient,
-            Map<RegionTag, KeyPair> credentialsMap,
+            Map<RegionAndName, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
             Set<? extends Image> images,
             Set<? extends Location> locations,
@@ -194,7 +194,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getPrivateKeyOrNull(RunningInstance instance, String tag) {
-      KeyPair keyPair = credentialsMap.get(new RegionTag(instance.getRegion(), instance
+      KeyPair keyPair = credentialsMap.get(new RegionAndName(instance.getRegion(), instance
                .getKeyName()));
       return keyPair != null ? keyPair.getKeyMaterial() : null;
    }

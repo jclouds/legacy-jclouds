@@ -24,6 +24,7 @@ import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -41,8 +42,8 @@ public class TemplateBuilderImplTest {
    @Test
    public void testImageIdNullsEverythingElse() {
       TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(),
-               new LocationImpl(LocationScope.REGION, " id", "description", null));
+               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), new LocationImpl(
+                        LocationScope.REGION, " id", "description", null), new TemplateOptions());
       template.architecture(Architecture.X86_32);
       template.imageDescriptionMatches("imageDescriptionMatches");
       template.imageNameMatches("imageNameMatches");

@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.net.URI;
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -40,12 +41,12 @@ import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
-import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
-import org.jclouds.aws.ec2.compute.domain.RegionTag;
-import org.jclouds.aws.ec2.compute.functions.CreateNewKeyPair;
+import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.aws.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.aws.ec2.compute.functions.ImageParser;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
@@ -64,6 +65,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.GetNodesOptions;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -84,6 +86,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -108,6 +111,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Override
    protected void configure() {
       super.configure();
+      bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EC2RunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(EC2ListNodesStrategy.class);
@@ -117,6 +121,20 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
       }).annotatedWith(Jsr330.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
                .in(Scopes.SINGLETON);
+   }
+
+   @Provides
+   @Singleton
+   Supplier<String> provideSuffix() {
+      return new Supplier<String>() {
+         final SecureRandom random = new SecureRandom();
+
+         @Override
+         public String get() {
+            return random.nextInt(100) + "";
+         }
+      };
+
    }
 
    @Provides
@@ -220,7 +238,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   protected final Map<RegionTag, KeyPair> credentialsMap(CreateNewKeyPair in) {
+   protected final Map<RegionAndName, KeyPair> credentialsMap(CreateUniqueKeyPair in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();
@@ -228,7 +246,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   protected final Map<PortsRegionTag, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
+   protected final Map<RegionAndName, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();

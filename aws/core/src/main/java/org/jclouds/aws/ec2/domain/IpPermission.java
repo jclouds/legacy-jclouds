@@ -129,4 +129,10 @@ public class IpPermission implements Comparable<IpPermission> {
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "IpPermission [fromPort=" + fromPort + ", groups=" + groups + ", ipProtocol="
+               + ipProtocol + ", ipRanges=" + ipRanges + ", toPort=" + toPort + "]";
+   }
+
 }

@@ -22,13 +22,13 @@ package org.jclouds.aws.ec2.compute.domain;
  * 
  * @author Adrian Cole
  */
-public class RegionTag {
+public class RegionAndName {
    protected final String region;
-   protected final String tag;
+   protected final String name;
 
-   public RegionTag(String region, String tag) {
+   public RegionAndName(String region, String name) {
       this.region = region;
-      this.tag = tag;
+      this.name = name;
    }
 
    @Override
@@ -36,7 +36,7 @@ public class RegionTag {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((region == null) ? 0 : region.hashCode());
-      result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
 
@@ -48,16 +48,16 @@ public class RegionTag {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      RegionTag other = (RegionTag) obj;
+      RegionAndName other = (RegionAndName) obj;
       if (region == null) {
          if (other.region != null)
             return false;
       } else if (!region.equals(other.region))
          return false;
-      if (tag == null) {
-         if (other.tag != null)
+      if (name == null) {
+         if (other.name != null)
             return false;
-      } else if (!tag.equals(other.tag))
+      } else if (!name.equals(other.name))
          return false;
       return true;
    }
@@ -66,13 +66,13 @@ public class RegionTag {
       return region;
    }
 
-   public String getTag() {
-      return tag;
+   public String getName() {
+      return name;
    }
 
    @Override
    public String toString() {
-      return "RegionTag [region=" + region + ", tag=" + tag + "]";
+      return "RegionTag [region=" + region + ", name=" + name + "]";
    }
 
 }

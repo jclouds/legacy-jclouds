@@ -137,4 +137,10 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return false;
       return true;
    }
+
+   @Override
+   public String toString() {
+      return "SecurityGroup [description=" + description + ", ipPermissions=" + ipPermissions
+               + ", name=" + name + ", ownerId=" + ownerId + ", region=" + region + "]";
+   }
 }

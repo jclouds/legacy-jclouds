@@ -19,48 +19,37 @@
 
 package org.jclouds.aws.ec2.compute.strategy;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
+import static com.google.common.collect.Iterables.all;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.aws.ec2.compute.util.EC2ComputeUtils.getRegionFromLocationOrNull;
+import static org.jclouds.aws.ec2.compute.util.EC2ComputeUtils.getZoneFromLocationOrNull;
+import static org.jclouds.aws.ec2.compute.util.EC2ComputeUtils.instanceToId;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.domain.EC2Size;
-import org.jclouds.aws.ec2.compute.domain.PortsRegionTag;
-import org.jclouds.aws.ec2.compute.domain.RegionTag;
-import org.jclouds.aws.ec2.compute.functions.CreateNewKeyPair;
-import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
-import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
-import org.jclouds.compute.ComputeService;
+import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
-import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -70,125 +59,84 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private static Function<RunningInstance, String> instanceToId = new Function<RunningInstance, String>() {
-      @Override
-      public String apply(RunningInstance from) {
-         return from.getId();
-      }
-   };
-   protected final ComputeService computeService;
-   protected final EC2Client ec2Client;
-   protected final Map<RegionTag, KeyPair> credentialsMap;
-   protected final Map<PortsRegionTag, String> securityGroupMap;
-   protected final CreateNewKeyPair createNewKeyPair;
-   protected final CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded;
-   protected final Predicate<RunningInstance> instanceStateRunning;
-   protected final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
-   protected final ComputeUtils utils;
+   @VisibleForTesting
+   final InstanceClient instanceClient;
+   @VisibleForTesting
+   final CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
+   @VisibleForTesting
+   final Predicate<RunningInstance> instanceStateRunning;
+   @VisibleForTesting
+   final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   @VisibleForTesting
+   final ComputeUtils utils;
 
    @Inject
-   protected EC2RunNodesAndAddToSetStrategy(ComputeService computeService, EC2Client ec2Client,
-            Map<RegionTag, KeyPair> credentialsMap, Map<PortsRegionTag, String> securityGroupMap,
-            CreateNewKeyPair createKeyPairIfNeeded,
-            CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
+   EC2RunNodesAndAddToSetStrategy(
+            InstanceClient instanceClient,
+            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
             @Named("RUNNING") Predicate<RunningInstance> instanceStateRunning,
-            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata, ComputeUtils utils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.computeService = computeService;
-      this.ec2Client = ec2Client;
-      this.credentialsMap = credentialsMap;
-      this.securityGroupMap = securityGroupMap;
-      this.createNewKeyPair = createKeyPairIfNeeded;
-      this.createSecurityGroupIfNeeded = createSecurityGroupIfNeeded;
+            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata, ComputeUtils utils) {
+      this.instanceClient = instanceClient;
+      this.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
       this.instanceStateRunning = instanceStateRunning;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
       this.utils = utils;
-      this.executor = executor;
    }
 
-   protected final ExecutorService executor;
-
    @Override
-   public Map<?, ListenableFuture<Void>> execute(final String tag, final int count,
-            final Template template, final Set<NodeMetadata> nodes,
-            final Map<NodeMetadata, Exception> badNodes) {
-      checkArgument(template.getSize() instanceof EC2Size,
-               "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
-      EC2Size ec2Size = EC2Size.class.cast(template.getSize());
+   public Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template,
+            Set<NodeMetadata> goodNodes, Map<NodeMetadata, Exception> badNodes) {
 
-      // parse the availability zone of the request
-      String zone = template.getLocation().getScope() == LocationScope.ZONE ? template
-               .getLocation().getId() : null;
+      Reservation reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag, count,
+               template);
 
-      // if the location has a parent, it must be an availability zone.
-      String region = zone == null ? template.getLocation().getId() : template.getLocation()
-               .getParent().getId();
+      Iterable<NodeMetadata> runningNodes = blockUntilInstancesAreRunningAndConvertToNodes(reservation);
 
-      // get or create incidental resources
-      // TODO race condition. we were using MapMaker, but it doesn't seem to refresh properly when
-      // another thread
-      // deletes a key
-      RegionTag regionTag = new RegionTag(region, tag);
+      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(),
+               runningNodes, goodNodes, badNodes);
+   }
 
-      KeyPair keyPair = createNewKeyPair.apply(regionTag);
+   @VisibleForTesting
+   Iterable<NodeMetadata> blockUntilInstancesAreRunningAndConvertToNodes(Reservation reservation) {
+      return transform(blockUntilInstancesAreRunning(reservation), runningInstanceToNodeMetadata);
+   }
 
-      credentialsMap.put(new RegionTag(region, keyPair.getKeyName()), keyPair);
-
-      TemplateOptions options = template.getOptions();
-      String group = "jclouds#" +tag;
-      PortsRegionTag portsRegionTag = new PortsRegionTag(region, group, options.getInboundPorts());
-      if (!securityGroupMap.containsKey(portsRegionTag)) {
-         securityGroupMap.put(portsRegionTag, createSecurityGroupIfNeeded.apply(portsRegionTag));
-      }
-
-      logger
-               .debug(
-                        ">> running %d instance region(%s) zone(%s) ami(%s) type(%s) keyPair(%s) securityGroup(%s)",
-                        count, region, zone, template.getImage().getId(),
-                        ec2Size.getInstanceType(), keyPair.getKeyName(), group);
-      RunInstancesOptions instanceOptions = withKeyName(keyPair.getKeyName())// key
-               .asType(ec2Size.getInstanceType())// instance size
-               .withSecurityGroup(group)// group I created above
-               .withAdditionalInfo(tag);
-
-      Reservation reservation = ec2Client.getInstanceServices().runInstancesInRegion(region, zone,
-               template.getImage().getId(), 1, count, instanceOptions);
-      Iterable<String> ids = Iterables.transform(reservation, instanceToId);
+   @VisibleForTesting
+   Iterable<RunningInstance> blockUntilInstancesAreRunning(Reservation reservation) {
+      Iterable<String> ids = transform(reservation, instanceToId);
 
       String idsString = Joiner.on(',').join(ids);
       logger.debug("<< started instances(%s)", idsString);
-      Iterables.all(reservation, instanceStateRunning);
+      all(reservation, instanceStateRunning);
       logger.debug("<< running instances(%s)", idsString);
-      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
-      for (final NodeMetadata node : Iterables.transform(getInstances(region, ids),
-               runningInstanceToNodeMetadata)) {
-         responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               try {
-                  utils.runOptionsOnNode(node, template.getOptions());
-                  logger.debug("<< options applied node(%s)", node.getId());
-                  nodes.add(computeService.getNodeMetadata(node));
-               } catch (Exception e) {
-                  logger.error(e, "<< problem applying options to node(%s): ", node.getId(),
-                           Throwables.getRootCause(e).getMessage());
-                  badNodes.put(computeService.getNodeMetadata(node), e);
-               }
-               return null;
-            }
 
-         }), executor));
-      }
-      return responses;
+      return getInstances(reservation.getRegion(), ids);
+   }
+
+   @VisibleForTesting
+   Reservation createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
+            Template template) {
+      String region = getRegionFromLocationOrNull(template.getLocation());
+      String zone = getZoneFromLocationOrNull(template.getLocation());
+
+      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions
+               .execute(region, tag, template);
+
+      if (logger.isDebugEnabled())
+         logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count,
+                  region, zone, template.getImage().getId(), instanceOptions.buildFormParameters());
+
+      return instanceClient.runInstancesInRegion(region, zone, template.getImage().getId(), 1,
+               count, instanceOptions);
    }
 
    private Iterable<RunningInstance> getInstances(String region, Iterable<String> ids) {
-      return Iterables.concat(ec2Client.getInstanceServices().describeInstancesInRegion(region,
-               Iterables.toArray(ids, String.class)));
+      return concat(instanceClient.describeInstancesInRegion(region, toArray(ids, String.class)));
    }
 
 }

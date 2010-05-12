@@ -23,12 +23,14 @@ package org.jclouds.aws.ec2.compute.domain;
  * 
  * @author Adrian Cole
  */
-public class PortsRegionTag extends RegionTag {
+public class RegionNameAndIngressRules extends RegionAndName {
    private final int[] ports;
+   private final boolean authorizeSelf;
 
-   public PortsRegionTag(String region, String tag, int[] ports) {
+   public RegionNameAndIngressRules(String region, String tag, int[] ports, boolean authorizeSelf) {
       super(region, tag);
       this.ports = ports;
+      this.authorizeSelf = authorizeSelf;
    }
 
    // intentionally not overriding equals or hash-code so that we can search only by region/tag in a
@@ -36,6 +38,10 @@ public class PortsRegionTag extends RegionTag {
 
    public int[] getPorts() {
       return ports;
+   }
+
+   public boolean shouldAuthorizeSelf() {
+      return authorizeSelf;
    }
 
 }

@@ -41,6 +41,10 @@ public class BaseEC2RequestOptions extends BaseHttpRequestOptions {
       }
    }
 
+   protected void indexFormValuesWithPrefix(String prefix, Iterable<String> values) {
+      indexFormValuesWithPrefix(prefix, Iterables.toArray(values, String.class));
+   }
+
    protected Set<String> getFormValuesWithKeysPrefixedBy(final String prefix) {
       Set<String> values = Sets.newLinkedHashSet();
       for (String key : Iterables.filter(formParameters.keySet(), new Predicate<String>() {

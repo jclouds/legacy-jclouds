@@ -27,6 +27,7 @@ package org.jclouds.aws.ec2.compute;
 import static java.lang.String.format;
 
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -118,7 +119,7 @@ public class EC2ComputeServiceTest {
       return new TemplateBuilderImpl(ImmutableSet.of(location), ImmutableSet.of(image),
                ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
                         EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
-                        EC2Size.M2_4XLARGE), location) {
+                        EC2Size.M2_4XLARGE), location, new EC2TemplateOptions()) {
       };
    }
 

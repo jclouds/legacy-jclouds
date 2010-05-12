@@ -93,15 +93,16 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    boolean fastest;
 
-   private TemplateOptions options = TemplateOptions.NONE;
+   private TemplateOptions options;
 
    @Inject
    protected TemplateBuilderImpl(Set<? extends Location> locations, Set<? extends Image> images,
-            Set<? extends Size> sizes, Location defaultLocation) {
+            Set<? extends Size> sizes, Location defaultLocation, TemplateOptions options) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
       this.locationId = defaultLocation.getId();
+      this.options = options;
    }
 
    private final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {

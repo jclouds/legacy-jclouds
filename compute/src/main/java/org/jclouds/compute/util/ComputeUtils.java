@@ -21,6 +21,7 @@ package org.jclouds.compute.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -85,6 +86,15 @@ public class ComputeUtils {
    private final Predicate<InetSocketAddress> socketTester;
    private final ExecutorService executor;
 
+   @Inject
+   public ComputeUtils(Predicate<InetSocketAddress> socketTester,
+            @Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.socketTester = socketTester;
+      this.runScriptNotRunning = runScriptNotRunning;
+      this.executor = executor;
+   }
+
    public static String createExecutionErrorMessage(Map<?, Exception> executionExceptions) {
       Formatter fmt = new Formatter().format("Execution failures:%n%n");
       int index = 1;
@@ -94,6 +104,38 @@ public class ComputeUtils {
                   .getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", executionExceptions.size()).toString();
+   }
+
+   public Map<?, ListenableFuture<Void>> runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(
+            final TemplateOptions options, Iterable<NodeMetadata> runningNodes,
+            final Set<NodeMetadata> goodNodes, final Map<NodeMetadata, Exception> badNodes) {
+      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+      for (final NodeMetadata node : runningNodes) {
+         responses.put(node, makeListenable(executor
+                  .submit(runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(node, badNodes,
+                           goodNodes, options)), executor));
+      }
+      return responses;
+   }
+
+   public Callable<Void> runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(
+            final NodeMetadata node, final Map<NodeMetadata, Exception> badNodes,
+            final Set<NodeMetadata> goodNodes, final TemplateOptions options) {
+      return new Callable<Void>() {
+         @Override
+         public Void call() throws Exception {
+            try {
+               runOptionsOnNode(node, options);
+               logger.debug("<< options applied node(%s)", node.getId());
+               goodNodes.add(node);
+            } catch (Exception e) {
+               logger.error(e, "<< problem applying options to node(%s): ", node.getId(),
+                        Throwables.getRootCause(e).getMessage());
+               badNodes.put(node, e);
+            }
+            return null;
+         }
+      };
    }
 
    public static String createNodeErrorMessage(
@@ -106,15 +148,6 @@ public class ComputeUtils {
                   .getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
-   }
-
-   @Inject
-   public ComputeUtils(Predicate<InetSocketAddress> socketTester,
-            @Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.socketTester = socketTester;
-      this.runScriptNotRunning = runScriptNotRunning;
-      this.executor = executor;
    }
 
    public static Iterable<? extends ComputeMetadata> filterByName(

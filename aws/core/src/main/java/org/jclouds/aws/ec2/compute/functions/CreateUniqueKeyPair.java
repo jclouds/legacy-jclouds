@@ -21,8 +21,6 @@ package org.jclouds.aws.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.security.SecureRandom;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,43 +28,46 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CreateNewKeyPair implements Function<RegionTag, KeyPair> {
+public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final EC2Client ec2Client;
+   protected Supplier<String> randomSuffix;
 
    @Inject
-   public CreateNewKeyPair(EC2Client ec2Client) {
+   public CreateUniqueKeyPair(EC2Client ec2Client, Supplier<String> randomSuffix) {
       this.ec2Client = ec2Client;
+      this.randomSuffix = randomSuffix;
    }
 
    @Override
-   public KeyPair apply(RegionTag from) {
-      return createNewKeyPairInRegion(from.getRegion(), from.getTag());
+   public KeyPair apply(RegionAndName from) {
+      return createNewKeyPairInRegion(from.getRegion(), from.getName());
    }
 
-   private KeyPair createNewKeyPairInRegion(String region, String tag) {
+   private KeyPair createNewKeyPairInRegion(String region, String keyPairName) {
       checkNotNull(region, "region");
-      checkNotNull(tag, "tag");
-      logger.debug(">> creating keyPair region(%s) tag(%s)", region, tag);
+      checkNotNull(keyPairName, "keyPairName");
+      logger.debug(">> creating keyPair region(%s) keyPairName(%s)", region, keyPairName);
       KeyPair keyPair = null;
       while (keyPair == null) {
          try {
             keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region,
-                     "jclouds#" + tag + "-" + new SecureRandom().nextInt(100));
+                     getNextName(keyPairName));
             logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
          } catch (AWSResponseException e) {
             if (!e.getError().getCode().equals("InvalidKeyPair.Duplicate")) {
@@ -75,5 +76,9 @@ public class CreateNewKeyPair implements Function<RegionTag, KeyPair> {
          }
       }
       return keyPair;
+   }
+
+   private String getNextName(String keyPairName) {
+      return "jclouds#" + keyPairName + "-" + randomSuffix.get();
    }
 }

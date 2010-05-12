@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.compute.domain.RegionTag;
+import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.InstanceState;
@@ -60,7 +60,7 @@ public class RunningInstanceToNodeMetadataTest {
    public void testApplyWithNoSecurityGroupCreatesTagOfIdPrefixedByTagAndNullCredentials()
             throws UnknownHostException {
       AMIClient amiClient = createMock(AMIClient.class);
-      Map<RegionTag, KeyPair> credentialsMap = createMock(Map.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet
@@ -117,7 +117,7 @@ public class RunningInstanceToNodeMetadataTest {
    public void testApplyWithNoKeyPairCreatesTagOfParsedSecurityGroupAndNullCredentials()
             throws UnknownHostException {
       AMIClient amiClient = createMock(AMIClient.class);
-      Map<RegionTag, KeyPair> credentialsMap = createMock(Map.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet
@@ -174,7 +174,7 @@ public class RunningInstanceToNodeMetadataTest {
    public void testApplyWithKeyPairCreatesTagOfParsedSecurityGroupAndCredentialsBasedOnIt()
             throws UnknownHostException {
       AMIClient amiClient = createMock(AMIClient.class);
-      Map<RegionTag, KeyPair> credentialsMap = createMock(Map.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
@@ -207,7 +207,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
-      expect(credentialsMap.get(new RegionTag(Region.US_EAST_1, "jclouds#keyName"))).andReturn(
+      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#keyName"))).andReturn(
                new KeyPair(Region.US_EAST_1, "jclouds#keyName", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
@@ -245,7 +245,7 @@ public class RunningInstanceToNodeMetadataTest {
    public void testApplyWithTwoSecurityGroups()
             throws UnknownHostException {
       AMIClient amiClient = createMock(AMIClient.class);
-      Map<RegionTag, KeyPair> credentialsMap = createMock(Map.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
@@ -278,7 +278,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
-      expect(credentialsMap.get(new RegionTag(Region.US_EAST_1, "jclouds#keyName"))).andReturn(
+      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#keyName"))).andReturn(
                new KeyPair(Region.US_EAST_1, "jclouds#keyName", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();

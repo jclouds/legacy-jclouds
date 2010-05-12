@@ -1,3 +1,21 @@
+/**
+ *
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
 package org.jclouds.compute.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -6,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Arrays;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation. <h2>
+ * Contains options supported in the {@code ComputeService#runNodesWithTag} operation. <h2>
  * Usage</h2> The recommended way to instantiate a TemplateOptions object is to statically import
  * TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
  * needed):
@@ -15,7 +33,8 @@ import java.util.Arrays;
  * import static org.jclouds.compute.options.TemplateOptions.Builder.*;
  * <p/>
  * ComputeService client = // get connection
- * NodeSet set = client.runNode(name, template.options(inboundPorts(22, 80, 8080, 443)));
+ * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
+ * Set<? extends NodeMetadata> set = client.runNodesWithTag(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole
@@ -24,19 +43,19 @@ public class TemplateOptions {
 
    public static final TemplateOptions NONE = new TemplateOptions();
 
-   private int[] inboundPorts = new int[] { 22 };
+   protected int[] inboundPorts = new int[] { 22 };
 
-   private byte[] script;
+   protected byte[] script;
 
-   private String privateKey;
+   protected String privateKey;
 
-   private String publicKey;
+   protected String publicKey;
 
-   private int port = -1;
+   protected int port = -1;
 
-   private int seconds = -1;
+   protected int seconds = -1;
 
-   private boolean includeMetadata;
+   protected boolean includeMetadata;
 
    public int getPort() {
       return port;
@@ -64,6 +83,10 @@ public class TemplateOptions {
 
    public boolean isIncludeMetadata() {
       return includeMetadata;
+   }
+
+   public <T extends TemplateOptions> T as(Class<T> clazz) {
+      return clazz.cast(this);
    }
 
    /**
@@ -179,5 +202,51 @@ public class TemplateOptions {
                + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
                + (script != null) + ", port:seconds=" + port + ":" + seconds
                + ", metadata/details: " + includeMetadata + "]";
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + Arrays.hashCode(inboundPorts);
+      result = prime * result + (includeMetadata ? 1231 : 1237);
+      result = prime * result + port;
+      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
+      result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
+      result = prime * result + Arrays.hashCode(script);
+      result = prime * result + seconds;
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      TemplateOptions other = (TemplateOptions) obj;
+      if (!Arrays.equals(inboundPorts, other.inboundPorts))
+         return false;
+      if (includeMetadata != other.includeMetadata)
+         return false;
+      if (port != other.port)
+         return false;
+      if (privateKey == null) {
+         if (other.privateKey != null)
+            return false;
+      } else if (!privateKey.equals(other.privateKey))
+         return false;
+      if (publicKey == null) {
+         if (other.publicKey != null)
+            return false;
+      } else if (!publicKey.equals(other.publicKey))
+         return false;
+      if (!Arrays.equals(script, other.script))
+         return false;
+      if (seconds != other.seconds)
+         return false;
+      return true;
    }
 }

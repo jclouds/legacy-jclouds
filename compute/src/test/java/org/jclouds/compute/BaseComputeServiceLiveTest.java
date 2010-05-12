@@ -252,7 +252,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   private Map<NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
+   protected Map<NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
             Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesMatching(new Predicate<NodeMetadata>() {

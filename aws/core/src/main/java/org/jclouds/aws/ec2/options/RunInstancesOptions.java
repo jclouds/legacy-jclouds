@@ -65,7 +65,15 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       indexFormValuesWithPrefix("SecurityGroup", securityGroups);
       return this;
    }
-
+   
+   /**
+    * Attach multiple security groups
+    */
+   public RunInstancesOptions withSecurityGroups(Iterable<String> securityGroups) {
+      indexFormValuesWithPrefix("SecurityGroup", securityGroups);
+      return this;
+   }
+   
    /**
     * Attaches a single security group. Multiple calls to this method
     * won't add more groups.
