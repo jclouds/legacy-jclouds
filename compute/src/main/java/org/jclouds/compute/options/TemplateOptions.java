@@ -43,6 +43,90 @@ public class TemplateOptions {
 
    public static final TemplateOptions NONE = new TemplateOptions();
 
+   public static class ImmutableTemplateOptions extends TemplateOptions {
+      private final TemplateOptions delegate;
+
+      public ImmutableTemplateOptions(TemplateOptions delegate) {
+         this.delegate = delegate;
+      }
+
+      @Override
+      public String toString() {
+         return delegate.toString();
+      }
+
+      @Override
+      public <T extends TemplateOptions> T as(Class<T> clazz) {
+         return delegate.as(clazz);
+      }
+
+      @Override
+      public TemplateOptions authorizePublicKey(String publicKey) {
+         return delegate.authorizePublicKey(publicKey);
+      }
+
+      @Override
+      public TemplateOptions blockOnPort(int port, int seconds) {
+         throw new IllegalArgumentException("port, seconds are immutable");
+      }
+
+      @Override
+      public int[] getInboundPorts() {
+         return delegate.getInboundPorts();
+      }
+
+      @Override
+      public int getPort() {
+         return delegate.getPort();
+      }
+
+      @Override
+      public String getPrivateKey() {
+         return delegate.getPrivateKey();
+      }
+
+      @Override
+      public String getPublicKey() {
+         return delegate.getPublicKey();
+      }
+
+      @Override
+      public byte[] getRunScript() {
+         return delegate.getRunScript();
+      }
+
+      @Override
+      public int getSeconds() {
+         return delegate.getSeconds();
+      }
+
+      @Override
+      public TemplateOptions inboundPorts(int... ports) {
+         throw new IllegalArgumentException("ports is immutable");
+      }
+
+      @Override
+      public TemplateOptions installPrivateKey(String privateKey) {
+         throw new IllegalArgumentException("privateKey is immutable");
+      }
+
+      @Override
+      public boolean isIncludeMetadata() {
+         return delegate.isIncludeMetadata();
+      }
+
+      @Override
+      public TemplateOptions runScript(byte[] script) {
+         throw new IllegalArgumentException("withMetadata is immutable");
+      }
+
+      @Override
+      public TemplateOptions withMetadata() {
+         throw new IllegalArgumentException("withMetadata is immutable");
+      }
+
+   }
+
    protected int[] inboundPorts = new int[] { 22 };
 
    protected byte[] script;

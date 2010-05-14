@@ -19,7 +19,7 @@
 
 package org.jclouds.compute.strategy;
 
-import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.domain.Location;
 
 /**
  * Reboots a node unless it is in the state TERMINATED.
@@ -28,6 +28,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
  */
 public interface RebootNodeStrategy {
 
-   boolean execute(ComputeMetadata node);
+   boolean execute(Location location, String id);
 
 }

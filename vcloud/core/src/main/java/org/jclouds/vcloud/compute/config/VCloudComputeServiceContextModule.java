@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.compute.config;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
@@ -50,12 +49,12 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
-import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -163,8 +162,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         Task task = client.resetVApp(node.getId());
+      public boolean execute(Location location, String id) {
+         Task task = client.resetVApp(id);
          return taskTester.apply(task.getId());
       }
 
@@ -180,8 +179,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         computeClient.stop(checkNotNull(node.getId(), "node.id"));
+      public boolean execute(Location location, String id) {
+         computeClient.stop(checkNotNull(id, "node.id"));
          return true;
       }
 
@@ -241,11 +240,31 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
+      public Iterable<ComputeMetadata> list() {
          Set<ComputeMetadata> nodes = Sets.newHashSet();
          for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
+                  nodes.add(convertVAppToComputeMetadata(vdc, resource));
+               }
+            }
+         }
+         return nodes;
+      }
+
+      private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
+         Location location = findLocationForResourceInVDC.apply(resource, vdc.getId());
+         return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(), resource.getName(),
+                  location, null, ImmutableMap.<String, String> of());
+      }
+
+      @Override
+      public Iterable<NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
+         Set<NodeMetadata> nodes = Sets.newHashSet();
+         for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
+            for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+               if (resource.getType().equals(VCloudMediaType.VAPP_XML)
+                        && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
                   addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
                }
             }
@@ -254,7 +273,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @VisibleForTesting
-      void addVAppToSetRetryingIfNotYetPresent(Set<ComputeMetadata> nodes, NamedResource vdc,
+      void addVAppToSetRetryingIfNotYetPresent(Set<NodeMetadata> nodes, NamedResource vdc,
                NamedResource resource) {
          NodeMetadata node = null;
          int i = 0;
@@ -284,11 +303,9 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public NodeMetadata execute(ComputeMetadata node) {
-         checkArgument(node.getType() == ComputeType.NODE, "this is only valid for nodes, not "
-                  + node.getType());
-         return getNodeMetadataByIdInVDC(checkNotNull(node.getLocation(), "location").getId(),
-                  checkNotNull(node.getId(), "node.id"));
+      public NodeMetadata execute(Location location, String id) {
+         return getNodeMetadataByIdInVDC(checkNotNull(location, "location").getId(), checkNotNull(
+                  id, "node.id"));
       }
 
    }

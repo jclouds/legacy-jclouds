@@ -19,7 +19,7 @@
 
 package org.jclouds.compute.strategy;
 
-import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.domain.Location;
 
 /**
  * terminates the node and blocks until it is no longer visible or in the state TERMINATED. If this
@@ -29,6 +29,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
  */
 public interface DestroyNodeStrategy {
 
-   boolean execute(ComputeMetadata node);
+   boolean execute(Location location, String id);
 
 }

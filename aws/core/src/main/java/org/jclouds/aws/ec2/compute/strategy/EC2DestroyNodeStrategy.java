@@ -25,13 +25,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromNodeOrDefault;
+import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromLocation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -48,29 +47,25 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
    protected Logger logger = Logger.NULL;
    protected final EC2Client ec2Client;
    protected final Predicate<RunningInstance> instanceStateTerminated;
-   protected final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+   protected final GetRegionFromLocation getRegionFromLocation;
    protected final GetNodeMetadataStrategy getNodeMetadataStrategy;
 
    @Inject
    protected EC2DestroyNodeStrategy(EC2Client ec2Client,
             @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated,
-            GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
+            GetRegionFromLocation getRegionFromLocation,
             GetNodeMetadataStrategy getNodeMetadataStrategy) {
       this.ec2Client = ec2Client;
       this.instanceStateTerminated = instanceStateTerminated;
-      this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
+      this.getRegionFromLocation = getRegionFromLocation;
       this.getNodeMetadataStrategy = getNodeMetadataStrategy;
    }
 
    @Override
-   public boolean execute(ComputeMetadata metadata) {
-      NodeMetadata node = metadata instanceof NodeMetadata ? NodeMetadata.class.cast(metadata)
-               : getNodeMetadataStrategy.execute(metadata);
-      String region = getRegionFromNodeOrDefault.apply(node);
-
-      ec2Client.getInstanceServices().terminateInstancesInRegion(region, node.getId());
+   public boolean execute(Location location, String id) {
+      String region = getRegionFromLocation.apply(location);
+      ec2Client.getInstanceServices().terminateInstancesInRegion(region, id);
       return instanceStateTerminated.apply(Iterables.getOnlyElement(Iterables.concat(ec2Client
-               .getInstanceServices().describeInstancesInRegion(region, node.getId()))));
+               .getInstanceServices().describeInstancesInRegion(region, id))));
    }
-
 }

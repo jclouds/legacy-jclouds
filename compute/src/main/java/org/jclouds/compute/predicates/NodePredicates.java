@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 
 /**
@@ -66,6 +67,13 @@ public class NodePredicates {
    }
 
    /**
+    * return everything.
+    */
+   public static Predicate<ComputeMetadata> all() {
+      return Predicates.<ComputeMetadata> alwaysTrue();
+   }
+
+   /**
     * Return nodes with specified tag. Note: returns all nodes, regardless of the state.
     * 
     * @param tag
@@ -94,7 +102,7 @@ public class NodePredicates {
     *           tag to match the items
     * @return predicate
     */
-   public static Predicate<NodeMetadata> activeWithTag(final String tag) {
+   public static Predicate<NodeMetadata> runningWithTag(final String tag) {
       checkNotEmpty(tag, "Tag must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
@@ -105,7 +113,7 @@ public class NodePredicates {
 
          @Override
          public String toString() {
-            return "activeWithTag(" + tag + ")";
+            return "runningWithTag(" + tag + ")";
          }
       };
    }

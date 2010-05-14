@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
@@ -138,7 +139,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                   result.getKeyMaterial()));
 
       } finally {
-         client.destroyNodesWithTag(tag);
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
          if (startedId != null) {
             // ensure we didn't delete these resources!
             assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
@@ -190,7 +191,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert group.getIpPermissions().size() == 0 : group;
 
       } finally {
-         client.destroyNodesWithTag(tag);
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
          if (startedId != null) {
             // ensure we didn't delete these resources!
             assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);

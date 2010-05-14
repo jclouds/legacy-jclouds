@@ -35,7 +35,43 @@ public class RunScriptOptions {
     * <li>run the script as root (versus running with current privileges)</li>
     * </ul>
     */
-   public static final RunScriptOptions NONE = new RunScriptOptions();
+   public static final RunScriptOptions NONE = new ImmutableRunScriptOptions(new RunScriptOptions());
+
+   public static class ImmutableRunScriptOptions extends RunScriptOptions {
+      private final RunScriptOptions delegate;
+
+      public ImmutableRunScriptOptions(RunScriptOptions delegate) {
+         this.delegate = delegate;
+      }
+
+      @Override
+      public String toString() {
+         return delegate.toString();
+      }
+
+      @Override
+      public Credentials getOverrideCredentials() {
+         return delegate.getOverrideCredentials();
+
+      }
+
+      @Override
+      public boolean isRunAsRoot() {
+         return delegate.isRunAsRoot();
+
+      }
+
+      @Override
+      public RunScriptOptions runAsRoot(boolean runAsRoot) {
+         throw new IllegalArgumentException("runAsRoot is immutable");
+      }
+
+      @Override
+      public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
+         throw new IllegalArgumentException("overridingCredentials is immutable");
+      }
+
+   }
 
    private Credentials overridingCredentials;
    private boolean runAsRoot = true;

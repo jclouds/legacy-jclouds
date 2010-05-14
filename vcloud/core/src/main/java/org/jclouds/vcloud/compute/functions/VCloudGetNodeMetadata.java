@@ -57,6 +57,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class VCloudGetNodeMetadata {
+   
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -85,7 +86,7 @@ public class VCloudGetNodeMetadata {
       this.computeClient = checkNotNull(computeClient, "computeClient");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
    }
-
+   
    protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
       VApp vApp = client.getVApp(id);
 

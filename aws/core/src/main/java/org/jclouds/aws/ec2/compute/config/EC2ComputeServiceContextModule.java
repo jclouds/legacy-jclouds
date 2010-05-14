@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
@@ -64,8 +65,8 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
-import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -142,6 +143,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       return template.architecture(Architecture.X86_32).osFamily(UBUNTU);
    }
 
+   // TODO make this more efficient for listNodes(); currently RunningInstanceToNodeMetadata is slow
+   // due to image parsing; consider using MapMaker. computing map
    @Singleton
    public static class EC2ListNodesStrategy implements ListNodesStrategy {
       private final InstanceClient client;
@@ -155,21 +158,25 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
+      public Iterable<? extends ComputeMetadata> list() {
+         return listDetailsOnNodesMatching(NodePredicates.all());
+      }
+
+      @Override
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
+               Predicate<ComputeMetadata> filter) {
          Set<NodeMetadata> nodes = Sets.newHashSet();
          for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
             Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
                      .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
          }
-         return nodes;
+         return Iterables.filter(nodes, filter);
       }
-
    }
 
    @Singleton
-   public static class GetRegionFromNodeOrDefault implements Function<ComputeMetadata, String> {
-      public String apply(ComputeMetadata node) {
-         Location location = node.getLocation();
+   public static class GetRegionFromLocation implements Function<Location, String> {
+      public String apply(Location location) {
          String region = location.getScope() == LocationScope.REGION ? location.getId() : location
                   .getParent().getId();
          return region;
@@ -181,22 +188,22 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
       private final InstanceClient client;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
-      private final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+      private final GetRegionFromLocation getRegionFromLocation;
 
       @Inject
       protected EC2GetNodeMetadataStrategy(InstanceClient client,
-               GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
+               GetRegionFromLocation getRegionFromLocation,
                RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
          this.client = client;
-         this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
+         this.getRegionFromLocation = getRegionFromLocation;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
       }
 
       @Override
-      public NodeMetadata execute(ComputeMetadata node) {
-         String region = getRegionFromNodeOrDefault.apply(node);
+      public NodeMetadata execute(Location location, String id) {
+         String region = getRegionFromLocation.apply(checkNotNull(location, "location"));
          RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
-                  client, region, node.getId()));
+                  client, region, checkNotNull(id, "id")));
          return runningInstanceToNodeMetadata.apply(runningInstance);
       }
 
@@ -210,19 +217,19 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Singleton
    public static class EC2RebootNodeStrategy implements RebootNodeStrategy {
       private final InstanceClient client;
-      private final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+      private final GetRegionFromLocation getRegionFromLocation;
 
       @Inject
       protected EC2RebootNodeStrategy(InstanceClient client,
-               GetRegionFromNodeOrDefault getRegionFromNodeOrDefault) {
+               GetRegionFromLocation getRegionFromLocation) {
          this.client = client;
-         this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
+         this.getRegionFromLocation = getRegionFromLocation;
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         String region = getRegionFromNodeOrDefault.apply(node);
-         client.rebootInstancesInRegion(region, node.getId());
+      public boolean execute(Location location, String id) {
+         String region = getRegionFromLocation.apply(location);
+         client.rebootInstancesInRegion(region, id);
          return true;
       }
 

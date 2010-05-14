@@ -44,7 +44,6 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -66,7 +65,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -172,7 +170,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testTemplateMatch")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
-         client.destroyNodesWithTag(tag);
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
       } catch (HttpResponseException e) {
          // TODO hosting.com throws 400 when we try to delete a vApp
       } catch (NoSuchElementException e) {
@@ -236,8 +234,9 @@ public abstract class BaseComputeServiceLiveTest {
          assert good.account != null;
 
          try {
-            Map<NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, simpleTemplate
-                     .getImage().getOsFamily(), new Credentials(good.account, "romeo"));
+            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag,
+                     simpleTemplate.getImage().getOsFamily(),
+                     new Credentials(good.account, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
@@ -248,25 +247,19 @@ public abstract class BaseComputeServiceLiveTest {
          checkNodes(nodes, tag);
 
       } finally {
-         client.destroyNodesWithTag(tag);
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
       }
    }
 
-   protected Map<NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
-            Credentials creds) throws RunScriptOnNodesException {
+   protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag,
+            OsFamily osFamily, Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(new Predicate<NodeMetadata>() {
-
-            @Override
-            public boolean apply(NodeMetadata arg0) {
-               return arg0.getState() == NodeState.RUNNING && tag.equals(arg0.getTag());
-            }
-         }, buildScript(osFamily).getBytes(), RunScriptOptions.Builder
-                  .overrideCredentialsWith(creds));
+         return client.runScriptOnNodesMatching(NodePredicates.runningWithTag(tag), buildScript(
+                  osFamily).getBytes(), RunScriptOptions.Builder.overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
-            System.err.printf("bad credentials: %s:%s for %s%n", creds.account, creds.key, client
-                     .listNodesWithTag(tag));
+            // System.err.printf("bad credentials: %s:%s for %s%n", creds.account, creds.key, client
+            // .listNodesDetailsMatching(tag));
          }
          throw e;
       }
@@ -326,11 +319,12 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(client
-               .listNodesWithTag(tag), Predicates.not(NodePredicates.TERMINATED)));
+      Set<? extends NodeMetadata> nodes = client.listNodesDetailsMatching(NodePredicates.all());
+      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(nodes, Predicates
+               .and(NodePredicates.withTag(tag), Predicates.not(NodePredicates.TERMINATED))));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
-         NodeMetadata metadata = client.getNodeMetadata(node);
+         NodeMetadata metadata = client.getNodeMetadata(node.getLocation(), node.getId());
          assertEquals(metadata.getId(), node.getId());
          assertEquals(metadata.getTag(), node.getTag());
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
@@ -345,7 +339,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testGet")
    public void testReboot() throws Exception {
-      client.rebootNodesWithTag(tag);// TODO test validation
+      client.rebootNodesMatching(NodePredicates.withTag(tag));// TODO test validation
       testGet();
    }
 
@@ -366,7 +360,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testGetNodesWithDetails() throws Exception {
-      for (ComputeMetadata node : client.listNodes(new GetNodesOptions().withDetails())) {
+      for (NodeMetadata node : client.listNodesDetailsMatching(NodePredicates.all())) {
          assert node.getId() != null : node;
          assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
@@ -479,8 +473,9 @@ public abstract class BaseComputeServiceLiveTest {
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
-         client.destroyNodesWithTag(tag);
-         for (NodeMetadata node : client.listNodesWithTag(tag)) {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         for (NodeMetadata node : Iterables.filter(client.listNodesDetailsMatching(NodePredicates
+                  .all()), NodePredicates.withTag(tag))) {
             assert node.getState() == NodeState.TERMINATED : node;
          }
       }

@@ -20,7 +20,9 @@
 package org.jclouds.compute.strategy;
 
 import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.options.GetNodesOptions;
+import org.jclouds.compute.domain.NodeMetadata;
+
+import com.google.common.base.Predicate;
 
 /**
  * 
@@ -28,5 +30,8 @@ import org.jclouds.compute.options.GetNodesOptions;
  */
 public interface ListNodesStrategy {
 
-   Iterable<? extends ComputeMetadata> execute(GetNodesOptions options);
+   Iterable<? extends ComputeMetadata> list();
+
+   Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter);
+
 }

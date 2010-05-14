@@ -22,9 +22,9 @@ import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromNodeOrDefault;
+import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromLocation;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -50,9 +50,8 @@ import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -60,7 +59,7 @@ import com.google.common.collect.Sets;
 @Singleton
 public class EC2ComputeService extends BaseComputeService {
    private final EC2Client ec2Client;
-   private final GetRegionFromNodeOrDefault getRegionFromNodeOrDefault;
+   private final GetRegionFromLocation getRegionFromLocation;
    private final Map<RegionAndName, KeyPair> credentialsMap;
    private final Map<RegionAndName, String> securityGroupMap;
 
@@ -73,14 +72,13 @@ public class EC2ComputeService extends BaseComputeService {
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-            GetRegionFromNodeOrDefault getRegionFromNodeOrDefault,
-            Map<RegionAndName, KeyPair> credentialsMap,
-            Map<RegionAndName, String> securityGroupMap) {
+            GetRegionFromLocation getRegionFromLocation,
+            Map<RegionAndName, KeyPair> credentialsMap, Map<RegionAndName, String> securityGroupMap) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                templateBuilderProvider, utils, executor);
       this.ec2Client = ec2Client;
-      this.getRegionFromNodeOrDefault = getRegionFromNodeOrDefault;
+      this.getRegionFromLocation = getRegionFromLocation;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
    }
@@ -110,18 +108,18 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    @Override
-   public void destroyNodesWithTag(String tag) {
-      super.destroyNodesWithTag(tag);
-      Set<String> regions = Sets.newHashSet(Iterables.transform(listNodesWithTag(tag),
-               new Function<NodeMetadata, String>() {
-                  @Override
-                  public String apply(@Nullable NodeMetadata nodeMetadata) {
-                     return getRegionFromNodeOrDefault.apply(nodeMetadata);
-                  }
-               }));
-      for (String region : regions) {
-         deleteKeyPair(region, tag);
-         deleteSecurityGroup(region, tag);
+   public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
+      Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
+      Map<String, String> regionTags = Maps.newHashMap();
+      for (NodeMetadata nodeMetadata : deadOnes) {
+         if (nodeMetadata.getTag() != null)
+            regionTags.put(getRegionFromLocation.apply(nodeMetadata.getLocation()), nodeMetadata
+                     .getTag());
       }
+      for (Entry<String, String> regionTag : regionTags.entrySet()) {
+         deleteKeyPair(regionTag.getKey(), regionTag.getValue());
+         deleteSecurityGroup(regionTag.getKey(), regionTag.getValue());
+      }
+      return deadOnes;
    }
 }

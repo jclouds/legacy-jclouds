@@ -56,7 +56,7 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
-import org.jclouds.compute.options.GetNodesOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -140,8 +140,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         Long serverId = Long.parseLong(node.getId());
+      public boolean execute(Location location, String id) {
+         Long serverId = Long.parseLong(id);
          // if false server wasn't around in the first place
          return client.restartServer(serverId).getState() == RunningState.RUNNING;
       }
@@ -161,8 +161,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         long serverId = Long.parseLong(node.getId());
+      public boolean execute(Location location, String id) {
+         long serverId = Long.parseLong(id);
          client.destroyServer(serverId);
          return serverDestroyed.apply(client.getServer(serverId));
       }
@@ -220,8 +220,15 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
-         return Iterables.transform(client.getServerList(), serverToNodeMetadata);
+      public Iterable<? extends ComputeMetadata> list() {
+         return listDetailsOnNodesMatching(NodePredicates.all());
+      }
+
+      @Override
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
+               Predicate<ComputeMetadata> filter) {
+         return Iterables.filter(Iterables.transform(client.getServerList(), serverToNodeMetadata),
+                  filter);
       }
 
    }
@@ -240,8 +247,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public NodeMetadata execute(ComputeMetadata node) {
-         long serverId = Long.parseLong(node.getId());
+      public NodeMetadata execute(Location location, String id) {
+         // TODO location
+         long serverId = Long.parseLong(id);
          Server server = client.getServer(serverId);
          return server == null ? null : serverToNodeMetadata.apply(server);
       }

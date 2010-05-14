@@ -48,7 +48,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert node.getId() != null;
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
-         NodeMetadata allData = client.getNodeMetadata(node);
+         NodeMetadata allData = client.getNodeMetadata(node.getLocation(), node.getId());
          assert allData.getExtra().get("processor/count") != null;
          assert allData.getExtra().get("disk_drive/1/kb") != null;
          assert allData.getExtra().get("memory/mb") != null;

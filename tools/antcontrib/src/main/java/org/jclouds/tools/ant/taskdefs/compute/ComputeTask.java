@@ -40,11 +40,13 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
 
 /**
@@ -219,19 +221,21 @@ public class ComputeTask extends Task {
 
    private void destroy(ComputeService computeService) {
       log(String.format("destroy tag: %s", nodeElement.getTag()));
-      computeService.destroyNodesWithTag(nodeElement.getTag());
+      computeService.destroyNodesMatching(NodePredicates.withTag(nodeElement.getTag()));
    }
 
    private void get(ComputeService computeService) {
       log(String.format("get tag: %s", nodeElement.getTag()));
-      for (ComputeMetadata node : computeService.listNodesWithTag(nodeElement.getTag())) {
+      for (ComputeMetadata node : Iterables.filter(computeService
+               .listNodesDetailsMatching(NodePredicates.all()), NodePredicates.withTag(nodeElement
+               .getTag()))) {
          logDetails(computeService, node);
       }
    }
 
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
       NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node)
-               : computeService.getNodeMetadata(node);
+               : computeService.getNodeMetadata(node.getLocation(), node.getId());
       log(String
                .format(
                         "   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",

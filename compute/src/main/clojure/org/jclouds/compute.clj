@@ -60,7 +60,9 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.compute.domain
             Template TemplateBuilder ComputeMetadata NodeMetadata Size OsFamily
             Image Architecture]
-           [org.jclouds.compute.options TemplateOptions GetNodesOptions]
+           [org.jclouds.compute.options TemplateOptions]
+           [org.jclouds.compute.predicates
+            NodePredicates]
            [com.google.common.collect ImmutableSet]))
 
 (try
@@ -121,26 +123,12 @@ See http://code.google.com/p/jclouds for details."
 
 (defn nodes-with-tag
   [#^String tag #^ComputeService compute]
-    (seq (.listNodesWithTag compute tag)))
-
-(def #^{:private true} list-nodes-map
-  { :with-details #(when %2 (.withDetails %1)) })
+    (seq (.listNodesMatching(compute (NodePredicates/withTag tag)))))
 
 (defn nodes
-  "Retrieve the existing nodes for the compute context.
-  Options are:
-  :with-details true"
-  ([] (nodes *compute*))
-  ([compute-or-tag & options]
-     (if (compute-service? compute-or-tag)
-       (let [options (apply hash-map options)
-         list-nodes-options (reduce
-                            (fn [lno [k v]]
-                              ((list-nodes-map k) lno v)
-                              lno)
-                            (GetNodesOptions.) options)]
-         (seq (.listNodes compute-or-tag list-nodes-options)))
-       (nodes-with-tag compute-or-tag *compute*))))
+  "Retrieve the existing nodes for the compute context."
+  [#^ComputeService compute]
+    (seq (.listNodes compute)))
 
 (defn images
   "Retrieve the available images for the compute context."
@@ -219,33 +207,33 @@ See http://code.google.com/p/jclouds for details."
 
 (defn #^NodeMetadata node-details
   "Retrieve the node metadata."
-  ([node] (node-details node *compute*))
-  ([node #^ComputeService compute]
-     (.getNodeMetadata compute node )))
+  ([location id] (node-details location id *compute*))
+  ([#^Location location id #^ComputeService compute]
+     (.getNodeMetadata compute location id)))     
 
-(defn reboot-nodes
+(defn reboot-nodes-with-tag
   "Reboot all the nodes with the given tag."
-  ([tag] (reboot-nodes tag *compute*))
+  ([tag] (reboot-nodes-with-tag tag *compute*))
   ([#^String tag #^ComputeService compute]
-     (.rebootNodesWithTag compute tag )))
-
+    (.rebootNodesMatching(compute (NodePredicates/withTag tag)))))
+    
 (defn reboot-node
   "Reboot a given node."
-  ([node] (reboot-node node *compute*))
-  ([#^ComputeMetadata node #^ComputeService compute]
-     (.rebootNode compute node )))
+  ([location id] (reboot-node location id *compute*))
+  ([#^Location location id #^ComputeService compute]
+     (.rebootNode compute location id)))
 
-(defn destroy-nodes
+(defn destroy-nodes-with-tag
   "Destroy all the nodes with the given tag."
-  ([tag] (destroy-nodes tag *compute*))
+  ([tag] (destroy-nodes-with-tag tag *compute*))
   ([#^String tag #^ComputeService compute]
-     (.destroyNodesWithTag compute tag )))
-
+     (seq (.destroyNodesMatching(compute (NodePredicates/withTag tag))))))
+  
 (defn destroy-node
   "Destroy a given node."
-  ([node] (destroy-node node *compute*))
-  ([#^ComputeMetadata node #^ComputeServiceContext compute]
-     (.destroyNode compute node)))
+  ([location id] (destroy-node location id *compute*))
+  ([#^Location location id #^ComputeService compute]
+     (.destroyNode compute location id)))
 
 (defmacro state-predicate [node state]
   `(= (.getState ~node)
@@ -407,4 +395,3 @@ There are many options to use for the default template
           (if next
             (recur next remaining)))))
     (.build builder)))
-

@@ -36,7 +36,6 @@ import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -123,8 +122,7 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
     */
    protected Set<String> getNextNames(final String tag, final Template template, int count) {
       Set<String> names = Sets.newHashSet();
-      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy
-               .execute(GetNodesOptions.NONE);
+      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy.list();
       int maxTries = 100;
       int currentTries = 0;
       while (names.size() < count && currentTries++ < maxTries) {

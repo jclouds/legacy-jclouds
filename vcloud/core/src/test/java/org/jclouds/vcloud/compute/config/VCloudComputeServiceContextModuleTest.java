@@ -33,8 +33,8 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -124,7 +124,7 @@ public class VCloudComputeServiceContextModuleTest {
       VCloudListNodesStrategy strategy = new VCloudListNodesStrategy(client, computeClient,
                vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);
 
-      Set<ComputeMetadata> nodes = Sets.newHashSet();
+      Set<NodeMetadata> nodes = Sets.newHashSet();
       NamedResource vdc = new NamedResourceImpl("1", null, null, null);
       NamedResource resource = new NamedResourceImpl("10", null, null, null);
 

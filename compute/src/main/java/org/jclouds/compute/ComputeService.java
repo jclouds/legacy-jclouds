@@ -28,7 +28,6 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
-import org.jclouds.compute.options.GetNodesOptions;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ssh.ExecResponse;
@@ -81,12 +80,6 @@ public interface ComputeService {
    Set<? extends ComputeMetadata> listNodes();
 
    /**
-    * all nodes available to the current user by id. If possible, the returned set will include
-    * {@link NodeMetadata} objects.
-    */
-   Set<? extends ComputeMetadata> listNodes(GetNodesOptions options);
-
-   /**
     * The list locations command returns all the valid locations for nodes. A location has a scope,
     * which is typically region or zone. A region is a general area, like eu-west, where a zone is
     * similar to a datacenter. If a location has a parent, that implies it is within that location.
@@ -136,66 +129,70 @@ public interface ComputeService {
     * destroy the node. If it is the only node in a tag set, the dependent resources will also be
     * destroyed.
     */
-   void destroyNode(ComputeMetadata node);
+   void destroyNode(Location location, String id);
 
    /**
-    * nodes which are tagged are treated as a logical set. Using the delete command, you can save
+    * nodes matching the filter are treated as a logical set. Using the delete command, you can save
     * time by removing the nodes in parallel. When the last node in a set is destroyed, any indirect
     * resources it uses, such as keypairs, are also destroyed.
-    *
+    * 
     * @return list of nodes destroyed
     */
-   void destroyNodesWithTag(String tag);
+   Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter);
 
    /**
     * reboot the node.
     */
-   void rebootNode(ComputeMetadata node);
+   void rebootNode(Location location, String id);
 
    /**
-    * nodes which are tagged are treated as a logical set. Using this command, you can save time by
-    * rebooting the nodes in parallel.
+    * nodes matching the filter are treated as a logical set. Using this command, you can save time
+    * by rebooting the nodes in parallel.
     */
-   void rebootNodesWithTag(String tag);
+   void rebootNodesMatching(Predicate<NodeMetadata> filter);
 
-   /**
+   /**      
     * Find a node by its id
     */
-   NodeMetadata getNodeMetadata(ComputeMetadata node);
+   NodeMetadata getNodeMetadata(Location location, String id);
 
    /**
-    * get all nodes matching the tag.
+    * get all nodes including details such as image and ip addresses even if it incurs extra
+    * requests to the service.
     * 
-    * @param tag
+    * @param filter
+    *           how to select the nodes you are interested in details on.
     */
-   Set<? extends NodeMetadata> listNodesWithTag(String tag);
+   Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate<ComputeMetadata> filter);
 
    /**
     * Runs the script without any additional options
     * 
-    * @see #runScriptOnNodesMatching(Predicate, byte[], org.jclouds.compute.options.RunScriptOptions)
-    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
+    * @see #runScriptOnNodesMatching(Predicate, byte[],
+    *      org.jclouds.compute.options.RunScriptOptions)
+    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     */
-   Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript)
-            throws RunScriptOnNodesException;
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(
+            Predicate<NodeMetadata> filter, byte[] runScript) throws RunScriptOnNodesException;
 
    /**
     * Run the script on all nodes with the specific tag.
-    *
+    * 
     * @param filter
-    *           Predicate-based filter to define on which nodes the script is to be
-    *           executed
+    *           Predicate-based filter to define on which nodes the script is to be executed
     * @param runScript
     *           script to run in byte format. If the script is a string, use
     *           {@link String#getBytes()} to retrieve the bytes
     * @param options
     *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
-    * @throws RunScriptOnNodesException if anything goes wrong during script execution
-    *
-    * @see org.jclouds.compute.predicates.NodePredicates#activeWithTag(String)
+    * @throws RunScriptOnNodesException
+    *            if anything goes wrong during script execution
+    * 
+    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     */
-   Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, byte[] runScript,
-            RunScriptOptions options) throws RunScriptOnNodesException;
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(
+            Predicate<NodeMetadata> filter, byte[] runScript, RunScriptOptions options)
+            throws RunScriptOnNodesException;
 
 }

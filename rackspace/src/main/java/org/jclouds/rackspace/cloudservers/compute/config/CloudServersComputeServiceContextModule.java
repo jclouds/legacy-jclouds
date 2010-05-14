@@ -53,7 +53,7 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
-import org.jclouds.compute.options.GetNodesOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -142,8 +142,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         int serverId = Integer.parseInt(node.getId());
+      public boolean execute(Location location, String id) {
+         int serverId = Integer.parseInt(id);
          // if false server wasn't around in the first place
          client.rebootServer(serverId, RebootType.HARD);
          Server server = client.getServer(serverId);
@@ -165,8 +165,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         int serverId = Integer.parseInt(node.getId());
+      public boolean execute(Location location, String id) {
+         int serverId = Integer.parseInt(id);
          // if false server wasn't around in the first place
          if (!client.deleteServer(serverId))
             return false;
@@ -216,11 +216,16 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
-         return Iterables.transform(client.listServers(ListOptions.Builder.withDetails()),
-                  serverToNodeMetadata);
+      public Iterable<? extends ComputeMetadata> list() {
+         return listDetailsOnNodesMatching(NodePredicates.all());
       }
 
+      @Override
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
+               Predicate<ComputeMetadata> filter) {
+         return Iterables.filter(Iterables.transform(client.listServers(ListOptions.Builder
+                  .withDetails()), serverToNodeMetadata), filter);
+      }
    }
 
    @Singleton
@@ -237,8 +242,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public NodeMetadata execute(ComputeMetadata node) {
-         int serverId = Integer.parseInt(node.getId());
+      public NodeMetadata execute(Location location, String id) {
+         int serverId = Integer.parseInt(id);
          Server server = client.getServer(serverId);
          return server == null ? null : serverToNodeMetadata.apply(server);
       }

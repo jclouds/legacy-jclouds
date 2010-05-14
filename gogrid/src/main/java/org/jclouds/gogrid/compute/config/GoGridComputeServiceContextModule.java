@@ -18,6 +18,7 @@
  */
 package org.jclouds.gogrid.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
@@ -49,7 +50,7 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
-import org.jclouds.compute.options.GetNodesOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -137,9 +138,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersByName(
-                  node.getName()));
+      public boolean execute(Location location, String id) {
+         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
+                  new Long(id)));
          client.getServerServices().power(server.getName(), PowerCommand.RESTART);
          serverLatestJobCompleted.apply(server);
          client.getServerServices().power(server.getName(), PowerCommand.START);
@@ -160,11 +161,16 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute(GetNodesOptions options) {
-         return Iterables.transform(client.getServerServices().getServerList(),
-                  serverToNodeMetadata);
+      public Iterable<? extends ComputeMetadata> list() {
+         return listDetailsOnNodesMatching(NodePredicates.all());
       }
 
+      @Override
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
+               Predicate<ComputeMetadata> filter) {
+         return Iterables.filter(Iterables.transform(client.getServerServices().getServerList(),
+                  serverToNodeMetadata), filter);
+      }
    }
 
    @Singleton
@@ -180,9 +186,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public NodeMetadata execute(ComputeMetadata node) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersByName(
-                  node.getName()));
+      public NodeMetadata execute(Location location, String id) {
+         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
+                  new Long(checkNotNull(id, "id"))));
          return server == null ? null : serverToNodeMetadata.apply(server);
       }
    }
@@ -200,9 +206,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersByName(
-                  node.getName()));
+      public boolean execute(Location location, String id) {
+         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
+                  new Long(id)));
          client.getServerServices().deleteByName(server.getName());
          return serverLatestJobCompleted.apply(server);
       }
