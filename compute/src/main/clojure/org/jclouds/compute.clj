@@ -127,8 +127,9 @@ See http://code.google.com/p/jclouds for details."
 
 (defn nodes
   "Retrieve the existing nodes for the compute context."
-  [#^ComputeService compute]
-    (seq (.listNodes compute)))
+  ([] (nodes *compute*))
+  ([#^ComputeService compute]
+    (seq (.listNodes compute))))
 
 (defn images
   "Retrieve the available images for the compute context."
