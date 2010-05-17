@@ -123,7 +123,7 @@ See http://code.google.com/p/jclouds for details."
 
 (defn nodes-with-tag
   [#^String tag #^ComputeService compute]
-    (seq (.listNodesMatching(compute (NodePredicates/withTag tag)))))
+    (seq (.listNodesMatching compute (NodePredicates/withTag tag))))
 
 (defn nodes
   "Retrieve the existing nodes for the compute context."
@@ -210,14 +210,14 @@ See http://code.google.com/p/jclouds for details."
   "Retrieve the node metadata."
   ([location id] (node-details location id *compute*))
   ([#^Location location id #^ComputeService compute]
-     (.getNodeMetadata compute location id)))     
+     (.getNodeMetadata compute location id)))
 
 (defn reboot-nodes-with-tag
   "Reboot all the nodes with the given tag."
   ([tag] (reboot-nodes-with-tag tag *compute*))
   ([#^String tag #^ComputeService compute]
-    (.rebootNodesMatching(compute (NodePredicates/withTag tag)))))
-    
+    (.rebootNodesMatching compute (NodePredicates/withTag tag))))
+
 (defn reboot-node
   "Reboot a given node."
   ([location id] (reboot-node location id *compute*))
@@ -228,8 +228,8 @@ See http://code.google.com/p/jclouds for details."
   "Destroy all the nodes with the given tag."
   ([tag] (destroy-nodes-with-tag tag *compute*))
   ([#^String tag #^ComputeService compute]
-     (seq (.destroyNodesMatching(compute (NodePredicates/withTag tag))))))
-  
+     (.destroyNodesMatching compute (NodePredicates/withTag tag))))
+
 (defn destroy-node
   "Destroy a given node."
   ([location id] (destroy-node location id *compute*))
