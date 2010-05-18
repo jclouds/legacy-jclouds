@@ -231,6 +231,7 @@ public abstract class BaseComputeServiceLiveTest {
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
          Credentials good = nodes.iterator().next().getCredentials();
          assert good.account != null;
+         assert good.key != null;
 
          Image image = Iterables.get(nodes, 0).getImage();
          try {

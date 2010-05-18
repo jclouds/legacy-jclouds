@@ -37,6 +37,7 @@ import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -74,9 +75,19 @@ public class AMIClientLiveTest {
       client = context.getApi().getAMIServices();
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testDescribeImageNotExists() {
+      client.describeImagesInRegion(null, imageIds("ami-cdf819a3"));
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testDescribeImageBadId() {
+      client.describeImagesInRegion(null, imageIds("asdaasdsa"));
+   }
+
+   @Test(enabled = false)
    public void testDescribeImages() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
          SortedSet<Image> allResults = Sets.newTreeSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
@@ -95,8 +106,8 @@ public class AMIClientLiveTest {
 
    @Test(enabled = false)
    public void testRegisterImageFromManifest() {
-      String imageRegisteredId = client.registerImageFromManifestInRegion(null,
-               "jcloudstest1", DEFAULT_MANIFEST);
+      String imageRegisteredId = client.registerImageFromManifestInRegion(null, "jcloudstest1",
+               DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
       Image imageRegisteredFromManifest = Iterables.getOnlyElement(client.describeImagesInRegion(
                null, imageIds(imageRegisteredId)));
@@ -109,8 +120,8 @@ public class AMIClientLiveTest {
 
    @Test(enabled = false)
    public void testRegisterImageFromManifestOptions() {
-      String imageRegisteredWithOptionsId = client.registerImageFromManifestInRegion(
-               null, "jcloudstest2", DEFAULT_MANIFEST, withDescription("adrian"));
+      String imageRegisteredWithOptionsId = client.registerImageFromManifestInRegion(null,
+               "jcloudstest2", DEFAULT_MANIFEST, withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredFromManifestWithOptions = Iterables.getOnlyElement(client
                .describeImagesInRegion(null, imageIds(imageRegisteredWithOptionsId)));
@@ -126,11 +137,11 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBS() {
-      String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(null,
-               "jcloudstest1", DEFAULT_MANIFEST);
+      String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(null, "jcloudstest1",
+               DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
-      Image imageRegistered = Iterables.getOnlyElement(client.describeImagesInRegion(
-               null, imageIds(imageRegisteredId)));
+      Image imageRegistered = Iterables.getOnlyElement(client.describeImagesInRegion(null,
+               imageIds(imageRegisteredId)));
       assertEquals(imageRegistered.getName(), "jcloudstest1");
       assertEquals(imageRegistered.getImageType(), ImageType.MACHINE);
       assertEquals(imageRegistered.getRootDeviceType(), RootDeviceType.EBS);
@@ -140,9 +151,9 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBSOptions() {
-      String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(
-               null, "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2",
-                        "myvirtual", 1).withDescription("adrian"));
+      String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(null,
+               "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2", "myvirtual", 1)
+                        .withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);
       Image imageRegisteredWithOptions = Iterables.getOnlyElement(client.describeImagesInRegion(
                null, imageIds(imageRegisteredWithOptionsId)));

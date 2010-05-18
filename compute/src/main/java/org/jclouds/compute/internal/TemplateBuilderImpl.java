@@ -69,33 +69,33 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private final Location defaultLocation;
 
    @VisibleForTesting
-   OsFamily os;
+   protected OsFamily os;
    @VisibleForTesting
-   Architecture arch;
+   protected Architecture arch;
    @VisibleForTesting
-   String locationId;
+   protected String locationId;
    @VisibleForTesting
-   String imageId;
+   protected String imageId;
    @VisibleForTesting
-   String sizeId;
+   protected String sizeId;
    @VisibleForTesting
-   String osDescription;
+   protected String osDescription;
    @VisibleForTesting
-   String imageVersion;
+   protected String imageVersion;
    @VisibleForTesting
-   String imageName;
+   protected String imageName;
    @VisibleForTesting
-   String imageDescription;
+   protected String imageDescription;
    @VisibleForTesting
-   double minCores;
+   protected double minCores;
    @VisibleForTesting
-   int minRam;
+   protected int minRam;
    @VisibleForTesting
-   boolean biggest;
+   protected boolean biggest;
    @VisibleForTesting
-   boolean fastest;
+   protected boolean fastest;
    @VisibleForTesting
-   TemplateOptions options;
+   protected TemplateOptions options;
 
    @Inject
    protected TemplateBuilderImpl(Set<? extends Location> locations, Set<? extends Image> images,
@@ -401,28 +401,19 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       if (options == null)
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
-      Image image;
-      try {
-         image = DEFAULT_IMAGE_ORDERING.max(Iterables.filter(images, imagePredicate));
-      } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
-      }
-      logger.debug("<<   matched image(%s)", image);
+      Location location = resolveLocation();
+      Image image = resolveImage();
+
       // ensure we have an architecture matching
       this.arch = image.getArchitecture();
 
-      Ordering<Size> sizeOrdering = DEFAULT_SIZE_ORDERING;
-      if (!biggest)
-         sizeOrdering = sizeOrdering.reverse();
-      if (fastest)
-         sizeOrdering = Ordering.compound(ImmutableList.of(BY_CORES_ORDERING, sizeOrdering));
-      Size size;
-      try {
-         size = sizeOrdering.max(Iterables.filter(sizes, sizePredicate));
-      } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes);
-      }
-      logger.debug("<<   matched size(%s)", size);
+      Ordering<Size> sizeOrdering = sizeSorter();
+      Size size = resolveSize(sizeOrdering);
+
+      return new TemplateImpl(image, size, location, options);
+   }
+
+   protected Location resolveLocation() {
       Location location = Iterables.find(locations, new Predicate<Location>() {
 
          @Override
@@ -432,7 +423,43 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
       });
       logger.debug("<<   matched location(%s)", location);
-      return new TemplateImpl(image, size, location, options);
+      return location;
+   }
+
+   protected Size resolveSize(Ordering<Size> sizeOrdering) {
+      Size size;
+      try {
+         size = sizeOrdering.max(Iterables.filter(sizes, sizePredicate));
+      } catch (NoSuchElementException exception) {
+         throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes);
+      }
+      logger.debug("<<   matched size(%s)", size);
+      return size;
+   }
+
+   protected Ordering<Size> sizeSorter() {
+      Ordering<Size> sizeOrdering = DEFAULT_SIZE_ORDERING;
+      if (!biggest)
+         sizeOrdering = sizeOrdering.reverse();
+      if (fastest)
+         sizeOrdering = Ordering.compound(ImmutableList.of(BY_CORES_ORDERING, sizeOrdering));
+      return sizeOrdering;
+   }
+
+   /**
+    * 
+    * @throws NoSuchElementException
+    *            if there's no image that matches the predicate
+    */
+   protected Image resolveImage() {
+      Image image;
+      try {
+         image = DEFAULT_IMAGE_ORDERING.max(Iterables.filter(images, imagePredicate));
+      } catch (NoSuchElementException exception) {
+         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
+      }
+      logger.debug("<<   matched image(%s)", image);
+      return image;
    }
 
    /**

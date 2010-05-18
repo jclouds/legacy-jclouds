@@ -26,10 +26,12 @@ import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
@@ -63,13 +65,14 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private static class FindImageForInstance implements Predicate<Image> {
+   @VisibleForTesting
+   static class FindImageForInstance implements Predicate<Image> {
       private final Location location;
       private final RunningInstance instance;
 
-      private FindImageForInstance(Location location, RunningInstance instance) {
-         this.location = location;
-         this.instance = instance;
+      FindImageForInstance(Location location, RunningInstance instance) {
+         this.location = checkNotNull(location, "location");
+         this.instance = checkNotNull(instance, "instance");
       }
 
       @Override
@@ -77,6 +80,37 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          return input.getId().equals(instance.getImageId())
                   && (input.getLocation() == null || input.getLocation().equals(location) || input
                            .getLocation().equals(location.getParent()));
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((instance.getId() == null) ? 0 : instance.getId().hashCode());
+         result = prime * result + ((location.getId() == null) ? 0 : location.getId().hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         FindImageForInstance other = (FindImageForInstance) obj;
+         if (instance.getId() == null) {
+            if (other.instance.getId() != null)
+               return false;
+         } else if (!instance.getId().equals(other.instance.getId()))
+            return false;
+         if (location.getId() == null) {
+            if (other.location.getId() != null)
+               return false;
+         } else if (!location.getId().equals(other.location.getId()))
+            return false;
+         return true;
       }
    }
 
@@ -88,16 +122,18 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    private final AMIClient amiClient;
    private final Map<RegionAndName, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
-   private final Set<? extends Image> images;
+   private final Provider<Set<? extends Image>> images;
    private final Set<? extends Location> locations;
    private final Function<RunningInstance, Map<String, String>> instanceToStorageMapping;
+   private final ConcurrentMap<RegionAndName, Image> imageMap;
 
    @Inject
    RunningInstanceToNodeMetadata(
             AMIClient amiClient,
             Map<RegionAndName, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Set<? extends Image> images,
+            Provider<Set<? extends Image>> images, // to facilitate on-demand refresh of image list
+            ConcurrentMap<RegionAndName, Image> imageMap,
             Set<? extends Location> locations,
             @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
       this.amiClient = checkNotNull(amiClient, "amiClient");
@@ -105,15 +141,50 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.images = checkNotNull(images, "images");
       this.locations = checkNotNull(locations, "locations");
-      this.instanceToStorageMapping = checkNotNull(instanceToStorageMapping);
+      this.instanceToStorageMapping = checkNotNull(instanceToStorageMapping,
+               "instanceToStorageMapping");
+      this.imageMap = checkNotNull(imageMap, "imageMap");
    }
 
    @Override
    public NodeMetadata apply(final RunningInstance instance) {
       String id = checkNotNull(instance, "instance").getId();
+
       String name = null; // user doesn't determine a node name;
       URI uri = null; // no uri to get rest access to host info
 
+      String tag = getTagForInstace(instance);
+
+      Credentials credentials = getCredentialsForInstanceWithTag(instance, tag);
+
+      Map<String, String> userMetadata = ImmutableMap.<String, String> of();
+
+      NodeState state = instanceToNodeState.get(instance.getInstanceState());
+
+      Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
+      Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
+
+      Map<String, String> extra = getExtra(instance);
+
+      Location location = getLocationForAvailabilityZone(instance);
+
+      Image image = resolveImageForInstanceInLocation(instance, location);
+
+      return new NodeMetadataImpl(id, name, location, uri, userMetadata, tag, image, state,
+               publicAddresses, privateAddresses, extra, credentials);
+   }
+
+   private Credentials getCredentialsForInstanceWithTag(final RunningInstance instance, String tag) {
+      Credentials credentials = null;// default if no keypair exists
+
+      if (instance.getKeyName() != null) {
+         credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance,
+                  tag));
+      }
+      return credentials;
+   }
+
+   private String getTagForInstace(final RunningInstance instance) {
       String tag = String.format("NOTAG-%s", instance.getId());// default
       try {
          tag = Iterables.getOnlyElement(
@@ -133,26 +204,13 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          logger.warn("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(),
                   instance.getGroupIds());
       }
+      return tag;
+   }
 
-      Credentials credentials = null;// default if no keypair exists
-
-      if (instance.getKeyName() != null) {
-         credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance,
-                  tag));
-      }
-
-      Map<String, String> userMetadata = ImmutableMap.<String, String> of();
-
-      NodeState state = instanceToNodeState.get(instance.getInstanceState());
-
-      Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
-      Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
-
+   private Location getLocationForAvailabilityZone(final RunningInstance instance) {
       final String locationId = instance.getAvailabilityZone();
 
-      Map<String, String> extra = getExtra(instance);
-
-      final Location location = Iterables.find(locations, new Predicate<Location>() {
+      Location location = Iterables.find(locations, new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {
@@ -160,16 +218,24 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          }
 
       });
+      return location;
+   }
 
+   @VisibleForTesting
+   Image resolveImageForInstanceInLocation(final RunningInstance instance, final Location location) {
       Image image = null;
       try {
-         image = Iterables.find(images, new FindImageForInstance(location, instance));
+         image = Iterables.find(images.get(), new FindImageForInstance(location, instance));
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching image for instance %s in location %s", instance,
-                  location);
+         RegionAndName key = new RegionAndName(instance.getRegion(), instance.getImageId());
+         try {
+            image = imageMap.get(key);
+         } catch (NullPointerException nex) {
+            logger.warn("could not find a matching image for instance %s in location %s", instance,
+                     location);
+         }
       }
-      return new NodeMetadataImpl(id, name, location, uri, userMetadata, tag, image, state,
-               publicAddresses, privateAddresses, extra, credentials);
+      return image;
    }
 
    /**

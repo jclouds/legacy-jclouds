@@ -24,6 +24,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -120,10 +121,21 @@ public class SyncProxy implements InvocationHandler {
          try {
             return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(
                      timeoutMap.get(method), TimeUnit.NANOSECONDS);
+         } catch (ExecutionException e) {
+            throw typedExceptionOrPropagate(method.getExceptionTypes(), e.getCause());
          } catch (Exception e) {
-            throw Throwables.getRootCause(e);
+            throw typedExceptionOrPropagate(method.getExceptionTypes(), e);
          }
       }
+   }
+
+   public static Throwable typedExceptionOrPropagate(Class<?>[] exceptionTypes, Throwable throwable) {
+      for (Class<?> type : exceptionTypes) {
+         if (type.isInstance(throwable)) {
+            return throwable;
+         }
+      }
+      return Throwables.propagate(throwable);
    }
 
    @Override

@@ -32,10 +32,7 @@ import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
@@ -56,26 +53,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    public void setServiceDefaults() {
       service = "ec2";
-   }
-
-   @Test
-   public void testTemplateBuilderCanUseImageId() {
-      client.templateBuilder().imageId(Iterables.get(client.listImages(), 0).getId()).build();
-   }
-
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assert (defaultTemplate.getImage().getId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getName(), "9.10");
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
-      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
-      client.templateBuilder().osFamily(OsFamily.UBUNTU).smallest().architecture(
-               Architecture.X86_32).imageId("ami-7e28ca17").build();
-      client.templateBuilder().osFamily(OsFamily.UBUNTU).smallest().architecture(
-               Architecture.X86_32).imageId("ami-bb709dd2").build();
    }
 
    @Override

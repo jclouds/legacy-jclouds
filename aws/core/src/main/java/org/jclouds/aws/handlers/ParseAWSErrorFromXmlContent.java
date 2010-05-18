@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
@@ -34,6 +35,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
 import com.google.common.io.Closeables;
@@ -45,6 +47,7 @@ import com.google.common.io.Closeables;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
@@ -60,7 +63,13 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = parseErrorFromContentOrNull(command, response);
+         exception = error != null ? new AWSResponseException(command, response, error) : exception;
          switch (response.getStatusCode()) {
+            case 400:
+               if (error.getCode().equals("InvalidAMIID.NotFound")
+                        || error.getCode().equals("InvalidAMIID.Malformed"))
+                  exception = new ResourceNotFoundException(error.getMessage(), exception);
+               break;
             case 401:
                exception = new AuthorizationException(command.getRequest(), error != null ? error
                         .getMessage() : response.getStatusLine());
@@ -77,9 +86,6 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                      exception = new KeyNotFoundException(container, key, message);
                }
                break;
-            default:
-               exception = error != null ? new AWSResponseException(command, response, error)
-                        : new HttpResponseException(command, response);
          }
       } finally {
          Closeables.closeQuietly(response.getContent());

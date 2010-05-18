@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.domain.Credentials;
 
 /**
@@ -77,6 +79,9 @@ public class RunScriptOptions {
    private boolean runAsRoot = true;
 
    public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
+      checkNotNull(overridingCredentials, "overridingCredentials");
+      checkNotNull(overridingCredentials.account, "overridingCredentials.account");
+      checkNotNull(overridingCredentials.key, "overridingCredentials.key");
       this.overridingCredentials = overridingCredentials;
       return this;
    }

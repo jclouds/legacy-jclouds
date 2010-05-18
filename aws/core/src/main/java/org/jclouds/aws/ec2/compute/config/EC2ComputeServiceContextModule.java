@@ -22,12 +22,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -36,7 +40,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
+import org.jclouds.Constants;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
@@ -46,13 +50,16 @@ import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.aws.ec2.compute.functions.ImageParser;
+import org.jclouds.aws.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.aws.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
@@ -74,6 +81,7 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -89,8 +97,10 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -111,6 +121,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Override
    protected void configure() {
       super.configure();
+      bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EC2RunNodesAndAddToSetStrategy.class);
@@ -147,14 +158,23 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    // due to image parsing; consider using MapMaker. computing map
    @Singleton
    public static class EC2ListNodesStrategy implements ListNodesStrategy {
+      @Resource
+      @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+      protected Logger logger = Logger.NULL;
+      
       private final InstanceClient client;
+      private final Map<String, URI> regionMap;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+      private final ExecutorService executor;
 
       @Inject
-      protected EC2ListNodesStrategy(InstanceClient client,
-               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
+      protected EC2ListNodesStrategy(InstanceClient client, @EC2 Map<String, URI> regionMap,
+               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
+               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
          this.client = client;
+         this.regionMap = regionMap;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
+         this.executor = executor;
       }
 
       @Override
@@ -165,11 +185,28 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       @Override
       public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
                Predicate<ComputeMetadata> filter) {
-         Set<NodeMetadata> nodes = Sets.newHashSet();
-         for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1)) {
-            Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
-                     .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
+         final Set<NodeMetadata> nodes = Sets.newHashSet();
+
+         Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
+
+         for (final String region : regionMap.keySet()) {
+            parallelResponses.put(region, ConcurrentUtils.makeListenable(executor
+                     .submit(new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                           Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
+                                    .describeInstancesInRegion(region)),
+                                    runningInstanceToNodeMetadata));
+                           return null;
+                        }
+                     }), executor));
          }
+         Map<String, Exception> exceptions = awaitCompletion(parallelResponses, executor, null,
+                  logger, "nodes");
+
+         if (exceptions.size() > 0)
+            throw new RuntimeException(String.format("error parsing nodes in regions: %s",
+                     exceptions));
          return Iterables.filter(nodes, filter);
       }
    }
@@ -322,30 +359,65 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Singleton
    @Named(PROPERTY_EC2_AMI_OWNERS)
    String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
+      if (amiOwners.trim().equals(""))
+         return new String[] {};
       return Iterables.toArray(Splitter.on(',').split(amiOwners), String.class);
    }
 
    @Provides
-   @Singleton
-   protected Set<? extends Image> provideImages(final EC2Client sync,
-            @EC2 Map<String, URI> regionMap, LogHolder holder,
-            Function<ComputeMetadata, String> indexer,
-            @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, ImageParser parser)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      final Set<Image> images = Sets.newHashSet();
-      holder.logger.debug(">> providing images");
+   protected Set<? extends Image> provideImages(Map<RegionAndName, ? extends Image> map) {
+      return ImmutableSet.copyOf(map.values());
+   }
 
-      for (final String region : regionMap.keySet()) {
-         for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
-                  .describeImagesInRegion(region, ownedBy(amiOwners))) {
-            Image image = parser.apply(from);
-            if (image != null)
-               images.add(image);
-            else
-               holder.logger.trace("<< image(%s) didn't parse", from.getId());
+   @Provides
+   @Singleton
+   protected ConcurrentMap<RegionAndName, Image> provideImageMap(
+            RegionAndIdToImage regionAndIdToImage) {
+      return new MapMaker().makeComputingMap(regionAndIdToImage);
+   }
+
+   @Provides
+   @Singleton
+   protected Map<RegionAndName, ? extends Image> provideImages(final EC2Client sync,
+            @EC2 Map<String, URI> regionMap, final LogHolder holder,
+            Function<ComputeMetadata, String> indexer,
+            @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners, final ImageParser parser,
+            final ConcurrentMap<RegionAndName, Image> images,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      if (amiOwners.length == 0) {
+         holder.logger.debug(">> no owners specified, skipping image parsing");
+      } else {
+         holder.logger.debug(">> providing images");
+
+         Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
+
+         for (final String region : regionMap.keySet()) {
+            parallelResponses.put(region, ConcurrentUtils.makeListenable(executor
+                     .submit(new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                           for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
+                                    .describeImagesInRegion(region, ownedBy(amiOwners))) {
+                              Image image = parser.apply(from);
+                              if (image != null)
+                                 images.put(new RegionAndName(region, image.getId()), image);
+                              else if (from.getImageType() == ImageType.MACHINE)
+                                 holder.logger.trace("<< image(%s) didn't parse", from.getId());
+                           }
+                           return null;
+                        }
+                     }), executor));
          }
+         Map<String, Exception> exceptions = awaitCompletion(parallelResponses, executor, null,
+                  holder.logger, "images");
+
+         if (exceptions.size() > 0)
+            throw new RuntimeException(String.format("error parsing images in regions: %s",
+                     exceptions));
+
+         holder.logger.debug("<< images(%d)", images.size());
       }
-      holder.logger.debug("<< images(%d)", images.size());
       return images;
    }
 }

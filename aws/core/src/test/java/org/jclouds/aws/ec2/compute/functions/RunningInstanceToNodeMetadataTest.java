@@ -29,6 +29,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.inject.Provider;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
@@ -55,6 +58,203 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "ec2.RunningInstanceToNodeMetadataTest")
 public class RunningInstanceToNodeMetadataTest {
+   private static class ImageProvider implements
+            Provider<Set<? extends org.jclouds.compute.domain.Image>> {
+      private final Set<? extends org.jclouds.compute.domain.Image> images;
+
+      private ImageProvider(org.jclouds.compute.domain.Image jcImage) {
+         this.images = ImmutableSet.<org.jclouds.compute.domain.Image> of(jcImage);
+      }
+
+      @Override
+      public Set<? extends org.jclouds.compute.domain.Image> get() {
+         return images;
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testImageNotFoundAndLazyReturnsNull() throws UnknownHostException {
+      AMIClient amiClient = createMock(AMIClient.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
+      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
+
+      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
+      Set<Location> locations = ImmutableSet.<Location> of(location);
+      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
+      RunningInstance instance = createMock(RunningInstance.class);
+
+      expect(instance.getId()).andReturn("id").atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
+      expect(instance.getKeyName()).andReturn(null).atLeastOnce();
+      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+
+      expect(instance.getIpAddress()).andReturn(
+               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
+      expect(instance.getPrivateIpAddress()).andReturn(
+               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+
+      expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
+
+      expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getId()).andReturn("notImageId").atLeastOnce();
+      expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
+
+      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(null);
+
+      expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
+
+      replay(imageMap);
+      replay(jcImage);
+      replay(amiClient);
+      replay(credentialsMap);
+      replay(credentialProvider);
+      replay(instance);
+
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+               new RunningInstanceToStorageMappingUnix());
+
+      NodeMetadata metadata = parser.apply(instance);
+      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getImage(), null);
+      assertEquals(metadata.getTag(), "NOTAG-id");
+      assertEquals(metadata.getCredentials(), null);
+
+      verify(imageMap);
+      verify(jcImage);
+      verify(amiClient);
+      verify(credentialsMap);
+      verify(credentialProvider);
+      verify(instance);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testImageNotFoundAndLazyFailsWithNPE() throws UnknownHostException {
+      AMIClient amiClient = createMock(AMIClient.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
+      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
+
+      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
+      Set<Location> locations = ImmutableSet.<Location> of(location);
+      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
+      RunningInstance instance = createMock(RunningInstance.class);
+
+      expect(instance.getId()).andReturn("id").atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
+      expect(instance.getKeyName()).andReturn(null).atLeastOnce();
+      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+
+      expect(instance.getIpAddress()).andReturn(
+               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
+      expect(instance.getPrivateIpAddress()).andReturn(
+               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+
+      expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
+
+      expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getId()).andReturn("notImageId").atLeastOnce();
+      expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
+
+      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andThrow(
+               new NullPointerException()).atLeastOnce();
+
+      expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
+
+      replay(imageMap);
+      replay(jcImage);
+      replay(amiClient);
+      replay(credentialsMap);
+      replay(credentialProvider);
+      replay(instance);
+
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+               new RunningInstanceToStorageMappingUnix());
+
+      NodeMetadata metadata = parser.apply(instance);
+      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getImage(), null);
+      assertEquals(metadata.getTag(), "NOTAG-id");
+      assertEquals(metadata.getCredentials(), null);
+
+      verify(imageMap);
+      verify(jcImage);
+      verify(amiClient);
+      verify(credentialsMap);
+      verify(credentialProvider);
+      verify(instance);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testImageNotFoundAndLazySucceeds() throws UnknownHostException {
+      AMIClient amiClient = createMock(AMIClient.class);
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
+      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
+
+      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
+      Set<Location> locations = ImmutableSet.<Location> of(location);
+      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
+      RunningInstance instance = createMock(RunningInstance.class);
+
+      expect(instance.getId()).andReturn("id").atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
+      expect(instance.getKeyName()).andReturn(null).atLeastOnce();
+      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+
+      expect(instance.getIpAddress()).andReturn(
+               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
+      expect(instance.getPrivateIpAddress()).andReturn(
+               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+
+      expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
+
+      expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getId()).andReturn("notImageId").atLeastOnce();
+      expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
+
+      org.jclouds.compute.domain.Image lateImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(lateImage)
+               .atLeastOnce();
+
+      expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
+
+      replay(lateImage);
+      replay(imageMap);
+      replay(jcImage);
+      replay(amiClient);
+      replay(credentialsMap);
+      replay(credentialProvider);
+      replay(instance);
+
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+               new RunningInstanceToStorageMappingUnix());
+
+      NodeMetadata metadata = parser.apply(instance);
+      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getImage(), lateImage);
+      assertEquals(metadata.getTag(), "NOTAG-id");
+      assertEquals(metadata.getCredentials(), null);
+
+      verify(lateImage);
+      verify(imageMap);
+      verify(jcImage);
+      verify(amiClient);
+      verify(credentialsMap);
+      verify(credentialProvider);
+      verify(instance);
+   }
+
    @SuppressWarnings("unchecked")
    @Test
    public void testApplyWithNoSecurityGroupCreatesTagOfIdPrefixedByTagAndNullCredentials()
@@ -63,8 +263,7 @@ public class RunningInstanceToNodeMetadataTest {
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet
-               .<org.jclouds.compute.domain.Image> of(jcImage);
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
@@ -89,6 +288,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
+      replay(imageMap);
       replay(jcImage);
       replay(amiClient);
       replay(credentialsMap);
@@ -96,7 +296,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
-               credentialsMap, credentialProvider, images, locations,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -105,6 +305,7 @@ public class RunningInstanceToNodeMetadataTest {
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
 
+      verify(imageMap);
       verify(jcImage);
       verify(amiClient);
       verify(credentialsMap);
@@ -119,9 +320,7 @@ public class RunningInstanceToNodeMetadataTest {
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
-
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet
-               .<org.jclouds.compute.domain.Image> of(jcImage);
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
@@ -146,6 +345,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
+      replay(imageMap);
       replay(jcImage);
       replay(amiClient);
       replay(credentialsMap);
@@ -153,7 +353,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
-               credentialsMap, credentialProvider, images, locations,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -162,6 +362,7 @@ public class RunningInstanceToNodeMetadataTest {
       assertEquals(metadata.getTag(), "tag");
       assertEquals(metadata.getCredentials(), null);
 
+      verify(imageMap);
       verify(jcImage);
       verify(amiClient);
       verify(credentialsMap);
@@ -175,6 +376,7 @@ public class RunningInstanceToNodeMetadataTest {
             throws UnknownHostException {
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
@@ -188,8 +390,6 @@ public class RunningInstanceToNodeMetadataTest {
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet
-               .<org.jclouds.compute.domain.Image> of(jcImage);
 
       expect(instance.getIpAddress()).andReturn(
                InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
@@ -214,6 +414,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
+      replay(imageMap);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
@@ -221,9 +422,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
-               credentialsMap, credentialProvider, images, locations,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
-
       NodeMetadata metadata = parser.apply(instance);
 
       assertEquals(metadata.getTag(), "tag");
@@ -232,6 +432,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
+      verify(imageMap);
       verify(jcImage);
       verify(amiClient);
       verify(credentialsMap);
@@ -242,25 +443,24 @@ public class RunningInstanceToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testApplyWithTwoSecurityGroups()
-            throws UnknownHostException {
+   public void testApplyWithTwoSecurityGroups() throws UnknownHostException {
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
       Image image = createMock(Image.class);
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
-      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag","jclouds#tag2")).atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag", "jclouds#tag2"))
+               .atLeastOnce();
       expect(instance.getKeyName()).andReturn("jclouds#keyName").atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet
-               .<org.jclouds.compute.domain.Image> of(jcImage);
 
       expect(instance.getIpAddress()).andReturn(
                InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
@@ -285,6 +485,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
+      replay(imageMap);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
@@ -292,7 +493,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
-               credentialsMap, credentialProvider, images, locations,
+               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -303,6 +504,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
+      verify(imageMap);
       verify(jcImage);
       verify(amiClient);
       verify(credentialsMap);

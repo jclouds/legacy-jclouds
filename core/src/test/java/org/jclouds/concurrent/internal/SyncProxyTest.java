@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -168,7 +167,7 @@ public class SyncProxyTest {
 
    }
 
-   @Test(expectedExceptions = UndeclaredThrowableException.class)
+   @Test(expectedExceptions = RuntimeException.class)
    public void testTake100MillisecondsAndTimeout() {
       assertEquals(sync.take100MillisecondsAndTimeout(), "foo");
 

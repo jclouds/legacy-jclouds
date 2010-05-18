@@ -122,7 +122,7 @@
     <!-- Limit categories -->
     <!-- ================ -->
     <category name="jclouds.blobstore">
-        <priority value="TRACE" />
+        <priority value="DEBUG" />
         <appender-ref ref="ASYNCBLOBSTORE" />
     </category>
 
@@ -136,15 +136,16 @@
         <appender-ref ref="ASYNCWIRE" />
     </category>
     <category name="jclouds.compute">
-        <priority value="TRACE" />
+        <priority value="DEBUG" />
         <appender-ref ref="ASYNCCOMPUTE" />
-    </category><!--
+    </category>
 
     <category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-    --><!--  ======================= -->
+    
+    <!--  ======================= -->
     <!-- Setup the Root category -->
     <!-- ======================= -->
 

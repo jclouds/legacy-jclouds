@@ -25,6 +25,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.inject.Provider;
 
@@ -49,7 +50,9 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testNothingUsesDefaultTemplateBuilder() {
-
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -63,9 +66,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
 
       template.build();
 
@@ -75,10 +77,20 @@ public class TemplateBuilderImplTest {
       verify(templateBuilderProvider);
    }
 
+   protected TemplateBuilderImpl createTemplateBuilder(Set<Location> locations, Set<Image> images,
+            Set<Size> sizes, Location defaultLocation, Provider<TemplateOptions> optionsProvider,
+            Provider<TemplateBuilder> templateBuilderProvider) {
+      TemplateBuilderImpl template = new TemplateBuilderImpl(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
+      return template;
+   }
+
    @SuppressWarnings("unchecked")
    @Test
    public void testSuppliedLocationWithNoOptions() {
-
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -91,9 +103,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").locationId("location").build();
@@ -101,7 +112,7 @@ public class TemplateBuilderImplTest {
       } catch (NoSuchElementException e) {
 
       }
-      
+
       verify(defaultOptions);
       verify(defaultLocation);
       verify(optionsProvider);
@@ -111,7 +122,9 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testSuppliedLocationAndOptions() {
-
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -120,9 +133,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").options(TemplateOptions.NONE).locationId("location").build();
@@ -138,8 +150,10 @@ public class TemplateBuilderImplTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testDefaultLocationWithNoOptions() {
-
+   public void testDefaultLocationWithNoOptionsNoSuchElement() {
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -153,9 +167,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").build();
@@ -163,7 +176,7 @@ public class TemplateBuilderImplTest {
       } catch (NoSuchElementException e) {
 
       }
-      
+
       verify(defaultOptions);
       verify(defaultLocation);
       verify(optionsProvider);
@@ -173,7 +186,9 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testDefaultLocationWithOptions() {
-
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -184,9 +199,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").options(TemplateOptions.NONE).build();
@@ -203,6 +217,9 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testImageIdNullsEverythingElse() {
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -211,9 +228,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = new TemplateBuilderImpl(ImmutableSet.<Location> of(),
-               ImmutableSet.<Image> of(), ImmutableSet.<Size> of(), defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
 
       template.architecture(Architecture.X86_32);
       template.imageDescriptionMatches("imageDescriptionMatches");

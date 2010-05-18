@@ -61,6 +61,14 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
    public static final Pattern CANONICAL_PATTERN = Pattern
             .compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
 
+   // ex rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml
+   public static final Pattern RIGHTSCALE_PATTERN = Pattern
+            .compile("[^/]*/([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
+
+   // ex 411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha
+   public static final Pattern RIGHTIMAGE_PATTERN = Pattern
+            .compile("[^/]*/RightImage_([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
+
    public static final Map<String, String> NAME_VERSION_MAP = ImmutableMap
             .<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10").put("jaunty",
                      "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
@@ -96,19 +104,21 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
                .getImageLocation();
       String osDescription = from.getImageLocation();
       String version = "";
-      Matcher matcher = CANONICAL_PATTERN.matcher(from.getImageLocation());
-      if (matcher.find()) {
-         try {
-            os = OsFamily.fromValue(matcher.group(1));
-            name = matcher.group(2);// TODO no field for os version
-            // normalize versions across ubuntu from alestic and canonical
-            if (NAME_VERSION_MAP.containsKey(name))
-               name = NAME_VERSION_MAP.get(name);
-            version = matcher.group(3).replace(".manifest.xml", "");
-         } catch (IllegalArgumentException e) {
-            logger.debug("<< didn't match os(%s)", matcher.group(1));
-         }
+
+      try {
+         Matcher matcher = getMatcherAndFind(from.getImageLocation());
+         os = OsFamily.fromValue(matcher.group(1));
+         name = matcher.group(2);// TODO no field for os version
+         // normalize versions across ubuntu from alestic and canonical
+         if (NAME_VERSION_MAP.containsKey(name))
+            name = NAME_VERSION_MAP.get(name);
+         version = matcher.group(3).replace(".manifest.xml", "");
+      } catch (IllegalArgumentException e) {
+         logger.debug("<< didn't match os(%s)", from.getImageLocation());
+      } catch (NoSuchElementException e) {
+         logger.debug("<< didn't match at all(%s)", from.getImageLocation());
       }
+
       Credentials defaultCredentials = credentialProvider.execute(from);
 
       Location location = null;
@@ -140,5 +150,20 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
                from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
                         : Architecture.X86_64, defaultCredentials);
 
+   }
+
+   /**
+    * 
+    * @throws NoSuchElementException
+    *            if no configured matcher matches the manifest.
+    */
+   private Matcher getMatcherAndFind(String manifest) {
+      for (Pattern pattern : new Pattern[] { CANONICAL_PATTERN, RIGHTIMAGE_PATTERN,
+               RIGHTSCALE_PATTERN }) {
+         Matcher matcher = pattern.matcher(manifest);
+         if (matcher.find())
+            return matcher;
+      }
+      throw new NoSuchElementException(manifest);
    }
 }

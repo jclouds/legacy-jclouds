@@ -153,6 +153,45 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
    }
 
+   public void testParseRightScaleImage() {
+      InputStream is = getClass().getResourceAsStream("/ec2/rightscale_images.xml");
+
+      Set<Image> result = parseImages(is);
+
+      ImageParser parser = new ImageParser(
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableSet
+                        .<Location> of(defaultLocation), defaultLocation);
+
+      org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
+
+      assertEquals(image.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_64);
+      assertEquals(image.getDescription(), "rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml");
+      assertEquals(image.getId(), "ami-ccb35ea5");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), "5.4");
+      assertEquals(image.getOsDescription(),
+               "rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml");
+      assertEquals(image.getOsFamily(), OsFamily.CENTOS);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner",
+               "411009282317"));
+      assertEquals(image.getVersion(), "4.4.10");
+
+      image = parser.apply(Iterables.get(result, 1));
+
+      assertEquals(image.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_64);
+      assertEquals(image.getDescription(), "RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha");
+      assertEquals(image.getId(), "ami-c19db6b5");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), "9.10");
+      assertEquals(image.getOsDescription(),
+               "411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha");
+      assertEquals(image.getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner",
+               "411009282317"));
+      assertEquals(image.getVersion(), "4.5.3_EBS_Alpha");
+
+   }
+
    private Set<Image> parseImages(InputStream is) {
       DescribeImagesResponseHandler handler = injector
                .getInstance(DescribeImagesResponseHandler.class);
