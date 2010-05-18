@@ -29,6 +29,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ssh.ExecResponse;
 
@@ -53,6 +54,11 @@ public interface ComputeService {
     * Makes a new template builder for this service
     */
    TemplateBuilder templateBuilder();
+
+   /**
+    * Makes a new set of options for running nodes
+    */
+   TemplateOptions templateOptions();
 
    /**
     * The list sizes command shows you the options including virtual cpu count, memory, and disks.
@@ -126,6 +132,19 @@ public interface ComputeService {
             throws RunNodesException;
 
    /**
+    * Like {@link ComputeService#runNodesWithTag(String,int,Template)}, except that the template is
+    * default, equivalent to {@code templateBuilder().any().options(templateOptions)}.
+    */
+   Set<? extends NodeMetadata> runNodesWithTag(String tag, int count,
+            TemplateOptions templateOptions) throws RunNodesException;
+
+   /**
+    * Like {@link ComputeService#runNodesWithTag(String,int,TemplateOptions)}, except that the
+    * options are default, as specified in {@link ComputeService#templateOptions}.
+    */
+   Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
+
+   /**
     * destroy the node. If it is the only node in a tag set, the dependent resources will also be
     * destroyed.
     */
@@ -151,7 +170,7 @@ public interface ComputeService {
     */
    void rebootNodesMatching(Predicate<NodeMetadata> filter);
 
-   /**      
+   /**
     * Find a node by its id
     */
    NodeMetadata getNodeMetadata(Location location, String id);

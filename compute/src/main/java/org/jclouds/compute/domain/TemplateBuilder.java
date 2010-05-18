@@ -30,6 +30,12 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(TemplateBuilderImpl.class)
 public interface TemplateBuilder {
+
+   /**
+    * prime this builder with parameters known to work on the current compute provider.
+    */
+   TemplateBuilder any();
+
    /**
     * Configure this template to require the minimum size of the parameter.
     */
@@ -97,7 +103,7 @@ public interface TemplateBuilder {
     * Configure this template to have an image name that matches the regular expression
     */
    TemplateBuilder imageNameMatches(String imageNameRegex);
-   
+
    /**
     * Configure this template to have an image version that matches the regular expression
     */

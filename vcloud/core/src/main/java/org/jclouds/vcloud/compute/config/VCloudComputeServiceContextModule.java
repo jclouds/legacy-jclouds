@@ -54,7 +54,6 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -127,7 +126,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    }
 
    @Provides
-   protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+   @Named("DEFAULT")
+   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.osFamily(UBUNTU);
    }
 

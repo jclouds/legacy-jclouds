@@ -226,23 +226,22 @@ public abstract class BaseComputeServiceLiveTest {
    @Test
    public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String tag = this.tag + "run";
-      Template simpleTemplate = buildTemplate(client.templateBuilder());
-      simpleTemplate.getOptions().blockOnPort(22, 120);
+      TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
       try {
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, simpleTemplate);
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
          Credentials good = nodes.iterator().next().getCredentials();
          assert good.account != null;
 
+         Image image = Iterables.get(nodes, 0).getImage();
          try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag,
-                     simpleTemplate.getImage().getOsFamily(),
-                     new Credentials(good.account, "romeo"));
+            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, image
+                     .getOsFamily(), new Credentials(good.account, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 
-         runScriptWithCreds(tag, simpleTemplate.getImage().getOsFamily(), good);
+         runScriptWithCreds(tag, image.getOsFamily(), good);
 
          checkNodes(nodes, tag);
 
@@ -319,9 +318,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Set<? extends NodeMetadata> nodes = client.listNodesDetailsMatching(NodePredicates.all());
-      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(nodes, Predicates
-               .and(NodePredicates.withTag(tag), Predicates.not(NodePredicates.TERMINATED))));
+      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(client
+               .listNodesDetailsMatching(NodePredicates.all()), Predicates.and(NodePredicates
+               .withTag(tag), Predicates.not(NodePredicates.TERMINATED))));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node.getLocation(), node.getId());

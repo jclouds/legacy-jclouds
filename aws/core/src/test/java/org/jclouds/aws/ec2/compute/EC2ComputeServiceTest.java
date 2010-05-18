@@ -25,9 +25,13 @@
 package org.jclouds.aws.ec2.compute;
 
 import static java.lang.String.format;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+
+import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
-import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -35,6 +39,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -110,16 +115,25 @@ public class EC2ComputeServiceTest {
                "m2.xlarge", String.valueOf(template.getSize()));
    }
 
+   @SuppressWarnings("unchecked")
    private TemplateBuilder newTemplateBuilder() {
       Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
+
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateOptions defaultOptions = createMock(TemplateOptions.class);
+
+      expect(optionsProvider.get()).andReturn(defaultOptions);
+
       Image image = new ImageImpl("ami-image", "image", location, null, Maps
                .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
                Architecture.X86_64, new Credentials("root", null));
-
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
       return new TemplateBuilderImpl(ImmutableSet.of(location), ImmutableSet.of(image),
                ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
                         EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
-                        EC2Size.M2_4XLARGE), location, new EC2TemplateOptions()) {
+                        EC2Size.M2_4XLARGE), location, optionsProvider, templateBuilderProvider) {
       };
    }
 

@@ -35,6 +35,7 @@ import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromLocation;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
+import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
@@ -42,6 +43,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -70,13 +72,14 @@ public class EC2ComputeService extends BaseComputeService {
             GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
+            Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
             GetRegionFromLocation getRegionFromLocation,
             Map<RegionAndName, KeyPair> credentialsMap, Map<RegionAndName, String> securityGroupMap) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
-               templateBuilderProvider, utils, executor);
+               templateBuilderProvider, templateOptionsProvider, utils, executor);
       this.ec2Client = ec2Client;
       this.getRegionFromLocation = getRegionFromLocation;
       this.credentialsMap = credentialsMap;
@@ -107,6 +110,10 @@ public class EC2ComputeService extends BaseComputeService {
       }
    }
 
+   /**
+    * like {@link BaseComputeService#destroyNodesMatching} except that this will clean implicit
+    * keypairs and security groups.
+    */
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
@@ -121,5 +128,13 @@ public class EC2ComputeService extends BaseComputeService {
          deleteSecurityGroup(regionTag.getKey(), regionTag.getValue());
       }
       return deadOnes;
+   }
+
+   /**
+    * returns template options, except of type {@link EC2TemplateOptions}.
+    */
+   @Override
+   public EC2TemplateOptions templateOptions() {
+      return EC2TemplateOptions.class.cast(super.templateOptions());
    }
 }

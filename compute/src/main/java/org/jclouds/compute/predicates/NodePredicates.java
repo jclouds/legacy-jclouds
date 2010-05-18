@@ -106,7 +106,7 @@ public class NodePredicates {
       checkNotEmpty(tag, "Tag must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
-         public boolean apply(@Nullable NodeMetadata nodeMetadata) {
+         public boolean apply(NodeMetadata nodeMetadata) {
             return tag.equals(nodeMetadata.getTag())
                      && nodeMetadata.getState() == NodeState.RUNNING;
          }
@@ -123,7 +123,7 @@ public class NodePredicates {
     */
    public static final Predicate<NodeMetadata> ACTIVE = new Predicate<NodeMetadata>() {
       @Override
-      public boolean apply(@Nullable NodeMetadata nodeMetadata) {
+      public boolean apply(NodeMetadata nodeMetadata) {
          return nodeMetadata.getState() == NodeState.RUNNING;
       }
 
@@ -138,7 +138,7 @@ public class NodePredicates {
     */
    public static final Predicate<NodeMetadata> TERMINATED = new Predicate<NodeMetadata>() {
       @Override
-      public boolean apply(@Nullable NodeMetadata nodeMetadata) {
+      public boolean apply(NodeMetadata nodeMetadata) {
          return nodeMetadata.getState() == NodeState.TERMINATED;
       }
 

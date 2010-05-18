@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -63,6 +64,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private final Set<? extends Image> images;
    private final Set<? extends Size> sizes;
    private final Set<? extends Location> locations;
+   private final Provider<TemplateOptions> optionsProvider;
+   private final Provider<TemplateBuilder> defaultTemplateProvider;
+   private final Location defaultLocation;
+
    @VisibleForTesting
    OsFamily os;
    @VisibleForTesting
@@ -77,32 +82,32 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    String osDescription;
    @VisibleForTesting
    String imageVersion;
-
    @VisibleForTesting
    String imageName;
    @VisibleForTesting
    String imageDescription;
-
    @VisibleForTesting
    double minCores;
    @VisibleForTesting
    int minRam;
-
    @VisibleForTesting
    boolean biggest;
    @VisibleForTesting
    boolean fastest;
-
-   private TemplateOptions options;
+   @VisibleForTesting
+   TemplateOptions options;
 
    @Inject
    protected TemplateBuilderImpl(Set<? extends Location> locations, Set<? extends Image> images,
-            Set<? extends Size> sizes, Location defaultLocation, TemplateOptions options) {
+            Set<? extends Size> sizes, Location defaultLocation,
+            Provider<TemplateOptions> optionsProvider,
+            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
-      this.locationId = defaultLocation.getId();
-      this.options = options;
+      this.defaultLocation = defaultLocation;
+      this.optionsProvider = optionsProvider;
+      this.defaultTemplateProvider = defaultTemplateProvider;
    }
 
    private final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
@@ -389,6 +394,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public Template build() {
+      if (nothingChanged())
+         return defaultTemplateProvider.get().build();
+      if (locationId == null)
+         locationId = defaultLocation.getId();
+      if (options == null)
+         options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
       Image image;
       try {
@@ -509,6 +520,22 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    public TemplateBuilder options(TemplateOptions options) {
       this.options = checkNotNull(options, "options");
       return this;
+   }
+
+   @VisibleForTesting
+   boolean nothingChanged() {
+      return os == null && arch == null && locationId == null && imageId == null && sizeId == null
+               && osDescription == null && imageVersion == null && imageName == null
+               && imageDescription == null && minCores == 0 && minRam == 0 && !biggest && !fastest
+               && options == null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public TemplateBuilder any() {
+      return defaultTemplateProvider.get();
    }
 
    @Override

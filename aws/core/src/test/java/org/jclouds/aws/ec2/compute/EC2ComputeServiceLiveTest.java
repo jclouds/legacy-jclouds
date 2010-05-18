@@ -36,7 +36,7 @@ import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -83,11 +83,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return new JschSshClientModule();
    }
 
-   @Override
-   protected Template buildTemplate(TemplateBuilder templateBuilder) {
-      return templateBuilder.imageId("ami-714ba518").build();
-   }
-
    @Test
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
@@ -101,10 +96,10 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String tag = this.tag + "optionsandlogin";
 
-      Template template = buildTemplate(client.templateBuilder());
+      TemplateOptions options = client.templateOptions();
 
-      template.getOptions().as(EC2TemplateOptions.class).securityGroups(tag);
-      template.getOptions().as(EC2TemplateOptions.class).keyPair(tag);
+      options.as(EC2TemplateOptions.class).securityGroups(tag);
+      options.as(EC2TemplateOptions.class).keyPair(tag);
 
       String startedId = null;
       try {
@@ -116,9 +111,10 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, template);
-         Credentials good = nodes.iterator().next().getCredentials();
-         assert good.account != null;
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         NodeMetadata first = Iterables.get(nodes, 0);
+         assert first.getCredentials() != null : first;
+         assert first.getCredentials().account != null : first;
 
          startedId = Iterables.getOnlyElement(nodes).getId();
 
@@ -135,8 +131,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert group.getIpPermissions().size() == 0 : group;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(tag, template.getImage().getOsFamily(), new Credentials(good.account,
-                  result.getKeyMaterial()));
+         runScriptWithCreds(tag, first.getImage().getOsFamily(), new Credentials(first
+                  .getCredentials().account, result.getKeyMaterial()));
 
       } finally {
          client.destroyNodesMatching(NodePredicates.withTag(tag));
@@ -162,17 +158,17 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String tag = this.tag + "optionsnokey";
 
-      Template template = buildTemplate(client.templateBuilder());
+      TemplateOptions options = client.templateOptions();
 
-      template.getOptions().as(EC2TemplateOptions.class).securityGroups(tag);
-      template.getOptions().as(EC2TemplateOptions.class).noKeyPair();
+      options.as(EC2TemplateOptions.class).securityGroups(tag);
+      options.as(EC2TemplateOptions.class).noKeyPair();
 
       String startedId = null;
       try {
          // create the security group
          securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, template);
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
          Credentials creds = nodes.iterator().next().getCredentials();
          assert creds == null;
 

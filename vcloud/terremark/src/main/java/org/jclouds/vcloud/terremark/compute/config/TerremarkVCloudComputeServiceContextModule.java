@@ -38,7 +38,6 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
-import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Location;
@@ -93,7 +92,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    }
 
    @Override
-   protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.osFamily(OsFamily.UBUNTU);
    }
 

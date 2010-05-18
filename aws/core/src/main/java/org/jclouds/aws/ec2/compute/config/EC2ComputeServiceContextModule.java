@@ -64,7 +64,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
@@ -139,7 +138,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    }
 
    @Provides
-   TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+   @Named("DEFAULT")
+   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.architecture(Architecture.X86_32).osFamily(UBUNTU);
    }
 

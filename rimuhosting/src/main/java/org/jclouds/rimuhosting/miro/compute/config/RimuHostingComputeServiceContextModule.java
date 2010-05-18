@@ -55,7 +55,6 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
@@ -119,7 +118,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    }
 
    @Provides
-   TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+   @Named("DEFAULT")
+   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.sizeId("MIRO1B").osFamily(UBUNTU);
    }
 

@@ -52,6 +52,7 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -95,6 +96,7 @@ public class BaseComputeService implements ComputeService {
    protected final RebootNodeStrategy rebootNodeStrategy;
    protected final DestroyNodeStrategy destroyNodeStrategy;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
+   protected final Provider<TemplateOptions> templateOptionsProvider;
    protected final ComputeUtils utils;
    protected final ExecutorService executor;
 
@@ -105,7 +107,8 @@ public class BaseComputeService implements ComputeService {
             GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider, ComputeUtils utils,
+            Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.images = checkNotNull(images, "images");
@@ -120,18 +123,26 @@ public class BaseComputeService implements ComputeService {
       this.destroyNodeStrategy = checkNotNull(destroyNodeStrategy, "destroyNodeStrategy");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider,
                "templateBuilderProvider");
+      this.templateOptionsProvider = checkNotNull(templateOptionsProvider,
+               "templateOptionsProvider");
       this.utils = checkNotNull(utils, "utils");
       this.executor = checkNotNull(executor, "executor");
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public ComputeServiceContext getContext() {
       return context;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(final String tag, int count,
-            final Template template) throws RunNodesException {
+   public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template)
+            throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)",
@@ -149,6 +160,27 @@ public class BaseComputeService implements ComputeService {
       return nodes;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count,
+            TemplateOptions templateOptions) throws RunNodesException {
+      return runNodesWithTag(tag, count, templateBuilder().any().options(templateOptions).build());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count)
+            throws RunNodesException {
+      return runNodesWithTag(tag, count, templateOptions());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public void destroyNode(Location location, String id) {
       checkNotNull(location, "location");
@@ -158,6 +190,9 @@ public class BaseComputeService implements ComputeService {
       logger.debug("<< destroyed node(%s/%s) success(%s)", location.getId(), id, successful);
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> destroying nodes matching(%s)", filter);
@@ -184,6 +219,9 @@ public class BaseComputeService implements ComputeService {
                .not(NodePredicates.TERMINATED)));
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Set<? extends ComputeMetadata> listNodes() {
       logger.debug(">> listing nodes");
@@ -192,6 +230,9 @@ public class BaseComputeService implements ComputeService {
       return set;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate<ComputeMetadata> filter) {
       checkNotNull(filter, "filter");
@@ -202,26 +243,41 @@ public class BaseComputeService implements ComputeService {
       return set;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Set<? extends Size> listSizes() {
       return sizes.get();
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Set<? extends Image> listImages() {
       return images.get();
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Set<? extends Location> listAssignableLocations() {
       return locations.get();
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public TemplateBuilder templateBuilder() {
       return templateBuilderProvider.get();
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public NodeMetadata getNodeMetadata(Location location, String id) {
       checkNotNull(location, "location");
@@ -229,6 +285,9 @@ public class BaseComputeService implements ComputeService {
       return getNodeMetadataStrategy.execute(location, id);
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public void rebootNode(Location location, String id) {
       checkNotNull(location, "location");
@@ -238,6 +297,9 @@ public class BaseComputeService implements ComputeService {
       logger.debug("<< rebooted node(%s/%s) success(%s)", location.getId(), id, successful);
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public void rebootNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> rebooting nodes matching(%s)", filter);
@@ -257,10 +319,7 @@ public class BaseComputeService implements ComputeService {
    }
 
    /**
-    * @throws RunScriptOnNodesException
-    * @see #runScriptOnNodesMatching(Predicate, byte[],
-    *      org.jclouds.compute.options.RunScriptOptions)
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * {@inheritDoc}
     */
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(
@@ -269,20 +328,7 @@ public class BaseComputeService implements ComputeService {
    }
 
    /**
-    * Run the script on all nodes with the specific tag.
-    * 
-    * @param filter
-    *           Predicate-based filter to define on which nodes the script is to be executed
-    * @param runScript
-    *           script to run in byte format. If the script is a string, use
-    *           {@link String#getBytes()} to retrieve the bytes
-    * @param options
-    *           nullable options to how to run the script, whether to override credentials
-    * @return map with node identifiers and corresponding responses
-    * @throws RunScriptOnNodesException
-    *            if anything goes wrong during script execution
-    * 
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * {@inheritDoc}
     */
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
@@ -372,5 +418,10 @@ public class BaseComputeService implements ComputeService {
 
    private Iterable<? extends NodeMetadata> detailsOnAllNodes() {
       return listNodesStrategy.listDetailsOnNodesMatching(NodePredicates.all());
+   }
+
+   @Override
+   public TemplateOptions templateOptions() {
+      return templateOptionsProvider.get();
    }
 }

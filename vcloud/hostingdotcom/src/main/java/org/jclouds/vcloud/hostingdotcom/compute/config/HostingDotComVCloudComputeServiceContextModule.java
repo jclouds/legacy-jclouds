@@ -21,7 +21,6 @@ package org.jclouds.vcloud.hostingdotcom.compute.config;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.impl.ReturnNullCredentials;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -49,7 +48,7 @@ public class HostingDotComVCloudComputeServiceContextModule extends
    }
 
    @Override
-   protected TemplateBuilder provideTemplate(TemplateBuilderImpl template) {
+   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.osFamily(CENTOS);
    }
 

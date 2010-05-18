@@ -41,7 +41,7 @@ import java.util.Arrays;
  */
 public class TemplateOptions {
 
-   public static final TemplateOptions NONE = new TemplateOptions();
+   public static final TemplateOptions NONE = new ImmutableTemplateOptions(new TemplateOptions());
 
    public static class ImmutableTemplateOptions extends TemplateOptions {
       private final TemplateOptions delegate;
