@@ -65,9 +65,13 @@ public class DnsNameValidator extends Validator<String> {
        * digits 0 through 9". From Azure: Every Dash (-) Must Be Immediately Preceded and Followed
        * by a Letter or Number.
        */
-      CharMatcher lettersNumbersOrDashes = inRange('a', 'z').or(inRange('0', '9').or(is('-')));
-      if (!lettersNumbersOrDashes.matchesAllOf(name))
+      CharMatcher range = getAcceptableRange();
+      if (!range.matchesAllOf(name))
          throw exception(name, "Should have lowercase ASCII letters, " + "numbers, or dashes");
+   }
+
+   protected CharMatcher getAcceptableRange() {
+      return inRange('a', 'z').or(inRange('0', '9').or(is('-')));
    }
 
    protected IllegalArgumentException exception(String vAppName, String reason) {

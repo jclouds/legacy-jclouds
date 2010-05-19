@@ -199,18 +199,29 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       checkFilters(httpMethod);
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testCopyObjectInvalidName() throws ArrayIndexOutOfBoundsException,
+            SecurityException, IllegalArgumentException, NoSuchMethodException, IOException {
+      Method method = S3AsyncClient.class
+               .getMethod("copyObject", String.class, String.class, String.class, String.class,
+                        Array.newInstance(CopyObjectOptions.class, 0).getClass());
+      processor.createRequest(method, "sourceBucket", "sourceObject", "destinationBucket",
+               "destinationObject");
+
+   }
+
    public void testCopyObject() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class
                .getMethod("copyObject", String.class, String.class, String.class, String.class,
                         Array.newInstance(CopyObjectOptions.class, 0).getClass());
       GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
-               "sourceBucket", "sourceObject", "destinationBucket", "destinationObject");
+               "sourceBucket", "sourceObject", "destinationbucket", "destinationObject");
 
       assertRequestLineEquals(httpMethod,
-               "PUT http://destinationBucket.stub:8080/destinationObject HTTP/1.1");
+               "PUT http://destinationbucket.stub:8080/destinationObject HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 0\nHost: destinationBucket.stub\nx-amz-copy-source: /sourceBucket/sourceObject\n");
+               "Content-Length: 0\nHost: destinationbucket.stub\nx-amz-copy-source: /sourceBucket/sourceObject\n");
       assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
