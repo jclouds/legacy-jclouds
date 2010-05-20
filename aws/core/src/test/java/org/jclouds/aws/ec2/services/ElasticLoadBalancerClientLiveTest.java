@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
@@ -35,6 +36,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -43,67 +45,56 @@ import com.google.common.collect.ImmutableSet;
  * @author Lili Nader
  */
 @Test(groups = "live", sequential = true, testName = "ec2.ElasticLoadBalancerClientLiveTest")
-public class ElasticLoadBalancerClientLiveTest
-{
+public class ElasticLoadBalancerClientLiveTest {
 
-    private ElasticLoadBalancerClient              client;
-    private RestContext<EC2AsyncClient, EC2Client> context;
+   private ElasticLoadBalancerClient client;
+   private RestContext<EC2AsyncClient, EC2Client> context;
 
-    @BeforeGroups(groups = { "live" })
-    public void setupClient()
-    {
-        String user = checkNotNull(System.getProperty("jclouds.test.user"),
-                "jclouds.test.user");
-        String password = checkNotNull(System.getProperty("jclouds.test.key"),
-                "jclouds.test.key");
+   @BeforeGroups(groups = { "live" })
+   public void setupClient() {
+      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-        context = EC2ContextFactory.createContext(user, password,
-                new Log4JLoggingModule()).getProviderSpecificContext();
-        client = context.getApi().getElasticLoadBalancerServices();
-    }
+      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
+               .getProviderSpecificContext();
+      client = context.getApi().getElasticLoadBalancerServices();
+   }
 
-    @Test
-    void testCreateLoadBalancer()
-    {
-        String name = "TestLoadBalancer";
-        for (String region : ImmutableSet.of(Region.US_EAST_1))
-        {
-            String dnsName = client.createLoadBalancer(region, name, "http",
-                    80, 80, AvailabilityZone.US_EAST_1A);
-            assertNotNull(dnsName);
-            assert (dnsName.startsWith(name));
-        }
-    }
+   @Test
+   void testCreateLoadBalancer() {
+      String name = "TestLoadBalancer";
+      for (Entry<String, String> regionZone : ImmutableMap.<String, String> of(Region.US_EAST_1,
+               AvailabilityZone.US_EAST_1A, Region.US_WEST_1, AvailabilityZone.US_WEST_1A,
+               Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, Region.AP_SOUTHEAST_1,
+               AvailabilityZone.AP_SOUTHEAST_1A).entrySet()) {
+         String dnsName = client.createLoadBalancer(regionZone.getKey(), name, "http", 80, 80,
+                  regionZone.getValue());
+         assertNotNull(dnsName);
+         assert (dnsName.startsWith(name));
+      }
+   }
 
-    @Test
-    void testDescribeLoadBalancers()
-    {
-        String name = "TestDescribeLoadBalancer";
-        for (String region : ImmutableSet.of(Region.US_EAST_1))
-        {
-            client.createLoadBalancer(region, name, "http",
-                    80, 80, AvailabilityZone.US_EAST_1A);
-            Set<ElasticLoadBalancer> allResults = client.describeLoadBalancers(
-                    region, name);
-            assertNotNull(allResults);
-            assert (allResults.size() >= 1);
-            
-            client.deleteLoadBalancer(region, name);
-        }
-    }
+   @Test(dependsOnMethods = "testCreateLoadBalancer")
+   void testDescribeLoadBalancers() {
+      String name = "TestDescribeLoadBalancer";
+      for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
+         Set<ElasticLoadBalancer> allResults = client.describeLoadBalancers(region, name);
+         assertNotNull(allResults);
+         assert (allResults.size() >= 1);
+      }
+   }
 
-    @Test
-    void testDeleteLoadBalancer()
-    {
-        for (String region : ImmutableSet.of(Region.US_EAST_1))
-        {
-            client.deleteLoadBalancer(region, "TestLoadBalancer");
-        }
-    }
+   @Test
+   void testDeleteLoadBalancer() {
+      for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
+         client.deleteLoadBalancer(region, "TestLoadBalancer");
+      }
+   }
 
-    @AfterTest
-    public void shutdown()
-    {
-        context.close();
-    }
+   @AfterTest
+   public void shutdown() {
+      context.close();
+   }
 }

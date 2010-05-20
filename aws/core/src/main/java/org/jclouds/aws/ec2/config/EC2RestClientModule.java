@@ -27,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.ELB;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
@@ -41,6 +43,8 @@ import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
+import org.jclouds.aws.ec2.services.ElasticLoadBalancerAsyncClient;
+import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
@@ -70,6 +74,7 @@ import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -112,6 +117,26 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @ELB
+   protected URI provideELBURI(@Named(EC2Constants.PROPERTY_ELB_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   @ELB
+   Map<String, URI> provideELBRegions() {
+      return ImmutableMap.<String, URI> of(Region.US_EAST_1, URI
+               .create("https://elasticloadbalancing.us-east-1.amazonaws.com"), Region.US_WEST_1,
+               URI.create("https://elasticloadbalancing.us-west-1.amazonaws.com"),
+               Region.EU_WEST_1,
+               URI.create("https://elasticloadbalancing.eu-west-1.amazonaws.com"),
+               Region.AP_SOUTHEAST_1, URI
+                        .create("https://elasticloadbalancing.ap-southeast-1.amazonaws.com"));
+   }
+
+   @Provides
+   @Singleton
    @EC2
    String provideCurrentRegion(@EC2 Map<String, URI> regionMap, @EC2 URI currentUri) {
       ImmutableBiMap<URI, String> map = ImmutableBiMap.<String, URI> builder().putAll(regionMap)
@@ -130,8 +155,8 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Map<String, String> provideAvailabilityZoneToRegions(
-            AvailabilityZoneAndRegionClient client, @EC2 Map<String, URI> regions) {
+   Map<String, String> provideAvailabilityZoneToRegions(AvailabilityZoneAndRegionClient client,
+            @EC2 Map<String, URI> regions) {
       Map<String, String> map = Maps.newHashMap();
       for (String region : regions.keySet()) {
          for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {
@@ -173,6 +198,13 @@ public class EC2RestClientModule extends AbstractModule {
    protected ElasticIPAddressAsyncClient provideElasticIPAddressAsyncClient(
             RestClientFactory factory) {
       return factory.create(ElasticIPAddressAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   protected ElasticLoadBalancerAsyncClient provideElasticLoadBalancerAsyncClient(
+            RestClientFactory factory) {
+      return factory.create(ElasticLoadBalancerAsyncClient.class);
    }
 
    @Provides
@@ -261,6 +293,14 @@ public class EC2RestClientModule extends AbstractModule {
    public ElasticBlockStoreClient provideElasticBlockStoreClient(ElasticBlockStoreAsyncClient client)
             throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       return SyncProxy.create(ElasticBlockStoreClient.class, client);
+   }
+
+   @Provides
+   @Singleton
+   public ElasticLoadBalancerClient provideElasticLoadBalancerClient(
+            ElasticLoadBalancerAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(ElasticLoadBalancerClient.class, client);
    }
 
    @Provides

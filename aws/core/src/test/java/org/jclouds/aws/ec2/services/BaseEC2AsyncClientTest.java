@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2PropertiesBuilder;
+import org.jclouds.aws.ec2.ELB;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.TimeStamp;
@@ -79,6 +80,8 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
                      .build(), "properties"));
             bind(URI.class).annotatedWith(EC2.class).toInstance(
                      URI.create("https://ec2.amazonaws.com"));
+            bind(URI.class).annotatedWith(ELB.class).toInstance(
+                     URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com"));
             bind(String.class).annotatedWith(EC2.class).toInstance(Region.US_EAST_1);
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
@@ -106,11 +109,25 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
          }
 
          @SuppressWarnings("unused")
+         @Provides
+         @Singleton
+         @ELB
+         Map<String, URI> provideELBRegions() {
+            return ImmutableMap.<String, URI> of(Region.US_EAST_1, URI
+                     .create("https://elasticloadbalancing.us-east-1.amazonaws.com"),
+                     Region.US_WEST_1, URI
+                              .create("https://elasticloadbalancing.us-west-1.amazonaws.com"),
+                     Region.EU_WEST_1, URI
+                              .create("https://elasticloadbalancing.eu-west-1.amazonaws.com"),
+                     Region.AP_SOUTHEAST_1, URI
+                              .create("https://elasticloadbalancing.ap-southeast-1.amazonaws.com"));
+         }
+
+         @SuppressWarnings("unused")
          @Singleton
          @Provides
          Map<String, String> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A,
-                     Region.US_EAST_1);
+            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
          }
       };
    }

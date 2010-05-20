@@ -59,12 +59,11 @@ public class EC2Utils {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof String) {
             String regionName = (String) arg;
-            if(Region.EU_WEST_1.equals(regionName) ||
-                    Region.US_WEST_1.equals(regionName) ||
-                    Region.US_EAST_1.equals(regionName) ||
-                    Region.US_STANDARD.equals(regionName) ||
-                    Region.AP_SOUTHEAST_1.equals(regionName)
-                    ) return regionName;
+            if (Region.EU_WEST_1.equals(regionName) || Region.US_WEST_1.equals(regionName)
+                     || Region.US_EAST_1.equals(regionName)
+                     || Region.US_STANDARD.equals(regionName)
+                     || Region.AP_SOUTHEAST_1.equals(regionName))
+               return regionName;
          }
       }
       return null;
@@ -74,9 +73,22 @@ public class EC2Utils {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof String) {
             String zone = (String) arg;
-            if(AvailabilityZone.zones.contains(zone)) return zone;
+            if (AvailabilityZone.zones.contains(zone))
+               return zone;
          }
       }
       return null;
+   }
+
+   public static void indexStringArrayToFormValuesWithStringFormat(GeneratedHttpRequest<?> request,
+            String format, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof String[],
+               "this binder is only valid for String[] : " + input.getClass());
+      String[] values = (String[]) input;
+      for (int i = 0; i < values.length; i++) {
+         request.addFormParam(String.format(format, (i + 1)), checkNotNull(values[i], format
+                  .toLowerCase()
+                  + "s[" + i + "]"));
+      }
    }
 }

@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.aws.ec2.reference.EC2Constants.*;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_ENDPOINT;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_EXPIREINTERVAL;
@@ -40,6 +40,8 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_EC2_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_ELB_ENDPOINT,
+               "https://elasticloadbalancing.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, "60");
       // alestic and canonical
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477");

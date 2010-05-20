@@ -33,5 +33,6 @@ public interface EC2Constants extends AWSConstants {
     * the ami owners you wish to use in {@link ComputeService}
     */
    public static final String PROPERTY_EC2_AMI_OWNERS = "jclouds.ec2.ami-owners";
+   public static final String PROPERTY_ELB_ENDPOINT = "jclouds.elb.endpoint";
 
 }

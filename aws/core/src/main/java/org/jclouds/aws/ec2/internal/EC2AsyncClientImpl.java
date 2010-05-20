@@ -28,6 +28,7 @@ import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
+import org.jclouds.aws.ec2.services.ElasticLoadBalancerAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
@@ -48,6 +49,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    private final MonitoringAsyncClient monitoringServices;
    private final AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices;
    private final ElasticBlockStoreAsyncClient elasticBlockStoreServices;
+   private final ElasticLoadBalancerAsyncClient elasticLoadBalancerAsyncClient;
 
    @Inject
    public EC2AsyncClientImpl(AMIAsyncClient AMIServices,
@@ -56,7 +58,8 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
             SecurityGroupAsyncClient securityGroupServices,
             MonitoringAsyncClient monitoringServices,
             AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices,
-            ElasticBlockStoreAsyncClient elasticBlockStoreServices) {
+            ElasticBlockStoreAsyncClient elasticBlockStoreServices,
+            ElasticLoadBalancerAsyncClient elasticLoadBalancerAsyncClient) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
@@ -68,11 +71,14 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
                "availabilityZoneAndRegionServices");
       this.elasticBlockStoreServices = checkNotNull(elasticBlockStoreServices,
                "elasticBlockStoreServices");
+      this.elasticLoadBalancerAsyncClient = checkNotNull(elasticLoadBalancerAsyncClient,
+               "elasticLoadBalancerAsyncClient");
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public AMIAsyncClient getAMIServices() {
       return AMIServices;
    }
@@ -80,6 +86,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public ElasticIPAddressAsyncClient getElasticIPAddressServices() {
       return elasticIPAddressServices;
    }
@@ -87,6 +94,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public InstanceAsyncClient getInstanceServices() {
       return instanceServices;
    }
@@ -94,6 +102,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public KeyPairAsyncClient getKeyPairServices() {
       return keyPairServices;
    }
@@ -101,6 +110,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public SecurityGroupAsyncClient getSecurityGroupServices() {
       return securityGroupServices;
    }
@@ -108,6 +118,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public MonitoringAsyncClient getMonitoringServices() {
       return monitoringServices;
    }
@@ -115,6 +126,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public AvailabilityZoneAndRegionAsyncClient getAvailabilityZoneAndRegionServices() {
       return availabilityZoneAndRegionServices;
    }
@@ -122,8 +134,17 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
+   @Override
    public ElasticBlockStoreAsyncClient getElasticBlockStoreServices() {
       return elasticBlockStoreServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ElasticLoadBalancerAsyncClient getElasticLoadBalancerServices() {
+      return elasticLoadBalancerAsyncClient;
    }
 
 }

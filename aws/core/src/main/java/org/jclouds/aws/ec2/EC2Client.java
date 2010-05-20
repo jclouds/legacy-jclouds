@@ -23,6 +23,7 @@ import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
+import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
@@ -76,4 +77,9 @@ public interface EC2Client {
     * Provides synchronous access to Elastic Block Store services.
     */
    ElasticBlockStoreClient getElasticBlockStoreServices();
+
+   /**
+    * Provides synchronous access to Elastic Load Balancer services.
+    */
+   ElasticLoadBalancerClient getElasticLoadBalancerServices();
 }

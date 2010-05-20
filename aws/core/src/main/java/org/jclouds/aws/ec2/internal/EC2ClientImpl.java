@@ -28,6 +28,7 @@ import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
+import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
@@ -48,13 +49,15 @@ public class EC2ClientImpl implements EC2Client {
    private final MonitoringClient monitoringServices;
    private final AvailabilityZoneAndRegionClient availabilityZoneAndRegionServices;
    private final ElasticBlockStoreClient elasticBlockStoreServices;
+   private final ElasticLoadBalancerClient elasticLoadBalancerClient;
 
    @Inject
    public EC2ClientImpl(AMIClient AMIServices, ElasticIPAddressClient elasticIPAddressServices,
             InstanceClient instanceServices, KeyPairClient keyPairServices,
             SecurityGroupClient securityGroupServices, MonitoringClient monitoringServices,
             AvailabilityZoneAndRegionClient availabilityZoneAndRegionServices,
-            ElasticBlockStoreClient elasticBlockStoreServices) {
+            ElasticBlockStoreClient elasticBlockStoreServices,
+            ElasticLoadBalancerClient elasticLoadBalancerClient) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
@@ -66,11 +69,14 @@ public class EC2ClientImpl implements EC2Client {
                "availabilityZoneAndRegionServices");
       this.elasticBlockStoreServices = checkNotNull(elasticBlockStoreServices,
                "elasticBlockStoreServices");
+      this.elasticLoadBalancerClient = checkNotNull(elasticLoadBalancerClient,
+               "elasticLoadBalancerClient");
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public AMIClient getAMIServices() {
       return AMIServices;
    }
@@ -78,6 +84,7 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public ElasticIPAddressClient getElasticIPAddressServices() {
       return elasticIPAddressServices;
    }
@@ -85,6 +92,7 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public InstanceClient getInstanceServices() {
       return instanceServices;
    }
@@ -92,6 +100,7 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public KeyPairClient getKeyPairServices() {
       return keyPairServices;
    }
@@ -99,6 +108,7 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public SecurityGroupClient getSecurityGroupServices() {
       return securityGroupServices;
    }
@@ -106,6 +116,7 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public MonitoringClient getMonitoringServices() {
       return monitoringServices;
    }
@@ -113,6 +124,7 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public AvailabilityZoneAndRegionClient getAvailabilityZoneAndRegionServices() {
       return availabilityZoneAndRegionServices;
    }
@@ -120,8 +132,17 @@ public class EC2ClientImpl implements EC2Client {
    /**
     * {@inheritDoc}
     */
+   @Override
    public ElasticBlockStoreClient getElasticBlockStoreServices() {
       return elasticBlockStoreServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ElasticLoadBalancerClient getElasticLoadBalancerServices() {
+      return elasticLoadBalancerClient;
    }
 
 }
