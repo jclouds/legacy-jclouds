@@ -108,9 +108,6 @@ public class VCloudComputeServiceContextModuleTest {
       expect(client.getVApp("10")).andThrow(new NullPointerException());
       expect(client.getVApp("10")).andThrow(new NullPointerException());
       expect(client.getVApp("10")).andReturn(vApp);
-      expect(computeClient.getPublicAddresses("10")).andReturn(Sets.<InetAddress> newHashSet());
-      expect(computeClient.getPrivateAddresses("10")).andReturn(
-               Sets.newHashSet(InetAddress.getLocalHost()));
 
       replay(client);
       replay(computeClient);
