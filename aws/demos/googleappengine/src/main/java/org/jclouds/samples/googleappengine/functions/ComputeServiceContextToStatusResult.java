@@ -19,6 +19,7 @@
 package org.jclouds.samples.googleappengine.functions;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -48,9 +49,9 @@ public class ComputeServiceContextToStatusResult implements Function<String, Sta
       String name = "not found";
       try {
          long start = System.currentTimeMillis();
-         Map<String, ? extends ComputeMetadata> nodes = context.getComputeService().getNodes();
+         Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
          if (nodes.size() > 0)
-            name = Iterables.get(nodes.keySet(), 0);
+            name = Iterables.get(nodes, 0).getId();
          status = ((System.currentTimeMillis() - start) + "ms");
       } catch (Exception e) {
          logger.error(e, "Error listing service %s", contextName);

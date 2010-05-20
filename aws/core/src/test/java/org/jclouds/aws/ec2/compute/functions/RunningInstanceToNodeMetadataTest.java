@@ -271,6 +271,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance instance = createMock(RunningInstance.class);
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
+      expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
@@ -328,6 +329,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance instance = createMock(RunningInstance.class);
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
+      expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
       expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag")).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);

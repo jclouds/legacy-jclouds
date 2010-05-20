@@ -53,64 +53,63 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = "2009-11-25")
 @VirtualHost
-public interface ElasticLoadBalancerAsyncClient
-{
-    /**
-     * @see ElasticLoadBalancerClient#createLoadBalancer
-     */
-    @POST
-    @Path("/")
-    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
-    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-    ListenableFuture<String> createLoadBalancer(
+public interface ElasticLoadBalancerAsyncClient {
+   /**
+    * @see ElasticLoadBalancerClient#createLoadBalancerInRegion
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
+   @FormParams(keys = ACTION, values = "CreateLoadBalancer")
+   ListenableFuture<String> createLoadBalancerInRegion(
             @EndpointParam(parser = ELBRegionToEndpoint.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
             @FormParam("Listeners.member.1.Protocol") String protocol,
-            @FormParam("Listeners.member.1.LoadBalancerPort") Integer loadBalancerPort,
-            @FormParam("Listeners.member.1.InstancePort") Integer instancePort,
+            @FormParam("Listeners.member.1.LoadBalancerPort") int loadBalancerPort,
+            @FormParam("Listeners.member.1.InstancePort") int instancePort,
             @FormParam("AvailabilityZones.member.1") String availabilityZone);
 
-    /**
-     * @see ElasticLoadBalancerClient#deleteLoadBalancer
-     */
-    @POST
-    @Path("/")
-    @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
-    ListenableFuture<Void> deleteLoadBalancer(
+   /**
+    * @see ElasticLoadBalancerClient#deleteLoadBalancerInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
+   ListenableFuture<Void> deleteLoadBalancerInRegion(
             @EndpointParam(parser = ELBRegionToEndpoint.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name);
 
-    /**
-     * @see ElasticLoadBalancerClient#registerInstancesWithLoadBalancer
-     */
-    @POST
-    @Path("/")
-    @XMLResponseParser(RegisterInstancesWithLoadBalancerResponseHandler.class)
-    @FormParams(keys = ACTION, values = "RegisterInstancesWithLoadBalancer")
-    ListenableFuture<? extends Set<String>> registerInstancesWithLoadBalancer(
+   /**
+    * @see ElasticLoadBalancerClient#registerInstancesWithLoadBalancerInRegion
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(RegisterInstancesWithLoadBalancerResponseHandler.class)
+   @FormParams(keys = ACTION, values = "RegisterInstancesWithLoadBalancer")
+   ListenableFuture<? extends Set<String>> registerInstancesWithLoadBalancerInRegion(
             @EndpointParam(parser = ELBRegionToEndpoint.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
             @BinderParam(BindELBInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
-    /**
-     * @see ElasticLoadBalancerClient#deregisterInstancesWithLoadBalancer
-     */
-    @POST
-    @Path("/")
-    @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
-    ListenableFuture<Void> deregisterInstancesWithLoadBalancer(
+   /**
+    * @see ElasticLoadBalancerClient#deregisterInstancesWithLoadBalancerInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
+   ListenableFuture<Void> deregisterInstancesWithLoadBalancerInRegion(
             @EndpointParam(parser = ELBRegionToEndpoint.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
             @BinderParam(BindELBInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
-    /**
-     * @see ElasticLoadBalancerClient#describeLoadBalancers
-     */
-    @POST
-    @Path("/")
-    @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
-    @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
-    ListenableFuture<? extends Set<ElasticLoadBalancer>> describeLoadBalancers(
+   /**
+    * @see ElasticLoadBalancerClient#describeLoadBalancersInRegion
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
+   @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
+   ListenableFuture<? extends Set<ElasticLoadBalancer>> describeLoadBalancersInRegion(
             @EndpointParam(parser = ELBRegionToEndpoint.class) @Nullable String region,
             @FormParam("LoadBalancerName") @Nullable String name);
 

@@ -50,4 +50,12 @@ public interface ComputeMetadata extends ResourceMetadata<ComputeType> {
    @Override
    public String getName();
 
+   /**
+    * A means to uniquely address this resource within a provider. For example, if the namespace of
+    * a node or image is region based, the handle will likely include both the region and the id
+    * encoded to avoid collisions.
+    * 
+    */
+   public String getHandle();
+
 }

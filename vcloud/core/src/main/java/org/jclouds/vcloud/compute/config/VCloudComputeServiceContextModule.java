@@ -162,8 +162,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public boolean execute(Location location, String id) {
-         Task task = client.resetVApp(id);
+      public boolean execute(String id) {
+         Task task = client.resetVApp(checkNotNull(id, "node.id"));
          return taskTester.apply(task.getId());
       }
 
@@ -179,7 +179,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public boolean execute(Location location, String id) {
+      public boolean execute(String id) {
          computeClient.stop(checkNotNull(id, "node.id"));
          return true;
       }
@@ -214,9 +214,9 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
       protected NodeMetadata newCreateNodeResponse(String tag, Template template,
                Map<String, String> metaMap, VApp vApp) {
-         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), template.getLocation(), vApp
-                  .getLocation(), ImmutableMap.<String, String> of(), tag, template.getImage(),
-                  vAppStatusToNodeState.get(vApp.getStatus()), computeClient
+         return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(), template
+                  .getLocation(), vApp.getLocation(), ImmutableMap.<String, String> of(), tag,
+                  template.getImage(), vAppStatusToNodeState.get(vApp.getStatus()), computeClient
                            .getPublicAddresses(vApp.getId()), computeClient
                            .getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(),
                   new Credentials(metaMap.get("username"), metaMap.get("password")));
@@ -255,7 +255,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
          Location location = findLocationForResourceInVDC.apply(resource, vdc.getId());
          return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(), resource.getName(),
-                  location, null, ImmutableMap.<String, String> of());
+                  resource.getId(), location, null, ImmutableMap.<String, String> of());
       }
 
       @Override
@@ -279,7 +279,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
          int i = 0;
          while (node == null && i++ < 3) {
             try {
-               node = getNodeMetadataByIdInVDC(vdc.getId(), resource.getId());
+               node = getNodeMetadataByIdInVDC(resource.getId());
                nodes.add(node);
             } catch (NullPointerException e) {
                logger.warn("vApp %s not yet present in vdc %s", resource.getId(), vdc.getId());
@@ -303,9 +303,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       }
 
       @Override
-      public NodeMetadata execute(Location location, String id) {
-         return getNodeMetadataByIdInVDC(checkNotNull(location, "location").getId(), checkNotNull(
-                  id, "node.id"));
+      public NodeMetadata execute(String id) {
+         return getNodeMetadataByIdInVDC(checkNotNull(id, "node.id"));
       }
 
    }
@@ -366,10 +365,10 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                                        .getId());
 
                               images.add(new ImageImpl(resource.getId(), template.getName(),
-                                       location, template.getLocation(), ImmutableMap
-                                                .<String, String> of(), template.getDescription(),
-                                       "", myOs, template.getName(), arch, new Credentials("root",
-                                                null)));
+                                       resource.getId(), location, template.getLocation(),
+                                       ImmutableMap.<String, String> of(), template
+                                                .getDescription(), "", myOs, template.getName(),
+                                       arch, new Credentials("root", null)));
                               return null;
                            }
                         }), executor));
@@ -431,10 +430,12 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
             throws InterruptedException, TimeoutException, ExecutionException {
       Set<Size> sizes = Sets.newHashSet();
       for (int cpus : new int[] { 1, 2, 4 })
-         for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 })
-            sizes.add(new SizeImpl(String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10), null,
-                     null, null, ImmutableMap.<String, String> of(), cpus, ram, 10, ImmutableSet
-                              .<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+         for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 }) {
+            String id = String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10);
+            sizes.add(new SizeImpl(id, null, id, null, null, ImmutableMap.<String, String> of(),
+                     cpus, ram, 10, ImmutableSet.<Architecture> of(Architecture.X86_32,
+                              Architecture.X86_64)));
+         }
       return sizes;
    }
 

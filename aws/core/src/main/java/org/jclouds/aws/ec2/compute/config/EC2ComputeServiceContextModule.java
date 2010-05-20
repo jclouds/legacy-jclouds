@@ -18,9 +18,10 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.aws.ec2.util.EC2Utils.getAllRunningInstancesInRegion;
+import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
@@ -126,12 +127,12 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
+      bind(LoadBalancerStrategy.class).to(EC2LoadBalancerStrategy.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EC2RunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(EC2ListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
-      bind(LoadBalancerStrategy.class).to(EC2LoadBalancerStrategy.class);
       bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
       }).annotatedWith(Jsr330.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
                .in(Scopes.SINGLETON);
@@ -164,7 +165,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       @Resource
       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
       protected Logger logger = Logger.NULL;
-      
+
       private final InstanceClient client;
       private final Map<String, URI> regionMap;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
@@ -215,60 +216,44 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    }
 
    @Singleton
-   public static class GetRegionFromLocation implements Function<Location, String> {
-      public String apply(Location location) {
-         String region = location.getScope() == LocationScope.REGION ? location.getId() : location
-                  .getParent().getId();
-         return region;
-      }
-   }
-
-   @Singleton
    public static class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
       private final InstanceClient client;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
-      private final GetRegionFromLocation getRegionFromLocation;
 
       @Inject
       protected EC2GetNodeMetadataStrategy(InstanceClient client,
-               GetRegionFromLocation getRegionFromLocation,
                RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
          this.client = client;
-         this.getRegionFromLocation = getRegionFromLocation;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
       }
 
       @Override
-      public NodeMetadata execute(Location location, String id) {
-         String region = getRegionFromLocation.apply(checkNotNull(location, "location"));
+      public NodeMetadata execute(String handle) {
+         String[] parts = parseHandle(handle);
+         String region = parts[0];
+         String id = parts[1];
          RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
-                  client, region, checkNotNull(id, "id")));
+                  client, region, id));
          return runningInstanceToNodeMetadata.apply(runningInstance);
       }
 
    }
 
-   public static Iterable<RunningInstance> getAllRunningInstancesInRegion(InstanceClient client,
-            String region, String id) {
-      return Iterables.concat(client.describeInstancesInRegion(region, id));
-   }
-
    @Singleton
    public static class EC2RebootNodeStrategy implements RebootNodeStrategy {
       private final InstanceClient client;
-      private final GetRegionFromLocation getRegionFromLocation;
 
       @Inject
-      protected EC2RebootNodeStrategy(InstanceClient client,
-               GetRegionFromLocation getRegionFromLocation) {
+      protected EC2RebootNodeStrategy(InstanceClient client) {
          this.client = client;
-         this.getRegionFromLocation = getRegionFromLocation;
       }
 
       @Override
-      public boolean execute(Location location, String id) {
-         String region = getRegionFromLocation.apply(location);
+      public boolean execute(String handle) {
+         String[] parts = parseHandle(handle);
+         String region = parts[0];
+         String id = parts[1];
          client.rebootInstancesInRegion(region, id);
          return true;
       }

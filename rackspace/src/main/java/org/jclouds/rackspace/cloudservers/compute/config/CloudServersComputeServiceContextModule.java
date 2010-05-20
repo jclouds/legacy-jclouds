@@ -142,8 +142,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public boolean execute(Location location, String id) {
-         int serverId = Integer.parseInt(id);
+      public boolean execute(String handle) {
+         int serverId = Integer.parseInt(handle);
          // if false server wasn't around in the first place
          client.rebootServer(serverId, RebootType.HARD);
          Server server = client.getServer(serverId);
@@ -165,8 +165,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public boolean execute(Location location, String id) {
-         int serverId = Integer.parseInt(id);
+      public boolean execute(String handle) {
+         int serverId = Integer.parseInt(handle);
          // if false server wasn't around in the first place
          if (!client.deleteServer(serverId))
             return false;
@@ -193,12 +193,13 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
          Server server = client.createServer(name, Integer.parseInt(template.getImage().getId()),
                   Integer.parseInt(template.getSize().getId()));
          serverActive.apply(server);
-         return new NodeMetadataImpl(server.getId() + "", name, new LocationImpl(
-                  LocationScope.HOST, server.getHostId(), server.getHostId(), template
-                           .getLocation()), null, server.getMetadata(), tag, template.getImage(),
-                  NodeState.RUNNING, server.getAddresses().getPublicAddresses(), server
-                           .getAddresses().getPrivateAddresses(), ImmutableMap
-                           .<String, String> of(), new Credentials("root", server.getAdminPass()));
+         return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "",
+                  new LocationImpl(LocationScope.HOST, server.getHostId(), server.getHostId(),
+                           template.getLocation()), null, server.getMetadata(), tag, template
+                           .getImage(), NodeState.RUNNING, server.getAddresses()
+                           .getPublicAddresses(), server.getAddresses().getPrivateAddresses(),
+                  ImmutableMap.<String, String> of(),
+                  new Credentials("root", server.getAdminPass()));
       }
 
    }
@@ -242,8 +243,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public NodeMetadata execute(Location location, String id) {
-         int serverId = Integer.parseInt(id);
+      public NodeMetadata execute(String handle) {
+         int serverId = Integer.parseInt(handle);
          Server server = client.getServer(serverId);
          return server == null ? null : serverToNodeMetadata.apply(server);
       }
@@ -315,9 +316,10 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new SizeImpl(from.getId() + "", from.getName(), location, null, ImmutableMap
-                  .<String, String> of(), from.getDisk() / 10, from.getRam(), from.getDisk(),
-                  ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location,
+                  null, ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(),
+                  from.getDisk(), ImmutableSet.<Architecture> of(Architecture.X86_32,
+                           Architecture.X86_64)));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
@@ -357,9 +359,9 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
-         images.add(new ImageImpl(from.getId() + "", from.getName(), location, null, ImmutableMap
-                  .<String, String> of(), from.getName(), version, os, osDescription, arch,
-                  new Credentials("root", null)));
+         images.add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location,
+                  null, ImmutableMap.<String, String> of(), from.getName(), version, os,
+                  osDescription, arch, new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return images;

@@ -19,7 +19,6 @@
 
 package org.jclouds.compute.strategy;
 
-import org.jclouds.domain.Location;
 
 /**
  * Reboots a node unless it is in the state TERMINATED.
@@ -28,6 +27,6 @@ import org.jclouds.domain.Location;
  */
 public interface RebootNodeStrategy {
 
-   boolean execute(Location location, String id);
+   boolean execute(String handle);
 
 }

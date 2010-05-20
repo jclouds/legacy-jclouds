@@ -91,7 +91,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
       Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl(null, null, location, null,
+      Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl("1", "1", "region/1", location, null,
                ImmutableMap.<String, String> of(), 1, 1, 1, EnumSet.allOf(Architecture.class)));
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
@@ -127,7 +127,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
       Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl(null, null, location, null,
+      Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl("1", "1", "region/1", location, null,
                ImmutableMap.<String, String> of(), 1, 1, 1, EnumSet.allOf(Architecture.class)));
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);

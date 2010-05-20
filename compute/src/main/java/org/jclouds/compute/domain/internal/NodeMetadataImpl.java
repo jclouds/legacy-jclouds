@@ -54,12 +54,12 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final String tag;
    private final Image image;
 
-   public NodeMetadataImpl(String id, String name, Location location, URI uri,
+   public NodeMetadataImpl(String id, String name, String handle, Location location, URI uri,
             Map<String, String> userMetadata, @Nullable String tag, @Nullable Image image,
             NodeState state, Iterable<InetAddress> publicAddresses,
             Iterable<InetAddress> privateAddresses, Map<String, String> extra,
             @Nullable Credentials credentials) {
-      super(ComputeType.NODE, id, name, location, uri, userMetadata);
+      super(ComputeType.NODE, id, name, handle, location, uri, userMetadata);
       this.tag = tag;
       this.image = image;
       this.state = checkNotNull(state, "state");

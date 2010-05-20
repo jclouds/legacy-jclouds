@@ -324,7 +324,7 @@ public abstract class BaseComputeServiceLiveTest {
                .withTag(tag), Predicates.not(NodePredicates.TERMINATED))));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
-         NodeMetadata metadata = client.getNodeMetadata(node.getLocation(), node.getId());
+         NodeMetadata metadata = client.getNodeMetadata(node.getHandle());
          assertEquals(metadata.getId(), node.getId());
          assertEquals(metadata.getTag(), node.getTag());
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());

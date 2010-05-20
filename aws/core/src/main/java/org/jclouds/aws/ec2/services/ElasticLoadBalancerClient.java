@@ -34,48 +34,64 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ElasticLoadBalancerClient {
-    
-    /**
-     * Creates a load balancer
-     * 
-     * @param name  Name of the load balancer
-     * @param loadBalancerPort Port for the load balancer to listen on
-     * @param instancePort Port to forward the request to
-     * @return dns the DNS name for the load balancer
-     *  @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/"
-     */
-   String createLoadBalancer(@Nullable String region, String name, String protocol,  Integer loadBalancerPort, Integer instancePort, String availabilityZone);
+
+   /**
+    * Creates a load balancer
+    * 
+    * @param name
+    *           Name of the load balancer
+    * @param loadBalancerPort
+    *           Port for the load balancer to listen on
+    * @param instancePort
+    *           Port to forward the request to
+    * @return dns the DNS name for the load balancer
+    * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/"
+    */
+   String createLoadBalancerInRegion(@Nullable String region, String name, String protocol,
+            int loadBalancerPort, int instancePort, String availabilityZone);
 
    /**
     * Delete load balancer
     * 
-    * @param name  Name of the load balancer
+    * @param name
+    *           Name of the load balancer
     * @return
-    * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
+    * @see <a
+    *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
     */
-   void deleteLoadBalancer(@Nullable String region, String name);
+   void deleteLoadBalancerInRegion(@Nullable String region, String name);
 
-    /**
-     * Register instances with an existing load balancer
-     * @param name Load Balancer name
-     * @param instanceIds Set of instance Ids to register with load balancer
-     * @return instanceIds registered with load balancer
-     * 
-     * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
-     */
-   Set<String> registerInstancesWithLoadBalancer(@Nullable String region, String name, String... instanceIds);
-   
+   /**
+    * Register instances with an existing load balancer
+    * 
+    * @param name
+    *           Load Balancer name
+    * @param instanceIds
+    *           Set of instance Ids to register with load balancer
+    * @return instanceIds registered with load balancer
+    * 
+    * @see <a
+    *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
+    */
+   Set<String> registerInstancesWithLoadBalancerInRegion(@Nullable String region, String name,
+            String... instanceIds);
+
    /**
     * Deregister instances with an existing load balancer
-    * @param name Load Balancer name
-    * @param instanceIds Set of instance Ids to deregister with load balancer
+    * 
+    * @param name
+    *           Load Balancer name
+    * @param instanceIds
+    *           Set of instance Ids to deregister with load balancer
     * @return
     * 
-    * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
+    * @see <a
+    *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
     */
-   void deregisterInstancesWithLoadBalancer(@Nullable String region, String name, String... instanceIds);
+   void deregisterInstancesWithLoadBalancerInRegion(@Nullable String region, String name,
+            String... instanceIds);
 
-
-   Set<ElasticLoadBalancer> describeLoadBalancers(@Nullable String region, @Nullable String name);
+   Set<ElasticLoadBalancer> describeLoadBalancersInRegion(@Nullable String region,
+            @Nullable String name);
 
 }

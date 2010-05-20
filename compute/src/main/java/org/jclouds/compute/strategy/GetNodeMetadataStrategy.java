@@ -20,7 +20,6 @@
 package org.jclouds.compute.strategy;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.domain.Location;
 
 /**
  * returns all details associated to the node below.
@@ -29,6 +28,6 @@ import org.jclouds.domain.Location;
  */
 public interface GetNodeMetadataStrategy {
 
-   NodeMetadata execute(Location location, String id);
+   NodeMetadata execute(String handle);
 
 }

@@ -67,7 +67,7 @@ public class ElasticLoadBalancerClientLiveTest {
                AvailabilityZone.US_EAST_1A, Region.US_WEST_1, AvailabilityZone.US_WEST_1A,
                Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, Region.AP_SOUTHEAST_1,
                AvailabilityZone.AP_SOUTHEAST_1A).entrySet()) {
-         String dnsName = client.createLoadBalancer(regionZone.getKey(), name, "http", 80, 80,
+         String dnsName = client.createLoadBalancerInRegion(regionZone.getKey(), name, "http", 80, 80,
                   regionZone.getValue());
          assertNotNull(dnsName);
          assert (dnsName.startsWith(name));
@@ -79,7 +79,7 @@ public class ElasticLoadBalancerClientLiveTest {
       String name = "TestDescribeLoadBalancer";
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         Set<ElasticLoadBalancer> allResults = client.describeLoadBalancers(region, name);
+         Set<ElasticLoadBalancer> allResults = client.describeLoadBalancersInRegion(region, name);
          assertNotNull(allResults);
          assert (allResults.size() >= 1);
       }
@@ -89,7 +89,7 @@ public class ElasticLoadBalancerClientLiveTest {
    void testDeleteLoadBalancer() {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         client.deleteLoadBalancer(region, "TestLoadBalancer");
+         client.deleteLoadBalancerInRegion(region, "TestLoadBalancer");
       }
    }
 

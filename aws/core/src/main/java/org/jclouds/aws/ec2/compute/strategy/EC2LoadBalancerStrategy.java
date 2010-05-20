@@ -29,9 +29,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule.GetRegionFromLocation;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
+import org.jclouds.aws.ec2.util.EC2Utils.GetRegionFromLocation;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.LoadBalancerStrategy;
 import org.jclouds.domain.Location;
@@ -42,69 +42,59 @@ import org.jclouds.logging.Logger;
  * @author Adrian Cole
  */
 @Singleton
-public class EC2LoadBalancerStrategy implements LoadBalancerStrategy
-{
-    @Resource
-    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-    protected Logger          logger = Logger.NULL;
-    protected final EC2Client ec2Client;
-    protected final GetRegionFromLocation getRegionFromLocation;
+public class EC2LoadBalancerStrategy implements LoadBalancerStrategy {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+   protected final EC2Client ec2Client;
+   protected final GetRegionFromLocation getRegionFromLocation;
 
-    @Inject
-    protected EC2LoadBalancerStrategy(EC2Client ec2Client, GetRegionFromLocation getRegionFromLocation)
-    {
-        this.ec2Client = ec2Client;
-        this.getRegionFromLocation = getRegionFromLocation;
-    }
+   @Inject
+   protected EC2LoadBalancerStrategy(EC2Client ec2Client,
+            GetRegionFromLocation getRegionFromLocation) {
+      this.ec2Client = ec2Client;
+      this.getRegionFromLocation = getRegionFromLocation;
+   }
 
-    @Override
-    public String execute(Location location, String name,
-            String protocol, Integer loadBalancerPort, Integer instancePort,
-            Set<String> instanceIds)
-    {
-        String region = getRegionFromLocation.apply(location);
-        String dnsName = new String();
+   @Override
+   public String execute(Location location, String name, String protocol, int loadBalancerPort,
+            int instancePort, Set<String> instanceIds) {
+      String region = getRegionFromLocation.apply(location);
+      String dnsName = new String();
 
-        // TODO: Fix temp hack
-        String availabilityZone = new String();
-        for (String az : AvailabilityZone.zones)
-        {
-            if (az.startsWith(region))
-                availabilityZone = az;
-        }
+      // TODO: Fix temp hack
+      String availabilityZone = new String();
+      for (String az : AvailabilityZone.zones) {
+         if (az.startsWith(region))
+            availabilityZone = az;
+      }
 
-        ElasticLoadBalancerClient elbClient = ec2Client
-                .getElasticLoadBalancerServices();
+      ElasticLoadBalancerClient elbClient = ec2Client.getElasticLoadBalancerServices();
 
-        dnsName = elbClient.createLoadBalancer(region, name, protocol,
-                loadBalancerPort, instancePort, availabilityZone);
+      dnsName = elbClient.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort,
+               instancePort, availabilityZone);
 
-        List<String> instanceIdlist = new ArrayList<String>(instanceIds);
-        String[] instanceIdArray = new String[instanceIdlist.size()];
-        for(int i=0; i<instanceIdlist.size(); i++)
-        {
-            instanceIdArray[i] = instanceIdlist.get(i);
-        }
-        
-        Set<String> registeredInstanceIds = elbClient
-                .registerInstancesWithLoadBalancer(region, name,
-                        instanceIdArray);
+      List<String> instanceIdlist = new ArrayList<String>(instanceIds);
+      String[] instanceIdArray = new String[instanceIdlist.size()];
+      for (int i = 0; i < instanceIdlist.size(); i++) {
+         instanceIdArray[i] = instanceIdlist.get(i);
+      }
 
-        // deregister instances
-        boolean changed = registeredInstanceIds.removeAll(instanceIds);
-        if (changed)
-        {
-            List<String> list = new ArrayList<String>(registeredInstanceIds);
-            instanceIdArray = new String[list.size()];
-            for(int i=0; i<list.size(); i++)
-            {
-                instanceIdArray[i] = list.get(i);
-            }
-            if(instanceIdArray.length>0)
-                elbClient.deregisterInstancesWithLoadBalancer(region, name,
-                    instanceIdArray);
-        }
+      Set<String> registeredInstanceIds = elbClient.registerInstancesWithLoadBalancerInRegion(
+               region, name, instanceIdArray);
 
-        return dnsName;
-    }
+      // deregister instances
+      boolean changed = registeredInstanceIds.removeAll(instanceIds);
+      if (changed) {
+         List<String> list = new ArrayList<String>(registeredInstanceIds);
+         instanceIdArray = new String[list.size()];
+         for (int i = 0; i < list.size(); i++) {
+            instanceIdArray[i] = list.get(i);
+         }
+         if (instanceIdArray.length > 0)
+            elbClient.deregisterInstancesWithLoadBalancerInRegion(region, name, instanceIdArray);
+      }
+
+      return dnsName;
+   }
 }

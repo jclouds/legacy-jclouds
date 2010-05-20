@@ -140,8 +140,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public boolean execute(Location location, String id) {
-         Long serverId = Long.parseLong(id);
+      public boolean execute(String handle) {
+         Long serverId = Long.parseLong(handle);
          // if false server wasn't around in the first place
          return client.restartServer(serverId).getState() == RunningState.RUNNING;
       }
@@ -161,8 +161,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public boolean execute(Location location, String id) {
-         long serverId = Long.parseLong(id);
+      public boolean execute(String handle) {
+         Long serverId = Long.parseLong(handle);
          client.destroyServer(serverId);
          return serverDestroyed.apply(client.getServer(serverId));
       }
@@ -196,12 +196,12 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
          Server server = client.getServer(serverResponse.getServer().getId());
          // we have to lookup the new details in order to retrieve the currently assigned ip
          // address.
-         NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, template
-                  .getLocation(), null, ImmutableMap.<String, String> of(), tag, template
-                  .getImage(), runningStateToNodeState.get(server.getState()), getPublicAddresses
-                  .apply(server), ImmutableList.<InetAddress> of(), ImmutableMap
-                  .<String, String> of(), new Credentials("root", serverResponse
-                  .getNewInstanceRequest().getCreateOptions().getPassword()));
+         NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, server.getId()
+                  .toString(), template.getLocation(), null, ImmutableMap.<String, String> of(),
+                  tag, template.getImage(), runningStateToNodeState.get(server.getState()),
+                  getPublicAddresses.apply(server), ImmutableList.<InetAddress> of(), ImmutableMap
+                           .<String, String> of(), new Credentials("root", serverResponse
+                           .getNewInstanceRequest().getCreateOptions().getPassword()));
          return node;
       }
 
@@ -247,9 +247,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public NodeMetadata execute(Location location, String id) {
-         // TODO location
-         long serverId = Long.parseLong(id);
+      public NodeMetadata execute(String handle) {
+         long serverId = Long.parseLong(handle);
          Server server = client.getServer(serverId);
          return server == null ? null : serverToNodeMetadata.apply(server);
       }
@@ -322,9 +321,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
                      location);
          }
          NodeState state = runningStateToNodeState.get(from.getState());
-         return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null,
-                  ImmutableMap.<String, String> of(), tag, image, state, getPublicAddresses
-                           .apply(from), ImmutableList.<InetAddress> of(), ImmutableMap
+         return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "",
+                  location, null, ImmutableMap.<String, String> of(), tag, image, state,
+                  getPublicAddresses.apply(from), ImmutableList.<InetAddress> of(), ImmutableMap
                            .<String, String> of(), creds);
 
       }
@@ -432,9 +431,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
                }
 
             });
-            sizes.add(new SizeImpl(from.getId(), from.getId(), location, null, ImmutableMap
-                     .<String, String> of(), 1, from.getRam(), from.getDiskSize(), ImmutableSet
-                     .<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+            sizes.add(new SizeImpl(from.getId(), from.getId(), from.getId(), location, null,
+                     ImmutableMap.<String, String> of(), 1, from.getRam(), from.getDiskSize(),
+                     ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }
@@ -476,9 +475,9 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
             }
          }
 
-         images.add(new ImageImpl(from.getId(), from.getDescription(), null, null, ImmutableMap
-                  .<String, String> of(), from.getDescription(), version, os, osDescription, arch,
-                  new Credentials("root", null)));
+         images.add(new ImageImpl(from.getId(), from.getDescription(), from.getId(), null, null,
+                  ImmutableMap.<String, String> of(), from.getDescription(), version, os,
+                  osDescription, arch, new Credentials("root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return images;

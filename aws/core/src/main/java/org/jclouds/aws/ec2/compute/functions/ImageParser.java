@@ -140,6 +140,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
       return new ImageImpl(
                from.getId(),
                name,
+               from.getRegion() + "/" + from.getId(),
                location,
                null,
                ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),

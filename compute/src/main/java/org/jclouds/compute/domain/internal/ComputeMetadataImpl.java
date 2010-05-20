@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 import java.util.Map;
 
@@ -35,10 +37,20 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 7374704415964898694L;
+   private final String handle;
 
-   public ComputeMetadataImpl(ComputeType type, String id, String name, Location location, URI uri,
-            Map<String, String> userMetadata) {
+   public ComputeMetadataImpl(ComputeType type, String id, String name, String handle,
+            Location location, URI uri, Map<String, String> userMetadata) {
       super(type, id, name, location, uri, userMetadata);
+      this.handle = checkNotNull(handle, "handle");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getHandle() {
+      return handle;
    }
 
 }

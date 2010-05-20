@@ -21,15 +21,32 @@ package org.jclouds.aws.ec2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.services.InstanceClient;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class EC2Utils {
+   @Singleton
+   public static class GetRegionFromLocation implements Function<Location, String> {
+      public String apply(Location location) {
+         String region = location.getScope() == LocationScope.REGION ? location.getId() : location
+                  .getParent().getId();
+         return region;
+      }
+   }
 
    public static void indexStringArrayToFormValuesWithPrefix(GeneratedHttpRequest<?> request,
             String prefix, Object input) {
@@ -40,6 +57,17 @@ public class EC2Utils {
          request.addFormParam(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase()
                   + "s[" + i + "]"));
       }
+   }
+
+   public static Iterable<RunningInstance> getAllRunningInstancesInRegion(InstanceClient client,
+            String region, String id) {
+      return Iterables.concat(client.describeInstancesInRegion(region, id));
+   }
+
+   public static String[] parseHandle(String handle) {
+      String[] parts = checkNotNull(handle, "handle").split("/");
+      checkArgument(parts.length == 2, "handle syntax is region/id");
+      return parts;
    }
 
    public static void indexIterableToFormValuesWithPrefix(GeneratedHttpRequest<?> request,

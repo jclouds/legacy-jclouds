@@ -18,20 +18,13 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.ElasticLoadBalancer;
-import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -40,31 +33,26 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.RegisterInstancesWithLoadBalancerResponseHandlerTest")
-public class RegisterInstancesWithLoadBalancerResponseHandlerTest extends
-        BaseEC2HandlerTest
-{
+public class RegisterInstancesWithLoadBalancerResponseHandlerTest extends BaseEC2HandlerTest {
 
-    public void testParse()
-    {
-        InputStream is = getClass().getResourceAsStream(
-                "/ec2/register_instances_with_loadbalancer.xml");
+   public void testParse() {
+      InputStream is = getClass().getResourceAsStream(
+               "/ec2/register_instances_with_loadbalancer.xml");
 
-        Set<String> instanceIds = Sets.newHashSet();
-        instanceIds.add("i-6055fa09");
-        instanceIds.add("i-9055fa55");
-        
+      Set<String> instanceIds = Sets.newHashSet();
+      instanceIds.add("i-6055fa09");
+      instanceIds.add("i-9055fa55");
 
-        Set<String> result = parseXML(is);
+      Set<String> result = parseXML(is);
 
-        assertEquals(result, instanceIds);
-    }
+      assertEquals(result, instanceIds);
+   }
 
-    private Set<String> parseXML(InputStream is)
-    {
-        RegisterInstancesWithLoadBalancerResponseHandler handler = injector
-                .getInstance(RegisterInstancesWithLoadBalancerResponseHandler.class);
-        Set<String> result = factory.create(handler).parse(is);
-        return result;
-    }
+   private Set<String> parseXML(InputStream is) {
+      RegisterInstancesWithLoadBalancerResponseHandler handler = injector
+               .getInstance(RegisterInstancesWithLoadBalancerResponseHandler.class);
+      Set<String> result = factory.create(handler).parse(is);
+      return result;
+   }
 
 }

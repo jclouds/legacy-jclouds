@@ -138,9 +138,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public boolean execute(Location location, String id) {
+      public boolean execute(String handle) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(id)));
+                  new Long(handle)));
          client.getServerServices().power(server.getName(), PowerCommand.RESTART);
          serverLatestJobCompleted.apply(server);
          client.getServerServices().power(server.getName(), PowerCommand.START);
@@ -186,9 +186,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public NodeMetadata execute(Location location, String id) {
+      public NodeMetadata execute(String handle) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(checkNotNull(id, "id"))));
+                  new Long(checkNotNull(handle, "handle"))));
          return server == null ? null : serverToNodeMetadata.apply(server);
       }
    }
@@ -206,9 +206,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public boolean execute(Location location, String id) {
+      public boolean execute(String handle) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(id)));
+                  new Long(handle)));
          client.getServerServices().deleteByName(server.getName());
          return serverLatestJobCompleted.apply(server);
       }
@@ -329,16 +329,22 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
 
-      sizes.add(new SizeImpl("1", "1", null, null, ImmutableMap.<String, String> of(), 0.5, 512,
-               30, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 60,
-               ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("3", "3", null, null, ImmutableMap.<String, String> of(), 2, 2048,
-               120, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("4", "4", null, null, ImmutableMap.<String, String> of(), 4, 4096,
-               240, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes.add(new SizeImpl("5", "5", null, null, ImmutableMap.<String, String> of(), 8, 8192,
-               480, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5,
+               512, 30, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1,
+               1024, 60, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+      sizes
+               .add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2,
+                        2048, 120, ImmutableSet.<Architecture> of(Architecture.X86_32,
+                                 Architecture.X86_64)));
+      sizes
+               .add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4,
+                        4096, 240, ImmutableSet.<Architecture> of(Architecture.X86_32,
+                                 Architecture.X86_64)));
+      sizes
+               .add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8,
+                        8192, 480, ImmutableSet.<Architecture> of(Architecture.X86_32,
+                                 Architecture.X86_64)));
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
    }
@@ -377,9 +383,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             holder.logger.debug("<< didn't match os(%s)", matchedOs);
          }
          Credentials defaultCredentials = authenticator.execute(from);
-         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), location, null,
-                  ImmutableMap.<String, String> of(), from.getDescription(), version, os,
-                  osDescription, arch, defaultCredentials));
+         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), from.getId() + "",
+                  location, null, ImmutableMap.<String, String> of(), from.getDescription(),
+                  version, os, osDescription, arch, defaultCredentials));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return images;

@@ -103,8 +103,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
                   .warn("could not find a matching image for server %s in location %s", from,
                            location);
       }
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), location, null, ImmutableMap
-               .<String, String> of(), tag, image, state, ipSet, ImmutableList.<InetAddress> of(),
-               ImmutableMap.<String, String> of(), creds);
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location,
+               null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList
+                        .<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
    }
 }

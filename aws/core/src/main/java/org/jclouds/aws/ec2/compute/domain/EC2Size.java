@@ -36,9 +36,8 @@ public class EC2Size extends SizeImpl {
 
    EC2Size(String instanceType, Double cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
-      super(instanceType,
-            instanceType, null, null,
-            ImmutableMap.<String, String> of(),cores, ram, disk, supportedArchitectures);
+      super(instanceType, instanceType, instanceType, null, null, ImmutableMap
+               .<String, String> of(), cores, ram, disk, supportedArchitectures);
       this.instanceType = instanceType;
    }
 

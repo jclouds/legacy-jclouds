@@ -235,7 +235,7 @@ public class ComputeTask extends Task {
 
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
       NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node)
-               : computeService.getNodeMetadata(node.getLocation(), node.getId());
+               : computeService.getNodeMetadata(node.getHandle());
       log(String
                .format(
                         "   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",

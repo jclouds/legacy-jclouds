@@ -58,7 +58,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.LoadBalancerStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
@@ -96,7 +95,6 @@ public class BaseComputeService implements ComputeService {
    protected final RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy;
    protected final RebootNodeStrategy rebootNodeStrategy;
    protected final DestroyNodeStrategy destroyNodeStrategy;
-   protected final LoadBalancerStrategy loadBalancerStrategy;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
    protected final Provider<TemplateOptions> templateOptionsProvider;
    protected final ComputeUtils utils;
@@ -109,7 +107,7 @@ public class BaseComputeService implements ComputeService {
             GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            LoadBalancerStrategy loadBalancerStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
@@ -123,7 +121,6 @@ public class BaseComputeService implements ComputeService {
                "runNodesAndAddToSetStrategy");
       this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
       this.destroyNodeStrategy = checkNotNull(destroyNodeStrategy, "destroyNodeStrategy");
-      this.loadBalancerStrategy = checkNotNull(loadBalancerStrategy, "loadBalancerStrategy");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider,
                "templateBuilderProvider");
       this.templateOptionsProvider = checkNotNull(templateOptionsProvider,
@@ -151,8 +148,8 @@ public class BaseComputeService implements ComputeService {
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)",
                count, count > 1 ? "s" : "", tag, template.getLocation().getId(), template
                         .getImage().getId(), template.getSize().getId(), template.getOptions());
-      final Set<NodeMetadata> nodes = Sets.newHashSet();
-      final Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
+      Set<NodeMetadata> nodes = Sets.newHashSet();
+      Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Map<?, ListenableFuture<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count,
                template, nodes, badNodes);
       Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger,
@@ -185,12 +182,11 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public void destroyNode(Location location, String id) {
-      checkNotNull(location, "location");
-      checkNotNull(id, "id");
-      logger.debug(">> destroying node(%s/%s)", location.getId(), id);
-      boolean successful = destroyNodeStrategy.execute(location, id);
-      logger.debug("<< destroyed node(%s/%s) success(%s)", location.getId(), id, successful);
+   public void destroyNode(String handle) {
+      checkNotNull(handle, "handle");
+      logger.debug(">> destroying node(%s)", handle);
+      boolean successful = destroyNodeStrategy.execute(handle);
+      logger.debug("<< destroyed node(%s) success(%s)", handle, successful);
    }
 
    /**
@@ -205,7 +201,7 @@ public class BaseComputeService implements ComputeService {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-               destroyNode(node.getLocation(), node.getId());
+               destroyNode(node.getHandle());
                destroyedNodes.add(node);
                return null;
             }
@@ -282,22 +278,20 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public NodeMetadata getNodeMetadata(Location location, String id) {
-      checkNotNull(location, "location");
-      checkNotNull(id, "id");
-      return getNodeMetadataStrategy.execute(location, id);
+   public NodeMetadata getNodeMetadata(String handle) {
+      checkNotNull(handle, "handle");
+      return getNodeMetadataStrategy.execute(handle);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public void rebootNode(Location location, String id) {
-      checkNotNull(location, "location");
-      checkNotNull(id, "id");
-      logger.debug(">> rebooting node(%s/%s)", location.getId(), id);
-      boolean successful = rebootNodeStrategy.execute(location, id);
-      logger.debug("<< rebooted node(%s/%s) success(%s)", location.getId(), id, successful);
+   public void rebootNode(String handle) {
+      checkNotNull(handle, "handle");
+      logger.debug(">> rebooting node(%s)", handle);
+      boolean successful = rebootNodeStrategy.execute(handle);
+      logger.debug("<< rebooted node(%s) success(%s)", handle, successful);
    }
 
    /**
@@ -312,7 +306,7 @@ public class BaseComputeService implements ComputeService {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-               rebootNode(node.getLocation(), node.getId());
+               rebootNode(node.getHandle());
                return null;
             }
          }), executor));
@@ -383,12 +377,8 @@ public class BaseComputeService implements ComputeService {
       return execs;
 
    }
-   
-   
-   /**
-    * {@inheritDoc}
-    */
-    private Iterable<? extends NodeMetadata> verifyParametersAndListNodes(
+
+   private Iterable<? extends NodeMetadata> verifyParametersAndListNodes(
             Predicate<NodeMetadata> filter, byte[] runScript, final RunScriptOptions options) {
       checkNotNull(filter, "Filter must be provided");
       checkNotNull(runScript,
@@ -423,28 +413,6 @@ public class BaseComputeService implements ComputeService {
       });
    }
 
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String loadBalanceNodesMatching(String loadBalancerName,
-            String protocol, Integer loadBalancerPort, Integer instancePort,
-            Predicate<NodeMetadata> filter)
-    {
-        return null;
-    }
-    
-    
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteLoadBalancer(String loadBalancerName,
-            Predicate<NodeMetadata> filter)
-    {
-        
-    }
-
    private Iterable<? extends NodeMetadata> detailsOnAllNodes() {
       return listNodesStrategy.listDetailsOnNodesMatching(NodePredicates.all());
    }
@@ -452,5 +420,17 @@ public class BaseComputeService implements ComputeService {
    @Override
    public TemplateOptions templateOptions() {
       return templateOptionsProvider.get();
+   }
+
+   @Override
+   public void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter) {
+      throw new UnsupportedOperationException("deleteLoadBalancer not supported in this cloud");
+   }
+
+   @Override
+   public String loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
+            String protocol, int loadBalancerPort, int instancePort) {
+      throw new UnsupportedOperationException(
+               "loadBalanceNodesMatching not supported in this cloud");
    }
 }

@@ -125,7 +125,7 @@ public class EC2ComputeServiceTest {
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      Image image = new ImageImpl("ami-image", "image", location, null, Maps
+      Image image = new ImageImpl("ami-image", "image", "us-east-1/ami-image", location, null, Maps
                .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
                Architecture.X86_64, new Credentials("root", null));
       replay(optionsProvider);

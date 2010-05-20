@@ -52,12 +52,11 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    private final Architecture architecture;
    private final Credentials defaultCredentials;
 
-
-   public ImageImpl(String id, String name, Location location, URI uri,
+   public ImageImpl(String id, String name, String handle, Location location, URI uri,
             Map<String, String> userMetadata, String description, String version,
             @Nullable OsFamily osFamily, String osDescription, Architecture architecture,
             Credentials defaultCredentials) {
-      super(ComputeType.IMAGE, id, name, location, uri, userMetadata);
+      super(ComputeType.IMAGE, id, name, handle, location, uri, userMetadata);
       this.version = checkNotNull(version, "version");
       this.osFamily = osFamily;
       this.description = checkNotNull(description, "description");
@@ -107,14 +106,14 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    }
 
    /**
-   * {@inheritDoc}
-   */
+    * {@inheritDoc}
+    */
    @Override
    public Credentials getDefaultCredentials() {
-       return defaultCredentials;
+      return defaultCredentials;
    }
 
-    @Override
+   @Override
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", locationId=" + getLocation()
                + ", architecture=" + architecture + ", osDescription=" + osDescription

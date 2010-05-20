@@ -207,10 +207,10 @@ See http://code.google.com/p/jclouds for details."
      (first (run-nodes tag 1 template compute))))
 
 (defn #^NodeMetadata node-details
-  "Retrieve the node metadata."
-  ([location id] (node-details location id *compute*))
-  ([#^Location location id #^ComputeService compute]
-     (.getNodeMetadata compute location id)))
+  "Retrieve the node metadata, given its handle."
+  ([handle] (node-details handle *compute*))
+  ([handle #^ComputeService compute]
+     (.getNodeMetadata compute handle)))
 
 (defn reboot-nodes-with-tag
   "Reboot all the nodes with the given tag."
@@ -219,10 +219,10 @@ See http://code.google.com/p/jclouds for details."
     (.rebootNodesMatching compute (NodePredicates/withTag tag))))
 
 (defn reboot-node
-  "Reboot a given node."
-  ([location id] (reboot-node location id *compute*))
-  ([#^Location location id #^ComputeService compute]
-     (.rebootNode compute location id)))
+  "Reboot a node, given its handle."
+  ([handle] (reboot-node handle *compute*))
+  ([handle #^ComputeService compute]
+     (.rebootNode compute handle)))
 
 (defn destroy-nodes-with-tag
   "Destroy all the nodes with the given tag."
@@ -231,10 +231,10 @@ See http://code.google.com/p/jclouds for details."
      (.destroyNodesMatching compute (NodePredicates/withTag tag))))
 
 (defn destroy-node
-  "Destroy a given node."
-  ([location id] (destroy-node location id *compute*))
-  ([#^Location location id #^ComputeService compute]
-     (.destroyNode compute location id)))
+  "Destroy a node, given its handle."
+  ([handle] (destroy-node handle *compute*))
+  ([handle #^ComputeService compute]
+     (.destroyNode compute handle)))
 
 (defmacro state-predicate [node state]
   `(= (.getState ~node)
@@ -294,6 +294,11 @@ See http://code.google.com/p/jclouds for details."
   "Returns the compute node's location id"
   [#^ComputeMetadata node]
   (-?> node .getLocation .getId))
+
+(defn handle
+  "Returns the compute node's handle"
+  [#^ComputeMetadata node]
+  (.getHandle node))
 
 (define-accessors Template image size location options)
 (define-accessors Image version os-family os-description architecture)

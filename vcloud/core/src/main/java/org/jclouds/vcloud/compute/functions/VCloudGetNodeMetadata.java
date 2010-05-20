@@ -57,7 +57,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class VCloudGetNodeMetadata {
-   
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -86,15 +86,15 @@ public class VCloudGetNodeMetadata {
       this.computeClient = checkNotNull(computeClient, "computeClient");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
    }
-   
-   protected NodeMetadata getNodeMetadataByIdInVDC(String vDCId, String id) {
+
+   protected NodeMetadata getNodeMetadataByIdInVDC(String id) {
       VApp vApp = client.getVApp(id);
 
       String tag = null;
       Image image = null;
       Matcher matcher = TAG_PATTERN_WITH_TEMPLATE.matcher(vApp.getName());
 
-      final Location location = findLocationForResourceInVDC.apply(vApp, vDCId);
+      final Location location = findLocationForResourceInVDC.apply(vApp, vApp.getVDC().getId());
       if (matcher.find()) {
          tag = matcher.group(1);
          String templateIdInHexWithoutLeadingZeros = matcher.group(2).replaceAll("^[0]+", "");
@@ -121,9 +121,9 @@ public class VCloudGetNodeMetadata {
             tag = "NOTAG-" + vApp.getName();
          }
       }
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), location, vApp.getLocation(),
-               ImmutableMap.<String, String> of(), tag, image, vAppStatusToNodeState.get(vApp
-                        .getStatus()), computeClient.getPublicAddresses(id), computeClient
-                        .getPrivateAddresses(id), getExtra.apply(vApp), null);
+      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(), location, vApp
+               .getLocation(), ImmutableMap.<String, String> of(), tag, image,
+               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(id),
+               computeClient.getPrivateAddresses(id), getExtra.apply(vApp), null);
    }
 }

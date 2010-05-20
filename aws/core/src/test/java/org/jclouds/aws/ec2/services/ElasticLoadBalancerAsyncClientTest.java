@@ -41,7 +41,7 @@ public class ElasticLoadBalancerAsyncClientTest extends
    public void testRegisterInstancesWithLoadBalancer() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = ElasticLoadBalancerAsyncClient.class.getMethod(
-               "registerInstancesWithLoadBalancer", String.class, String.class, String[].class);
+               "registerInstancesWithLoadBalancerInRegion", String.class, String.class, String[].class);
 
       GeneratedHttpRequest<ElasticLoadBalancerAsyncClient> httpMethod = processor.createRequest(
                method, null, "ReferenceAP1", "i-6055fa09");

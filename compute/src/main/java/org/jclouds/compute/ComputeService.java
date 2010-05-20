@@ -33,6 +33,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ssh.ExecResponse;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
@@ -145,10 +146,10 @@ public interface ComputeService {
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
 
    /**
-    * destroy the node. If it is the only node in a tag set, the dependent resources will also be
-    * destroyed.
+    * destroy the node, given its handle. If it is the only node in a tag set, the dependent
+    * resources will also be destroyed.
     */
-   void destroyNode(Location location, String id);
+   void destroyNode(String handle);
 
    /**
     * nodes matching the filter are treated as a logical set. Using the delete command, you can save
@@ -160,9 +161,9 @@ public interface ComputeService {
    Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter);
 
    /**
-    * reboot the node.
+    * reboot the node, given its handle.
     */
-   void rebootNode(Location location, String id);
+   void rebootNode(String handle);
 
    /**
     * nodes matching the filter are treated as a logical set. Using this command, you can save time
@@ -171,9 +172,9 @@ public interface ComputeService {
    void rebootNodesMatching(Predicate<NodeMetadata> filter);
 
    /**
-    * Find a node by its id
+    * Find a node by its handle.
     */
-   NodeMetadata getNodeMetadata(Location location, String id);
+   NodeMetadata getNodeMetadata(String handle);
 
    /**
     * get all nodes including details such as image and ip addresses even if it incurs extra
@@ -213,33 +214,31 @@ public interface ComputeService {
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(
             Predicate<NodeMetadata> filter, byte[] runScript, RunScriptOptions options)
             throws RunScriptOnNodesException;
-   
-    /**
-     * @param loadBalancerName
-     *            Load balancer name
-     * @param protocol
-     *            LoadBalancer transport protocol to use for routing - TCP or
-     *            HTTP. This property cannot be modified for the life of the
-     *            LoadBalancer.
-     * @param loadBalancerPort
-     *            The external TCP port of the LoadBalancer. Valid LoadBalancer
-     *            ports are - 80, 443 and 1024 through 65535. This property
-     *            cannot be modified for the life of the LoadBalancer.
-     * @param instancePort
-     *            The InstancePort data type is simple type of type: integer. It
-     *            is the TCP port on which the server on the instance is
-     *            listening. Valid instance ports are one (1) through 65535.
-     *            This property cannot be modified for the life of the
-     *            LoadBalancer.
-     * @param filter
-     *            Predicate-based filter to define on which nodes the script is
-     *            to be executed
-     * @return DNS Name of the load balancer
-     */
-    String loadBalanceNodesMatching(String loadBalancerName, String protocol,
-            Integer loadBalancerPort, Integer instancePort,
-            Predicate<NodeMetadata> filter);
-    
-    void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter);
+
+   /**
+    * @param filter
+    *           Predicate-based filter to define which nodes to loadbalance
+    * @param loadBalancerName
+    *           Load balancer name
+    * @param protocol
+    *           LoadBalancer transport protocol to use for routing - TCP or HTTP. This property
+    *           cannot be modified for the life of the LoadBalancer.
+    * @param loadBalancerPort
+    *           The external TCP port of the LoadBalancer. Valid LoadBalancer ports are - 80, 443
+    *           and 1024 through 65535. This property cannot be modified for the life of the
+    *           LoadBalancer.
+    * @param instancePort
+    *           The InstancePort data type is simple type of type: integer. It is the TCP port on
+    *           which the server on the instance is listening. Valid instance ports are one (1)
+    *           through 65535. This property cannot be modified for the life of the LoadBalancer.
+    * 
+    * @return DNS Name of the load balancer
+    */
+   @Beta
+   String loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
+            String protocol, int loadBalancerPort, int instancePort);
+
+   @Beta
+   void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter);
 
 }
