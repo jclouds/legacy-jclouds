@@ -43,10 +43,10 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.internal.ImmutableMap;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code AMIClient}
@@ -85,9 +85,9 @@ public class AMIClientLiveTest {
       client.describeImagesInRegion(null, imageIds("asdaasdsa"));
    }
 
-   @Test(enabled = false)
    public void testDescribeImages() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          SortedSet<Image> allResults = Sets.newTreeSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();

@@ -31,4 +31,6 @@ public interface SQSConstants extends AWSConstants {
    public static final String PROPERTY_SQS_ENDPOINT_EU_WEST_1 = "jclouds.sqs.endpoint.eu_west_1";
    public static final String PROPERTY_SQS_ENDPOINT_US_EAST_1 = "jclouds.sqs.endpoint.us_east_1";
    public static final String PROPERTY_SQS_ENDPOINT_US_WEST_1 = "jclouds.sqs.endpoint.us_west_1";
+   public static final String PROPERTY_SQS_ENDPOINT_AP_SOUTHEAST_1 = "jclouds.sqs.endpoint.ap_southeast_1";
+
 }

@@ -34,7 +34,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code EC2Client}
@@ -61,8 +61,8 @@ public class InstanceClientLiveTest {
 
    @Test
    void testDescribeInstances() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          Set<Reservation> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();

@@ -42,9 +42,9 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code SecurityGroupClient}
@@ -69,7 +69,8 @@ public class SecurityGroupClientLiveTest {
 
    @Test
    void testDescribe() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          SortedSet<SecurityGroup> allResults = Sets.newTreeSet(client
                   .describeSecurityGroupsInRegion(region));
          assertNotNull(allResults);

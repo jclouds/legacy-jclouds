@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code ElasticIPAddressClient}
@@ -77,8 +77,8 @@ public class ElasticLoadBalancerClientLiveTest {
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    void testDescribeLoadBalancers() {
       String name = "TestDescribeLoadBalancer";
-      for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          Set<ElasticLoadBalancer> allResults = client.describeLoadBalancers(region, name);
          assertNotNull(allResults);
          assert (allResults.size() >= 1);
@@ -87,8 +87,8 @@ public class ElasticLoadBalancerClientLiveTest {
 
    @Test
    void testDeleteLoadBalancer() {
-      for (String region : ImmutableSet.of(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          client.deleteLoadBalancer(region, "TestLoadBalancer");
       }
    }

@@ -37,8 +37,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code SQSClient}
@@ -66,7 +66,8 @@ public class SQSClientLiveTest {
 
    @Test
    void testListQueuesInRegion() throws InterruptedException {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -82,8 +83,8 @@ public class SQSClientLiveTest {
    void testCreateQueue() throws InterruptedException {
       String queueName = PREFIX + "1";
 
-      for (final String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (final String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          try {
             SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region,
                      queuePrefix(queueName)));
@@ -109,7 +110,8 @@ public class SQSClientLiveTest {
                throw e;
             }
          }
-         assertEquals(queue.getRegion(), region);
+         if (region != null)
+            assertEquals(queue.getRegion(), region);
          assertEquals(queue.getName(), queueName);
          assertQueueInList(region, queue);
          queues.add(queue);

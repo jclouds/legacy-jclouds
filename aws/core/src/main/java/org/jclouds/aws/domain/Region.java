@@ -29,7 +29,7 @@ package org.jclouds.aws.domain;
  * 
  */
 public class Region {
-
+   
    /**
     * EU (Ireland)
     * <p/>

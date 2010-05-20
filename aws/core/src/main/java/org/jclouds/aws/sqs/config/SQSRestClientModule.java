@@ -94,9 +94,11 @@ public class SQSRestClientModule extends AbstractModule {
    Map<String, URI> provideRegions(
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_EAST_1) String useast,
             @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_US_WEST_1) String uswest,
-            @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1) String euwest) {
+            @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_EU_WEST_1) String euwest,
+            @Named(SQSConstants.PROPERTY_SQS_ENDPOINT_AP_SOUTHEAST_1) String apsoutheast) {
       return ImmutableMap.<String, URI> of(Region.US_EAST_1, URI.create(useast), Region.US_WEST_1,
-               URI.create(uswest), Region.EU_WEST_1, URI.create(euwest));
+               URI.create(uswest), Region.EU_WEST_1, URI.create(euwest), Region.AP_SOUTHEAST_1, URI
+                        .create(apsoutheast));
    }
 
    @Provides

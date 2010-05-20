@@ -35,8 +35,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code KeyPairClient}
@@ -61,8 +61,8 @@ public class KeyPairClientLiveTest {
 
    @Test
    void testDescribeKeyPairs() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
 
          SortedSet<KeyPair> allResults = Sets.newTreeSet(client.describeKeyPairsInRegion(region));
          assertNotNull(allResults);
@@ -95,8 +95,8 @@ public class KeyPairClientLiveTest {
       assertNotNull(result.getKeyFingerprint());
       assertEquals(result.getKeyName(), keyName);
 
-      SortedSet<KeyPair> twoResults = Sets.newTreeSet(client.describeKeyPairsInRegion(
-               null, keyName));
+      SortedSet<KeyPair> twoResults = Sets.newTreeSet(client
+               .describeKeyPairsInRegion(null, keyName));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();

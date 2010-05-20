@@ -44,9 +44,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code ElasticBlockStoreClient}
@@ -72,8 +72,8 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeVolumes() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -96,8 +96,8 @@ public class ElasticBlockStoreClientLiveTest {
 
       this.volumeId = expected.getId();
 
-      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null,
-               expected.getId()));
+      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null, expected
+               .getId()));
       assertNotNull(result);
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();
@@ -171,8 +171,8 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeSnapshots() {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          SortedSet<Snapshot> allResults = Sets.newTreeSet(client.describeSnapshotsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -213,8 +213,7 @@ public class ElasticBlockStoreClientLiveTest {
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testDeleteVolumeInRegion() {
       client.deleteVolumeInRegion(null, volumeId);
-      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null,
-               volumeId));
+      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null, volumeId));
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();
       assertEquals(volume.getStatus(), Volume.Status.DELETING);
