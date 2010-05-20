@@ -58,6 +58,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.LoadBalancerStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
@@ -95,6 +96,7 @@ public class BaseComputeService implements ComputeService {
    protected final RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy;
    protected final RebootNodeStrategy rebootNodeStrategy;
    protected final DestroyNodeStrategy destroyNodeStrategy;
+   protected final LoadBalancerStrategy loadBalancerStrategy;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
    protected final Provider<TemplateOptions> templateOptionsProvider;
    protected final ComputeUtils utils;
@@ -107,7 +109,7 @@ public class BaseComputeService implements ComputeService {
             GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider,
+            LoadBalancerStrategy loadBalancerStrategy, Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
@@ -121,6 +123,7 @@ public class BaseComputeService implements ComputeService {
                "runNodesAndAddToSetStrategy");
       this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
       this.destroyNodeStrategy = checkNotNull(destroyNodeStrategy, "destroyNodeStrategy");
+      this.loadBalancerStrategy = checkNotNull(loadBalancerStrategy, "loadBalancerStrategy");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider,
                "templateBuilderProvider");
       this.templateOptionsProvider = checkNotNull(templateOptionsProvider,
@@ -380,8 +383,12 @@ public class BaseComputeService implements ComputeService {
       return execs;
 
    }
-
-   private Iterable<? extends NodeMetadata> verifyParametersAndListNodes(
+   
+   
+   /**
+    * {@inheritDoc}
+    */
+    private Iterable<? extends NodeMetadata> verifyParametersAndListNodes(
             Predicate<NodeMetadata> filter, byte[] runScript, final RunScriptOptions options) {
       checkNotNull(filter, "Filter must be provided");
       checkNotNull(runScript,
@@ -415,6 +422,28 @@ public class BaseComputeService implements ComputeService {
          }
       });
    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String loadBalanceNodesMatching(String loadBalancerName,
+            String protocol, Integer loadBalancerPort, Integer instancePort,
+            Predicate<NodeMetadata> filter)
+    {
+        return null;
+    }
+    
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteLoadBalancer(String loadBalancerName,
+            Predicate<NodeMetadata> filter)
+    {
+        
+    }
 
    private Iterable<? extends NodeMetadata> detailsOnAllNodes() {
       return listNodesStrategy.listDetailsOnNodesMatching(NodePredicates.all());

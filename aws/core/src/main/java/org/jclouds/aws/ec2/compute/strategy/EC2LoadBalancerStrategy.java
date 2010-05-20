@@ -19,6 +19,8 @@
 
 package org.jclouds.aws.ec2.compute.strategy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -77,15 +79,31 @@ public class EC2LoadBalancerStrategy implements LoadBalancerStrategy
         dnsName = elbClient.createLoadBalancer(region, name, protocol,
                 loadBalancerPort, instancePort, availabilityZone);
 
+        List<String> instanceIdlist = new ArrayList<String>(instanceIds);
+        String[] instanceIdArray = new String[instanceIdlist.size()];
+        for(int i=0; i<instanceIdlist.size(); i++)
+        {
+            instanceIdArray[i] = instanceIdlist.get(i);
+        }
+        
         Set<String> registeredInstanceIds = elbClient
                 .registerInstancesWithLoadBalancer(region, name,
-                        (String[]) instanceIds.toArray());
+                        instanceIdArray);
 
         // deregister instances
         boolean changed = registeredInstanceIds.removeAll(instanceIds);
         if (changed)
-            elbClient.deregisterInstancesWithLoadBalancer(region, name,
-                    (String[]) registeredInstanceIds.toArray());
+        {
+            List<String> list = new ArrayList<String>(registeredInstanceIds);
+            instanceIdArray = new String[list.size()];
+            for(int i=0; i<list.size(); i++)
+            {
+                instanceIdArray[i] = list.get(i);
+            }
+            if(instanceIdArray.length>0)
+                elbClient.deregisterInstancesWithLoadBalancer(region, name,
+                    instanceIdArray);
+        }
 
         return dnsName;
     }

@@ -1,0 +1,8 @@
+<RegisterInstancesWithLoadBalancerResult>
+	<Instances>
+		<member>
+			<InstanceId>i-6055fa09</InstanceId>
+			<InstanceId>i-9055fa55</InstanceId>
+		</member>
+	</Instances>
+</RegisterInstancesWithLoadBalancerResult>

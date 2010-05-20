@@ -18,8 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.Utils.checkNotEmpty;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -44,15 +47,19 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.LoadBalancerStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -72,6 +79,7 @@ public class EC2ComputeService extends BaseComputeService {
             GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            LoadBalancerStrategy loadBalancerStrategy,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
@@ -79,7 +87,7 @@ public class EC2ComputeService extends BaseComputeService {
             Map<RegionAndName, KeyPair> credentialsMap, Map<RegionAndName, String> securityGroupMap) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
-               templateBuilderProvider, templateOptionsProvider, utils, executor);
+               loadBalancerStrategy, templateBuilderProvider, templateOptionsProvider, utils, executor);
       this.ec2Client = ec2Client;
       this.getRegionFromLocation = getRegionFromLocation;
       this.credentialsMap = credentialsMap;
@@ -128,9 +136,57 @@ public class EC2ComputeService extends BaseComputeService {
          deleteSecurityGroup(regionTag.getKey(), regionTag.getValue());
       }
       return deadOnes;
-   }
 
-   /**
+   }
+   
+    @Override
+    public String loadBalanceNodesMatching(String loadBalancerName,
+            String protocol, Integer loadBalancerPort, Integer instancePort,
+            Predicate<NodeMetadata> filter)
+    {
+        checkNotNull(loadBalancerName, "loadBalancerName");
+        checkNotNull(protocol, "protocol");
+        checkArgument(protocol.toUpperCase().equals("HTTP")
+                || protocol.toUpperCase().equals("TCP"),
+                "Acceptable values for protocol are HTTP or TCP");
+        checkNotNull(loadBalancerPort, "loadBalancerPort");
+        checkNotNull(instancePort, "instancePort");
+
+        Location location = null;
+        Set<String> ids = new HashSet<String>();
+        for (final NodeMetadata node : Iterables.filter(super
+                .listNodesDetailsMatching(NodePredicates.all()), Predicates
+                .and(filter, Predicates.not(NodePredicates.TERMINATED))))
+        {
+            ids.add(node.getId());
+            location = node.getLocation();
+        }
+        logger.debug(">> creating load balancer (%s)", loadBalancerName);
+        String dnsName = loadBalancerStrategy
+                .execute(location, loadBalancerName, protocol,
+                        loadBalancerPort, instancePort, ids);
+        logger.debug("<< created load balancer (%s) DNS (%s)",
+                loadBalancerName, dnsName);
+        return dnsName;
+    }
+   
+   
+
+    @Override
+    public void deleteLoadBalancer(String loadBalancerName,
+            Predicate<NodeMetadata> filter)
+    {
+
+        Location location = Iterables.filter(
+                super.listNodesDetailsMatching(NodePredicates.all()),
+                Predicates.and(filter, Predicates
+                        .not(NodePredicates.TERMINATED))).iterator().next()
+                .getLocation();
+        ec2Client.getElasticLoadBalancerServices().deleteLoadBalancer(
+                getRegionFromLocation.apply(location), loadBalancerName);
+    }
+
+  /**
     * returns template options, except of type {@link EC2TemplateOptions}.
     */
    @Override

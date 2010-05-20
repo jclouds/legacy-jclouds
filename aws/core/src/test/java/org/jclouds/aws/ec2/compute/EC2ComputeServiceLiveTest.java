@@ -19,20 +19,26 @@
 package org.jclouds.aws.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.aws.ec2.domain.ElasticLoadBalancer;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
+import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
@@ -172,6 +178,39 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
       }
    }
+   
+    @Test
+    public void testLoadBalanceNodesMatching() throws Exception{
+
+        ElasticLoadBalancerClient elbClient = EC2Client.class.cast(
+                context.getProviderSpecificContext().getApi())
+                .getElasticLoadBalancerServices();
+
+        String tag = "jcloudsElbTest";
+        Template template = client.templateBuilder().build();
+        Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 2,
+                template);
+        Set<String> instanceIds = new HashSet<String>();
+        for (NodeMetadata node : nodes)
+        {
+            instanceIds.add(node.getId());
+        }
+
+        // create load balancer
+        String dnsName = client.loadBalanceNodesMatching(tag, "HTTP", 80, 80,
+                NodePredicates.withTag(tag));
+        assertNotNull(dnsName);
+        Set<ElasticLoadBalancer> elbs = elbClient.describeLoadBalancers(
+                Region.US_EAST_1, tag);
+        assertNotNull(elbs);
+        ElasticLoadBalancer elb = elbs.iterator().next();
+        assertEquals(elb.getInstanceIds(), instanceIds);
+        
+        elbClient.deleteLoadBalancer(Region.US_EAST_1, tag);
+        //finaly destroy nodes
+        client.destroyNodesMatching(NodePredicates.withTag(tag));
+
+    }
 
    private RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient

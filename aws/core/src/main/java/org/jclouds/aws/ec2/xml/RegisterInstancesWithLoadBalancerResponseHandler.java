@@ -30,6 +30,8 @@ public class RegisterInstancesWithLoadBalancerResponseHandler extends
     {
         if(qName.equals("InstanceId"))
             instanceIds.add(currentText.toString().trim());
+        
+        currentText = new StringBuilder();
     }
     @Override
     public Set<String> getResult()

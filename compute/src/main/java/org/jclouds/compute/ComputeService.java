@@ -213,5 +213,33 @@ public interface ComputeService {
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(
             Predicate<NodeMetadata> filter, byte[] runScript, RunScriptOptions options)
             throws RunScriptOnNodesException;
+   
+    /**
+     * @param loadBalancerName
+     *            Load balancer name
+     * @param protocol
+     *            LoadBalancer transport protocol to use for routing - TCP or
+     *            HTTP. This property cannot be modified for the life of the
+     *            LoadBalancer.
+     * @param loadBalancerPort
+     *            The external TCP port of the LoadBalancer. Valid LoadBalancer
+     *            ports are - 80, 443 and 1024 through 65535. This property
+     *            cannot be modified for the life of the LoadBalancer.
+     * @param instancePort
+     *            The InstancePort data type is simple type of type: integer. It
+     *            is the TCP port on which the server on the instance is
+     *            listening. Valid instance ports are one (1) through 65535.
+     *            This property cannot be modified for the life of the
+     *            LoadBalancer.
+     * @param filter
+     *            Predicate-based filter to define on which nodes the script is
+     *            to be executed
+     * @return DNS Name of the load balancer
+     */
+    String loadBalanceNodesMatching(String loadBalancerName, String protocol,
+            Integer loadBalancerPort, Integer instancePort,
+            Predicate<NodeMetadata> filter);
+    
+    void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter);
 
 }

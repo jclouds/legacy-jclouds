@@ -55,6 +55,7 @@ import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
+import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalancerStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -79,6 +80,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.LoadBalancerStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
@@ -129,6 +131,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
+      bind(LoadBalancerStrategy.class).to(EC2LoadBalancerStrategy.class);
       bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
       }).annotatedWith(Jsr330.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
                .in(Scopes.SINGLETON);

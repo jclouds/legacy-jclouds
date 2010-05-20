@@ -97,7 +97,7 @@ public interface ElasticLoadBalancerAsyncClient
      */
     @POST
     @Path("/")
-    @FormParams(keys = ACTION, values = "DeregisterInstancesWithLoadBalancer")
+    @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
     ListenableFuture<Void> deregisterInstancesWithLoadBalancer(
             @EndpointParam(parser = ELBRegionToEndpoint.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
