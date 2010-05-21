@@ -44,7 +44,7 @@ public class BindS3ObjectToPayload implements Binder {
    public void bindToRequest(HttpRequest request, Object payload) {
       S3Object s3Object = (S3Object) payload;
       checkNotNull(s3Object.getContentLength(), "contentLength");
-      checkArgument(s3Object.getContentLength() <= 5 * 1024 * 1024 * 1024,
+      checkArgument(s3Object.getContentLength() <= 5l * 1024 * 1024 * 1024,
                "maximum size for put object is 5GB");
       blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
 
