@@ -30,6 +30,10 @@ import org.jclouds.blobstore.binders.BindBlobToPayloadAndUserMetadataToHeadersWi
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class BindS3ObjectToPayload implements Binder {
    private final BindBlobToPayloadAndUserMetadataToHeadersWithPrefix blobBinder;
    private final ObjectToBlob object2Blob;
