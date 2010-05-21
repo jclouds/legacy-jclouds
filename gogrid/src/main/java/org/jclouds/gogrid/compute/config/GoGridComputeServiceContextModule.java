@@ -209,7 +209,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       public boolean execute(String id) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
                   new Long(id)));
-         client.getServerServices().deleteByName(server.getName());
+         client.getServerServices().deleteById(server.getId());
          return serverLatestJobCompleted.apply(server);
       }
 
