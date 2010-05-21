@@ -394,8 +394,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public Template build() {
-      if (nothingChangedExceptOptions())
-         return defaultTemplateProvider.get().build();
+      if (nothingChangedExceptOptions()) {
+         TemplateBuilder defaultTemplate = defaultTemplateProvider.get();
+         if (options != null)
+            defaultTemplate.options(options);
+         return defaultTemplate.build();
+      }
       if (locationId == null)
          locationId = defaultLocation.getId();
       if (options == null)
