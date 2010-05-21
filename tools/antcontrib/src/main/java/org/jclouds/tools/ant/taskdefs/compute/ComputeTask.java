@@ -160,7 +160,7 @@ public class ComputeTask extends Task {
          log(String
                   .format(
                            "   image location=%s, id=%s, name=%s, version=%s, arch=%s, osfam=%s, osdesc=%s, desc=%s",
-                           image.getLocation(), image.getId(), image.getName(), image.getVersion(),
+                           image.getLocation(), image.getProviderId(), image.getName(), image.getVersion(),
                            image.getArchitecture(), image.getOsFamily(), image.getOsDescription(),
                            image.getDescription()));
       }
@@ -169,7 +169,7 @@ public class ComputeTask extends Task {
    private void listSizes(ComputeService computeService) {
       log("list sizes");
       for (Size size : computeService.listSizes()) {// TODO
-         log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getId(), size
+         log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getProviderId(), size
                   .getCores(), size.getRam(), size.getDisk()));
       }
    }
@@ -185,7 +185,7 @@ public class ComputeTask extends Task {
    private void list(ComputeService computeService) {
       log("list");
       for (ComputeMetadata node : computeService.listNodes()) {
-         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getId(), node
+         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getProviderId(), node
                   .getName()));
       }
    }
@@ -207,7 +207,7 @@ public class ComputeTask extends Task {
 
    private void addNodeDetailsAsProjectProperties(NodeMetadata createdNode) {
       if (nodeElement.getIdproperty() != null)
-         getProject().setProperty(nodeElement.getIdproperty(), createdNode.getId());
+         getProject().setProperty(nodeElement.getIdproperty(), createdNode.getProviderId());
       if (nodeElement.getHostproperty() != null)
          getProject().setProperty(nodeElement.getHostproperty(),
                   ipOrEmptyString(createdNode.getPublicAddresses()));
@@ -235,11 +235,11 @@ public class ComputeTask extends Task {
 
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
       NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node)
-               : computeService.getNodeMetadata(node.getHandle());
+               : computeService.getNodeMetadata(node.getId());
       log(String
                .format(
                         "   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
-                        metadata.getId(), metadata.getName(), metadata.getTag(), metadata
+                        metadata.getProviderId(), metadata.getName(), metadata.getTag(), metadata
                                  .getLocation(), metadata.getState(), ComputeTaskUtils
                                  .ipOrEmptyString(metadata.getPublicAddresses()),
                         ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getExtra()));

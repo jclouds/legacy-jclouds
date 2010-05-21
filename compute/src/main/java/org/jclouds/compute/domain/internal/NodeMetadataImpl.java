@@ -128,7 +128,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", tag=" + getTag() + ", name=" + getName() + ", location="
+      return "[id=" + getProviderId() + ", tag=" + getTag() + ", name=" + getName() + ", location="
                + getLocation() + ", uri=" + getUri() + ", image=" + getImage() + ", userMetadata="
                + getUserMetadata() + ", state=" + getState() + ", privateAddresses="
                + privateAddresses + ", publicAddresses=" + publicAddresses + "]";

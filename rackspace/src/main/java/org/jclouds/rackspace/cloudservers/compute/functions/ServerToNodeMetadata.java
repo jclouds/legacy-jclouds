@@ -69,7 +69,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       @Override
       public boolean apply(Image input) {
-         return input.getId().equals(instance.getImageId() + "")
+         return input.getProviderId().equals(instance.getImageId() + "")
                   && (input.getLocation() == null || input.getLocation().equals(
                            location.getParent()));
       }

@@ -163,7 +163,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testImagesCache")
    public void testTemplateMatch() throws Exception {
       template = buildTemplate(client.templateBuilder());
-      Template toMatch = client.templateBuilder().imageId(template.getImage().getId()).build();
+      Template toMatch = client.templateBuilder().imageId(template.getImage().getProviderId()).build();
       assertEquals(toMatch, template);
    }
 
@@ -267,7 +267,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
       for (NodeMetadata node : nodes) {
-         assertNotNull(node.getId());
+         assertNotNull(node.getProviderId());
          assertNotNull(node.getTag());
          assertEquals(node.getTag(), tag);
          assertEquals(node.getState(), NodeState.RUNNING);
@@ -324,8 +324,8 @@ public abstract class BaseComputeServiceLiveTest {
                .withTag(tag), Predicates.not(NodePredicates.TERMINATED))));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
-         NodeMetadata metadata = client.getNodeMetadata(node.getHandle());
-         assertEquals(metadata.getId(), node.getId());
+         NodeMetadata metadata = client.getNodeMetadata(node.getId());
+         assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getTag(), node.getTag());
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
          assertEquals(metadata.getImage(), template.getImage());
@@ -353,7 +353,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {
-         assert node.getId() != null;
+         assert node.getProviderId() != null;
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
       }
@@ -361,12 +361,12 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testGetNodesWithDetails() throws Exception {
       for (NodeMetadata node : client.listNodesDetailsMatching(NodePredicates.all())) {
-         assert node.getId() != null : node;
+         assert node.getProviderId() != null : node;
          assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
          assert node instanceof NodeMetadata;
          NodeMetadata nodeMetadata = (NodeMetadata) node;
-         assert nodeMetadata.getId() != null : nodeMetadata;
+         assert nodeMetadata.getProviderId() != null : nodeMetadata;
          // nullable
          // assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
@@ -382,7 +382,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testListImages() throws Exception {
       for (Image image : client.listImages()) {
-         assert image.getId() != null : image;
+         assert image.getProviderId() != null : image;
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
       }
@@ -427,7 +427,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    public void testListSizes() throws Exception {
       for (Size size : client.listSizes()) {
-         assert size.getId() != null;
+         assert size.getProviderId() != null;
          assert size.getCores() > 0;
          assert size.getDisk() > 0;
          assert size.getRam() > 0;

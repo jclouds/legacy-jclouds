@@ -107,7 +107,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
                         input.tag, input.template)).andReturn(ec2Options);
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
-      expect(input.image.getId()).andReturn(imageId).atLeastOnce();
+      expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
       expect(
                strategy.instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count,
                         ec2Options)).andReturn(reservation);

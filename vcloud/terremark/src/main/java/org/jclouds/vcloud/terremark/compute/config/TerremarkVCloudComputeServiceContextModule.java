@@ -172,7 +172,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       Image anyImage = Iterables.get(images, 0);
       holder.logger.debug(">> providing sizes");
       SortedSet<Size> sizes = Sets.newTreeSet(Iterables.transform(TerremarkVCloudClient.class.cast(
-               client).getComputeOptionsOfCatalogItem(anyImage.getId()), sizeConverter));
+               client).getComputeOptionsOfCatalogItem(anyImage.getProviderId()), sizeConverter));
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
    }

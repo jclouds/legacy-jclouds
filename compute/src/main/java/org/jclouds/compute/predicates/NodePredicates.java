@@ -56,7 +56,7 @@ public class NodePredicates {
       return new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(@Nullable ComputeMetadata nodeMetadata) {
-            return search.contains(nodeMetadata.getId());
+            return search.contains(nodeMetadata.getProviderId());
          }
 
          @Override

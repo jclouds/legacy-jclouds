@@ -59,7 +59,7 @@ public class ServerToNodeMetadataTest {
       ServerImage image = createMock(ServerImage.class);
       expect(server.getImage()).andReturn(image).atLeastOnce();
       expect(image.getId()).andReturn(2000l).atLeastOnce();
-      expect(jcImage.getId()).andReturn("2000").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       replay(client);

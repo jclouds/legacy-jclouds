@@ -83,7 +83,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
     * {@inheritDoc}
     */
    @Override
-   public String getId() {
+   public String getProviderId() {
       return id;
    }
 

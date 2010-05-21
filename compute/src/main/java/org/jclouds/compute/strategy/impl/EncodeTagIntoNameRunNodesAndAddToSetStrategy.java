@@ -93,14 +93,14 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
                NodeMetadata node = null;
                logger.debug(">> starting node(%s) tag(%s)", name, tag);
                node = addNodeWithTagStrategy.execute(tag, name, template);
-               logger.debug("<< running node(%s)", node.getId());
+               logger.debug("<< running node(%s)", node.getProviderId());
                try {
                   utils.runOptionsOnNode(node, template.getOptions());
-                  logger.debug("<< options applied node(%s)", node.getId());
+                  logger.debug("<< options applied node(%s)", node.getProviderId());
                   nodes.add(node);
                } catch (Exception e) {
                   logger.error(e, "<< error applying options (%s) on node (%s)", template
-                           .getOptions(), node.getId());
+                           .getOptions(), node.getProviderId());
                   badNodes.put(node, e);
                }
                return null;

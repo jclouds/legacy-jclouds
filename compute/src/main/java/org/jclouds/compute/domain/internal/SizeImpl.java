@@ -103,7 +103,7 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
     */
    @Override
    public String toString() {
-      return "[id=" + getId() + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk
+      return "[id=" + getProviderId() + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk
                + ", supportedArchitectures=" + supportedArchitectures + "]";
    }
 

@@ -49,7 +49,7 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
     * {@inheritDoc}
     */
    @Override
-   public String getHandle() {
+   public String getId() {
       return handle;
    }
 

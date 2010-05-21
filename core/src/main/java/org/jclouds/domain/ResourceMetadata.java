@@ -44,7 +44,7 @@ public interface ResourceMetadata<T extends Enum<T>> extends Comparable<Resource
     * the resource. ex. /path/to/file.txt
     * 
     */
-   String getId();
+   String getProviderId();
 
    /**
     * Name of this resource. Names are dictated by the user. For files, this may be the filename,

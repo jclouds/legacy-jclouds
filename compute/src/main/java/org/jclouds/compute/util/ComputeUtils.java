@@ -126,10 +126,10 @@ public class ComputeUtils {
          public Void call() throws Exception {
             try {
                runOptionsOnNode(node, options);
-               logger.debug("<< options applied node(%s)", node.getId());
+               logger.debug("<< options applied node(%s)", node.getProviderId());
                goodNodes.add(node);
             } catch (Exception e) {
-               logger.error(e, "<< problem applying options to node(%s): ", node.getId(),
+               logger.error(e, "<< problem applying options to node(%s): ", node.getProviderId(),
                         Throwables.getRootCause(e).getMessage());
                badNodes.put(node, e);
             }
@@ -144,7 +144,7 @@ public class ComputeUtils {
       int index = 1;
       for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
          fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
-                  .getSimpleName(), errorMessage.getKey().getId(), Throwables
+                  .getSimpleName(), errorMessage.getKey().getProviderId(), Throwables
                   .getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
@@ -222,7 +222,7 @@ public class ComputeUtils {
    public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node,
             Iterable<? extends SshCallable<?>> parallel, @Nullable SshCallable<?> last) {
       checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
-      checkNotNull(node.getCredentials().key, "credentials.key for node " + node.getId());
+      checkNotNull(node.getCredentials().key, "credentials.key for node " + node.getProviderId());
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
          ssh.connect();
@@ -465,7 +465,7 @@ public class ComputeUtils {
     * returns a new instance of {@link NodeMetadata} that has new credentials
     */
    public static NodeMetadata installNewCredentials(NodeMetadata node, Credentials newCredentials) {
-      return new NodeMetadataImpl(node.getId(), node.getName(), node.getHandle(), node
+      return new NodeMetadataImpl(node.getProviderId(), node.getName(), node.getId(), node
                .getLocation(), node.getUri(), node.getUserMetadata(), node.getTag(), node
                .getImage(), node.getState(), node.getPublicAddresses(), node.getPrivateAddresses(),
                node.getExtra(), newCredentials);

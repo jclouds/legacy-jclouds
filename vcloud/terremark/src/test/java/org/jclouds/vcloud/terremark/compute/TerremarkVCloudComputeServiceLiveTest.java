@@ -77,7 +77,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
    @Override
    public void testListImages() throws Exception {
       for (Image image : client.listImages()) {
-         assert image.getId() != null : image;
+         assert image.getProviderId() != null : image;
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
          assert image.getDefaultCredentials().account != null : image;

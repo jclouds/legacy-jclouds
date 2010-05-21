@@ -50,7 +50,7 @@ public class ContainerToResourceList implements
                object2blobMd), new Function<BlobMetadata, StorageMetadata>() {
          public StorageMetadata apply(BlobMetadata input) {
             if (input.getContentType().equals("application/directory")) {
-               return new StorageMetadataImpl(StorageType.RELATIVE_PATH, input.getId(), input
+               return new StorageMetadataImpl(StorageType.RELATIVE_PATH, input.getProviderId(), input
                         .getName(), input.getLocation(), input.getUri(), input.getETag(), input
                         .getSize(), input.getLastModified(), input.getUserMetadata());
             }

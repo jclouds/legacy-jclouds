@@ -127,7 +127,7 @@ public class EC2ComputeService extends BaseComputeService {
       Map<String, String> regionTags = Maps.newHashMap();
       for (NodeMetadata nodeMetadata : deadOnes) {
          if (nodeMetadata.getTag() != null)
-            regionTags.put(parseHandle(nodeMetadata.getHandle())[0], nodeMetadata.getTag());
+            regionTags.put(parseHandle(nodeMetadata.getId())[0], nodeMetadata.getTag());
       }
       for (Entry<String, String> regionTag : regionTags.entrySet()) {
          deleteKeyPair(regionTag.getKey(), regionTag.getValue());
@@ -157,7 +157,7 @@ public class EC2ComputeService extends BaseComputeService {
       for (NodeMetadata node : Iterables.filter(super
                .listNodesDetailsMatching(NodePredicates.all()), Predicates.and(filter, Predicates
                .not(NodePredicates.TERMINATED)))) {
-         ids.add(node.getId());
+         ids.add(node.getProviderId());
          location = node.getLocation();
       }
       logger.debug(">> creating load balancer (%s)", loadBalancerName);
@@ -171,7 +171,7 @@ public class EC2ComputeService extends BaseComputeService {
    public void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter) {
       String region = parseHandle(Iterables.get(
                Iterables.filter(super.listNodesDetailsMatching(NodePredicates.all()), Predicates
-                        .and(filter, Predicates.not(NodePredicates.TERMINATED))), 0).getHandle())[0];
+                        .and(filter, Predicates.not(NodePredicates.TERMINATED))), 0).getId())[0];
       ec2Client.getElasticLoadBalancerServices().deleteLoadBalancerInRegion(region,
                loadBalancerName);
    }

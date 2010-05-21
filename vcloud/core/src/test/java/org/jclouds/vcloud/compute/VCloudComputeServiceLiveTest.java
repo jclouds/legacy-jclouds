@@ -45,10 +45,10 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {
-         assert node.getId() != null;
+         assert node.getProviderId() != null;
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
-         NodeMetadata allData = client.getNodeMetadata(node.getHandle());
+         NodeMetadata allData = client.getNodeMetadata(node.getId());
          assert allData.getExtra().get("processor/count") != null;
          assert allData.getExtra().get("disk_drive/1/kb") != null;
          assert allData.getExtra().get("memory/mb") != null;

@@ -48,7 +48,7 @@ public class RunNodesException extends Exception {
                         .format(
                                  "error running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)%n%s%n%s",
                                  count, count > 1 ? "s" : "", tag, template.getLocation().getId(),
-                                 template.getImage().getId(), template.getSize().getId(), template
+                                 template.getImage().getProviderId(), template.getSize().getProviderId(), template
                                           .getOptions(), ComputeUtils
                                           .createExecutionErrorMessage(executionExceptions),
                                  ComputeUtils.createNodeErrorMessage(failedNodes)));

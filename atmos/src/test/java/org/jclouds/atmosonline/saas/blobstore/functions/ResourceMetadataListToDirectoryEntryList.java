@@ -46,7 +46,7 @@ public class ResourceMetadataListToDirectoryEntryList
                   public DirectoryEntry apply(StorageMetadata from) {
                      FileType type = (from.getType() == StorageType.FOLDER || from.getType() == StorageType.RELATIVE_PATH) ? FileType.DIRECTORY
                               : FileType.REGULAR;
-                     return new DirectoryEntry(from.getId(), type, from.getName());
+                     return new DirectoryEntry(from.getProviderId(), type, from.getName());
                   }
 
                }), from.getNextMarker());

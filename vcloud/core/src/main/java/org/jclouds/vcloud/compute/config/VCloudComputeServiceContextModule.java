@@ -207,7 +207,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                   Double.valueOf(template.getSize().getCores()).intValue()).memory(
                   template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
          Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
-                  template.getImage().getId(), options, template.getOptions().getInboundPorts());
+                  template.getImage().getProviderId(), options, template.getOptions().getInboundPorts());
          VApp vApp = client.getVApp(metaMap.get("id"));
          return newCreateNodeResponse(tag, template, metaMap, vApp);
       }
@@ -387,7 +387,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       return new Function<ComputeMetadata, String>() {
          @Override
          public String apply(ComputeMetadata from) {
-            return from.getId();
+            return from.getProviderId();
          }
       };
    }

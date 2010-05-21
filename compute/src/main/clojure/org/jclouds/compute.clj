@@ -207,10 +207,10 @@ See http://code.google.com/p/jclouds for details."
      (first (run-nodes tag 1 template compute))))
 
 (defn #^NodeMetadata node-details
-  "Retrieve the node metadata, given its handle."
-  ([handle] (node-details handle *compute*))
-  ([handle #^ComputeService compute]
-     (.getNodeMetadata compute handle)))
+  "Retrieve the node metadata, given its id."
+  ([id] (node-details id *compute*))
+  ([id #^ComputeService compute]
+     (.getNodeMetadata compute id)))
 
 (defn reboot-nodes-with-tag
   "Reboot all the nodes with the given tag."
@@ -219,10 +219,10 @@ See http://code.google.com/p/jclouds for details."
     (.rebootNodesMatching compute (NodePredicates/withTag tag))))
 
 (defn reboot-node
-  "Reboot a node, given its handle."
-  ([handle] (reboot-node handle *compute*))
-  ([handle #^ComputeService compute]
-     (.rebootNode compute handle)))
+  "Reboot a node, given its id."
+  ([id] (reboot-node id *compute*))
+  ([id #^ComputeService compute]
+     (.rebootNode compute id)))
 
 (defn destroy-nodes-with-tag
   "Destroy all the nodes with the given tag."
@@ -231,10 +231,10 @@ See http://code.google.com/p/jclouds for details."
      (.destroyNodesMatching compute (NodePredicates/withTag tag))))
 
 (defn destroy-node
-  "Destroy a node, given its handle."
-  ([handle] (destroy-node handle *compute*))
-  ([handle #^ComputeService compute]
-     (.destroyNode compute handle)))
+  "Destroy a node, given its id."
+  ([id] (destroy-node id *compute*))
+  ([id #^ComputeService compute]
+     (.destroyNode compute id)))
 
 (defmacro state-predicate [node state]
   `(= (.getState ~node)
@@ -295,10 +295,10 @@ See http://code.google.com/p/jclouds for details."
   [#^ComputeMetadata node]
   (-?> node .getLocation .getId))
 
-(defn handle
-  "Returns the compute node's handle"
+(defn id
+  "Returns the compute node's id"
   [#^ComputeMetadata node]
-  (.getHandle node))
+  (.getId node))
 
 (define-accessors Template image size location options)
 (define-accessors Image version os-family os-description architecture)

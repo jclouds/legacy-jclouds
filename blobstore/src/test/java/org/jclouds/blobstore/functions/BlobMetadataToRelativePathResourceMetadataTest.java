@@ -47,7 +47,7 @@ public class BlobMetadataToRelativePathResourceMetadataTest {
       md.setId("dir/");
       StorageMetadata rd = parser.apply(md);
       assertEquals(rd.getName(), "dir");
-      assertEquals(rd.getId(), "dir/");
+      assertEquals(rd.getProviderId(), "dir/");
       assertEquals(rd.getType(), StorageType.RELATIVE_PATH);
    }
 
@@ -58,7 +58,7 @@ public class BlobMetadataToRelativePathResourceMetadataTest {
       md.setId("dir_$folder$");
       StorageMetadata rd = parser.apply(md);
       assertEquals(rd.getName(), "dir");
-      assertEquals(rd.getId(), "dir_$folder$");
+      assertEquals(rd.getProviderId(), "dir_$folder$");
       assertEquals(rd.getType(), StorageType.RELATIVE_PATH);
    }
 
@@ -69,7 +69,7 @@ public class BlobMetadataToRelativePathResourceMetadataTest {
       md.setId("dir");
       StorageMetadata rd = parser.apply(md);
       assertEquals(rd.getName(), "dir");
-      assertEquals(rd.getId(), "dir");
+      assertEquals(rd.getProviderId(), "dir");
       assertEquals(rd.getType(), StorageType.RELATIVE_PATH);
    }
 }

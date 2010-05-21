@@ -67,14 +67,14 @@ public class EC2TemplateBuilderLiveTest {
                   ImmutableSet.of(new Log4JLoggingModule()));
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
-         assert (defaultTemplate.getImage().getId().startsWith("ami-")) : defaultTemplate;
+         assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
          assertEquals(defaultTemplate.getImage().getName(), "9.10");
          assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
          assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
          assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
          assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
          newContext.getComputeService().templateBuilder().imageId(
-                  Iterables.get(newContext.getComputeService().listImages(), 0).getId()).build();
+                  Iterables.get(newContext.getComputeService().listImages(), 0).getProviderId()).build();
          newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest()
                   .architecture(Architecture.X86_32).imageId("ami-7e28ca17").build();
          newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest()
@@ -101,7 +101,7 @@ public class EC2TemplateBuilderLiveTest {
          Template template = newContext.getComputeService().templateBuilder().imageId(
                   "ami-ccb35ea5").build();
          System.out.println(template.getImage());
-         assert (template.getImage().getId().startsWith("ami-")) : template;
+         assert (template.getImage().getProviderId().startsWith("ami-")) : template;
          assertEquals(template.getImage().getName(), "5.4");
          assertEquals(template.getImage().getArchitecture(), Architecture.X86_64);
          assertEquals(template.getImage().getOsFamily(), OsFamily.CENTOS);

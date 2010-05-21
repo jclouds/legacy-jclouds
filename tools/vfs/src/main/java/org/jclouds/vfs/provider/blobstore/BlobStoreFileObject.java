@@ -223,7 +223,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
 
    private void deleteBasedOnType() {
       if (metadata.getType() != StorageType.CONTAINER) {
-         deleteBlob(metadata.getId());
+         deleteBlob(metadata.getProviderId());
       } else {
          getBlobStore().deleteContainer(getContainer());
          logger.info(String.format("<< deleted container: %s", getContainer()));

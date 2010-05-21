@@ -190,7 +190,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          NewServerResponse serverResponse = client.createServer(name, checkNotNull(template
-                  .getImage().getId(), "imageId"), checkNotNull(template.getSize().getId(),
+                  .getImage().getProviderId(), "imageId"), checkNotNull(template.getSize().getProviderId(),
                   "sizeId"));
          serverRunning.apply(serverResponse.getServer());
          Server server = client.getServer(serverResponse.getServer().getId());
@@ -287,7 +287,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
          @Override
          public boolean apply(Image input) {
-            return input.getId().equals(instance.getImageId())
+            return input.getProviderId().equals(instance.getImageId())
                      && (input.getLocation() == null || input.getLocation().equals(location) || input
                               .getLocation().equals(location.getParent()));
          }
@@ -406,7 +406,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       return new Function<ComputeMetadata, String>() {
          @Override
          public String apply(ComputeMetadata from) {
-            return from.getId();
+            return from.getProviderId();
          }
       };
    }

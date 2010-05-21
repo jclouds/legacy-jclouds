@@ -37,7 +37,7 @@ public class ResourceMetadataToRelativePathResourceMetadata implements
          if (name.endsWith(suffix))
             name = name.substring(0, name.length() - suffix.length());
       }
-      return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getId(), name, md
+      return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getProviderId(), name, md
                .getLocation(), md.getUri(), md.getETag(), md.getSize(), md.getLastModified(), md
                .getUserMetadata());
    }

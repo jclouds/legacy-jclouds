@@ -62,7 +62,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(ubuntuHardy.getDescription(),
                "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
-      assertEquals(ubuntuHardy.getId(), "ami-7e28ca17");
+      assertEquals(ubuntuHardy.getProviderId(), "ami-7e28ca17");
       assertEquals(ubuntuHardy.getLocation(), defaultLocation);
       assertEquals(ubuntuHardy.getName(), "8.04");
       assertEquals(ubuntuHardy.getOsDescription(),
@@ -77,7 +77,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(alesticKarmic.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(alesticKarmic.getDescription(),
                "alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml");
-      assertEquals(alesticKarmic.getId(), "ami-19a34270");
+      assertEquals(alesticKarmic.getProviderId(), "ami-19a34270");
       assertEquals(alesticKarmic.getLocation(), defaultLocation);
       assertEquals(alesticKarmic.getName(), "9.10");
       assertEquals(alesticKarmic.getOsDescription(),
@@ -92,7 +92,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuKarmic.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(ubuntuKarmic.getDescription(),
                "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
-      assertEquals(ubuntuKarmic.getId(), "ami-bb709dd2");
+      assertEquals(ubuntuKarmic.getProviderId(), "ami-bb709dd2");
       assertEquals(ubuntuKarmic.getLocation(), defaultLocation);
       assertEquals(ubuntuKarmic.getName(), "9.10");
       assertEquals(ubuntuKarmic.getOsDescription(),
@@ -110,7 +110,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(alesticHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(alesticHardy.getDescription(),
                "alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml");
-      assertEquals(alesticHardy.getId(), "ami-c0fa1ea9");
+      assertEquals(alesticHardy.getProviderId(), "ami-c0fa1ea9");
       assertEquals(alesticHardy.getLocation(), defaultLocation);
       assertEquals(alesticHardy.getName(), "8.04");
       assertEquals(alesticHardy.getOsDescription(),
@@ -141,7 +141,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(image.getDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");
-      assertEquals(image.getId(), "ami-870de2ee");
+      assertEquals(image.getProviderId(), "ami-870de2ee");
       assertEquals(image.getLocation(), defaultLocation);
       assertEquals(image.getName(), "");
       assertEquals(image.getOsDescription(),
@@ -166,7 +166,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       assertEquals(image.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_64);
       assertEquals(image.getDescription(), "rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml");
-      assertEquals(image.getId(), "ami-ccb35ea5");
+      assertEquals(image.getProviderId(), "ami-ccb35ea5");
       assertEquals(image.getLocation(), defaultLocation);
       assertEquals(image.getName(), "5.4");
       assertEquals(image.getOsDescription(),
@@ -180,7 +180,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       assertEquals(image.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_64);
       assertEquals(image.getDescription(), "RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha");
-      assertEquals(image.getId(), "ami-c19db6b5");
+      assertEquals(image.getProviderId(), "ami-c19db6b5");
       assertEquals(image.getLocation(), defaultLocation);
       assertEquals(image.getName(), "9.10");
       assertEquals(image.getOsDescription(),

@@ -103,7 +103,7 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    private Server addServer(String name, Template template, Ip availableIp) {
       Server addedServer;
       addedServer = client.getServerServices().addServer(name,
-               checkNotNull(template.getImage().getId()),
+               checkNotNull(template.getImage().getProviderId()),
                sizeToRam.apply(template.getSize()), availableIp.getIp());
       return addedServer;
    }

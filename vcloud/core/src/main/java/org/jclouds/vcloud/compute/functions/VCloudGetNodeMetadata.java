@@ -104,7 +104,7 @@ public class VCloudGetNodeMetadata {
 
                @Override
                public boolean apply(Image input) {
-                  return input.getId().equals(templateId) && input.getLocation().equals(location);
+                  return input.getProviderId().equals(templateId) && input.getLocation().equals(location);
                }
 
             });

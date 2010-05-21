@@ -52,7 +52,7 @@ public class EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategyTest {
          Template template = createMock(Template.class);
          Image image = createMock(Image.class);
          expect(template.getImage()).andReturn(image);
-         expect(image.getId()).andReturn("233");
+         expect(image.getProviderId()).andReturn("233");
          replay(template);
          replay(image);
 

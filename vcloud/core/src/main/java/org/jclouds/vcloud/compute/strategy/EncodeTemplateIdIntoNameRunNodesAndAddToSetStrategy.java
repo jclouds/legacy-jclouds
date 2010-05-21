@@ -61,7 +61,7 @@ public class EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy extends
    @Override
    protected String getNextName(final String tag, final Template template) {
       return String.format(nodeNamingConvention, tag, Strings.padStart(Integer.toHexString(Integer
-               .parseInt(template.getImage().getId())), 3, '0'), Strings.padStart(Integer
+               .parseInt(template.getImage().getProviderId())), 3, '0'), Strings.padStart(Integer
                .toHexString(random.nextInt(255)), 2, '0'));
    }
 }

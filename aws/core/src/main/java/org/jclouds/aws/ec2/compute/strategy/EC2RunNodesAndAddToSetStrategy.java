@@ -129,9 +129,9 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
       if (logger.isDebugEnabled())
          logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count,
-                  region, zone, template.getImage().getId(), instanceOptions.buildFormParameters());
+                  region, zone, template.getImage().getProviderId(), instanceOptions.buildFormParameters());
 
-      return instanceClient.runInstancesInRegion(region, zone, template.getImage().getId(), 1,
+      return instanceClient.runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
                count, instanceOptions);
    }
 

@@ -147,7 +147,7 @@ public class BaseComputeService implements ComputeService {
       checkNotNull(template.getLocation(), "location");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)",
                count, count > 1 ? "s" : "", tag, template.getLocation().getId(), template
-                        .getImage().getId(), template.getSize().getId(), template.getOptions());
+                        .getImage().getProviderId(), template.getSize().getProviderId(), template.getOptions());
       Set<NodeMetadata> nodes = Sets.newHashSet();
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Map<?, ListenableFuture<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count,
@@ -201,7 +201,7 @@ public class BaseComputeService implements ComputeService {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-               destroyNode(node.getHandle());
+               destroyNode(node.getId());
                destroyedNodes.add(node);
                return null;
             }
@@ -306,7 +306,7 @@ public class BaseComputeService implements ComputeService {
          responses.put(node, makeListenable(executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-               rebootNode(node.getHandle());
+               rebootNode(node.getId());
                return null;
             }
          }), executor));

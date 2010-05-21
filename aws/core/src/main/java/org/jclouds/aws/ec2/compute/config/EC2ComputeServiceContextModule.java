@@ -297,7 +297,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       return new Function<ComputeMetadata, String>() {
          @Override
          public String apply(ComputeMetadata from) {
-            return from.getId();
+            return from.getProviderId();
          }
       };
    }
@@ -389,7 +389,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
                                     .describeImagesInRegion(region, ownedBy(amiOwners))) {
                               Image image = parser.apply(from);
                               if (image != null)
-                                 images.put(new RegionAndName(region, image.getId()), image);
+                                 images.put(new RegionAndName(region, image.getProviderId()), image);
                               else if (from.getImageType() == ImageType.MACHINE)
                                  holder.logger.trace("<< image(%s) didn't parse", from.getId());
                            }

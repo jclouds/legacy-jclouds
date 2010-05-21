@@ -190,8 +190,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         Server server = client.createServer(name, Integer.parseInt(template.getImage().getId()),
-                  Integer.parseInt(template.getSize().getId()));
+         Server server = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()),
+                  Integer.parseInt(template.getSize().getProviderId()));
          serverActive.apply(server);
          return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "",
                   new LocationImpl(LocationScope.HOST, server.getHostId(), server.getHostId(),
@@ -301,7 +301,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       return new Function<ComputeMetadata, String>() {
          @Override
          public String apply(ComputeMetadata from) {
-            return from.getId();
+            return from.getProviderId();
          }
       };
    }

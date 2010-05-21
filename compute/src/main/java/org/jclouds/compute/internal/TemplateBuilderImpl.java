@@ -125,7 +125,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Image input) {
          boolean returnVal = true;
          if (imageId != null) {
-            returnVal = imageId.equals(input.getId());
+            returnVal = imageId.equals(input.getProviderId());
             // match our input params so that the later predicates pass.
             if (returnVal) {
                fromImage(input);
@@ -228,7 +228,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Size input) {
          boolean returnVal = true;
          if (sizeId != null) {
-            returnVal = sizeId.equals(input.getId());
+            returnVal = sizeId.equals(input.getProviderId());
             // match our input params so that the later predicates pass.
             if (returnVal) {
                fromSize(input);

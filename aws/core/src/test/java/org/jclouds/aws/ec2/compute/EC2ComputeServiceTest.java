@@ -141,7 +141,7 @@ public class EC2ComputeServiceTest {
       return new Function<ComputeMetadata, String>() {
          @Override
          public String apply(ComputeMetadata from) {
-            return from.getId();
+            return from.getProviderId();
          }
       };
    }

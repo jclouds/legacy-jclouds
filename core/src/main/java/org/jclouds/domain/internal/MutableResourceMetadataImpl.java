@@ -52,7 +52,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
 
    public MutableResourceMetadataImpl(ResourceMetadata<T> from) {
       this.type = from.getType();
-      this.id = from.getId();
+      this.id = from.getProviderId();
       this.name = from.getName();
       this.location = from.getLocation();
       this.uri = from.getUri();
@@ -89,7 +89,7 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
     * {@inheritDoc}
     */
    @Override
-   public String getId() {
+   public String getProviderId() {
       return id;
    }
 

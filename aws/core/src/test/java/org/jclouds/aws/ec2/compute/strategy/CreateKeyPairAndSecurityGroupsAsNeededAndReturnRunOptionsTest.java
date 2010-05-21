@@ -88,7 +88,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       RunInstancesOptions runOptions = strategy.execute(region, tag, template);
       assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildFormParameters().entries(), ImmutableMultimap
-               .<String, String> of("InstanceType", size.getId(), "SecurityGroup.1",
+               .<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
                         generatedGroup, "AdditionalInfo", tag, "KeyName",
                         systemGeneratedKeyPairName).entries());
       assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());

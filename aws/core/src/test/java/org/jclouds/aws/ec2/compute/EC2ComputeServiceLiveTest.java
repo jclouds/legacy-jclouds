@@ -99,7 +99,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert first.getCredentials() != null : first;
          assert first.getCredentials().account != null : first;
 
-         startedId = Iterables.getOnlyElement(nodes).getId();
+         startedId = Iterables.getOnlyElement(nodes).getProviderId();
 
          RunningInstance instance = getInstance(instanceClient, startedId);
 
@@ -155,7 +155,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          Credentials creds = nodes.iterator().next().getCredentials();
          assert creds == null;
 
-         startedId = Iterables.getOnlyElement(nodes).getId();
+         startedId = Iterables.getOnlyElement(nodes).getProviderId();
 
          RunningInstance instance = getInstance(instanceClient, startedId);
 
@@ -191,7 +191,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 2, template);
          Set<String> instanceIds = new HashSet<String>();
          for (NodeMetadata node : nodes) {
-            instanceIds.add(node.getId());
+            instanceIds.add(node.getProviderId());
          }
 
          // create load balancer

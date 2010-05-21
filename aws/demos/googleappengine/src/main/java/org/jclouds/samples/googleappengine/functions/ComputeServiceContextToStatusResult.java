@@ -51,7 +51,7 @@ public class ComputeServiceContextToStatusResult implements Function<String, Sta
          long start = System.currentTimeMillis();
          Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
          if (nodes.size() > 0)
-            name = Iterables.get(nodes, 0).getId();
+            name = Iterables.get(nodes, 0).getProviderId();
          status = ((System.currentTimeMillis() - start) + "ms");
       } catch (Exception e) {
          logger.error(e, "Error listing service %s", contextName);

@@ -99,7 +99,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("notImageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(null);
@@ -158,7 +158,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("notImageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andThrow(
@@ -218,7 +218,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("notImageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       org.jclouds.compute.domain.Image lateImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -284,7 +284,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
@@ -342,7 +342,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
@@ -401,7 +401,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
@@ -472,7 +472,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getId()).andReturn("imageId").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(

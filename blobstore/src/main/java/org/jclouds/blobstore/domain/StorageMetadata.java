@@ -49,7 +49,7 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_METADATA
     */
    @Override
-   String getId();
+   String getProviderId();
 
    /**
     * Name of this resource. Names are dictated by the user. For files, this may be the filename,

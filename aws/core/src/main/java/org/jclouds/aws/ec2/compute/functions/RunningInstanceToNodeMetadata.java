@@ -77,7 +77,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       @Override
       public boolean apply(Image input) {
-         return input.getId().equals(instance.getImageId())
+         return input.getProviderId().equals(instance.getImageId())
                   && (input.getLocation() == null || input.getLocation().equals(location) || input
                            .getLocation().equals(location.getParent()));
       }

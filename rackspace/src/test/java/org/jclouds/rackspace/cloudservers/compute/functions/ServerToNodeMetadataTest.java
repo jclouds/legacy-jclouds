@@ -62,7 +62,7 @@ public class ServerToNodeMetadataTest {
       expect(addresses.getPrivateAddresses()).andReturn(privateAddresses);
 
       expect(server.getImageId()).andReturn(2000).atLeastOnce();
-      expect(jcImage.getId()).andReturn("2000").atLeastOnce();
+      expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(provider).atLeastOnce();
 
       replay(addresses);
