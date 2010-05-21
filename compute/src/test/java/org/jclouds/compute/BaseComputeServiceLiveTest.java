@@ -146,9 +146,11 @@ public abstract class BaseComputeServiceLiveTest {
 
    abstract protected Module getSshModule();
 
+   // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
-      new ComputeServiceContextFactory().createContext(service, "MOMMA", "MIA").close();
+      new ComputeServiceContextFactory().createContext(service, "MOMMA", "MIA",
+               ImmutableSet.<Module> of(new Log4JLoggingModule())).close();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
@@ -163,7 +165,8 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testImagesCache")
    public void testTemplateMatch() throws Exception {
       template = buildTemplate(client.templateBuilder());
-      Template toMatch = client.templateBuilder().imageId(template.getImage().getProviderId()).build();
+      Template toMatch = client.templateBuilder().imageId(template.getImage().getProviderId())
+               .build();
       assertEquals(toMatch, template);
    }
 
@@ -223,7 +226,7 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(node.getImage(), template.getImage());
    }
 
-   @Test
+   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String tag = this.tag + "run";
       TemplateOptions options = client.templateOptions().blockOnPort(22, 120);

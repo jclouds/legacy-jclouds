@@ -66,7 +66,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return new JschSshClientModule();
    }
 
-   @Test
+   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
                context.getProviderSpecificContext().getApi()).getSecurityGroupServices();
@@ -128,7 +128,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test
+   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testExtendedOptionsNoKeyPair() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
                context.getProviderSpecificContext().getApi()).getSecurityGroupServices();
@@ -179,7 +179,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test
+   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testLoadBalanceNodesMatching() throws Exception {
 
       ElasticLoadBalancerClient elbClient = EC2Client.class.cast(

@@ -87,6 +87,7 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class EC2RestClientModule extends AbstractModule {
+
    @Provides
    @Singleton
    @Named("RUNNING")
@@ -146,11 +147,25 @@ public class EC2RestClientModule extends AbstractModule {
       return region;
    }
 
+   private RuntimeException regionException = null;
+
    @Provides
    @Singleton
    @EC2
    Map<String, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
-      return client.describeRegions();
+      // http://code.google.com/p/google-guice/issues/detail?id=483
+      // guice doesn't remember when singleton providers throw exceptions.
+      // in this case, if describeRegions fails, it is called again for
+      // each provider method that depends on it. To short-circuit this,
+      // we remember the last exception trusting that guice is single-threaded
+      if (regionException != null)
+         throw regionException;
+      try {
+         return client.describeRegions();
+      } catch (RuntimeException e) {
+         this.regionException = e;
+         throw e;
+      }
    }
 
    @Provides
