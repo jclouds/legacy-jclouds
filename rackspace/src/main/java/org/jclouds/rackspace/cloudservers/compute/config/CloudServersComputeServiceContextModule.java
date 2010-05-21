@@ -142,8 +142,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public boolean execute(String handle) {
-         int serverId = Integer.parseInt(handle);
+      public boolean execute(String id) {
+         int serverId = Integer.parseInt(id);
          // if false server wasn't around in the first place
          client.rebootServer(serverId, RebootType.HARD);
          Server server = client.getServer(serverId);
@@ -165,8 +165,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public boolean execute(String handle) {
-         int serverId = Integer.parseInt(handle);
+      public boolean execute(String id) {
+         int serverId = Integer.parseInt(id);
          // if false server wasn't around in the first place
          if (!client.deleteServer(serverId))
             return false;
@@ -243,8 +243,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       }
 
       @Override
-      public NodeMetadata execute(String handle) {
-         int serverId = Integer.parseInt(handle);
+      public NodeMetadata execute(String id) {
+         int serverId = Integer.parseInt(id);
          Server server = client.getServer(serverId);
          return server == null ? null : serverToNodeMetadata.apply(server);
       }

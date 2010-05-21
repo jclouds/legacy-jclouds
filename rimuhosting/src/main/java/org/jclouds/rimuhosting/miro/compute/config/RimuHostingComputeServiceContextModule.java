@@ -140,8 +140,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public boolean execute(String handle) {
-         Long serverId = Long.parseLong(handle);
+      public boolean execute(String id) {
+         Long serverId = Long.parseLong(id);
          // if false server wasn't around in the first place
          return client.restartServer(serverId).getState() == RunningState.RUNNING;
       }
@@ -161,8 +161,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public boolean execute(String handle) {
-         Long serverId = Long.parseLong(handle);
+      public boolean execute(String id) {
+         Long serverId = Long.parseLong(id);
          client.destroyServer(serverId);
          return serverDestroyed.apply(client.getServer(serverId));
       }
@@ -247,8 +247,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       }
 
       @Override
-      public NodeMetadata execute(String handle) {
-         long serverId = Long.parseLong(handle);
+      public NodeMetadata execute(String id) {
+         long serverId = Long.parseLong(id);
          Server server = client.getServer(serverId);
          return server == null ? null : serverToNodeMetadata.apply(server);
       }

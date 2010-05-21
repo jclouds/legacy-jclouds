@@ -48,10 +48,10 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
 
    private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
 
-   public SizeImpl(String id, String name, String handle, @Nullable Location location, URI uri,
+   public SizeImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
             Map<String, String> userMetadata, double cores, int ram, int disk,
             Iterable<Architecture> supportedArchitectures) {
-      super(ComputeType.SIZE, id, name, handle, location, uri, userMetadata);
+      super(ComputeType.SIZE, providerId, name, id, location, uri, userMetadata);
       this.cores = cores;
       this.ram = ram;
       this.disk = disk;
@@ -103,8 +103,9 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
     */
    @Override
    public String toString() {
-      return "[id=" + getProviderId() + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk
-               + ", supportedArchitectures=" + supportedArchitectures + "]";
+      return "[id=" + getId() + ", providerId=" + getProviderId() + ", cores=" + cores + ", ram="
+               + ram + ", disk=" + disk + ", supportedArchitectures=" + supportedArchitectures
+               + "]";
    }
 
    /**

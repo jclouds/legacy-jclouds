@@ -146,10 +146,10 @@ public interface ComputeService {
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
 
    /**
-    * destroy the node, given its handle. If it is the only node in a tag set, the dependent
+    * destroy the node, given its id. If it is the only node in a tag set, the dependent
     * resources will also be destroyed.
     */
-   void destroyNode(String handle);
+   void destroyNode(String id);
 
    /**
     * nodes matching the filter are treated as a logical set. Using the delete command, you can save
@@ -161,9 +161,9 @@ public interface ComputeService {
    Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter);
 
    /**
-    * reboot the node, given its handle.
+    * reboot the node, given its id.
     */
-   void rebootNode(String handle);
+   void rebootNode(String id);
 
    /**
     * nodes matching the filter are treated as a logical set. Using this command, you can save time
@@ -172,9 +172,9 @@ public interface ComputeService {
    void rebootNodesMatching(Predicate<NodeMetadata> filter);
 
    /**
-    * Find a node by its handle.
+    * Find a node by its id.
     */
-   NodeMetadata getNodeMetadata(String handle);
+   NodeMetadata getNodeMetadata(String id);
 
    /**
     * get all nodes including details such as image and ip addresses even if it incurs extra

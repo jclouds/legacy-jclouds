@@ -229,12 +229,12 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       }
 
       @Override
-      public NodeMetadata execute(String handle) {
-         String[] parts = parseHandle(handle);
+      public NodeMetadata execute(String id) {
+         String[] parts = parseHandle(id);
          String region = parts[0];
-         String id = parts[1];
+         String instanceId = parts[1];
          RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
-                  client, region, id));
+                  client, region, instanceId));
          return runningInstanceToNodeMetadata.apply(runningInstance);
       }
 
@@ -250,11 +250,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       }
 
       @Override
-      public boolean execute(String handle) {
-         String[] parts = parseHandle(handle);
+      public boolean execute(String id) {
+         String[] parts = parseHandle(id);
          String region = parts[0];
-         String id = parts[1];
-         client.rebootInstancesInRegion(region, id);
+         String instanceId = parts[1];
+         client.rebootInstancesInRegion(region, instanceId);
          return true;
       }
 
@@ -389,7 +389,9 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
                                     .describeImagesInRegion(region, ownedBy(amiOwners))) {
                               Image image = parser.apply(from);
                               if (image != null)
-                                 images.put(new RegionAndName(region, image.getProviderId()), image);
+                                 images
+                                          .put(new RegionAndName(region, image.getProviderId()),
+                                                   image);
                               else if (from.getImageType() == ImageType.MACHINE)
                                  holder.logger.trace("<< image(%s) didn't parse", from.getId());
                            }

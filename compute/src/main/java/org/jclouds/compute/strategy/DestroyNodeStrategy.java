@@ -28,6 +28,6 @@ package org.jclouds.compute.strategy;
  */
 public interface DestroyNodeStrategy {
 
-   boolean execute(String handle);
+   boolean execute(String id);
 
 }

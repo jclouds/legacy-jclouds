@@ -28,6 +28,6 @@ import org.jclouds.compute.domain.NodeMetadata;
  */
 public interface GetNodeMetadataStrategy {
 
-   NodeMetadata execute(String handle);
+   NodeMetadata execute(String id);
 
 }

@@ -42,7 +42,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
 
    private final T type;
    @Nullable
-   private final String id;
+   private final String providerId;
    @Nullable
    private final String name;
    @Nullable
@@ -51,10 +51,10 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
    private final URI uri;
    private final Map<String, String> userMetadata = Maps.newLinkedHashMap();
 
-   public ResourceMetadataImpl(T type, @Nullable String id, @Nullable String name,
+   public ResourceMetadataImpl(T type, @Nullable String providerId, @Nullable String name,
             @Nullable Location location, @Nullable URI uri, Map<String, String> userMetadata) {
       this.type = checkNotNull(type, "type");
-      this.id = id;
+      this.providerId = providerId;
       this.name = name;
       this.location = location;
       this.uri = uri;
@@ -84,7 +84,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
     */
    @Override
    public String getProviderId() {
-      return id;
+      return providerId;
    }
 
    /**
@@ -121,7 +121,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
 
    @Override
    public String toString() {
-      return "[type=" + type + ", id=" + id + ", name=" + name + ", location=" + location
+      return "[type=" + type + ", providerId=" + providerId + ", name=" + name + ", location=" + location
                + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
    }
 
@@ -129,7 +129,7 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((providerId == null) ? 0 : providerId.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -146,10 +146,10 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
       if (getClass() != obj.getClass())
          return false;
       ResourceMetadataImpl<?> other = (ResourceMetadataImpl<?>) obj;
-      if (id == null) {
-         if (other.id != null)
+      if (providerId == null) {
+         if (other.providerId != null)
             return false;
-      } else if (!id.equals(other.id))
+      } else if (!providerId.equals(other.providerId))
          return false;
       if (location == null) {
          if (other.location != null)

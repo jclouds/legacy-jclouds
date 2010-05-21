@@ -59,12 +59,12 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public boolean execute(String handle) {
-      String[] parts = parseHandle(handle);
+   public boolean execute(String id) {
+      String[] parts = parseHandle(id);
       String region = parts[0];
-      String id = parts[1];
-      ec2Client.getInstanceServices().terminateInstancesInRegion(region, id);
+      String instanceId = parts[1];
+      ec2Client.getInstanceServices().terminateInstancesInRegion(region, instanceId);
       return instanceStateTerminated.apply(Iterables.getOnlyElement(Iterables.concat(ec2Client
-               .getInstanceServices().describeInstancesInRegion(region, id))));
+               .getInstanceServices().describeInstancesInRegion(region, instanceId))));
    }
 }

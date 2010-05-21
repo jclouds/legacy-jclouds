@@ -27,6 +27,6 @@ package org.jclouds.compute.strategy;
  */
 public interface RebootNodeStrategy {
 
-   boolean execute(String handle);
+   boolean execute(String id);
 
 }

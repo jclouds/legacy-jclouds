@@ -138,9 +138,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public boolean execute(String handle) {
+      public boolean execute(String id) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(handle)));
+                  new Long(id)));
          client.getServerServices().power(server.getName(), PowerCommand.RESTART);
          serverLatestJobCompleted.apply(server);
          client.getServerServices().power(server.getName(), PowerCommand.START);
@@ -186,9 +186,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public NodeMetadata execute(String handle) {
+      public NodeMetadata execute(String id) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(checkNotNull(handle, "handle"))));
+                  new Long(checkNotNull(id, "id"))));
          return server == null ? null : serverToNodeMetadata.apply(server);
       }
    }
@@ -206,9 +206,9 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }
 
       @Override
-      public boolean execute(String handle) {
+      public boolean execute(String id) {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(handle)));
+                  new Long(id)));
          client.getServerServices().deleteByName(server.getName());
          return serverLatestJobCompleted.apply(server);
       }

@@ -37,12 +37,12 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 7374704415964898694L;
-   private final String handle;
+   private final String id;
 
-   public ComputeMetadataImpl(ComputeType type, String id, String name, String handle,
+   public ComputeMetadataImpl(ComputeType type, String providerId, String name, String id,
             Location location, URI uri, Map<String, String> userMetadata) {
-      super(type, id, name, location, uri, userMetadata);
-      this.handle = checkNotNull(handle, "handle");
+      super(type, providerId, name, location, uri, userMetadata);
+      this.id = checkNotNull(id, "id");
    }
 
    /**
@@ -50,7 +50,7 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
     */
    @Override
    public String getId() {
-      return handle;
+      return id;
    }
 
 }

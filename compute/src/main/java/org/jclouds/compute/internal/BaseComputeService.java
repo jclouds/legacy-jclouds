@@ -147,7 +147,8 @@ public class BaseComputeService implements ComputeService {
       checkNotNull(template.getLocation(), "location");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)",
                count, count > 1 ? "s" : "", tag, template.getLocation().getId(), template
-                        .getImage().getProviderId(), template.getSize().getProviderId(), template.getOptions());
+                        .getImage().getProviderId(), template.getSize().getProviderId(), template
+                        .getOptions());
       Set<NodeMetadata> nodes = Sets.newHashSet();
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Map<?, ListenableFuture<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count,
@@ -182,11 +183,11 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public void destroyNode(String handle) {
-      checkNotNull(handle, "handle");
-      logger.debug(">> destroying node(%s)", handle);
-      boolean successful = destroyNodeStrategy.execute(handle);
-      logger.debug("<< destroyed node(%s) success(%s)", handle, successful);
+   public void destroyNode(String id) {
+      checkNotNull(id, "id");
+      logger.debug(">> destroying node(%s)", id);
+      boolean successful = destroyNodeStrategy.execute(id);
+      logger.debug("<< destroyed node(%s) success(%s)", id, successful);
    }
 
    /**
@@ -278,20 +279,20 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public NodeMetadata getNodeMetadata(String handle) {
-      checkNotNull(handle, "handle");
-      return getNodeMetadataStrategy.execute(handle);
+   public NodeMetadata getNodeMetadata(String id) {
+      checkNotNull(id, "id");
+      return getNodeMetadataStrategy.execute(id);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public void rebootNode(String handle) {
-      checkNotNull(handle, "handle");
-      logger.debug(">> rebooting node(%s)", handle);
-      boolean successful = rebootNodeStrategy.execute(handle);
-      logger.debug("<< rebooted node(%s) success(%s)", handle, successful);
+   public void rebootNode(String id) {
+      checkNotNull(id, "id");
+      logger.debug(">> rebooting node(%s)", id);
+      boolean successful = rebootNodeStrategy.execute(id);
+      logger.debug("<< rebooted node(%s) success(%s)", id, successful);
    }
 
    /**

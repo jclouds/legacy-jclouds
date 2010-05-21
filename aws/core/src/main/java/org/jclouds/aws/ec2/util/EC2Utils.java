@@ -64,9 +64,9 @@ public class EC2Utils {
       return Iterables.concat(client.describeInstancesInRegion(region, id));
    }
 
-   public static String[] parseHandle(String handle) {
-      String[] parts = checkNotNull(handle, "handle").split("/");
-      checkArgument(parts.length == 2, "handle syntax is region/id");
+   public static String[] parseHandle(String id) {
+      String[] parts = checkNotNull(id, "id").split("/");
+      checkArgument(parts.length == 2, "id syntax is region/instanceid");
       return parts;
    }
 
