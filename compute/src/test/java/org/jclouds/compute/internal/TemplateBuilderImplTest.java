@@ -49,6 +49,35 @@ public class TemplateBuilderImplTest {
 
    @SuppressWarnings("unchecked")
    @Test
+   public void testOptionsUsesDefaultTemplateBuilder() {
+      Set<Location> locations = ImmutableSet.<Location> of();
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Size> sizes = ImmutableSet.<Size> of();
+      Location defaultLocation = createMock(Location.class);
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
+
+      expect(templateBuilderProvider.get()).andReturn(defaultTemplate);
+      expect(defaultTemplate.build()).andReturn(null);
+
+      replay(defaultTemplate);
+      replay(defaultLocation);
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
+
+      template.options(new TemplateOptions()).build();
+
+      verify(defaultTemplate);
+      verify(defaultLocation);
+      verify(optionsProvider);
+      verify(templateBuilderProvider);
+   }
+   @SuppressWarnings("unchecked")
+   @Test
    public void testNothingUsesDefaultTemplateBuilder() {
       Set<Location> locations = ImmutableSet.<Location> of();
       Set<Image> images = ImmutableSet.<Image> of();

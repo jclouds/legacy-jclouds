@@ -394,7 +394,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public Template build() {
-      if (nothingChanged())
+      if (nothingChangedExceptOptions())
          return defaultTemplateProvider.get().build();
       if (locationId == null)
          locationId = defaultLocation.getId();
@@ -550,11 +550,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    @VisibleForTesting
-   boolean nothingChanged() {
+   boolean nothingChangedExceptOptions() {
       return os == null && arch == null && locationId == null && imageId == null && sizeId == null
                && osDescription == null && imageVersion == null && imageName == null
-               && imageDescription == null && minCores == 0 && minRam == 0 && !biggest && !fastest
-               && options == null;
+               && imageDescription == null && minCores == 0 && minRam == 0 && !biggest && !fastest;
    }
 
    /**
