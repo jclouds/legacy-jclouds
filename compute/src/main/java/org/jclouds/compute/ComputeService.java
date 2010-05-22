@@ -235,10 +235,10 @@ public interface ComputeService {
     * @return DNS Name of the load balancer
     */
    @Beta
-   String loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
+   Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
             String protocol, int loadBalancerPort, int instancePort);
 
    @Beta
-   void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter);
+   void deleteLoadBalancer(String handle);
 
 }

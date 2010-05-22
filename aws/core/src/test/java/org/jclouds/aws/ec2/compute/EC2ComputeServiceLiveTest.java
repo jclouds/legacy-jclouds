@@ -194,10 +194,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
             instanceIds.add(node.getProviderId());
          }
 
-         // create load balancer
-         String dnsName = client.loadBalanceNodesMatching(NodePredicates.withTag(tag), tag, "HTTP",
+         // create load balancers
+         
+         Set<String> dnsNames = client.loadBalanceNodesMatching(NodePredicates.withTag(tag), tag, "HTTP",
                   80, 80);
-         assertNotNull(dnsName);
+         assertNotNull(dnsNames);
          Set<ElasticLoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(Region.US_EAST_1,
                   tag);
          assertNotNull(elbs);

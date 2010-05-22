@@ -21,6 +21,9 @@ package org.jclouds.aws.ec2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
@@ -118,5 +121,25 @@ public class EC2Utils {
                   .toLowerCase()
                   + "s[" + i + "]"));
       }
+   }
+   
+   public static Map<String, String> getLoadBalancerNameAndRegionFromDnsName(String handle)
+   {
+      String[] parts = checkNotNull(handle, "handle").split(".");
+      checkArgument(parts.length == 5, "handle syntax is my-load-balancer-1277832914.us-east-1.elb.amazonaws.com");
+      
+      String loadBalancerName = parts[0].substring(0, parts[0].lastIndexOf("-"));
+      
+      String regionName = parts[1];
+     
+      checkArgument((Region.EU_WEST_1.equals(regionName) || Region.US_WEST_1.equals(regionName)
+              || Region.US_EAST_1.equals(regionName)
+              || Region.US_STANDARD.equals(regionName)
+              || Region.AP_SOUTHEAST_1.equals(regionName)), String.format("Region (%s, args) is not a valid region", regionName));
+      
+      Map<String, String> map = new HashMap<String, String>();
+      map.put(regionName, loadBalancerName);
+      return map;
+          
    }
 }

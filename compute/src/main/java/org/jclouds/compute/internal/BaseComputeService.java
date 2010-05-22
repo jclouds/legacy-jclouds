@@ -424,12 +424,12 @@ public class BaseComputeService implements ComputeService {
    }
 
    @Override
-   public void deleteLoadBalancer(String loadBalancerName, Predicate<NodeMetadata> filter) {
+   public void deleteLoadBalancer(String handle) {
       throw new UnsupportedOperationException("deleteLoadBalancer not supported in this cloud");
    }
 
    @Override
-   public String loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
+   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
             String protocol, int loadBalancerPort, int instancePort) {
       throw new UnsupportedOperationException(
                "loadBalanceNodesMatching not supported in this cloud");
