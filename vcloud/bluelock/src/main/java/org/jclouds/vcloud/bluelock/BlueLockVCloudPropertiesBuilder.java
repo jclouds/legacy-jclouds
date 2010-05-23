@@ -34,7 +34,7 @@ public class BlueLockVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, "https://express3.bluelock.com/api");
+      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, "https://express.bluelock.com/api");
       return properties;
    }
 
@@ -43,6 +43,6 @@ public class BlueLockVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
    }
 
    public BlueLockVCloudPropertiesBuilder(String id, String secret) {
-      super(URI.create("https://express3.bluelock.com/api"), id, secret);
+      super(URI.create("https://express.bluelock.com/api"), id, secret);
    }
 }
