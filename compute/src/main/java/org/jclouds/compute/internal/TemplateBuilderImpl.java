@@ -476,7 +476,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             logger.trace("<<   matched images(%s)", matchingImages);
          List<? extends Image> maxImages = Utils.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
          if (logger.isTraceEnabled())
-            logger.debug("<<   best images(%s)", maxImages);
+            logger.trace("<<   best images(%s)", maxImages);
          return maxImages;
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);

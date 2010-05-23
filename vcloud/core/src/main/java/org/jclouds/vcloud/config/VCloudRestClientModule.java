@@ -113,7 +113,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    protected Predicate<String> successTester(TaskSuccess success) {
-      return new RetryablePredicate<String>(success, 600, 10, TimeUnit.SECONDS);
+      return new RetryablePredicate<String>(success, 60 * 30, 10, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -163,8 +163,9 @@ public class VCloudRestClientModule extends AbstractModule {
             try {
                return login.login().get(180, TimeUnit.SECONDS);
             } catch (Exception e) {
-               Throwables.propagateIfPossible(e);
-               throw new RuntimeException("Error logging in", e);
+               Throwables.propagate(e);
+               assert false;
+               return null;
             }
          }
       }, seconds, TimeUnit.SECONDS);

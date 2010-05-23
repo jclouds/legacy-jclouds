@@ -229,6 +229,12 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String tag = this.tag + "run";
+      try {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+      } catch (Exception e) {
+
+      }
+
       TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
       try {
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
@@ -374,7 +380,7 @@ public abstract class BaseComputeServiceLiveTest {
          // assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
          // assert nodeMetadata.getName() != null : nodeMetadata;
-         if (nodeMetadata.getState() != NodeState.TERMINATED) {
+         if (nodeMetadata.getState() == NodeState.RUNNING) {
             assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
             assert nodeMetadata.getPublicAddresses().size() > 0
                      || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;

@@ -29,11 +29,11 @@ public enum NodeState {
     */
    PENDING,
    /**
-    * The node is not running
+    * The node is visible, and in the process of being deleted.
     */
    TERMINATED,
    /**
-    * The node is deployed, but suspended
+    * The node is deployed, but suspended or stopped.
     */
    SUSPENDED,
    /**

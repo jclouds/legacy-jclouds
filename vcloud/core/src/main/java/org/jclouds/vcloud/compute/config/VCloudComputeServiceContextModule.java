@@ -85,11 +85,12 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       this.providerName = providerName;
    }
 
+   
    @Singleton
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
       return ImmutableMap.<VAppStatus, NodeState> builder().put(VAppStatus.OFF,
-               NodeState.TERMINATED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
+               NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
                NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(
                VAppStatus.UNRESOLVED, NodeState.PENDING).build();
    }
