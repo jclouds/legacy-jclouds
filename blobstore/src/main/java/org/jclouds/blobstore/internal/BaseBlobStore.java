@@ -194,7 +194,7 @@ public abstract class BaseBlobStore implements BlobStore {
 
    protected void clearAndDeleteContainer(final String container) {
       try {
-         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                try {
                   clearContainer(container, recursive());

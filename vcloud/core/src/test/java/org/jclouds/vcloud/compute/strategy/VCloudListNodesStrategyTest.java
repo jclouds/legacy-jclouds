@@ -33,6 +33,8 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Provider;
+
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -59,6 +61,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.inject.util.Providers;
 
 /**
  * @author Adrian Cole
@@ -112,9 +115,10 @@ public class VCloudListNodesStrategyTest {
       replay(computeClient);
 
       Location vdcL = new LocationImpl(LocationScope.ZONE, "1", "1", null);
-      Set<? extends Location> locations = ImmutableSet.of(vdcL);
-
-      Set<? extends Image> images = ImmutableSet.of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.of(vdcL));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
       FindLocationForResourceInVDC findLocationForResourceInVDC = new FindLocationForResourceInVDC(
                locations, null);
       VCloudListNodesStrategy strategy = new VCloudListNodesStrategy(client, computeClient,

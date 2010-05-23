@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
@@ -62,7 +63,7 @@ public class VCloudGetNodeMetadata {
    public Logger logger = Logger.NULL;
    protected final VCloudClient client;
    protected final VCloudComputeClient computeClient;
-   protected final Set<? extends Image> images;
+   protected final Provider<Set<? extends Image>> images;
    protected final FindLocationForResourceInVDC findLocationForResourceInVDC;
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
@@ -76,7 +77,8 @@ public class VCloudGetNodeMetadata {
    @Inject
    protected VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
             Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResourceInVDC findLocationForResourceInVDC, Set<? extends Image> images) {
+            FindLocationForResourceInVDC findLocationForResourceInVDC,
+            Provider<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
       this.getExtra = checkNotNull(getExtra, "getExtra");
@@ -99,11 +101,12 @@ public class VCloudGetNodeMetadata {
          String templateIdInHexWithoutLeadingZeros = matcher.group(2).replaceAll("^[0]+", "");
          final String templateId = Integer.parseInt(templateIdInHexWithoutLeadingZeros, 16) + "";
          try {
-            image = Iterables.find(images, new Predicate<Image>() {
+            image = Iterables.find(images.get(), new Predicate<Image>() {
 
                @Override
                public boolean apply(Image input) {
-                  return input.getProviderId().equals(templateId) && input.getLocation().equals(location);
+                  return input.getProviderId().equals(templateId)
+                           && input.getLocation().equals(location);
                }
 
             });

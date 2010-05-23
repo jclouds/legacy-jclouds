@@ -55,8 +55,9 @@ import org.jclouds.aws.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.aws.ec2.compute.strategy.EC2DestroyLoadBalancerStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalancerStrategy;
+import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.config.EC2ContextModule;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -78,10 +79,11 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.LoadBalancerStrategy;
+import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
@@ -90,7 +92,6 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
 import org.jclouds.util.Jsr330;
 
 import com.google.common.base.Function;
@@ -127,7 +128,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
-      bind(LoadBalancerStrategy.class).to(EC2LoadBalancerStrategy.class);
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<EC2AsyncClient, EC2Client>>() {
+      }).in(Scopes.SINGLETON);
+      bind(LoadBalanceNodesStrategy.class).to(EC2LoadBalanceNodesStrategy.class);
+      bind(DestroyLoadBalancerStrategy.class).to(EC2DestroyLoadBalancerStrategy.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EC2RunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(EC2ListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
@@ -282,13 +287,6 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();
-   }
-
-   @Provides
-   @Singleton
-   ComputeServiceContext provideContext(ComputeService computeService,
-            RestContext<EC2AsyncClient, EC2Client> context) {
-      return new ComputeServiceContextImpl<EC2AsyncClient, EC2Client>(computeService, context);
    }
 
    @Provides

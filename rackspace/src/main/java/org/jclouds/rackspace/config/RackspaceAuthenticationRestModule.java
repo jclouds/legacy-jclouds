@@ -32,6 +32,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.Authentication;
@@ -80,18 +81,22 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
             final RestClientFactory factory, @Named(PROPERTY_RACKSPACE_USER) final String user,
             @Named(PROPERTY_RACKSPACE_KEY) final String key) {
-      return new ExpirableSupplier<AuthenticationResponse>(new Supplier<AuthenticationResponse>() {
-         public AuthenticationResponse get() {
-            try {
-               ListenableFuture<AuthenticationResponse> response = factory.create(
-                        RackspaceAuthentication.class).authenticate(user, key);
-               return response.get(30, TimeUnit.SECONDS);
-            } catch (Exception e) {
-               Throwables.propagateIfPossible(e);
-               throw new RuntimeException("Error logging in", e);
-            }
-         }
-      }, 23, TimeUnit.HOURS);
+      return new ExpirableSupplier<AuthenticationResponse>(
+               new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
+                        new Supplier<AuthenticationResponse>() {
+                           public AuthenticationResponse get() {
+                              try {
+                                 ListenableFuture<AuthenticationResponse> response = factory
+                                          .create(RackspaceAuthentication.class).authenticate(user,
+                                                   key);
+                                 return response.get(30, TimeUnit.SECONDS);
+                              } catch (Exception e) {
+                                 Throwables.propagate(e);
+                                 assert false : e;
+                                 return null;
+                              }
+                           }
+                        }), 23, TimeUnit.HOURS);
    }
 
    @Provides

@@ -18,13 +18,9 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 import static org.jclouds.util.Utils.checkNotEmpty;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -41,7 +37,6 @@ import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -49,19 +44,15 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.LoadBalancerStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -72,7 +63,6 @@ public class EC2ComputeService extends BaseComputeService {
    private final EC2Client ec2Client;
    private final Map<RegionAndName, KeyPair> credentialsMap;
    private final Map<RegionAndName, String> securityGroupMap;
-   private final LoadBalancerStrategy loadBalancerStrategy;
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context,
@@ -83,13 +73,11 @@ public class EC2ComputeService extends BaseComputeService {
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            LoadBalancerStrategy loadBalancerStrategy, EC2Client ec2Client,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
             Map<RegionAndName, KeyPair> credentialsMap, Map<RegionAndName, String> securityGroupMap) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                templateBuilderProvider, templateOptionsProvider, utils, executor);
-      this.loadBalancerStrategy = checkNotNull(loadBalancerStrategy, "loadBalancerStrategy");
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -146,47 +134,4 @@ public class EC2ComputeService extends BaseComputeService {
       return EC2TemplateOptions.class.cast(super.templateOptions());
    }
 
-
-   @Override
-   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
-            String protocol, int loadBalancerPort, int instancePort) {
-      checkNotNull(loadBalancerName, "loadBalancerName");
-      checkNotNull(protocol, "protocol");
-      checkArgument(protocol.toUpperCase().equals("HTTP") || protocol.toUpperCase().equals("TCP"),
-               "Acceptable values for protocol are HTTP or TCP");
-
-      Map<Location, Set<String>> locationMap = new HashMap<Location, Set<String>>();
-      for (NodeMetadata node : Iterables.filter(super
-               .listNodesDetailsMatching(NodePredicates.all()), Predicates.and(filter, Predicates
-               .not(NodePredicates.TERMINATED)))) {
-          
-          Set<String> ids = locationMap.get(node.getLocation());
-          if(ids == null)
-              ids = new HashSet<String>();
-          ids.add(node.getProviderId());
-          locationMap.put(node.getLocation(), ids);
-      }
-      Set<String> dnsNames = new HashSet<String>(0);
-      for(Location location: locationMap.keySet())
-      {
-          logger.debug(">> creating load balancer (%s)", loadBalancerName);
-          String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol,
-                   loadBalancerPort, instancePort, locationMap.get(location));
-          dnsNames.add(dnsName);
-          logger.debug("<< created load balancer (%s) DNS (%s)", loadBalancerName, dnsName);
-      }
-      return dnsNames;
-   }
-
-   @Override
-   public void deleteLoadBalancer(String dnsName) {
-
-      Map<String, String> tuple = EC2Utils.getLoadBalancerNameAndRegionFromDnsName(dnsName);
-      //Only one load balancer per DNS name is expected
-      for(String key: tuple.keySet())
-      {
-          ec2Client.getElasticLoadBalancerServices().deleteLoadBalancerInRegion(key,
-                  tuple.get(key));
-      }
-   }
 }

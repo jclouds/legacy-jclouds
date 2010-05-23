@@ -33,7 +33,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ssh.ExecResponse;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
@@ -146,8 +145,8 @@ public interface ComputeService {
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
 
    /**
-    * destroy the node, given its id. If it is the only node in a tag set, the dependent
-    * resources will also be destroyed.
+    * destroy the node, given its id. If it is the only node in a tag set, the dependent resources
+    * will also be destroyed.
     */
    void destroyNode(String id);
 
@@ -214,31 +213,5 @@ public interface ComputeService {
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(
             Predicate<NodeMetadata> filter, byte[] runScript, RunScriptOptions options)
             throws RunScriptOnNodesException;
-
-   /**
-    * @param filter
-    *           Predicate-based filter to define which nodes to loadbalance
-    * @param loadBalancerName
-    *           Load balancer name
-    * @param protocol
-    *           LoadBalancer transport protocol to use for routing - TCP or HTTP. This property
-    *           cannot be modified for the life of the LoadBalancer.
-    * @param loadBalancerPort
-    *           The external TCP port of the LoadBalancer. Valid LoadBalancer ports are - 80, 443
-    *           and 1024 through 65535. This property cannot be modified for the life of the
-    *           LoadBalancer.
-    * @param instancePort
-    *           The InstancePort data type is simple type of type: integer. It is the TCP port on
-    *           which the server on the instance is listening. Valid instance ports are one (1)
-    *           through 65535. This property cannot be modified for the life of the LoadBalancer.
-    * 
-    * @return DNS Name of the load balancer
-    */
-   @Beta
-   Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
-            String protocol, int loadBalancerPort, int instancePort);
-
-   @Beta
-   void deleteLoadBalancer(String handle);
 
 }

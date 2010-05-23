@@ -29,12 +29,15 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
+import java.util.Set;
+
 import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
@@ -49,6 +52,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.inject.util.Providers;
 
 /**
  * Tests compute service specifically to EC2.
@@ -130,10 +134,18 @@ public class EC2ComputeServiceTest {
                Architecture.X86_64, new Credentials("root", null));
       replay(optionsProvider);
       replay(templateBuilderProvider);
-      return new TemplateBuilderImpl(ImmutableSet.of(location), ImmutableSet.of(image),
-               ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
-                        EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
-                        EC2Size.M2_4XLARGE), location, optionsProvider, templateBuilderProvider) {
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of(image));
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL,
+                        EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
+                        EC2Size.M2_4XLARGE));
+
+      return new TemplateBuilderImpl(locations, images, sizes, location, optionsProvider,
+               templateBuilderProvider) {
+
       };
    }
 

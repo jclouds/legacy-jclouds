@@ -40,8 +40,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -71,7 +71,6 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.config.RimuHostingContextModule;
@@ -89,7 +88,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Providers;
 
 /**
  * Configures the {@link RimuHostingComputeServiceContext}; requires
@@ -109,6 +110,12 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       super.configure();
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      })
+               .to(
+                        new TypeLiteral<ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>>() {
+                        }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Server, Iterable<InetAddress>>>() {
       }).to(ServerToPublicAddresses.class);
       bind(AddNodeWithTagStrategy.class).to(RimuHostingAddNodeWithTagStrategy.class);
@@ -350,14 +357,6 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
             }
          });
       }
-   }
-
-   @Provides
-   @Singleton
-   ComputeServiceContext provideContext(ComputeService computeService,
-            RestContext<RimuHostingAsyncClient, RimuHostingClient> context) {
-      return new ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>(
-               computeService, context);
    }
 
    @Provides

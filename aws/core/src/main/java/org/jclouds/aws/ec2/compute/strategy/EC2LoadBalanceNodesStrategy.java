@@ -33,7 +33,7 @@ import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
 import org.jclouds.aws.ec2.util.EC2Utils.GetRegionFromLocation;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.LoadBalancerStrategy;
+import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
@@ -42,7 +42,7 @@ import org.jclouds.logging.Logger;
  * @author Adrian Cole
  */
 @Singleton
-public class EC2LoadBalancerStrategy implements LoadBalancerStrategy {
+public class EC2LoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -50,7 +50,7 @@ public class EC2LoadBalancerStrategy implements LoadBalancerStrategy {
    protected final GetRegionFromLocation getRegionFromLocation;
 
    @Inject
-   protected EC2LoadBalancerStrategy(EC2Client ec2Client,
+   protected EC2LoadBalanceNodesStrategy(EC2Client ec2Client,
             GetRegionFromLocation getRegionFromLocation) {
       this.ec2Client = ec2Client;
       this.getRegionFromLocation = getRegionFromLocation;

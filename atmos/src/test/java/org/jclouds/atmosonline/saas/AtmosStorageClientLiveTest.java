@@ -363,7 +363,7 @@ public class AtmosStorageClientLiveTest {
          connection.deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
-      assert Utils.enventuallyTrue(new Supplier<Boolean>() {
+      assert Utils.eventuallyTrue(new Supplier<Boolean>() {
          public Boolean get() {
             return !connection.pathExists(path);
          }

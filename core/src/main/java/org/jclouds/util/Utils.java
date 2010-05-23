@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -42,9 +43,11 @@ import javax.annotation.Resource;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
@@ -93,6 +96,15 @@ public class Utils {
       Throwables.propagate(from);
       assert false : "exception should have propogated";
       return null;
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
+      try {
+         return (T) Iterables.find(Throwables.getCausalChain(from), Predicates.instanceOf(clazz));
+      } catch (NoSuchElementException e) {
+         return null;
+      }
    }
 
    public static Throwable firstRootCauseOrOriginalException(ProvisionException e) {
@@ -145,7 +157,7 @@ public class Utils {
       };
    }
 
-   public static boolean enventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis)
+   public static boolean eventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis)
             throws InterruptedException {
 
       for (int i = 0; i < 30; i++) {

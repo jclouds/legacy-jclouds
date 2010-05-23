@@ -42,6 +42,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpErrorHandler;
@@ -158,17 +159,19 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    Supplier<VCloudSession> provideVCloudTokenCache(
             @Named(PROPERTY_VCLOUD_SESSIONINTERVAL) long seconds, final VCloudLoginAsyncClient login) {
-      return new ExpirableSupplier<VCloudSession>(new Supplier<VCloudSession>() {
-         public VCloudSession get() {
-            try {
-               return login.login().get(180, TimeUnit.SECONDS);
-            } catch (Exception e) {
-               Throwables.propagate(e);
-               assert false;
-               return null;
-            }
-         }
-      }, seconds, TimeUnit.SECONDS);
+      return new ExpirableSupplier<VCloudSession>(
+               new RetryOnTimeOutExceptionSupplier<VCloudSession>(new Supplier<VCloudSession>() {
+                  public VCloudSession get() {
+                     try {
+                        return login.login().get(10, TimeUnit.SECONDS);
+                     } catch (Exception e) {
+                        Throwables.propagate(e);
+                        assert false : e;
+                        return null;
+                     }
+                  }
+
+               }), seconds, TimeUnit.SECONDS);
    }
 
    @Provides

@@ -51,6 +51,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
+import com.google.inject.util.Providers;
 
 /**
  * 
@@ -77,8 +78,9 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    }
 
    @Override
-   protected EC2TemplateBuilderImpl createTemplateBuilder(Set<Location> locations,
-            Set<Image> images, Set<Size> sizes, Location defaultLocation,
+   protected EC2TemplateBuilderImpl createTemplateBuilder(
+            Provider<Set<? extends Location>> locations, Provider<Set<? extends Image>> images,
+            Provider<Set<? extends Size>> sizes, Location defaultLocation,
             Provider<TemplateOptions> optionsProvider,
             Provider<TemplateBuilder> templateBuilderProvider) {
       return new EC2TemplateBuilderImpl(locations, images, sizes, defaultLocation, optionsProvider,
@@ -89,10 +91,15 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @Test
    public void testParseOnDemand() {
       Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl("1", "1", "region/1", location, null,
-               ImmutableMap.<String, String> of(), 1, 1, 1, ImagePredicates.any()));
+
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(new SizeImpl("1", "1", "region/1", location, null, ImmutableMap
+                        .<String, String> of(), 1, 1, 1, ImagePredicates.any())));
+
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -125,10 +132,15 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testParseOnDemandNotFound() {
       Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl("1", "1", "region/1", location, null,
-               ImmutableMap.<String, String> of(), 1, 1, 1, ImagePredicates.any()));
+
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(new SizeImpl("1", "1", "region/1", location, null, ImmutableMap
+                        .<String, String> of(), 1, 1, 1, ImagePredicates.any())));
+
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);

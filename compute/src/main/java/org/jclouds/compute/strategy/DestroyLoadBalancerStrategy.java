@@ -16,32 +16,21 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.compute;
 
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.rest.RestContext;
+package org.jclouds.compute.strategy;
 
-import com.google.inject.ImplementedBy;
+import java.net.InetAddress;
+
+import com.google.common.annotations.Beta;
 
 /**
- * Represents a cloud that has compute functionality.
  * 
  * 
  * @author Adrian Cole
- * 
  */
-@ImplementedBy(ComputeServiceContextImpl.class)
-public interface ComputeServiceContext {
+@Beta
+public interface DestroyLoadBalancerStrategy {
 
-   ComputeService getComputeService();
+   boolean execute(InetAddress loadBalancer);
 
-   /**
-    * 
-    * @return null, if the cloud does not support load balancer services
-    */
-   LoadBalancerService getLoadBalancerService();
-
-   <A, S> RestContext<A, S> getProviderSpecificContext();
-
-   void close();
 }

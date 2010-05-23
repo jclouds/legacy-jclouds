@@ -36,8 +36,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -79,7 +79,6 @@ import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.config.RackspaceLocationsModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -88,7 +87,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Providers;
 
 /**
  * Configures the {@link CloudServersComputeServiceContext}; requires {@link BaseComputeService}
@@ -109,6 +110,12 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       install(new RackspaceLocationsModule(providerName));
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      })
+               .to(
+                        new TypeLiteral<ComputeServiceContextImpl<CloudServersAsyncClient, CloudServersClient>>() {
+                        }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(CloudServersAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(CloudServersListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(CloudServersGetNodeMetadataStrategy.class);
@@ -277,14 +284,6 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                .put(ServerStatus.REBOOT, NodeState.PENDING)//
                .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
                .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
-   }
-
-   @Provides
-   @Singleton
-   ComputeServiceContext provideContext(ComputeService computeService,
-            RestContext<CloudServersAsyncClient, CloudServersClient> context) {
-      return new ComputeServiceContextImpl<CloudServersAsyncClient, CloudServersClient>(
-               computeService, context);
    }
 
    @Provides

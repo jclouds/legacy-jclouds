@@ -28,9 +28,9 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
    private final ConcurrentMap<RegionAndName, Image> imageMap;
 
    @Inject
-   protected EC2TemplateBuilderImpl(Set<? extends Location> locations, Set<? extends Image> images,
-            Set<? extends Size> sizes, Location defaultLocation,
-            Provider<TemplateOptions> optionsProvider,
+   protected EC2TemplateBuilderImpl(Provider<Set<? extends Location>> locations,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Location defaultLocation, Provider<TemplateOptions> optionsProvider,
             @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider,
             ConcurrentMap<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);

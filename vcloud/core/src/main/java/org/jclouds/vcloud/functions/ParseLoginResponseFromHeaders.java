@@ -31,6 +31,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.vcloud.VCloudToken;
@@ -48,7 +49,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCloudSession> {
-   static final Pattern pattern = Pattern.compile("vcloud-token=(.*); [Pp]ath=.*");
+   static final Pattern pattern = Pattern.compile("vcloud-token=([^;]+);.*");
 
    private final ParseSax.Factory factory;
    private final Provider<OrgListHandler> orgHandlerProvider;
@@ -87,6 +88,7 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
          };
 
       } else {
+         HttpUtils.consumeContent(from);
          throw new HttpResponseException("vcloud token not found in response ", null, from);
       }
    }

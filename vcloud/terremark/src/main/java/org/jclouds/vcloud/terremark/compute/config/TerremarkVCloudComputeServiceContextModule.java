@@ -57,8 +57,15 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
                ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
-
    }
+
+   // TODO
+   // @Override
+   // protected void bindLoadBalancer() {
+   // bind(LoadBalanceNodesStrategy.class).to(TerremarkLoadBalanceNodesStrategy.class);
+   // bind(DestroyLoadBalancerStrategy.class).to(TerremarkDestroyLoadBalancerStrategy.class);
+   // }
+   //   
 
    @Named("PASSWORD")
    @Provides

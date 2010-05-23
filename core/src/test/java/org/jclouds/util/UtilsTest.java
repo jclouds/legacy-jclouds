@@ -22,6 +22,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
@@ -44,6 +45,25 @@ public class UtilsTest {
       Message message = new Message(ImmutableList.of(), "test", aex);
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
       assertEquals(Utils.firstRootCauseOrOriginalException(pex), aex);
+   }
+
+   public void testGetFirstThrowableOfTypeOuter() {
+      AuthorizationException aex = createMock(AuthorizationException.class);
+      assertEquals(Utils.getFirstThrowableOfType(aex, AuthorizationException.class), aex);
+   }
+
+   public void testGetFirstThrowableOfTypeInner() {
+      AuthorizationException aex = createMock(AuthorizationException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
+      assertEquals(Utils.getFirstThrowableOfType(pex, AuthorizationException.class), aex);
+   }
+
+   public void testGetFirstThrowableOfTypeFail() {
+      TimeoutException aex = createMock(TimeoutException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
+      assertEquals(Utils.getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
 
    public void testReplaceTokens() throws UnsupportedEncodingException {

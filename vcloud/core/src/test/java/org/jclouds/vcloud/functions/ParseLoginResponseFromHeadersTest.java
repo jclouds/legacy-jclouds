@@ -65,4 +65,23 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    }
 
+   @Test
+   public void testApplyBlueLock() {
+      HttpResponse response = new HttpResponse();
+      response.setMessage("OK");
+      response.setStatusCode(200);
+      response.setContent(getClass().getResourceAsStream("/orglist.xml"));
+      response.getHeaders().put(HttpHeaders.SET_COOKIE,
+               "vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/");
+      response.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "307");
+      response.getHeaders().put(HttpHeaders.CONTENT_TYPE,
+               "Content-Type: application/xml; charset=utf-8");
+      VCloudSession reply = parser.apply(response);
+      assertEquals(reply.getVCloudToken(), "c9f232506df9b65d7b7d97b7499eddd7");
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("48",
+               "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+
+   }
+
 }

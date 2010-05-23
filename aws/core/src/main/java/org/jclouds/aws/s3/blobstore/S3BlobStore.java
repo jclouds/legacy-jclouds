@@ -167,7 +167,7 @@ public class S3BlobStore extends BaseBlobStore {
     */
    public void clearAndDeleteContainer(final String container) {
       try {
-         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                clearContainer(container);
                return sync.deleteBucketIfEmpty(container);

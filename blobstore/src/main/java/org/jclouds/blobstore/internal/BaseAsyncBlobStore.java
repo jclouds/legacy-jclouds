@@ -252,7 +252,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    protected void deleteAndEnsurePathGone(final String container) {
       try {
-         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                try {
                   clearContainer(container, recursive());

@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
@@ -45,7 +45,6 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
@@ -70,6 +69,7 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Providers;
 
 /**
  * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
@@ -85,14 +85,13 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       this.providerName = providerName;
    }
 
-   
    @Singleton
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
-      return ImmutableMap.<VAppStatus, NodeState> builder().put(VAppStatus.OFF,
-               NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
-               NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(
-               VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+      return ImmutableMap.<VAppStatus, NodeState> builder()
+               .put(VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(
+                        VAppStatus.RESOLVED, NodeState.PENDING).put(VAppStatus.SUSPENDED,
+                        NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
    }
 
    @Provides
@@ -106,12 +105,16 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       super.configure();
       bind(String.class).annotatedWith(VCloud.class).toInstance(providerName);
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudAsyncClient, VCloudClient>>() {
+      }).in(Scopes.SINGLETON);
       bind(RunNodesAndAddToSetStrategy.class).to(
                EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
+      bindLoadBalancer();
       bindSizes();
       bindImages();
       bindLocations();
@@ -132,11 +135,8 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
                TimeUnit.SECONDS);
    }
 
-   @Provides
-   @Singleton
-   protected ComputeServiceContext provideContext(ComputeService computeService,
-            RestContext<VCloudAsyncClient, VCloudClient> context) {
-      return new ComputeServiceContextImpl<VCloudAsyncClient, VCloudClient>(computeService, context);
+   protected void bindLoadBalancer() {
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
    }
 
    protected void bindImages() {

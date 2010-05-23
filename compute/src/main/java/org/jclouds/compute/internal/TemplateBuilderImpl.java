@@ -64,9 +64,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Set<? extends Image> images;
-   private final Set<? extends Size> sizes;
-   private final Set<? extends Location> locations;
+   private final Provider<Set<? extends Image>> images;
+   private final Provider<Set<? extends Size>> sizes;
+   private final Provider<Set<? extends Location>> locations;
    private final Provider<TemplateOptions> optionsProvider;
    private final Provider<TemplateBuilder> defaultTemplateProvider;
    private final Location defaultLocation;
@@ -101,9 +101,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected TemplateOptions options;
 
    @Inject
-   protected TemplateBuilderImpl(Set<? extends Location> locations, Set<? extends Image> images,
-            Set<? extends Size> sizes, Location defaultLocation,
-            Provider<TemplateOptions> optionsProvider,
+   protected TemplateBuilderImpl(Provider<Set<? extends Location>> locations,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Location defaultLocation, Provider<TemplateOptions> optionsProvider,
             @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
@@ -413,7 +413,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    protected Location resolveLocation() {
-      Location location = Iterables.find(locations, new Predicate<Location>() {
+      Location location = Iterables.find(locations.get(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {
@@ -428,23 +428,23 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected Size resolveSize(Ordering<Size> sizeOrdering, final List<? extends Image> images) {
       Size size;
       try {
-         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = Iterables.filter(sizes,
-                  new Predicate<Size>() {
+         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = Iterables.filter(sizes
+                  .get(), new Predicate<Size>() {
+            @Override
+            public boolean apply(final Size size) {
+               boolean returnVal = false;
+               if (size != null)
+                  returnVal = Iterables.any(images, new Predicate<Image>() {
+
                      @Override
-                     public boolean apply(final Size size) {
-                        boolean returnVal = false;
-                        if (size != null)
-                           returnVal = Iterables.any(images, new Predicate<Image>() {
-
-                              @Override
-                              public boolean apply(Image input) {
-                                 return size.supportsImage(input);
-                              }
-
-                           });
-                        return returnVal;
+                     public boolean apply(Image input) {
+                        return size.supportsImage(input);
                      }
+
                   });
+               return returnVal;
+            }
+         });
          size = sizeOrdering.max(Iterables.filter(sizesThatAreCompatibleWithOurImages,
                   sizePredicate));
       } catch (NoSuchElementException exception) {
@@ -471,7 +471,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected List<? extends Image> resolveImages() {
       Predicate<Image> imagePredicate = buildImagePredicate();
       try {
-         Iterable<? extends Image> matchingImages = Iterables.filter(images, imagePredicate);
+         Iterable<? extends Image> matchingImages = Iterables.filter(images.get(), imagePredicate);
          if (logger.isTraceEnabled())
             logger.trace("<<   matched images(%s)", matchingImages);
          List<? extends Image> maxImages = Utils.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);

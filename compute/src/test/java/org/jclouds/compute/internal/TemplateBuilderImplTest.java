@@ -42,6 +42,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.util.Providers;
 
 /**
  * 
@@ -60,9 +61,12 @@ public class TemplateBuilderImplTest {
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
                .<String, String> of(), 1.0, 0, 0, ImagePredicates.any());
 
-      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
-      Set<Image> images = ImmutableSet.<Image> of(image, image2);
-      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(defaultLocation));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of(image, image2));
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -86,7 +90,7 @@ public class TemplateBuilderImplTest {
       TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
                defaultLocation, optionsProvider, templateBuilderProvider);
 
-      assertEquals(template.resolveImages(), images);
+      assertEquals(template.resolveImages(), images.get());
 
       verify(image);
       verify(image2);
@@ -106,9 +110,12 @@ public class TemplateBuilderImplTest {
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
                .<String, String> of(), 1.0, 0, 0, ImagePredicates.any());
 
-      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
-      Set<Image> images = ImmutableSet.<Image> of(image, image2);
-      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(defaultLocation));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of(image, image2));
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -150,9 +157,12 @@ public class TemplateBuilderImplTest {
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
                .<String, String> of(), 0, 0, 0, ImagePredicates.idEquals("imageId"));
 
-      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
-      Set<Image> images = ImmutableSet.<Image> of(image);
-      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(defaultLocation));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of(image));
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -194,9 +204,12 @@ public class TemplateBuilderImplTest {
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
                .<String, String> of(), 0, 0, 0, ImagePredicates.idEquals("imageId"));
 
-      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
-      Set<Image> images = ImmutableSet.<Image> of(image);
-      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of(defaultLocation));
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of(image));
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -237,9 +250,12 @@ public class TemplateBuilderImplTest {
    public void testOptionsUsesDefaultTemplateBuilder() {
       TemplateOptions options = new TemplateOptions();
 
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -268,9 +284,14 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testNothingUsesDefaultTemplateBuilder() {
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
+
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -295,8 +316,9 @@ public class TemplateBuilderImplTest {
       verify(templateBuilderProvider);
    }
 
-   protected TemplateBuilderImpl createTemplateBuilder(Set<Location> locations, Set<Image> images,
-            Set<Size> sizes, Location defaultLocation, Provider<TemplateOptions> optionsProvider,
+   protected TemplateBuilderImpl createTemplateBuilder(Provider<Set<? extends Location>> locations,
+            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
+            Location defaultLocation, Provider<TemplateOptions> optionsProvider,
             Provider<TemplateBuilder> templateBuilderProvider) {
       TemplateBuilderImpl template = new TemplateBuilderImpl(locations, images, sizes,
                defaultLocation, optionsProvider, templateBuilderProvider);
@@ -306,9 +328,12 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testSuppliedLocationWithNoOptions() {
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -340,9 +365,12 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testSuppliedLocationAndOptions() {
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -369,9 +397,12 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testDefaultLocationWithNoOptionsNoSuchElement() {
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -404,9 +435,12 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testDefaultLocationWithOptions() {
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -435,9 +469,12 @@ public class TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testImageIdNullsEverythingElse() {
-      Set<Location> locations = ImmutableSet.<Location> of();
-      Set<Image> images = ImmutableSet.<Image> of();
-      Set<Size> sizes = ImmutableSet.<Size> of();
+      Provider<Set<? extends Location>> locations = Providers
+               .<Set<? extends Location>> of(ImmutableSet.<Location> of());
+      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+               .<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
+               .<Size> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);

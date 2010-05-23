@@ -27,12 +27,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +42,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @SuppressWarnings("deprecation")
-@Singleton
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
@@ -55,8 +51,6 @@ public class SyncProxy implements InvocationHandler {
                new SyncProxy(clazz, delegate));
    }
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    private final Object delegate;
    private final Class<?> declaring;
    private final Map<Method, Method> methodMap;

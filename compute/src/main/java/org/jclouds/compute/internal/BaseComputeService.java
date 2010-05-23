@@ -422,16 +422,4 @@ public class BaseComputeService implements ComputeService {
    public TemplateOptions templateOptions() {
       return templateOptionsProvider.get();
    }
-
-   @Override
-   public void deleteLoadBalancer(String handle) {
-      throw new UnsupportedOperationException("deleteLoadBalancer not supported in this cloud");
-   }
-
-   @Override
-   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
-            String protocol, int loadBalancerPort, int instancePort) {
-      throw new UnsupportedOperationException(
-               "loadBalanceNodesMatching not supported in this cloud");
-   }
 }

@@ -37,8 +37,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -76,7 +76,6 @@ import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -86,7 +85,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Providers;
 
 /**
  * @author Oleksiy Yarmula
@@ -103,6 +104,10 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       super.configure();
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>>() {
+      }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(GoGridAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(GoGridListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(GoGridGetNodeMetadataStrategy.class);
@@ -267,13 +272,6 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
             return "512MB"; /* smallest */
          }
       };
-   }
-
-   @Provides
-   @Singleton
-   ComputeServiceContext provideContext(ComputeService computeService,
-            RestContext<GoGridAsyncClient, GoGridClient> context) {
-      return new ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>(computeService, context);
    }
 
    @Provides

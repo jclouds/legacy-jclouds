@@ -80,7 +80,7 @@ public class AtmosStorageUtils {
 
    public static void deleteAndEnsureGone(final AtmosStorageClient sync, final String path) {
       try {
-         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                sync.deletePath(path);
                return !sync.pathExists(path);

@@ -126,7 +126,7 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @VisibleForTesting
    static ExecutorService newFixedThreadPoolNamed(String name, int maxCount) {
-      return new ThreadPoolExecutor(0, maxCount, 60L, TimeUnit.SECONDS,
+      return new ThreadPoolExecutor(maxCount, maxCount, 60L, TimeUnit.SECONDS,
                new LinkedBlockingQueue<Runnable>(), new NamingThreadFactory(name));
    }
 

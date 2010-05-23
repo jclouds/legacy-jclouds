@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
@@ -43,11 +44,12 @@ public class FindLocationForResourceInVDC {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   final Set<? extends Location> locations;
+   final Provider<Set<? extends Location>> locations;
    final Location defaultLocation;
 
    @Inject
-   public FindLocationForResourceInVDC(Set<? extends Location> locations, Location defaultLocation) {
+   public FindLocationForResourceInVDC(Provider<Set<? extends Location>> locations,
+            Location defaultLocation) {
       this.locations = locations;
       this.defaultLocation = defaultLocation;
    }
@@ -55,7 +57,7 @@ public class FindLocationForResourceInVDC {
    public Location apply(NamedResource resource, final String vdcId) {
       Location location = null;
       try {
-         location = Iterables.find(locations, new Predicate<Location>() {
+         location = Iterables.find(locations.get(), new Predicate<Location>() {
 
             @Override
             public boolean apply(Location input) {

@@ -198,6 +198,21 @@ public class HttpUtils {
    /**
     * Content stream may need to be read. However, we should always close the http stream.
     */
+   public static void consumeContent(HttpResponse response) {
+      if (response.getContent() != null) {
+         try {
+            ByteStreams.toByteArray(response.getContent());
+         } catch (IOException e) {
+            Throwables.propagate(e);
+         } finally {
+            Closeables.closeQuietly(response.getContent());
+         }
+      }
+   }
+
+   /**
+    * Content stream may need to be read. However, we should always close the http stream.
+    */
    public static byte[] closeClientButKeepContentStream(HttpResponse response) {
       if (response.getContent() != null) {
          try {

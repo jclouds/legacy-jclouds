@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -62,7 +63,8 @@ public class VCloudListNodesStrategy extends VCloudGetNodeMetadata implements Li
    @Inject
    protected VCloudListNodesStrategy(VCloudClient client, VCloudComputeClient computeClient,
             Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResourceInVDC findLocationForResourceInVDC, Set<? extends Image> images) {
+            FindLocationForResourceInVDC findLocationForResourceInVDC,
+            Provider<Set<? extends Image>> images) {
       super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC,
                images);
    }

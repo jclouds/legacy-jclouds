@@ -28,7 +28,7 @@ import org.jclouds.domain.Location;
  * 
  * @author Lili Nader
  */
-public interface LoadBalancerStrategy {
+public interface LoadBalanceNodesStrategy {
 
    String execute(Location loaction, String name, String protocol, int loadBalancerPort,
             int instancePort, Set<String> instanceIds);
