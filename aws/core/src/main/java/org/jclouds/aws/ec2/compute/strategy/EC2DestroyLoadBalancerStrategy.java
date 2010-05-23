@@ -55,7 +55,7 @@ public class EC2DestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
    @Override
    public boolean execute(InetAddress loadBalancer) {
       Map<String, String> tuple = EC2Utils.getLoadBalancerNameAndRegionFromDnsName(loadBalancer
-               .getCanonicalHostName());
+               .getHostName());
       // Only one load balancer per DNS name is expected
       for (String key : tuple.keySet()) {
          elbClient.deleteLoadBalancerInRegion(key, tuple.get(key));

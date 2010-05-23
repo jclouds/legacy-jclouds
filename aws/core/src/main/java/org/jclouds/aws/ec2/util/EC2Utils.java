@@ -21,8 +21,9 @@ package org.jclouds.aws.ec2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 
@@ -35,6 +36,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -90,14 +92,17 @@ public class EC2Utils {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof String) {
             String regionName = (String) arg;
-            if (Region.EU_WEST_1.equals(regionName) || Region.US_WEST_1.equals(regionName)
-                     || Region.US_EAST_1.equals(regionName)
-                     || Region.US_STANDARD.equals(regionName)
-                     || Region.AP_SOUTHEAST_1.equals(regionName))
+            if (isRegion(regionName))
                return regionName;
          }
       }
       return null;
+   }
+
+   public static boolean isRegion(String regionName) {
+      return Region.EU_WEST_1.equals(regionName) || Region.US_WEST_1.equals(regionName)
+               || Region.US_EAST_1.equals(regionName) || Region.US_STANDARD.equals(regionName)
+               || Region.AP_SOUTHEAST_1.equals(regionName);
    }
 
    public static String findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
@@ -122,24 +127,18 @@ public class EC2Utils {
                   + "s[" + i + "]"));
       }
    }
-   
-   public static Map<String, String> getLoadBalancerNameAndRegionFromDnsName(String handle)
-   {
-      String[] parts = checkNotNull(handle, "handle").split(".");
-      checkArgument(parts.length == 5, "handle syntax is my-load-balancer-1277832914.us-east-1.elb.amazonaws.com");
-      
-      String loadBalancerName = parts[0].substring(0, parts[0].lastIndexOf("-"));
-      
-      String regionName = parts[1];
-     
-      checkArgument((Region.EU_WEST_1.equals(regionName) || Region.US_WEST_1.equals(regionName)
-              || Region.US_EAST_1.equals(regionName)
-              || Region.US_STANDARD.equals(regionName)
-              || Region.AP_SOUTHEAST_1.equals(regionName)), String.format("Region (%s, args) is not a valid region", regionName));
-      
-      Map<String, String> map = new HashMap<String, String>();
-      map.put(regionName, loadBalancerName);
-      return map;
-          
+
+   private static final Pattern ELB_PATTERN = Pattern
+            .compile("([^.]+)-[^.]+\\.([^.]+)\\.elb\\.amazonaws\\.com");
+
+   public static Map<String, String> getLoadBalancerNameAndRegionFromDnsName(String dnsName) {
+      Matcher matcher = ELB_PATTERN.matcher(checkNotNull(dnsName, "dnsName"));
+      checkArgument(matcher.find(), "dnsName syntax is " + ELB_PATTERN + " didn't match: "
+               + dnsName);
+      String loadBalancerName = matcher.group(1);
+      String regionName = matcher.group(2);
+      checkArgument((isRegion(regionName)), String.format(
+               "Region (%s)  parsed from (%s) is not a valid region", regionName, dnsName));
+      return ImmutableMap.<String, String> of(regionName, loadBalancerName);
    }
 }

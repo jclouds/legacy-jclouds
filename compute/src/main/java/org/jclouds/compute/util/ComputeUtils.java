@@ -185,9 +185,15 @@ public class ComputeUtils {
       }
 
       if (options.getPort() > 0) {
+         checkNodeHasPublicIps(node);
          blockUntilPortIsListeningOnPublicIp(options.getPort(), options.getSeconds(), Iterables
                   .get(node.getPublicAddresses(), 0));
       }
+   }
+
+   private void checkNodeHasPublicIps(NodeMetadata node) {
+      checkState(node.getPublicAddresses().size() > 0,
+               "node does not have IP addresses configured: " + node);
    }
 
    private void blockUntilPortIsListeningOnPublicIp(int port, int seconds, InetAddress inetAddress) {
@@ -222,6 +228,7 @@ public class ComputeUtils {
    public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node,
             Iterable<? extends SshCallable<?>> parallel, @Nullable SshCallable<?> last) {
       checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
+      checkNodeHasPublicIps(node);
       checkNotNull(node.getCredentials().key, "credentials.key for node " + node.getProviderId());
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
