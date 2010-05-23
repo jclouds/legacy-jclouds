@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.*;
+import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +37,7 @@ import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.TemplateOptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
@@ -72,29 +73,32 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
                "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
       EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
-      checkArgument(template.getOptions() instanceof EC2TemplateOptions,
-               "unexpected options type. should be EC2Options, was: "
-                        + template.getOptions().getClass());
-      EC2TemplateOptions options = EC2TemplateOptions.class.cast(template.getOptions());
-
-      String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options);
-      Set<String> groups = getSecurityGroupsForTagAndOptions(region, tag, options);
+      String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template
+               .getOptions());
+      Set<String> groups = getSecurityGroupsForTagAndOptions(region, tag, template.getOptions());
 
       RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType())//
                .withSecurityGroups(groups)//
                .withAdditionalInfo(tag);
-      
+
       if (keyPairName != null)
          instanceOptions.withKeyName(keyPairName);
-      
+
       return instanceOptions;
    }
 
    @VisibleForTesting
    String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String tag,
-            EC2TemplateOptions options) {
-      String keyPairName = options.getKeyPair();
-      if (keyPairName == null && options.shouldAutomaticallyCreateKeyPair()) {
+            TemplateOptions options) {
+      String keyPairName = null;
+      boolean shouldAutomaticallyCreateKeyPair = true;
+      if (options instanceof EC2TemplateOptions) {
+         keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
+         if (keyPairName == null)
+            shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
+                     .shouldAutomaticallyCreateKeyPair();
+      }
+      if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          RegionAndName regionAndName = new RegionAndName(region, tag);
          KeyPair keyPair = createUniqueKeyPair.apply(regionAndName);
          // get or create incidental resources
@@ -110,7 +114,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
 
    @VisibleForTesting
    Set<String> getSecurityGroupsForTagAndOptions(String region, @Nullable String tag,
-            EC2TemplateOptions options) {
+            TemplateOptions options) {
       Set<String> groups = Sets.newLinkedHashSet();
 
       if (tag != null) {
@@ -119,12 +123,15 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
 
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;
 
-         if (options.getGroupIds().size() == 0) {
-            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region,
-                     markerGroup, options.getInboundPorts(), true);
-         } else {
+         if (options instanceof EC2TemplateOptions
+                  && EC2TemplateOptions.class.cast(options).getGroupIds().size() > 0) {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region,
                      markerGroup, new int[] {}, false);
+            groups.addAll(EC2TemplateOptions.class.cast(options).getGroupIds());
+
+         } else {
+            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region,
+                     markerGroup, options.getInboundPorts(), true);
          }
 
          if (!securityGroupMap.containsKey(regionNameAndIngessRulesForMarkerGroup)) {
@@ -132,7 +139,6 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
                      createSecurityGroupIfNeeded.apply(regionNameAndIngessRulesForMarkerGroup));
          }
       }
-      groups.addAll(options.getGroupIds());
       return groups;
    }
 }

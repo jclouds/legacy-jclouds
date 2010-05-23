@@ -38,6 +38,7 @@ import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -63,12 +64,12 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
                CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class, new Method[] {
                         CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
                                  .getDeclaredMethod("createNewKeyPairUnlessUserSpecifiedOtherwise",
-                                          String.class, String.class, EC2TemplateOptions.class),
+                                          String.class, String.class, TemplateOptions.class),
                         CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
                                  .getDeclaredMethod("getSecurityGroupsForTagAndOptions",
-                                          String.class, String.class, EC2TemplateOptions.class) });
+                                          String.class, String.class, TemplateOptions.class) });
 
-      EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
+      TemplateOptions options = createMock(TemplateOptions.class);
       Template template = createMock(Template.class);
 
       // setup expectations
