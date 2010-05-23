@@ -28,6 +28,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -42,6 +45,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.OutputSupplier;
@@ -54,6 +58,28 @@ import com.google.inject.spi.Message;
  * @author Adrian Cole
  */
 public class Utils {
+
+   /**
+    * Like Ordering, but handle the case where there are multiple valid maximums
+    */
+   @SuppressWarnings("unchecked")
+   public static <T, E extends T> List<E> multiMax(Comparator<T> ordering, Iterable<E> iterable) {
+      Iterator<E> iterator = iterable.iterator();
+      List<E> maxes = Lists.newArrayList(iterator.next());
+      E maxSoFar = maxes.get(0);
+      while (iterator.hasNext()) {
+         E current = iterator.next();
+         int comparison = ordering.compare(maxSoFar, current);
+         if (comparison == 0) {
+            maxes.add(current);
+         } else if (comparison < 0) {
+            maxes = Lists.newArrayList(current);
+            maxSoFar = current;
+         }
+      }
+      return maxes;
+   }
+
    public static final String UTF8_ENCODING = "UTF-8";
 
    public static <T> Set<T> nullSafeSet(T in) {

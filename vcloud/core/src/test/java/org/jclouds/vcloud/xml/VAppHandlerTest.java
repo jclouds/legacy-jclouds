@@ -52,40 +52,33 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testHosting() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/vapp-hosting.xml");
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class))
-            .parse(is);
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
       ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-            .<String, InetAddress> of("Network 1", InetAddress
-                  .getByName("204.12.11.167"));
+               .<String, InetAddress> of("Network 1", InetAddress.getByName("204.12.11.167"));
 
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family",
-            "SimpleVM", "vmx-07");
+      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
 
       SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet
-            .<ResourceAllocation> naturalOrder().add(
-                  new ResourceAllocation(1, "1 virtual CPU(s)",
-                        "Number of Virtual CPUs", ResourceType.PROCESSOR, null,
-                        null, null, null, null, null, 1, "hertz * 10^6"),
-                  new ResourceAllocation(2, "512MB of memory", "Memory Size",
-                        ResourceType.MEMORY, null, null, null, null, null,
-                        null, 512, "byte * 2^20")).add(
+               .<ResourceAllocation> naturalOrder().add(
+                        new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs",
+                                 ResourceType.PROCESSOR, null, null, null, null, null, null, 1,
+                                 "hertz * 10^6"),
+                        new ResourceAllocation(2, "512MB of memory", "Memory Size",
+                                 ResourceType.MEMORY, null, null, null, null, null, null, 512,
+                                 "byte * 2^20")).add(
 
-                  new ResourceAllocation(3, "SCSI Controller 0",
-                        "SCSI Controller", ResourceType.SCSI_CONTROLLER,
-                        "lsilogic", null, 0, null, null, null, 1, null)).add(
+                        new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
+                                 ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
+                                 null, 1, null)).add(
 
-                  new ResourceAllocation(9, "Hard Disk 1", null,
-                        ResourceType.DISK_DRIVE, null, "20971520", null, 0, 3,
-                        null, 20971520, "byte * 2^20")).build();
+                        new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
+                                 null, "20971520", null, 0, 3, null, 20971520, "byte * 2^20"))
+               .build();
 
-      VApp expects = new VAppImpl(
-            "188849-96",
-            "188849-96",
-            URI
-                  .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-96"),
-            VAppStatus.OFF, new Long(20971520), null, networkToAddresses, null,
-            system, resourceAllocations);
+      VApp expects = new VAppImpl("188849-96", "188849-96", URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-96"), VAppStatus.OFF,
+               new Long(20971520), null, networkToAddresses, null, system, resourceAllocations);
 
       assertEquals(result, expects);
    }
@@ -93,65 +86,97 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testInstantiated() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/instantiatedvapp.xml");
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class))
-            .parse(is);
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
       VApp expects = new VAppImpl("10", "centos53", URI
-            .create("http://10.150.4.49/api/v0.8/vApp/10"),
-            VAppStatus.RESOLVED, 123456789l, new NamedResourceImpl("4", null,
-                  "application/vnd.vmware.vcloud.vdc+xml", URI
-                        .create("http://10.150.4.49/api/v0.8/vdc/4")),
-            ImmutableListMultimap.<String, InetAddress> of(), null, null,
-            ImmutableSet.<ResourceAllocation> of());
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), VAppStatus.RESOLVED, 123456789l,
+               new NamedResourceImpl("4", null, "application/vnd.vmware.vcloud.vdc+xml", URI
+                        .create("http://10.150.4.49/api/v0.8/vdc/4")), ImmutableListMultimap
+                        .<String, InetAddress> of(), null, null, ImmutableSet
+                        .<ResourceAllocation> of());
       assertEquals(result, expects);
    }
 
-   // TODO why does this fail?
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/vapp.xml");
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class))
-            .parse(is);
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
       ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-            .<String, InetAddress> of("Public Network", InetAddress
-                  .getByName("10.150.4.93"));
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family",
-            "centos53", "vmx-07");
+               .<String, InetAddress> of("Public Network", InetAddress.getByName("10.150.4.93"));
+      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "centos53", "vmx-07");
 
       SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet
-            .<ResourceAllocation> naturalOrder().add(
-                  new ResourceAllocation(1, "1 virtual CPU(s)",
-                        "Number of Virtual CPUs", ResourceType.PROCESSOR, null,
-                        null, null, null, null, null, 1, "hertz * 10^6"),
-                  new ResourceAllocation(2, "16MB of memory", "Memory Size",
-                        ResourceType.MEMORY, null, null, null, null, null,
-                        null, 16, "byte * 2^20")).add(
-                  new ResourceAllocation(3, "SCSI Controller 0",
-                        "SCSI Controller", ResourceType.SCSI_CONTROLLER,
-                        "lsilogic", null, 0, null, null, null, 1, null)).add(
-                  new ResourceAllocation(8, "Network Adapter 1",
-                        "PCNet32 ethernet adapter on \"Internal\" network",
-                        ResourceType.ETHERNET_ADAPTER, "PCNet32", null, null,
-                        7, null, true, 1, null)).add(
-                  new ResourceAllocation(9, "Hard Disk 1", null,
-                        ResourceType.DISK_DRIVE, null, "104857", null, 0, 3,
-                        null, 104857, "byte * 2^20")).build();
+               .<ResourceAllocation> naturalOrder().add(
+                        new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs",
+                                 ResourceType.PROCESSOR, null, null, null, null, null, null, 1,
+                                 "hertz * 10^6"),
+                        new ResourceAllocation(2, "16MB of memory", "Memory Size",
+                                 ResourceType.MEMORY, null, null, null, null, null, null, 16,
+                                 "byte * 2^20")).add(
+                        new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
+                                 ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
+                                 null, 1, null)).add(
+                        new ResourceAllocation(8, "Network Adapter 1",
+                                 "PCNet32 ethernet adapter on \"Internal\" network",
+                                 ResourceType.ETHERNET_ADAPTER, "PCNet32", null, null, 7, null,
+                                 true, 1, null)).add(
+                        new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
+                                 null, "104857", null, 0, 3, null, 104857, "byte * 2^20")).build();
 
-      VApp expects = new VAppImpl(
-            "10",
-            "centos53",
-            URI.create("http://10.150.4.49/api/v0.8/vApp/10"),
-            VAppStatus.ON,
-            new Long(104857),
-            new NamedResourceImpl(
-                  "4",
-                  null,
-                  "application/vnd.vmware.vcloud.vdc+xml",
-                  URI
-                        .create("http://10.150.4.49/api/v0.8/vdc/4")),
-            networkToAddresses, "Other Linux (32-bit)", system,
-            resourceAllocations);
+      VApp expects = new VAppImpl("10", "centos53", URI
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), VAppStatus.ON, new Long(104857),
+               new NamedResourceImpl("4", null, "application/vnd.vmware.vcloud.vdc+xml", URI
+                        .create("http://10.150.4.49/api/v0.8/vdc/4")), networkToAddresses,
+               "Other Linux (32-bit)", system, resourceAllocations);
+      assertEquals(result.getId(), expects.getId());
+      assertEquals(result.getLocation(), expects.getLocation());
+      assertEquals(result.getName(), expects.getName());
+      assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
+      assertEquals(result.getOperatingSystemDescription(), expects.getOperatingSystemDescription());
+      assertEquals(result.getResourceAllocationByType(), expects.getResourceAllocationByType());
+      assertEquals(result.getResourceAllocations(), expects.getResourceAllocations());
+      assertEquals(result.getSize(), expects.getSize());
+      assertEquals(result.getStatus(), expects.getStatus());
+      assertEquals(result.getSystem(), expects.getSystem());
+      assertEquals(result.getType(), expects.getType());
+      assertEquals(result.getVDC(), expects.getVDC());
+   }
+
+   public void testLatest() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/vapp2.xml");
+
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+
+      ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
+               .<String, InetAddress> of("Public Network", InetAddress.getByName("10.23.119.221"));
+      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "m1", "vmx-07");
+
+      SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet
+               .<ResourceAllocation> naturalOrder().add(
+                        new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs",
+                                 ResourceType.PROCESSOR, null, null, null, null, null, null, 1,
+                                 "hertz * 10^6"),
+                        new ResourceAllocation(2, "512MB of memory", "Memory Size",
+                                 ResourceType.MEMORY, null, null, null, null, null, null, 512,
+                                 "byte * 2^20")).add(
+                        new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
+                                 ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
+                                 null, 1, null)).add(
+                        new ResourceAllocation(8, "Network Adapter 1",
+                                 "PCNet32 ethernet adapter on \"Internal\" network",
+                                 ResourceType.ETHERNET_ADAPTER, "PCNet32", null, null, 7, null,
+                                 true, 1, null)).add(
+                        new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
+                                 null, "10485760", null, 0, 3, null, 10485760, "byte * 2^20"))
+               .build();
+
+      VApp expects = new VAppImpl("80", "m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"),
+               VAppStatus.ON, new Long(10485760), new NamedResourceImpl("28", null,
+                        "application/vnd.vmware.vcloud.vdc+xml", URI
+                                 .create("http://localhost:8000/api/v0.8/vdc/28")),
+               networkToAddresses, "Microsoft Windows XP Professional (32-bit)", system,
+               resourceAllocations);
       assertEquals(result.getId(), expects.getId());
       assertEquals(result.getLocation(), expects.getLocation());
       assertEquals(result.getName(), expects.getName());

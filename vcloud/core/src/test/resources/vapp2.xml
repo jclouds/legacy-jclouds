@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VApp href="http://localhost:8000/api/v0.8/vApp/80" type="application/vnd.vmware.vcloud.vApp+xml"
+    name="m1" status="4"
+    xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 http://localhost:8000/api/v0.8/schemas/vcloud/vApp.xsd"
+    xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://www.vmware.com/vcloud/v0.8"
+    xmlns:vmw="http://www.vmware.com/schema/ovf"
+    xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+    xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="10485760">
+    <Link rel="up" href="http://localhost:8000/api/v0.8/vdc/28"
+        type="application/vnd.vmware.vcloud.vdc+xml" />
+    <Link rel="remove" href="http://localhost:8000/api/v0.8/vApp/80" />
+    <NetworkConnectionSection xmlns="http://schemas.dmtf.org/ovf/envelope/1"
+        xmlns:ovf="http://www.vmware.com/vcloud/v0.8">
+        <ovf:NetworkConnection Network="Public Network">
+            <ovf:IpAddress>10.23.119.221</ovf:IpAddress>
+        </ovf:NetworkConnection>
+    </NetworkConnectionSection>
+    <OperatingSystemSection d2p1:id="67"
+        xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:d2p1="http://schemas.dmtf.org/ovf/envelope/1">
+        <Info>The kind of installed guest operating system</Info>
+        <Description>Microsoft Windows XP Professional (32-bit)
+        </Description>
+    </OperatingSystemSection>
+    <VirtualHardwareSection xmlns="http://schemas.dmtf.org/ovf/envelope/1">
+        <Info>Virtual hardware</Info>
+        <Link rel="edit" href="http://localhost:8000/api/v0.8/vApp/80"
+            type="application/vnd.vmware.ovf.virtualHardwareSection+xml" />
+        <System>
+            <vssd:AutomaticRecoveryAction
+                xsi:nil="true" />
+            <vssd:AutomaticShutdownAction
+                xsi:nil="true" />
+            <vssd:AutomaticStartupAction
+                xsi:nil="true" />
+            <vssd:AutomaticStartupActionDelay
+                xsi:nil="true" />
+            <vssd:AutomaticStartupActionSequenceNumber
+                xsi:nil="true" />
+            <vssd:Caption xsi:nil="true" />
+            <vssd:ConfigurationDataRoot
+                xsi:nil="true" />
+            <vssd:ConfigurationFile xsi:nil="true" />
+            <vssd:ConfigurationID xsi:nil="true" />
+            <vssd:CreationTime xsi:nil="true" />
+            <vssd:Description xsi:nil="true" />
+            <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+            <vssd:InstanceID>0</vssd:InstanceID>
+            <vssd:LogDataRoot xsi:nil="true" />
+            <vssd:RecoveryFile xsi:nil="true" />
+            <vssd:SnapshotDataRoot xsi:nil="true" />
+            <vssd:SuspendDataRoot xsi:nil="true" />
+            <vssd:SwapFileDataRoot xsi:nil="true" />
+            <vssd:VirtualSystemIdentifier>m1
+            </vssd:VirtualSystemIdentifier>
+            <vssd:VirtualSystemType>vmx-07</vssd:VirtualSystemType>
+        </System>
+        <Item>
+            <rasd:Address xsi:nil="true" />
+            <rasd:AddressOnParent xsi:nil="true" />
+            <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+            <rasd:AutomaticAllocation xsi:nil="true" />
+            <rasd:AutomaticDeallocation
+                xsi:nil="true" />
+            <rasd:Caption xsi:nil="true" />
+            <rasd:ConsumerVisibility xsi:nil="true" />
+            <rasd:Description>Number of Virtual CPUs</rasd:Description>
+            <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+            <rasd:InstanceID>1</rasd:InstanceID>
+            <rasd:Limit xsi:nil="true" />
+            <rasd:MappingBehavior xsi:nil="true" />
+            <rasd:OtherResourceType xsi:nil="true" />
+            <rasd:Parent xsi:nil="true" />
+            <rasd:PoolID xsi:nil="true" />
+            <rasd:Reservation xsi:nil="true" />
+            <rasd:ResourceSubType xsi:nil="true" />
+            <rasd:ResourceType>3</rasd:ResourceType>
+            <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+            <rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>
+            <rasd:Weight xsi:nil="true" />
+        </Item>
+        <Item>
+            <rasd:Address xsi:nil="true" />
+            <rasd:AddressOnParent xsi:nil="true" />
+            <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+            <rasd:AutomaticAllocation xsi:nil="true" />
+            <rasd:AutomaticDeallocation
+                xsi:nil="true" />
+            <rasd:Caption xsi:nil="true" />
+            <rasd:ConsumerVisibility xsi:nil="true" />
+            <rasd:Description>Memory Size</rasd:Description>
+            <rasd:ElementName>512MB of memory</rasd:ElementName>
+            <rasd:InstanceID>2</rasd:InstanceID>
+            <rasd:Limit xsi:nil="true" />
+            <rasd:MappingBehavior xsi:nil="true" />
+            <rasd:OtherResourceType xsi:nil="true" />
+            <rasd:Parent xsi:nil="true" />
+            <rasd:PoolID xsi:nil="true" />
+            <rasd:Reservation xsi:nil="true" />
+            <rasd:ResourceSubType xsi:nil="true" />
+            <rasd:ResourceType>4</rasd:ResourceType>
+            <rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+            <rasd:VirtualQuantityUnits>byte * 2^20
+            </rasd:VirtualQuantityUnits>
+            <rasd:Weight xsi:nil="true" />
+        </Item>
+        <Item>
+            <rasd:Address>0</rasd:Address>
+            <rasd:AddressOnParent xsi:nil="true" />
+            <rasd:AllocationUnits xsi:nil="true" />
+            <rasd:AutomaticAllocation xsi:nil="true" />
+            <rasd:AutomaticDeallocation
+                xsi:nil="true" />
+            <rasd:Caption xsi:nil="true" />
+            <rasd:ConsumerVisibility xsi:nil="true" />
+            <rasd:Description>SCSI Controller</rasd:Description>
+            <rasd:ElementName>SCSI Controller 0</rasd:ElementName>
+            <rasd:InstanceID>3</rasd:InstanceID>
+            <rasd:Limit xsi:nil="true" />
+            <rasd:MappingBehavior xsi:nil="true" />
+            <rasd:OtherResourceType xsi:nil="true" />
+            <rasd:Parent xsi:nil="true" />
+            <rasd:PoolID xsi:nil="true" />
+            <rasd:Reservation xsi:nil="true" />
+            <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+            <rasd:ResourceType>6</rasd:ResourceType>
+            <rasd:VirtualQuantity xsi:nil="true" />
+            <rasd:VirtualQuantityUnits
+                xsi:nil="true" />
+            <rasd:Weight xsi:nil="true" />
+        </Item>
+        <Item>
+            <rasd:AddressOnParent>7</rasd:AddressOnParent>
+            <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+            <rasd:Connection connected="true">Internal
+            </rasd:Connection>
+            <rasd:Description>PCNet32 ethernet adapter on "Internal" network</rasd:Description>
+            <rasd:ElementName>Network Adapter 1</rasd:ElementName>
+            <rasd:InstanceID>8</rasd:InstanceID>
+            <rasd:ResourceSubType>PCNet32</rasd:ResourceSubType>
+            <rasd:ResourceType>10</rasd:ResourceType>
+        </Item>
+        <Item>
+            <rasd:Address xsi:nil="true" />
+            <rasd:AddressOnParent>0</rasd:AddressOnParent>
+            <rasd:AllocationUnits xsi:nil="true" />
+            <rasd:AutomaticAllocation xsi:nil="true" />
+            <rasd:AutomaticDeallocation
+                xsi:nil="true" />
+            <rasd:Caption xsi:nil="true" />
+            <rasd:ConsumerVisibility xsi:nil="true" />
+            <rasd:Description xsi:nil="true" />
+            <rasd:ElementName>Hard Disk 1</rasd:ElementName>
+            <rasd:HostResource>10485760</rasd:HostResource>
+            <rasd:InstanceID>9</rasd:InstanceID>
+            <rasd:Limit xsi:nil="true" />
+            <rasd:MappingBehavior xsi:nil="true" />
+            <rasd:OtherResourceType xsi:nil="true" />
+            <rasd:Parent>3</rasd:Parent>
+            <rasd:PoolID xsi:nil="true" />
+            <rasd:Reservation xsi:nil="true" />
+            <rasd:ResourceSubType xsi:nil="true" />
+            <rasd:ResourceType>17</rasd:ResourceType>
+            <rasd:VirtualQuantity>10485760</rasd:VirtualQuantity>
+            <rasd:VirtualQuantityUnits
+                xsi:nil="true" />
+            <rasd:Weight xsi:nil="true" />
+        </Item>
+    </VirtualHardwareSection>
+</VApp>

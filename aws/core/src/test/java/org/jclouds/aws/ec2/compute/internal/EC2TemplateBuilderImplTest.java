@@ -25,7 +25,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import java.util.EnumSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -41,6 +40,7 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.internal.TemplateBuilderImplTest;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -92,7 +92,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       Set<Location> locations = ImmutableSet.<Location> of(location);
       Set<Image> images = ImmutableSet.<Image> of();
       Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl("1", "1", "region/1", location, null,
-               ImmutableMap.<String, String> of(), 1, 1, 1, EnumSet.allOf(Architecture.class)));
+               ImmutableMap.<String, String> of(), 1, 1, 1, ImagePredicates.any()));
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -128,7 +128,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       Set<Location> locations = ImmutableSet.<Location> of(location);
       Set<Image> images = ImmutableSet.<Image> of();
       Set<Size> sizes = ImmutableSet.<Size> of(new SizeImpl("1", "1", "region/1", location, null,
-               ImmutableMap.<String, String> of(), 1, 1, 1, EnumSet.allOf(Architecture.class)));
+               ImmutableMap.<String, String> of(), 1, 1, 1, ImagePredicates.any()));
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);

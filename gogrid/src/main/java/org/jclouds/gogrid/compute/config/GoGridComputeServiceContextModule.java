@@ -20,6 +20,7 @@ package org.jclouds.gogrid.compute.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.jclouds.compute.predicates.ImagePredicates.architectureIn;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
 import java.net.InetAddress;
@@ -330,21 +331,20 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       holder.logger.debug(">> providing sizes");
 
       sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5,
-               512, 30, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+               512, 30, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
+                        Architecture.X86_64))));
       sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1,
-               1024, 60, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
-      sizes
-               .add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2,
-                        2048, 120, ImmutableSet.<Architecture> of(Architecture.X86_32,
-                                 Architecture.X86_64)));
-      sizes
-               .add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4,
-                        4096, 240, ImmutableSet.<Architecture> of(Architecture.X86_32,
-                                 Architecture.X86_64)));
-      sizes
-               .add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8,
-                        8192, 480, ImmutableSet.<Architecture> of(Architecture.X86_32,
-                                 Architecture.X86_64)));
+               1024, 60, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
+                        Architecture.X86_64))));
+      sizes.add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2,
+               2048, 120, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
+                        Architecture.X86_64))));
+      sizes.add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4,
+               4096, 240, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
+                        Architecture.X86_64))));
+      sizes.add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8,
+               8192, 480, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
+                        Architecture.X86_64))));
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
    }

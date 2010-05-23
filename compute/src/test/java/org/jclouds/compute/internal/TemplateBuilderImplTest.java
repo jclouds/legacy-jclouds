@@ -34,10 +34,13 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -46,6 +49,188 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class TemplateBuilderImplTest {
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void tesResolveImages() {
+      Location defaultLocation = createMock(Location.class);
+      Image image = createMock(Image.class);
+      Image image2 = createMock(Image.class);
+
+      Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
+               .<String, String> of(), 1.0, 0, 0, ImagePredicates.any());
+
+      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
+      Set<Image> images = ImmutableSet.<Image> of(image, image2);
+      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
+
+      expect(image.getName()).andReturn("image");
+      expect(image2.getName()).andReturn("image");
+      expect(image.getVersion()).andReturn("version");
+      expect(image2.getVersion()).andReturn("version");
+      expect(image.getOsDescription()).andReturn("osDescription");
+      expect(image2.getOsDescription()).andReturn("osDescription");
+      expect(image.getArchitecture()).andReturn(Architecture.X86_64).atLeastOnce();
+      expect(image2.getArchitecture()).andReturn(Architecture.X86_64).atLeastOnce();
+
+      replay(image);
+      replay(image2);
+      replay(defaultTemplate);
+      replay(defaultLocation);
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
+
+      assertEquals(template.resolveImages(), images);
+
+      verify(image);
+      verify(image2);
+      verify(defaultTemplate);
+      verify(defaultLocation);
+      verify(optionsProvider);
+      verify(templateBuilderProvider);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testArchWins() {
+      Location defaultLocation = createMock(Location.class);
+      Image image = createMock(Image.class);
+      Image image2 = createMock(Image.class);
+
+      Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
+               .<String, String> of(), 1.0, 0, 0, ImagePredicates.any());
+
+      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
+      Set<Image> images = ImmutableSet.<Image> of(image, image2);
+      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
+
+      expect(defaultLocation.getId()).andReturn("locationId").atLeastOnce();
+      expect(optionsProvider.get()).andReturn(new TemplateOptions());
+
+      expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
+      expect(image.getArchitecture()).andReturn(Architecture.X86_32).atLeastOnce();
+
+      expect(image2.getLocation()).andReturn(defaultLocation).atLeastOnce();
+      expect(image2.getArchitecture()).andReturn(Architecture.X86_64).atLeastOnce();
+
+      replay(image);
+      replay(image2);
+      replay(defaultTemplate);
+      replay(defaultLocation);
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
+
+      assertEquals(template.smallest().architecture(Architecture.X86_32).build().getImage(), image);
+
+      verify(image);
+      verify(image2);
+      verify(defaultTemplate);
+      verify(defaultLocation);
+      verify(optionsProvider);
+      verify(templateBuilderProvider);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testSizeWithImageIdPredicateOnlyAcceptsImage() {
+      Location defaultLocation = createMock(Location.class);
+      Image image = createMock(Image.class);
+      Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
+               .<String, String> of(), 0, 0, 0, ImagePredicates.idEquals("imageId"));
+
+      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
+      Set<Image> images = ImmutableSet.<Image> of(image);
+      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
+
+      expect(defaultLocation.getId()).andReturn("locationId").atLeastOnce();
+      expect(optionsProvider.get()).andReturn(new TemplateOptions());
+      expect(image.getId()).andReturn("imageId").atLeastOnce();
+      expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
+      expect(image.getOsFamily()).andReturn(null);
+      expect(image.getName()).andReturn(null);
+      expect(image.getDescription()).andReturn(null);
+      expect(image.getOsDescription()).andReturn(null);
+      expect(image.getVersion()).andReturn(null);
+      expect(image.getArchitecture()).andReturn(null).atLeastOnce();
+
+      replay(image);
+      replay(defaultTemplate);
+      replay(defaultLocation);
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
+
+      template.imageId("imageId").build();
+
+      verify(image);
+      verify(defaultTemplate);
+      verify(defaultLocation);
+      verify(optionsProvider);
+      verify(templateBuilderProvider);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testSizeWithImageIdPredicateOnlyDoesntImage() {
+      Location defaultLocation = createMock(Location.class);
+      Image image = createMock(Image.class);
+      Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap
+               .<String, String> of(), 0, 0, 0, ImagePredicates.idEquals("imageId"));
+
+      Set<Location> locations = ImmutableSet.<Location> of(defaultLocation);
+      Set<Image> images = ImmutableSet.<Image> of(image);
+      Set<Size> sizes = ImmutableSet.<Size> of(size);
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
+      TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
+
+      expect(defaultLocation.getId()).andReturn("locationId").atLeastOnce();
+      expect(optionsProvider.get()).andReturn(new TemplateOptions());
+      expect(image.getId()).andReturn("notImageId").atLeastOnce();
+      expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
+      expect(image.getOsFamily()).andReturn(null);
+      expect(image.getName()).andReturn(null);
+      expect(image.getDescription()).andReturn(null);
+      expect(image.getOsDescription()).andReturn(null);
+      expect(image.getVersion()).andReturn(null);
+      expect(image.getArchitecture()).andReturn(null).atLeastOnce();
+
+      replay(image);
+      replay(defaultTemplate);
+      replay(defaultLocation);
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
+               defaultLocation, optionsProvider, templateBuilderProvider);
+      try {
+         template.imageId("notImageId").build();
+         assert false;
+      } catch (NoSuchElementException e) {
+         verify(image);
+         verify(defaultTemplate);
+         verify(defaultLocation);
+         verify(optionsProvider);
+         verify(templateBuilderProvider);
+      }
+   }
 
    @SuppressWarnings("unchecked")
    @Test

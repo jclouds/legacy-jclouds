@@ -83,15 +83,17 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("VApp")) {
-    	 NamedResource resource = Utils.newNamedResource(attributes);
+         NamedResource resource = Utils.newNamedResource(attributes);
          name = resource.getName();
          id = resource.getId();
          location = resource.getLocation();
          status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("size") != -1)
             size = new Long(attributes.getValue(attributes.getIndex("size")));
-      } else if (qName.equals("Link")) {
-         if (attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
+      } else if (qName.equals("Link")) { // type should never be missing
+         if (attributes.getIndex("type") != -1
+                  && attributes.getValue(attributes.getIndex("type")).equals(
+                           VCloudMediaType.VDC_XML)) {
             vDC = Utils.newNamedResource(attributes);
          }
       } else if (qName.equals("OperatingSystemSection")) {

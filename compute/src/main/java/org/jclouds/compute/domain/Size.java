@@ -23,8 +23,6 @@
  */
 package org.jclouds.compute.domain;
 
-import java.util.Set;
-
 import org.jclouds.compute.domain.internal.SizeImpl;
 
 import com.google.inject.ImplementedBy;
@@ -53,7 +51,7 @@ public interface Size extends ComputeMetadata {
    int getDisk();
 
    /**
-    * Determines platforms this can support
+    * Determines whether this size can run an image.
     */
-   Set<Architecture> getSupportedArchitectures();
+   boolean supportsImage(Image image);
 }

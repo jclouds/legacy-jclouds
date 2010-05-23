@@ -55,6 +55,7 @@ import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
@@ -190,8 +191,8 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          NewServerResponse serverResponse = client.createServer(name, checkNotNull(template
-                  .getImage().getProviderId(), "imageId"), checkNotNull(template.getSize().getProviderId(),
-                  "sizeId"));
+                  .getImage().getProviderId(), "imageId"), checkNotNull(template.getSize()
+                  .getProviderId(), "sizeId"));
          serverRunning.apply(serverResponse.getServer());
          Server server = client.getServer(serverResponse.getServer().getId());
          // we have to lookup the new details in order to retrieve the currently assigned ip
@@ -433,7 +434,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
             });
             sizes.add(new SizeImpl(from.getId(), from.getId(), from.getId(), location, null,
                      ImmutableMap.<String, String> of(), 1, from.getRam(), from.getDiskSize(),
-                     ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64)));
+                     ImagePredicates.any()));
          } catch (NullPointerException e) {
             holder.logger.warn("datacenter not present in " + from.getId());
          }

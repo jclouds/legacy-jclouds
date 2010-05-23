@@ -20,7 +20,6 @@ package org.jclouds.vcloud.bluelock;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudClient;
@@ -48,20 +47,6 @@ public class BlueLockVCloudClientLiveTest extends VCloudClientLiveTest {
                new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
 
       connection = injector.getInstance(VCloudClient.class);
-   }
-
-   // https://forums.bluelock.com/showthread.php?t=112
-   @Override
-   @Test(expectedExceptions = HttpResponseException.class)
-   public void testGetNetwork() throws Exception {
-      super.testGetNetwork();
-   }
-
-   // https://forums.bluelock.com/showthread.php?t=113
-   @Override
-   @Test(expectedExceptions = HttpResponseException.class)
-   public void testGetTask() throws Exception {
-      super.testGetTask();
    }
 
 }

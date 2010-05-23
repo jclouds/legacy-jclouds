@@ -20,6 +20,7 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -47,6 +49,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
 
@@ -125,7 +128,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Image input) {
          boolean returnVal = true;
          if (imageId != null) {
-            returnVal = imageId.equals(input.getProviderId());
+            returnVal = imageId.equals(input.getId());
             // match our input params so that the later predicates pass.
             if (returnVal) {
                fromImage(input);
@@ -228,26 +231,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Size input) {
          boolean returnVal = true;
          if (sizeId != null) {
-            returnVal = sizeId.equals(input.getProviderId());
+            returnVal = sizeId.equals(input.getId());
             // match our input params so that the later predicates pass.
             if (returnVal) {
                fromSize(input);
             }
          }
-         return returnVal;
-      }
-   };
-
-   private final Predicate<Image> imagePredicate = Predicates.and(idPredicate, locationPredicate,
-            osPredicate, imageArchPredicate, osDescriptionPredicate, imageVersionPredicate,
-            imageNamePredicate, imageDescriptionPredicate);
-
-   private final Predicate<Size> sizeArchPredicate = new Predicate<Size>() {
-      @Override
-      public boolean apply(Size input) {
-         boolean returnVal = false;
-         if (arch != null)
-            returnVal = input.getSupportedArchitectures().contains(arch);
          return returnVal;
       }
    };
@@ -266,7 +255,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
    };
    private final Predicate<Size> sizePredicate = Predicates.and(sizeIdPredicate, locationPredicate,
-            sizeArchPredicate, sizeCoresPredicate, sizeRamPredicate);
+            sizeCoresPredicate, sizeRamPredicate);
 
    static final Ordering<Size> DEFAULT_SIZE_ORDERING = new Ordering<Size>() {
       public int compare(Size left, Size right) {
@@ -284,10 +273,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return ComparisonChain.start().compare(left.getName(), right.getName(),
                   Ordering.<String> natural().nullsLast()).compare(left.getVersion(),
                   right.getVersion(), Ordering.<String> natural().nullsLast()).compare(
-                  left.getDescription(), right.getDescription(),
-                  Ordering.<String> natural().nullsLast()).compare(left.getOsDescription(),
-                  right.getOsDescription(), Ordering.<String> natural().nullsLast()).compare(
-                  left.getArchitecture(), right.getArchitecture()).result();
+                  left.getOsDescription(), right.getOsDescription(),
+                  Ordering.<String> natural().nullsLast()).compare(left.getArchitecture(),
+                  right.getArchitecture()).result();
       }
    };
 
@@ -406,14 +394,21 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
       Location location = resolveLocation();
-      Image image = resolveImage();
+      List<? extends Image> images = resolveImages();
+      final Size size = resolveSize(sizeSorter(), images);
+
+      Image image = Iterables.find(images, new Predicate<Image>() {
+
+         @Override
+         public boolean apply(Image input) {
+            return size.supportsImage(input);
+         }
+
+      });
+      logger.debug("<<   matched image(%s)", image);
 
       // ensure we have an architecture matching
       this.arch = image.getArchitecture();
-
-      Ordering<Size> sizeOrdering = sizeSorter();
-      Size size = resolveSize(sizeOrdering);
-
       return new TemplateImpl(image, size, location, options);
    }
 
@@ -430,10 +425,28 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       return location;
    }
 
-   protected Size resolveSize(Ordering<Size> sizeOrdering) {
+   protected Size resolveSize(Ordering<Size> sizeOrdering, final List<? extends Image> images) {
       Size size;
       try {
-         size = sizeOrdering.max(Iterables.filter(sizes, sizePredicate));
+         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = Iterables.filter(sizes,
+                  new Predicate<Size>() {
+                     @Override
+                     public boolean apply(final Size size) {
+                        boolean returnVal = false;
+                        if (size != null)
+                           returnVal = Iterables.any(images, new Predicate<Image>() {
+
+                              @Override
+                              public boolean apply(Image input) {
+                                 return size.supportsImage(input);
+                              }
+
+                           });
+                        return returnVal;
+                     }
+                  });
+         size = sizeOrdering.max(Iterables.filter(sizesThatAreCompatibleWithOurImages,
+                  sizePredicate));
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes);
       }
@@ -455,15 +468,44 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * @throws NoSuchElementException
     *            if there's no image that matches the predicate
     */
-   protected Image resolveImage() {
-      Image image;
+   protected List<? extends Image> resolveImages() {
+      Predicate<Image> imagePredicate = buildImagePredicate();
       try {
-         image = DEFAULT_IMAGE_ORDERING.max(Iterables.filter(images, imagePredicate));
+         Iterable<? extends Image> matchingImages = Iterables.filter(images, imagePredicate);
+         if (logger.isTraceEnabled())
+            logger.trace("<<   matched images(%s)", matchingImages);
+         List<? extends Image> maxImages = Utils.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
+         if (logger.isTraceEnabled())
+            logger.debug("<<   best images(%s)", maxImages);
+         return maxImages;
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
       }
-      logger.debug("<<   matched image(%s)", image);
-      return image;
+   }
+
+   private Predicate<Image> buildImagePredicate() {
+      List<Predicate<Image>> predicates = Lists.newArrayList();
+      if (imageId != null) {
+         predicates.add(idPredicate);
+      } else {
+         predicates.add(new Predicate<Image>() {
+
+            @Override
+            public boolean apply(Image input) {
+               return locationPredicate.apply(input);
+            }
+
+         });
+         predicates.add(osPredicate);
+         predicates.add(imageArchPredicate);
+         predicates.add(osDescriptionPredicate);
+         predicates.add(imageVersionPredicate);
+         predicates.add(imageNamePredicate);
+         predicates.add(imageDescriptionPredicate);
+      }
+
+      Predicate<Image> imagePredicate = Predicates.and(predicates);
+      return imagePredicate;
    }
 
    /**

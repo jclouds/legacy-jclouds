@@ -52,6 +52,7 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
@@ -84,7 +85,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
@@ -190,8 +190,8 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         Server server = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()),
-                  Integer.parseInt(template.getSize().getProviderId()));
+         Server server = client.createServer(name, Integer.parseInt(template.getImage()
+                  .getProviderId()), Integer.parseInt(template.getSize().getProviderId()));
          serverActive.apply(server);
          return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "",
                   new LocationImpl(LocationScope.HOST, server.getHostId(), server.getHostId(),
@@ -318,8 +318,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
          sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location,
                   null, ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(),
-                  from.getDisk(), ImmutableSet.<Architecture> of(Architecture.X86_32,
-                           Architecture.X86_64)));
+                  from.getDisk(), ImagePredicates.any()));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;

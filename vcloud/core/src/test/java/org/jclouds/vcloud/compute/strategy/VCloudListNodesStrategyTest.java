@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.compute.config;
+package org.jclouds.vcloud.compute.strategy;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -41,8 +41,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule.FindLocationForResourceInVDC;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule.VCloudListNodesStrategy;
+import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
 import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
@@ -64,8 +63,8 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudComputeServiceContextModuleTest")
-public class VCloudComputeServiceContextModuleTest {
+@Test(groups = "unit", testName = "vcloud.VCloudListNodesStrategyTest")
+public class VCloudListNodesStrategyTest {
    private VApp newVApp() throws UnknownHostException {
       ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
                .<String, InetAddress> of("Network 1", InetAddress.getLocalHost());

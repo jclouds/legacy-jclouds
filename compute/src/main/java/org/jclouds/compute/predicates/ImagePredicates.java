@@ -1,0 +1,87 @@
+/**
+ *
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+package org.jclouds.compute.predicates;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
+
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.Image;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
+
+/**
+ * Container for image filters (predicates).
+ * 
+ * This class has static methods that create customized predicates to use with
+ * {@link org.jclouds.compute.ComputeService}.
+ * 
+ * @author Adrian Cole
+ */
+public class ImagePredicates {
+
+   /**
+    * evaluates true if the Image
+    * 
+    * @param ids
+    *           ids of the images
+    * @return predicate
+    */
+   public static Predicate<Image> idEquals(final String id) {
+      checkNotNull(id, "id must be defined");
+      return new Predicate<Image>() {
+         @Override
+         public boolean apply(Image image) {
+            return id.equals(image.getId());
+         }
+
+         @Override
+         public String toString() {
+            return "idEquals(" + id + ")";
+         }
+      };
+   }
+
+   public static Predicate<Image> architectureIn(Iterable<Architecture> architectures) {
+      checkNotNull(architectures, "architectures must be defined");
+      final Set<Architecture> search = Sets.newHashSet(architectures);
+      return new Predicate<Image>() {
+         @Override
+         public boolean apply(Image image) {
+            return search.contains(image.getArchitecture());
+         }
+
+         @Override
+         public String toString() {
+            return "architectureIn(" + search + ")";
+         }
+      };
+   }
+
+   /**
+    * return everything.
+    */
+   public static Predicate<Image> any() {
+      return Predicates.<Image> alwaysTrue();
+   }
+
+}

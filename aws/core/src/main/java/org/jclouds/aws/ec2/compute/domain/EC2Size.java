@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.compute.domain;
 
+import static org.jclouds.compute.predicates.ImagePredicates.architectureIn;
+
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.internal.SizeImpl;
@@ -37,7 +39,7 @@ public class EC2Size extends SizeImpl {
    EC2Size(String instanceType, Double cores, Integer ram, Integer disk,
             Iterable<Architecture> supportedArchitectures) {
       super(instanceType, instanceType, instanceType, null, null, ImmutableMap
-               .<String, String> of(), cores, ram, disk, supportedArchitectures);
+               .<String, String> of(), cores, ram, disk, architectureIn(supportedArchitectures));
       this.instanceType = instanceType;
    }
 

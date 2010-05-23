@@ -19,50 +19,25 @@
 package org.jclouds.vcloud.terremark.compute.config;
 
 import java.security.SecureRandom;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 
-import org.jclouds.Constants;
-import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.internal.ImageImpl;
-import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.concurrent.ConcurrentUtils;
-import org.jclouds.domain.Location;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
+import org.jclouds.vcloud.terremark.compute.config.providers.ComputeOptionsToSizeProvider;
+import org.jclouds.vcloud.terremark.compute.config.providers.QueryCatalogForVAppTemplatesAndConvertToImagesProvider;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link TerremarkVCloudComputeServiceContext}; requires
@@ -96,84 +71,17 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       return template.osFamily(OsFamily.UBUNTU);
    }
 
-   private static final ComputeOptionsToSize sizeConverter = new ComputeOptionsToSize();
-
-   private static class ComputeOptionsToSize implements Function<ComputeOptions, Size> {
-      @Override
-      public Size apply(ComputeOptions from) {
-         return new SizeImpl(from.toString(), from.toString(), from.toString(), null, null,
-                  ImmutableMap.<String, String> of(), from.getProcessorCount(), from.getMemory(),
-                  10, ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64));
-      }
-   }
-
-   /**
-    * Terremark does not provide vApp templates in the vDC resourceEntity list. Rather, you must
-    * query the catalog.
-    */
    @Override
-   protected Set<? extends Image> provideImages(final VCloudClient client,
-            final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            LogHolder holder, final FindLocationForResourceInVDC findLocationForResourceInVDC,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            Function<ComputeMetadata, String> indexer) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      final Set<Image> images = Sets.newHashSet();
-      holder.logger.debug(">> providing vAppTemplates");
-      final VDC vDC = client.getDefaultVDC();
-
-      Catalog response = client.getDefaultCatalog();
-      Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
-
-      for (final NamedResource resource : response.values()) {
-         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-            final CatalogItem item = client.getCatalogItem(resource.getId());
-            if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-               responses.put(item.getName(), ConcurrentUtils.makeListenable(executor
-                        .submit(new Callable<Void>() {
-                           @Override
-                           public Void call() throws Exception {
-                              OsFamily myOs = null;
-                              for (OsFamily os : OsFamily.values()) {
-                                 if (resource.getName().toLowerCase().replaceAll("\\s", "")
-                                          .indexOf(os.toString()) != -1) {
-                                    myOs = os;
-                                 }
-                              }
-                              Architecture arch = resource.getName().indexOf("64") == -1 ? Architecture.X86_32
-                                       : Architecture.X86_64;
-                              VAppTemplate template = client.getVAppTemplate(item.getEntity()
-                                       .getId());
-
-                              Location location = findLocationForResourceInVDC.apply(resource, vDC
-                                       .getId());
-
-                              images.add(new ImageImpl(resource.getId(), template.getName(),
-                                       resource.getId(), location, template.getLocation(),
-                                       ImmutableMap.<String, String> of(), template
-                                                .getDescription(), "", myOs, template.getName(),
-                                       arch, credentialsProvider.execute(template)));
-                              return null;
-                           }
-                        }), executor));
-            }
-         }
-      }
-      ConcurrentUtils.awaitCompletion(responses, executor, null, holder.logger, "vAppTemplates in "
-               + vDC);
-      return images;
+   protected void bindImages() {
+      bind(new TypeLiteral<Set<? extends Image>>() {
+      }).toProvider(QueryCatalogForVAppTemplatesAndConvertToImagesProvider.class).in(
+               Scopes.SINGLETON);
    }
 
    @Override
-   protected Set<? extends Size> provideSizes(Function<ComputeMetadata, String> indexer,
-            VCloudClient client, Set<? extends Image> images, LogHolder holder,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
-            throws InterruptedException, TimeoutException, ExecutionException {
-      Image anyImage = Iterables.get(images, 0);
-      holder.logger.debug(">> providing sizes");
-      SortedSet<Size> sizes = Sets.newTreeSet(Iterables.transform(TerremarkVCloudClient.class.cast(
-               client).getComputeOptionsOfCatalogItem(anyImage.getProviderId()), sizeConverter));
-      holder.logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
+   protected void bindSizes() {
+      bind(new TypeLiteral<Set<? extends Size>>() {
+      }).toProvider(ComputeOptionsToSizeProvider.class).in(Scopes.SINGLETON);
    }
+
 }

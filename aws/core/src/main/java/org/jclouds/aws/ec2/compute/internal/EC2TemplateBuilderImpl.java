@@ -1,5 +1,6 @@
 package org.jclouds.aws.ec2.compute.internal;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -15,6 +16,8 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * 
@@ -39,17 +42,20 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
     *            if the image is not found
     */
    @Override
-   protected Image resolveImage() {
+   protected List<? extends Image> resolveImages() {
       try {
-         return super.resolveImage();
+         return super.resolveImages();
       } catch (NoSuchElementException e) {
-         RegionAndName key = new RegionAndName(this.locationId, this.imageId);
-         try {
-            return imageMap.get(key);
-         } catch (NullPointerException nex) {
-            throw new NoSuchElementException(String.format("image %s/%s not found",
-                     key.getRegion(), key.getName()));
+         if (locationId != null && imageId != null) {
+            RegionAndName key = new RegionAndName(this.locationId, this.imageId);
+            try {
+               return ImmutableList.of(imageMap.get(key));
+            } catch (NullPointerException nex) {
+               throw new NoSuchElementException(String.format("image %s/%s not found", key
+                        .getRegion(), key.getName()));
+            }
          }
+         throw e;
       }
    }
 

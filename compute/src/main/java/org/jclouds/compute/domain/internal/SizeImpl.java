@@ -18,23 +18,19 @@
  */
 package org.jclouds.compute.domain.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
@@ -46,17 +42,16 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
    private final int ram;
    private final int disk;
 
-   private final Set<Architecture> supportedArchitectures = Sets.newHashSet();
+   private Predicate<Image> supportsImage;
 
    public SizeImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
             Map<String, String> userMetadata, double cores, int ram, int disk,
-            Iterable<Architecture> supportedArchitectures) {
+            Predicate<Image> supportsImage) {
       super(ComputeType.SIZE, providerId, name, id, location, uri, userMetadata);
       this.cores = cores;
       this.ram = ram;
       this.disk = disk;
-      Iterables.addAll(this.supportedArchitectures, checkNotNull(supportedArchitectures,
-               "supportedArchitectures"));
+      this.supportsImage = supportsImage;
    }
 
    /**
@@ -103,16 +98,46 @@ public class SizeImpl extends ComputeMetadataImpl implements Size {
     */
    @Override
    public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", cores=" + cores + ", ram="
-               + ram + ", disk=" + disk + ", supportedArchitectures=" + supportedArchitectures
-               + "]";
+      return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName()
+               + ", cores=" + cores + ", ram=" + ram + ", disk=" + disk + ", supportsImage="
+               + supportsImage + "]";
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public Set<Architecture> getSupportedArchitectures() {
-      return supportedArchitectures;
+   public boolean supportsImage(Image image) {
+      return supportsImage.apply(image);
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      long temp;
+      temp = Double.doubleToLongBits(cores);
+      result = prime * result + (int) (temp ^ (temp >>> 32));
+      result = prime * result + disk;
+      result = prime * result + ram;
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      SizeImpl other = (SizeImpl) obj;
+      if (Double.doubleToLongBits(cores) != Double.doubleToLongBits(other.cores))
+         return false;
+      if (disk != other.disk)
+         return false;
+      if (ram != other.ram)
+         return false;
+      return true;
    }
 }

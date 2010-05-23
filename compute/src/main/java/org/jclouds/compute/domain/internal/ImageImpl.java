@@ -116,9 +116,9 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName()
-               + ", locationId=" + getLocation() + ", architecture=" + architecture
-               + ", osDescription=" + osDescription + ", osFamily=" + osFamily + ", version="
-               + version + "]";
+               + ", locationId=" + (getLocation() != null ? getLocation().getId() : "null")
+               + ", architecture=" + architecture + ", osDescription=" + osDescription
+               + ", version=" + version + ", osFamily=" + osFamily + ", version=" + version + "]";
    }
 
    @Override

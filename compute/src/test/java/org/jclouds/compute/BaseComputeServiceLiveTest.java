@@ -434,7 +434,6 @@ public abstract class BaseComputeServiceLiveTest {
          assert size.getCores() > 0;
          assert size.getDisk() > 0;
          assert size.getRam() > 0;
-         assert size.getSupportedArchitectures() != null;
          assertEquals(size.getType(), ComputeType.SIZE);
       }
    }

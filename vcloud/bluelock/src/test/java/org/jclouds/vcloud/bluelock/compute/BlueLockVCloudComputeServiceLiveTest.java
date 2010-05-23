@@ -21,23 +21,14 @@ package org.jclouds.vcloud.bluelock.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
-import org.jclouds.vcloud.domain.NamedResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 
 /**
  * 
@@ -52,14 +43,6 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       service = "bluelock";
    }
 
-   @Override
-   public void testListImages() throws Exception {
-      super.testListImages();
-      Set<? extends Image> images = client.listImages();
-      assertEquals(images.size(), 5);
-      // TODO verify parsing works
-   }
-
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
@@ -67,48 +50,6 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "133");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
-   }
-
-   // // https://forums.bluelock.com/showthread.php?p=353#post353
-   // @Override
-   // @Test(enabled = false)
-   // public void testCreate() throws Exception {
-   // super.testCreate();
-   // }
-   //
-   // @Override
-   // @Test(enabled = false)
-   // public void testGet() throws Exception {
-   // super.testGet();
-   // }
-   //
-   // @Override
-   // @Test(enabled = false)
-   // public void testReboot() throws Exception {
-   // super.testReboot();
-   // }
-
-   @Test
-   public void testExample() throws Exception {
-
-      // get a synchronous object to use for manipulating vcloud objects in BlueLock
-      VCloudClient bluelockClient = VCloudClient.class.cast(context.getProviderSpecificContext()
-               .getApi());
-
-      // look at only vApp templates in my default vDC
-      Map<String, NamedResource> vAppTemplatesByName = Maps.filterValues(bluelockClient
-               .getDefaultVDC().getResourceEntities(), new Predicate<NamedResource>() {
-
-         @Override
-         public boolean apply(NamedResource input) {
-            return input.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
-         }
-
-      });
-
-      // get details on a specific template I know by name
-      bluelockClient.getVAppTemplate(vAppTemplatesByName
-               .get("Ubuntu904Serverx64 1CPUx1GBx20GB a01").getId());
    }
 
    @Test
