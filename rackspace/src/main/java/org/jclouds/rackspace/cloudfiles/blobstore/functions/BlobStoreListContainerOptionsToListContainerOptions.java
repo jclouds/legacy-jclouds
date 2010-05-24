@@ -44,7 +44,7 @@ public class BlobStoreListContainerOptionsToListContainerOptions
          options.underPath("");
       }
       if ((from.getDir() != null) && (from.isRecursive())) {
-         options.withPrefix(from.getDir());
+         options.withPrefix(from.getDir().endsWith("/") ? from.getDir() : from.getDir() + "/");
       }
       if ((from.getDir() != null) && (!from.isRecursive())) {
          options.underPath(from.getDir());

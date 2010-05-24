@@ -20,6 +20,7 @@ package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
+import static org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl.createParentIfNeededAsync;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -80,9 +81,8 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    CloudFilesAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Set<? extends Location> locations,
-            CloudFilesClient sync, CloudFilesAsyncClient async,
-            ContainerToResourceMetadata container2ResourceMd,
+            Location defaultLocation, Set<? extends Location> locations, CloudFilesClient sync,
+            CloudFilesAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
@@ -216,6 +216,7 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob) {
+      createParentIfNeededAsync(this, container, blob);
       return async.putObject(container, blob2Object.apply(blob));
    }
 

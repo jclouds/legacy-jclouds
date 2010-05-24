@@ -69,7 +69,6 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-
    @Test(groups = { "integration", "live" })
    public void testWithDetails() throws InterruptedException {
       String key = "hello";
@@ -199,6 +198,12 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          // should have only the 2 level-deep directory above
          container = context.getBlobStore().list(containerName, inDirectory(directory));
+         assert container.getNextMarker() == null;
+         assert container.size() == 1 : container;
+
+         context.getBlobStore().createDirectory(containerName, directory + "/" + directory);
+
+         container = context.getBlobStore().list(containerName, inDirectory(directory).recursive());
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
 

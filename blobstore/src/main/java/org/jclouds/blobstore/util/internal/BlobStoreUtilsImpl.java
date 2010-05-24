@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -135,6 +136,10 @@ public class BlobStoreUtilsImpl implements BlobStoreUtils {
       return "".equals(prefix) ? null : prefix;
    }
 
+   public static String parseDirectoryFromPath(String path) {
+      return path.substring(0, path.lastIndexOf('/'));
+   }
+
    private static Pattern keyFromContainer = Pattern.compile("/?[^/]+/(.*)");
 
    public static String getKeyFor(GeneratedHttpRequest<?> request, HttpResponse from) {
@@ -166,6 +171,14 @@ public class BlobStoreUtilsImpl implements BlobStoreUtils {
          return Utils.toStringAndClose((InputStream) o);
       } else {
          throw new IllegalArgumentException("Object type not supported: " + o.getClass().getName());
+      }
+   }
+
+   public static void createParentIfNeededAsync(AsyncBlobStore asyncBlobStore, String container,
+            Blob blob) {
+      String name = blob.getMetadata().getName();
+      if (name.indexOf('/') > 0) {
+         asyncBlobStore.createDirectory(container, parseDirectoryFromPath(name));
       }
    }
 }

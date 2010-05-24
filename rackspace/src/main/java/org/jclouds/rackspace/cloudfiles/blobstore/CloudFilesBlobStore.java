@@ -19,6 +19,7 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl.createParentIfNeededAsync;
 
 import java.util.Set;
 
@@ -69,8 +70,8 @@ public class CloudFilesBlobStore extends BaseBlobStore {
 
    @Inject
    CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
-            Location defaultLocation, Set<? extends Location> locations,
-            CloudFilesClient sync, ContainerToResourceMetadata container2ResourceMd,
+            Location defaultLocation, Set<? extends Location> locations, CloudFilesClient sync,
+            ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
@@ -194,6 +195,7 @@ public class CloudFilesBlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(String container, Blob blob) {
+      createParentIfNeededAsync(context.getAsyncBlobStore(), container, blob);
       return sync.putObject(container, blob2Object.apply(blob));
    }
 

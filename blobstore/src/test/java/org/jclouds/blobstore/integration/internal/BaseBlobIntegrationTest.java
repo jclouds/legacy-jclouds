@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import javax.ws.rs.core.MediaType;
@@ -46,6 +45,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.EncryptionService.MD5InputStreamResult;
@@ -61,6 +61,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
@@ -371,10 +373,18 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    private void assertContainerEmptyDeleting(String containerName, String key) {
-      Set<? extends StorageMetadata> listing = context.getBlobStore().list(containerName);
-      assertEquals(listing.size(), 0, String.format(
-               "deleting %s, we still have %s left in container %s, using encoding %s", key,
-               listing.size(), containerName, LOCAL_ENCODING));
+      Iterable<? extends StorageMetadata> listing = Iterables.filter(context.getBlobStore().list(
+               containerName), new Predicate<StorageMetadata>() {
+
+         @Override
+         public boolean apply(StorageMetadata input) {
+            return input.getType() == StorageType.BLOB;
+         }
+
+      });
+      assertEquals(Iterables.size(listing), 0, String.format(
+               "deleting %s, we still have %s blobs left in container %s, using encoding %s", key,
+               Iterables.size(listing), containerName, LOCAL_ENCODING));
    }
 
    @Test(groups = { "integration", "live" })
