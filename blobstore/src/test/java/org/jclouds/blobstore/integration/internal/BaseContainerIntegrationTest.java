@@ -142,7 +142,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
             UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
-         String prefix = "apps";
+         String prefix = "rootdelimeter";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName);
@@ -158,7 +158,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
-         String directory = "apps";
+         String directory = "directory";
 
          assert !context.getBlobStore().directoryExists(containerName, directory);
 
@@ -229,7 +229,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testListContainerPrefix() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
-         String prefix = "apps";
+         String prefix = "containerprefix";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 

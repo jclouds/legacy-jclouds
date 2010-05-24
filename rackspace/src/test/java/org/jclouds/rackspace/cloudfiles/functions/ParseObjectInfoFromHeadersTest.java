@@ -57,6 +57,8 @@ public class ParseObjectInfoFromHeadersTest {
    public void testEtagCaseIssue() {
       ParseObjectInfoFromHeaders parser = i.getInstance(ParseObjectInfoFromHeaders.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getArgs()).andReturn(new String[] { "container", "key" }).atLeastOnce();
+
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
       replay(request);
       parser.setContext(request);
