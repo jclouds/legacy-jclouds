@@ -22,8 +22,10 @@ package org.jclouds.vcloud.bluelock.compute;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
@@ -50,6 +52,15 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "133");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+   }
+
+   @Override
+   protected Template buildTemplate(TemplateBuilder templateBuilder) {
+      Template template = super.buildTemplate(templateBuilder);
+      Image image = template.getImage();
+      assert image.getDefaultCredentials().account != null : image;
+      assert image.getDefaultCredentials().key != null : image;
+      return template;
    }
 
    @Test

@@ -35,8 +35,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
@@ -61,17 +61,19 @@ public class VCloudImageProvider implements Provider<Set<? extends Image>> {
 
    private final VCloudClient client;
    private final FindLocationForResourceInVDC findLocationForResourceInVDC;
-
+   private final PopulateDefaultLoginCredentialsForImageStrategy populateDefaultLoginCredentialsForImageStrategy;
    private final ExecutorService executor;
 
    @Inject
-   protected VCloudImageProvider(VCloudClient client,
+   protected VCloudImageProvider(
+            VCloudClient client,
             FindLocationForResourceInVDC findLocationForResourceInVDC,
+            PopulateDefaultLoginCredentialsForImageStrategy populateDefaultLoginCredentialsForImageStrategy,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = client;
       this.findLocationForResourceInVDC = findLocationForResourceInVDC;
+      this.populateDefaultLoginCredentialsForImageStrategy = populateDefaultLoginCredentialsForImageStrategy;
       this.executor = executor;
-
    }
 
    @Override
@@ -105,7 +107,9 @@ public class VCloudImageProvider implements Provider<Set<? extends Image>> {
                               images.add(new ImageImpl(resource.getId(), name, resource.getId(),
                                        location, template.getLocation(), ImmutableMap
                                                 .<String, String> of(), template.getDescription(),
-                                       "", myOs, name, arch, new Credentials("root", null)));
+                                       "", myOs, name, arch,
+                                       populateDefaultLoginCredentialsForImageStrategy
+                                                .execute(template)));
                               return null;
                            }
                         }), executor));

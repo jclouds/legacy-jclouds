@@ -21,8 +21,6 @@ package org.jclouds.vcloud.hostingdotcom.compute.config;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.compute.strategy.impl.ReturnNullCredentials;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
@@ -44,7 +42,6 @@ public class HostingDotComVCloudComputeServiceContextModule extends
    protected void configure() {
       super.configure();
       bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
-      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(ReturnNullCredentials.class);
    }
 
    @Override

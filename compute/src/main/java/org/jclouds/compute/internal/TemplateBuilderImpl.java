@@ -449,7 +449,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          size = sizeOrdering.max(Iterables.filter(sizesThatAreCompatibleWithOurImages,
                   sizePredicate));
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes);
+         throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes.get());
       }
       logger.debug("<<   matched size(%s)", size);
       return size;
@@ -480,7 +480,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             logger.trace("<<   best images(%s)", maxImages);
          return maxImages;
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
+         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images.get());
       }
    }
 

@@ -18,11 +18,15 @@
  */
 package org.jclouds.compute.strategy;
 
+import org.jclouds.compute.strategy.impl.ReturnNullCredentials;
 import org.jclouds.domain.Credentials;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * @author Oleksiy Yarmula
  */
+@ImplementedBy(ReturnNullCredentials.class)
 public interface PopulateDefaultLoginCredentialsForImageStrategy {
 
     /**

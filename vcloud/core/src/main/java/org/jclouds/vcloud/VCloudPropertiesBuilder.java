@@ -46,7 +46,6 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 8 * 60 + "");
-      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
                "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
@@ -58,10 +57,18 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
 
    public VCloudPropertiesBuilder(Properties properties) {
       super(properties);
+      setNs();
+   }
+
+   private void setNs() {
+      if (properties.getProperty(PROPERTY_VCLOUD_XML_NAMESPACE) == null)
+         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v"
+                  + properties.getProperty(PROPERTY_VCLOUD_VERSION));
    }
 
    public VCloudPropertiesBuilder(URI endpoint, String id, String secret) {
       super();
+      setNs();
       withCredentials(id, secret);
       withEndpoint(endpoint);
    }

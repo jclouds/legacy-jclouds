@@ -75,10 +75,13 @@ public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServ
    private static class BlueLockVCloudImageProvider extends VCloudImageProvider {
 
       @Inject
-      protected BlueLockVCloudImageProvider(VCloudClient client,
+      protected BlueLockVCloudImageProvider(
+               VCloudClient client,
                FindLocationForResourceInVDC findLocationForResourceInVDC,
+               PopulateDefaultLoginCredentialsForImageStrategy populateDefaultLoginCredentialsForImageStrategy,
                @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-         super(client, findLocationForResourceInVDC, executor);
+         super(client, findLocationForResourceInVDC,
+                  populateDefaultLoginCredentialsForImageStrategy, executor);
       }
 
       // Extremely important, as otherwise the size encoded into the name will throw off the
