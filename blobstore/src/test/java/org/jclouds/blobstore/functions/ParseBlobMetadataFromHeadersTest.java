@@ -62,6 +62,7 @@ public class ParseBlobMetadataFromHeadersTest {
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getArgs()).andReturn(new Object[] { "container/key" }).anyTimes();
       replay(request);
       parser.setContext(request);
    }

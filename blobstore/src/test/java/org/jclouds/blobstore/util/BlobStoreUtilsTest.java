@@ -18,9 +18,16 @@
  */
 package org.jclouds.blobstore.util;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
+
 import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,6 +38,35 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "blobstore.BlobStoreUtilsTest")
 public class BlobStoreUtilsTest {
 
+   public void testGetKeyForAzureS3AndRackspace() {
+
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+
+      HttpResponse from = createMock(HttpResponse.class);
+      expect(request.getEndpoint()).andReturn(
+               URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore0/five"));
+      expect(request.getArgs()).andReturn(new Object[] { "adriancole-blobstore0", "five" }).atLeastOnce();
+
+      replay(request);
+      replay(from);
+
+      assertEquals(BlobStoreUtilsImpl.getKeyFor(request, from), "five");
+   }
+
+   public void testGetKeyForAtmos() {
+
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+
+      HttpResponse from = createMock(HttpResponse.class);
+      expect(request.getEndpoint()).andReturn(
+               URI.create("https://storage4.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22/adriancole-blobstore0/four"));
+      expect(request.getArgs()).andReturn(new Object[] { "adriancole-blobstore0/four" }).atLeastOnce();
+
+      replay(request);
+      replay(from);
+
+      assertEquals(BlobStoreUtilsImpl.getKeyFor(request, from), "four");
+   }
    public void testGetContainer() {
       String container = BlobStoreUtilsImpl.parseContainerFromPath("foo");
       assertEquals(container, "foo");

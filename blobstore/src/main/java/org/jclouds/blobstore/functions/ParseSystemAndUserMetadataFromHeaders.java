@@ -28,6 +28,7 @@ import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -60,7 +61,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
-      String objectKey = getKeyFor(from);
+      String objectKey = BlobStoreUtilsImpl.getKeyFor(request, from);
       MutableBlobMetadata to = metadataFactory.get();
       to.setName(objectKey);
       setContentTypeOrThrowException(from, to);
@@ -117,14 +118,6 @@ public class ParseSystemAndUserMetadataFromHeaders implements
       }
    }
 
-   protected String getKeyFor(HttpResponse from) {
-      String objectKey = request.getEndpoint().getPath();
-      if (objectKey.startsWith("/")) {
-         // Trim initial slash from object key name.
-         objectKey = objectKey.substring(1);
-      }
-      return objectKey;
-   }
 
    @VisibleForTesting
    void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata)

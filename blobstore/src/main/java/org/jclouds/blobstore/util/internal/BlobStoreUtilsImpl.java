@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,6 +39,8 @@ import org.jclouds.blobstore.strategy.DeleteDirectoryStrategy;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 /**
@@ -129,6 +133,28 @@ public class BlobStoreUtilsImpl implements BlobStoreUtils {
       if (path.indexOf('/') != -1)
          prefix = path.substring(path.indexOf('/') + 1);
       return "".equals(prefix) ? null : prefix;
+   }
+
+   private static Pattern keyFromContainer = Pattern.compile("/?[^/]+/(.*)");
+
+   public static String getKeyFor(GeneratedHttpRequest<?> request, HttpResponse from) {
+      checkNotNull(request, "request");
+      checkNotNull(from, "from");
+      // assume first params are container and key
+      if (request.getArgs().length >= 2 && request.getArgs()[0] instanceof String
+               && request.getArgs()[1] instanceof String) {
+         return request.getArgs()[1].toString();
+      } else if (request.getArgs().length >= 1 && request.getArgs()[0] instanceof String) {
+         Matcher matcher = keyFromContainer.matcher(request.getArgs()[0].toString());
+         if (matcher.find())
+            return matcher.group(1);
+      }
+      String objectKey = request.getEndpoint().getPath();
+      if (objectKey.startsWith("/")) {
+         // Trim initial slash from object key name.
+         objectKey = objectKey.substring(1);
+      }
+      return objectKey;
    }
 
    public static String getContentAsStringOrNullAndClose(Blob blob) throws IOException {
