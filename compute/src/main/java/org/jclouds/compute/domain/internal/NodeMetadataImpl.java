@@ -132,7 +132,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
                + getName() + ", location=" + getLocation() + ", uri=" + getUri() + ", image="
                + getImage() + ", userMetadata=" + getUserMetadata() + ", state=" + getState()
                + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
-               + "]";
+               + ", extra=" + getExtra() + "]";
    }
 
    @Override

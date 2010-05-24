@@ -128,7 +128,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.sizeId("MIRO1B").osFamily(UBUNTU);
+      return template.sizeId("MIRO1B").osFamily(UBUNTU).architecture(Architecture.X86_32);
    }
 
    @Provides

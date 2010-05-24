@@ -51,6 +51,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 /**
@@ -117,7 +119,7 @@ public class AtmosStorageClientLiveTest {
       String uid = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(
-               "atmosstorage", uid, key, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+               "atmosonline", uid, key, ImmutableSet.<Module> of(new Log4JLoggingModule()));
       RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = blobStoreContext
                .getProviderSpecificContext();
       connection = context.getApi();
@@ -166,18 +168,13 @@ public class AtmosStorageClientLiveTest {
       createOrReplaceObject("object4", "here is my data!", "meta-value1");
       BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(privateDirectory,
                ListOptions.Builder.limit(1));
-      // test bug exists:
-      assertEquals(r2.size(), 3);
-      // assertEquals(r2.size(), 1);
-      // assert r2.getToken() != null;
-      // assertEquals(r2.last().getObjectName(),"object2");
-      // r2 = connection.listDirectory(privateDirectory,
-      // ListOptions.Builder.token(r2.getToken())).get(10,
-      // TimeUnit.SECONDS);
-      // assertEquals(r2.size(), 2);
-      // assert r2.getToken() == null;
-      // assertEquals(r2.last().getObjectName(),"object4");
-
+      assertEquals(r2.size(), 1);
+      assert r2.getToken() != null;
+      assertEquals(Iterables.getLast(Sets.newTreeSet(r2)).getObjectName(), "object2");
+      r2 = connection.listDirectory(privateDirectory, ListOptions.Builder.token(r2.getToken()));
+      assertEquals(r2.size(), 2);
+      assert r2.getToken() == null;
+      assertEquals(Iterables.getLast(Sets.newTreeSet(r2)).getObjectName(), "object4");
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testListOptions" })

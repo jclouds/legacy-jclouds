@@ -22,8 +22,10 @@ import java.net.InetAddress;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -41,25 +43,33 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class GetExtra implements Function<VApp, Map<String, String>> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    public Map<String, String> apply(VApp vApp) {
       Map<String, String> extra = Maps.newHashMap();
-      extra.put("memory/mb", Iterables.getOnlyElement(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity()
-               + "");
-      extra.put("processor/count", Iterables.getOnlyElement(
-               vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
-               .getVirtualQuantity()
-               + "");
-      for (ResourceAllocation disk : vApp.getResourceAllocationByType().get(
-               ResourceType.PROCESSOR)) {
-         extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity()
+      try {
+         extra.put("memory/mb", Iterables.getOnlyElement(
+                  vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity()
                   + "");
-      }
+         extra.put("processor/count", Iterables.getOnlyElement(
+                  vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+                  .getVirtualQuantity()
+                  + "");
+         for (ResourceAllocation disk : vApp.getResourceAllocationByType().get(
+                  ResourceType.PROCESSOR)) {
+            extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity()
+                     + "");
+         }
 
-      for (Entry<String, InetAddress> net : vApp.getNetworkToAddresses().entries()) {
-         extra
-                  .put(String.format("network/%s/ip", net.getKey()), net.getValue()
-                           .getHostAddress());
+         for (Entry<String, InetAddress> net : vApp.getNetworkToAddresses().entries()) {
+            extra
+                     .put(String.format("network/%s/ip", net.getKey()), net.getValue()
+                              .getHostAddress());
+         }
+      } catch (Exception e) {
+         logger.error(e, "error getting extra data for vApp: %s", vApp);
       }
       return extra;
    }

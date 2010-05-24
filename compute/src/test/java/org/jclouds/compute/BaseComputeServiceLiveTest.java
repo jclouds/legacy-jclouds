@@ -165,9 +165,9 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testImagesCache")
    public void testTemplateMatch() throws Exception {
       template = buildTemplate(client.templateBuilder());
-      Template toMatch = client.templateBuilder().imageId(template.getImage().getProviderId())
+      Template toMatch = client.templateBuilder().imageId(template.getImage().getId())
                .build();
-      assertEquals(toMatch, template);
+      assertEquals(toMatch.getImage(), template.getImage());
    }
 
    @Test(enabled = true, dependsOnMethods = "testTemplateMatch")

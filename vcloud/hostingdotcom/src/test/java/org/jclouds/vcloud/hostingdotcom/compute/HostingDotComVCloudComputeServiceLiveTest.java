@@ -50,23 +50,4 @@ public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServ
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
-   // Takes too long
-   @Override
-   @Test(enabled = false)
-   public void testCreateTwoNodesWithRunScript() throws Exception {
-      super.testCreateTwoNodesWithRunScript();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testGet() throws Exception {
-      super.testGet();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testReboot() throws Exception {
-      super.testReboot();
-   }
-
 }

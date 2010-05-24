@@ -28,6 +28,7 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 import org.testng.annotations.BeforeTest;
@@ -69,6 +70,12 @@ public class TaskHandlerTest extends BaseHandlerTest {
       );
       assertEquals(result, expects);
 
+   }
+
+   public void testStates() {
+      assert VAppStatus.ON.compareTo(VAppStatus.OFF) > 0;
+      assert VAppStatus.SUSPENDED.compareTo(VAppStatus.OFF) > 0;
+      assert VAppStatus.OFF.compareTo(VAppStatus.OFF) == 0;
    }
 
    public void testSelf() {

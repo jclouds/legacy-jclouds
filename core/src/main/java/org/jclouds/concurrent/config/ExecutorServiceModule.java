@@ -18,14 +18,13 @@
  */
 package org.jclouds.concurrent.config;
 
+import static org.jclouds.concurrent.DynamicExecutors.newScalingThreadPool;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -120,14 +119,14 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    @VisibleForTesting
-   static ExecutorService newThreadPoolNamed(String name, int count) {
-      return count == 0 ? newCachedThreadPoolNamed(name) : newFixedThreadPoolNamed(name, count);
+   static ExecutorService newThreadPoolNamed(String name, int maxCount) {
+      return maxCount == 0 ? newCachedThreadPoolNamed(name) : newScalingThreadPoolNamed(name,
+               maxCount);
    }
 
    @VisibleForTesting
-   static ExecutorService newFixedThreadPoolNamed(String name, int maxCount) {
-      return new ThreadPoolExecutor(maxCount, maxCount, 60L, TimeUnit.SECONDS,
-               new LinkedBlockingQueue<Runnable>(), new NamingThreadFactory(name));
+   static ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
+      return newScalingThreadPool(0, maxCount, 60L * 1000, new NamingThreadFactory(name));
    }
 
 }

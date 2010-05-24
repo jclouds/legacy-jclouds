@@ -58,7 +58,7 @@ public class BlueLockVCloudRestClientModule extends VCloudRestClientModule {
 
                   @Override
                   public boolean apply(NamedResource input) {
-                     return input.getName().endsWith("Public");
+                     return input.getName().equals("Internal In and Out");
                   }
 
                })).getLocation();

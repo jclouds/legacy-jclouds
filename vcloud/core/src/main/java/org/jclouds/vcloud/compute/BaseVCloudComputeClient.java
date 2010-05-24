@@ -126,17 +126,21 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
    public void stop(String id) {
       VApp vApp = client.getVApp(id);
-      if (vApp.getStatus() != VAppStatus.OFF) {
-         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
-                  .getStatus());
-         Task task = client.powerOffVApp(vApp.getId());
-         if (!taskTester.apply(task.getId())) {
-            throw new TaskException("powerOff", vApp, task);
-         }
-         vApp = client.getVApp(id);
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
-      }
-      if (vApp.getStatus() != VAppStatus.UNRESOLVED) {
+      vApp = powerOffVAppIfDeployed(vApp);
+      vApp = undeployVAppIfDeployed(vApp);
+      boolean successful = deleteVApp(vApp);
+      logger.debug("<< deleted vApp(%s) completed(%s)", vApp.getId(), successful);
+   }
+
+   private boolean deleteVApp(VApp vApp) {
+      logger.debug(">> deleting vApp(%s)", vApp.getId());
+      client.deleteVApp(vApp.getId());
+      boolean successful = notFoundTester.apply(vApp);
+      return successful;
+   }
+
+   private VApp undeployVAppIfDeployed(VApp vApp) {
+      if (vApp.getStatus().compareTo(VAppStatus.RESOLVED) > 0) {
          logger
                   .debug(">> undeploying vApp(%s), current status: %s", vApp.getId(), vApp
                            .getStatus());
@@ -144,13 +148,24 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
          if (!taskTester.apply(task.getId())) {
             throw new TaskException("undeploy", vApp, task);
          }
-         vApp = client.getVApp(id);
+         vApp = client.getVApp(vApp.getId());
          logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
       }
-      logger.debug(">> deleting vApp(%s)", vApp.getId());
-      client.deleteVApp(id);
-      boolean successful = notFoundTester.apply(vApp);
-      logger.debug("<< deleted vApp(%s) completed(%s)", vApp.getId(), successful);
+      return vApp;
+   }
+
+   private VApp powerOffVAppIfDeployed(VApp vApp) {
+      if (vApp.getStatus().compareTo(VAppStatus.OFF) > 0) {
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
+                  .getStatus());
+         Task task = client.powerOffVApp(vApp.getId());
+         if (!taskTester.apply(task.getId())) {
+            throw new TaskException("powerOff", vApp, task);
+         }
+         vApp = client.getVApp(vApp.getId());
+         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
+      }
+      return vApp;
    }
 
    public static class TaskException extends VAppException {

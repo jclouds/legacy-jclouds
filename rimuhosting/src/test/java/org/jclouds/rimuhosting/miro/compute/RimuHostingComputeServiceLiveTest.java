@@ -43,7 +43,7 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
       assertEquals(defaultTemplate.getSize().getProviderId(), "MIRO1B");

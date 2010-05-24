@@ -33,6 +33,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
@@ -55,7 +56,8 @@ public class GoGridErrorHandler implements HttpErrorHandler {
       Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response.getContent());
       switch (response.getStatusCode()) {
          case 403:
-            exception = new HttpResponseException(command, response);
+            exception = new AuthorizationException(command.getRequest(), errors != null ? errors
+                     .toString() : response.getStatusLine());
             break;
          default:
             exception = errors != null ? new GoGridResponseException(command, response, errors)

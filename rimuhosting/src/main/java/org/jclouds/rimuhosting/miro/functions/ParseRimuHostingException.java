@@ -20,16 +20,20 @@ package org.jclouds.rimuhosting.miro.functions;
 
 import static org.jclouds.util.Utils.propagateOrNull;
 
-import com.google.common.base.Function;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.lang.reflect.Type;
-import java.util.Map;
+
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * On non 2xx we have an error. RimuHosting using the same json base object.
@@ -52,13 +56,16 @@ public class ParseRimuHostingException implements Function<Exception, Object> {
       if (e instanceof HttpResponseException) {
          HttpResponseException responseException = (HttpResponseException) e;
          if (responseException.getContent() != null) {
-
             Type setType = new TypeToken<Map<String, RimuHostingResponse>>() {
             }.getType();
             String test = responseException.getContent();
             Map<String, RimuHostingResponse> responseMap = gson.fromJson(test, setType);
-            throw new RuntimeException(responseMap.values().iterator().next().getErrorInfo()
-                     .getErrorClass());
+            RimuHostingResponse firstResponse = Iterables.get(responseMap.values(), 0);
+            String errorClass = firstResponse.getErrorInfo().getErrorClass();
+            if (errorClass.equals("PermissionException"))
+               throw new AuthorizationException(responseException.getCommand().getRequest(),
+                        firstResponse.getErrorInfo().getErrorMessage());
+            throw new RuntimeException(firstResponse.getErrorInfo().getErrorMessage(), e);
          }
       }
       return propagateOrNull(e);

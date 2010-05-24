@@ -30,31 +30,36 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ErrorResponse implements Comparable<ErrorResponse> {
 
-    private String message;
-    @SerializedName("errorcode")
-    private String errorCode;
+   private String message;
+   @SerializedName("errorcode")
+   private String errorCode;
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public ErrorResponse() {
-    }
+   /**
+    * A no-args constructor is required for deserialization
+    */
+   public ErrorResponse() {
+   }
 
-    public ErrorResponse(String message, String errorCode) {
-        this.message = message;
-        this.errorCode = errorCode;
-    }
+   public ErrorResponse(String message, String errorCode) {
+      this.message = message;
+      this.errorCode = errorCode;
+   }
 
-    public String getMessage() {
-        return message;
-    }
+   public String getMessage() {
+      return message;
+   }
 
-    public String getErrorCode() {
-        return errorCode;
-    }
+   public String getErrorCode() {
+      return errorCode;
+   }
 
-    @Override
-    public int compareTo(ErrorResponse o) {
-        return message.compareTo(o.getMessage());
-    }
+   @Override
+   public int compareTo(ErrorResponse o) {
+      return message.compareTo(o.getMessage());
+   }
+
+   @Override
+   public String toString() {
+      return "[errorCode=" + errorCode + ", message=" + message + "]";
+   }
 }

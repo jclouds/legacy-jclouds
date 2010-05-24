@@ -80,6 +80,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String startedId = null;
       try {
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+
          // create a security group that allows ssh in so that our scripts later will work
          securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
          securityGroupClient.authorizeSecurityGroupIngressInRegion(null, tag, IpProtocol.TCP, 22,
@@ -142,6 +144,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       String startedId = null;
       try {
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+
          // create the security group
          securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
 
