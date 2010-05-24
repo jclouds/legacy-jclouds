@@ -126,7 +126,7 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @VisibleForTesting
    static ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
-      return newScalingThreadPool(0, maxCount, 60L * 1000, new NamingThreadFactory(name));
+      return newScalingThreadPool(1, maxCount, 60L * 1000, new NamingThreadFactory(name));
    }
 
 }
