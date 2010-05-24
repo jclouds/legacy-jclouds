@@ -126,7 +126,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.osFamily(UBUNTU);
+      return template.osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*");
    }
 
    @Provides

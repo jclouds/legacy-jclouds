@@ -160,7 +160,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.architecture(Architecture.X86_32).osFamily(UBUNTU);
+      return template.architecture(Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*");
    }
 
    // TODO make this more efficient for listNodes(); currently RunningInstanceToNodeMetadata is slow

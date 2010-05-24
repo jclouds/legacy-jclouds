@@ -160,6 +160,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
 
    };
+
    private final Predicate<Image> osDescriptionPredicate = new Predicate<Image>() {
       @Override
       public boolean apply(Image input) {

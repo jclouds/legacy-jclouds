@@ -43,8 +43,8 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_ELB_ENDPOINT,
                "https://elasticloadbalancing.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, "60");
-      // alestic and canonical
-      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477");
+      // alestic, canonical, and rightscale
+      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477,411009282317");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
       properties.setProperty("jclouds.ssh.max_retries", "6");
