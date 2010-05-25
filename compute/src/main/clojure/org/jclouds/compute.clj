@@ -273,12 +273,12 @@ See http://code.google.com/p/jclouds for details."
 (defn public-ips
   "Returns the node's public ips"
   [#^NodeMetadata node]
-  (map #(.getHostAddress %) (.getPublicAddresses node)))
+  (.getPublicAddresses node))
 
 (defn private-ips
   "Returns the node's private ips"
   [#^NodeMetadata node]
-  (map #(.getHostAddress %) (.getPrivateAddresses node)))
+  (.getPrivateAddresses node))
 
 (defn tag
   "Returns a the node's tag"
