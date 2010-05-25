@@ -133,7 +133,7 @@ See http://code.google.com/p/jclouds for details."
 
 (defn nodes-with-details
   "Retrieve the existing nodes for the compute context."
-  ([] (nodes *compute*))
+  ([] (nodes-with-details *compute*))
   ([#^ComputeService compute]
     (seq (.listNodesDetailsMatching compute (NodePredicates/all)))))
 
