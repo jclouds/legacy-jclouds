@@ -24,8 +24,7 @@
     [org.jclouds.aws.ebs :as ebs])
   (:use (clojure.contrib def core))
   (:import org.jclouds.compute.domain.NodeMetadata
-    (org.jclouds.aws.ec2.domain PublicIpInstanceIdPair)
-    java.net.InetAddress))
+    (org.jclouds.aws.ec2.domain PublicIpInstanceIdPair)))
 
 (defn #^org.jclouds.aws.ec2.services.ElasticIPAddressClient
   eip-service
@@ -35,17 +34,10 @@
   (-> (or compute compute/*compute*)
     .getContext .getProviderSpecificContext .getApi .getElasticIPAddressServices))
 
-(defn- as-ip
-  "Coerces v to an InetAddress; accepts InetAddresses and strings."
-  [v]
-  (if (string? v)
-    (InetAddress/getByName v)
-    v))
-
 (defn allocate
   "Claims a new elastic IP address within the (optionally) specified region for your account.
    Region may be a string, keyword, or a node from which the region
-   is inferred.  Returns a corresponding InetAddress instance."
+   is inferred.  Returns the IP address as a string."
   ([] (allocate nil))
   ([region]
     (.allocateAddressInRegion (eip-service) (ebs/get-region region))))
@@ -57,7 +49,7 @@
   ([region public-ip instance-id]
     (.associateAddressInRegion (eip-service)
       (ebs/get-region region)
-      (as-ip public-ip)
+      public-ip
       instance-id)))
 
 (defn addresses
@@ -71,7 +63,7 @@
   ([region & public-ips]
     (into {} (for [#^PublicIpInstanceIdPair pair (.describeAddressesInRegion (eip-service)
                                                    (ebs/get-region region)
-                                                   (into-array InetAddress (map as-ip public-ips)))]
+                                                   (into-array String public-ips))]
                [(.getPublicIp pair) (merge {:region (.getRegion pair)}
                                       (when (.getInstanceId pair) {:node-id (.getInstanceId pair)}))]))))
 
@@ -80,7 +72,7 @@
   [region public-ip]
   (.disassociateAddressInRegion (eip-service)
     (ebs/get-region region)
-    (as-ip public-ip)))
+    public-ip))
 
 (defn release
   "Disclaims an elastic IP address from your account."
@@ -88,4 +80,4 @@
   ([region public-ip]
     (.releaseAddressInRegion (eip-service)
       (ebs/get-region region)
-      (as-ip public-ip))))
+      public-ip)))
