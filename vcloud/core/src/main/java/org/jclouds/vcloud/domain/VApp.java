@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.domain;
 
-import java.net.InetAddress;
 import java.util.Set;
 
 import org.jclouds.vcloud.domain.internal.VAppImpl;
@@ -42,7 +41,7 @@ public interface VApp extends NamedResource {
 
    Long getSize();
 
-   ListMultimap<String, InetAddress> getNetworkToAddresses();
+   ListMultimap<String, String> getNetworkToAddresses();
 
    String getOperatingSystemDescription();
 

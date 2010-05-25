@@ -23,8 +23,6 @@ import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.compute.predicates.ImagePredicates.architectureIn;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -228,22 +226,6 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
                "Starting", NodeState.PENDING).put("Off", NodeState.SUSPENDED).put("Saving",
                NodeState.PENDING).put("Restarting", NodeState.PENDING).put("Stopping",
                NodeState.PENDING).build();
-   }
-
-   @Singleton
-   @Provides
-   Function<String, InetAddress> provideStringIpToInetAddress() {
-      return new Function<String, InetAddress>() {
-         @Override
-         public InetAddress apply(String from) {
-            try {
-               return InetAddress.getByName(from);
-            } catch (UnknownHostException e) {
-               // TODO: log the failure.
-               return null;
-            }
-         }
-      };
    }
 
    /**

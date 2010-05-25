@@ -16,49 +16,34 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.domain;
+package org.jclouds.net;
 
-import java.net.URI;
+import java.io.Serializable;
 
 /**
+ * As google appengine prohibits use of java.net classes, this will serve as a replacement.
+ * 
  * @author Adrian Cole
  */
-public class PublicIpAddress implements Comparable<PublicIpAddress> {
-   private final int id;
+public class IPSocket implements Serializable {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 2978329372952402188L;
+
    private final String address;
-   private final URI location;
+   private final int port;
 
-   public PublicIpAddress(int id, String address, URI location) {
-      this.id = id;
+   public IPSocket(String address, int port) {
       this.address = address;
-      this.location = location;
-   }
-
-   public int getId() {
-      return id;
-   }
-
-   public URI getLocation() {
-      return location;
+      this.port = port;
    }
 
    public String getAddress() {
       return address;
    }
 
-   public int compareTo(PublicIpAddress that) {
-      final int BEFORE = -1;
-      final int EQUAL = 0;
-      final int AFTER = 1;
-
-      if (this == that)
-         return EQUAL;
-
-      if (this.id < that.getId())
-         return BEFORE;
-      if (this.id > that.getId())
-         return AFTER;
-      return EQUAL;
+   public int getPort() {
+      return port;
    }
 
    @Override
@@ -66,8 +51,7 @@ public class PublicIpAddress implements Comparable<PublicIpAddress> {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((address == null) ? 0 : address.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + port;
       return result;
    }
 
@@ -79,25 +63,20 @@ public class PublicIpAddress implements Comparable<PublicIpAddress> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      PublicIpAddress other = (PublicIpAddress) obj;
+      IPSocket other = (IPSocket) obj;
       if (address == null) {
          if (other.address != null)
             return false;
       } else if (!address.equals(other.address))
          return false;
-      if (id != other.id)
-         return false;
-      if (location == null) {
-         if (other.location != null)
-            return false;
-      } else if (!location.equals(other.location))
+      if (port != other.port)
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "PublicIpAddress [address=" + address + ", id=" + id + ", location=" + location + "]";
+      return "[address=" + address + ", port=" + port + "]";
    }
 
 }

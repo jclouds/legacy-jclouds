@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.domain;
 
-import java.net.InetAddress;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -39,21 +38,21 @@ public interface Network extends NamedResource {
    /**
     * @return IP addresses of the network’s DNS servers.
     */
-   Set<InetAddress> getDnsServers();
+   Set<String> getDnsServers();
 
    /**
     * 
     * 
     * @return The IP address of the network’s primary gateway
     */
-   InetAddress getGateway();
+   String getGateway();
 
    /**
     * *
     * 
     * @return the network’s subnet mask
     */
-   InetAddress getNetmask();
+   String getNetmask();
 
    /**
     * return the network’s fence modes.

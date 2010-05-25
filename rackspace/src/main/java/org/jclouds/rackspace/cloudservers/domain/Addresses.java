@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudservers.domain;
 
-import java.net.InetAddress;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -31,31 +30,31 @@ import com.google.gson.annotations.SerializedName;
 public class Addresses {
 
    @SerializedName("public")
-   private Set<InetAddress> publicAddresses = Sets.newLinkedHashSet();
+   private Set<String> publicAddresses = Sets.newLinkedHashSet();
    @SerializedName("private")
-   private Set<InetAddress> privateAddresses = Sets.newLinkedHashSet();
+   private Set<String> privateAddresses = Sets.newLinkedHashSet();
 
    public Addresses() {
    }
 
-   public Addresses(Set<InetAddress> publicAddresses, Set<InetAddress> privateAddresses) {
+   public Addresses(Set<String> publicAddresses, Set<String> privateAddresses) {
       this.publicAddresses = publicAddresses;
       this.privateAddresses = privateAddresses;
    }
 
-   public void setPublicAddresses(Set<InetAddress> publicAddresses) {
+   public void setPublicAddresses(Set<String> publicAddresses) {
       this.publicAddresses = publicAddresses;
    }
 
-   public Set<InetAddress> getPublicAddresses() {
+   public Set<String> getPublicAddresses() {
       return publicAddresses;
    }
 
-   public void setPrivateAddresses(Set<InetAddress> privateAddresses) {
+   public void setPrivateAddresses(Set<String> privateAddresses) {
       this.privateAddresses = privateAddresses;
    }
 
-   public Set<InetAddress> getPrivateAddresses() {
+   public Set<String> getPrivateAddresses() {
       return privateAddresses;
    }
 

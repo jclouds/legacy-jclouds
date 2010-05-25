@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -92,11 +91,10 @@ public class GridLoadBalancerAsyncClientTest extends RestClientTest<GridLoadBala
       Method method = GridLoadBalancerAsyncClient.class.getMethod("addLoadBalancer", String.class,
                IpPortPair.class, List.class, AddLoadBalancerOptions[].class);
       GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(
-               method, "BalanceIt", new IpPortPair(new Ip(InetAddress.getByName("127.0.0.1")), 80),
-               Arrays.asList(new IpPortPair(new Ip(InetAddress.getByName("127.0.0.1")), 8080),
-                        new IpPortPair(new Ip(InetAddress.getByName("127.0.0.1")), 9090)),
-               new AddLoadBalancerOptions.Builder().create(LoadBalancerType.LEAST_CONNECTED,
-                        LoadBalancerPersistenceType.SSL_STICKY));
+               method, "BalanceIt", new IpPortPair(new Ip("127.0.0.1"), 80), Arrays.asList(
+                        new IpPortPair(new Ip("127.0.0.1"), 8080), new IpPortPair(new Ip(
+                                 "127.0.0.1"), 9090)), new AddLoadBalancerOptions.Builder().create(
+                        LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SSL_STICKY));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
                + "add?v=1.4&name=BalanceIt&loadbalancer.type=Least%20Connect&"
@@ -128,9 +126,8 @@ public class GridLoadBalancerAsyncClientTest extends RestClientTest<GridLoadBala
       Method method = GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancer", String.class,
                List.class);
       GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(
-               method, "BalanceIt", Arrays.asList(new IpPortPair(new Ip(InetAddress
-                        .getByName("127.0.0.1")), 8080), new IpPortPair(new Ip(InetAddress
-                        .getByName("127.0.0.1")), 9090)));
+               method, "BalanceIt", Arrays.asList(new IpPortPair(new Ip("127.0.0.1"), 8080),
+                        new IpPortPair(new Ip("127.0.0.1"), 9090)));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
                + "edit?v=1.4&loadbalancer=BalanceIt&realiplist.0.ip=127.0.0.1&"

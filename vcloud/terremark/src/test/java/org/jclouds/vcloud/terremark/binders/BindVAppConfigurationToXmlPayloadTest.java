@@ -25,7 +25,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
@@ -71,8 +70,8 @@ public class BindVAppConfigurationToXmlPayloadTest {
    public void testChangeName() throws IOException {
       VAppImpl vApp = new VAppImpl("4213", "MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, InetAddress> of(),
-               null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
+               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, String> of(), null,
+               null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
                         ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
                         new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
                                  null, null, null, null, 1024, null), new ResourceAllocation(9,
@@ -106,8 +105,8 @@ public class BindVAppConfigurationToXmlPayloadTest {
    public void testRemoveDisk() throws IOException {
       VAppImpl vApp = new VAppImpl("4213", "MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, InetAddress> of(),
-               null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
+               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, String> of(), null,
+               null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
                         ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
                         new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
                                  null, null, null, null, 1024, null), new ResourceAllocation(9,
@@ -143,8 +142,8 @@ public class BindVAppConfigurationToXmlPayloadTest {
    public void testChangeCPUCountTo4() throws IOException {
       VAppImpl vApp = new VAppImpl("4213", "eduardo", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, InetAddress> of(),
-               null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
+               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, String> of(), null,
+               null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
                         ResourceType.PROCESSOR, null, null, null, null, null, null, 4, null),
                         new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
                                  null, null, null, null, 1024, null), new ResourceAllocation(9,
@@ -176,8 +175,8 @@ public class BindVAppConfigurationToXmlPayloadTest {
    public void testChangeMemoryTo1536() throws IOException {
       VAppImpl vApp = new VAppImpl("4213", "MyAppServer6", URI
                .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, InetAddress> of(),
-               null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
+               VAppStatus.OFF, 4194304l, null, ImmutableListMultimap.<String, String> of(), null,
+               null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
                         ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
                         new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
                                  null, null, null, null, 1536, null), new ResourceAllocation(9,

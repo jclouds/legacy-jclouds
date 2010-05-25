@@ -29,8 +29,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rackspace.RackspacePropertiesBuilder;
@@ -61,6 +60,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
@@ -76,7 +76,7 @@ public class CloudServersClientLiveTest {
 
    protected CloudServersClient client;
    protected SshClient.Factory sshFactory;
-   private RetryablePredicate<InetSocketAddress> socketTester;
+   private Predicate<IPSocket> socketTester;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
@@ -88,7 +88,7 @@ public class CloudServersClientLiveTest {
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
    }
 
@@ -277,7 +277,7 @@ public class CloudServersClientLiveTest {
    private int serverId;
    private String adminPass;
    Map<String, String> metadata = ImmutableMap.of("jclouds", "rackspace");
-   private InetAddress ip;
+   private String ip;
    private int serverId2;
    private String adminPass2;
    private int imageId;
@@ -374,8 +374,8 @@ public class CloudServersClientLiveTest {
    }
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(Iterables.get(newDetails.getAddresses()
-               .getPublicAddresses(), 0), 22);
+      IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(),
+               0), 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, "root", pass);
@@ -391,8 +391,8 @@ public class CloudServersClientLiveTest {
    }
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(Iterables.get(details.getAddresses()
-               .getPublicAddresses(), 0), 22);
+      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0),
+               22);
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, "root", pass);
       try {
@@ -452,7 +452,7 @@ public class CloudServersClientLiveTest {
    private void assertIpConfigured(Server server, String password) {
       try {
          ExecResponse response = exec(server, password, "ifconfig -a");
-         assert response.getOutput().indexOf(ip.getHostAddress()) > 0 : String.format(
+         assert response.getOutput().indexOf(ip) > 0 : String.format(
                   "server %s didn't get ip %s%n%s", server, ip, response);
       } catch (Exception e) {
          e.printStackTrace();
@@ -473,7 +473,7 @@ public class CloudServersClientLiveTest {
    private void assertIpNotConfigured(Server server, String password) {
       try {
          ExecResponse response = exec(server, password, "ifconfig -a");
-         assert response.getOutput().indexOf(ip.getHostAddress()) == -1 : String.format(
+         assert response.getOutput().indexOf(ip) == -1 : String.format(
                   "server %s still has get ip %s%n%s", server, ip, response);
       } catch (Exception e) {
          e.printStackTrace();

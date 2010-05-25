@@ -18,18 +18,18 @@
  */
 package org.jclouds.ssh.jsch.config;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import static org.testng.Assert.assertEquals;
+
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests the ability to configure a {@link JschSshClient}
@@ -43,8 +43,7 @@ public class JschSshClientModuleTest {
 
       Injector i = Guice.createInjector(new JschSshClientModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      SshClient connection = factory.create(new InetSocketAddress(InetAddress.getLocalHost(), 22),
-               "username", "password");
+      SshClient connection = factory.create(new IPSocket("localhost", 22), "username", "password");
       assert connection instanceof JschSshClient;
       Map<String, String> keyPair = factory.generateRSAKeyPair("comment", "hola");
       assertEquals(keyPair.get("comment"), "comment");

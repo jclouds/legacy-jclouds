@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudservers.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -49,9 +48,8 @@ public class ParseInetAddressListFromJsonResponseTest {
 
       ParseInetAddressListFromJsonResponse parser = new ParseInetAddressListFromJsonResponse(i
                .getInstance(Gson.class));
-      List<InetAddress> response = parser.apply(is);
-      assertEquals(response, ImmutableList.of(InetAddress.getByAddress(new byte[] { 67, 23, 10,
-               (byte) 132 }), InetAddress.getByAddress(new byte[] { 67, 23, 10, (byte) 131 })));
+      List<String> response = parser.apply(is);
+      assertEquals(response, ImmutableList.of("67.23.10.132", "67.23.10.131"));
    }
 
    public void testPrivate() throws UnknownHostException {
@@ -60,8 +58,7 @@ public class ParseInetAddressListFromJsonResponseTest {
 
       ParseInetAddressListFromJsonResponse parser = new ParseInetAddressListFromJsonResponse(i
                .getInstance(Gson.class));
-      List<InetAddress> response = parser.apply(is);
-      assertEquals(response, ImmutableList.of(InetAddress.getByAddress(new byte[] { 10, (byte) 176,
-               42, 16 })));
+      List<String> response = parser.apply(is);
+      assertEquals(response, ImmutableList.of("10.176.42.16"));
    }
 }

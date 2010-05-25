@@ -19,16 +19,18 @@
 package org.jclouds.ssh.jsch.config;
 
 import java.io.ByteArrayOutputStream;
-import java.net.InetSocketAddress;
 import java.util.Map;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -49,6 +51,7 @@ public class JschSshClientModule extends AbstractModule {
 
    protected void configure() {
       bind(SshClient.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
+      bind(SocketOpen.class).to(InetSocketAddressConnect.class).in(Scopes.SINGLETON);
    }
 
    private static class Factory implements SshClient.Factory {
@@ -66,14 +69,14 @@ public class JschSshClientModule extends AbstractModule {
          this.injector = injector;
       }
 
-      public SshClient create(InetSocketAddress socket, String username, String password) {
+      public SshClient create(IPSocket socket, String username, String password) {
          SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, timeout,
                   username, password, null);
          injector.injectMembers(client);// add logger
          return client;
       }
 
-      public SshClient create(InetSocketAddress socket, String username, byte[] privateKey) {
+      public SshClient create(IPSocket socket, String username, byte[] privateKey) {
          SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, timeout,
                   username, null, privateKey);
          injector.injectMembers(client);// add logger

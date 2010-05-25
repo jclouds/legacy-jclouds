@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -37,6 +35,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
@@ -65,7 +64,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    protected SshClient.Factory sshFactory;
    protected String tag;
 
-   protected RetryablePredicate<InetSocketAddress> socketTester;
+   protected RetryablePredicate<IPSocket> socketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
@@ -74,7 +73,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    protected String password;
    protected Template template;
    protected Map<String, String> keyPair;
-   protected Set<InetAddress> loadbalancers;
+   protected Set<String> loadbalancers;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
@@ -89,7 +88,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
       Injector injector = Guice.createInjector(getSshModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
 
       Template template = client.templateBuilder().build();
@@ -128,7 +127,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testLoadBalanceNodesMatching")
    public void testDestroyLoadBalancers() throws Exception {
-      for (InetAddress lb : loadbalancers) {
+      for (String lb : loadbalancers) {
          lbClient.destroyLoadBalancer(lb);
       }
    }

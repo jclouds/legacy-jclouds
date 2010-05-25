@@ -18,17 +18,17 @@
  */
 package org.jclouds.gogrid.binders;
 
-import org.jclouds.gogrid.domain.IpPortPair;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.REAL_IP_LIST_KEY;
+
+import java.util.List;
+
+import org.jclouds.gogrid.domain.IpPortPair;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.Binder;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Binds a list of real IPs to the request.
@@ -57,8 +57,7 @@ public class BindRealIpPortPairsToQueryParams implements Binder {
                   "There must be an IP address defined in Ip object");
          checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-         generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp()
-                  .getHostAddress());
+         generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp());
          generatedRequest.addQueryParam(REAL_IP_LIST_KEY + i + ".port", String.valueOf(ipPortPair
                   .getPort()));
          i++;

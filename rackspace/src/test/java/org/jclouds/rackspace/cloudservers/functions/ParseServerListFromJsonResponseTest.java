@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudservers.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -73,10 +72,8 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
       assertEquals(response.get(0).getProgress(), new Integer(60));
-      List<InetAddress> publicAddresses = Lists.newArrayList(InetAddress.getByName("67.23.10.132"),
-               InetAddress.getByName("67.23.10.131"));
-      List<InetAddress> privateAddresses = Lists
-               .newArrayList(InetAddress.getByName("10.176.42.16"));
+      List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
+      List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
       Addresses addresses1 = new Addresses();
       addresses1.getPrivateAddresses().addAll(privateAddresses);
       addresses1.getPublicAddresses().addAll(publicAddresses);
@@ -90,10 +87,8 @@ public class ParseServerListFromJsonResponseTest {
       assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
       assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);
       assertEquals(response.get(1).getProgress(), null);
-      List<InetAddress> publicAddresses2 = Lists
-               .newArrayList(InetAddress.getByName("67.23.10.133"));
-      List<InetAddress> privateAddresses2 = Lists.newArrayList(InetAddress
-               .getByName("10.176.42.17"));
+      List<String> publicAddresses2 = Lists.newArrayList("67.23.10.133");
+      List<String> privateAddresses2 = Lists.newArrayList("10.176.42.17");
       Addresses addresses2 = new Addresses();
       addresses2.getPrivateAddresses().addAll(privateAddresses2);
       addresses2.getPublicAddresses().addAll(publicAddresses2);

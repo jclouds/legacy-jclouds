@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.services;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
@@ -45,9 +44,9 @@ public class ElasticIPAddressAsyncClientTest extends
    public void testDisassociateAddress() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("disassociateAddressInRegion",
-               String.class, InetAddress.class);
+               String.class, String.class);
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+               method, null, "127.0.0.1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -64,9 +63,9 @@ public class ElasticIPAddressAsyncClientTest extends
 
    public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("associateAddressInRegion",
-               String.class, InetAddress.class, String.class);
+               String.class, String.class, String.class);
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), "me");
+               method, null, "127.0.0.1", "me");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -83,9 +82,9 @@ public class ElasticIPAddressAsyncClientTest extends
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("releaseAddressInRegion",
-               String.class, InetAddress.class);
+               String.class, String.class);
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+               method, null, "127.0.0.1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -101,9 +100,9 @@ public class ElasticIPAddressAsyncClientTest extends
 
    public void testDescribeAddresses() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("describeAddressesInRegion",
-               String.class, Array.newInstance(InetAddress.class, 0).getClass());
+               String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+               method, null, "127.0.0.1");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,

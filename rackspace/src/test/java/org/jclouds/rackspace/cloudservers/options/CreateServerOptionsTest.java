@@ -23,9 +23,7 @@ import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Bui
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
 import static org.testng.Assert.assertEquals;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 
 import javax.ws.rs.HttpMethod;
 
@@ -110,18 +108,16 @@ public class CreateServerOptionsTest {
    }
 
    @Test
-   public void testWithSharedIp() throws UnknownHostException {
+   public void testWithSharedIp() {
       CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIpGroup(3).withSharedIp(
-               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+      options.withSharedIpGroup(3).withSharedIp("127.0.0.1");
       HttpRequest request = buildRequest(options);
       assertSharedIp(request);
    }
 
    @Test
-   public void testWithSharedIpStatic() throws UnknownHostException {
-      CreateServerOptions options = withSharedIpGroup(3).withSharedIp(
-               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+   public void testWithSharedIpStatic() {
+      CreateServerOptions options = withSharedIpGroup(3).withSharedIp("127.0.0.1");
       HttpRequest request = buildRequest(options);
       assertSharedIp(request);
    }
@@ -133,16 +129,15 @@ public class CreateServerOptionsTest {
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testWithSharedIpNoGroup() throws UnknownHostException {
+   public void testWithSharedIpNoGroup() {
       CreateServerOptions options = new CreateServerOptions();
-      options.withSharedIp(InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+      options.withSharedIp("127.0.0.1");
       buildRequest(options);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testWithSharedIpNoGroupStatic() throws UnknownHostException {
-      CreateServerOptions options = withSharedIp(InetAddress
-               .getByAddress(new byte[] { 127, 0, 0, 1 }));
+   public void testWithSharedIpNoGroupStatic() {
+      CreateServerOptions options = withSharedIp("127.0.0.1");
       buildRequest(options);
    }
 }

@@ -21,7 +21,6 @@ package org.jclouds.vcloud.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -204,12 +203,12 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    }
 
    @Override
-   public Set<InetAddress> getPrivateAddresses(String id) {
+   public Set<String> getPrivateAddresses(String id) {
       return ImmutableSet.of();
    }
 
    @Override
-   public Set<InetAddress> getPublicAddresses(String id) {
+   public Set<String> getPublicAddresses(String id) {
       VApp vApp = client.getVApp(id);
       return Sets.newHashSet(vApp.getNetworkToAddresses().values());
    }

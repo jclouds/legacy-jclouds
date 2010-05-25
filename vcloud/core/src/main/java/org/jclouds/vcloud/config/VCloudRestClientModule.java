@@ -28,8 +28,6 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.SortedMap;
@@ -52,7 +50,7 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.AddressReachable;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -101,14 +99,8 @@ public class VCloudRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
-      return new RetryablePredicate<InetSocketAddress>(open, 130, 10, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected Predicate<InetAddress> addressTester(AddressReachable reachable) {
-      return new RetryablePredicate<InetAddress>(reachable, 60, 5, TimeUnit.SECONDS);
+   protected Predicate<IPSocket> socketTester(SocketOpen open) {
+      return new RetryablePredicate<IPSocket>(open, 130, 10, TimeUnit.SECONDS);
    }
 
    @Provides

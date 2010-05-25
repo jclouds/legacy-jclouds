@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.compute.functions;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -63,10 +62,8 @@ public class GetExtra implements Function<VApp, Map<String, String>> {
                      + "");
          }
 
-         for (Entry<String, InetAddress> net : vApp.getNetworkToAddresses().entries()) {
-            extra
-                     .put(String.format("network/%s/ip", net.getKey()), net.getValue()
-                              .getHostAddress());
+         for (Entry<String, String> net : vApp.getNetworkToAddresses().entries()) {
+            extra.put(String.format("network/%s/ip", net.getKey()), net.getValue());
          }
       } catch (Exception e) {
          logger.error(e, "error getting extra data for vApp: %s", vApp);

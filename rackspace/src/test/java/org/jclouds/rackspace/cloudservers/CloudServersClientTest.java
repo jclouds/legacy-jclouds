@@ -30,7 +30,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
@@ -156,12 +155,7 @@ public class CloudServersClientTest {
                int.class, int.class, createServerOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] {
-                        "ralphie",
-                        2,
-                        1,
-                        withSharedIpGroup(2).withSharedIp(
-                                 InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 })) });
+               new Object[] { "ralphie", 2, 1, withSharedIpGroup(2).withSharedIp("127.0.0.1") });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
                httpMethod.getPayload().getRawContent());
@@ -479,11 +473,11 @@ public class CloudServersClientTest {
 
    public void testShareIpNoConfig() throws SecurityException, NoSuchMethodException,
             UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("shareIp", InetAddress.class,
-               int.class, int.class, boolean.class);
+      Method method = CloudServersAsyncClient.class.getMethod("shareIp", String.class, int.class,
+               int.class, boolean.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
+               new Object[] { "127.0.0.1", 2, 3, false });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -503,11 +497,11 @@ public class CloudServersClientTest {
 
    public void testShareIpConfig() throws SecurityException, NoSuchMethodException,
             UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("shareIp", InetAddress.class,
-               int.class, int.class, boolean.class);
+      Method method = CloudServersAsyncClient.class.getMethod("shareIp", String.class, int.class,
+               int.class, boolean.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, true });
+               new Object[] { "127.0.0.1", 2, 3, true });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -528,11 +522,10 @@ public class CloudServersClientTest {
 
    public void testUnshareIpNoConfig() throws SecurityException, NoSuchMethodException,
             UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("unshareIp", InetAddress.class,
-               int.class);
+      Method method = CloudServersAsyncClient.class.getMethod("unshareIp", String.class, int.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
+               new Object[] { "127.0.0.1", 2, 3, false });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);

@@ -26,7 +26,6 @@ package org.jclouds.tools.ant.taskdefs.compute;
 import static org.jclouds.rest.RestContextFactory.getPropertiesFromResource;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -169,9 +168,9 @@ public class ComputeTaskUtils {
          }
    }
 
-   static String ipOrEmptyString(Set<InetAddress> set) {
+   static String ipOrEmptyString(Set<String> set) {
       if (set.size() > 0) {
-         return Iterables.get(set, 0).getHostAddress();
+         return Iterables.get(set, 0);
       } else {
          return "";
       }

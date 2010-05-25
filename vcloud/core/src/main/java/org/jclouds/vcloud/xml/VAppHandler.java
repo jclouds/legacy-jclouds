@@ -18,9 +18,7 @@
  */
 package org.jclouds.vcloud.xml;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -63,8 +61,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected VirtualSystem system;
    protected Set<ResourceAllocation> allocations = Sets.newLinkedHashSet();
    protected VAppStatus status;
-   protected final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap
-            .create();
+   protected final ListMultimap<String, String> networkToAddresses = ArrayListMultimap.create();
    protected StringBuilder currentText = new StringBuilder();
    protected String operatingSystemDescription;
    protected boolean inOs;
@@ -114,7 +111,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
       } else if (inOs && qName.equals("Description")) {
          operatingSystemDescription = currentText.toString().trim();
       } else if (qName.endsWith("IpAddress")) {
-         networkToAddresses.put(networkName, parseInetAddress(currentText.toString().trim()));
+         networkToAddresses.put(networkName, currentText.toString().trim());
       } else if (qName.equals("System")) {
          systemHandler.endElement(uri, localName, qName);
          system = systemHandler.getResult();
@@ -133,20 +130,6 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
       currentText.append(ch, start, length);
       systemHandler.characters(ch, start, length);
       allocationHandler.characters(ch, start, length);
-   }
-
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-      }
-      return null;
    }
 
 }

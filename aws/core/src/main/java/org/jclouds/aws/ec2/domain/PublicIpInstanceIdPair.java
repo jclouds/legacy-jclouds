@@ -20,8 +20,6 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
-
 import com.google.inject.internal.Nullable;
 
 /**
@@ -35,9 +33,9 @@ public class PublicIpInstanceIdPair implements Comparable<PublicIpInstanceIdPair
    private final String region;
    @Nullable
    private final String instanceId;
-   private final InetAddress publicIp;
+   private final String publicIp;
 
-   public PublicIpInstanceIdPair(String region, InetAddress publicIp, @Nullable String instanceId) {
+   public PublicIpInstanceIdPair(String region, String publicIp, @Nullable String instanceId) {
       this.region = checkNotNull(region, "region");
       this.instanceId = instanceId;
       this.publicIp = checkNotNull(publicIp, "publicIp");
@@ -54,8 +52,7 @@ public class PublicIpInstanceIdPair implements Comparable<PublicIpInstanceIdPair
     * {@inheritDoc}
     */
    public int compareTo(PublicIpInstanceIdPair o) {
-      return (this == o) ? 0 : getPublicIp().getHostAddress().compareTo(
-               o.getPublicIp().getHostAddress());
+      return (this == o) ? 0 : getPublicIp().compareTo(o.getPublicIp());
    }
 
    /**
@@ -68,7 +65,7 @@ public class PublicIpInstanceIdPair implements Comparable<PublicIpInstanceIdPair
    /**
     * The public IP address.
     */
-   public InetAddress getPublicIp() {
+   public String getPublicIp() {
       return publicIp;
    }
 

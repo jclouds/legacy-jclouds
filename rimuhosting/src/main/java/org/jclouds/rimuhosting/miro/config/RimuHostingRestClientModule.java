@@ -19,7 +19,6 @@
 package org.jclouds.rimuhosting.miro.config;
 
 import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +27,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -70,8 +70,8 @@ public class RimuHostingRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
-      return new RetryablePredicate<InetSocketAddress>(open, 130, 1, TimeUnit.SECONDS);
+   protected Predicate<IPSocket> socketTester(SocketOpen open) {
+      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
 
    @Override

@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -47,7 +46,6 @@ import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
-import org.jclouds.rackspace.cloudservers.functions.IpAddress;
 import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromJsonResponse;
@@ -70,7 +68,6 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
-import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -187,8 +184,7 @@ public interface CloudServersAsyncClient {
    @PUT
    @Path("/servers/{id}/ips/public/{address}")
    @MapBinder(BindSharedIpGroupToJsonPayload.class)
-   ListenableFuture<Void> shareIp(
-            @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
+   ListenableFuture<Void> shareIp(@PathParam("address") String addressToShare,
             @PathParam("id") int serverToTosignBindressTo,
             @MapPayloadParam("sharedIpGroupId") int sharedIpGroup,
             @MapPayloadParam("configureServer") boolean configureServer);
@@ -199,8 +195,7 @@ public interface CloudServersAsyncClient {
    @DELETE
    @Path("/servers/{id}/ips/public/{address}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> unshareIp(
-            @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
+   ListenableFuture<Void> unshareIp(@PathParam("address") String addressToShare,
             @PathParam("id") int serverToTosignBindressTo);
 
    /**
@@ -356,7 +351,7 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseInetAddressListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/public")
-   ListenableFuture<? extends List<InetAddress>> listPublicAddresses(@PathParam("id") int serverId);
+   ListenableFuture<? extends List<String>> listPublicAddresses(@PathParam("id") int serverId);
 
    /**
     * @see CloudServersClient#listPrivateAddresses
@@ -365,6 +360,6 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseInetAddressListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/private")
-   ListenableFuture<? extends List<InetAddress>> listPrivateAddresses(@PathParam("id") int serverId);
+   ListenableFuture<? extends List<String>> listPrivateAddresses(@PathParam("id") int serverId);
 
 }

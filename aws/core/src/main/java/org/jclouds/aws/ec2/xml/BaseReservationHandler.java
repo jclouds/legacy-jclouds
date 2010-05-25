@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -73,7 +71,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private String instanceId;
    private InstanceState instanceState;
    private String instanceType;
-   private InetAddress ipAddress;
+   private String ipAddress;
    private String kernelId;
    private String keyName;
    private Date launchTime;
@@ -81,7 +79,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private String availabilityZone;
    private String platform;
    private String privateDnsName;
-   private InetAddress privateIpAddress;
+   private String privateIpAddress;
    private Set<String> productCodes = Sets.newHashSet();
    private String ramdiskId;
    private String reason;
@@ -140,7 +138,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("instanceType")) {
          instanceType = currentOrNull();
       } else if (qName.equals("ipAddress")) {
-         ipAddress = parseInetAddress(currentOrNull());
+         ipAddress = currentOrNull();
       } else if (qName.equals("kernelId")) {
          kernelId = currentOrNull();
       } else if (qName.equals("keyName")) {
@@ -156,7 +154,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("privateDnsName")) {
          privateDnsName = currentOrNull();
       } else if (qName.equals("privateIpAddress")) {
-         privateIpAddress = parseInetAddress(currentOrNull());
+         privateIpAddress = currentOrNull();
       } else if (qName.equals("ramdiskId")) {
          ramdiskId = currentOrNull();
       } else if (qName.equals("reason")) {
@@ -237,20 +235,6 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          this.rootDeviceName = null;
          this.ebsBlockDevices = Maps.newHashMap();
       }
-   }
-
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-      }
-      return null;
    }
 
    public void characters(char ch[], int start, int length) {

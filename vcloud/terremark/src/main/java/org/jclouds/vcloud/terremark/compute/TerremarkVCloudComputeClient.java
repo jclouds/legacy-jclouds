@@ -20,7 +20,6 @@ package org.jclouds.vcloud.terremark.compute;
 
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
-import java.net.InetAddress;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -101,10 +100,10 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
       return response;
    }
 
-   public InetAddress createPublicAddressMappedToPorts(String vAppId, int... ports) {
+   public String createPublicAddressMappedToPorts(String vAppId, int... ports) {
       VApp vApp = client.getVApp(vAppId);
       PublicIpAddress ip = null;
-      InetAddress privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
+      String privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
       for (int port : ports) {
          InternetService is = null;
          Protocol protocol;
@@ -132,18 +131,16 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
                                        .getName())));
             ip = is.getPublicIpAddress();
          } else {
-            logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress().getHostAddress(),
-                     protocol, port);
+            logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress(), protocol, port);
             is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port,
                      protocol, port, withDescription(String.format(
                               "port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
                                        .getName())));
          }
          logger.debug("<< created InternetService(%s) %s:%s:%d", is.getId(), is
-                  .getPublicIpAddress().getAddress().getHostAddress(), is.getProtocol(), is
-                  .getPort());
-         logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress()
-                  .getHostAddress(), is.getPort(), privateAddress.getHostAddress(), port);
+                  .getPublicIpAddress().getAddress(), is.getProtocol(), is.getPort());
+         logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress(), is
+                  .getPort(), privateAddress, port);
          Node node = client.addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
          logger.debug("<< added Node(%s)", node.getId());
       }
@@ -158,14 +155,14 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                ipAddresses.add(service.getPublicIpAddress());
                logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getId(), service
-                        .getPublicIpAddress().getAddress().getHostAddress(), service.getPort(),
-                        node.getIpAddress().getHostAddress(), node.getPort());
+                        .getPublicIpAddress().getAddress(), service.getPort(), node.getIpAddress(),
+                        node.getPort());
                client.deleteNode(node.getId());
                logger.debug("<< deleted Node(%s)", node.getId());
                SortedSet<Node> nodes = client.getNodes(service.getId());
                if (nodes.size() == 0) {
                   logger.debug(">> deleting InternetService(%s) %s:%d", service.getId(), service
-                           .getPublicIpAddress().getAddress().getHostAddress(), service.getPort());
+                           .getPublicIpAddress().getAddress(), service.getPort());
                   client.deleteInternetService(service.getId());
                   logger.debug("<< deleted InternetService(%s)", service.getId());
                   continue SERVICE;
@@ -182,7 +179,7 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
                   .getInternetServicesOnPublicIp(address.getId());
          if (services.size() == 0) {
             logger.debug(">> deleting PublicIpAddress(%s) %s", address.getId(), address
-                     .getAddress().getHostAddress());
+                     .getAddress());
             client.deletePublicIp(address.getId());
             logger.debug("<< deleted PublicIpAddress(%s)", address.getId());
             continue IPADDRESS;
@@ -217,15 +214,15 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
    }
 
    @Override
-   public Set<InetAddress> getPrivateAddresses(String id) {
+   public Set<String> getPrivateAddresses(String id) {
       VApp vApp = client.getVApp(id);
       return Sets.newHashSet(vApp.getNetworkToAddresses().values());
    }
 
    @Override
-   public Set<InetAddress> getPublicAddresses(String id) {
+   public Set<String> getPublicAddresses(String id) {
       VApp vApp = client.getVApp(id);
-      Set<InetAddress> ipAddresses = Sets.newHashSet();
+      Set<String> ipAddresses = Sets.newHashSet();
       for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
          for (Node node : client.getNodes(service.getId())) {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {

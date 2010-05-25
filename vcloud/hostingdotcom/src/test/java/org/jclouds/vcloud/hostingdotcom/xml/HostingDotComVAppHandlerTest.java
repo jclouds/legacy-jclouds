@@ -21,7 +21,6 @@ package org.jclouds.vcloud.hostingdotcom.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 
@@ -53,10 +52,10 @@ public class HostingDotComVAppHandlerTest extends BaseHandlerTest {
       HostingDotComVApp expects = new HostingDotComVAppImpl("188849-33", "188849-33", URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-33"),
                VAppStatus.RESOLVED, null, new NamedResourceImpl("188849", null,
-                     "application/vnd.vmware.vcloud.vdc+xml", URI
-                     .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849")),
-                     ImmutableListMultimap.<String, InetAddress> of(),
-               null, null, ImmutableSortedSet.<ResourceAllocation> of(), "root", "meatisyummy");
+                        "application/vnd.vmware.vcloud.vdc+xml", URI
+                                 .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849")),
+               ImmutableListMultimap.<String, String> of(), null, null, ImmutableSortedSet
+                        .<ResourceAllocation> of(), "root", "meatisyummy");
 
       assertEquals(result, expects);
    }

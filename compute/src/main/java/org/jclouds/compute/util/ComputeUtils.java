@@ -25,9 +25,6 @@ import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.Comparator;
 import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
@@ -54,8 +51,8 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
@@ -83,11 +80,11 @@ public class ComputeUtils {
    @Inject(optional = true)
    private SshClient.Factory sshFactory;
    protected final Predicate<CommandUsingClient> runScriptNotRunning;
-   private final Predicate<InetSocketAddress> socketTester;
+   private final Predicate<IPSocket> socketTester;
    private final ExecutorService executor;
 
    @Inject
-   public ComputeUtils(Predicate<InetSocketAddress> socketTester,
+   public ComputeUtils(Predicate<IPSocket> socketTester,
             @Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.socketTester = socketTester;
@@ -160,15 +157,6 @@ public class ComputeUtils {
       });
    }
 
-   public static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
-
-      @Override
-      public int compare(InetAddress o1, InetAddress o2) {
-         return (o1 == o2) ? 0 : o1.getHostAddress().compareTo(o2.getHostAddress());
-      }
-
-   };
-
    public void runOptionsOnNode(NodeMetadata node, TemplateOptions options) {
       List<SshCallable<?>> callables = Lists.newArrayList();
       if (options.getRunScript() != null) {
@@ -196,11 +184,11 @@ public class ComputeUtils {
                "node does not have IP addresses configured: " + node);
    }
 
-   private void blockUntilPortIsListeningOnPublicIp(int port, int seconds, InetAddress inetAddress) {
+   private void blockUntilPortIsListeningOnPublicIp(int port, int seconds, String inetAddress) {
       logger.debug(">> blocking on port %s:%d for %d seconds", inetAddress, port, seconds);
-      RetryablePredicate<InetSocketAddress> tester = new RetryablePredicate<InetSocketAddress>(
-               new SocketOpen(), seconds, 1, TimeUnit.SECONDS);
-      InetSocketAddress socket = new InetSocketAddress(inetAddress, port);
+      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, seconds,
+               1, TimeUnit.SECONDS);
+      IPSocket socket = new IPSocket(inetAddress, port);
       boolean passed = tester.apply(socket);
       if (passed)
          logger.debug("<< port %s:%d opened", inetAddress, port);
@@ -258,8 +246,7 @@ public class ComputeUtils {
    }
 
    public SshClient createSshClientOncePortIsListeningOnNode(NodeMetadata node) {
-      InetSocketAddress socket = new InetSocketAddress(Iterables.get(node.getPublicAddresses(), 0),
-               22);
+      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
       SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().account,
                node.getCredentials().key.getBytes()) : sshFactory.create(socket, node
@@ -347,12 +334,11 @@ public class ComputeUtils {
          logger.debug("<< complete(%d)", returnVal.getExitCode());
          if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
             logger.debug("<< stdout from %s as %s@%s\n%s", scriptName,
-                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0)
-                              .getHostAddress(), ssh.exec("./" + scriptName + " tail").getOutput());
+                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0),
+                     ssh.exec("./" + scriptName + " tail").getOutput());
             logger.debug("<< stderr from %s as %s@%s\n%s", scriptName,
-                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0)
-                              .getHostAddress(), ssh.exec("./" + scriptName + " tailerr")
-                              .getOutput());
+                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0),
+                     ssh.exec("./" + scriptName + " tailerr").getOutput());
          }
          return returnVal;
       }
@@ -366,16 +352,15 @@ public class ComputeUtils {
       private ExecResponse runScriptAsRoot() {
          if (node.getCredentials().account.equals("root")) {
             logger.debug(">> running %s as %s@%s", scriptName, node.getCredentials().account,
-                     Iterables.get(node.getPublicAddresses(), 0).getHostAddress());
+                     Iterables.get(node.getPublicAddresses(), 0));
             return ssh.exec("./" + scriptName + " start");
          } else if (isKeyAuth(node)) {
             logger.debug(">> running sudo %s as %s@%s", scriptName, node.getCredentials().account,
-                     Iterables.get(node.getPublicAddresses(), 0).getHostAddress());
+                     Iterables.get(node.getPublicAddresses(), 0));
             return ssh.exec("sudo ./" + scriptName + " start");
          } else {
             logger.debug(">> running sudo -S %s as %s@%s", scriptName,
-                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0)
-                              .getHostAddress());
+                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0));
             return ssh.exec(String.format("echo '%s'|sudo -S ./%s", node.getCredentials().key,
                      scriptName + " start"));
          }
@@ -383,7 +368,7 @@ public class ComputeUtils {
 
       private ExecResponse runScriptAsDefaultUser() {
          logger.debug(">> running script %s as %s@%s", scriptName, node.getCredentials().account,
-                  Iterables.get(node.getPublicAddresses(), 0).getHostAddress());
+                  Iterables.get(node.getPublicAddresses(), 0));
          return ssh.exec(String.format("./%s", scriptName + " start"));
       }
 
@@ -410,7 +395,7 @@ public class ComputeUtils {
          ssh.exec("mkdir .ssh");
          ssh.put(".ssh/id_rsa", new ByteArrayInputStream(privateKey.getBytes()));
          logger.debug(">> installing rsa key for %s@%s", node.getCredentials().account, Iterables
-                  .get(node.getPublicAddresses(), 0).getHostAddress());
+                  .get(node.getPublicAddresses(), 0));
          return ssh.exec("chmod 600 .ssh/id_rsa");
       }
 
@@ -443,7 +428,7 @@ public class ComputeUtils {
          ssh.exec("mkdir .ssh");
          ssh.put(".ssh/id_rsa.pub", new ByteArrayInputStream(publicKey.getBytes()));
          logger.debug(">> authorizing rsa public key for %s@%s", node.getCredentials().account,
-                  Iterables.get(node.getPublicAddresses(), 0).getHostAddress());
+                  Iterables.get(node.getPublicAddresses(), 0));
          ExecResponse returnVal = ssh.exec("cat .ssh/id_rsa.pub >> .ssh/authorized_keys");
          returnVal = ssh.exec("chmod 600 .ssh/authorized_keys");
          logger.debug("<< complete(%d)", returnVal.getExitCode());

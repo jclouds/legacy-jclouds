@@ -6,7 +6,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
@@ -53,8 +52,7 @@ public class ServerToNodeMetadataTest {
       expect(client.getServerCredentialsList()).andReturn(credentialsMap);
       expect(credentialsMap.get("tag-ff")).andReturn(new Credentials("user", "pass"));
 
-      expect(server.getIp()).andReturn(
-               new Ip(InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 })));
+      expect(server.getIp()).andReturn(new Ip("127.0.0.1"));
 
       ServerImage image = createMock(ServerImage.class);
       expect(server.getImage()).andReturn(image).atLeastOnce();

@@ -26,7 +26,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Properties;
 
@@ -339,10 +338,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testAddNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("addNode", int.class,
-               InetAddress.class, String.class, int.class, Array.newInstance(AddNodeOptions.class,
-                        0).getClass());
+               String.class, String.class, int.class, Array.newInstance(AddNodeOptions.class, 0)
+                        .getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
-               12, InetAddress.getByName("10.2.2.2"), "name", 22);
+               12, "10.2.2.2", "name", 22);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/internetServices/12/nodes HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -359,11 +358,11 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testAddNodeOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("addNode", int.class,
-               InetAddress.class, String.class, int.class, Array.newInstance(AddNodeOptions.class,
-                        0).getClass());
+               String.class, String.class, int.class, Array.newInstance(AddNodeOptions.class, 0)
+                        .getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
-               12, InetAddress.getByName("10.2.2.2"), "name", 22, AddNodeOptions.Builder.disabled()
-                        .withDescription("yahoo"));
+               12, "10.2.2.2", "name", 22, AddNodeOptions.Builder.disabled().withDescription(
+                        "yahoo"));
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/internetServices/12/nodes HTTP/1.1");
       assertHeadersEqual(httpMethod,

@@ -20,10 +20,9 @@ package org.jclouds.ssh.jsch;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeTest;
@@ -51,8 +50,8 @@ public class JschSshClientTest {
    protected JschSshClient createClient() throws UnknownHostException {
       Injector i = Guice.createInjector(module());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      JschSshClient ssh = JschSshClient.class.cast(factory.create(new InetSocketAddress(InetAddress
-               .getLocalHost(), 22), "username", "password"));
+      JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22),
+               "username", "password"));
       return ssh;
    }
 

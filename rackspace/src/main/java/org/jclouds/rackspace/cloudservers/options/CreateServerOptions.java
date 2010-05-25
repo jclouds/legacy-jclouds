@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -89,7 +88,7 @@ public class CreateServerOptions extends BindToJsonPayload {
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
    private Integer sharedIpGroupId;
-   private InetAddress publicIp;
+   private String publicIp;
 
    @Override
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
@@ -147,7 +146,7 @@ public class CreateServerOptions extends BindToJsonPayload {
     * Note: sharedIpGroupId is an optional parameter and for optimal performance, should ONLY be
     * specified when intending to share IPs between servers.
     * 
-    * @see #withSharedIp(InetAddress)
+    * @see #withSharedIp(String)
     */
    public CreateServerOptions withSharedIpGroup(int id) {
       checkArgument(id > 0, "id must be positive or zero.  was: " + id);
@@ -196,7 +195,7 @@ public class CreateServerOptions extends BindToJsonPayload {
     * the public shared IP address in your request. This is optional and is only valid if
     * sharedIpGroupId is also supplied.
     */
-   public CreateServerOptions withSharedIp(InetAddress publicIp) {
+   public CreateServerOptions withSharedIp(String publicIp) {
       checkState(sharedIpGroupId != null,
                "sharedIp is invalid unless a shared ip group is specified.");
       this.publicIp = checkNotNull(publicIp, "ip");
@@ -230,9 +229,9 @@ public class CreateServerOptions extends BindToJsonPayload {
       }
 
       /**
-       * @see CreateServerOptions#withSharedIp(InetAddress)
+       * @see CreateServerOptions#withSharedIp(String)
        */
-      public static CreateServerOptions withSharedIp(InetAddress publicIp) {
+      public static CreateServerOptions withSharedIp(String publicIp) {
          CreateServerOptions options = new CreateServerOptions();
          return options.withSharedIp(publicIp);
       }

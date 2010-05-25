@@ -18,9 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 
 import javax.annotation.Resource;
 
@@ -47,7 +45,7 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
    private URI location;
    private URI addressLocation;
    private String serviceName;
-   private InetAddress address;
+   private String address;
    private PublicIpAddress publicIpAddress;
    private int port;
    private String description;
@@ -87,7 +85,7 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
             location = URI.create(currentOrNull());
       } else if (qName.equals("Name")) {
          if (inPublicIpAddress)
-            address = parseInetAddress(currentOrNull());
+            address = currentOrNull();
          else
             serviceName = currentOrNull();
       } else if (qName.equals("PublicIpAddress")) {
@@ -108,20 +106,6 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
          description = currentOrNull();
       }
       currentText = new StringBuilder();
-   }
-
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-         throw new RuntimeException(e);
-      }
    }
 
    public void characters(char ch[], int start, int length) {

@@ -24,7 +24,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 
@@ -73,13 +72,13 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet
                         .of("adriancole.ec2ingress"), "0",
                         "ec2-174-129-81-68.compute-1.amazonaws.com", "ami-1fd73376", "i-0799056f",
-                        InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
-                                 .getByName("174.129.81.68"), "aki-a71cf9ce", "adriancole.ec21",
-                        dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"), false,
+                        InstanceState.RUNNING, InstanceType.M1_SMALL, "174.129.81.68",
+                        "aki-a71cf9ce", "adriancole.ec21", dateService
+                                 .iso8601DateParse("2009-11-09T03:00:34.000Z"), false,
                         AvailabilityZone.US_EAST_1C, null, "ip-10-243-42-70.ec2.internal",
-                        InetAddress.getByName("10.243.42.70"), ImmutableSet.<String> of(),
-                        "ari-a51cf9cc", null, null, null, RootDeviceType.INSTANCE_STORE, null,
-                        ImmutableMap.<String, EbsBlockDevice> of())), "993194456877", null,
+                        "10.243.42.70", ImmutableSet.<String> of(), "ari-a51cf9cc", null, null,
+                        null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap
+                                 .<String, EbsBlockDevice> of())), "993194456877", null,
                "r-a3c508cb"));
 
       Set<Reservation> result = getReservations(is);
@@ -95,7 +94,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       contents.add(new Reservation(defaultRegion, ImmutableSet.of("default"), ImmutableSet.of(
                new RunningInstance(defaultRegion, ImmutableSet.of("default"), "23",
                         "ec2-72-44-33-4.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64341",
-                        InstanceState.RUNNING, InstanceType.M1_LARGE, (InetAddress) null,
+                        InstanceState.RUNNING, InstanceType.M1_LARGE, (String) null,
                         "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
                         AvailabilityZone.US_EAST_1B, null, "10-251-50-132.ec2.internal", null,
@@ -104,7 +103,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                                  .<String, EbsBlockDevice> of()), new RunningInstance(
                         defaultRegion, ImmutableSet.of("default"), "23",
                         "ec2-72-44-33-6.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64435",
-                        InstanceState.RUNNING, InstanceType.M1_LARGE, (InetAddress) null,
+                        InstanceState.RUNNING, InstanceType.M1_LARGE, (String) null,
                         "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
                         AvailabilityZone.US_EAST_1B, null, "10-251-50-134.ec2.internal", null,
@@ -127,18 +126,17 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet
                         .of("adriancole.ec2ebsingress"), "0",
                         "ec2-75-101-203-146.compute-1.amazonaws.com", "ami-849875ed", "i-e564438d",
-                        InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
-                                 .getByName("75.101.203.146"), "aki-a71cf9ce",
-                        "adriancole.ec2ebs1", dateService
+                        InstanceState.RUNNING, InstanceType.M1_SMALL, "75.101.203.146",
+                        "aki-a71cf9ce", "adriancole.ec2ebs1", dateService
                                  .iso8601DateParse("2009-12-30T04:06:23.000Z"), false,
                         AvailabilityZone.US_EAST_1B, null,
-                        "domU-12-31-39-09-CE-53.compute-1.internal", InetAddress
-                                 .getByName("10.210.209.157"), ImmutableSet.<String> of(),
-                        "ari-a51cf9cc", null, null, null, RootDeviceType.EBS, "/dev/sda1",
-                        ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1", new EbsBlockDevice(
-                                 "vol-dc6ca8b5", Attachment.Status.ATTACHED, dateService
-                                          .iso8601DateParse("2009-12-30T04:06:29.000Z"), true)))),
-               "993194456877", null, "r-596dd731"));
+                        "domU-12-31-39-09-CE-53.compute-1.internal", "10.210.209.157", ImmutableSet
+                                 .<String> of(), "ari-a51cf9cc", null, null, null,
+                        RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of(
+                                 "/dev/sda1", new EbsBlockDevice("vol-dc6ca8b5",
+                                          Attachment.Status.ATTACHED, dateService
+                                                   .iso8601DateParse("2009-12-30T04:06:29.000Z"),
+                                          true)))), "993194456877", null, "r-596dd731"));
 
       Set<Reservation> result = getReservations(is);
 

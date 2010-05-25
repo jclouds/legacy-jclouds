@@ -33,11 +33,9 @@ import static org.jclouds.gogrid.reference.GoGridQueryParams.POWER_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.SERVER_ID_OR_NAME_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.SERVER_RAM_KEY;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -58,12 +56,10 @@ import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
-import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -123,17 +119,7 @@ public interface GridServerAsyncClient {
    @Path("/grid/server/add")
    ListenableFuture<Server> addServer(@QueryParam(NAME_KEY) String name,
             @QueryParam(IMAGE_KEY) String image, @QueryParam(SERVER_RAM_KEY) String ram,
-            @QueryParam(IP_KEY) @ParamParser(InetAddressHostName.class) InetAddress ip,
-            AddServerOptions... addServerOptions);
-
-   @Singleton
-   public static class InetAddressHostName implements Function<Object, String> {
-
-      public String apply(Object from) {
-         return ((InetAddress) from).getHostAddress();
-      }
-
-   }
+            @QueryParam(IP_KEY) String ip, AddServerOptions... addServerOptions);
 
    /**
     * @see GridServerClient#power(String, org.jclouds.gogrid.domain.PowerCommand)

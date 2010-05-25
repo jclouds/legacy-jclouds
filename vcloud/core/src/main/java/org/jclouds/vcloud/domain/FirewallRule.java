@@ -20,8 +20,6 @@ package org.jclouds.vcloud.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
-
 import com.google.common.base.CaseFormat;
 
 /**
@@ -68,10 +66,10 @@ public class FirewallRule {
 
    private final Policy policy;
    private final Protocol protocol;
-   private final InetAddress sourceIP;
+   private final String sourceIP;
    private final String sourcePort;
 
-   public FirewallRule(Policy policy, Protocol protocol, InetAddress sourceIP, String sourcePort) {
+   public FirewallRule(Policy policy, Protocol protocol, String sourceIP, String sourcePort) {
       this.policy = policy;
       this.protocol = protocol;
       this.sourceIP = sourceIP;
@@ -95,7 +93,7 @@ public class FirewallRule {
    /**
     * An IP address to which this rule applies
     */
-   public InetAddress getSourceIP() {
+   public String getSourceIP() {
       return sourceIP;
    }
 

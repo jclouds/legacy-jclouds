@@ -27,8 +27,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +35,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
@@ -87,12 +86,12 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
    private Factory sshFactory;
 
-   private InetAddress publicIp;
+   private String publicIp;
    private InternetService is;
    private Node node;
    private VApp vApp;
 
-   private RetryablePredicate<InetSocketAddress> socketTester;
+   private RetryablePredicate<IPSocket> socketTester;
 
    private RetryablePredicate<String> successTester;
 
@@ -430,8 +429,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                .getVirtualQuantity());
    }
 
-   private void doCheckPass(InetAddress address) throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(address, 22);
+   private void doCheckPass(String address) throws IOException {
+      IPSocket socket = new IPSocket(address, 22);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                socket);
@@ -488,8 +487,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<InetSocketAddress>(injector
-               .getInstance(SocketOpen.class), 130, 10, TimeUnit.SECONDS);// make it longer then
+      socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 130,
+               10, TimeUnit.SECONDS);// make it longer then
       // default internet
       // service timeout
       successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 650,

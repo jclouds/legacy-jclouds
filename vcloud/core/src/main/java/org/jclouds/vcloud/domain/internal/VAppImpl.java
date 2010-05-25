@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.domain.internal;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Set;
 
@@ -47,7 +46,7 @@ public class VAppImpl implements VApp {
    private final NamedResource vDC;
    private final VAppStatus status;
    private final Long size;
-   private final ListMultimap<String, InetAddress> networkToAddresses;
+   private final ListMultimap<String, String> networkToAddresses;
    private final String operatingSystemDescription;
    private final VirtualSystem system;
    private final Set<ResourceAllocation> resourceAllocations;
@@ -56,8 +55,8 @@ public class VAppImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(String id, String name, URI location, VAppStatus status, Long size, NamedResource vDC,
-            ListMultimap<String, InetAddress> networkToAddresses,
+   public VAppImpl(String id, String name, URI location, VAppStatus status, Long size,
+            NamedResource vDC, ListMultimap<String, String> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
             Set<ResourceAllocation> resourceAllocations) {
       this.id = id;
@@ -83,7 +82,7 @@ public class VAppImpl implements VApp {
       return status;
    }
 
-   public ListMultimap<String, InetAddress> getNetworkToAddresses() {
+   public ListMultimap<String, String> getNetworkToAddresses() {
       return networkToAddresses;
    }
 
@@ -114,21 +113,13 @@ public class VAppImpl implements VApp {
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime
-            * result
-            + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
-      result = prime
-            * result
-            + ((operatingSystemDescription == null) ? 0
-                  : operatingSystemDescription.hashCode());
-      result = prime
-            * result
-            + ((resourceAllocationByType == null) ? 0
-                  : resourceAllocationByType.hashCode());
-      result = prime
-            * result
-            + ((resourceAllocations == null) ? 0 : resourceAllocations
-                  .hashCode());
+      result = prime * result + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
+      result = prime * result
+               + ((operatingSystemDescription == null) ? 0 : operatingSystemDescription.hashCode());
+      result = prime * result
+               + ((resourceAllocationByType == null) ? 0 : resourceAllocationByType.hashCode());
+      result = prime * result
+               + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
       result = prime * result + ((size == null) ? 0 : size.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((system == null) ? 0 : system.hashCode());
@@ -168,14 +159,12 @@ public class VAppImpl implements VApp {
       if (operatingSystemDescription == null) {
          if (other.operatingSystemDescription != null)
             return false;
-      } else if (!operatingSystemDescription
-            .equals(other.operatingSystemDescription))
+      } else if (!operatingSystemDescription.equals(other.operatingSystemDescription))
          return false;
       if (resourceAllocationByType == null) {
          if (other.resourceAllocationByType != null)
             return false;
-      } else if (!resourceAllocationByType
-            .equals(other.resourceAllocationByType))
+      } else if (!resourceAllocationByType.equals(other.resourceAllocationByType))
          return false;
       if (resourceAllocations == null) {
          if (other.resourceAllocations != null)
@@ -223,13 +212,11 @@ public class VAppImpl implements VApp {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", location=" + location + ", name=" + name
-            + ", networkToAddresses=" + networkToAddresses
-            + ", operatingSystemDescription=" + operatingSystemDescription
-            + ", resourceAllocationByType=" + resourceAllocationByType
-            + ", resourceAllocations=" + resourceAllocations + ", size=" + size
-            + ", status=" + status + ", system=" + system + ", vDC=" + vDC
-            + "]";
+      return "[id=" + id + ", location=" + location + ", name=" + name + ", networkToAddresses="
+               + networkToAddresses + ", operatingSystemDescription=" + operatingSystemDescription
+               + ", resourceAllocationByType=" + resourceAllocationByType
+               + ", resourceAllocations=" + resourceAllocations + ", size=" + size + ", status="
+               + status + ", system=" + system + ", vDC=" + vDC + "]";
    }
 
    @Override

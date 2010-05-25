@@ -24,7 +24,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 
@@ -52,9 +51,9 @@ public class DescribeAddressesResponseHandlerTest extends BaseEC2HandlerTest {
 
       Set<PublicIpInstanceIdPair> result = factory.create(handler).parse(is);
 
-      assertEquals(result, ImmutableList.of(new PublicIpInstanceIdPair(defaultRegion, InetAddress
-               .getByName("67.202.55.255"), "i-f15ebb98"), new PublicIpInstanceIdPair(
-               defaultRegion, InetAddress.getByName("67.202.55.233"), null)));
+      assertEquals(result, ImmutableList.of(new PublicIpInstanceIdPair(defaultRegion,
+               "67.202.55.255", "i-f15ebb98"), new PublicIpInstanceIdPair(defaultRegion,
+               "67.202.55.233", null)));
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {

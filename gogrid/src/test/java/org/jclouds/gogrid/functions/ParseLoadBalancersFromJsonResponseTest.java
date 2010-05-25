@@ -21,7 +21,6 @@ package org.jclouds.gogrid.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.SortedSet;
@@ -64,14 +63,14 @@ public class ParseLoadBalancersFromJsonResponseTest {
                .getInstance(Gson.class));
       SortedSet<LoadBalancer> response = parser.apply(is);
 
-      LoadBalancer loadBalancer = new LoadBalancer(6372L, "Balancer", null, new IpPortPair(new Ip(
-               1313082L, InetAddress.getByName("204.51.240.181"), "204.51.240.176/255.255.255.240",
-               true, IpState.ASSIGNED), 80), ImmutableSortedSet.of(new IpPortPair(new Ip(1313086L,
-               InetAddress.getByName("204.51.240.185"), "204.51.240.176/255.255.255.240", true,
-               IpState.ASSIGNED), 80), new IpPortPair(new Ip(1313089L, InetAddress
-               .getByName("204.51.240.188"), "204.51.240.176/255.255.255.240", true,
-               IpState.ASSIGNED), 80)), LoadBalancerType.ROUND_ROBIN,
-               LoadBalancerPersistenceType.NONE, LoadBalancerOs.F5, LoadBalancerState.ON);
+      LoadBalancer loadBalancer = new LoadBalancer(6372L, "Balancer", null, new IpPortPair(
+               new Ip(1313082L, "204.51.240.181", "204.51.240.176/255.255.255.240", true,
+                        IpState.ASSIGNED), 80), ImmutableSortedSet.of(new IpPortPair(
+               new Ip(1313086L, "204.51.240.185", "204.51.240.176/255.255.255.240", true,
+                        IpState.ASSIGNED), 80), new IpPortPair(new Ip(1313089L, "204.51.240.188",
+               "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED), 80)),
+               LoadBalancerType.ROUND_ROBIN, LoadBalancerPersistenceType.NONE, LoadBalancerOs.F5,
+               LoadBalancerState.ON);
       assertEquals(Iterables.getOnlyElement(response), loadBalancer);
    }
 

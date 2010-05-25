@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -194,7 +193,7 @@ public interface CloudServersClient {
     *           (e.g. keepalived) can then be used within the servers to perform health checks and
     *           manage IP failover.
     */
-   void shareIp(InetAddress addressToShare, int serverToTosignBindressTo, int sharedIpGroup,
+   void shareIp(String addressToShare, int serverToTosignBindressTo, int sharedIpGroup,
             boolean configureServer);
 
    /**
@@ -206,7 +205,7 @@ public interface CloudServersClient {
     * @param serverToTosignBindressTo
     * @return
     */
-   void unshareIp(InetAddress addressToShare, int serverToTosignBindressTo);
+   void unshareIp(String addressToShare, int serverToTosignBindressTo);
 
    /**
     * This operation allows you to change the administrative password.
@@ -370,7 +369,7 @@ public interface CloudServersClient {
     * @throws ResourceNotFoundException
     *            , if the server doesn't exist
     */
-   List<InetAddress> listPublicAddresses(int serverId);
+   List<String> listPublicAddresses(int serverId);
 
    /**
     * List all private server addresses
@@ -378,6 +377,6 @@ public interface CloudServersClient {
     * @throws ResourceNotFoundException
     *            , if the server doesn't exist
     */
-   List<InetAddress> listPrivateAddresses(int serverId);
+   List<String> listPrivateAddresses(int serverId);
 
 }

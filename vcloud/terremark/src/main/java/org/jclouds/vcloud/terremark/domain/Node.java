@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.terremark.domain;
 
-import java.net.InetAddress;
 import java.net.URI;
 
 /**
@@ -28,13 +27,13 @@ public class Node implements Comparable<Node> {
    private final int id;
    private final String name;
    private final URI location;
-   private final InetAddress ipAddress;
+   private final String ipAddress;
    private final int port;
    private final boolean enabled;
    private final String description;
 
-   public Node(int id, String name, URI location, InetAddress ipAddress, int port,
-            boolean enabled, String description) {
+   public Node(int id, String name, URI location, String ipAddress, int port, boolean enabled,
+            String description) {
       this.id = id;
       this.name = name;
       this.location = location;
@@ -68,10 +67,10 @@ public class Node implements Comparable<Node> {
       return location;
    }
 
-   public InetAddress getIpAddress() {
+   public String getIpAddress() {
       return ipAddress;
    }
-   
+
    public int compareTo(Node that) {
       if (this == that)
          return 0;

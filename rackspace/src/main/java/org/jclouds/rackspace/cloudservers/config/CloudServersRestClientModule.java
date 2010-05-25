@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudservers.config;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -30,6 +29,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
@@ -73,8 +73,8 @@ public class CloudServersRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
-      return new RetryablePredicate<InetSocketAddress>(open, 130, 1, TimeUnit.SECONDS);
+   protected Predicate<IPSocket> socketTester(SocketOpen open) {
+      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -89,7 +89,7 @@ public class CloudServersRestClientModule extends AbstractModule {
             throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       return SyncProxy.create(CloudServersClient.class, client);
    }
-   
+
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseCloudServersErrorFromHttpResponse.class);

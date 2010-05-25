@@ -27,8 +27,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
@@ -60,6 +58,7 @@ import org.jclouds.aws.ec2.predicates.VolumeAttached;
 import org.jclouds.aws.ec2.predicates.VolumeAvailable;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.InitBuilder;
@@ -101,7 +100,7 @@ public class EBSBootEC2ClientLiveTest {
    private KeyPair keyPair;
    private String securityGroupName;
 
-   private RetryablePredicate<InetSocketAddress> socketTester;
+   private RetryablePredicate<IPSocket> socketTester;
    private RetryablePredicate<Attachment> attachTester;
    private RetryablePredicate<Volume> volumeTester;
    private RunningInstance instance;
@@ -126,7 +125,7 @@ public class EBSBootEC2ClientLiveTest {
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
 
       VolumeAvailable volumeAvailable = injector.getInstance(VolumeAvailable.class);
       volumeTester = new RetryablePredicate<Volume>(volumeAvailable, 60, 1, TimeUnit.SECONDS);
@@ -273,7 +272,7 @@ public class EBSBootEC2ClientLiveTest {
 
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
-      SshClient ssh = sshFactory.create(new InetSocketAddress(instance.getIpAddress(), 22),
+      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
                "ubuntu", keyPair.getKeyMaterial().getBytes());
       try {
          ssh.connect();
@@ -533,8 +532,8 @@ public class EBSBootEC2ClientLiveTest {
       doCheckKey(newDetails.getIpAddress());
    }
 
-   private void doCheckKey(InetAddress address) {
-      SshClient ssh = sshFactory.create(new InetSocketAddress(address, 22), "ubuntu", keyPair
+   private void doCheckKey(String address) {
+      SshClient ssh = sshFactory.create(new IPSocket(address, 22), "ubuntu", keyPair
                .getKeyMaterial().getBytes());
       try {
          ssh.connect();
@@ -560,7 +559,7 @@ public class EBSBootEC2ClientLiveTest {
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
-      assert socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 22));
+      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 22));
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance
                .getDnsName());
       sshPing(instance);

@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.hostingdotcom.domain.internal;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Set;
 
@@ -46,7 +45,7 @@ public class HostingDotComVAppImpl extends VAppImpl implements HostingDotComVApp
    private static final long serialVersionUID = 8464716396538298809L;
 
    public HostingDotComVAppImpl(String id, String name, URI location, VAppStatus status, Long size,
-            NamedResource vDC, ListMultimap<String, InetAddress> networkToAddresses,
+            NamedResource vDC, ListMultimap<String, String> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
             Set<ResourceAllocation> resourceAllocations, String username, String password) {
       super(id, name, location, status, size, vDC, networkToAddresses, operatingSystemDescription,

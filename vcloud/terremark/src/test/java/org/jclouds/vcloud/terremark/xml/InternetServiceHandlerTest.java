@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 
@@ -52,8 +51,7 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
       InternetService result = (InternetService) factory.create(
                injector.getInstance(InternetServiceHandler.class)).parse(is);
       assertEquals(result, new InternetService(523, "IS_for_Jim", null, new PublicIpAddress(4208,
-               InetAddress.getByName("10.1.22.159"), null), 80, Protocol.HTTP, false, 1,
-               "Some test service"));
+               "10.1.22.159", null), 80, Protocol.HTTP, false, 1, "Some test service"));
    }
 
    public void test2() throws UnknownHostException {
@@ -70,7 +68,7 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"),
                         new PublicIpAddress(
                                  4208,
-                                 InetAddress.getByName("10.1.22.159"),
+                                 "10.1.22.159",
                                  URI
                                           .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208")),
                         45, Protocol.HTTP, false, 1, "Some test service"));

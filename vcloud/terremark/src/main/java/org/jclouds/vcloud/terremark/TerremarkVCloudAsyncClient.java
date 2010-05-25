@@ -23,7 +23,6 @@ import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
-import java.net.InetAddress;
 import java.util.SortedSet;
 
 import javax.ws.rs.Consumes;
@@ -46,7 +45,6 @@ import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.InetAddressToHostAddress;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -278,11 +276,9 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Consumes(APPLICATION_XML)
    @XMLResponseParser(NodeHandler.class)
    @MapBinder(AddNodeOptions.class)
-   ListenableFuture<? extends Node> addNode(
-            @PathParam("internetServiceId") int internetServiceId,
-            @MapPayloadParam("ipAddress") @ParamParser(InetAddressToHostAddress.class) InetAddress ipAddress,
-            @MapPayloadParam("name") String name, @MapPayloadParam("port") int port,
-            AddNodeOptions... options);
+   ListenableFuture<? extends Node> addNode(@PathParam("internetServiceId") int internetServiceId,
+            @MapPayloadParam("ipAddress") String ipAddress, @MapPayloadParam("name") String name,
+            @MapPayloadParam("port") int port, AddNodeOptions... options);
 
    /**
     * @see TerremarkVCloudClient#getNodes

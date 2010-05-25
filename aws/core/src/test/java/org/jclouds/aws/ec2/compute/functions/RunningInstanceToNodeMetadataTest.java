@@ -25,7 +25,6 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.testng.Assert.assertEquals;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
@@ -91,10 +90,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -150,10 +147,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -210,10 +205,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -276,10 +269,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -334,10 +325,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -393,10 +382,8 @@ public class RunningInstanceToNodeMetadataTest {
       Set<Location> locations = ImmutableSet.<Location> of(location);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
@@ -464,10 +451,8 @@ public class RunningInstanceToNodeMetadataTest {
       Set<Location> locations = ImmutableSet.<Location> of(location);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
-      expect(instance.getIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 12, 10, 10, 1 }));
-      expect(instance.getPrivateIpAddress()).andReturn(
-               InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 }));
+      expect(instance.getIpAddress()).andReturn("127.0.0.1");
+      expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
 
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 

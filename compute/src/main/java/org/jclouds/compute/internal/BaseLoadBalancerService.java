@@ -26,8 +26,6 @@ package org.jclouds.compute.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
@@ -98,7 +96,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    }
 
    @Override
-   public Set<InetAddress> loadBalanceNodesMatching(Predicate<NodeMetadata> filter,
+   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter,
             String loadBalancerName, String protocol, int loadBalancerPort, int instancePort) {
       checkNotNull(loadBalancerName, "loadBalancerName");
       checkNotNull(protocol, "protocol");
@@ -115,21 +113,12 @@ public class BaseLoadBalancerService implements LoadBalancerService {
          ids.add(node.getProviderId());
          locationMap.put(node.getLocation(), ids);
       }
-      Set<InetAddress> dnsNames = Sets.newHashSet();
+      Set<String> dnsNames = Sets.newHashSet();
       for (Location location : locationMap.keySet()) {
          logger.debug(">> creating load balancer (%s)", loadBalancerName);
          String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol,
                   loadBalancerPort, instancePort, locationMap.get(location));
-         for (int i = 0; i < dnsRetries; i++) {
-            try {
-               dnsNames.add(InetAddress.getByName(dnsName));
-            } catch (UnknownHostException from) {
-               backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, i + 1, dnsRetries,
-                        String.format("%s/%s@%s:%d:%d connection error: %s", location,
-                                 loadBalancerName, dnsName, loadBalancerPort, instancePort));
-               continue;
-            }
-         }
+         dnsNames.add(dnsName);
          logger.debug("<< created load balancer (%s) DNS (%s)", loadBalancerName, dnsName);
       }
       return dnsNames;
@@ -139,7 +128,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
     * {@inheritDoc}
     */
    @Override
-   public void destroyLoadBalancer(InetAddress loadBalancer) {
+   public void destroyLoadBalancer(String loadBalancer) {
       checkNotNull(loadBalancer, "loadBalancer");
       logger.debug(">> destroying load balancer(%s)", loadBalancer);
       boolean successful = destroyLoadBalancerStrategy.execute(loadBalancer);

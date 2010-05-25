@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -53,9 +52,8 @@ public class EC2DestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
    }
 
    @Override
-   public boolean execute(InetAddress loadBalancer) {
-      Map<String, String> tuple = EC2Utils.getLoadBalancerNameAndRegionFromDnsName(loadBalancer
-               .getHostName());
+   public boolean execute(String loadBalancer) {
+      Map<String, String> tuple = EC2Utils.getLoadBalancerNameAndRegionFromDnsName(loadBalancer);
       // Only one load balancer per DNS name is expected
       for (String key : tuple.keySet()) {
          elbClient.deleteLoadBalancerInRegion(key, tuple.get(key));

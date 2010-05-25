@@ -26,8 +26,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -49,6 +47,7 @@ import org.jclouds.aws.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.ScriptBuilder;
@@ -83,9 +82,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    private KeyPair keyPair;
    private String securityGroupName;
    private String instanceId;
-   private InetAddress address;
+   private String address;
 
-   private RetryablePredicate<InetSocketAddress> socketTester;
+   private RetryablePredicate<IPSocket> socketTester;
    private RetryablePredicate<RunningInstance> hasIpTester;
    private RetryablePredicate<RunningInstance> runningTester;
 
@@ -102,8 +101,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
       hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client
                .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
-      socketTester = new RetryablePredicate<InetSocketAddress>(new SocketOpen(), 180, 1,
-               TimeUnit.SECONDS);
+      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 180, 1, TimeUnit.SECONDS);
    }
 
    @Test(enabled = false)
@@ -155,12 +154,12 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
             Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
-                                                                                                    // ec2
-                                                                                                    // to
-                                                                                                    // chose
-                                                                                                    // an
-                                                                                                    // availability
-                                                                                                    // zone
+                     // ec2
+                     // to
+                     // chose
+                     // an
+                     // availability
+                     // zone
                      "ami-ccf615a5", // alestic ami allows auto-invoke of user data scripts
                      1, // minimum instances
                      1, // maximum instances
@@ -307,8 +306,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       Thread.sleep(1000);
       instance = getInstance(instanceId);
       blockUntilWeCanSshIntoInstance(instance);
-      SshClient ssh = sshFactory.create(new InetSocketAddress(instance.getIpAddress(), 22), "root",
-               keyPair.getKeyMaterial().getBytes());
+      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22), "root", keyPair
+               .getKeyMaterial().getBytes());
       try {
          ssh.connect();
          ExecResponse uptime = ssh.exec("uptime");
@@ -374,7 +373,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
-      assert socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 22));
+      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 22));
 
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance
                .getDnsName());
@@ -384,7 +383,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
       System.out.printf("%d: %s awaiting http service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
-      assert socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 80));
+      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 80));
       System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance
                .getDnsName());
       return instance;
@@ -419,9 +418,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       doCheckKey(newDetails.getIpAddress());
    }
 
-   private void doCheckKey(InetAddress address) {
-      SshClient ssh = sshFactory.create(new InetSocketAddress(address, 22), "root", keyPair
-               .getKeyMaterial().getBytes());
+   private void doCheckKey(String address) {
+      SshClient ssh = sshFactory.create(new IPSocket(address, 22), "root", keyPair.getKeyMaterial()
+               .getBytes());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

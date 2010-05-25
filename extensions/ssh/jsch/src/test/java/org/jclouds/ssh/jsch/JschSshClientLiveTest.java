@@ -25,10 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 
+import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -56,8 +54,6 @@ public class JschSshClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public SshClient setupClient() throws NumberFormatException, FileNotFoundException, IOException {
       int port = (sshPort != null) ? Integer.parseInt(sshPort) : 22;
-      InetAddress host = (sshHost != null) ? InetAddress.getByName(sshHost) : InetAddress
-               .getLocalHost();
       if (sshUser == null
                || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile
                         .trim().equals(""))) || sshUser.trim().equals("")) {
@@ -81,11 +77,7 @@ public class JschSshClientLiveTest {
 
             public ExecResponse exec(String command) {
                if (command.equals("hostname")) {
-                  try {
-                     return new ExecResponse(InetAddress.getLocalHost().getHostName(), "", 0);
-                  } catch (UnknownHostException e) {
-                     throw new RuntimeException(e);
-                  }
+                  return new ExecResponse(sshHost, "", 0);
                }
                throw new RuntimeException("command " + command + " not stubbed");
             }
@@ -111,10 +103,10 @@ public class JschSshClientLiveTest {
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
          SshClient connection;
          if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-            connection = factory.create(new InetSocketAddress(host, port), sshUser, Utils
+            connection = factory.create(new IPSocket(sshHost, port), sshUser, Utils
                      .toStringAndClose(new FileInputStream(sshKeyFile)).getBytes());
          } else {
-            connection = factory.create(new InetSocketAddress(host, port), sshUser, sshPass);
+            connection = factory.create(new IPSocket(sshHost, port), sshUser, sshPass);
          }
          connection.connect();
          return connection;
@@ -140,7 +132,7 @@ public class JschSshClientLiveTest {
    public void testExecHostname() throws IOException {
       ExecResponse response = setupClient().exec("hostname");
       assertEquals(response.getError(), "");
-      assertEquals(response.getOutput().trim(), InetAddress.getLocalHost().getHostName());
+      assertEquals(response.getOutput().trim(), sshHost);
    }
 
 }

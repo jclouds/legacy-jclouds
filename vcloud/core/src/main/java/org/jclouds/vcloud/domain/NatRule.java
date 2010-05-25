@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.domain;
 
-import java.net.InetAddress;
-
 /**
  * Specifies a set of Network Address Translation rules using a pair of IP addresses and a pair of
  * IP port numbers.
@@ -27,12 +25,13 @@ import java.net.InetAddress;
  * @author Adrian Cole
  */
 public class NatRule {
-   private final InetAddress externalIP;
+   private final String externalIP;
    private final Integer externalPort;
-   private final InetAddress internalIP;
+   private final String internalIP;
    private final Integer internalPort;
 
-   public NatRule(InetAddress externalIP, Integer externalPort, InetAddress IntegerernalIP, Integer IntegerernalPort) {
+   public NatRule(String externalIP, Integer externalPort, String IntegerernalIP,
+            Integer IntegerernalPort) {
       this.externalIP = externalIP;
       this.externalPort = externalPort;
       this.internalIP = IntegerernalIP;
@@ -42,7 +41,7 @@ public class NatRule {
    /**
     * The externally‐visible IP address.
     */
-   public InetAddress getExternalIP() {
+   public String getExternalIP() {
       return externalIP;
    }
 
@@ -56,7 +55,7 @@ public class NatRule {
    /**
     * The Integerernally‐visible (non‐routable) IP address.
     */
-   public InetAddress getInternalIP() {
+   public String getInternalIP() {
       return internalIP;
    }
 

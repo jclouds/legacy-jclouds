@@ -18,7 +18,6 @@
  */
 package org.jclouds.compute;
 
-import java.net.InetAddress;
 import java.util.Set;
 
 import org.jclouds.compute.domain.NodeMetadata;
@@ -59,13 +58,14 @@ public interface LoadBalancerService {
     *           which the server on the instance is listening. Valid instance ports are one (1)
     *           through 65535. This property cannot be modified for the life of the LoadBalancer.
     * 
-    * @return DNS Name of the load balancer
+    * @return DNS Name of the load balancer; note we don't use String, as it is incompatible
+    *         with google appengine.
     */
    @Beta
-   Set<InetAddress> loadBalanceNodesMatching(Predicate<NodeMetadata> filter,
-            String loadBalancerName, String protocol, int loadBalancerPort, int instancePort);
+   Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
+            String protocol, int loadBalancerPort, int instancePort);
 
    @Beta
-   void destroyLoadBalancer(InetAddress handle);
+   void destroyLoadBalancer(String handle);
 
 }

@@ -6,7 +6,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
@@ -53,10 +52,8 @@ public class ServerToNodeMetadataTest {
       Addresses addresses = createMock(Addresses.class);
       expect(server.getAddresses()).andReturn(addresses).atLeastOnce();
 
-      Set<InetAddress> publicAddresses = ImmutableSet.of(InetAddress.getByAddress(new byte[] { 12,
-               10, 10, 1 }));
-      Set<InetAddress> privateAddresses = ImmutableSet.of(InetAddress.getByAddress(new byte[] { 10,
-               10, 10, 1 }));
+      Set<String> publicAddresses = ImmutableSet.of("12.10.10.1");
+      Set<String> privateAddresses = ImmutableSet.of("10.10.10.1");
 
       expect(addresses.getPublicAddresses()).andReturn(publicAddresses);
       expect(addresses.getPrivateAddresses()).andReturn(privateAddresses);

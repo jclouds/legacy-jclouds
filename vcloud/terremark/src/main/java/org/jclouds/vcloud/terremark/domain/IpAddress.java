@@ -20,8 +20,6 @@ package org.jclouds.vcloud.terremark.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
-
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
@@ -49,18 +47,18 @@ public class IpAddress implements Comparable<IpAddress> {
 
    }
 
-   private final InetAddress address;
+   private final String address;
    private final Status status;
    @Nullable
    private final String server;
 
-   public IpAddress(InetAddress address, Status status, String server) {
+   public IpAddress(String address, Status status, String server) {
       this.address = address;
       this.status = status;
       this.server = server;
    }
 
-   public InetAddress getAddress() {
+   public String getAddress() {
       return address;
    }
 
@@ -79,8 +77,7 @@ public class IpAddress implements Comparable<IpAddress> {
 
    @Override
    public int compareTo(IpAddress o) {
-      return (this == o) ? 0 : getAddress().getHostAddress().compareTo(
-               o.getAddress().getHostAddress());
+      return (this == o) ? 0 : getAddress().compareTo(o.getAddress());
    }
 
    @Override

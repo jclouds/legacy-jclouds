@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.terremark;
 
-import java.net.InetAddress;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -120,7 +119,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * @param options
     * @return
     */
-   Node addNode(int internetServiceId, InetAddress ipAddress, String name, int port,
+   Node addNode(int internetServiceId, String ipAddress, String name, int port,
             AddNodeOptions... options);
 
    Node getNode(int nodeId);
@@ -147,8 +146,10 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * You can make more than one change in a single request. For example, you can increase the
     * number of virtual CPUs and the amount of virtual memory in the same request.
     * 
-    * @param vApp vApp to change in power state off
-    * @param configuration(s) to change
+    * @param vApp
+    *           vApp to change in power state off
+    * @param configuration
+    *           (s) to change
     * @return task of configuration change
     */
    Task configureVApp(VApp vApp, VAppConfiguration configuration);

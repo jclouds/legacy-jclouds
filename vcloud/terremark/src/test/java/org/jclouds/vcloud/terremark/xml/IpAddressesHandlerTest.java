@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.SortedSet;
 
@@ -45,8 +44,7 @@ public class IpAddressesHandlerTest extends BaseHandlerTest {
 
       SortedSet<IpAddress> result = factory.create(injector.getInstance(IpAddressesHandler.class))
                .parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new IpAddress(InetAddress
-               .getByName("10.114.34.131"), Status.ASSIGNED, "testforjcloud2"), new IpAddress(
-               InetAddress.getByName("10.114.34.132"), Status.AVAILABLE, null)));
+      assertEquals(result, ImmutableSortedSet.of(new IpAddress("10.114.34.131", Status.ASSIGNED,
+               "testforjcloud2"), new IpAddress("10.114.34.132", Status.AVAILABLE, null)));
    }
 }

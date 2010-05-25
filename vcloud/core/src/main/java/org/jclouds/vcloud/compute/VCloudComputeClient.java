@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.compute;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,12 +65,12 @@ public interface VCloudComputeClient {
    /**
     * returns a set of addresses that are only visible to the private network.
     */
-   Set<InetAddress> getPrivateAddresses(String vAppId);
+   Set<String> getPrivateAddresses(String vAppId);
 
    /**
     * returns a set of addresses that are publically visible
     */
-   Set<InetAddress> getPublicAddresses(String vAppId);
+   Set<String> getPublicAddresses(String vAppId);
 
    /**
     * reboots the vApp, blocking until the following state transition is complete:

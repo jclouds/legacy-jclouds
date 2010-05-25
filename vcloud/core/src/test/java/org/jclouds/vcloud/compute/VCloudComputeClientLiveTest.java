@@ -23,7 +23,6 @@ import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +62,7 @@ public class VCloudComputeClientLiveTest {
    protected VCloudClient client;
 
    protected String id;
-   protected InetAddress publicAddress;
+   protected String publicAddress;
    protected String templateId;
 
    public static class Expectation {
@@ -78,7 +77,7 @@ public class VCloudComputeClientLiveTest {
 
    protected Map<OsFamily, Expectation> expectationMap;
 
-   protected Predicate<InetAddress> addressTester;
+   protected Predicate<String> addressTester;
 
    @Test(enabled = true)
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
@@ -151,7 +150,7 @@ public class VCloudComputeClientLiveTest {
                new JschSshClientModule()).buildInjector();
       computeClient = injector.getInstance(VCloudComputeClient.class);
       client = injector.getInstance(VCloudClient.class);
-      addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {
+      addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<String>>() {
       }));
       expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();

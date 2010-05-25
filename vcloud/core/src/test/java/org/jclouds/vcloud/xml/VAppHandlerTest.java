@@ -21,7 +21,6 @@ package org.jclouds.vcloud.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.SortedSet;
@@ -54,8 +53,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
 
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
-      ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-               .<String, InetAddress> of("Network 1", InetAddress.getByName("204.12.11.167"));
+      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of(
+               "Network 1", "204.12.11.167");
 
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
 
@@ -92,8 +91,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
                .create("http://10.150.4.49/api/v0.8/vApp/10"), VAppStatus.RESOLVED, 123456789l,
                new NamedResourceImpl("4", null, "application/vnd.vmware.vcloud.vdc+xml", URI
                         .create("http://10.150.4.49/api/v0.8/vdc/4")), ImmutableListMultimap
-                        .<String, InetAddress> of(), null, null, ImmutableSet
-                        .<ResourceAllocation> of());
+                        .<String, String> of(), null, null, ImmutableSet.<ResourceAllocation> of());
       assertEquals(result, expects);
    }
 
@@ -102,8 +100,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
 
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
-      ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-               .<String, InetAddress> of("Public Network", InetAddress.getByName("10.150.4.93"));
+      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of(
+               "Public Network", "10.150.4.93");
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "centos53", "vmx-07");
 
       SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet
@@ -148,8 +146,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
 
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
-      ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-               .<String, InetAddress> of("Public Network", InetAddress.getByName("10.23.119.221"));
+      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of(
+               "Public Network", "10.23.119.221");
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "m1", "vmx-07");
 
       SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet

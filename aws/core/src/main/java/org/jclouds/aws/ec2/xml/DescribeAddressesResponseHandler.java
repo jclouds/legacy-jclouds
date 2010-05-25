@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -43,7 +41,7 @@ public class DescribeAddressesResponseHandler extends
    @Resource
    protected Logger logger = Logger.NULL;
    private Set<PublicIpInstanceIdPair> pairs = Sets.newLinkedHashSet();
-   private InetAddress ipAddress;
+   private String ipAddress;
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @EC2
@@ -57,7 +55,7 @@ public class DescribeAddressesResponseHandler extends
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("publicIp")) {
-         ipAddress = parseInetAddress(currentOrNull());
+         ipAddress = currentOrNull();
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("item")) {
@@ -69,20 +67,6 @@ public class DescribeAddressesResponseHandler extends
          instanceId = null;
       }
       currentText = new StringBuilder();
-   }
-
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-         throw new RuntimeException(e);
-      }
    }
 
    public void characters(char ch[], int start, int length) {

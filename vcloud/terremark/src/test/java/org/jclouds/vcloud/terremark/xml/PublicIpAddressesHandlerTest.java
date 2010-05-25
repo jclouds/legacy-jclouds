@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.SortedSet;
@@ -51,12 +50,12 @@ public class PublicIpAddressesHandlerTest extends BaseHandlerTest {
                         .of(
                                  new PublicIpAddress(
                                           8720,
-                                          InetAddress.getByName("204.51.112.91"),
+                                          "204.51.112.91",
                                           URI
                                                    .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720")),
                                  new PublicIpAddress(
                                           14965,
-                                          InetAddress.getByName("204.51.114.79"),
+                                          "204.51.114.79",
                                           URI
                                                    .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/14965"))));
 

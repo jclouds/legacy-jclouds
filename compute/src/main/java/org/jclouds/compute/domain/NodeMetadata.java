@@ -18,7 +18,6 @@
  */
 package org.jclouds.compute.domain;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,12 +54,12 @@ public interface NodeMetadata extends ComputeMetadata {
    /**
     * All public IP addresses, potentially including shared ips.
     */
-   Set<InetAddress> getPublicAddresses();
+   Set<String> getPublicAddresses();
 
    /**
     * All private IP addresses.
     */
-   Set<InetAddress> getPrivateAddresses();
+   Set<String> getPrivateAddresses();
 
    /**
     * If possible, these are returned upon all detail requests. However, it is often the case that

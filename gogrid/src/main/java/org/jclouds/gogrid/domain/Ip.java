@@ -23,8 +23,6 @@
  */
 package org.jclouds.gogrid.domain;
 
-import java.net.InetAddress;
-
 import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
@@ -35,7 +33,7 @@ public class Ip implements Comparable<Ip> {
 
    private long id;
 
-   private InetAddress ip;
+   private String ip;
    private String subnet;
    @SerializedName("public")
    private boolean isPublic;
@@ -53,11 +51,11 @@ public class Ip implements Comparable<Ip> {
     * @param ip
     *           ip address
     */
-   public Ip(InetAddress ip) {
+   public Ip(String ip) {
       this.ip = ip;
    }
 
-   public Ip(long id, InetAddress ip, String subnet, boolean isPublic, IpState state) {
+   public Ip(long id, String ip, String subnet, boolean isPublic, IpState state) {
       this.id = id;
       this.ip = ip;
       this.subnet = subnet;
@@ -69,7 +67,7 @@ public class Ip implements Comparable<Ip> {
       return id;
    }
 
-   public InetAddress getIp() {
+   public String getIp() {
       return ip;
    }
 

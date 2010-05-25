@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.domain.internal;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Set;
 
@@ -43,9 +42,9 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
    private final String description;
-   private final Set<InetAddress> dnsServers = Sets.newHashSet();
-   private final InetAddress gateway;
-   private final InetAddress netmask;
+   private final Set<String> dnsServers = Sets.newHashSet();
+   private final String gateway;
+   private final String netmask;
    private final Set<FenceMode> fenceModes = Sets.newHashSet();
    @Nullable
    private final Boolean dhcp;
@@ -53,9 +52,8 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    private final Set<FirewallRule> firewallRules = Sets.newHashSet();
 
    public NetworkImpl(String id, String name, URI location, String description,
-            Set<InetAddress> dnsServers, InetAddress gateway, InetAddress netmask,
-            Set<FenceMode> fenceModes, Boolean dhcp, Set<NatRule> natRules,
-            Set<FirewallRule> firewallRules) {
+            Set<String> dnsServers, String gateway, String netmask, Set<FenceMode> fenceModes,
+            Boolean dhcp, Set<NatRule> natRules, Set<FirewallRule> firewallRules) {
       super(id, name, VCloudMediaType.NETWORK_XML, location);
       this.description = description;
       this.dnsServers.addAll(dnsServers);
@@ -77,21 +75,21 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    /**
     * {@inheritDoc}
     */
-   public Set<InetAddress> getDnsServers() {
+   public Set<String> getDnsServers() {
       return dnsServers;
    }
 
    /**
     * {@inheritDoc}
     */
-   public InetAddress getGateway() {
+   public String getGateway() {
       return gateway;
    }
 
    /**
     * {@inheritDoc}
     */
-   public InetAddress getNetmask() {
+   public String getNetmask() {
       return netmask;
    }
 

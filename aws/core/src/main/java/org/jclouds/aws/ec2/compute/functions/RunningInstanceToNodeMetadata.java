@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.Utils.nullSafeSet;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -161,8 +160,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       NodeState state = instanceToNodeState.get(instance.getInstanceState());
 
-      Set<InetAddress> publicAddresses = nullSafeSet(instance.getIpAddress());
-      Set<InetAddress> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
+      Set<String> publicAddresses = nullSafeSet(instance.getIpAddress());
+      Set<String> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
 
       Map<String, String> extra = getExtra(instance);
 

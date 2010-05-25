@@ -19,11 +19,12 @@
 package org.jclouds.ssh;
 
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
+import org.jclouds.net.IPSocket;
 
 /**
  * @author Adrian Cole
@@ -31,9 +32,9 @@ import javax.annotation.PreDestroy;
 public interface SshClient {
 
    interface Factory {
-      SshClient create(InetSocketAddress socket, String username, String password);
+      SshClient create(IPSocket socket, String username, String password);
 
-      SshClient create(InetSocketAddress socket, String username, byte[] privateKey);
+      SshClient create(IPSocket socket, String username, byte[] privateKey);
 
       Map<String, String> generateRSAKeyPair(String comment, String passphrase);
    }

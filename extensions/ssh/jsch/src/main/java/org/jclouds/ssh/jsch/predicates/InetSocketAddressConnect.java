@@ -16,44 +16,62 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.predicates;
+package org.jclouds.ssh.jsch.predicates;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.SocketOpen;
 
-import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if an address is reachable.
+ * Tests to see if a socket is open.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class AddressReachable implements Predicate<InetAddress> {
+public class InetSocketAddressConnect implements SocketOpen {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject(optional = true)
-   @Named("org.jclouds.address_timeout")
+   @Named("org.jclouds.socket_timeout")
    private int timeout = 2000;
 
    @Override
-   public boolean apply(InetAddress address) {
+   public boolean apply(IPSocket socketA) {
+      InetSocketAddress socketAddress = new InetSocketAddress(socketA.getAddress(), socketA
+               .getPort());
+      Socket socket = null;
       try {
-         logger.trace("testing address %s", address);
-         return address.isReachable(timeout);
+         logger.trace("testing socket %s", socketAddress);
+         socket = new Socket();
+         socket.setReuseAddress(false);
+         socket.setSoLinger(false, 1);
+         socket.setSoTimeout(timeout);
+         socket.connect(socketAddress, timeout);
       } catch (IOException e) {
          return false;
+      } finally {
+         if (socket != null) {
+            try {
+               socket.close();
+            } catch (IOException ioe) {
+               // no work to do
+            }
+         }
       }
+      return true;
    }
 
 }

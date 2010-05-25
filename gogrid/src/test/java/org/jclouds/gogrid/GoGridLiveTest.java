@@ -25,7 +25,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,10 +54,11 @@ import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.AfterTest;
@@ -345,10 +345,10 @@ public class GoGridLiveTest {
       Credentials instanceCredentials = credsMap.get(createdServer.getName());
       assertNotNull(instanceCredentials);
 
-      InetSocketAddress socket = new InetSocketAddress(createdServer.getIp().getIp(), 22);
+      IPSocket socket = new IPSocket(createdServer.getIp().getIp(), 22);
 
-      Predicate<InetSocketAddress> socketOpen = new RetryablePredicate<InetSocketAddress>(
-               new SocketOpen(), 180, 5, TimeUnit.SECONDS);
+      RetryablePredicate<IPSocket> socketOpen = new RetryablePredicate<IPSocket>(
+               new InetSocketAddressConnect(), 180, 5, TimeUnit.SECONDS);
 
       socketOpen.apply(socket);
 

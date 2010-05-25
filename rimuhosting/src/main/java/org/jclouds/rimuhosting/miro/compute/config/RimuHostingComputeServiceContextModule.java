@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -116,7 +114,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
                .to(
                         new TypeLiteral<ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>>() {
                         }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<Function<Server, Iterable<InetAddress>>>() {
+      bind(new TypeLiteral<Function<Server, Iterable<String>>>() {
       }).to(ServerToPublicAddresses.class);
       bind(AddNodeWithTagStrategy.class).to(RimuHostingAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(RimuHostingListNodesStrategy.class);
@@ -182,13 +180,13 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
    public static class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       private final RimuHostingClient client;
       private final Predicate<Server> serverRunning;
-      private final Function<Server, Iterable<InetAddress>> getPublicAddresses;
+      private final Function<Server, Iterable<String>> getPublicAddresses;
       private final Map<RunningState, NodeState> runningStateToNodeState;
 
       @Inject
       protected RimuHostingAddNodeWithTagStrategy(RimuHostingClient client,
                @Named("RUNNING") Predicate<Server> serverRunning,
-               Function<Server, Iterable<InetAddress>> getPublicAddresses,
+               Function<Server, Iterable<String>> getPublicAddresses,
                Map<RunningState, NodeState> runningStateToNodeState) {
          this.client = client;
          this.serverRunning = serverRunning;
@@ -208,7 +206,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
          NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, server.getId()
                   .toString(), template.getLocation(), null, ImmutableMap.<String, String> of(),
                   tag, template.getImage(), runningStateToNodeState.get(server.getState()),
-                  getPublicAddresses.apply(server), ImmutableList.<InetAddress> of(), ImmutableMap
+                  getPublicAddresses.apply(server), ImmutableList.<String> of(), ImmutableMap
                            .<String, String> of(), new Credentials("root", serverResponse
                            .getNewInstanceRequest().getCreateOptions().getPassword()));
          return node;
@@ -279,7 +277,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
       @Resource
       protected Logger logger = Logger.NULL;
-      private final Function<Server, Iterable<InetAddress>> getPublicAddresses;
+      private final Function<Server, Iterable<String>> getPublicAddresses;
       private final Map<RunningState, NodeState> runningStateToNodeState;
       private final Set<? extends Image> images;
       @SuppressWarnings("unused")
@@ -304,7 +302,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
 
       @SuppressWarnings("unused")
       @Inject
-      ServerToNodeMetadata(Function<Server, Iterable<InetAddress>> getPublicAddresses,
+      ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
                Map<RunningState, NodeState> runningStateToNodeState, Set<? extends Image> images,
                Set<? extends Location> locations) {
          this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
@@ -332,31 +330,19 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
          NodeState state = runningStateToNodeState.get(from.getState());
          return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "",
                   location, null, ImmutableMap.<String, String> of(), tag, image, state,
-                  getPublicAddresses.apply(from), ImmutableList.<InetAddress> of(), ImmutableMap
+                  getPublicAddresses.apply(from), ImmutableList.<String> of(), ImmutableMap
                            .<String, String> of(), creds);
 
       }
    }
 
    @Singleton
-   private static class ServerToPublicAddresses implements Function<Server, Iterable<InetAddress>> {
+   private static class ServerToPublicAddresses implements Function<Server, Iterable<String>> {
       @Override
-      public Iterable<InetAddress> apply(Server server) {
-         Iterable<String> addresses = server.getIpAddresses() == null ? ImmutableSet.<String> of()
-                  : Iterables.concat(ImmutableList.of(server.getIpAddresses().getPrimaryIp()),
-                           server.getIpAddresses().getSecondaryIps());
-         return Iterables.transform(addresses, new Function<String, InetAddress>() {
-
-            @Override
-            public InetAddress apply(String from) {
-               try {
-                  return InetAddress.getByName(from);
-               } catch (UnknownHostException e) {
-                  // TODO: log the failure.
-                  return null;
-               }
-            }
-         });
+      public Iterable<String> apply(Server server) {
+         return server.getIpAddresses() == null ? ImmutableSet.<String> of() : Iterables.concat(
+                  ImmutableList.of(server.getIpAddresses().getPrimaryIp()), server.getIpAddresses()
+                           .getSecondaryIps());
       }
    }
 

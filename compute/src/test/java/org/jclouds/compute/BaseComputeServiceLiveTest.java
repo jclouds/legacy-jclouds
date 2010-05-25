@@ -25,7 +25,6 @@ import static org.testng.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -52,6 +51,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
@@ -89,7 +89,7 @@ public abstract class BaseComputeServiceLiveTest {
    protected SshClient.Factory sshFactory;
    protected String tag;
 
-   protected RetryablePredicate<InetSocketAddress> socketTester;
+   protected RetryablePredicate<IPSocket> socketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
@@ -121,7 +121,7 @@ public abstract class BaseComputeServiceLiveTest {
       Injector injector = Guice.createInjector(getSshModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
       // keyPair = sshFactory.generateRSAKeyPair("", "");
       keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
@@ -165,8 +165,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testImagesCache")
    public void testTemplateMatch() throws Exception {
       template = buildTemplate(client.templateBuilder());
-      Template toMatch = client.templateBuilder().imageId(template.getImage().getId())
-               .build();
+      Template toMatch = client.templateBuilder().imageId(template.getImage().getId()).build();
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
@@ -460,8 +459,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
-      InetSocketAddress socket = new InetSocketAddress(Iterables.get(node.getPublicAddresses(), 0),
-               22);
+      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 22);
       socketTester.apply(socket); // TODO add transitionTo option that accepts a socket conection
       // state.
       SshClient ssh = sshFactory.create(socket, node.getCredentials().account, keyPair.get(

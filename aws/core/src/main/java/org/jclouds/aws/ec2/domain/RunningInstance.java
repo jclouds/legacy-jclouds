@@ -20,7 +20,6 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -128,7 +127,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final InstanceState instanceState;
    private final String instanceType;
    @Nullable
-   private final InetAddress ipAddress;
+   private final String ipAddress;
    @Nullable
    private final String kernelId;
    @Nullable
@@ -141,7 +140,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    @Nullable
    private final String privateDnsName;
    @Nullable
-   private final InetAddress privateIpAddress;
+   private final String privateIpAddress;
    private final Set<String> productCodes;
    @Nullable
    private final String ramdiskId;
@@ -163,10 +162,10 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public RunningInstance(String region, Iterable<String> groupIds,
             @Nullable String amiLaunchIndex, @Nullable String dnsName, String imageId,
             String instanceId, InstanceState instanceState, String instanceType,
-            @Nullable InetAddress ipAddress, @Nullable String kernelId, @Nullable String keyName,
+            @Nullable String ipAddress, @Nullable String kernelId, @Nullable String keyName,
             Date launchTime, boolean monitoring, String availabilityZone,
             @Nullable String platform, @Nullable String privateDnsName,
-            @Nullable InetAddress privateIpAddress, Set<String> productCodes,
+            @Nullable String privateIpAddress, Set<String> productCodes,
             @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
             @Nullable String vpcId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
             Map<String, EbsBlockDevice> ebsBlockDevices) {
@@ -254,7 +253,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * Specifies the IP address of the instance.
     */
-   public InetAddress getIpAddress() {
+   public String getIpAddress() {
       return ipAddress;
    }
 
@@ -311,7 +310,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * Specifies the private IP address that is assigned to the instance (Amazon VPC).
     */
-   public InetAddress getPrivateIpAddress() {
+   public String getPrivateIpAddress() {
       return privateIpAddress;
    }
 

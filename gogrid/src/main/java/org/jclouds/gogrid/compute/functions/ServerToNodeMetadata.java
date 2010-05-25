@@ -20,7 +20,6 @@ package org.jclouds.gogrid.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -92,7 +91,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    public NodeMetadata apply(Server from) {
       Matcher matcher = ALL_BEFORE_HYPHEN_HEX.matcher(from.getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
-      Set<InetAddress> ipSet = ImmutableSet.of(from.getIp().getIp());
+      Set<String> ipSet = ImmutableSet.of(from.getIp().getIp());
       NodeState state = serverStateToNodeState.get(from.getState().getName());
       Credentials creds = client.getServerCredentialsList().get(from.getName());
       Image image = null;
@@ -105,6 +104,6 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       }
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location,
                null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList
-                        .<InetAddress> of(), ImmutableMap.<String, String> of(), creds);
+                        .<String> of(), ImmutableMap.<String, String> of(), creds);
    }
 }

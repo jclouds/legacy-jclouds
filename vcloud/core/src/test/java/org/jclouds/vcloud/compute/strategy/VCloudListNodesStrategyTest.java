@@ -24,7 +24,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -69,8 +68,8 @@ import com.google.inject.util.Providers;
 @Test(groups = "unit", testName = "vcloud.VCloudListNodesStrategyTest")
 public class VCloudListNodesStrategyTest {
    private VApp newVApp() throws UnknownHostException {
-      ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-               .<String, InetAddress> of("Network 1", InetAddress.getLocalHost());
+      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of(
+               "Network 1", "127.0.0.1");
 
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
 

@@ -47,7 +47,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Properties;
 
@@ -188,9 +187,9 @@ public class GridServerAsyncClientTest extends RestClientTest<GridServerAsyncCli
    @Test
    public void testAddServerNoOptions() throws NoSuchMethodException, IOException {
       Method method = GridServerAsyncClient.class.getMethod("addServer", String.class,
-               String.class, String.class, InetAddress.class, AddServerOptions[].class);
+               String.class, String.class, String.class, AddServerOptions[].class);
       GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method,
-               "serverName", "img55", "memory", InetAddress.getByName("127.0.0.1"));
+               "serverName", "img55", "memory", "127.0.0.1");
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/add?v=1.3&"
                + "name=serverName&server.ram=memory&image=img55&ip=127.0.0.1 " + "HTTP/1.1");
@@ -214,9 +213,9 @@ public class GridServerAsyncClientTest extends RestClientTest<GridServerAsyncCli
    @Test
    public void testAddServerOptions() throws NoSuchMethodException, IOException {
       Method method = GridServerAsyncClient.class.getMethod("addServer", String.class,
-               String.class, String.class, InetAddress.class, AddServerOptions[].class);
+               String.class, String.class, String.class, AddServerOptions[].class);
       GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method,
-               "serverName", "img55", "memory", InetAddress.getByName("127.0.0.1"),
+               "serverName", "img55", "memory", "127.0.0.1",
                new AddServerOptions().asSandboxType().withDescription("fooy"));
 
       assertRequestLineEquals(

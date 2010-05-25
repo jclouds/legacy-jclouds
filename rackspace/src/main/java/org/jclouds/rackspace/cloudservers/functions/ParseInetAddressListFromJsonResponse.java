@@ -22,37 +22,37 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
- * This parses a list of {@link InetAddress} from a gson string.
+ * This parses a list of {@link String} from a gson string.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ParseInetAddressListFromJsonResponse extends ParseJson<List<InetAddress>> {
+public class ParseInetAddressListFromJsonResponse extends ParseJson<List<String>> {
 
    @Inject
    public ParseInetAddressListFromJsonResponse(Gson gson) {
       super(gson);
    }
 
-   Map<String, List<InetAddress>> addressMap;
+   Map<String, List<String>> addressMap;
 
-   public List<InetAddress> apply(InputStream stream) {
-      Type flavor = new TypeToken<Map<String, List<InetAddress>>>() {
+   public List<String> apply(InputStream stream) {
+      Type flavor = new TypeToken<Map<String, List<String>>>() {
       }.getType();
       try {
-         Map<String, List<InetAddress>> map = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+         Map<String, List<String>> map = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
                   flavor);
          return map.values().iterator().next();
       } catch (UnsupportedEncodingException e) {

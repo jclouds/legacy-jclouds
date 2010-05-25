@@ -26,7 +26,6 @@ package org.jclouds.gogrid.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
@@ -78,14 +77,13 @@ public class ParseServersFromJsonResponseTest {
       Server server = new Server(75245L, false, "PowerServer",
                "server to test the api. created by Alex", new Option(1L, "On",
                         "Server is in active state."), webServer, new Option(1L, "512MB",
-                        "Server with 512MB RAM"), centOs, new Ip(1313079L, InetAddress
-                        .getByName("204.51.240.178"), "204.51.240.176/255.255.255.240", true,
-                        IpState.ASSIGNED), new ServerImage(1946L,
-                        "GSI-f8979644-e646-4711-ad58-d98a5fa3612c", "BitNami Gallery 2.3.1-0",
-                        "http://bitnami.org/stack/gallery", centOs, null,
-                        ServerImageType.WEB_APPLICATION_SERVER, ServerImageState.AVAILABLE, 0.0,
-                        "24732/GSI-f8979644-e646-4711-ad58-d98a5fa3612c.img", true, true, new Date(
-                                 1261504577971L), new Date(1262649582180L), ImmutableSortedSet.of(
+                        "Server with 512MB RAM"), centOs, new Ip(1313079L, "204.51.240.178",
+                        "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED), new ServerImage(
+                        1946L, "GSI-f8979644-e646-4711-ad58-d98a5fa3612c",
+                        "BitNami Gallery 2.3.1-0", "http://bitnami.org/stack/gallery", centOs,
+                        null, ServerImageType.WEB_APPLICATION_SERVER, ServerImageState.AVAILABLE,
+                        0.0, "24732/GSI-f8979644-e646-4711-ad58-d98a5fa3612c.img", true, true,
+                        new Date(1261504577971L), new Date(1262649582180L), ImmutableSortedSet.of(
                                  new BillingToken(38L, "CentOS 5.2 32bit", 0.0), new BillingToken(
                                           56L, "BitNami: Gallery", 0.0)), new Customer(24732L,
                                  "BitRock")));

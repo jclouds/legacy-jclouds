@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.SortedSet;
 
 import javax.annotation.Nullable;
@@ -44,7 +42,7 @@ public class IpAddressesHandler extends ParseSax.HandlerWithResult<SortedSet<IpA
    protected Logger logger = Logger.NULL;
 
    private SortedSet<IpAddress> addresses = Sets.newTreeSet();
-   private InetAddress address;
+   private String address;
    private Status status;
    @Nullable
    private String server;
@@ -67,7 +65,7 @@ public class IpAddressesHandler extends ParseSax.HandlerWithResult<SortedSet<IpA
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equals("Name")) {
-         address = parseInetAddress(currentOrNull());
+         address = currentOrNull();
       } else if (qName.equals("Status")) {
          status = IpAddress.Status.fromValue(currentOrNull());
       } else if (!skip && qName.equals("Server")) {
@@ -88,20 +86,6 @@ public class IpAddressesHandler extends ParseSax.HandlerWithResult<SortedSet<IpA
    protected String currentOrNull() {
       String returnVal = currentText.toString().trim();
       return returnVal.equals("") ? null : returnVal;
-   }
-
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-      }
-      return null;
    }
 
 }

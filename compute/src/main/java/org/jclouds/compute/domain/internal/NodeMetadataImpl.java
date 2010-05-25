@@ -20,7 +20,6 @@ package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -47,8 +46,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private static final long serialVersionUID = 7924307572338157887L;
 
    private final NodeState state;
-   private final Set<InetAddress> publicAddresses = Sets.newLinkedHashSet();
-   private final Set<InetAddress> privateAddresses = Sets.newLinkedHashSet();
+   private final Set<String> publicAddresses = Sets.newLinkedHashSet();
+   private final Set<String> privateAddresses = Sets.newLinkedHashSet();
    private final Map<String, String> extra = Maps.newLinkedHashMap();
    private final Credentials credentials;
    private final String tag;
@@ -56,8 +55,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
             Map<String, String> userMetadata, @Nullable String tag, @Nullable Image image,
-            NodeState state, Iterable<InetAddress> publicAddresses,
-            Iterable<InetAddress> privateAddresses, Map<String, String> extra,
+            NodeState state, Iterable<String> publicAddresses,
+            Iterable<String> privateAddresses, Map<String, String> extra,
             @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
       this.tag = tag;
@@ -98,7 +97,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
-   public Set<InetAddress> getPublicAddresses() {
+   public Set<String> getPublicAddresses() {
       return publicAddresses;
    }
 
@@ -106,7 +105,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
-   public Set<InetAddress> getPrivateAddresses() {
+   public Set<String> getPrivateAddresses() {
       return privateAddresses;
    }
 

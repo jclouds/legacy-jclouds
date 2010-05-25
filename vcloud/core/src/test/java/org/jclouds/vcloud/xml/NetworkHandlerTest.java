@@ -21,7 +21,6 @@ package org.jclouds.vcloud.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 
@@ -58,8 +57,7 @@ public class NetworkHandlerTest {
       Network result = factory.create(injector.getInstance(NetworkHandler.class)).parse(is);
       assertEquals(result, new NetworkImpl("1708", "10.114.34.128/26", URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"), null,
-               ImmutableSet.<InetAddress> of(), InetAddress.getByName("10.114.34.129"), InetAddress
-                        .getByName("255.255.255.192"), ImmutableSet
+               ImmutableSet.<String> of(), "10.114.34.129", "255.255.255.192", ImmutableSet
                         .<FenceMode> of(FenceMode.ISOLATED), null, ImmutableSet.<NatRule> of(),
                ImmutableSet.<FirewallRule> of()));
    }
@@ -72,10 +70,9 @@ public class NetworkHandlerTest {
                is);
       assertEquals(result, new NetworkImpl("1183", "188849 trust", URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/network/1183"), "188849 trust",
-               ImmutableSet.<InetAddress> of(InetAddress.getByName("76.12.32.110"), InetAddress
-                        .getByName("208.112.89.187")), InetAddress.getByName("204.12.53.89"),
-               InetAddress.getByName("255.255.255.248"), ImmutableSet.<FenceMode> of(), null,
-               ImmutableSet.<NatRule> of(), ImmutableSet.<FirewallRule> of()));
+               ImmutableSet.<String> of("76.12.32.110", "208.112.89.187"), "204.12.53.89",
+               "255.255.255.248", ImmutableSet.<FenceMode> of(), null, ImmutableSet.<NatRule> of(),
+               ImmutableSet.<FirewallRule> of()));
    }
 
 }

@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -38,9 +37,9 @@ public class AllocateAddressResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/allocate_address.xml");
 
-      InetAddress result = factory.create(
-               injector.getInstance(AllocateAddressResponseHandler.class)).parse(is);
+      String result = factory.create(injector.getInstance(AllocateAddressResponseHandler.class))
+               .parse(is);
 
-      assertEquals(result, InetAddress.getByName("67.202.55.255"));
+      assertEquals(result, "67.202.55.255");
    }
 }

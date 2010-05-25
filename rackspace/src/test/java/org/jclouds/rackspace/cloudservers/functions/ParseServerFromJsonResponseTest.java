@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudservers.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -60,10 +59,8 @@ public class ParseServerFromJsonResponseTest {
       assertEquals(response.getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.getStatus(), ServerStatus.BUILD);
       assertEquals(response.getProgress(), new Integer(60));
-      List<InetAddress> publicAddresses = Lists.newArrayList(InetAddress.getByName("67.23.10.132"),
-               InetAddress.getByName("67.23.10.131"));
-      List<InetAddress> privateAddresses = Lists
-               .newArrayList(InetAddress.getByName("10.176.42.16"));
+      List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
+      List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
       Addresses addresses1 = new Addresses();
       addresses1.getPrivateAddresses().addAll(privateAddresses);
       addresses1.getPublicAddresses().addAll(publicAddresses);

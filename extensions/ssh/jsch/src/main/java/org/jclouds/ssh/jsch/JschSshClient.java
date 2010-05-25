@@ -30,8 +30,6 @@ import static com.google.common.collect.Iterables.any;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -43,6 +41,7 @@ import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -85,7 +84,7 @@ public class JschSshClient implements SshClient {
       }
    }
 
-   private final InetAddress host;
+   private final String host;
    private final int port;
    private final String username;
    private final String password;
@@ -112,9 +111,8 @@ public class JschSshClient implements SshClient {
    private final int timeout;
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
-   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler,
-            InetSocketAddress socket, int timeout, String username, String password,
-            byte[] privateKey) {
+   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket,
+            int timeout, String username, String password, byte[] privateKey) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       checkArgument(password != null || privateKey != null, "you must specify a password or a key");
@@ -131,20 +129,20 @@ public class JschSshClient implements SshClient {
       checkNotNull(path, "path");
 
       checkConnected();
-      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host.getHostAddress(), port);
+      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host, port);
       ChannelSftp sftp = null;
       try {
          sftp = (ChannelSftp) session.openChannel("sftp");
          sftp.connect();
       } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host
-                  .getHostAddress(), port), e);
+         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username,
+                  host, port), e);
       }
       try {
          return new CloseFtpChannelOnCloseInputStream(sftp.get(path), sftp);
       } catch (SftpException e) {
-         throw new SshException(String.format("%s@%s:%d: Error getting path: %s", username, host
-                  .getHostAddress(), port, path), e);
+         throw new SshException(String.format("%s@%s:%d: Error getting path: %s", username, host,
+                  port, path), e);
       }
    }
 
@@ -153,20 +151,20 @@ public class JschSshClient implements SshClient {
       checkNotNull(contents, "contents");
 
       checkConnected();
-      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host.getHostAddress(), port);
+      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host, port);
       ChannelSftp sftp = null;
       try {
          sftp = (ChannelSftp) session.openChannel("sftp");
          sftp.connect();
       } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host
-                  .getHostAddress(), port), e);
+         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username,
+                  host, port), e);
       }
       try {
          sftp.put(contents, path);
       } catch (SftpException e) {
-         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host
-                  .getHostAddress(), port, path), e);
+         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host,
+                  port, path), e);
       } finally {
          Closeables.closeQuietly(contents);
       }
@@ -174,7 +172,7 @@ public class JschSshClient implements SshClient {
 
    private void checkConnected() {
       checkState(session != null && session.isConnected(), String.format(
-               "%s@%s:%d: SFTP not connected!", username, host.getHostAddress(), port));
+               "%s@%s:%d: SFTP not connected!", username, host, port));
    }
 
    @PostConstruct
@@ -221,18 +219,17 @@ public class JschSshClient implements SshClient {
 
    private void backoffForAttempt(int retryAttempt, String rootMessage) {
       backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, retryAttempt, sshRetries,
-               String.format("%s@%s:%d: connection error: %s", username, host.getHostAddress(),
-                        port, rootMessage));
+               String.format("%s@%s:%d: connection error: %s", username, host, port, rootMessage));
    }
 
    private void newSession() throws JSchException {
       JSch jsch = new JSch();
       session = null;
       try {
-         session = jsch.getSession(username, host.getHostAddress(), port);
+         session = jsch.getSession(username, host, port);
          if (timeout != 0)
             session.setTimeout(timeout);
-         logger.debug("%s@%s:%d: Session created.", username, host.getHostAddress(), port);
+         logger.debug("%s@%s:%d: Session created.", username, host, port);
          if (password != null) {
             session.setPassword(password);
          } else {
@@ -241,19 +238,19 @@ public class JschSshClient implements SshClient {
                      emptyPassPhrase);
          }
       } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error creating session.", username, host
-                  .getHostAddress(), port), e);
+         throw new SshException(String.format("%s@%s:%d: Error creating session.", username, host,
+                  port), e);
       }
       java.util.Properties config = new java.util.Properties();
       config.put("StrictHostKeyChecking", "no");
       session.setConfig(config);
       session.connect();
-      logger.debug("%s@%s:%d: Session connected.", username, host.getHostAddress(), port);
+      logger.debug("%s@%s:%d: Session connected.", username, host, port);
    }
 
    private SshException propagate(Exception e) {
-      throw new SshException(String.format("%s@%s:%d: Error connecting to session.", username, host
-               .getHostAddress(), port), e);
+      throw new SshException(String.format("%s@%s:%d: Error connecting to session.", username,
+               host, port), e);
    }
 
    @PreDestroy
@@ -272,7 +269,7 @@ public class JschSshClient implements SshClient {
             executor = (ChannelExec) session.openChannel("exec");
          } catch (JSchException e) {
             throw new SshException(String.format("%s@%s:%d: Error connecting to exec.", username,
-                     host.getHostAddress(), port), e);
+                     host, port), e);
          }
          executor.setCommand(command);
          ByteArrayOutputStream error = new ByteArrayOutputStream();
@@ -283,7 +280,7 @@ public class JschSshClient implements SshClient {
                      .toString(), executor.getExitStatus());
          } catch (Exception e) {
             throw new SshException(String.format("%s@%s:%d: Error executing command: ", username,
-                     host.getHostAddress(), port, command), e);
+                     host, port, command), e);
          }
       } finally {
          if (executor != null)
@@ -293,7 +290,7 @@ public class JschSshClient implements SshClient {
 
    @Override
    public String getHostAddress() {
-      return this.host.getHostAddress();
+      return this.host;
    }
 
    @Override

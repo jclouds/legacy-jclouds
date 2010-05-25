@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.xml;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -54,22 +52,22 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
 
    private String description;
 
-   private Set<InetAddress> dnsServers = Sets.newHashSet();
-   private InetAddress gateway;
-   private InetAddress netmask;
+   private Set<String> dnsServers = Sets.newHashSet();
+   private String gateway;
+   private String netmask;
    private Set<FenceMode> fenceModes = Sets.newHashSet();
    private Boolean dhcp;
    private Set<NatRule> natRules = Sets.newHashSet();
    private Set<FirewallRule> firewallRules = Sets.newHashSet();
 
-   private InetAddress externalIP;
+   private String externalIP;
    private Integer externalPort;
-   private InetAddress internalIP;
+   private String internalIP;
    private Integer internalPort;
 
    private Policy policy;
    private Protocol protocol;
-   private InetAddress sourceIP;
+   private String sourceIP;
    private String sourcePort;
 
    public Network getResult() {
@@ -89,11 +87,11 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       if (qName.equals("Description")) {
          description = currentOrNull();
       } else if (qName.equals("Dns")) {
-         dnsServers.add(parseInetAddress(currentOrNull()));
+         dnsServers.add(currentOrNull());
       } else if (qName.equals("Gateway")) {
-         gateway = parseInetAddress(currentOrNull());
+         gateway = currentOrNull();
       } else if (qName.equals("Netmask")) {
-         netmask = parseInetAddress(currentOrNull());
+         netmask = currentOrNull();
       } else if (qName.equals("FenceMode")) {
          fenceModes.add(FenceMode.fromValue(currentOrNull()));
       } else if (qName.equals("Dhcp")) {
@@ -105,11 +103,11 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
          internalIP = null;
          internalPort = null;
       } else if (qName.equals("ExternalIP")) {
-         externalIP = parseInetAddress(currentOrNull());
+         externalIP = currentOrNull();
       } else if (qName.equals("ExternalPort")) {
          externalPort = Integer.parseInt(currentOrNull());
       } else if (qName.equals("InternalIP")) {
-         internalIP = parseInetAddress(currentOrNull());
+         internalIP = currentOrNull();
       } else if (qName.equals("InternalPort")) {
          internalPort = Integer.parseInt(currentOrNull());
       } else if (qName.equals("FirewallRule")) {
@@ -123,7 +121,7 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("Policy")) {
          protocol = Protocol.fromValue(currentOrNull());
       } else if (qName.equals("SourceIp")) {
-         sourceIP = parseInetAddress(currentOrNull());
+         sourceIP = currentOrNull();
       } else if (qName.equals("SourcePort")) {
          sourcePort = currentOrNull();
       }
@@ -140,17 +138,4 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       return returnVal.equals("") ? null : returnVal;
    }
 
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-      }
-      return null;
-   }
 }

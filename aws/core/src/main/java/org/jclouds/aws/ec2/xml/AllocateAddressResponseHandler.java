@@ -18,9 +18,6 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
@@ -29,12 +26,12 @@ import org.jclouds.logging.Logger;
 /**
  * @author Adrian Cole
  */
-public class AllocateAddressResponseHandler extends HandlerWithResult<InetAddress> {
+public class AllocateAddressResponseHandler extends HandlerWithResult<String> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private InetAddress ipAddress;
+   private String ipAddress;
    private StringBuilder currentText = new StringBuilder();
 
    protected String currentOrNull() {
@@ -44,23 +41,9 @@ public class AllocateAddressResponseHandler extends HandlerWithResult<InetAddres
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("publicIp")) {
-         ipAddress = parseInetAddress(currentOrNull());
+         ipAddress = currentOrNull();
       }
       currentText = new StringBuilder();
-   }
-
-   private InetAddress parseInetAddress(String string) {
-      String[] byteStrings = string.split("\\.");
-      byte[] bytes = new byte[4];
-      for (int i = 0; i < 4; i++) {
-         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
-      }
-      try {
-         return InetAddress.getByAddress(bytes);
-      } catch (UnknownHostException e) {
-         logger.warn(e, "error parsing ipAddress", currentText);
-         throw new RuntimeException(e);
-      }
    }
 
    public void characters(char ch[], int start, int length) {
@@ -68,7 +51,7 @@ public class AllocateAddressResponseHandler extends HandlerWithResult<InetAddres
    }
 
    @Override
-   public InetAddress getResult() {
+   public String getResult() {
       return ipAddress;
    }
 

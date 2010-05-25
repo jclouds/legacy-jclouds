@@ -69,12 +69,12 @@ public class InternetServiceLiveTest {
       PublicIpAddress ip = is.getPublicIpAddress();
       for (int port : new int[] { 80, 8080 }) {
          services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
-            Protocol.HTTP, port));
+                  Protocol.HTTP, port));
       }
    }
 
    private void delete(SortedSet<InternetService> set) {
-	  Set<Integer> publicIps = Sets.newHashSet();
+      Set<Integer> publicIps = Sets.newHashSet();
       for (InternetService service : set) {
          for (Node node : tmClient.getNodes(service.getId())) {
             tmClient.deleteNode(node.getId());
@@ -83,7 +83,7 @@ public class InternetServiceLiveTest {
          publicIps.add(service.getPublicIpAddress().getId());
       }
       for (int id : publicIps) {
-          tmClient.deletePublicIp(id);
+         tmClient.deletePublicIp(id);
       }
    }
 
@@ -104,9 +104,9 @@ public class InternetServiceLiveTest {
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new TerremarkVCloudContextBuilder("terremark", new TerremarkVCloudPropertiesBuilder(
-               account, key).build()).withModules(new Log4JLoggingModule(),
-               new JschSshClientModule()).buildInjector();
+      Injector injector = new TerremarkVCloudContextBuilder("terremark",
+               new TerremarkVCloudPropertiesBuilder(account, key).build()).withModules(
+               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
 
@@ -115,10 +115,9 @@ public class InternetServiceLiveTest {
    void print(SortedSet<InternetService> set) {
       for (InternetService service : set) {
          System.out.printf("%d (%s:%d%n)", service.getId(), service.getPublicIpAddress()
-                  .getAddress().getHostAddress(), service.getPort());
+                  .getAddress(), service.getPort());
          for (Node node : tmClient.getNodes(service.getId())) {
-            System.out.printf("   %d (%s:%d%n)", node.getId(),
-                     node.getIpAddress().getHostAddress(), node.getPort());
+            System.out.printf("   %d (%s:%d%n)", node.getId(), node.getIpAddress(), node.getPort());
          }
       }
    }
