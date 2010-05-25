@@ -37,8 +37,10 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
+import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.net.IPSocket;
 import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -86,7 +88,7 @@ public class MainApp {
             RunningInstance instance = createSecurityGroupKeyPairAndInstance(client, name);
 
             System.out.printf("instance %s ready%n", instance.getId());
-            System.out.printf("ip address: %s%n", instance.getIpAddress().getHostAddress());
+            System.out.printf("ip address: %s%n", instance.getIpAddress());
             System.out.printf("dns name: %s%n", instance.getDnsName());
             System.out.printf("login identity:%n%s%n", pair.getKeyMaterial());
 
@@ -190,11 +192,11 @@ public class MainApp {
 
       instance = findInstanceById(client, instance.getId());
 
-      RetryablePredicate<InetSocketAddress> socketTester = new RetryablePredicate<InetSocketAddress>(
-               new SocketOpen(), 300, 1, TimeUnit.SECONDS);
+      RetryablePredicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(
+               new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
-      if (!socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 22)))
+      if (!socketTester.apply(new IPSocket(instance.getIpAddress(), 22)))
          throw new TimeoutException("timeout waiting for ssh to start: " + instance.getIpAddress());
 
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance
@@ -202,7 +204,7 @@ public class MainApp {
 
       System.out.printf("%d: %s awaiting http service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
-      if (!socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 80)))
+      if (!socketTester.apply(new IPSocket(instance.getIpAddress(), 80)))
          throw new TimeoutException("timeout waiting for http to start: " + instance.getIpAddress());
 
       System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance
