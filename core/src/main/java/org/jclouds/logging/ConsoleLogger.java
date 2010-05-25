@@ -43,7 +43,7 @@ public class ConsoleLogger implements Logger {
     */
    @Override
    public void error(String message, Object... args) {
-      System.err.printf("ERROR: %s%n", message, args);
+      System.err.printf(String.format("ERROR: %s%n", message), args);
    }
 
    /**
@@ -51,8 +51,8 @@ public class ConsoleLogger implements Logger {
     */
    @Override
    public void error(Throwable throwable, String message, Object... args) {
-      System.err
-               .printf("ERROR: %s%n%s", message, args, Throwables.getStackTraceAsString(throwable));
+      System.err.printf(String.format("ERROR: %s%n%s", message, Throwables
+               .getStackTraceAsString(throwable)), args);
    }
 
    /**
@@ -68,7 +68,7 @@ public class ConsoleLogger implements Logger {
     */
    @Override
    public void info(String message, Object... args) {
-      System.err.printf("INFO: %s%n", message, args);
+      System.err.printf(String.format("INFO: %s%n", message), args);
    }
 
    /**
@@ -128,7 +128,7 @@ public class ConsoleLogger implements Logger {
     */
    @Override
    public void warn(String message, Object... args) {
-      System.err.printf("WARN: %s%n", message, args);
+      System.err.printf(String.format("WARN: %s%n", message), args);
    }
 
    /**
@@ -136,7 +136,8 @@ public class ConsoleLogger implements Logger {
     */
    @Override
    public void warn(Throwable throwable, String message, Object... args) {
-      System.err.printf("WARN: %s%n%s", message, args, Throwables.getStackTraceAsString(throwable));
+      System.err.printf(String.format("WARN: %s%n%s", message, Throwables
+               .getStackTraceAsString(throwable)), args);
    }
 
 }

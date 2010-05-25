@@ -18,11 +18,11 @@
  */
 package org.jclouds.azure.azurequeue;
 
-import java.util.Set;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+
+import java.util.Map;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.AzureQueueAsyncClient;
@@ -30,9 +30,12 @@ import org.jclouds.azure.storage.queue.AzureQueueClient;
 import org.jclouds.azure.storage.queue.AzureQueueContextFactory;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
+import org.jclouds.logging.ConsoleLogger;
+import org.jclouds.logging.Logger;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContext;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -48,6 +51,21 @@ public class SpeedTest {
 
    public static int PARAMETERS = 4;
    public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"account\" \"encodedKey\"  \"queueName\" \"messageCount\" ";
+   private static final Logger logger = Logger.CONSOLE;
+
+   private static final Logger traceLogger = new ConsoleLogger() {
+
+      @Override
+      public boolean isTraceEnabled() {
+         return true;
+      }
+
+      @Override
+      public void trace(String message, Object... args) {
+         super.info(message, args);
+      }
+
+   };
 
    public static void main(String[] args) throws InterruptedException {
 
@@ -69,7 +87,7 @@ public class SpeedTest {
 
       try {
          if (purgeQueues(queueName, context)) {
-            System.out.printf("pausing 60 seconds before recreating queues%n");
+            logger.info("pausing 60 seconds before recreating queues");
             Thread.sleep(60 * 1000);
          }
          createQueue(queueName, context);
@@ -83,52 +101,50 @@ public class SpeedTest {
 
    }
 
+   private static class QueueMessage {
+      final String queue;
+      final String message;
+
+      QueueMessage(String queue, String message) {
+         this.queue = queue;
+         this.message = message;
+      }
+
+      @Override
+      public String toString() {
+         return "[queue=" + queue + ", message=" + message + "]";
+      }
+   }
+
    private static void runTests(String queueName, int messageCount, String contextName,
             RestContext<AzureQueueAsyncClient, AzureQueueClient> context)
             throws InterruptedException {
       String message = "1";
       long timeOut = messageCount * 200; // minimum rate should be at least 5/second
 
-      int complete = 0;
-      int errors = 0;
-      long start = System.currentTimeMillis();
+      logger.info("context: %s, queueName: %s", contextName, queueName);
 
       // fire off all the messages for the test
-      Set<ListenableFuture<Void>> responses = Sets.newHashSet();
+      Map<QueueMessage, ListenableFuture<Void>> responses = Maps.newHashMap();
       for (int i = 0; i < messageCount; i++) {
-         responses.add(context.getAsyncApi().putMessage(queueName, message));
+         responses.put(new QueueMessage(queueName, message), context.getAsyncApi().putMessage(
+                  queueName, message));
       }
 
-      do {
-         Set<ListenableFuture<Void>> retries = Sets.newHashSet();
-         for (ListenableFuture<Void> response : responses) {
-            try {
-               response.get(100, TimeUnit.MILLISECONDS);
-               complete++;
-            } catch (ExecutionException e) {
-               System.err.println(e.getMessage());
-               errors++;
-            } catch (TimeoutException e) {
-               retries.add(response);
-            }
-         }
-         responses = Sets.newHashSet(retries);
-      } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
-      long duration = System.currentTimeMillis() - start;
-      if (duration > timeOut)
-         System.out.printf("TIMEOUT: context: %s, rate: %f messages/second%n", contextName,
-                  ((double) complete) / (duration / 1000.0));
-      else
-         System.out.printf("COMPLETE: context: %s, rate: %f messages/second%n", contextName,
-                  ((double) complete) / (duration / 1000.0));
+      Map<QueueMessage, Exception> exceptions = awaitCompletion(responses, sameThreadExecutor(),
+               timeOut, traceLogger, String.format("context: %s", contextName));
+
+      if (exceptions.size() > 0)
+         logger.error("problems in context: %s: %s", contextName, exceptions);
+
       System.gc();
-      System.out.println("pausing 5 seconds before the next run");
+      logger.info("pausing 5 seconds before the next run");
       Thread.sleep(5000);// let the network quiet down
    }
 
    private static void createQueue(String queueName,
             RestContext<AzureQueueAsyncClient, AzureQueueClient> nullLoggingDefaultContext) {
-      System.out.printf("creating queue: %s%n", queueName);
+      logger.info("creating queue: %s", queueName);
       nullLoggingDefaultContext.getApi().createQueue(queueName);
    }
 

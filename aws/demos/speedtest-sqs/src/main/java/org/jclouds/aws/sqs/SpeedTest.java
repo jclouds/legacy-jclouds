@@ -18,21 +18,24 @@
  */
 package org.jclouds.aws.sqs;
 
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.aws.sqs.options.ListQueuesOptions.Builder.queuePrefix;
+import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
+import org.jclouds.logging.ConsoleLogger;
+import org.jclouds.logging.Logger;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -45,9 +48,26 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 public class SpeedTest {
+   private static final ImmutableSet<String> REGIONS = ImmutableSet.of(Region.EU_WEST_1,
+            Region.US_EAST_1, Region.US_WEST_1, Region.AP_SOUTHEAST_1);
+   public static final int PARAMETERS = 4;
+   public static final String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretkey\"  \"queueName\" \"messageCount\" ";
 
-   public static int PARAMETERS = 4;
-   public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretkey\"  \"queueName\" \"messageCount\" ";
+   private static final Logger logger = Logger.CONSOLE;
+
+   private static final Logger traceLogger = new ConsoleLogger() {
+
+      @Override
+      public boolean isTraceEnabled() {
+         return true;
+      }
+
+      @Override
+      public void trace(String message, Object... args) {
+         super.info(message, args);
+      }
+
+   };
 
    public static void main(String[] args) throws InterruptedException {
 
@@ -69,7 +89,7 @@ public class SpeedTest {
       try {
          Set<Queue> queues = Sets.newHashSet();
          if (purgeQueues(queueName, context)) {
-            System.out.printf("pausing 60 seconds before recreating queues%n");
+            logger.info("pausing 60 seconds before recreating queues");
             Thread.sleep(60 * 1000);
          }
          createQueues(queueName, context, queues);
@@ -83,6 +103,21 @@ public class SpeedTest {
 
    }
 
+   private static class QueueMessage {
+      final Queue queue;
+      final String message;
+
+      QueueMessage(Queue queue, String message) {
+         this.queue = queue;
+         this.message = message;
+      }
+
+      @Override
+      public String toString() {
+         return "[queue=" + queue + ", message=" + message + "]";
+      }
+   }
+
    private static void runTests(int messageCount, String contextName,
             RestContext<SQSAsyncClient, SQSClient> context, Set<Queue> queues)
             throws InterruptedException {
@@ -90,48 +125,34 @@ public class SpeedTest {
       long timeOut = messageCount * 200; // minimum rate should be at least 5/second
 
       for (Queue queue : queues) {
-         int complete = 0;
-         int errors = 0;
-         long start = System.currentTimeMillis();
+         logger.info("context: %s, region: %s, queueName: %s", contextName, queue.getRegion(),
+                  queue.getName());
 
          // fire off all the messages for the test
-         Set<ListenableFuture<byte[]>> responses = Sets.newHashSet();
+         Map<QueueMessage, ListenableFuture<byte[]>> responses = Maps.newHashMap();
          for (int i = 0; i < messageCount; i++) {
-            responses.add(context.getAsyncApi().sendMessage(queue, message));
+            responses.put(new QueueMessage(queue, message), context.getAsyncApi().sendMessage(
+                     queue, message));
          }
 
-         do {
-            Set<ListenableFuture<byte[]>> retries = Sets.newHashSet();
-            for (ListenableFuture<byte[]> response : responses) {
-               try {
-                  response.get(100, TimeUnit.MILLISECONDS);
-                  complete++;
-               } catch (ExecutionException e) {
-                  System.err.println(e.getMessage());
-                  errors++;
-               } catch (TimeoutException e) {
-                  retries.add(response);
-               }
-            }
-            responses = Sets.newHashSet(retries);
-         } while (responses.size() > 0 && System.currentTimeMillis() < start + timeOut);
-         long duration = System.currentTimeMillis() - start;
-         if (duration > timeOut)
-            System.out.printf("TIMEOUT: context: %s, region: %s, rate: %f messages/second%n",
-                     contextName, queue.getRegion(), ((double) complete) / (duration / 1000.0));
-         else
-            System.out.printf("COMPLETE:  context: %s, region: %s, rate: %f messages/second%n",
-                     contextName, queue.getRegion(), ((double) complete) / (duration / 1000.0));
+         Map<QueueMessage, Exception> exceptions = awaitCompletion(responses, sameThreadExecutor(),
+                  timeOut, traceLogger, String.format("context: %s, region: %s", contextName, queue
+                           .getRegion()));
+
+         if (exceptions.size() > 0)
+            logger.error("problems in context: %s, region: %s: %s", contextName, queue.getRegion(),
+                     exceptions);
+
          System.gc();
-         System.out.println("pausing 5 seconds before the next run");
+         logger.info("pausing 5 seconds before the next run");
          Thread.sleep(5000);// let the network quiet down
       }
    }
 
    private static void createQueues(String queueName,
             RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext, Set<Queue> queues) {
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
-         System.out.printf("creating queue: %s in region %s%n", queueName, region);
+      for (String region : REGIONS) {
+         logger.info("creating queue: %s in region %s", queueName, region);
          queues.add(nullLoggingDefaultContext.getApi().createQueueInRegion(region, queueName));
       }
    }
@@ -139,13 +160,13 @@ public class SpeedTest {
    private static boolean purgeQueues(String queueName,
             RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext) {
       boolean deleted = false;
-      for (String region : ImmutableSet.of(Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1)) {
+      for (String region : REGIONS) {
          try {
             SortedSet<Queue> result = Sets.newTreeSet(nullLoggingDefaultContext.getApi()
                      .listQueuesInRegion(region, queuePrefix(queueName)));
             if (result.size() >= 1) {
                nullLoggingDefaultContext.getApi().deleteQueue(result.last());
-               System.out.printf("deleted queue: %s in region %s%n", queueName, region);
+               logger.info("deleted queue: %s in region %s", queueName, region);
                deleted = true;
             }
          } catch (Exception e) {

@@ -21,4 +21,4 @@
 # 1. execute 'mvn install' to build the sample
 # 2. invoke the jar, passing your aws credentials and the bucket you wish to create
 # ex.
-#   java -jar target/jclouds-speedtest-sqs-jar-with-dependencies.jar accesskey secretkey queueName messageCount
+# java -jar target/jclouds-speedtest-sqs-jar-with-dependencies.jar $AWS_USER $AWS_PWD testqueue 1000

@@ -21,4 +21,4 @@
 # 1. execute 'mvn install' to build the sample
 # 2. invoke the jar, passing your azure credentials and the bucket you wish to create
 # ex.
-#   java -jar target/jclouds-speedtest-azurequeue-jar-with-dependencies.jar accountName encodedKey queueName messageCount
+#  java -jar target/jclouds-demo-speedtest-azurequeue-jar-with-dependencies.jar $AZURE_USER $AZURE_PWD testqueue 1000
