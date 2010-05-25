@@ -121,10 +121,6 @@ See http://code.google.com/p/jclouds for details."
   ([#^ComputeService compute]
      (seq (.listAssignableLocations compute))))
 
-(defn nodes-with-tag
-  [#^String tag #^ComputeService compute]
-    (seq (.listNodesDetailsMatching compute (NodePredicates/withTag tag))))
-
 (defn nodes
   "Retrieve the existing nodes for the compute context."
   ([] (nodes *compute*))
@@ -137,6 +133,12 @@ See http://code.google.com/p/jclouds for details."
   ([#^ComputeService compute]
     (seq (.listNodesDetailsMatching compute (NodePredicates/all)))))
 
+(defn nodes-with-tag
+  "list details of all the nodes with the given tag."
+  ([tag] (nodes-with-tag tag *compute*))
+  ([#^String tag #^ComputeService compute]
+    (filter #(= (.getTag %) tag) (nodes-with-details compute))))
+    
 (defn images
   "Retrieve the available images for the compute context."
   ([] (images *compute*))
