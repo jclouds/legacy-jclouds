@@ -4,7 +4,7 @@ jclouds is an open source framework that helps you get started in the cloud
 and reuse your java and clojure development skills. Our api allows you to 
 freedom to use portable abstractions or cloud-specific features.
  
-our current version is 1.0-beta-5
+our current version is 1.0-beta-6
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, gogrid, rackspace, rimuhosting, vcloud, terremark, 
@@ -64,7 +64,7 @@ Compute Example (Clojure):
     (run-nodes "mycluster" 2))
  
 Downloads:
-  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-5.zip
+  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-6.zip
   * maven repo: http://jclouds.googlecode.com/svn/repo 
   * snapshot repo: http://jclouds.rimuhosting.com/maven2/snapshots
  
