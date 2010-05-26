@@ -58,8 +58,8 @@
       (instance? NodeMetadata v) (let [zone (compute/location v)]
                                    ; no easier way to go from zone -> region?
                                    (if (> (.indexOf zone "-") -1)
-                                                       (subs zone 0 (-> zone count dec))
-                                                       zone))
+                                     (subs zone 0 (-> zone count dec))
+                                     zone))
     :else default-region)))
 
 (defn get-volume-id
@@ -186,7 +186,7 @@
           (attach-volume some-node-instance :vol-45228a6d \"/dev/sdh\")
           (attach-volume some-node-instance some-volume-instance \"/dev/sdh\"))"
   ([#^NodeMetadata node volume device]
-    (attach-volume node (.getId node) (get-volume-id volume) device))
+    (attach-volume node (.getProviderId node) (get-volume-id volume) device))
   ([region instance-id volume-id device]
     (apply #(.attachVolumeInRegion (ebs-service)
               (get-region region) % %2 %3)
