@@ -45,7 +45,7 @@
 (defn associate
   "Associates an elastic IP address with a node."
   ([#^NodeMetadata node public-ip]
-    (associate node public-ip (.getId node)))
+    (associate node public-ip (.getProviderId node)))
   ([region public-ip instance-id]
     (.associateAddressInRegion (eip-service)
       (ebs/get-region region)
