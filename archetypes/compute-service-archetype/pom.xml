@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-archetypes</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-beta-6</version>
   </parent>
   <artifactId>jclouds-compute-service-archetype</artifactId>
   <name>jclouds Compute service archetype</name>

@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-thirdparty-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-beta-6</version>
     </parent>
     <groupId>org.jboss.resteasy</groupId>
     <artifactId>resteasy-jaxrs-client</artifactId>
-    <version>1.2.1.GA-SNAPSHOT</version>
+    <version>1.2.1.GA</version>
     <name>RESTEasy JAX-RS Client Implementation</name>
     <dependencies>
         <dependency>
