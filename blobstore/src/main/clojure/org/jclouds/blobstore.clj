@@ -133,7 +133,7 @@ Options can also be specified for extension modules
     (apply list-container *blobstore* blobstore args)))
 
 (defn- list-blobs-chunk [container prefix blobstore & [marker]]
-  (apply blobstore/list-container blobstore container
+  (apply list-container blobstore container
          :in-directory prefix (when (string? marker)
                                 [:after-marker marker])))
 
