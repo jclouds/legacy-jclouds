@@ -44,22 +44,40 @@
  */
 package ${package};
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Properties;
 
-import javax.inject.Qualifier;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
+
+import com.google.inject.Module;
 
 /**
- * Related to a ${clientName} resource.
+ * Creates {@link RestContext} for {@link ${providerName}Client} instances based on the most commonly
+ * requested arguments.
+ * <p/>
+ * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * <p/>
+ * <p/>
+ * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author ${author}
- * 
+ * @see RestContext
+ * @see ${providerName}Client
+ * @see ${providerName}AsyncClient
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface ${clientName} {
+public class ${providerName}ContextFactory {
+
+   public static RestContext<${providerName}AsyncClient, ${providerName}Client> createContext(String user, String password,
+            Module... modules) {
+      return new ${providerName}ContextBuilder("${artifactId}", new ${providerName}PropertiesBuilder(user, password).build())
+               .withModules(modules).buildContext();
+   }
+
+   public static RestContext<${providerName}AsyncClient, ${providerName}Client> createContext(Properties properties, Module... modules) {
+      return new ${providerName}ContextBuilder("${artifactId}", new ${providerName}PropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
+   }
 
 }

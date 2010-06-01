@@ -16,7 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-#set( $ucaseClientName = ${clientName.toUpperCase()} )
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
@@ -45,40 +44,28 @@
  */
 package ${package};
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.concurrent.TimeUnit;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.jclouds.rest.RestContextBuilder;
-import ${package}.config.${clientName}ContextModule;
-import ${package}.config.${clientName}RestClientModule;
-import ${package}.reference.${clientName}Constants;
-
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import org.jclouds.concurrent.Timeout;
 
 /**
+ * Provides synchronous access to ${providerName}.
+ * <p/>
  * 
+ * @see ${providerName}AsyncClient
+ * @see <a href="TODO: insert URL of ${providerName} documentation" />
  * @author ${author}
  */
-public class ${clientName}ContextBuilder extends RestContextBuilder<${clientName}AsyncClient, ${clientName}Client> {
-
-   public ${clientName}ContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<${clientName}AsyncClient>() {
-      }, new TypeLiteral<${clientName}Client>() {
-      }, props);
-      checkNotNull(properties.getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_USER));
-      checkNotNull(properties.getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_PASSWORD));
-   }
-
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new ${clientName}RestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new ${clientName}ContextModule(providerName));
-   }
+@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+public interface ${providerName}Client {
+   /*
+    * Note all these delegate to methods in ${providerName}AsyncClient with a specified or inherited timeout.
+    *   The singatures should match those of ${providerName}AsyncClient, except the returnvals should not be 
+    *   wrapped in a ListenableFuture 
+    */
+   
+   String list();
+   
+   String get(long id);
 
 }

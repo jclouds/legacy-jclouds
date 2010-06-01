@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,18 +19,21 @@
     ====================================================================
 
 -->
-<archetype-descriptor name="jclouds-compute-service-archetype">
+<archetype-descriptor name="jclouds-compute-service-archetype" partial="true">
   <requiredProperties>
     <requiredProperty key="groupId">
       <defaultValue>org.jclouds</defaultValue>
-    </requiredProperty>      
+    </requiredProperty>
+    <requiredProperty key="package" >
+     <defaultValue>${groupId}.${artifactId}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="author">
       <defaultValue>Adrian Cole</defaultValue>
     </requiredProperty>
     <requiredProperty key="providerName" />
     <requiredProperty key="providerEndpoint" />
-    <requiredProperty key="providerUser" />
-    <requiredProperty key="providerPassword" />    
+    <requiredProperty key="providerAccount" />
+    <requiredProperty key="providerKey" />  
   </requiredProperties>
   <fileSets>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
@@ -45,16 +48,10 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/test/resources</directory>
-      <includes>
-        <include>**/*.xml</include>
-      </includes>
-    </fileSet>
     <fileSet encoding="UTF-8">
       <directory>src/test/resources</directory>
       <includes>
-        <include>**/*.json</include>
+        <include>**/*.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
@@ -62,6 +59,6 @@
       <includes>
         <include>.gitignore</include>
       </includes>
-    </fileSet>
+    </fileSet>    
   </fileSets>
 </archetype-descriptor>

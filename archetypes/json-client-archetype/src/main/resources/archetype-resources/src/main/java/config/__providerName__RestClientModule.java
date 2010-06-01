@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-#set( $ucaseClientName = ${clientName.toUpperCase()} )
+#set( $ucaseProviderName = ${providerName.toUpperCase()} )
 /**
  *
  * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -42,44 +42,78 @@
  */
 package ${package}.config;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
-import ${package}.${clientName};
-import ${package}.${clientName}AsyncClient;
-import ${package}.${clientName}Client;
-import ${package}.reference.${clientName}Constants;
+import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestClientFactory;
+import org.jclouds.encryption.EncryptionService;
+
+import ${package}.${providerName};
+import ${package}.${providerName}Client;
+import ${package}.${providerName}AsyncClient;
+import ${package}.reference.${providerName}Constants;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the ${clientName} connection, including logging and http transport.
+ * Configures the ${providerName} connection.
  * 
  * @author ${author}
  */
-public class ${clientName}ContextModule extends AbstractModule {
-   
-   public ${clientName}ContextModule(String providerName) {
-      // providerName ignored right now
-   }
-   
+@RequiresHttp
+@ConfiguresRestClient
+public class ${providerName}RestClientModule extends AbstractModule {
+
    @Override
    protected void configure() {
-      // example of how to customize bindings
-      // bind(DateAdapter.class).to(CDateAdapter.class);
+      bindErrorHandlers();
+      bindRetryHandlers();
    }
 
    @Provides
    @Singleton
-   RestContext<${clientName}AsyncClient, ${clientName}Client> provideContext(Closer closer, ${clientName}AsyncClient asyncApi,
-            ${clientName}Client syncApi, @${clientName} URI endPoint, @Named(${clientName}Constants.PROPERTY_${ucaseClientName}_USER) String account) {
-      return new RestContextImpl<${clientName}AsyncClient, ${clientName}Client>(closer, asyncApi, syncApi, endPoint, account);
+   public BasicAuthentication provideBasicAuthentication(
+            @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER) String user,
+            @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_PASSWORD) String password,
+            EncryptionService encryptionService)
+            throws UnsupportedEncodingException {
+      return new BasicAuthentication(user, password, encryptionService);
+   }
+
+   @Provides
+   @Singleton
+   protected ${providerName}AsyncClient provideClient(RestClientFactory factory) {
+      return factory.create(${providerName}AsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public ${providerName}Client provideClient(${providerName}AsyncClient provider) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(${providerName}Client.class, provider);
+   }
+   
+   @Provides
+   @Singleton
+   @${providerName}
+   protected URI provideURI(@Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
+   }
+
+   protected void bindErrorHandlers() {
+      // TODO
+   }
+
+   protected void bindRetryHandlers() {
+      // TODO
    }
 
 }

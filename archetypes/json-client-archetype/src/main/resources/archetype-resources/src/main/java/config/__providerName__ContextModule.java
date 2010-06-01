@@ -16,9 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
+#set( $ucaseProviderName = ${providerName.toUpperCase()} )
 /**
  *
  * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -42,30 +40,46 @@
  * under the License.
  * ====================================================================
  */
-package ${package};
+package ${package}.config;
 
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
 
-import org.jclouds.concurrent.Timeout;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
+import ${package}.${providerName};
+import ${package}.${providerName}AsyncClient;
+import ${package}.${providerName}Client;
+import ${package}.reference.${providerName}Constants;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
- * Provides synchronous access to ${clientName}.
- * <p/>
+ * Configures the ${providerName} connection, including logging and http transport.
  * 
- * @see ${clientName}AsyncClient
- * @see <a href="TODO: insert URL of ${clientName} documentation" />
  * @author ${author}
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
-public interface ${clientName}Client {
-   /*
-    * Note all these delegate to methods in ${clientName}AsyncClient with a specified or inherited timeout.
-    *   The singatures should match those of ${clientName}AsyncClient, except the returnvals should not be 
-    *   wrapped in a ListenableFuture 
-    */
+public class ${providerName}ContextModule extends AbstractModule {
    
-   String list();
+   public ${providerName}ContextModule(String providerName) {
+      // providerName ignored right now
+   }
    
-   String get(long id);
+   @Override
+   protected void configure() {
+      // example of how to customize bindings
+      // bind(DateAdapter.class).to(CDateAdapter.class);
+   }
+
+   @Provides
+   @Singleton
+   RestContext<${providerName}AsyncClient, ${providerName}Client> provideContext(Closer closer, ${providerName}AsyncClient asyncApi,
+            ${providerName}Client syncApi, @${providerName} URI endPoint, @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER) String account) {
+      return new RestContextImpl<${providerName}AsyncClient, ${providerName}Client>(closer, asyncApi, syncApi, endPoint, account);
+   }
 
 }

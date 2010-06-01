@@ -30,10 +30,10 @@
     <requiredProperty key="author">
       <defaultValue>Adrian Cole</defaultValue>
     </requiredProperty>
-    <requiredProperty key="clientName" />
-    <requiredProperty key="clientEndpoint" />
-    <requiredProperty key="clientUser" />
-    <requiredProperty key="clientPassword" />    
+    <requiredProperty key="providerName" />
+    <requiredProperty key="providerEndpoint" />
+    <requiredProperty key="providerAccount" />
+    <requiredProperty key="providerKey" />    
   </requiredProperties>
   <fileSets>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">

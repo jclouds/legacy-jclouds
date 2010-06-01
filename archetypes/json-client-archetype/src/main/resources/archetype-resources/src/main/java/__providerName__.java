@@ -16,8 +16,9 @@
  * limitations under the License.
  * ====================================================================
  */
-#set( $lcaseClientName = ${clientName.toLowerCase()} )
-#set( $ucaseClientName = ${clientName.toUpperCase()} )
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  *
  * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -41,15 +42,24 @@
  * under the License.
  * ====================================================================
  */
-package ${package}.reference;
+package ${package};
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Configuration properties and constants used in ${clientName} connections.
+ * Related to a ${providerName} resource.
  * 
  * @author ${author}
+ * 
  */
-public interface ${clientName}Constants {
-   public static final String PROPERTY_${ucaseClientName}_ENDPOINT = "jclouds.${lcaseClientName}.endpoint";
-   public static final String PROPERTY_${ucaseClientName}_USER = "jclouds.${lcaseClientName}.user";
-   public static final String PROPERTY_${ucaseClientName}_PASSWORD = "jclouds.${lcaseClientName}.password";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface ${providerName} {
+
 }

@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@
   </parent>
   <artifactId>jclouds-json-client-archetype</artifactId>
   <name>jclouds JSON client archetype</name>
-  <description>Maven archetype for a client of a JSON-speaking service</description>
+  <description>Maven archetype for a provider of a JSON-speaking service</description>
   <packaging>maven-archetype</packaging>
   
   <build>

@@ -1,4 +1,4 @@
-#set( $ucaseClientName = ${clientName.toUpperCase()} )
+#set( $ucaseProviderName = ${providerName.toUpperCase()} )
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
@@ -28,9 +28,9 @@
 package ${package};
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static ${package}.reference.${clientName}Constants.PROPERTY_${ucaseClientName}_ENDPOINT;
-import static ${package}.reference.${clientName}Constants.PROPERTY_${ucaseClientName}_PASSWORD;
-import static ${package}.reference.${clientName}Constants.PROPERTY_${ucaseClientName}_USER;
+import static ${package}.reference.${providerName}Constants.PROPERTY_${ucaseProviderName}_ENDPOINT;
+import static ${package}.reference.${providerName}Constants.PROPERTY_${ucaseProviderName}_PASSWORD;
+import static ${package}.reference.${providerName}Constants.PROPERTY_${ucaseProviderName}_USER;
 
 import java.net.URI;
 import java.util.Properties;
@@ -38,35 +38,35 @@ import java.util.Properties;
 import org.jclouds.PropertiesBuilder;
 
 /**
- * Builds properties used in ${clientName} Clients
+ * Builds properties used in ${providerName} Clients
  * 
  * @author ${author}
  */
-public class ${clientName}PropertiesBuilder extends PropertiesBuilder {
+public class ${providerName}PropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_${ucaseClientName}_ENDPOINT, "${clientEndpoint}");
+      properties.setProperty(PROPERTY_${ucaseProviderName}_ENDPOINT, "${providerEndpoint}");
       return properties;
    }
 
-   public ${clientName}PropertiesBuilder(Properties properties) {
+   public ${providerName}PropertiesBuilder(Properties properties) {
       super(properties);
    }
 
-   public ${clientName}PropertiesBuilder(String id, String secret) {
+   public ${providerName}PropertiesBuilder(String id, String secret) {
       super();
       withCredentials(id, secret);
    }
 
-   public ${clientName}PropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_${ucaseClientName}_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_${ucaseClientName}_PASSWORD, checkNotNull(secret, "password"));
+   public ${providerName}PropertiesBuilder withCredentials(String id, String secret) {
+      properties.setProperty(PROPERTY_${ucaseProviderName}_USER, checkNotNull(id, "user"));
+      properties.setProperty(PROPERTY_${ucaseProviderName}_PASSWORD, checkNotNull(secret, "password"));
       return this;
    }
 
-   public ${clientName}PropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_${ucaseClientName}_ENDPOINT, checkNotNull(endpoint, "endpoint")
+   public ${providerName}PropertiesBuilder withEndpoint(URI endpoint) {
+      properties.setProperty(PROPERTY_${ucaseProviderName}_ENDPOINT, checkNotNull(endpoint, "endpoint")
                .toString());
       return this;
    }

@@ -16,28 +16,30 @@
  * limitations under the License.
  * ====================================================================
  */
-package ${package}.config;
+package ${package}.compute.config;
 
-import java.util.Map;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
+import ${package}.${providerName}Client;
+import ${package}.config.${providerName}ContextModule;
+
+import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.predicates.RunScriptRunning;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
+import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -49,23 +51,25 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.SshClient;
-import ${package}.${providerName}AsyncClient;
-import ${package}.${providerName}Client;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provides;
+import com.google.inject.util.Providers;
 
 /**
  * @author ${author}
  */
 public class ${providerName}ComputeServiceContextModule extends ${providerName}ContextModule {
 
+   private final String providerName;
+   
+   public ${providerName}ComputeServiceContextModule(String providerName){
+      super(providerName);
+      this.providerName=providerName;
+   }
+   
    @Override
    protected void configure() {
       super.configure();
@@ -74,8 +78,18 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       bind(GetNodeMetadataStrategy.class).to(${providerName}GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(${providerName}RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(${providerName}DestroyNodeStrategy.class);
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
    }
-
+   
+   /**
+    * tested known configuration
+    */
+   @Provides
+   @Named("DEFAULT")
+   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
+      return template.osFamily(UBUNTU);
+   }
+   
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
@@ -107,7 +121,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
+      public boolean execute(String id) {
           /*
            * TODO: implement
            */
@@ -123,11 +137,19 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> execute() {
-          /*
-           * TODO: implement
-           */
-          return null;
+      public Iterable<? extends ComputeMetadata> list() {
+         /*
+          * TODO: implement
+          */return null;
+      }
+
+      @Override
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
+               Predicate<ComputeMetadata> filter) {
+         /*
+          * TODO: implement
+          */
+         return null;
       }
 
    }
@@ -140,7 +162,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       }
 
       @Override
-      public NodeMetadata execute(ComputeMetadata node) {
+      public NodeMetadata execute(String id) {
           /*
            * TODO: implement
            */
@@ -156,7 +178,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       }
 
       @Override
-      public boolean execute(ComputeMetadata node) {
+      public boolean execute(String id) {
           /*
            * TODO: implement
            */
@@ -167,60 +189,42 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
 
    @Provides
    @Singleton
-   ComputeServiceContext provideContext(ComputeService computeService,
-            RestContext<${providerName}AsyncClient, ${providerName}Client> context) {
-      return new ComputeServiceContextImpl<${providerName}AsyncClient, ${providerName}Client>(computeService, context);
-   }
-
-   @Provides
-   @Singleton
    @Named("NOT_RUNNING")
-   protected Predicate<SshClient> runScriptRunning(RunScriptRunning stateRunning) {
-      return new RetryablePredicate<SshClient>(Predicates.not(stateRunning), 600, 3,
+   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
+      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
    }
-
+   
    @Provides
    @Singleton
-   Location getDefaultLocation(Map<String, ? extends Location> locations) {
-      return locations.get("SANFRANCISCO");
+   Location getDefaultLocation(Set<? extends Location> locations) {
+
+      /*
+       * TODO: implement
+       */
+      
+      return null;
    }
 
    @Provides
    @Singleton
-   Map<String, ? extends Location> getDefaultLocations(${providerName}Client sync, LogHolder holder,
-            Function<ComputeMetadata, String> indexer) {
-      final Set<Location> locations = Sets.newHashSet();
+   Set<? extends Location> getAssignableLocations(${providerName}Client sync, LogHolder holder ) {
+      final Set<Location> assignableLocations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
-      locations.add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA", null,
-               true));
-      holder.logger.debug("<< locations(%d)", locations.size());
-      return Maps.uniqueIndex(locations, new Function<Location, String>() {
-
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-      });
+      Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+      /*
+       * TODO: add children with parent to locations.  Note do not add parent to assignablelocations 
+       * directly
+       */
+      
+      holder.logger.debug("<< locations(%d)", assignableLocations.size());
+      return assignableLocations;
    }
 
    @Provides
    @Singleton
-   protected Function<ComputeMetadata, String> indexer() {
-      return new Function<ComputeMetadata, String>() {
-         @Override
-         public String apply(ComputeMetadata from) {
-            return from.getId();
-         }
-      };
-   }
-
-   @Provides
-   @Singleton
-   protected Map<String, ? extends Size> provideSizes(${providerName}Client sync,
-            Map<String, ? extends Image> images, LogHolder holder,
-            Function<ComputeMetadata, String> indexer) throws InterruptedException,
-            TimeoutException, ExecutionException {
+   protected Set<? extends Size> provideSizes(${providerName}Client sync,
+            Set<? extends Image> images, LogHolder holder) {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
 
@@ -229,20 +233,13 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
        */
       
       holder.logger.debug("<< sizes(%d)", sizes.size());
-      return Maps.uniqueIndex(sizes, indexer);
-   }
-
-   private static class LogHolder {
-       @Resource
-       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-       protected Logger logger = Logger.NULL;
+      return sizes;
    }
 
    @Provides
    @Singleton
-   protected Map<String, ? extends Image> provideImages(final ${providerName}Client sync, LogHolder holder,
-            Function<ComputeMetadata, String> indexer, Location location)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Set<? extends Image> provideImages(final ${providerName}Client sync, LogHolder holder,
+            Location location) {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
 
@@ -251,6 +248,13 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
        */
 
       holder.logger.debug("<< images(%d)", images.size());
-      return Maps.uniqueIndex(images, indexer);
+      return images;
+   }
+
+   @Singleton
+   private static class LogHolder {
+       @Resource
+       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+       protected Logger logger = Logger.NULL;
    }
 }

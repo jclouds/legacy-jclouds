@@ -45,22 +45,29 @@ import com.google.inject.Module;
  */
 public class ${providerName}ContextFactory {
    public static ComputeServiceContext createContext(Properties properties, Module... modules) {
-      return new ${providerName}ContextBuilder(
+      return new ${providerName}ContextBuilder("${artifactId}",
                new ${providerName}PropertiesBuilder(properties).build()).withModules(modules)
                .buildComputeServiceContext();
    }
 
+   public static ComputeServiceContext createContext(String user, String key,
+            Module... modules) {
+      return new ${providerName}ContextBuilder("${artifactId}",
+               new ${providerName}PropertiesBuilder(user, key).build())
+               .withModules(modules).buildComputeServiceContext();
+   }
+   
    public static ComputeServiceContext createContext(Properties properties, String user,
             String key, Module... modules) {
-      return new ${providerName}ContextBuilder(
+      return new ${providerName}ContextBuilder("${artifactId}",
                new ${providerName}PropertiesBuilder(properties).withCredentials(user, key)
                         .build()).withModules(modules).buildComputeServiceContext();
    }
 
    public static ComputeServiceContext createContext(URI endpoint, String user, String key,
             Module... modules) {
-      return new ${providerName}ContextBuilder(
-               new ${providerName}PropertiesBuilder(endpoint, user, key).withEndpoint(endpoint).build())
+      return new ${providerName}ContextBuilder("${artifactId}",
+               new ${providerName}PropertiesBuilder(user, key).withEndpoint(endpoint).build())
                .withModules(modules).buildComputeServiceContext();
    }
 }

@@ -1,3 +1,4 @@
+#set( $ucaseProviderName = ${providerName.toUpperCase()} )
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
@@ -26,44 +27,43 @@
  */
 package ${package};
 
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Properties;
 
-import com.google.inject.Key;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import ${package}.compute.config.${providerName}ComputeServiceContextModule;
+import org.jclouds.rest.RestContextBuilder;
+import ${package}.${providerName}AsyncClient;
+import ${package}.${providerName}Client;
+
+import ${package}.config.${providerName}ContextModule;
 import ${package}.config.${providerName}RestClientModule;
+import ${package}.reference.${providerName}Constants;
 
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
+ * 
  * @author ${author}
  */
-public class ${providerName}ContextBuilder extends ComputeServiceContextBuilder<${providerName}AsyncClient, ${providerName}Client> {
+public class ${providerName}ContextBuilder extends RestContextBuilder<${providerName}AsyncClient, ${providerName}Client> {
 
-    public ${providerName}ContextBuilder(String providerName, Properties props) {
-        super(providerName, new TypeLiteral<${providerName}AsyncClient>() {}, 
-                new TypeLiteral<${providerName}Client>() {}, 
-                props);
-    }
+   public ${providerName}ContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<${providerName}AsyncClient>() {
+      }, new TypeLiteral<${providerName}Client>() {
+      }, props);
+      checkNotNull(properties.getProperty(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER));
+      checkNotNull(properties.getProperty(${providerName}Constants.PROPERTY_${ucaseProviderName}_PASSWORD));
+   }
 
-    protected void addClientModule(List<Module> modules) {
-        modules.add(new ${providerName}RestClientModule());
-    }
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new ${providerName}RestClientModule());
+   }
 
-    @Override
-    protected void addContextModule(String providerName, List<Module> modules) {
-        modules.add(new ${providerName}ComputeServiceContextModule(providerName));
-    }
-
-    @Override
-    public ComputeServiceContext buildComputeServiceContext() {
-        return this.buildInjector().getInstance(Key.get(
-                new TypeLiteral<ComputeServiceContextImpl<${providerName}AsyncClient, ${providerName}Client>>() {}));
-    }
+   @Override
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new ${providerName}ContextModule(providerName));
+   }
 
 }

@@ -1,4 +1,4 @@
-#set( $lcaseClientName = ${clientName.toLowerCase()} )
+#set( $lcaseProviderName = ${providerName.toLowerCase()} )
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
@@ -57,19 +57,19 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests annotation parsing of {@code ${clientName}AsyncClient}
+ * Tests annotation parsing of {@code ${providerName}AsyncClient}
  * 
  * @author ${author}
  */
-@Test(groups = "unit", testName = "${lcaseClientName}.${clientName}AsyncClientTest")
-public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}AsyncClient> {
+@Test(groups = "unit", testName = "${lcaseProviderName}.${providerName}AsyncClientTest")
+public class ${providerName}AsyncClientTest extends RestClientTest<${providerName}AsyncClient> {
 
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ${clientName}AsyncClient.class.getMethod("list");
-      GeneratedHttpRequest<${clientName}AsyncClient> httpRequest = processor.createRequest(method);
+      Method method = ${providerName}AsyncClient.class.getMethod("list");
+      GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET ${clientEndpoint}/item HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/item HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -77,7 +77,7 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET ${clientEndpoint}/item HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/item HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
       assertHeadersEqual(httpRequest, "Authorization: Basic Zm9vOmJhcg==\n");
       assertPayloadEquals(httpRequest, null);
@@ -92,10 +92,10 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
    }
 
    public void testGet() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ${clientName}AsyncClient.class.getMethod("get", long.class);
-      GeneratedHttpRequest<${clientName}AsyncClient> httpRequest = processor.createRequest(method, 1);
+      Method method = ${providerName}AsyncClient.class.getMethod("get", long.class);
+      GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpRequest, "GET ${clientEndpoint}/item/1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/item/1 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -110,14 +110,14 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<${clientName}AsyncClient> httpRequest) {
+   protected void checkFilters(GeneratedHttpRequest<${providerName}AsyncClient> httpRequest) {
       assertEquals(httpRequest.getFilters().size(), 1);
       assertEquals(httpRequest.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<${clientName}AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<${clientName}AsyncClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<${providerName}AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<${providerName}AsyncClient>>() {
       };
    }
 
@@ -126,10 +126,10 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), new ${clientName}PropertiesBuilder(
+            Jsr330.bindProperties(binder(), new ${providerName}PropertiesBuilder(
                      new Properties()).build());
-            bind(URI.class).annotatedWith(${clientName}.class).toInstance(
-                     URI.create("${clientEndpoint}"));
+            bind(URI.class).annotatedWith(${providerName}.class).toInstance(
+                     URI.create("${providerEndpoint}"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

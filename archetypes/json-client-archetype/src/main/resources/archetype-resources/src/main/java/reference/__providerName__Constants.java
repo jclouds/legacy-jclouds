@@ -16,9 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
+#set( $lcaseProviderName = ${providerName.toLowerCase()} )
+#set( $ucaseProviderName = ${providerName.toUpperCase()} )
 /**
  *
  * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -42,42 +41,15 @@
  * under the License.
  * ====================================================================
  */
-package ${package};
-
-import java.util.Properties;
-
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContext;
-
-import com.google.inject.Module;
+package ${package}.reference;
 
 /**
- * Creates {@link RestContext} for {@link ${clientName}Client} instances based on the most commonly
- * requested arguments.
- * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * Configuration properties and constants used in ${providerName} connections.
  * 
  * @author ${author}
- * @see RestContext
- * @see ${clientName}Client
- * @see ${clientName}AsyncClient
  */
-public class ${clientName}ContextFactory {
-
-   public static RestContext<${clientName}AsyncClient, ${clientName}Client> createContext(String user, String password,
-            Module... modules) {
-      return new ${clientName}ContextBuilder("${artifactId}", new ${clientName}PropertiesBuilder(user, password).build())
-               .withModules(modules).buildContext();
-   }
-
-   public static RestContext<${clientName}AsyncClient, ${clientName}Client> createContext(Properties properties, Module... modules) {
-      return new ${clientName}ContextBuilder("${artifactId}", new ${clientName}PropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
-   }
-
+public interface ${providerName}Constants {
+   public static final String PROPERTY_${ucaseProviderName}_ENDPOINT = "jclouds.${lcaseProviderName}.endpoint";
+   public static final String PROPERTY_${ucaseProviderName}_USER = "jclouds.${lcaseProviderName}.user";
+   public static final String PROPERTY_${ucaseProviderName}_PASSWORD = "jclouds.${lcaseProviderName}.password";
 }

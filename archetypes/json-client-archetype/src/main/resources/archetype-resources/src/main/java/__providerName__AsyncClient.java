@@ -39,29 +39,29 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to ${clientName} via their REST API.
+ * Provides asynchronous access to ${providerName} via their REST API.
  * <p/>
  *
- * @see ${clientName}Client
- * @see <a href="TODO: insert URL of client documentation" />
+ * @see ${providerName}Client
+ * @see <a href="TODO: insert URL of provider documentation" />
  * @author ${author}
  */
-@Endpoint(${clientName}.class)
+@Endpoint(${providerName}.class)
 @RequestFilters(BasicAuthentication.class)
-public interface ${clientName}AsyncClient {
+public interface ${providerName}AsyncClient {
    /*
-    * TODO: define interface methods for ${clientName} 
+    * TODO: define interface methods for ${providerName} 
     */
    
    /**
-    * @see ${clientName}AsyncClient#list()
+    * @see ${providerName}AsyncClient#list()
     */
    @GET
    @Path("/item")
    ListenableFuture<String> list();
    
    /**
-    * @see ${clientName}AsyncClient#get(String)
+    * @see ${providerName}AsyncClient#get(String)
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)

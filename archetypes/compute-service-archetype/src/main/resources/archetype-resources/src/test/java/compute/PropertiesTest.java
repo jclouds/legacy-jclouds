@@ -18,16 +18,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package ${package};
+package ${package}.compute;
 
-import com.google.common.io.Resources;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.testng.Assert.assertEquals;
+import ${package}.${providerName}ContextBuilder;
+import ${package}.${providerName}PropertiesBuilder;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.google.common.io.Resources;
 
 /**
  * @author ${author}

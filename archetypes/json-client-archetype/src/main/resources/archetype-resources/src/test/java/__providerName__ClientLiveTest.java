@@ -1,4 +1,4 @@
-#set( $lcaseClientName = ${clientName.toLowerCase()} )
+#set( $lcaseProviderName = ${providerName.toLowerCase()} )
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
@@ -35,21 +35,21 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code ${clientName}Client}
+ * Tests behavior of {@code ${providerName}Client}
  * 
  * @author ${author}
  */
-@Test(groups = "live", testName = "${lcaseClientName}.${clientName}ClientLiveTest")
-public class ${clientName}ClientLiveTest {
+@Test(groups = "live", testName = "${lcaseProviderName}.${providerName}ClientLiveTest")
+public class ${providerName}ClientLiveTest {
 
-   private ${clientName}Client connection;
+   private ${providerName}Client connection;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = ${clientName}ContextFactory.createContext(user, password, new Log4JLoggingModule())
+      connection = ${providerName}ContextFactory.createContext(user, password, new Log4JLoggingModule())
                .getApi();
    }
 
@@ -66,6 +66,6 @@ public class ${clientName}ClientLiveTest {
    }
 
    /*
-    * TODO: add tests for ${clientName} interface methods
+    * TODO: add tests for ${providerName} interface methods
     */
 }
