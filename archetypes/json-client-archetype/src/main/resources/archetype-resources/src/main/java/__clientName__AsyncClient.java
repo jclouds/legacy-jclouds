@@ -1,27 +1,9 @@
-/**
- *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -44,9 +26,17 @@
  */
 package ${package};
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to ${clientName} via their REST API.
@@ -59,7 +49,23 @@ import org.jclouds.rest.annotations.RequestFilters;
 @Endpoint(${clientName}.class)
 @RequestFilters(BasicAuthentication.class)
 public interface ${clientName}AsyncClient {
-    /*
-     * TODO: define interface methods for ${clientName} 
-     */
+   /*
+    * TODO: define interface methods for ${clientName} 
+    */
+   
+   /**
+    * @see ${clientName}AsyncClient#list()
+    */
+   @GET
+   @Path("/item")
+   ListenableFuture<String> list();
+   
+   /**
+    * @see ${clientName}AsyncClient#get(String)
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/item/{itemId}")
+   ListenableFuture<String> get(@PathParam("itemId") long id);
+   
 }

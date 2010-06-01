@@ -58,7 +58,14 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface ${clientName}Client {
-    /*
-     * TODO: define interface methods for ${clientName} 
-     */
+   /*
+    * Note all these delegate to methods in ${clientName}AsyncClient with a specified or inherited timeout.
+    *   The singatures should match those of ${clientName}AsyncClient, except the returnvals should not be 
+    *   wrapped in a ListenableFuture 
+    */
+   
+   String list();
+   
+   String get(long id);
+
 }

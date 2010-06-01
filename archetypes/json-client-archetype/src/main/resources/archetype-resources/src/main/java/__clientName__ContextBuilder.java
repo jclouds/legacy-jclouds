@@ -64,8 +64,8 @@ import com.google.inject.TypeLiteral;
  */
 public class ${clientName}ContextBuilder extends RestContextBuilder<${clientName}AsyncClient, ${clientName}Client> {
 
-   public ${clientName}ContextBuilder(Properties props) {
-      super(new TypeLiteral<${clientName}AsyncClient>() {
+   public ${clientName}ContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<${clientName}AsyncClient>() {
       }, new TypeLiteral<${clientName}Client>() {
       }, props);
       checkNotNull(properties.getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_USER));
@@ -77,8 +77,8 @@ public class ${clientName}ContextBuilder extends RestContextBuilder<${clientName
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new ${clientName}ContextModule());
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new ${clientName}ContextModule(providerName));
    }
 
 }

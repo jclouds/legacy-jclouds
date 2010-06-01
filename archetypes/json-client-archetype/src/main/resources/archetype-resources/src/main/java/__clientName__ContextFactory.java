@@ -71,12 +71,12 @@ public class ${clientName}ContextFactory {
 
    public static RestContext<${clientName}AsyncClient, ${clientName}Client> createContext(String user, String password,
             Module... modules) {
-      return new ${clientName}ContextBuilder(new ${clientName}PropertiesBuilder(user, password).build())
+      return new ${clientName}ContextBuilder("${artifactId}", new ${clientName}PropertiesBuilder(user, password).build())
                .withModules(modules).buildContext();
    }
 
    public static RestContext<${clientName}AsyncClient, ${clientName}Client> createContext(Properties properties, Module... modules) {
-      return new ${clientName}ContextBuilder(new ${clientName}PropertiesBuilder(properties).build())
+      return new ${clientName}ContextBuilder("${artifactId}", new ${clientName}PropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 

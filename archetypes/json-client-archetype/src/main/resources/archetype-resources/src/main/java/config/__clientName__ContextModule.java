@@ -47,8 +47,6 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -66,9 +64,15 @@ import com.google.inject.Provides;
  * @author ${author}
  */
 public class ${clientName}ContextModule extends AbstractModule {
+   
+   public ${clientName}ContextModule(String providerName) {
+      // providerName ignored right now
+   }
+   
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(CDateAdapter.class);
+      // example of how to customize bindings
+      // bind(DateAdapter.class).to(CDateAdapter.class);
    }
 
    @Provides

@@ -23,7 +23,10 @@
   <requiredProperties>
     <requiredProperty key="groupId">
       <defaultValue>org.jclouds</defaultValue>
-    </requiredProperty>      
+    </requiredProperty>
+    <requiredProperty key="package" >
+     <defaultValue>${groupId}.${artifactId}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="author">
       <defaultValue>Adrian Cole</defaultValue>
     </requiredProperty>
