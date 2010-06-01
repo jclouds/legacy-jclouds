@@ -29,3 +29,22 @@ list, Alan Dipert and MeikelBrandmeyer."
 (deftest os-families-test
   (is (some #{"centos"} (map str (os-families)))))
 
+
+(defn clean-stub-fixture
+  "This should allow basic tests to easily be run with another service."
+  [service account key & options]
+  (fn [f]
+    (with-compute-service [(apply compute-service service account key options)]
+      (doseq [node (nodes)]
+        (destroy-node (.getId node)))
+      (f))))
+
+(use-fixtures :each (clean-stub-fixture "stub" "" ""))
+
+(deftest compute-service?-test
+  (is (compute-service? *compute*)))
+
+(deftest as-compute-service-test
+  (is (compute-service? (compute-service "stub" "user" "password")))
+  (is (compute-service? (as-compute-service *compute*)))
+  (is (compute-service? (as-compute-service (compute-context *compute*)))))

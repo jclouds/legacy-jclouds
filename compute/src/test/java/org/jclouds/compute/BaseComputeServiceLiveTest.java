@@ -80,7 +80,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "compute.ComputeServiceLiveTest")
+@Test(groups = { "integration", "live" }, sequential = true, testName = "compute.ComputeServiceLiveTest")
 public abstract class BaseComputeServiceLiveTest {
    @BeforeClass
    abstract public void setServiceDefaults();
@@ -98,13 +98,12 @@ public abstract class BaseComputeServiceLiveTest {
    protected Template template;
    protected Map<String, String> keyPair;
 
-   @BeforeGroups(groups = { "live" })
+   @BeforeGroups(groups = { "integration", "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       if (tag == null)
          tag = checkNotNull(service, "service");
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      setupCredentials();
       String secretKeyFile;
       try {
          secretKeyFile = checkNotNull(System.getProperty("jclouds.test.ssh.keyfile"),
@@ -115,17 +114,25 @@ public abstract class BaseComputeServiceLiveTest {
       checkSecretKeyFile(secretKeyFile);
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
-
+      keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
+               new File(secretKeyFile + ".pub"), Charsets.UTF_8));
       initializeContextAndClient();
 
-      Injector injector = Guice.createInjector(getSshModule());
+      Injector injector = createSshClientInjector();
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
       // keyPair = sshFactory.generateRSAKeyPair("", "");
-      keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
-               new File(secretKeyFile + ".pub"), Charsets.UTF_8));
+   }
+
+   protected void setupCredentials() {
+      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+   }
+
+   protected Injector createSshClientInjector() {
+      return Guice.createInjector(getSshModule());
    }
 
    private void initializeContextAndClient() throws IOException {
@@ -153,13 +160,49 @@ public abstract class BaseComputeServiceLiveTest {
                ImmutableSet.<Module> of(new Log4JLoggingModule())).close();
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
+   @Test(enabled = true)
    public void testImagesCache() throws Exception {
       client.listImages();
       long time = System.currentTimeMillis();
       client.listImages();
       long duration = System.currentTimeMillis() - time;
       assert duration < 1000 : String.format("%dms to get images", duration);
+   }
+
+   // since surefire and eclipse don't otherwise guarantee the order, we are 
+   // starting this one alphabetically before create2nodes..
+   @Test(enabled = true, dependsOnMethods = "testImagesCache")
+   public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
+      String tag = this.tag + "run";
+      try {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+      } catch (Exception e) {
+
+      }
+
+      TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
+      try {
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Credentials good = nodes.iterator().next().getCredentials();
+         assert good.account != null;
+         assert good.key != null;
+
+         Image image = Iterables.get(nodes, 0).getImage();
+         try {
+            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, image
+                     .getOsFamily(), new Credentials(good.account, "romeo"));
+            assert false : "shouldn't pass with a bad password\n" + responses;
+         } catch (RunScriptOnNodesException e) {
+            assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
+         }
+
+         runScriptWithCreds(tag, image.getOsFamily(), good);
+
+         checkNodes(nodes, tag);
+
+      } finally {
+         client.destroyNodesMatching(NodePredicates.withTag(tag));
+      }
    }
 
    @Test(enabled = true, dependsOnMethods = "testImagesCache")
@@ -223,40 +266,6 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(nodes.size(), 1);
       assertLocationSameOrChild(node.getLocation(), template.getLocation());
       assertEquals(node.getImage(), template.getImage());
-   }
-
-   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
-   public void testScriptExecutionAfterBootWithBasicTemplate() throws Exception {
-      String tag = this.tag + "run";
-      try {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
-      } catch (Exception e) {
-
-      }
-
-      TemplateOptions options = client.templateOptions().blockOnPort(22, 120);
-      try {
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
-         Credentials good = nodes.iterator().next().getCredentials();
-         assert good.account != null;
-         assert good.key != null;
-
-         Image image = Iterables.get(nodes, 0).getImage();
-         try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, image
-                     .getOsFamily(), new Credentials(good.account, "romeo"));
-            assert false : "shouldn't pass with a bad password\n" + responses;
-         } catch (RunScriptOnNodesException e) {
-            assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
-         }
-
-         runScriptWithCreds(tag, image.getOsFamily(), good);
-
-         checkNodes(nodes, tag);
-
-      } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
-      }
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag,
