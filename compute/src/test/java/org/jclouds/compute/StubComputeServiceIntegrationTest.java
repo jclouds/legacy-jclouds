@@ -27,6 +27,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -163,11 +164,11 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                      new SshException("Auth fail"));
             expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "password1")).andReturn(
                      client1).atLeastOnce();
-            
+
             client1.connect();
             runScript(client1, "computeserv", 1);
             client1.disconnect();
-            
+
             expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(
                      client2).atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.3", 22), "root", "password3")).andReturn(
@@ -305,6 +306,12 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
          throw new UnsupportedOperationException("hashCode() is not supported");
       }
 
+   }
+
+   @Override
+   protected void setupKeyPair() throws FileNotFoundException, IOException {
+      keyPair = ImmutableMap.<String, String> of("public", "ssh-rsa", "private",
+               "-----BEGIN RSA PRIVATE KEY-----");
    }
 
 }

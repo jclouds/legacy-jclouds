@@ -104,6 +104,17 @@ public abstract class BaseComputeServiceLiveTest {
       if (tag == null)
          tag = checkNotNull(service, "service");
       setupCredentials();
+      setupKeyPair();
+      initializeContextAndClient();
+
+      Injector injector = createSshClientInjector();
+      sshFactory = injector.getInstance(SshClient.Factory.class);
+      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      injector.injectMembers(socketOpen); // add logger
+   }
+
+   protected void setupKeyPair() throws FileNotFoundException, IOException {
       String secretKeyFile;
       try {
          secretKeyFile = checkNotNull(System.getProperty("jclouds.test.ssh.keyfile"),
@@ -116,14 +127,6 @@ public abstract class BaseComputeServiceLiveTest {
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
       keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
                new File(secretKeyFile + ".pub"), Charsets.UTF_8));
-      initializeContextAndClient();
-
-      Injector injector = createSshClientInjector();
-      sshFactory = injector.getInstance(SshClient.Factory.class);
-      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketOpen); // add logger
-      // keyPair = sshFactory.generateRSAKeyPair("", "");
    }
 
    protected void setupCredentials() {
