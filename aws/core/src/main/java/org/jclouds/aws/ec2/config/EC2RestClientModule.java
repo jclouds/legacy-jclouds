@@ -56,7 +56,6 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
@@ -70,6 +69,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Predicate;

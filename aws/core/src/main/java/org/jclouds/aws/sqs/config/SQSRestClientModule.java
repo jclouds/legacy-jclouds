@@ -34,7 +34,6 @@ import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.SQSAsyncClient;
 import org.jclouds.aws.sqs.SQSClient;
 import org.jclouds.aws.sqs.reference.SQSConstants;
-import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
@@ -45,6 +44,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.collect.ImmutableBiMap;

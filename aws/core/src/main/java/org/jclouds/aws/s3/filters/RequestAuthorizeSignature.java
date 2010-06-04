@@ -35,7 +35,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -44,6 +43,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.RequestSigner;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -108,14 +108,14 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
             throws HttpException {
-      String signature = signString(toSign);
+      String signature = sign(toSign);
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
                Collections.singletonList("AWS " + accessKey + ":" + signature));
    }
 
-   public String signString(String toSign) {
+   public String sign(String toSign) {
       String signature;
       try {
          signature = encryptionService.hmacSha1Base64(toSign, secretKey.getBytes());

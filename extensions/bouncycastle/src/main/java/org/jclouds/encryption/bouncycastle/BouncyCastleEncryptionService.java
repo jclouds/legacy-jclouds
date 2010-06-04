@@ -23,9 +23,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.inject.Singleton;
 
 import org.bouncycastle.crypto.Digest;
@@ -155,5 +160,26 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
          digest.doFinal(resBuf, 0);
          return resBuf;
       }
+   }
+
+   @Override
+   public String sha1Base64(String toEncode) throws NoSuchAlgorithmException,
+            NoSuchProviderException, InvalidKeyException {
+      byte[] plainBytes = toEncode.getBytes();
+      Digest digest = new SHA1Digest();
+      byte[] resBuf = new byte[digest.getDigestSize()];
+      digest.update(plainBytes, 0, plainBytes.length);
+      digest.doFinal(resBuf, 0);
+      return toBase64String(resBuf);
+   }
+
+   @Override
+   public byte[] rsaPrivateEncrypt(String toSign, Key key) throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException {
+      // TODO convert this to BC code
+      Cipher cipher = Cipher.getInstance("RSA");
+      cipher.init(Cipher.ENCRYPT_MODE, key);
+      return cipher.doFinal(toSign.getBytes());
    }
 }

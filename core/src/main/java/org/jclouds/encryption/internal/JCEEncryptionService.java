@@ -24,11 +24,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.DigestOutputStream;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.Closeables;
@@ -97,7 +102,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
    }
 
    public String toBase64String(byte[] resBuf) {
-      return Base64.encodeBytes(resBuf);
+      return Base64.encodeBytes(resBuf, Base64.DONT_BREAK_LINES);
    }
 
    public MD5InputStreamResult generateMD5Result(InputStream toEncode) {
@@ -153,5 +158,22 @@ public class JCEEncryptionService extends BaseEncryptionService {
          MessageDigest digest = ((DigestOutputStream) out).getMessageDigest();
          return digest.digest();
       }
+   }
+
+   @Override
+   public String sha1Base64(String toEncode) throws NoSuchAlgorithmException,
+            NoSuchProviderException, InvalidKeyException {
+      MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+      byte[] digest = sha1.digest(toEncode.getBytes());
+      return toBase64String(digest);
+   }
+
+   @Override
+   public byte[] rsaPrivateEncrypt(String toSign, Key key) throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException {
+      Cipher cipher = Cipher.getInstance("RSA");
+      cipher.init(Cipher.ENCRYPT_MODE, key);
+      return cipher.doFinal(toSign.getBytes());
    }
 }

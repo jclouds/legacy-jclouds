@@ -50,7 +50,8 @@
         <module>twitter</module>
         <module>vcloud</module>
         <module>gogrid</module>
-    </modules>
+    <module>chef</module>
+  </modules>
     <build>
         <plugins>
             <plugin>

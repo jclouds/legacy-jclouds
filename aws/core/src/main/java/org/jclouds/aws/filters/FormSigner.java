@@ -42,7 +42,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -51,6 +50,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
@@ -103,7 +103,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
-      String signature = signString(stringToSign);
+      String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
       setPayload(request, decodedParams);
       HttpUtils.logRequest(signatureLog, request, "<<");
@@ -153,7 +153,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    @VisibleForTesting
-   public String signString(String stringToSign) {
+   public String sign(String stringToSign) {
       String signature;
       try {
          signature = encryptionService.hmacSha256Base64(stringToSign, secretKey.getBytes());

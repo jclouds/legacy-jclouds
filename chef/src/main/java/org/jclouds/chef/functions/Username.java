@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +16,23 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.util;
+package org.jclouds.chef.functions;
 
-import org.jclouds.http.HttpRequest;
+import javax.inject.Singleton;
+
+import org.jclouds.chef.domain.User;
+
+import com.google.common.base.Function;
 
 /**
  * 
  * @author Adrian Cole
  */
-public interface RequestSigner {
+@Singleton
+public class Username implements Function<Object, String> {
 
-   String createStringToSign(HttpRequest input);
-
-   String signString(String toSign);
+   public String apply(Object from) {
+      return ((User) from).getUsername();
+   }
 
 }

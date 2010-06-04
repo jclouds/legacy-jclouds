@@ -20,7 +20,7 @@ package org.jclouds.http;
 
 import java.util.Collection;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
@@ -35,7 +35,7 @@ public class HttpMessage {
    /**
     * synchronized as there is no concurrent version. Headers may change in flight due to redirects.
     */
-   protected Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
+   protected Multimap<String, String> headers = Multimaps.synchronizedMultimap(LinkedHashMultimap
             .<String, String> create());
 
    public Multimap<String, String> getHeaders() {

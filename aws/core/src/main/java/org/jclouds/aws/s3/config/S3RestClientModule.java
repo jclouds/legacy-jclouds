@@ -35,7 +35,6 @@ import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
@@ -47,6 +46,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Supplier;

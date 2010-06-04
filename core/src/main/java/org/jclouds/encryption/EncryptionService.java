@@ -26,8 +26,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
 
@@ -46,6 +51,9 @@ public interface EncryptionService {
 
    String hmacSha256Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException;
+
+   String sha1Base64(String toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
+            InvalidKeyException;
 
    String hmacSha1Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException;
@@ -91,5 +99,9 @@ public interface EncryptionService {
    }
 
    byte[] fromBase64String(String encoded);
+
+   byte[] rsaPrivateEncrypt(String toSign, Key privateKey) throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException;
 
 }

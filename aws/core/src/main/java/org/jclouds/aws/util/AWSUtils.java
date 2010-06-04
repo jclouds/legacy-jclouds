@@ -29,6 +29,7 @@ import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.RequestSigner;
 
 /**
  * Needed to sign and verify requests and responses.
@@ -51,7 +52,7 @@ public class AWSUtils {
       AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).parse(content);
       if ("SignatureDoesNotMatch".equals(error.getCode())) {
          error.setStringSigned(signer.createStringToSign(command.getRequest()));
-         error.setSignature(signer.signString(error.getStringSigned()));
+         error.setSignature(signer.sign(error.getStringSigned()));
       }
       return error;
    }
