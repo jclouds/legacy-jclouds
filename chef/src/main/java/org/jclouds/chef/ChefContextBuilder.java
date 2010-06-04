@@ -49,8 +49,8 @@ public class ChefContextBuilder extends RestContextBuilder<ChefAsyncClient, Chef
       super(providerName, new TypeLiteral<ChefAsyncClient>() {
       }, new TypeLiteral<ChefClient>() {
       }, props);
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_USER_ID));
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_PRIVATE_KEY));
+      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_IDENTITY));
+      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_RSA_KEY));
    }
 
    protected void addClientModule(List<Module> modules) {

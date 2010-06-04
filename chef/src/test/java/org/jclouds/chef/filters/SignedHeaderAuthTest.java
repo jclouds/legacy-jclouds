@@ -111,13 +111,18 @@ public class SignedHeaderAuthTest {
    public static final Multimap<String, String> EXPECTED_SIGN_RESULT_EMPTY = ImmutableMultimap
             .<String, String> builder().put("X-Ops-Content-Hash", X_OPS_CONTENT_HASH_EMPTY).put(
                      "X-Ops-Userid", USER_ID).put("X-Ops-Sign", "version=1.0").put(
-                     "X-Ops-Authorization-1", "N6U75kopDK64cEFqrB6vw+PnubnXr0w5LQeXnIGNGLRP2LvifwIeisk7QxEx").put(
-                     "X-Ops-Authorization-2", "mtpQOWAw8HvnWErjzuk9AvUsqVmWpv14ficvkaD79qsPMvbje+aLcIrCGT1P").put(
-                     "X-Ops-Authorization-3", "3d2uvf4w7iqwzrIscPnkxLR6o6pymR90gvJXDPzV7Le0jbfD8kmZ8AAK0sGG").put(
-                     "X-Ops-Authorization-4", "09F1ftW80bLatJTA66Cw2wBz261r6x/abZhIKFJFDWLzyQGJ8ZNOkUrDDtgI").put(
-                     "X-Ops-Authorization-5", "svLVXpOJKZZfKunsElpWjjsyNt3k8vpI1Y4ANO8Eg2bmeCPeEK+YriGm5fbC").put(
-                     "X-Ops-Authorization-6", "DzWNPylHJqMeGKVYwGQKpg62QDfe5yXh3wZLiQcXow==").put("X-Ops-Timestamp",
-                     TIMESTAMP_ISO8601).build();
+                     "X-Ops-Authorization-1",
+                     "N6U75kopDK64cEFqrB6vw+PnubnXr0w5LQeXnIGNGLRP2LvifwIeisk7QxEx").put(
+                     "X-Ops-Authorization-2",
+                     "mtpQOWAw8HvnWErjzuk9AvUsqVmWpv14ficvkaD79qsPMvbje+aLcIrCGT1P").put(
+                     "X-Ops-Authorization-3",
+                     "3d2uvf4w7iqwzrIscPnkxLR6o6pymR90gvJXDPzV7Le0jbfD8kmZ8AAK0sGG").put(
+                     "X-Ops-Authorization-4",
+                     "09F1ftW80bLatJTA66Cw2wBz261r6x/abZhIKFJFDWLzyQGJ8ZNOkUrDDtgI").put(
+                     "X-Ops-Authorization-5",
+                     "svLVXpOJKZZfKunsElpWjjsyNt3k8vpI1Y4ANO8Eg2bmeCPeEK+YriGm5fbC").put(
+                     "X-Ops-Authorization-6", "DzWNPylHJqMeGKVYwGQKpg62QDfe5yXh3wZLiQcXow==").put(
+                     "X-Ops-Timestamp", TIMESTAMP_ISO8601).build();
 
    public static String PUBLIC_KEY;
    public static String PRIVATE_KEY;
@@ -194,6 +199,12 @@ public class SignedHeaderAuthTest {
 
    private SignedHeaderAuth signing_obj;
    private EncryptionService encryptionService;
+
+   @Test
+   void canParseKeyFromCreateClient() throws IOException {
+      String key = "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA50Iwgq8OIfm5vY9Gwfb6UBt17D7V4djyFSLJ1AbCU/o8Zlrr\nW73JqaK5dC3IO6Dcu+/qPYGtBUWvhFAXrsFOooz0mTod/LtBN1YVurJ60goJrR6w\nKhUYC9H45OW/qcdIM7kdDwiyMZfbHqW6fo0xPqjvgxtZoI+v7pgThacOG6pw7PO6\nGgnJa3MGK3xEbzlI6+EBJWG3EiwexguwOpTD4a4TDIAqKrlVDPeUpU7rFbsBPRS8\nkypR3lU58+WRz/zi9fiH/Sy2X+S3yZg14HiutJjxc8zJsazF3eDxyLGPQmhv3Mso\nA0wbjGusbe6hPdDkzh/B2KO9u96QCdlGu/rc6QIDAQABAoIBAA/7OgD9+fsNF/Hq\nodgrqja4/xg5a2x1Ip2lTs9RPEKza1Mje1pWrkYD0c8ejtTYFAkE1mozuPJBU5TQ\nOCLChx2iohCovIPHqQUa9Nt3FBfJy8tj8Ian+IZwl0OyQOGJvQqeA00Tq8TTmrfu\negne1gVfhVXJIROAeocBiW/WEJqGti0OE5zQQMld3cJ5viTdEsaWYCu2HaEoblKB\nH6KfRGM2N3L3KjKFGtEg+cX1UdaMlzmp+O5/yvjBykZy6cuUOIsgz2e5nQV4hYEq\ntJ/+6E0QVTXfnVZi4IxKlkVMhyonqOxAOKGG+dWeWh3DqPJFzjmp3kcbRN9E3u+2\nqKU5gpECgYEA+a/i5z2jFCJ8rMpoCPPxm2eiIYZVs3LE33WU5FNNieBRC+KqO06h\nMB3rQ3k8KJDNJYWD5UwIrgjCD5mgkmcSDI6SbOn6PA1Mtw6qZlbeg17V9L9ryXxt\nSfC5AC+qVWd6unrLh0LgkvLS8rgG4GjLZY0HDDMrJWodcc+uWVk3Mo0CgYEA7RsG\nC9gOcHWi6WJ2uEDvLj4IkSkB4IFipEVcKl7VVDSnUgxaBZm3o0DLYDYhIOw7XcQL\n6vpxbRZdlApGyu1ahfMbk3+quFNMQuGxZcv9EhHz7ASnXK6mlrWkJzCGjLz6/MdI\nU0VGbtkBtOY/GaLXdTkQksWowVNoedISfQV9as0CgYEA0Tj1JVecw05yskeZDYd8\nOQCJ9xWd0pSlK6pXbUvweUwiHZd9ldy5bJxle1CnfEZ54KsUbptb2pk0I+ZTitob\nYbJGOEWHjbKHSg1b9A1uvx5EoqWUKG2/FmpEW0eVr6LaUFB9I4aCsCARa5mRCZJG\nfX3DHhHyYZOdwLSKIAyGGDECgYALEwkMQpIiFIyAZBXxcy74tPMHfKfWyZRG4ep1\nHCrQnQj3nxYRTuWx3VPicYTImeAH+CEqX3ouwy2pvXUjA0UIHpu6HutlYpacRRhZ\nDdcLIgWHj4wVmx6yyVcacXzHVAhRCCnLod+xS7d1sI9f7igsFHc+s7a3GOM3VWWB\nq2D5PQKBgQDY9eSb5pc5EYbPy0a/wKFLMNCVLXlDT8jRSC2UnhmcHbhi1IdUbn1j\nR+SuUgrAVNAKzJRY9wmF6Zt0pJ2YLFX7L8HaGyfzkib8kli2sXFonlQ4d0dTdcJo\nVGR1jTxfZQicdPcDPOLPpQz/rP31ZqdHtfaegTOxHebX7W2E5QvPZg==\n-----END RSA PRIVATE KEY-----\n";
+      KeyPair.class.cast(new PEMReader(new StringReader(key)).readObject());
+   }
 
    /**
     * before class, as we need to ensure that the filter is threadsafe.

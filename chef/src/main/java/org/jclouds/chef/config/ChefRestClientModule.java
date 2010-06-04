@@ -57,12 +57,17 @@ import org.bouncycastle.openssl.PEMReader;
 import org.jclouds.chef.Chef;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
+import org.jclouds.chef.handlers.ChefErrorHandler;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
@@ -95,7 +100,7 @@ public class ChefRestClientModule extends AbstractModule {
             final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
-            return dateService.iso8601DateFormat();
+            return dateService.iso8601SecondsDateFormat();
          }
       }, seconds, TimeUnit.SECONDS);
    }
@@ -108,7 +113,7 @@ public class ChefRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public PrivateKey provideKey(@Named(ChefConstants.PROPERTY_CHEF_PRIVATE_KEY) String key)
+   public PrivateKey provideKey(@Named(ChefConstants.PROPERTY_CHEF_RSA_KEY) String key)
             throws IOException {
       // TODO do this without adding a provider
       Security.addProvider(new BouncyCastleProvider());
@@ -135,9 +140,14 @@ public class ChefRestClientModule extends AbstractModule {
    protected URI provideURI(@Named(ChefConstants.PROPERTY_CHEF_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
-
+   
    protected void bindErrorHandlers() {
-      // TODO
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               ChefErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               ChefErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ChefErrorHandler.class);
    }
 
    protected void bindRetryHandlers() {

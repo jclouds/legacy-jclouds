@@ -36,6 +36,7 @@ public class User implements Comparable<User> {
    @SerializedName("display_name")
    private String displayName;
    private String email;
+   private String password;
 
    public User(String username) {
       this.username = username;
@@ -107,6 +108,7 @@ public class User implements Comparable<User> {
       result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
       result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
       result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
+      result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + ((username == null) ? 0 : username.hashCode());
       return result;
    }
@@ -145,6 +147,11 @@ public class User implements Comparable<User> {
             return false;
       } else if (!middleName.equals(other.middleName))
          return false;
+      if (password == null) {
+         if (other.password != null)
+            return false;
+      } else if (!password.equals(other.password))
+         return false;
       if (username == null) {
          if (other.username != null)
             return false;
@@ -158,5 +165,13 @@ public class User implements Comparable<User> {
       return "User [username=" + username + ", displayName=" + displayName + ", firstName="
                + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", email="
                + email + "]";
+   }
+
+   public void setPassword(String password) {
+      this.password = password;
+   }
+
+   public String getPassword() {
+      return password;
    }
 }

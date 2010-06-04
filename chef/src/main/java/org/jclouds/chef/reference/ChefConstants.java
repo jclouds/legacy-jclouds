@@ -48,11 +48,20 @@ package org.jclouds.chef.reference;
  */
 public interface ChefConstants {
    public static final String PROPERTY_CHEF_ENDPOINT = "jclouds.chef.endpoint";
-   public static final String PROPERTY_CHEF_USER_ID = "jclouds.chef.user-id";
+   /**
+    * There are generally 3 types of identities
+    * <ul>
+    * <li>validator - used to create clients within an organization; {@code orgname}-validator</li>
+    * <li>client - scoped to an organization, used on nodes to run chef</li>
+    * <li>user - used to run commands like knife and access cookbook sites</li>
+    * </ul>
+    * 
+    */
+   public static final String PROPERTY_CHEF_IDENTITY = "jclouds.chef.identity";
    /**
     * The PEM-encoded key
     */
-   public static final String PROPERTY_CHEF_PRIVATE_KEY = "jclouds.chef.private-key";
+   public static final String PROPERTY_CHEF_RSA_KEY = "jclouds.chef.rsa-key";
 
    /**
     * how often to refresh timestamps in seconds.

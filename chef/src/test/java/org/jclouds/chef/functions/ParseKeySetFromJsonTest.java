@@ -10,23 +10,24 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code ParseKeyFromJson}
+ * Tests behavior of {@code ParseKeySetFromJson}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "chef.ParseKeyFromJsonTest")
-public class ParseKeyFromJsonTest {
+@Test(groups = "unit", sequential = true, testName = "chef.ParseKeySetFromJsonTest")
+public class ParseKeySetFromJsonTest {
 
-   private ParseKeyFromJson handler;
+   private ParseKeySetFromJson handler;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new ParserModule());
-      handler = injector.getInstance(ParseKeyFromJson.class);
+      handler = injector.getInstance(ParseKeySetFromJson.class);
    }
 
    public void testRegex() {
@@ -34,14 +35,7 @@ public class ParseKeyFromJsonTest {
                handler
                         .apply(new HttpResponse(
                                  Utils
-                                          .toInputStream("{\n\"uri\": \"https://api.opscode.com/users/bobo\", \"private_key\": \"RSA_PRIVATE_KEY\",}"))),
-               "RSA_PRIVATE_KEY");
+                                          .toInputStream("{\n\"opscode-validator\": \"https://api.opscode.com/...\", \"pimp-validator\": \"https://api.opscode.com/...\"}"))),
+               ImmutableSet.of("opscode-validator","pimp-validator"));
    }
-
-   public void test2() {
-      String key = handler.apply(new HttpResponse(ParseKeyFromJsonTest.class
-               .getResourceAsStream("/newclient.txt")));
-      assert key.startsWith("-----BEGIN RSA PRIVATE KEY-----\n");
-   }
-
 }

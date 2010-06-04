@@ -28,11 +28,14 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
-import org.jclouds.chef.domain.Organization;
 import org.jclouds.chef.domain.User;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.testng.annotations.BeforeGroups;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.RestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
@@ -46,23 +49,73 @@ import com.google.common.io.Files;
 @Test(groups = "live", testName = "chef.ChefClientLiveTest")
 public class ChefClientLiveTest {
 
-   private ChefClient client;
-   private String username;
+   private RestContext<ChefAsyncClient, ChefClient> validatorConnection;
+   private RestContext<ChefAsyncClient, ChefClient> clientConnection;
 
-   @BeforeGroups(groups = { "live" })
+   private String orgname;
+   private String clientKey;
+
+   public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
+
+   @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      username = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      orgname = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String keyfile = System.getProperty("jclouds.test.key");
       if (keyfile == null || keyfile.equals(""))
-         keyfile = System.getProperty("user.home") + "/chef/client.pem";
-      client = ChefContextFactory.createContext(username,
-               Files.toString(new File(keyfile), Charsets.UTF_8), new Log4JLoggingModule())
-               .getApi();
+         keyfile = System.getProperty("user.home") + "/chef/validation.pem";
+      validatorConnection = createConnection(orgname + "-validator", Files.toString(new File(
+               keyfile), Charsets.UTF_8));
+   }
+
+   private RestContext<ChefAsyncClient, ChefClient> createConnection(String identity, String key)
+            throws IOException {
+      return ChefContextFactory.createContext(identity, key, new Log4JLoggingModule());
+   }
+
+   @Test
+   public void testListClientsInOrg() throws Exception {
+      Set<String> clients = validatorConnection.getApi().listClientsInOrg(orgname);
+      assertNotNull(clients);
+      assert clients.contains(orgname + "-validator");
+   }
+
+   @Test(dependsOnMethods = "testListClientsInOrg")
+   public void testCreateClientInOrg() throws Exception {
+      validatorConnection.getApi().deleteClientInOrg(orgname, PREFIX);
+      clientKey = validatorConnection.getApi().createClientInOrg(orgname, PREFIX);
+      assertNotNull(clientKey);
+      System.out.println(clientKey);
+      clientConnection = createConnection(PREFIX, clientKey);
+      clientConnection.getApi().clientExistsInOrg(orgname, PREFIX);
+   }
+
+   @Test(dependsOnMethods = "testCreateClientInOrg")
+   public void testGenerateKeyForClientInOrg() throws Exception {
+      clientKey = validatorConnection.getApi().generateKeyForClientInOrg(orgname, PREFIX);
+      assertNotNull(clientKey);
+      clientConnection.close();
+      clientConnection = createConnection(PREFIX, clientKey);
+      clientConnection.getApi().clientExistsInOrg(orgname, PREFIX);
+   }
+
+   @Test(dependsOnMethods = "testCreateClientInOrg")
+   public void testClientExistsInOrg() throws Exception {
+      assertNotNull(validatorConnection.getApi().clientExistsInOrg(orgname, PREFIX));
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testGetOrgFailsForValidationKey() throws Exception {
+      validatorConnection.getApi().getOrg(orgname);
+   }
+
+   @Test(dependsOnMethods = "testGenerateKeyForClientInOrg", expectedExceptions = AuthorizationException.class)
+   public void testGetOrgFailsForClient() throws Exception {
+      clientConnection.getApi().getOrg(orgname);
    }
 
    @Test(enabled = false)
    public void testGetUser() throws Exception {
-      User user = client.getUser(username);
+      User user = validatorConnection.getApi().getUser(orgname);
       assertNotNull(user);
    }
 
@@ -82,24 +135,26 @@ public class ChefClientLiveTest {
    }
 
    @Test(enabled = false)
-   public void testCreateOrganization() throws Exception {
-      // TODO
-   }
-
-   @Test
-   public void testGetOrganization() throws Exception {
-      Organization organization = client.getOrganization("jclouds");
-      assertNotNull(organization);
-   }
-
-   @Test(enabled = false)
-   public void testUpdateOrganization() throws Exception {
+   public void testCreateOrg() throws Exception {
       // TODO
    }
 
    @Test(enabled = false)
-   public void testDeleteOrganization() throws Exception {
+   public void testUpdateOrg() throws Exception {
+      // TODO
+   }
+
+   @Test(enabled = false)
+   public void testDeleteOrg() throws Exception {
       // TODO
 
+   }
+
+   @AfterClass(groups = { "live" })
+   public void teardownClient() throws IOException {
+      if (clientConnection != null)
+         clientConnection.close();
+      if (validatorConnection != null)
+         validatorConnection.close();
    }
 }

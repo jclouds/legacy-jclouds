@@ -77,7 +77,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
 
    @Inject
    public SignedHeaderAuth(SignatureWire signatureWire,
-            @Named(ChefConstants.PROPERTY_CHEF_USER_ID) String userId, PrivateKey privateKey,
+            @Named(ChefConstants.PROPERTY_CHEF_IDENTITY) String userId, PrivateKey privateKey,
             @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.userId = userId;

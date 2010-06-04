@@ -23,20 +23,26 @@
  */
 package org.jclouds.chef;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.chef.binders.BindClientnameToJsonPayload;
+import org.jclouds.chef.binders.BindGenerateKeyForClientToJsonPayload;
 import org.jclouds.chef.domain.Organization;
 import org.jclouds.chef.domain.User;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.functions.OrganizationName;
 import org.jclouds.chef.functions.ParseKeyFromJson;
+import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.chef.functions.ParseOrganizationFromJson;
 import org.jclouds.chef.functions.ParseUserFromJson;
 import org.jclouds.chef.functions.Username;
@@ -47,7 +53,9 @@ import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -63,9 +71,53 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(SignedHeaderAuth.class)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface ChefAsyncClient {
+   /**
+    * @see ChefClient#createClientInOrganization
+    */
+   @POST
+   @Path("/organizations/{orgname}/clients")
+   @ResponseParser(ParseKeyFromJson.class)
+   ListenableFuture<String> createClientInOrg(@PathParam("orgname") String orgname,
+            @BinderParam(BindClientnameToJsonPayload.class) String clientname);
 
    /**
-    * @see ChefAsyncClient#createUser
+    * @see ChefClient#generateKeyForClientInOrg
+    */
+   @PUT
+   @Path("/organizations/{orgname}/clients/{clientname}")
+   @ResponseParser(ParseKeyFromJson.class)
+   ListenableFuture<String> generateKeyForClientInOrg(
+            @PathParam("orgname") String orgname,
+            @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
+
+   /**
+    * @see ChefClient#clientExistsInOrg
+    */
+   @HEAD
+   @Path("/organizations/{orgname}/clients/{clientname}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> clientExistsInOrg(@PathParam("orgname") String orgname,
+            @PathParam("clientname") String clientname);
+
+   /**
+    * @see ChefClient#deleteClientInOrg
+    */
+   @DELETE
+   @Path("/organizations/{orgname}/clients/{clientname}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteClientInOrg(@PathParam("orgname") String orgname,
+            @PathParam("clientname") String clientname);
+
+   /**
+    * @see ChefClient#createClientInOrganization
+    */
+   @GET
+   @Path("/organizations/{orgname}/clients")
+   @ResponseParser(ParseKeySetFromJson.class)
+   ListenableFuture<Set<String>> listClientsInOrg(@PathParam("orgname") String orgname);
+
+   /**
+    * @see ChefClient#createUser
     */
    @POST
    @Path("/users")
@@ -73,7 +125,7 @@ public interface ChefAsyncClient {
    ListenableFuture<String> createUser(@BinderParam(BindToJsonPayload.class) User user);
 
    /**
-    * @see ChefAsyncClient#updateUser
+    * @see ChefClient#updateUser
     */
    @PUT
    @Path("/users/{username}")
@@ -82,7 +134,7 @@ public interface ChefAsyncClient {
             @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
 
    /**
-    * @see ChefAsyncClient#getUser
+    * @see ChefClient#getUser
     */
    @GET
    @Path("/users/{username}")
@@ -91,7 +143,7 @@ public interface ChefAsyncClient {
    ListenableFuture<User> getUser(@PathParam("username") String username);
 
    /**
-    * @see ChefAsyncClient#deleteUser
+    * @see ChefClient#deleteUser
     */
    @DELETE
    @Path("/users/{username}")
@@ -99,38 +151,37 @@ public interface ChefAsyncClient {
    ListenableFuture<User> deleteUser(@PathParam("username") String username);
 
    /**
-    * @see ChefAsyncClient#createOrganization
+    * @see ChefClient#createOrg
     */
    @POST
    @Path("/organizations")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createOrganization(
-            @BinderParam(BindToJsonPayload.class) Organization org);
+   ListenableFuture<String> createOrg(@BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
-    * @see ChefAsyncClient#updateOrganization
+    * @see ChefClient#updateOrg
     */
    @PUT
    @Path("/organizations/{orgname}")
    @ResponseParser(ParseOrganizationFromJson.class)
-   ListenableFuture<Organization> updateOrganization(
+   ListenableFuture<Organization> updateOrg(
             @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
-    * @see ChefAsyncClient#getOrganization
+    * @see ChefClient#getOrg
     */
    @GET
    @Path("/organizations/{orgname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(ParseOrganizationFromJson.class)
-   ListenableFuture<Organization> getOrganization(@PathParam("orgname") String orgname);
+   ListenableFuture<Organization> getOrg(@PathParam("orgname") String orgname);
 
    /**
-    * @see ChefAsyncClient#deleteOrganization
+    * @see ChefClient#deleteOrg
     */
    @DELETE
    @Path("/organizations/{orgname}")
    @ResponseParser(ParseOrganizationFromJson.class)
-   ListenableFuture<Organization> deleteOrganization(@PathParam("orgname") String orgname);
+   ListenableFuture<Organization> deleteOrg(@PathParam("orgname") String orgname);
 
 }

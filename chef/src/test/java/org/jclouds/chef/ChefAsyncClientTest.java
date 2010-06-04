@@ -35,12 +35,17 @@ import org.jclouds.chef.domain.User;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
 import org.jclouds.chef.functions.ParseKeyFromJson;
+import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.chef.functions.ParseOrganizationFromJson;
 import org.jclouds.chef.functions.ParseUserFromJson;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -58,6 +63,98 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "chef.ChefAsyncClientTest")
 public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
+   public void testClientExistsInOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("clientExistsInOrg", String.class,
+               String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "org",
+               "client");
+      assertRequestLineEquals(httpRequest,
+               "HEAD https://api.opscode.com/organizations/org/clients/client HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDeleteClientInOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("deleteClientInOrg", String.class,
+               String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "org",
+               "client");
+      assertRequestLineEquals(httpRequest,
+               "DELETE https://api.opscode.com/organizations/org/clients/client HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testGenerateKeyForClientInOrg() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("generateKeyForClientInOrg", String.class,
+               String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "org",
+               "client");
+      assertRequestLineEquals(httpRequest,
+               "PUT https://api.opscode.com/organizations/org/clients/client HTTP/1.1");
+      assertHeadersEqual(httpRequest,
+               "Accept: application/json\nContent-Length: 44\nContent-Type: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"clientname\":\"client\", \"private_key\": true}");
+
+      assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testCreateClientInOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("createClientInOrg", String.class,
+               String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "org",
+               "client");
+
+      assertRequestLineEquals(httpRequest,
+               "POST https://api.opscode.com/organizations/org/clients HTTP/1.1");
+      assertHeadersEqual(httpRequest,
+               "Accept: application/json\nContent-Length: 23\nContent-Type: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"clientname\":\"client\"}");
+
+      assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListClientsInOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("listClientsInOrg", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "org");
+
+      assertRequestLineEquals(httpRequest,
+               "GET https://api.opscode.com/organizations/org/clients HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
 
    public void testCreateUser() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("createUser", User.class);
@@ -163,9 +260,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testCreateOrganization() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ChefAsyncClient.class.getMethod("createOrganization", Organization.class);
+   public void testCreateOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("createOrg", Organization.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
                new Organization("myorganization"));
 
@@ -182,9 +278,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testUpdateOrganization() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ChefAsyncClient.class.getMethod("updateOrganization", Organization.class);
+   public void testUpdateOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("updateOrg", Organization.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
                new Organization("myorganization"));
 
@@ -202,8 +297,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testGetOrganization() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("getOrganization", String.class);
+   public void testGetOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("getOrg", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
                "myorganization");
 
@@ -220,9 +315,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testDeleteOrganization() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ChefAsyncClient.class.getMethod("deleteOrganization", String.class);
+   public void testDeleteOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("deleteOrg", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
                "myorganization");
 

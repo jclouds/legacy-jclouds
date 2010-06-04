@@ -25,9 +25,9 @@ package org.jclouds.chef;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_ENDPOINT;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_PRIVATE_KEY;
+import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_RSA_KEY;
 import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_TIMESTAMP_INTERVAL;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_USER_ID;
+import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_IDENTITY;
 
 import java.net.URI;
 import java.util.Properties;
@@ -52,14 +52,14 @@ public class ChefPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   public ChefPropertiesBuilder(String id, String secret) {
+   public ChefPropertiesBuilder(String identity, String rsaKey) {
       super();
-      withCredentials(id, secret);
+      withCredentials(identity, rsaKey);
    }
 
-   public ChefPropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_CHEF_USER_ID, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_CHEF_PRIVATE_KEY, checkNotNull(secret, "password"));
+   public ChefPropertiesBuilder withCredentials(String identity, String rsaKey) {
+      properties.setProperty(PROPERTY_CHEF_IDENTITY, checkNotNull(identity, "identity"));
+      properties.setProperty(PROPERTY_CHEF_RSA_KEY, checkNotNull(rsaKey, "password"));
       return this;
    }
 

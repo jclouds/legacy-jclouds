@@ -39,46 +39,43 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef.config;
+package org.jclouds.chef.functions;
 
-import java.net.URI;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Set;
 
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.chef.Chef;
-import org.jclouds.chef.ChefAsyncClient;
-import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.reference.ChefConstants;
+import org.jclouds.http.functions.ParseJson;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
- * Configures the Chef connection, including logging and http transport.
- * 
  * @author Adrian Cole
  */
-public class ChefContextModule extends AbstractModule {
-   
-   public ChefContextModule(String providerName) {
-      // providerName ignored right now
+@Singleton
+public class ParseKeySetFromJson extends ParseJson<Set<String>> {
+   @Inject
+   public ParseKeySetFromJson(Gson gson) {
+      super(gson);
    }
-   
+
+   @SuppressWarnings("unchecked")
    @Override
-   protected void configure() {
-      // example of how to customize bindings
-      // bind(DateAdapter.class).to(CDateAdapter.class);
+   protected Set<String> apply(InputStream stream) {
+      try {
+         Type map = new TypeToken<Map<String, String>>() {
+         }.getType();
+         return ((Map<String, String>) gson.fromJson(new InputStreamReader(stream, "UTF-8"), map))
+                  .keySet();
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
    }
-
-   @Provides
-   @Singleton
-   RestContext<ChefAsyncClient, ChefClient> provideContext(Closer closer, ChefAsyncClient asyncApi,
-            ChefClient syncApi, @Chef URI endPoint, @Named(ChefConstants.PROPERTY_CHEF_IDENTITY) String account) {
-      return new RestContextImpl<ChefAsyncClient, ChefClient>(closer, asyncApi, syncApi, endPoint, account);
-   }
-
 }

@@ -41,11 +41,13 @@
  */
 package org.jclouds.chef;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.chef.domain.Organization;
 import org.jclouds.chef.domain.User;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 
@@ -57,8 +59,33 @@ import org.jclouds.rest.ResourceNotFoundException;
  * @see <a href="TODO: insert URL of Chef documentation" />
  * @author Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
+
+   /**
+    * creates a new client
+    * 
+    * @return the private key of the client. You can then use this client name and private key to
+    *         access the Opscode API.
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if the caller is not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if the caller is not authorized to create a client.
+    * @throws HttpResponseException
+    *            "409 Conflict" if the client already exists
+    */
+   @Timeout(duration =  120, timeUnit = TimeUnit.SECONDS)
+   String createClientInOrg(String orgname, String name);
+
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+   String generateKeyForClientInOrg(String orgname, String name);
+
+   Set<String> listClientsInOrg(String orgname);
+
+   boolean clientExistsInOrg(String orgname, String name);
+
+   void deleteClientInOrg(String orgname, String name);
 
    /**
     * creates a new user
@@ -118,7 +145,7 @@ public interface ChefClient {
     *            <p/>
     *            "403 Forbidden" if the caller is not authorized to create a organization.
     */
-   String createOrganization(Organization organization);
+   String createOrg(Organization organization);
 
    /**
     * updates an existing organization. Note: you must have update rights on the organization.
@@ -131,14 +158,14 @@ public interface ChefClient {
     * @throws ResourceNotFoundException
     *            if the organization does not exist.
     */
-   Organization updateOrganization(Organization organization);
+   Organization updateOrg(Organization organization);
 
    /**
     * retrieves an existing organization. Note: you must have update rights on the organization.
     * 
     * @return null, if the organization is not found
     */
-   Organization getOrganization(String organizationname);
+   Organization getOrg(String organizationname);
 
    /**
     * deletes an existing organization. Note: you must have delete rights on the organization.
@@ -153,5 +180,5 @@ public interface ChefClient {
     *            <p/>
     *            “404 Not Found” if the organization does not exist.
     */
-   Organization deleteOrganization(String organizationname);
+   Organization deleteOrg(String organizationname);
 }

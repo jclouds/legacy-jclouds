@@ -41,11 +41,13 @@ import com.google.common.base.Throwables;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseKeyFromJson implements Function<HttpResponse, String> {
-   Pattern pattern = Pattern.compile(".*private_key\": *\"([^\"]+)\".*");
+public class ParseErrorFromJsonOrNull implements Function<HttpResponse, String> {
+   Pattern pattern = Pattern.compile(".*error\": *\"([^\"]+)\".*");
 
    @Override
    public String apply(HttpResponse response) {
+      if (response.getContent() == null)
+         return null;
       try {
          return parse(Utils.toStringAndClose(response.getContent()));
       } catch (IOException e) {
@@ -62,9 +64,8 @@ public class ParseKeyFromJson implements Function<HttpResponse, String> {
    public String parse(String in) {
       Matcher matcher = pattern.matcher(in);
       while (matcher.find()) {
-         return matcher.group(1).replaceAll("\\\\n", "\n");
+         return matcher.group(1);
       }
-      assert false : String.format("pattern: %s didn't match %s", pattern, in);
       return null;
    }
 }
