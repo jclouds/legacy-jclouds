@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package ${package}.compute.config;
+package org.jclouds.ibmdev.compute.config;
 
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
@@ -27,10 +27,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import ${package}.${providerName}Client;
-import ${package}.${providerName}AsyncClient;
-import ${package}.config.${providerName}ContextModule;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
@@ -52,6 +48,9 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.ibmdev.IBMDeveloperCloudAsyncClient;
+import org.jclouds.ibmdev.IBMDeveloperCloudClient;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudContextModule;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -66,30 +65,30 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
- * @author ${author}
+ * @author Adrian Cole
  */
-public class ${providerName}ComputeServiceContextModule extends ${providerName}ContextModule {
+public class IBMDeveloperCloudComputeServiceContextModule extends IBMDeveloperCloudContextModule {
 
    private final String providerName;
-   
-   public ${providerName}ComputeServiceContextModule(String providerName){
+
+   public IBMDeveloperCloudComputeServiceContextModule(String providerName) {
       super(providerName);
-      this.providerName=providerName;
+      this.providerName = providerName;
    }
-   
+
    @Override
    protected void configure() {
       super.configure();
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
                .to(
-                        new TypeLiteral<ComputeServiceContextImpl<${providerName}AsyncClient, ${providerName}Client>>() {
+                        new TypeLiteral<ComputeServiceContextImpl<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient>>() {
                         }).in(Scopes.SINGLETON);
-      bind(AddNodeWithTagStrategy.class).to(${providerName}AddNodeWithTagStrategy.class);
-      bind(ListNodesStrategy.class).to(${providerName}ListNodesStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(${providerName}GetNodeMetadataStrategy.class);
-      bind(RebootNodeStrategy.class).to(${providerName}RebootNodeStrategy.class);
-      bind(DestroyNodeStrategy.class).to(${providerName}DestroyNodeStrategy.class);
+      bind(AddNodeWithTagStrategy.class).to(IBMDeveloperCloudAddNodeWithTagStrategy.class);
+      bind(ListNodesStrategy.class).to(IBMDeveloperCloudListNodesStrategy.class);
+      bind(GetNodeMetadataStrategy.class).to(IBMDeveloperCloudGetNodeMetadataStrategy.class);
+      bind(RebootNodeStrategy.class).to(IBMDeveloperCloudRebootNodeStrategy.class);
+      bind(DestroyNodeStrategy.class).to(IBMDeveloperCloudDestroyNodeStrategy.class);
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
    }
 
@@ -98,7 +97,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    protected Predicate<IPSocket> socketTester(SocketOpen open) {
       return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
-   
+
    /**
     * tested known configuration
     */
@@ -107,7 +106,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.osFamily(UBUNTU);
    }
-   
+
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
@@ -116,42 +115,42 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    }
 
    @Singleton
-   public static class ${providerName}AddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+   public static class IBMDeveloperCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
       @Inject
-      protected ${providerName}AddNodeWithTagStrategy() {
+      protected IBMDeveloperCloudAddNodeWithTagStrategy() {
       }
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-          /*
-           * TODO: implement
-           */
-          return null;
+         /*
+          * TODO: implement
+          */
+         return null;
       }
    }
 
    @Singleton
-   public static class ${providerName}RebootNodeStrategy implements RebootNodeStrategy {
+   public static class IBMDeveloperCloudRebootNodeStrategy implements RebootNodeStrategy {
 
       @Inject
-      protected ${providerName}RebootNodeStrategy() {
+      protected IBMDeveloperCloudRebootNodeStrategy() {
       }
 
       @Override
       public boolean execute(String id) {
-          /*
-           * TODO: implement
-           */
-          return false;
+         /*
+          * TODO: implement
+          */
+         return false;
       }
    }
 
    @Singleton
-   public static class ${providerName}ListNodesStrategy implements ListNodesStrategy {
+   public static class IBMDeveloperCloudListNodesStrategy implements ListNodesStrategy {
 
       @Inject
-      protected ${providerName}ListNodesStrategy() {
+      protected IBMDeveloperCloudListNodesStrategy() {
       }
 
       @Override
@@ -173,34 +172,34 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    }
 
    @Singleton
-   public static class ${providerName}GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+   public static class IBMDeveloperCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
       @Inject
-      protected ${providerName}GetNodeMetadataStrategy() {
+      protected IBMDeveloperCloudGetNodeMetadataStrategy() {
       }
 
       @Override
       public NodeMetadata execute(String id) {
-          /*
-           * TODO: implement
-           */
-          return null;
+         /*
+          * TODO: implement
+          */
+         return null;
       }
    }
 
    @Singleton
-   public static class ${providerName}DestroyNodeStrategy implements DestroyNodeStrategy {
+   public static class IBMDeveloperCloudDestroyNodeStrategy implements DestroyNodeStrategy {
 
       @Inject
-      protected ${providerName}DestroyNodeStrategy() {
+      protected IBMDeveloperCloudDestroyNodeStrategy() {
       }
 
       @Override
       public boolean execute(String id) {
-          /*
-           * TODO: implement
-           */
-          return false;
+         /*
+          * TODO: implement
+          */
+         return false;
       }
 
    }
@@ -212,7 +211,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
                TimeUnit.SECONDS);
    }
-   
+
    @Provides
    @Singleton
    Location getDefaultLocation(Set<? extends Location> locations) {
@@ -220,28 +219,28 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       /*
        * TODO: implement
        */
-      
+
       return null;
    }
 
    @Provides
    @Singleton
-   Set<? extends Location> getAssignableLocations(${providerName}Client sync, LogHolder holder ) {
+   Set<? extends Location> getAssignableLocations(IBMDeveloperCloudClient sync, LogHolder holder) {
       final Set<Location> assignableLocations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
       Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       /*
-       * TODO: add children with parent to locations.  Note do not add parent to assignablelocations 
+       * TODO: add children with parent to locations. Note do not add parent to assignablelocations
        * directly
        */
-      
+
       holder.logger.debug("<< locations(%d)", assignableLocations.size());
       return assignableLocations;
    }
 
    @Provides
    @Singleton
-   protected Set<? extends Size> provideSizes(${providerName}Client sync,
+   protected Set<? extends Size> provideSizes(IBMDeveloperCloudClient sync,
             Set<? extends Image> images, LogHolder holder) {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
@@ -249,15 +248,15 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       /*
        * TODO: implement
        */
-      
+
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
    }
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final ${providerName}Client sync, LogHolder holder,
-            Location location) {
+   protected Set<? extends Image> provideImages(final IBMDeveloperCloudClient sync,
+            LogHolder holder, Location location) {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
 
@@ -271,8 +270,8 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
 
    @Singleton
    private static class LogHolder {
-       @Resource
-       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-       protected Logger logger = Logger.NULL;
+      @Resource
+      @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+      protected Logger logger = Logger.NULL;
    }
 }

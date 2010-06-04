@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   $HeadURL$
+   $Revision$
+   $Date$
+
+   Copyright (C) 2009 Cloud Conscious, LLC <info@cloudconscious.com>
+
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0.html 
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+   ====================================================================
+ --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../project/pom.xml</relativePath>
+    </parent>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-ibmdev</artifactId>
+    <name>jclouds IBMDeveloperCloud core</name>
+    <description>jclouds components to access IBMDeveloperCloud</description>
+
+    <scm>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/ibmdevelopercloud</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/ibmdevelopercloud</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk/ibmdevelopercloud</url>
+    </scm>
+    
+    <!-- bootstrapping: need to fetch the project POM -->
+    <repositories>
+        <repository>
+            <id>jclouds-googlecode-deploy</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+        </repository>
+        <repository>
+            <id>jclouds-rimu-snapshots-nexus</id>
+            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
+            <snapshots>
+            </snapshots>
+        </repository>    
+    </repositories>
+    
+    <properties>
+        <jclouds.test.user>${providerUser}</jclouds.test.user>
+        <jclouds.test.key>${providerPassword}</jclouds.test.key>
+        <jclouds.test.endpoint>https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403</jclouds.test.endpoint>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jclouds-jsch</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+        <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jclouds-compute</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+        <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jclouds-compute</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    </dependencies>
+</project>

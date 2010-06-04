@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
  *
  * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -24,40 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package ${package};
-
+package org.jclouds.ibmdev;
 
 import java.util.List;
 import java.util.Properties;
 
-import com.google.inject.Key;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import ${package}.compute.config.${providerName}ComputeServiceContextModule;
-import ${package}.config.${providerName}RestClientModule;
+import org.jclouds.ibmdev.compute.config.IBMDeveloperCloudComputeServiceContextModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudRestClientModule;
 
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * @author ${author}
+ * @author Adrian Cole
  */
-public class ${providerName}ContextBuilder extends ComputeServiceContextBuilder<${providerName}AsyncClient, ${providerName}Client> {
+public class IBMDeveloperCloudContextBuilder extends
+         ComputeServiceContextBuilder<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient> {
 
-    public ${providerName}ContextBuilder(String providerName, Properties props) {
-        super(providerName, new TypeLiteral<${providerName}AsyncClient>() {}, 
-                new TypeLiteral<${providerName}Client>() {}, 
-                props);
-    }
+   public IBMDeveloperCloudContextBuilder(String providerName, Properties props) {
+      super(providerName, new TypeLiteral<IBMDeveloperCloudAsyncClient>() {
+      }, new TypeLiteral<IBMDeveloperCloudClient>() {
+      }, props);
+   }
 
-    protected void addClientModule(List<Module> modules) {
-        modules.add(new ${providerName}RestClientModule());
-    }
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new IBMDeveloperCloudRestClientModule());
+   }
 
-    @Override
-    protected void addContextModule(String providerName, List<Module> modules) {
-        modules.add(new ${providerName}ComputeServiceContextModule(providerName));
-    }
+   @Override
+   protected void addContextModule(String providerName, List<Module> modules) {
+      modules.add(new IBMDeveloperCloudComputeServiceContextModule(providerName));
+   }
 
 }

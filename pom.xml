@@ -51,6 +51,7 @@
         <module>vcloud</module>
         <module>gogrid</module>
     <module>chef</module>
+    <module>ibmdev</module>
   </modules>
     <build>
         <plugins>
