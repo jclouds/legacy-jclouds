@@ -24,19 +24,21 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 
+import org.jclouds.azure.storage.handlers.AzureStorageClientErrorRetryHandler;
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -46,7 +48,11 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class AzureStorageRestClientModule extends AbstractModule {
+public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
+
+   public AzureStorageRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+      super(syncClientType, asyncClientType);
+   }
 
    @Provides
    @TimeStamp
@@ -59,7 +65,7 @@ public class AzureStorageRestClientModule extends AbstractModule {
     */
    @Provides
    @TimeStamp
-   Supplier<String> provideTimeStampCache(
+   protected Supplier<String> provideTimeStampCache(
             @Named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL) long seconds,
             final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
@@ -70,11 +76,6 @@ public class AzureStorageRestClientModule extends AbstractModule {
    }
 
    @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
-
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseAzureStorageErrorFromXmlContent.class);
@@ -84,7 +85,10 @@ public class AzureStorageRestClientModule extends AbstractModule {
                ParseAzureStorageErrorFromXmlContent.class);
    }
 
+   @Override
    protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
+               AzureStorageClientErrorRetryHandler.class);
    }
 
 }

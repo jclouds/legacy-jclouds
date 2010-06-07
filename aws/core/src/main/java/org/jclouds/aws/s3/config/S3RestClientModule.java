@@ -36,7 +36,6 @@ import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.concurrent.ExpirableSupplier;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
@@ -47,12 +46,11 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -63,7 +61,17 @@ import com.google.inject.Scopes;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class S3RestClientModule extends AbstractModule {
+public class S3RestClientModule extends RestClientModule<S3Client, S3AsyncClient> {
+   public S3RestClientModule() {
+      super(S3Client.class, S3AsyncClient.class);
+   }
+   
+   @Override
+   protected void configure() {
+      install(new S3ObjectModule());
+      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
+      super.configure();
+   }
 
    @Provides
    @TimeStamp
@@ -90,13 +98,6 @@ public class S3RestClientModule extends AbstractModule {
             return dateService.rfc822DateFormat();
          }
       }, seconds, TimeUnit.SECONDS);
-   }
-
-   @Override
-   protected void configure() {
-      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
-      bindErrorHandlers();
-      bindRetryHandlers();
    }
 
    @Provides
@@ -133,19 +134,7 @@ public class S3RestClientModule extends AbstractModule {
       return ImmutableBiMap.<String, URI> builder().putAll(map).build().inverse().get(uri);
    }
 
-   @Provides
-   @Singleton
-   protected S3AsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(S3AsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public S3Client provideClient(S3AsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(S3Client.class, client);
-   }
-
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseAWSErrorFromXmlContent.class);
@@ -155,6 +144,7 @@ public class S3RestClientModule extends AbstractModule {
                ParseAWSErrorFromXmlContent.class);
    }
 
+   @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
                AWSRedirectionRetryHandler.class);

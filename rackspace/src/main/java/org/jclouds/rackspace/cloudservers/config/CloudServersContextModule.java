@@ -44,11 +44,11 @@ public class CloudServersContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<CloudServersAsyncClient, CloudServersClient> provideContext(Closer closer,
+   RestContext<CloudServersClient, CloudServersAsyncClient> provideContext(Closer closer,
             CloudServersAsyncClient asynchApi, CloudServersClient defaultApi,
             @CloudServers URI endPoint,
             @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-      return new RestContextImpl<CloudServersAsyncClient, CloudServersClient>(closer, asynchApi,
+      return new RestContextImpl<CloudServersClient, CloudServersAsyncClient>(closer, asynchApi,
                defaultApi, endPoint, account);
    }
 

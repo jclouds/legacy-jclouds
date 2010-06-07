@@ -29,22 +29,21 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 
 /**
  * @author Adrian Cole
  */
-public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuilder<A, S> {
+public abstract class ComputeServiceContextBuilder<S, A> extends RestContextBuilder<S, A> {
 
-   public ComputeServiceContextBuilder(String providerName, TypeLiteral<A> asyncClientType,
-            TypeLiteral<S> syncClientType) {
-      this(providerName, asyncClientType, syncClientType, new Properties());
+   public ComputeServiceContextBuilder(String providerName, Class<S> syncClientType,
+            Class<A> asyncClientType) {
+      this(providerName, syncClientType, asyncClientType, new Properties());
    }
 
-   public ComputeServiceContextBuilder(String providerName, TypeLiteral<A> asyncClientType,
-            TypeLiteral<S> syncClientType, Properties properties) {
-      super(providerName, asyncClientType, syncClientType, properties);
+   public ComputeServiceContextBuilder(String providerName, Class<S> syncClientType,
+            Class<A> asyncClientType, Properties properties) {
+      super(providerName, syncClientType, asyncClientType, properties);
 
    }
 
@@ -58,15 +57,15 @@ public abstract class ComputeServiceContextBuilder<A, S> extends RestContextBuil
     * {@inheritDoc}
     */
    @Override
-   public ComputeServiceContextBuilder<A, S> withModules(Module... modules) {
-      return (ComputeServiceContextBuilder<A, S>) super.withModules(modules);
+   public ComputeServiceContextBuilder<S, A> withModules(Module... modules) {
+      return (ComputeServiceContextBuilder<S, A>) super.withModules(modules);
    }
 
    public ComputeServiceContext buildComputeServiceContext() {
       // need the generic type information
       return (ComputeServiceContext) buildInjector().getInstance(
-               Key.get(Types.newParameterizedType(ComputeServiceContextImpl.class, asyncClientType
-                        .getType(), syncClientType.getType())));
+               Key.get(Types.newParameterizedType(ComputeServiceContextImpl.class, asyncClientType,
+                        syncClientType)));
    }
 
    protected void addImageResolutionModuleIfNotPresent() {

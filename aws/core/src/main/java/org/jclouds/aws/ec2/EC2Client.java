@@ -18,7 +18,8 @@
  */
 package org.jclouds.aws.ec2;
 
-import org.jclouds.aws.ec2.internal.EC2ClientImpl;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
@@ -28,58 +29,67 @@ import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
-
-import com.google.inject.ImplementedBy;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides synchronous access to EC2 services.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(EC2ClientImpl.class)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface EC2Client {
    /**
     * Provides synchronous access to AMI services.
     */
+   @Delegate
    AMIClient getAMIServices();
 
    /**
     * Provides synchronous access to Elastic IP Address services.
     */
+   @Delegate
    ElasticIPAddressClient getElasticIPAddressServices();
 
    /**
     * Provides synchronous access to Instance services.
     */
+   @Delegate
    InstanceClient getInstanceServices();
 
    /**
     * Provides synchronous access to KeyPair services.
     */
+   @Delegate
    KeyPairClient getKeyPairServices();
 
    /**
     * Provides synchronous access to SecurityGroup services.
     */
+   @Delegate
    SecurityGroupClient getSecurityGroupServices();
 
    /**
     * Provides synchronous access to Monitoring services.
     */
+   @Delegate
    MonitoringClient getMonitoringServices();
 
    /**
     * Provides synchronous access to Availability Zones and Regions services.
     */
+   @Delegate
    AvailabilityZoneAndRegionClient getAvailabilityZoneAndRegionServices();
 
    /**
     * Provides synchronous access to Elastic Block Store services.
     */
+   @Delegate
    ElasticBlockStoreClient getElasticBlockStoreServices();
 
    /**
     * Provides synchronous access to Elastic Load Balancer services.
     */
+   @Delegate
    ElasticLoadBalancerClient getElasticLoadBalancerServices();
 }

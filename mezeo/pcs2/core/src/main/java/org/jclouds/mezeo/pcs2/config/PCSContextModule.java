@@ -23,7 +23,6 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.mezeo.pcs2.PCS;
 import org.jclouds.mezeo.pcs2.PCSAsyncClient;
@@ -34,7 +33,6 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Configures the PCS connection, including logging and http transport.
@@ -48,19 +46,14 @@ public class PCSContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreObjectModule<PCSAsyncClient, PCSClient>(
-               new TypeLiteral<PCSAsyncClient>() {
-               }, new TypeLiteral<PCSClient>() {
-               }));
-      install(new PCSObjectModule());
    }
 
    @Provides
    @Singleton
-   RestContext<PCSAsyncClient, PCSClient> provideContext(Closer closer, PCSAsyncClient async,
+   RestContext<PCSClient, PCSAsyncClient> provideContext(Closer closer, PCSAsyncClient async,
             PCSClient defaultApi, @PCS URI endPoint,
             @Named(PCSConstants.PROPERTY_PCS2_USER) String account) {
-      return new RestContextImpl<PCSAsyncClient, PCSClient>(closer, async, defaultApi, endPoint,
+      return new RestContextImpl<PCSClient, PCSAsyncClient>(closer, async, defaultApi, endPoint,
                account);
    }
 

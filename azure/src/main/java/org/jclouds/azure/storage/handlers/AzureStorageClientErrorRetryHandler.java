@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.handlers;
+package org.jclouds.azure.storage.handlers;
 
 import java.io.ByteArrayInputStream;
 
@@ -41,7 +41,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
+public class AzureStorageClientErrorRetryHandler implements HttpRetryHandler {
 
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
@@ -54,7 +54,7 @@ public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public AzureBlobClientErrorRetryHandler(BackoffLimitedRetryHandler backoffHandler,
+   public AzureStorageClientErrorRetryHandler(BackoffLimitedRetryHandler backoffHandler,
             AzureStorageUtils utils) {
       this.backoffHandler = backoffHandler;
       this.utils = utils;

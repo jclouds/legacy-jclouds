@@ -58,7 +58,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<GoGridAsyncClient, GoGridClient> goGridContext = new ComputeServiceContextFactory()
+      RestContext<GoGridClient, GoGridAsyncClient> goGridContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
    }
 }

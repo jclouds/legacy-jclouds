@@ -38,7 +38,7 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -103,7 +103,7 @@ public class InsertUserContextIntoPathTest {
                      expect(sessionManager.getSessionToken()).andReturn("token").anyTimes();
                      replay(sessionManager);
                      bind(AddSessionTokenToRequest.class).toInstance(sessionManager);
-                     Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
+                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
                               "appname", "username", "password").build());
                   }
 

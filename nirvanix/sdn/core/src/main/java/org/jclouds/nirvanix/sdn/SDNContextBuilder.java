@@ -27,18 +27,15 @@ import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class SDNContextBuilder extends RestContextBuilder<SDNAsyncClient, SDNClient> {
+public class SDNContextBuilder extends RestContextBuilder<SDNClient, SDNAsyncClient> {
 
    public SDNContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<SDNAsyncClient>() {
-      }, new TypeLiteral<SDNClient>() {
-      }, props);
+      super(providerName, SDNClient.class, SDNAsyncClient.class, props);
    }
 
    @Override

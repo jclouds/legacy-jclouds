@@ -31,18 +31,15 @@ import org.jclouds.ibmdev.compute.config.IBMDeveloperCloudComputeServiceContextM
 import org.jclouds.ibmdev.config.IBMDeveloperCloudRestClientModule;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
 public class IBMDeveloperCloudContextBuilder extends
-         ComputeServiceContextBuilder<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient> {
+         ComputeServiceContextBuilder<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> {
 
    public IBMDeveloperCloudContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<IBMDeveloperCloudAsyncClient>() {
-      }, new TypeLiteral<IBMDeveloperCloudClient>() {
-      }, props);
+      super(providerName, IBMDeveloperCloudClient.class, IBMDeveloperCloudAsyncClient.class, props);
    }
 
    protected void addClientModule(List<Module> modules) {

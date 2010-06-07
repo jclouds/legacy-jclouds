@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
@@ -44,11 +44,11 @@ public class EC2DestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ElasticLoadBalancerClient elbClient;
+   private final EC2Client client;
 
    @Inject
-   protected EC2DestroyLoadBalancerStrategy(ElasticLoadBalancerClient elbClient) {
-      this.elbClient = checkNotNull(elbClient, "elbClient");
+   protected EC2DestroyLoadBalancerStrategy(EC2Client client) {
+      this.client = checkNotNull(client, "client");
    }
 
    @Override
@@ -56,7 +56,7 @@ public class EC2DestroyLoadBalancerStrategy implements DestroyLoadBalancerStrate
       Map<String, String> tuple = EC2Utils.getLoadBalancerNameAndRegionFromDnsName(loadBalancer);
       // Only one load balancer per DNS name is expected
       for (String key : tuple.keySet()) {
-         elbClient.deleteLoadBalancerInRegion(key, tuple.get(key));
+         client.getElasticLoadBalancerServices().deleteLoadBalancerInRegion(key, tuple.get(key));
       }
       return true;
    }

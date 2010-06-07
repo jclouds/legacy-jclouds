@@ -29,7 +29,6 @@ import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link SQSContext} or {@link Injector} instances based on the most commonly requested
@@ -44,12 +43,10 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see SQSContext
  */
-public class SQSContextBuilder extends RestContextBuilder<SQSAsyncClient, SQSClient> {
+public class SQSContextBuilder extends RestContextBuilder<SQSClient, SQSAsyncClient> {
 
    public SQSContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<SQSAsyncClient>() {
-      }, new TypeLiteral<SQSClient>() {
-      }, props);
+      super(providerName, SQSClient.class, SQSAsyncClient.class, props);
    }
 
    @Override

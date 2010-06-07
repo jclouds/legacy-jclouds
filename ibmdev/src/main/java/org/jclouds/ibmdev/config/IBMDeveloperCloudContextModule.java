@@ -76,11 +76,11 @@ public class IBMDeveloperCloudContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient> provideContext(Closer closer,
+   RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> provideContext(Closer closer,
             IBMDeveloperCloudAsyncClient asyncApi, IBMDeveloperCloudClient syncApi,
             @IBMDeveloperCloud URI endPoint,
             @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER) String account) {
-      return new RestContextImpl<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient>(closer,
+      return new RestContextImpl<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>(closer,
                asyncApi, syncApi, endPoint, account);
    }
 

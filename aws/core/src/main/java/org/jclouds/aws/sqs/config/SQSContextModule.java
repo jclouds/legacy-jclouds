@@ -52,10 +52,10 @@ public class SQSContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<SQSAsyncClient, SQSClient> provideContext(Closer closer, SQSAsyncClient defaultApi,
+   RestContext<SQSClient, SQSAsyncClient> provideContext(Closer closer, SQSAsyncClient defaultApi,
             SQSClient synchApi, @SQS URI endPoint,
             @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<SQSAsyncClient, SQSClient>(closer, defaultApi, synchApi, endPoint,
+      return new RestContextImpl<SQSClient, SQSAsyncClient>(closer, defaultApi, synchApi, endPoint,
                account);
    }
 

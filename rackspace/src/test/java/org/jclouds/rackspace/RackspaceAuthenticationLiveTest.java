@@ -36,9 +36,9 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -65,7 +64,7 @@ public class RackspaceAuthenticationLiveTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      RackspaceAuthentication provideClient(RestClientFactory factory) {
+      RackspaceAuthentication provideClient(AsyncClientFactory factory) {
          return factory.create(RackspaceAuthentication.class);
       }
 
@@ -119,9 +118,8 @@ public class RackspaceAuthenticationLiveTest {
    @BeforeClass
    void setupFactory() {
       context = new RestContextBuilder<RackspaceAuthentication, RackspaceAuthentication>(
-               "rackspace", new TypeLiteral<RackspaceAuthentication>() {
-               }, new TypeLiteral<RackspaceAuthentication>() {
-               }, new RackspacePropertiesBuilder(account, key).build()) {
+               "rackspace", RackspaceAuthentication.class, RackspaceAuthentication.class,
+               new RackspacePropertiesBuilder(account, key).build()) {
          @Override
          protected void addClientModule(List<Module> modules) {
             modules.add(new RestRackspaceAuthenticationClientModule());

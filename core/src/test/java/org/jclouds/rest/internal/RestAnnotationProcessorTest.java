@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -60,6 +62,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -67,7 +70,9 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
@@ -79,8 +84,10 @@ import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -99,8 +106,8 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
@@ -108,18 +115,23 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 
 /**
@@ -129,6 +141,158 @@ import com.google.inject.util.Types;
  */
 @Test(groups = "unit", testName = "jaxrs.JaxrsUtilTest")
 public class RestAnnotationProcessorTest {
+
+   @Endpoint(Localhost.class)
+   @Path("client")
+   public static interface AsyncCallee {
+      @GET
+      @Path("{path}")
+      ListenableFuture<Void> onePath(@PathParam("path") String path);
+   }
+
+   @Endpoint(Localhost2.class)
+   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
+   public static interface Caller {
+
+      @Delegate
+      @Path("{path}")
+      public Callee getCallee(@PathParam("path") String path);
+
+      @Delegate
+      public Callee getCallee();
+   }
+
+   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
+   public static interface Callee {
+
+      void onePath(String path);
+   }
+
+   public static interface AsyncCaller {
+
+      @Delegate
+      @Path("{path}")
+      public AsyncCallee getCallee(@PathParam("path") String path);
+
+      @Delegate
+      public AsyncCallee getCallee();
+   }
+
+   public void testDelegateAsync() throws SecurityException, NoSuchMethodException,
+            InterruptedException, ExecutionException {
+      Injector child = injectorForClient();
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      AsyncCaller caller = child.getInstance(AsyncCaller.class);
+
+      try {
+         caller.getCallee("goo").onePath("foo").get();
+         assert false : "shouldn't have connected as this url should be dummy";
+      } catch (HttpResponseException e) {
+         assertUriEquals(e, "http://localhost:9999/goo/client/foo");
+      }
+
+      try {
+         caller.getCallee().onePath("foo").get();
+         assert false : "shouldn't have connected as this url should be dummy";
+      } catch (HttpResponseException e) {
+         assertUriEquals(e, "http://localhost:9999/client/foo");
+      }
+
+   }
+
+   private void assertUriEquals(HttpResponseException e, String uri) {
+      assertEquals(e.getCommand().getRequest().getEndpoint().toASCIIString(), uri);
+   }
+
+   public void testDelegateWithOverridingEndpoint() throws SecurityException,
+            NoSuchMethodException, InterruptedException, ExecutionException {
+      Injector child = injectorForClient();
+      try {
+         child.getInstance(Callee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      Caller caller = child.getInstance(Caller.class);
+
+      try {
+         caller.getCallee("goo").onePath("foo");
+         assert false : "shouldn't have connected as this url should be dummy";
+      } catch (HttpResponseException e) {
+         assertUriEquals(e, "http://localhost:1111/goo/client/foo");
+      }
+
+      try {
+         caller.getCallee().onePath("foo");
+         assert false : "shouldn't have connected as this url should be dummy";
+      } catch (HttpResponseException e) {
+         assertUriEquals(e, "http://localhost:1111/client/foo");
+      }
+
+   }
+
+   private Injector injectorForClient() {
+      Injector child = Guice.createInjector(Iterables.concat(MODULES, ImmutableSet.<Module> of(
+               new RestClientModule<Caller, AsyncCaller>(Caller.class, AsyncCaller.class,
+                        ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class)) {
+               }, new AbstractModule() {
+
+                  @Override
+                  protected void configure() {
+                     bind(IOExceptionRetryHandler.class).toInstance(
+                              IOExceptionRetryHandler.NEVER_RETRY);
+                  }
+               })));
+      return child;
+   }
+
+   @Path("caller")
+   public static interface CallerWithPathOnClass {
+
+      @Delegate
+      @Path("{path}")
+      public AsyncCallee getCallee(@PathParam("path") String path);
+
+      @Delegate
+      public AsyncCallee getCallee();
+   }
+
+   public void testDelegateWithPathOnClass() throws SecurityException, NoSuchMethodException,
+            InterruptedException, ExecutionException {
+      Injector child = injectorForClient();
+      AsyncClientFactory factory = child.getInstance(AsyncClientFactory.class);
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      CallerWithPathOnClass caller = factory.create(CallerWithPathOnClass.class);
+
+      try {
+         caller.getCallee("goo").onePath("foo").get();
+         assert false : "shouldn't have connected as this url should be dummy";
+      } catch (HttpResponseException e) {
+         assertEquals(e.getCommand().getRequest().getEndpoint().getPath(), "/caller/goo/client/foo");
+      }
+
+      try {
+         caller.getCallee().onePath("foo").get();
+         assert false : "shouldn't have connected as this url should be dummy";
+      } catch (HttpResponseException e) {
+         assertEquals(e.getCommand().getRequest().getEndpoint().getPath(), "/caller/client/foo");
+      }
+
+   }
+
    Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
 
       @Override
@@ -333,7 +497,7 @@ public class RestAnnotationProcessorTest {
       GeneratedHttpRequest<?> httpMethod = factory(TestOverriddenEndpoint.class).createRequest(
                method, new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPort(), 8081);
+      assertEquals(httpMethod.getEndpoint().getPort(), 1111);
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getMethod(), "POST");
    }
@@ -612,7 +776,7 @@ public class RestAnnotationProcessorTest {
       GeneratedHttpRequest<?> httpMethod = factory(TestConstantPathParam.class).createRequest(
                method, new Object[] { "1", "localhost" });
       assertRequestLineEquals(httpMethod,
-               "GET http://localhost:8080/v1/ralphie/1/localhost HTTP/1.1");
+               "GET http://localhost:9999/v1/ralphie/1/localhost HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
    }
@@ -673,7 +837,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestPath.class.getMethod("onePathParamExtractor", String.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
                new Object[] { "localhost" });
-      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/l HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://localhost:9999/l HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
    }
@@ -684,7 +848,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestPath.class.getMethod("oneQueryParamExtractor", String.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
                "localhost");
-      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/?one=l HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://localhost:9999/?one=l HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
    }
@@ -695,7 +859,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestPath.class.getMethod("oneMatrixParamExtractor", String.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
                new Object[] { "localhost" });
-      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/;one=l HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://localhost:9999/;one=l HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
    }
@@ -706,7 +870,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestPath.class.getMethod("oneFormParamExtractor", String.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
                new Object[] { "localhost" });
-      assertRequestLineEquals(httpMethod, "POST http://localhost:8080/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://localhost:9999/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 5\nContent-Type: application/x-www-form-urlencoded\n");
       assertPayloadEquals(httpMethod, "one=l");
@@ -876,7 +1040,7 @@ public class RestAnnotationProcessorTest {
                .createRequest(method,
                         new Object[] { "robot", "kill", ImmutableMap.of("death", "slow") });
       assertEquals(httpMethod.getRequestLine(),
-               "POST http://localhost:8080/objects/robot/action/kill;death=slow HTTP/1.1");
+               "POST http://localhost:9999/objects/robot/action/kill;death=slow HTTP/1.1");
       assertEquals(httpMethod.getHeaders().size(), 0);
    }
 
@@ -1286,7 +1450,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestRequest.class.getMethod("get", String.class, HttpRequestOptions.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestRequest.class).createRequest(method,
                new Object[] { "1", options });
-      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/1?prefix=1 HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://localhost:9999/1?prefix=1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: localhost\n");
       assertPayloadEquals(httpMethod, null);
    }
@@ -1698,37 +1862,38 @@ public class RestAnnotationProcessorTest {
 
    @BeforeClass
    void setupFactory() {
-      injector = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named("testaccount")).to("ralphie");
-            bind(URI.class).annotatedWith(Localhost.class).toInstance(
-                     URI.create("http://localhost:8080"));
-            bind(URI.class).annotatedWith(Localhost2.class).toInstance(
-                     URI.create("http://localhost:8081"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            Jsr330.bindProperties(binder(), new PropertiesBuilder() {
-
-               @Override
-               public PropertiesBuilder withCredentials(String account, String key) {
-                  return null;
-               }
-
-               @Override
-               public PropertiesBuilder withEndpoint(URI endpoint) {
-                  return null;
-               }
-            }.build());
-         }
-
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
-
+      injector = Guice.createInjector(MODULES);
    }
+
+   public static final Iterable<Module> MODULES = ImmutableList.<Module> of(new AbstractModule() {
+      @Override
+      protected void configure() {
+         bindConstant().annotatedWith(Names.named("testaccount")).to("ralphie");
+         bind(URI.class).annotatedWith(Localhost.class).toInstance(
+                  URI.create("http://localhost:9999"));
+         bind(URI.class).annotatedWith(Localhost2.class).toInstance(
+                  URI.create("http://localhost:1111"));
+         bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+            public Logger getLogger(String category) {
+               return Logger.NULL;
+            }
+         });
+         Names.bindProperties(binder(), new PropertiesBuilder() {
+
+            @Override
+            public PropertiesBuilder withCredentials(String account, String key) {
+               return null;
+            }
+
+            @Override
+            public PropertiesBuilder withEndpoint(URI endpoint) {
+               return null;
+            }
+         }.build());
+      }
+
+   }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
+            new JavaUrlHttpCommandExecutorServiceModule());
 
    protected void assertPayloadEquals(GeneratedHttpRequest<?> httpMethod, String toMatch)
             throws IOException {

@@ -34,7 +34,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.functions.ParseSessionTokenFromJsonResponse;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -76,7 +76,7 @@ public class SDNAuthenticationTest {
          protected void configure() {
             bind(URI.class).annotatedWith(SDN.class)
                      .toInstance(URI.create("http://localhost:8080"));
-            Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("user", "key", "key",
+            Names.bindProperties(this.binder(), new SDNPropertiesBuilder("user", "key", "key",
                      "key").build());
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {

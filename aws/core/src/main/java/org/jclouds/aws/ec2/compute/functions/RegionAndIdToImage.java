@@ -24,8 +24,8 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
-import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -43,17 +43,17 @@ public final class RegionAndIdToImage implements Function<RegionAndName, Image> 
    protected Logger logger = Logger.NULL;
 
    private final ImageParser parser;
-   private final AMIClient sync;
+   private final EC2Client sync;
 
    @Inject
-   public RegionAndIdToImage(ImageParser parser, AMIClient sync) {
+   public RegionAndIdToImage(ImageParser parser, EC2Client sync) {
       this.parser = parser;
       this.sync = sync;
    }
 
    public Image apply(RegionAndName key) {
       try {
-         org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(sync
+         org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIServices()
                   .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));
          return parser.apply(image);
       } catch (ResourceNotFoundException e) {

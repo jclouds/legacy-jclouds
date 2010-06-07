@@ -35,8 +35,8 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VCloudVersions}
@@ -64,7 +63,7 @@ public class VCloudVersionsLiveTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      protected VCloudVersionsAsyncClient provideVCloudVersions(RestClientFactory factory) {
+      protected VCloudVersionsAsyncClient provideVCloudVersions(AsyncClientFactory factory) {
          return factory.create(VCloudVersionsAsyncClient.class);
       }
 
@@ -118,9 +117,8 @@ public class VCloudVersionsLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new RestContextBuilder<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(
-               "vcloud", new TypeLiteral<VCloudVersionsAsyncClient>() {
-               }, new TypeLiteral<VCloudVersionsAsyncClient>() {
-               }, new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
+               "vcloud", VCloudVersionsAsyncClient.class, VCloudVersionsAsyncClient.class,
+               new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
 
          public void addContextModule(String providerName, List<Module> modules) {
 

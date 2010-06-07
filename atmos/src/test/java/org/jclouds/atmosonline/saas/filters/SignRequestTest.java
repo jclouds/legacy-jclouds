@@ -18,7 +18,9 @@
  */
 package org.jclouds.atmosonline.saas.filters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -29,21 +31,23 @@ import java.security.NoSuchAlgorithmException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
-import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
+import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
+import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Jsr330;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
+import org.jclouds.rest.config.RestModule;
+import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
 
 @Test(groups = "unit", testName = "emcsaas.SignRequestTest")
 public class SignRequestTest {
@@ -80,26 +84,20 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
-               sameThreadExecutor()), new AbstractModule() {
-
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
-                     .to("user");
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
-                     .to(KEY);
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
-                     .to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String getDate() {
+      injector = Guice.createInjector(new RestModule(), new AtmosStorageRestClientModule() {
+         protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
             return "Thu, 05 Jun 2008 16:38:19 GMT";
+
          }
-      });
+      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
+               new AbstractModule() {
+                  protected void configure() {
+                     Names.bindProperties(binder(), checkNotNull(
+                              new AtmosStoragePropertiesBuilder("user", KEY)).build());
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
+                  }
+               });
       filter = injector.getInstance(SignRequest.class);
 
    }

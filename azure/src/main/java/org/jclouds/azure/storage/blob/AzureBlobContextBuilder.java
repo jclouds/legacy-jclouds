@@ -29,7 +29,6 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link AzureBlobStoreContext} or {@link Injector} instances based on the most commonly
@@ -45,12 +44,10 @@ import com.google.inject.TypeLiteral;
  * @see AzureBlobStoreContext
  */
 public class AzureBlobContextBuilder extends
-         BlobStoreContextBuilder<AzureBlobAsyncClient, AzureBlobClient> {
+         BlobStoreContextBuilder<AzureBlobClient, AzureBlobAsyncClient> {
 
    public AzureBlobContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<AzureBlobAsyncClient>() {
-      }, new TypeLiteral<AzureBlobClient>() {
-      }, props);
+      super(providerName, AzureBlobClient.class, AzureBlobAsyncClient.class, props);
    }
 
    @Override

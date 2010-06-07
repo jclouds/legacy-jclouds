@@ -41,7 +41,7 @@ public interface ComputeServiceContext {
     */
    LoadBalancerService getLoadBalancerService();
 
-   <A, S> RestContext<A, S> getProviderSpecificContext();
+   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    void close();
 }

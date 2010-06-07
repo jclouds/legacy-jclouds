@@ -114,7 +114,7 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
                .to(
-                        new TypeLiteral<ComputeServiceContextImpl<CloudServersAsyncClient, CloudServersClient>>() {
+                        new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(CloudServersAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(CloudServersListNodesStrategy.class);

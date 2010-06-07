@@ -18,24 +18,23 @@
  */
 package org.jclouds.vcloud.terremark.config;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.Jsr330;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
+import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -44,17 +43,15 @@ import com.google.inject.Key;
 public class TerremarkVCloudRestClientModuleTest {
 
    protected Injector createInjector() {
-      return Guice.createInjector(new TerremarkVCloudRestClientModule(), new ParserModule(),
+      return Guice.createInjector(new TerremarkVCloudRestClientModule(), new RestModule(),
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_VERSION)).to("0.8");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_USER)).to("user");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_KEY)).to("secret");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_ENDPOINT)).to(
-                              "http://localhost");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_SESSIONINTERVAL))
-                              .to("2");
+                     Names.bindProperties(binder(), checkNotNull(
+                              new TerremarkVCloudPropertiesBuilder("user", "pass").build(),
+                              "properties"));
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
                   }
                });
    }
@@ -62,11 +59,11 @@ public class TerremarkVCloudRestClientModuleTest {
    @Test
    void postStrings() throws IOException {
       assertEquals(createInjector().getInstance(
-               Key.get(String.class, Jsr330.named("CreateInternetService"))), Utils
+               Key.get(String.class, Names.named("CreateInternetService"))), Utils
                .toStringAndClose(getClass().getResourceAsStream(
                         "/terremark/CreateInternetService.xml")));
       assertEquals(createInjector().getInstance(
-               Key.get(String.class, Jsr330.named("CreateNodeService"))),
+               Key.get(String.class, Names.named("CreateNodeService"))),
                Utils.toStringAndClose(getClass().getResourceAsStream(
                         "/terremark/CreateNodeService.xml")));
    }

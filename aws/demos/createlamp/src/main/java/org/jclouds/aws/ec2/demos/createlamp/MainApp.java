@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.demos.createlamp;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
-import java.net.InetSocketAddress;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -37,13 +36,12 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
-import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -74,7 +72,7 @@ public class MainApp {
       String name = args[3];
 
       // Init
-      RestContext<EC2AsyncClient, EC2Client> context = EC2ContextFactory.createContext(accesskeyid,
+      RestContext<EC2Client, EC2AsyncClient> context = EC2ContextFactory.createContext(accesskeyid,
                secretkey).getProviderSpecificContext();
 
       // Get a synchronous client
@@ -147,8 +145,8 @@ public class MainApp {
       System.out.printf("%d: creating security group: %s%n", System.currentTimeMillis(), name);
       client.getSecurityGroupServices().createSecurityGroupInRegion(null, name, name);
       for (int port : new int[] { 80, 8080, 443, 22 }) {
-         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
-                  name, IpProtocol.TCP, port, port, "0.0.0.0/0");
+         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null, name,
+                  IpProtocol.TCP, port, port, "0.0.0.0/0");
       }
    }
 
@@ -165,8 +163,13 @@ public class MainApp {
                .build(OsFamily.UNIX);
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
-      Reservation reservation = client.getInstanceServices().runInstancesInRegion(null,
-               null, // allow ec2 to chose an availability zone
+      Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
+                                                                                              // ec2
+                                                                                              // to
+                                                                                              // chose
+                                                                                              // an
+                                                                                              // availability
+                                                                                              // zone
                "ami-ccf615a5", // alestic ami allows auto-invoke of user data scripts
                1, // minimum instances
                1, // maximum instances
@@ -183,7 +186,7 @@ public class MainApp {
             throws TimeoutException {
       // create utilities that wait for the instance to finish
       RetryablePredicate<RunningInstance> runningTester = new RetryablePredicate<RunningInstance>(
-               new InstanceStateRunning(client.getInstanceServices()), 180, 5, TimeUnit.SECONDS);
+               new InstanceStateRunning(client), 180, 5, TimeUnit.SECONDS);
 
       System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance
                .getId());
@@ -214,8 +217,8 @@ public class MainApp {
 
    private static RunningInstance findInstanceById(EC2Client client, String instanceId) {
       // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               null, instanceId); // last parameter (ids) narrows the search
+      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(null,
+               instanceId); // last parameter (ids) narrows the search
 
       // since we refined by instanceId there should only be one instance
       return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
@@ -223,8 +226,7 @@ public class MainApp {
 
    private static RunningInstance findInstanceByKeyName(EC2Client client, final String keyName) {
       // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               null);
+      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(null);
 
       // extract all the instances from all reservations
       Set<RunningInstance> allInstances = Sets.newHashSet();

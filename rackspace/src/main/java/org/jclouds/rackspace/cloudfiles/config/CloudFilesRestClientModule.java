@@ -18,9 +18,6 @@
  */
 package org.jclouds.rackspace.cloudfiles.config;
 
-import javax.inject.Singleton;
-
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -30,10 +27,7 @@ import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.handlers.ParseCloudFilesErrorFromHttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import org.jclouds.rest.config.RestClientModule;
 
 /**
  * 
@@ -41,25 +35,19 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class CloudFilesRestClientModule extends AbstractModule {
+public class CloudFilesRestClientModule extends
+         RestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
+   public CloudFilesRestClientModule() {
+      super(CloudFilesClient.class, CloudFilesAsyncClient.class);
+   }
+
    @Override
    protected void configure() {
-      bindErrorHandlers();
+      install(new CFObjectModule());
+      super.configure();
    }
 
-   @Provides
-   @Singleton
-   protected CloudFilesAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(CloudFilesAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public CloudFilesClient provideClient(CloudFilesAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(CloudFilesClient.class, client);
-   }
-
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseCloudFilesErrorFromHttpResponse.class);

@@ -185,10 +185,10 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          assertTrue(initialContainerCount >= 0);
 
          // Create test containers
-         String[] containerJsr330 = new String[] { containerPrefix + ".testListOwnedContainers1",
+         String[] containerNames = new String[] { containerPrefix + ".testListOwnedContainers1",
                   containerPrefix + ".testListOwnedContainers2" };
-         assertTrue(getApi().createContainer(containerJsr330[0]));
-         assertTrue(getApi().createContainer(containerJsr330[1]));
+         assertTrue(getApi().createContainer(containerNames[0]));
+         assertTrue(getApi().createContainer(containerNames[1]));
 
          // Test default listing
          response = getApi().listContainers();
@@ -198,19 +198,19 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // Test listing with options
          response = getApi().listContainers(
                   ListContainerOptions.Builder.afterMarker(
-                           containerJsr330[0].substring(0, containerJsr330[0].length() - 1))
+                           containerNames[0].substring(0, containerNames[0].length() - 1))
                            .maxResults(1));
          assertEquals(response.size(), 1);
-         assertEquals(Iterables.get(response, 0).getName(), containerJsr330[0]);
+         assertEquals(Iterables.get(response, 0).getName(), containerNames[0]);
 
          response = getApi().listContainers(
-                  ListContainerOptions.Builder.afterMarker(containerJsr330[0]).maxResults(1));
+                  ListContainerOptions.Builder.afterMarker(containerNames[0]).maxResults(1));
          assertEquals(response.size(), 1);
-         assertEquals(Iterables.get(response, 0).getName(), containerJsr330[1]);
+         assertEquals(Iterables.get(response, 0).getName(), containerNames[1]);
 
          // Cleanup and test containers have been removed
-         assertTrue(getApi().deleteContainerIfEmpty(containerJsr330[0]));
-         assertTrue(getApi().deleteContainerIfEmpty(containerJsr330[1]));
+         assertTrue(getApi().deleteContainerIfEmpty(containerNames[0]));
+         assertTrue(getApi().deleteContainerIfEmpty(containerNames[1]));
          response = getApi().listContainers();
          // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
          // exist, this will fail

@@ -35,11 +35,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
-import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -65,7 +65,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    protected Logger logger = Logger.NULL;
 
    @VisibleForTesting
-   final InstanceClient instanceClient;
+   final EC2Client client;
    @VisibleForTesting
    final CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
    @VisibleForTesting
@@ -77,11 +77,11 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    @Inject
    EC2RunNodesAndAddToSetStrategy(
-            InstanceClient instanceClient,
+            EC2Client client,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
             @Named("RUNNING") Predicate<RunningInstance> instanceStateRunning,
             RunningInstanceToNodeMetadata runningInstanceToNodeMetadata, ComputeUtils utils) {
-      this.instanceClient = instanceClient;
+      this.client = client;
       this.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
       this.instanceStateRunning = instanceStateRunning;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -129,14 +129,16 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
       if (logger.isDebugEnabled())
          logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count,
-                  region, zone, template.getImage().getProviderId(), instanceOptions.buildFormParameters());
+                  region, zone, template.getImage().getProviderId(), instanceOptions
+                           .buildFormParameters());
 
-      return instanceClient.runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
-               count, instanceOptions);
+      return client.getInstanceServices().runInstancesInRegion(region, zone,
+               template.getImage().getProviderId(), 1, count, instanceOptions);
    }
 
    private Iterable<RunningInstance> getInstances(String region, Iterable<String> ids) {
-      return concat(instanceClient.describeInstancesInRegion(region, toArray(ids, String.class)));
+      return concat(client.getInstanceServices().describeInstancesInRegion(region,
+               toArray(ids, String.class)));
    }
 
 }

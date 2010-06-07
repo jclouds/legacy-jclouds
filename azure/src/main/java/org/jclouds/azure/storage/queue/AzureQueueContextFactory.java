@@ -41,25 +41,25 @@ import com.google.inject.Module;
  */
 public class AzureQueueContextFactory {
 
-   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(
+   public static RestContext<AzureQueueClient, AzureQueueAsyncClient> createContext(
             Properties properties, Module... modules) {
       return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(properties)
                .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(
+   public static RestContext<AzureQueueClient, AzureQueueAsyncClient> createContext(
             Properties properties, String account, String encodedKey, Module... modules) {
       return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(properties)
                .withCredentials(account, encodedKey).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(String account,
+   public static RestContext<AzureQueueClient, AzureQueueAsyncClient> createContext(String account,
             String encodedKey, Module... modules) {
       return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(account,
                encodedKey).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(URI endpoint,
+   public static RestContext<AzureQueueClient, AzureQueueAsyncClient> createContext(URI endpoint,
             String account, String encodedKey, Module... modules) {
       return new AzureQueueContextBuilder("azurequeue", new AzureQueuePropertiesBuilder(account,
                encodedKey).withEndpoint(endpoint).build()).withModules(modules).buildContext();

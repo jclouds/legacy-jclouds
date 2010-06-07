@@ -21,14 +21,12 @@ package org.jclouds.aws.sqs.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
 
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
@@ -36,10 +34,11 @@ import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.SQSPropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.util.Jsr330;
+import org.jclouds.rest.config.RestModule;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -55,14 +54,21 @@ import com.google.inject.Key;
 public class SQSRestClientModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new SQSRestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+      return Guice.createInjector(new SQSRestClientModule(), new RestModule() {
+
+         @Override
+         protected void configure() {
+            bind(TransformingHttpCommandExecutorService.class).toInstance(
+                     createMock(TransformingHttpCommandExecutorService.class));
+            super.configure();
+         }
+
+      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     Jsr330.bindProperties(binder(), checkNotNull(new SQSPropertiesBuilder("user",
+                     Names.bindProperties(binder(), checkNotNull(new SQSPropertiesBuilder("user",
                               "key").build(), "properties"));
-                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

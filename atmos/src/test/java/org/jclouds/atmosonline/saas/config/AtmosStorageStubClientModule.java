@@ -20,18 +20,14 @@ package org.jclouds.atmosonline.saas.config;
 
 import java.net.URI;
 
-import javax.inject.Singleton;
-
 import org.jclouds.atmosonline.saas.AtmosStorage;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.internal.StubAtmosStorageAsyncClient;
 import org.jclouds.blobstore.config.TransientBlobStoreModule;
-import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.ConfiguresRestClient;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import org.jclouds.rest.config.RestClientModule;
 
 /**
  * adds a stub alternative to invoking AtmosStorage
@@ -39,19 +35,24 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class AtmosStorageStubClientModule extends AbstractModule {
+public class AtmosStorageStubClientModule extends
+         RestClientModule<AtmosStorageClient, AtmosStorageAsyncClient> {
 
-   protected void configure() {
-      install(new TransientBlobStoreModule());
-      bind(AtmosStorageAsyncClient.class).to(StubAtmosStorageAsyncClient.class).asEagerSingleton();
-      bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
-               URI.create("https://localhost/azurestub"));
+   public AtmosStorageStubClientModule() {
+      super(AtmosStorageClient.class, AtmosStorageAsyncClient.class);
    }
 
-   @Provides
-   @Singleton
-   public AtmosStorageClient provideClient(AtmosStorageAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(AtmosStorageClient.class, client);
+   protected void configure() {
+      super.configure();
+      install(new AtmosObjectModule());
+      install(new ParserModule());
+      install(new TransientBlobStoreModule());
+      bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
+               URI.create("https://localhost/atmosstub"));
+   }
+
+   @Override
+   protected void bindAsyncClient() {
+      bind(AtmosStorageAsyncClient.class).to(StubAtmosStorageAsyncClient.class).asEagerSingleton();
    }
 }

@@ -30,7 +30,6 @@ import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link CloudFilesBlobStoreContext} or {@link Injector} instances based on the most
@@ -46,12 +45,10 @@ import com.google.inject.TypeLiteral;
  * @see CloudFilesBlobStoreContext
  */
 public class CloudFilesContextBuilder extends
-         BlobStoreContextBuilder<CloudFilesAsyncClient, CloudFilesClient> {
+         BlobStoreContextBuilder<CloudFilesClient, CloudFilesAsyncClient> {
 
    public CloudFilesContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<CloudFilesAsyncClient>() {
-      }, new TypeLiteral<CloudFilesClient>() {
-      }, props);
+      super(providerName, CloudFilesClient.class, CloudFilesAsyncClient.class, props);
    }
 
    @Override

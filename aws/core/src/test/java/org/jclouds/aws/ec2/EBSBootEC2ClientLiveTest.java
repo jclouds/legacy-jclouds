@@ -136,8 +136,8 @@ public class EBSBootEC2ClientLiveTest {
       VolumeAttached volumeAttached = injector.getInstance(VolumeAttached.class);
       attachTester = new RetryablePredicate<Attachment>(volumeAttached, 60, 1, TimeUnit.SECONDS);
 
-      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client
-               .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
+      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client),
+               180, 5, TimeUnit.SECONDS);
 
       InstanceStateStopped instanceStateStopped = injector.getInstance(InstanceStateStopped.class);
       stoppedTester = new RetryablePredicate<RunningInstance>(instanceStateStopped, 60, 1,
@@ -199,12 +199,12 @@ public class EBSBootEC2ClientLiveTest {
          try {
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
             Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
-                                                                                                    // ec2
-                                                                                                    // to
-                                                                                                    // chose
-                                                                                                    // an
-                                                                                                    // availability
-                                                                                                    // zone
+                     // ec2
+                     // to
+                     // chose
+                     // an
+                     // availability
+                     // zone
                      imageId, 1, // minimum instances
                      1, // maximum instances
                      withKeyName(keyPair.getKeyName())// key I created above
@@ -272,8 +272,8 @@ public class EBSBootEC2ClientLiveTest {
 
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
-      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
-               "ubuntu", keyPair.getKeyMaterial().getBytes());
+      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22), "ubuntu",
+               keyPair.getKeyMaterial().getBytes());
       try {
          ssh.connect();
       } catch (SshException e) {// try twice in case there is a network timeout

@@ -21,6 +21,7 @@ package org.jclouds.rackspace.cloudfiles.config;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
@@ -43,6 +44,8 @@ public class CFObjectModule extends AbstractModule {
     */
    @Override
    protected void configure() {
+      // for converters to work.
+      install(new BlobStoreObjectModule());
       bind(CFObject.Factory.class).to(CFObjectFactory.class).in(Scopes.SINGLETON);
    }
 

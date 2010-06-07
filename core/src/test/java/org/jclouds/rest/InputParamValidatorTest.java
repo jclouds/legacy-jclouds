@@ -38,7 +38,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.TestException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -152,10 +152,10 @@ public class InputParamValidatorTest {
       injector = Guice.createInjector(new AbstractModule() {
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named("testaccount")).to("ralphie");
+            bindConstant().annotatedWith(Names.named("testaccount")).to("ralphie");
             bind(URI.class).annotatedWith(RestAnnotationProcessorTest.Localhost.class).toInstance(
                      URI.create("http://localhost:8080"));
-            Jsr330.bindProperties(binder(), new PropertiesBuilder() {
+            Names.bindProperties(binder(), new PropertiesBuilder() {
 
                @Override
                public PropertiesBuilder withCredentials(String account, String key) {

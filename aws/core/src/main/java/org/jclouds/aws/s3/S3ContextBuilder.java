@@ -29,7 +29,6 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link S3Context} or {@link Injector} instances based on the most commonly requested
@@ -44,16 +43,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
  */
-public class S3ContextBuilder extends BlobStoreContextBuilder<S3AsyncClient, S3Client> {
+public class S3ContextBuilder extends BlobStoreContextBuilder<S3Client, S3AsyncClient> {
 
    public S3ContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<S3AsyncClient>() {
-      }, new TypeLiteral<S3Client>() {
-      }, props);
+      super(providerName, S3Client.class, S3AsyncClient.class, props);
    }
 
    @Override
-   protected void addContextModule(String providerName,List<Module> modules) {
+   protected void addContextModule(String providerName, List<Module> modules) {
       modules.add(new S3BlobStoreContextModule(providerName));
    }
 

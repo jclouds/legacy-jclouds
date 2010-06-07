@@ -16,6 +16,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.Server;
@@ -34,7 +35,9 @@ public class ServerToNodeMetadataTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testApplySetsTagFromNameAndCredentialsFromName() throws UnknownHostException {
+      GoGridClient caller = createMock(GoGridClient.class);
       GridServerClient client = createMock(GridServerClient.class);
+      expect(caller.getServerServices()).andReturn(client).atLeastOnce();
       Map<String, NodeState> serverStateToNodeState = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
@@ -60,6 +63,7 @@ public class ServerToNodeMetadataTest {
       expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
+      replay(caller);
       replay(client);
       replay(serverStateToNodeState);
       replay(server);
@@ -67,7 +71,7 @@ public class ServerToNodeMetadataTest {
       replay(jcImage);
       replay(credentialsMap);
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, client,
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller,
                images, location);
 
       NodeMetadata metadata = parser.apply(server);
@@ -76,6 +80,7 @@ public class ServerToNodeMetadataTest {
       assertEquals(metadata.getTag(), "tag");
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
+      verify(caller);
       verify(client);
       verify(serverStateToNodeState);
       verify(image);

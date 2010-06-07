@@ -34,7 +34,6 @@ import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.SQSAsyncClient;
 import org.jclouds.aws.sqs.SQSClient;
 import org.jclouds.aws.sqs.reference.SQSConstants;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
@@ -45,11 +44,10 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -59,12 +57,10 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class SQSRestClientModule extends AbstractModule {
+public class SQSRestClientModule extends RestClientModule<SQSClient, SQSAsyncClient> {
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
+   public SQSRestClientModule() {
+      super(SQSClient.class, SQSAsyncClient.class);
    }
 
    @Provides
@@ -73,19 +69,6 @@ public class SQSRestClientModule extends AbstractModule {
             @Named(SQSConstants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
       return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
                + (expiration * 1000)));
-   }
-
-   @Provides
-   @Singleton
-   protected SQSAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(SQSAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public SQSClient provideClient(SQSAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(SQSClient.class, client);
    }
 
    @Provides
@@ -121,6 +104,7 @@ public class SQSRestClientModule extends AbstractModule {
       return in;
    }
 
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseAWSErrorFromXmlContent.class);
@@ -130,6 +114,7 @@ public class SQSRestClientModule extends AbstractModule {
                ParseAWSErrorFromXmlContent.class);
    }
 
+   @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
                AWSRedirectionRetryHandler.class);

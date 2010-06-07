@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.config.RestModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -74,7 +74,7 @@ public class SDNAuthenticationLiveTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected SDNAuthentication provideCloud(RestClientFactory factory) {
+         protected SDNAuthentication provideCloud(AsyncClientFactory factory) {
             return factory.create(SDNAuthentication.class);
          }
       }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(

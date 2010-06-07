@@ -38,6 +38,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -67,7 +68,9 @@ public class GaeHttpCommandExecutorServiceTest {
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
       client = new GaeHttpCommandExecutorService(createNiceMock(URLFetchService.class),
-               createNiceMock(ExecutorService.class), createNiceMock(DelegatingRetryHandler.class),
+               createNiceMock(ExecutorService.class),
+               createNiceMock(IOExceptionRetryHandler.class),
+               createNiceMock(DelegatingRetryHandler.class),
                createNiceMock(DelegatingErrorHandler.class), createNiceMock(HttpWire.class));
    }
 

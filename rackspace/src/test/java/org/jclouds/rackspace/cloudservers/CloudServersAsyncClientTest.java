@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
@@ -30,26 +29,22 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rackspace.Authentication;
-import org.jclouds.rackspace.CloudServers;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rackspace.RackspacePropertiesBuilder;
+import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
@@ -69,24 +64,23 @@ import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
+import org.jclouds.rackspace.filters.AddTimestampQuery;
+import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders.AuthenticationResponseImpl;
+import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
-import org.testng.annotations.BeforeClass;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Provides;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -95,7 +89,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "cloudservers.CloudServersClientTest")
-public class CloudServersClientTest {
+public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
             .getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[] {}
@@ -164,7 +158,7 @@ public class CloudServersClientTest {
 
    private void validateCreateServer(Method method,
             GeneratedHttpRequest<CloudServersAsyncClient> httpMethod, Object[] args) {
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -188,7 +182,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -205,7 +199,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -225,7 +219,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -244,7 +238,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -261,7 +255,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -279,7 +273,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -297,7 +291,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -316,7 +310,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -334,7 +328,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -352,7 +346,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -370,7 +364,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -388,7 +382,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -406,7 +400,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -425,7 +419,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -443,7 +437,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -460,7 +454,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -478,7 +472,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "127.0.0.1", 2, 3, false });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -502,7 +496,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "127.0.0.1", 2, 3, true });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -526,7 +520,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "127.0.0.1", 2, 3, false });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -544,7 +538,7 @@ public class CloudServersClientTest {
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2,
                         new BackupSchedule(WeeklyBackup.MONDAY, DailyBackup.H_0800_1000, true) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -567,7 +561,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -584,7 +578,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2, "foo" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -607,7 +601,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2, "foo" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -630,7 +624,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -648,7 +642,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -667,7 +661,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -686,7 +680,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
                + now.getTime() / 1000 + "&limit=1&offset=2");
@@ -704,7 +698,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -743,7 +737,7 @@ public class CloudServersClientTest {
 
    private void validateCreateSharedIpGroup(Method method,
             GeneratedHttpRequest<CloudServersAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -767,7 +761,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -783,7 +777,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -797,7 +791,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -811,7 +805,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/private");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -825,7 +819,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -842,7 +836,7 @@ public class CloudServersClientTest {
                new Object[] { "ralphie", 2 });
       assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", httpMethod.getPayload()
                .getRawContent());
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -884,7 +878,7 @@ public class CloudServersClientTest {
 
    private void validateRebuildServer(Method method,
             GeneratedHttpRequest<CloudServersAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/3/action");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -909,7 +903,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2, RebootType.HARD });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -931,7 +925,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2, 3 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -953,7 +947,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -974,7 +968,7 @@ public class CloudServersClientTest {
       Method method = CloudServersAsyncClient.class.getMethod("revertResizeServer", int.class);
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
@@ -991,27 +985,42 @@ public class CloudServersClientTest {
                CloseContentAndReturn.class);
    }
 
-   @BeforeClass
-   void setupFactory() {
-      Injector injector = Guice.createInjector(new AbstractModule() {
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {
+      };
+   }
+
+   @Override
+   protected void checkFilters(GeneratedHttpRequest<CloudServersAsyncClient> httpMethod) {
+      assertEquals(httpMethod.getFilters().size(), 2);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), AuthenticateRequest.class);
+      assertEquals(httpMethod.getFilters().get(1).getClass(), AddTimestampQuery.class);
+
+   }
+
+   @Override
+   protected Module createModule() {
+      return new RackspaceAuthenticationRestModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(this.binder(), new RackspacePropertiesBuilder("user", "key")
-                     .build());
-            bind(URI.class).annotatedWith(CloudServers.class).toInstance(
-                     URI.create("http://localhost:8080"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-
-            });
+            install(new CloudServersRestClientModule());
+            Names.bindProperties(binder(), new RackspacePropertiesBuilder(new Properties())
+                     .withCredentials("user", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
          }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @Authentication
-         public Supplier<String> getAuthToken() {
+         @Override
+         protected AuthenticationResponse provideAuthenticationResponse(
+                  Supplier<AuthenticationResponse> supplier) {
+            return new AuthenticationResponseImpl("authToken", "http://CDNManagementUrl",
+                     "http://serverManagementUrl", "http://storageUrl");
+         }
+
+         @Override
+         public Supplier<String> provideAuthenticationTokenCache(
+                  Supplier<AuthenticationResponse> supplier) {
             return new Supplier<String>() {
                public String get() {
                   return "testtoken";
@@ -1019,23 +1028,14 @@ public class CloudServersClientTest {
             };
          }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         public Supplier<Date> getDate() {
+         @Override
+         public Supplier<Date> provideCacheBusterDate() {
             return new Supplier<Date>() {
                public Date get() {
                   return new Date();
                }
             };
          }
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
-      processor = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {
-               }));
+      };
    }
-
-   RestAnnotationProcessor<CloudServersAsyncClient> processor;
-
 }

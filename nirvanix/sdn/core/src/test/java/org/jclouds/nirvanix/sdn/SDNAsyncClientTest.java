@@ -26,12 +26,11 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
 import org.jclouds.nirvanix.sdn.filters.InsertUserContextIntoPath;
 import org.jclouds.nirvanix.sdn.functions.ParseMetadataFromJsonResponse;
@@ -39,12 +38,11 @@ import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -178,22 +176,15 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new SDNRestClientModule() {
          @Override
          protected void configure() {
-            install(new BlobStoreObjectModule<SDNAsyncClient, SDNClient>(
-                     new TypeLiteral<SDNAsyncClient>() {
-                     }, new TypeLiteral<SDNClient>() {
-                     }));
-            Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("appKey", "appname",
+            Names.bindProperties(binder(), new SDNPropertiesBuilder("appKey", "appname",
                      "username", "password").build());
+            install(new NullLoggingModule());
             bind(URI.class).annotatedWith(SDN.class).toInstance(URI.create("http://stub:8080"));
             bind(String.class).annotatedWith(SessionToken.class).toInstance("sessiontoken");
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
+            super.configure();
          }
 
       };

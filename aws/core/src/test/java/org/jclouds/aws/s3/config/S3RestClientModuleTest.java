@@ -20,28 +20,27 @@ package org.jclouds.aws.s3.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.util.Jsr330;
+import org.jclouds.rest.config.RestModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -50,14 +49,21 @@ import com.google.inject.Injector;
 public class S3RestClientModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new S3RestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+      return Guice.createInjector(new S3RestClientModule(), new RestModule() {
+
+         @Override
+         protected void configure() {
+            bind(TransformingHttpCommandExecutorService.class).toInstance(
+                     createMock(TransformingHttpCommandExecutorService.class));
+            super.configure();
+         }
+
+      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user",
+                     Names.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user",
                               "key").build(), "properties"));
-                     bind(UriBuilder.class).to(UriBuilderImpl.class);
                   }
                });
    }

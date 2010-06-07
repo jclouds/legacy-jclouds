@@ -23,39 +23,46 @@
  */
 package org.jclouds.gogrid;
 
-import com.google.inject.ImplementedBy;
-import org.jclouds.gogrid.internal.GoGridAsyncClientImpl;
-import org.jclouds.gogrid.services.*;
+import org.jclouds.gogrid.services.GridImageAsyncClient;
+import org.jclouds.gogrid.services.GridIpAsyncClient;
+import org.jclouds.gogrid.services.GridJobAsyncClient;
+import org.jclouds.gogrid.services.GridLoadBalancerAsyncClient;
+import org.jclouds.gogrid.services.GridServerAsyncClient;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
  * @author Oleksiy Yarmula
  */
-@ImplementedBy(GoGridAsyncClientImpl.class)
 public interface GoGridAsyncClient {
 
-    /**
+   /**
     * @see GoGridClient#getServerServices()
     */
-    GridServerAsyncClient getServerServices();
+   @Delegate
+   GridServerAsyncClient getServerServices();
 
-    /**
+   /**
     * @see GoGridClient#getJobServices()
     */
-    GridJobAsyncClient getJobServices();
+   @Delegate
+   GridJobAsyncClient getJobServices();
 
-    /**
-    * @see GoGridClient#getIpServices() 
+   /**
+    * @see GoGridClient#getIpServices()
     */
-    GridIpAsyncClient getIpServices();
+   @Delegate
+   GridIpAsyncClient getIpServices();
 
-    /**
+   /**
     * @see GoGridClient#getLoadBalancerServices()
     */
-    GridLoadBalancerAsyncClient getLoadBalancerServices();
+   @Delegate
+   GridLoadBalancerAsyncClient getLoadBalancerServices();
 
-    /**
+   /**
     * @see GoGridClient#getImageServices()
     */
-    GridImageAsyncClient getImageServices();
+   @Delegate
+   GridImageAsyncClient getImageServices();
 
 }

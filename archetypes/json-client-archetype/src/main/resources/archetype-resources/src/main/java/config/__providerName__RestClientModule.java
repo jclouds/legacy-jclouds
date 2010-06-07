@@ -48,19 +48,22 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.encryption.EncryptionService;
 
 import ${package}.${providerName};
 import ${package}.${providerName}Client;
 import ${package}.${providerName}AsyncClient;
 import ${package}.reference.${providerName}Constants;
+import ${package}.handlers.${providerName}ErrorHandler;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -70,12 +73,11 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class ${providerName}RestClientModule extends AbstractModule {
+public class ${providerName}RestClientModule  extends
+         RestClientModule<${providerName}Client, ${providerName}AsyncClient> {
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
+   public ${providerName}RestClientModule() {
+      super(${providerName}Client.class, ${providerName}AsyncClient.class);
    }
 
    @Provides
@@ -90,28 +92,22 @@ public class ${providerName}RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected ${providerName}AsyncClient provideClient(RestClientFactory factory) {
-      return factory.create(${providerName}AsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public ${providerName}Client provideClient(${providerName}AsyncClient provider) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(${providerName}Client.class, provider);
-   }
-   
-   @Provides
-   @Singleton
    @${providerName}
    protected URI provideURI(@Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
+   @Override
    protected void bindErrorHandlers() {
-      // TODO
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               ${providerName}ErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               ${providerName}ErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ${providerName}ErrorHandler.class);
    }
 
+   @Override
    protected void bindRetryHandlers() {
       // TODO
    }

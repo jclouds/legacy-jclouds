@@ -30,7 +30,6 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link EC2ComputeServiceContext} or {@link Injector} instances based on the most commonly
@@ -45,12 +44,10 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see EC2ComputeServiceContext
  */
-public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2AsyncClient, EC2Client> {
+public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, EC2AsyncClient> {
 
    public EC2ContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<EC2AsyncClient>() {
-      }, new TypeLiteral<EC2Client>() {
-      }, props);
+      super(providerName, EC2Client.class, EC2AsyncClient.class, props);
    }
 
    @Override

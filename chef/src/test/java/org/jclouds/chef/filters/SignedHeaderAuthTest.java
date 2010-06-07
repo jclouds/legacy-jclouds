@@ -49,7 +49,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -218,7 +218,7 @@ public class SignedHeaderAuthTest {
                new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new AbstractModule() {
                   protected void configure() {
-                     Jsr330.bindProperties(binder(), checkNotNull(
+                     Names.bindProperties(binder(), checkNotNull(
                               new ChefPropertiesBuilder(URI.create("http://localhost"), "foo",
                                        "bar")).build());
                      bind(TransformingHttpCommandExecutorService.class).toInstance(

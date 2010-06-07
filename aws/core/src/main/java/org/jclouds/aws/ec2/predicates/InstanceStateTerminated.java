@@ -23,9 +23,9 @@ import java.util.NoSuchElementException;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -41,13 +41,13 @@ import com.google.inject.Inject;
 @Singleton
 public class InstanceStateTerminated implements Predicate<RunningInstance> {
 
-   private final InstanceClient client;
+   private final EC2Client client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateTerminated(InstanceClient client) {
+   public InstanceStateTerminated(EC2Client client) {
       this.client = client;
    }
 
@@ -64,7 +64,7 @@ public class InstanceStateTerminated implements Predicate<RunningInstance> {
    }
 
    private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.describeInstancesInRegion(
-               instance.getRegion(), instance.getId())));
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices()
+               .describeInstancesInRegion(instance.getRegion(), instance.getId())));
    }
 }

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.FenceMode;
@@ -61,7 +61,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
          props
                   .put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
                            "https://vcloud.safesecureweb.com/network/1990");
-         Jsr330.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
+         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
                   "properties"));
       }
    });

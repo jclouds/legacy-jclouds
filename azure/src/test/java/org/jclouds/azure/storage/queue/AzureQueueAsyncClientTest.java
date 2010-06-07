@@ -25,35 +25,29 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Collections;
+import java.util.Properties;
 
-import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 
-import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.azure.storage.queue.config.AzureQueueRestClientModule;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -73,7 +67,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -92,7 +86,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { maxResults(1).marker("marker").prefix("prefix") });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assert httpMethod.getEndpoint().getQuery().contains("comp=list");
       assert httpMethod.getEndpoint().getQuery().contains("marker=marker");
@@ -115,7 +109,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "queue" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -137,7 +131,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "queue", withMetadata(ImmutableMultimap.of("foo", "bar")) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -159,7 +153,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "queue" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
@@ -180,7 +174,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                "queue", "message");
 
-      assertRequestLineEquals(httpMethod, "POST http://localhost:8080/queue/messages HTTP/1.1");
+      assertRequestLineEquals(httpMethod,
+               "POST https://myaccount.queue.core.windows.net/queue/messages HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpMethod,
@@ -200,7 +195,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue", "message", PutMessageOptions.Builder.withTTL(3));
 
       assertRequestLineEquals(httpMethod,
-               "POST http://localhost:8080/queue/messages?messagettl=3 HTTP/1.1");
+               "POST https://myaccount.queue.core.windows.net/queue/messages?messagettl=3 HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpMethod,
@@ -218,7 +213,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                "queue");
 
-      assertRequestLineEquals(httpMethod, "DELETE http://localhost:8080/queue/messages HTTP/1.1");
+      assertRequestLineEquals(httpMethod,
+               "DELETE https://myaccount.queue.core.windows.net/queue/messages HTTP/1.1");
       assertHeadersEqual(httpMethod, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -243,30 +239,15 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new AzureQueueRestClientModule() {
          @Override
          protected void configure() {
-            bind(URI.class).annotatedWith(AzureQueue.class).toInstance(
-                     URI.create("http://localhost:8080"));
-            Jsr330.bindProperties(this.binder(), new AzureQueuePropertiesBuilder("user", "key")
-                     .build());
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
-                     1l);
+            Names.bindProperties(binder(), new AzureQueuePropertiesBuilder(new Properties())
+                     .withCredentials("myaccount", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
          }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         @Singleton
-         String provideTS() {
-            return "timestamp";
-         }
       };
    }
 }

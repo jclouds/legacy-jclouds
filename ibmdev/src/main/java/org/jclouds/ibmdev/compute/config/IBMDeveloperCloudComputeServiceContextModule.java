@@ -82,7 +82,7 @@ public class IBMDeveloperCloudComputeServiceContextModule extends IBMDeveloperCl
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
                .to(
-                        new TypeLiteral<ComputeServiceContextImpl<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient>>() {
+                        new TypeLiteral<ComputeServiceContextImpl<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(IBMDeveloperCloudAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(IBMDeveloperCloudListNodesStrategy.class);

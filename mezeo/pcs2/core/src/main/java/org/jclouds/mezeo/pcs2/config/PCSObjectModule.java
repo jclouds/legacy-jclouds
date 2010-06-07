@@ -21,6 +21,7 @@ package org.jclouds.mezeo.pcs2.config;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.mezeo.pcs2.domain.MutableFileInfo;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.domain.internal.PCSFileImpl;
@@ -42,6 +43,8 @@ public class PCSObjectModule extends AbstractModule {
     */
    @Override
    protected void configure() {
+      // for adapters
+      install(new BlobStoreObjectModule());
       bind(PCSFile.Factory.class).to(PCSFileFactory.class).in(Scopes.SINGLETON);
    }
 

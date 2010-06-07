@@ -36,6 +36,7 @@ import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.Payload;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -70,9 +71,9 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor, IOExceptionRetryHandler ioRetryHandler,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
-      super(ioExecutor, retryHandler, errorHandler, wire);
+      super(ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
    }
 

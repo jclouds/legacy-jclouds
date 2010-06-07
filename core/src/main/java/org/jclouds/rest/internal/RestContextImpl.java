@@ -31,7 +31,7 @@ import org.jclouds.rest.RestContext;
 /**
  * @author Adrian Cole
  */
-public class RestContextImpl<A, S> implements RestContext<A, S> {
+public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Resource
    private Logger logger = Logger.NULL;

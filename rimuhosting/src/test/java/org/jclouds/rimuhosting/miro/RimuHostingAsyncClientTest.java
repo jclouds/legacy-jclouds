@@ -35,7 +35,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -84,7 +84,7 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new RimuHostingPropertiesBuilder(
+            Names.bindProperties(binder(), checkNotNull(new RimuHostingPropertiesBuilder(
                      new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(RimuHosting.class).toInstance(
                      URI.create("https://rimuhosting.com/r"));

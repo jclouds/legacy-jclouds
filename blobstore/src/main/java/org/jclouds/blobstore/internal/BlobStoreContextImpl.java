@@ -36,18 +36,18 @@ import org.jclouds.rest.RestContext;
  * @author Adrian Cole
  */
 @Singleton
-public class BlobStoreContextImpl<X, Y> implements BlobStoreContext {
+public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    private final BlobMap.Factory blobMapFactory;
    private final InputStreamMap.Factory inputStreamMapFactory;
    private final AsyncBlobStore ablobStore;
    private final BlobStore blobStore;
-   private final RestContext<X, Y> providerSpecificContext;
+   private final RestContext<S, A> providerSpecificContext;
    private final ConsistencyModel consistencyModel;
 
    @Inject
    public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore,
-            BlobStore blobStore, RestContext<X, Y> providerSpecificContext) {
+            BlobStore blobStore, RestContext<S, A> providerSpecificContext) {
       this.providerSpecificContext = providerSpecificContext;
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
@@ -93,8 +93,8 @@ public class BlobStoreContextImpl<X, Y> implements BlobStoreContext {
 
    @SuppressWarnings("unchecked")
    @Override
-   public <A, S> RestContext<A, S> getProviderSpecificContext() {
-      return (RestContext<A, S>) providerSpecificContext;
+   public RestContext<S, A> getProviderSpecificContext() {
+      return (RestContext<S, A>) providerSpecificContext;
    }
 
    @Override

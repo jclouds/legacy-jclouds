@@ -106,7 +106,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
       bind(String.class).annotatedWith(VCloud.class).toInstance(providerName);
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudAsyncClient, VCloudClient>>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(RunNodesAndAddToSetStrategy.class).to(
                EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);

@@ -27,7 +27,6 @@ import org.jclouds.atmosonline.saas.AtmosStorage;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
@@ -35,28 +34,25 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 @RequiresHttp
 public class AtmosStorageContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      // for converters to work.
-      install(new BlobStoreObjectModule<AtmosStorageAsyncClient, AtmosStorageClient>(
-               new TypeLiteral<AtmosStorageAsyncClient>() {
-               }, new TypeLiteral<AtmosStorageClient>() {
-               }));
-      install(new AtmosObjectModule());
    }
 
    @Provides
    @Singleton
-   RestContext<AtmosStorageAsyncClient, AtmosStorageClient> provideContext(Closer closer,
+   RestContext<AtmosStorageClient, AtmosStorageAsyncClient> provideContext(Closer closer,
             AtmosStorageAsyncClient async, AtmosStorageClient defaultApi,
             @AtmosStorage URI endPoint,
             @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String account) {
-      return new RestContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>(closer, async,
+      return new RestContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>(closer, async,
                defaultApi, endPoint, account);
    }
 

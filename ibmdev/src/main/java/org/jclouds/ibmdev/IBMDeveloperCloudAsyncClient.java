@@ -26,20 +26,25 @@ package org.jclouds.ibmdev;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.ibmdev.binders.BindImageVisibilityToJsonPayload;
 import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.functions.ParseImageFromJson;
 import org.jclouds.ibmdev.functions.ParseImagesFromJson;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -57,7 +62,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface IBMDeveloperCloudAsyncClient {
 
    /**
-    * @see IBMDeveloperCloudAsyncClient#listImages()
+    * @see IBMDeveloperCloudClient#listImages()
     */
    @GET
    @Path("/images")
@@ -65,12 +70,30 @@ public interface IBMDeveloperCloudAsyncClient {
    ListenableFuture<Set<? extends Image>> listImages();
 
    /**
-    * @see IBMDeveloperCloudAsyncClient#getImage(long)
+    * @see IBMDeveloperCloudClient#getImage(long)
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/images/{imageId}")
    @ResponseParser(ParseImageFromJson.class)
    ListenableFuture<Image> getImage(@PathParam("imageId") long id);
+
+   /**
+    * @see IBMDeveloperCloudClient#deleteImage
+    */
+   @DELETE
+   @Path("/images/{imageId}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteImage(@PathParam("imageId") long id);
+
+   /**
+    * @see IBMDeveloperCloudClient#setImageVisibility(long, Image.Visibility)
+    */
+   @PUT
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/images/{imageId}")
+   @ResponseParser(ParseImageFromJson.class)
+   ListenableFuture<Image> setImageVisibility(@PathParam("imageId") long id,
+            @BinderParam(BindImageVisibilityToJsonPayload.class) Image.Visibility visibility);
 
 }

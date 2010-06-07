@@ -37,7 +37,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableMap;
@@ -76,7 +76,7 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder("user", "key")
+            Names.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder("user", "key")
                      .build(), "properties"));
             bind(URI.class).annotatedWith(EC2.class).toInstance(
                      URI.create("https://ec2.amazonaws.com"));

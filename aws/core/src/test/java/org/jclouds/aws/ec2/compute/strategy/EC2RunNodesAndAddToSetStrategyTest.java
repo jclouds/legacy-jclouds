@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
@@ -95,6 +96,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       // setup mocks
       EC2RunNodesAndAddToSetStrategy strategy = setupStrategy();
       InputParams input = new InputParams(location);
+      InstanceClient instanceClient = createMock(InstanceClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
       Reservation reservation = new Reservation(region, ImmutableSet.<String> of(), ImmutableSet
@@ -102,19 +104,19 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
 
       // setup expectations
+      expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
       expect(
                strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region,
                         input.tag, input.template)).andReturn(ec2Options);
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
-      expect(
-               strategy.instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count,
-                        ec2Options)).andReturn(reservation);
+      expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options))
+               .andReturn(reservation);
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       expect(strategy.instanceStateRunning.apply(instance)).andReturn(true);
-      expect(strategy.instanceClient.describeInstancesInRegion(region, instanceCreatedId))
-               .andReturn(ImmutableSet.of(reservation));
+      expect(instanceClient.describeInstancesInRegion(region, instanceCreatedId)).andReturn(
+               ImmutableSet.of(reservation));
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
@@ -124,6 +126,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
                         eq(input.badNodes))).andReturn(null);
 
       // replay mocks
+      replay(instanceClient);
       replay(ec2Options);
       replay(instance);
       replay(nodeMetadata);
@@ -134,6 +137,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       strategy.execute(input.tag, input.count, input.template, input.nodes, input.badNodes);
 
       // verify mocks
+      verify(instanceClient);
       verify(ec2Options);
       verify(instance);
       verify(nodeMetadata);
@@ -186,7 +190,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
    private void verifyStrategy(EC2RunNodesAndAddToSetStrategy strategy) {
       verify(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions);
-      verify(strategy.instanceClient);
+      verify(strategy.client);
       verify(strategy.instanceStateRunning);
       verify(strategy.runningInstanceToNodeMetadata);
       verify(strategy.utils);
@@ -194,20 +198,19 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
    @SuppressWarnings("unchecked")
    private EC2RunNodesAndAddToSetStrategy setupStrategy() {
-
-      InstanceClient instanceClient = createMock(InstanceClient.class);
+      EC2Client client = createMock(EC2Client.class);
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
-      return new EC2RunNodesAndAddToSetStrategy(instanceClient,
+      return new EC2RunNodesAndAddToSetStrategy(client,
                createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions, instanceStateRunning,
                runningInstanceToNodeMetadata, utils);
    }
 
    private void replayStrategy(EC2RunNodesAndAddToSetStrategy strategy) {
       replay(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions);
-      replay(strategy.instanceClient);
+      replay(strategy.client);
       replay(strategy.instanceStateRunning);
       replay(strategy.runningInstanceToNodeMetadata);
       replay(strategy.utils);

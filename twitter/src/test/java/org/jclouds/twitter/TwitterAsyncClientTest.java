@@ -35,7 +35,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -83,7 +83,7 @@ public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330
+            Names
                      .bindProperties(this.binder(), new TwitterPropertiesBuilder("foo", "bar")
                               .build());
             bind(URI.class).annotatedWith(Twitter.class).toInstance(

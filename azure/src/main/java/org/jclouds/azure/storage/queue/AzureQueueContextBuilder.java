@@ -29,7 +29,6 @@ import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link AzureQueueContext} or {@link Injector} instances based on the most commonly
@@ -45,12 +44,10 @@ import com.google.inject.TypeLiteral;
  * @see AzureQueueContext
  */
 public class AzureQueueContextBuilder extends
-         RestContextBuilder<AzureQueueAsyncClient, AzureQueueClient> {
+         RestContextBuilder<AzureQueueClient, AzureQueueAsyncClient> {
 
    public AzureQueueContextBuilder(String providerName, Properties properties) {
-      super(providerName, new TypeLiteral<AzureQueueAsyncClient>() {
-      }, new TypeLiteral<AzureQueueClient>() {
-      }, properties);
+      super(providerName, AzureQueueClient.class, AzureQueueAsyncClient.class, properties);
    }
 
    @Override

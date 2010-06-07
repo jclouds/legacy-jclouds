@@ -26,15 +26,10 @@ import javax.inject.Singleton;
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
-import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
-import org.jclouds.concurrent.internal.SyncProxy;
-import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.annotation.ClientError;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.Provides;
 
@@ -45,7 +40,18 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class AzureBlobRestClientModule extends AzureStorageRestClientModule {
+public class AzureBlobRestClientModule extends
+         AzureStorageRestClientModule<AzureBlobClient, AzureBlobAsyncClient> {
+
+   public AzureBlobRestClientModule() {
+      super(AzureBlobClient.class, AzureBlobAsyncClient.class);
+   }
+
+   @Override
+   protected void configure() {
+      install(new AzureBlobModule());
+      super.configure();
+   }
 
    @Provides
    @Singleton
@@ -55,22 +61,4 @@ public class AzureBlobRestClientModule extends AzureStorageRestClientModule {
       return URI.create(endpoint);
    }
 
-   @Provides
-   @Singleton
-   protected AzureBlobAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(AzureBlobAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public AzureBlobClient provideClient(AzureBlobAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(AzureBlobClient.class, client);
-   }
-
-   @Override
-   protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-               AzureBlobClientErrorRetryHandler.class);
-   }
 }

@@ -34,7 +34,9 @@ import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -49,6 +51,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
 
    private final DelegatingRetryHandler retryHandler;
+   private final IOExceptionRetryHandler ioRetryHandler;
    private final DelegatingErrorHandler errorHandler;
    private final ExecutorService ioWorkerExecutor;
 
@@ -63,8 +66,10 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    @Inject
    protected BaseHttpCommandExecutorService(
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.retryHandler = retryHandler;
+      this.ioRetryHandler = ioRetryHandler;
       this.errorHandler = errorHandler;
       this.ioWorkerExecutor = ioWorkerExecutor;
       this.wire = wire;
@@ -98,7 +103,18 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                            .getRawContent())));
                nativeRequest = convert(request);
                HttpUtils.logRequest(headerLog, request, ">>");
-               response = invoke(nativeRequest);
+               try {
+                  response = invoke(nativeRequest);
+               } catch (IOException e) {
+                  if (ioRetryHandler.shouldRetryRequest(command, e)) {
+                     continue;
+                  } else {
+                     command.setException(new HttpResponseException(e.getMessage()
+                              + " connecting to " + command.getRequest().getRequestLine(), command,
+                              new HttpResponse(), e));
+                     break;
+                  }
+               }
                logger.debug("Receiving response %s: %s", request.hashCode(), response
                         .getStatusLine());
                HttpUtils.logResponse(headerLog, response, "<<");
@@ -106,12 +122,10 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   response.setContent(wire.input(response.getContent()));
                int statusCode = response.getStatusCode();
                if (statusCode >= 300) {
-                  if (retryHandler.shouldRetryRequest(command, response)) {
+                  if (shouldContinue(response))
                      continue;
-                  } else {
-                     errorHandler.handleError(command, response);
+                  else
                      break;
-                  }
                } else {
                   break;
                }
@@ -123,6 +137,17 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
             throw command.getException();
          return response;
       }
+
+      private boolean shouldContinue(HttpResponse response) {
+         boolean shouldContinue = false;
+         if (retryHandler.shouldRetryRequest(command, response)) {
+            shouldContinue = true;
+         } else {
+            errorHandler.handleError(command, response);
+         }
+         return shouldContinue;
+      }
+
    }
 
    protected abstract Q convert(HttpRequest request) throws IOException, InterruptedException;

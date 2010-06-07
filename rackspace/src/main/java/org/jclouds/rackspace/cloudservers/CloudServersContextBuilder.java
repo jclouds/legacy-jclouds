@@ -30,7 +30,6 @@ import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link CloudServersComputeServiceContext} or {@link Injector} instances based on the most
@@ -46,12 +45,10 @@ import com.google.inject.TypeLiteral;
  * @see CloudServersComputeServiceContext
  */
 public class CloudServersContextBuilder extends
-         ComputeServiceContextBuilder<CloudServersAsyncClient, CloudServersClient> {
+         ComputeServiceContextBuilder<CloudServersClient, CloudServersAsyncClient> {
 
    public CloudServersContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<CloudServersAsyncClient>() {
-      }, new TypeLiteral<CloudServersClient>() {
-      }, props);
+      super(providerName, CloudServersClient.class, CloudServersAsyncClient.class, props);
    }
 
    @Override

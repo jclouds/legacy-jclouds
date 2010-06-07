@@ -19,6 +19,7 @@
 package org.jclouds.rest;
 
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -27,7 +28,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -43,26 +44,9 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.internal.Nullable;
 
 public abstract class RestClientTest<T> {
-//   , new AbstractModule() {
-//
-//      @Override
-//      protected void configure() {
-//         Jsr330.bindProperties(binder(), new PropertiesBuilder() {
-//
-//            @Override
-//            public PropertiesBuilder withCredentials(String account, String key) {
-//               return null;
-//            }
-//
-//            @Override
-//            public PropertiesBuilder withEndpoint(URI endpoint) {
-//               return null;
-//            }
-//         }.build());
-//      }
-//
-//   }
+
    protected RestAnnotationProcessor<T> processor;
+
    protected Injector injector;
 
    protected abstract Module createModule();
@@ -74,9 +58,16 @@ public abstract class RestClientTest<T> {
    @BeforeClass
    protected void setupFactory() {
 
-      injector = Guice.createInjector(createModule(), new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      injector = Guice.createInjector(createModule(), new RestModule() {
+
+         @Override
+         protected void configure() {
+            bind(TransformingHttpCommandExecutorService.class).toInstance(
+                     createMock(TransformingHttpCommandExecutorService.class));
+            super.configure();
+         }
+
+      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
 
       processor = injector.getInstance(Key.get(createTypeLiteral()));
    }

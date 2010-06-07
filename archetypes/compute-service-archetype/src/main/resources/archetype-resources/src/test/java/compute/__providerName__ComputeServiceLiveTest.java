@@ -63,7 +63,7 @@ public class ${providerName}ComputeServiceLiveTest extends BaseComputeServiceLiv
 
        public void testAssignability() throws Exception {
           @SuppressWarnings("unused")
-          RestContext<${providerName}AsyncClient, ${providerName}Client> tmContext = new ComputeServiceContextFactory()
+          RestContext<${providerName}Client, ${providerName}AsyncClient> tmContext = new ComputeServiceContextFactory()
                    .createContext(service, user, password).getProviderSpecificContext();
        }
 

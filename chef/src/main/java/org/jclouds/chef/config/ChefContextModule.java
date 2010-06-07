@@ -76,9 +76,9 @@ public class ChefContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<ChefAsyncClient, ChefClient> provideContext(Closer closer, ChefAsyncClient asyncApi,
+   RestContext<ChefClient, ChefAsyncClient> provideContext(Closer closer, ChefAsyncClient asyncApi,
             ChefClient syncApi, @Chef URI endPoint, @Named(ChefConstants.PROPERTY_CHEF_IDENTITY) String account) {
-      return new RestContextImpl<ChefAsyncClient, ChefClient>(closer, asyncApi, syncApi, endPoint, account);
+      return new RestContextImpl<ChefClient, ChefAsyncClient>(closer, asyncApi, syncApi, endPoint, account);
    }
 
 }

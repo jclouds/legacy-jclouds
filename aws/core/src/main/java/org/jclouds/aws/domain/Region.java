@@ -18,6 +18,9 @@
  */
 package org.jclouds.aws.domain;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -29,7 +32,6 @@ package org.jclouds.aws.domain;
  * 
  */
 public class Region {
-   
    /**
     * EU (Ireland)
     * <p/>
@@ -53,7 +55,7 @@ public class Region {
     * parameter. The US Standard Region provides eventual consistency for all requests.
     */
    public static final String US_STANDARD = "us-standard";
-   
+
    /**
     * 
     */
@@ -73,8 +75,12 @@ public class Region {
    public static final String US_WEST_1 = "us-west-1";
 
    /**
-    * Region in Singapore, launched April 28, 2010.
-    * This region improves latency for Asia-based users
+    * Region in Singapore, launched April 28, 2010. This region improves latency for Asia-based
+    * users
     */
    public static final String AP_SOUTHEAST_1 = "ap-southeast-1";
+
+   public static Set<String> ALL = ImmutableSet.of(EU_WEST_1, US_STANDARD, US_EAST_1, US_WEST_1,
+            AP_SOUTHEAST_1);
+
 }

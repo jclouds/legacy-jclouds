@@ -67,7 +67,7 @@ public class IBMDeveloperCloudClientLiveTest {
       assertNotNull(response);
       if (response.size() > 0) {
          Image image = Iterables.get(response, 0);
-         assertEquals(connection.getImage(image.getId()), image);
+         assertEquals(connection.getImage(image.getId()).getId(), image.getId());
       }
    }
 

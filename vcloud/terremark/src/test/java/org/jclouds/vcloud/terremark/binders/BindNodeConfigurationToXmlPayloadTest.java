@@ -29,7 +29,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.testng.annotations.Test;
@@ -53,7 +53,7 @@ public class BindNodeConfigurationToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Jsr330.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
+         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
                   "properties"));
       }
    });

@@ -42,7 +42,7 @@ public class MonitoringClientLiveTest {
 
    private MonitoringClient client;
    private static final String DEFAULT_INSTANCE = "i-TODO";
-   private RestContext<EC2AsyncClient, EC2Client> context;
+   private RestContext<EC2Client, EC2AsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

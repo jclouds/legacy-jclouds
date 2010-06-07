@@ -25,13 +25,12 @@ import org.jclouds.blobstore.config.TransientBlobStoreContextModule;
 import org.jclouds.blobstore.config.TransientBlobStoreModule;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
 public class TransientBlobStoreContextBuilder extends
-         BlobStoreContextBuilder<AsyncBlobStore, BlobStore> {
+         BlobStoreContextBuilder<BlobStore, AsyncBlobStore> {
 
    /**
     * This is only to have the same syntax.
@@ -42,9 +41,7 @@ public class TransientBlobStoreContextBuilder extends
    }
 
    public TransientBlobStoreContextBuilder() {
-      super("transient", new TypeLiteral<AsyncBlobStore>() {
-      }, new TypeLiteral<BlobStore>() {
-      });
+      super("transient", BlobStore.class, AsyncBlobStore.class);
    }
 
    @Override

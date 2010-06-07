@@ -18,10 +18,10 @@
  */
 package org.jclouds.rest;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 
@@ -30,19 +30,27 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 
-public class RestClientFactory {
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
+public class AsyncClientFactory {
    private final Injector injector;
 
    @Inject
-   public RestClientFactory(Injector injector) {
+   public AsyncClientFactory(Injector injector) {
       this.injector = injector;
    }
 
    @SuppressWarnings("unchecked")
    public <T> T create(Class<T> clazz) {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-               (InvocationHandler) injector.getInstance(Key.get(TypeLiteral.get(Types
-                        .newParameterizedType(AsyncRestClientProxy.class, clazz)))));
+      return (T) create(clazz, (AsyncRestClientProxy<T>) injector.getInstance(Key.get(TypeLiteral
+               .get(Types.newParameterizedType(AsyncRestClientProxy.class, clazz)))));
    }
 
+   @SuppressWarnings("unchecked")
+   public static <T> T create(Class<T> clazz, AsyncRestClientProxy<T> proxy) {
+      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
+   }
 }

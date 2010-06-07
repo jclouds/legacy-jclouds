@@ -41,18 +41,15 @@ import ${package}.config.${providerName}RestClientModule;
 import ${package}.reference.${providerName}Constants;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author ${author}
  */
-public class ${providerName}ContextBuilder extends RestContextBuilder<${providerName}AsyncClient, ${providerName}Client> {
+public class ${providerName}ContextBuilder extends RestContextBuilder<${providerName}Client, ${providerName}AsyncClient> {
 
    public ${providerName}ContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<${providerName}AsyncClient>() {
-      }, new TypeLiteral<${providerName}Client>() {
-      }, props);
+      super(providerName, ${providerName}Client.class, ${providerName}AsyncClient.class, props);
       checkNotNull(properties.getProperty(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER));
       checkNotNull(properties.getProperty(${providerName}Constants.PROPERTY_${ucaseProviderName}_PASSWORD));
    }

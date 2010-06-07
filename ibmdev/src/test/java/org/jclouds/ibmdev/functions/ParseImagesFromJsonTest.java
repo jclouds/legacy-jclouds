@@ -57,7 +57,7 @@ public class ParseImagesFromJsonTest {
       image1
                .setManifest("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{A233F5A0-05A5-F21D-3E92-3793B722DFBD}/1.0/parameters.xml");
       image1.setState(1);
-      image1.setVisibility("PUBLIC");
+      image1.setVisibility(Image.Visibility.PUBLIC);
       image1.setOwner("SYSTEM");
       image1.setArchitecture("i386");
       image1.setPlatform("SUSE Linux Enterprise/10 SP2");
@@ -76,7 +76,7 @@ public class ParseImagesFromJsonTest {
       image2
                .setManifest("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml");
       image2.setState(1);
-      image2.setVisibility("PUBLIC");
+      image2.setVisibility(Image.Visibility.PUBLIC);
       image2.setOwner("mutdosch@us.ibm.com");
       image2.setArchitecture("i386");
       image2.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");
@@ -92,6 +92,6 @@ public class ParseImagesFromJsonTest {
 
       Set<? extends Image> compare = handler.apply(new HttpResponse(ParseImagesFromJsonTest.class
                .getResourceAsStream("/images.json")));
-      assertEquals(compare, ImmutableSet.of(image2, image1));
+      assertEquals(compare, ImmutableSet.of(image1, image2));
    }
 }

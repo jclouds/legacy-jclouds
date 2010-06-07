@@ -49,19 +49,19 @@ import com.google.inject.Module;
  */
 public class ChefContextFactory {
 
-   public static RestContext<ChefAsyncClient, ChefClient> createContext(String identity,
+   public static RestContext<ChefClient, ChefAsyncClient> createContext(String identity,
             String rsaKey, Module... modules) {
       return new ChefContextBuilder("chef", new ChefPropertiesBuilder(identity, rsaKey).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<ChefAsyncClient, ChefClient> createContext(URI endpoint,
+   public static RestContext<ChefClient, ChefAsyncClient> createContext(URI endpoint,
             String identity, String rsaKey, Module... modules) {
       return new ChefContextBuilder("chef", new ChefPropertiesBuilder(identity, rsaKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<ChefAsyncClient, ChefClient> createContext(Properties properties,
+   public static RestContext<ChefClient, ChefAsyncClient> createContext(Properties properties,
             Module... modules) {
       return new ChefContextBuilder("chef", new ChefPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();

@@ -27,7 +27,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -48,10 +47,10 @@ import org.jclouds.mezeo.pcs2.endpoints.Tags;
 import org.jclouds.mezeo.pcs2.endpoints.WebDAV;
 import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -61,13 +60,16 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-// @SingleThreaded http://code.google.com/p/jclouds/issues/detail?id=104
-public class PCSRestClientModule extends AbstractModule {
+public class PCSRestClientModule extends RestClientModule<PCSClient, PCSAsyncClient> {
 
    @Override
    protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
+      install(new PCSObjectModule());
+      super.configure();
+   }
+
+   public PCSRestClientModule() {
+      super(PCSClient.class, PCSAsyncClient.class);
    }
 
    @Provides
@@ -81,22 +83,9 @@ public class PCSRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Response provideCloudResponse(RestClientFactory factory, @PCS URI authenticationUri)
+   protected Response provideCloudResponse(AsyncClientFactory factory, @PCS URI authenticationUri)
             throws InterruptedException, ExecutionException, TimeoutException {
       return factory.create(PCSCloud.class).authenticate().get(10, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected PCSAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(PCSAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public PCSClient provideClient(PCSAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(PCSClient.class, client);
    }
 
    @Provides
@@ -163,10 +152,7 @@ public class PCSRestClientModule extends AbstractModule {
       return response.getTagsUrl();
    }
 
-   protected void bindErrorHandlers() {
-      // TODO
-   }
-
+   @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
                PCSClientErrorRetryHandler.class);

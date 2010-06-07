@@ -25,15 +25,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.internal.ClassMethodArgs;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.internal.ImmutableMap;
 
 /**
  * Tests behavior of ListenableFutureExceptionParser
@@ -148,7 +151,9 @@ public class SyncProxyTest {
 
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      sync = SyncProxy.create(Sync.class, new Async());
+      sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
+               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap
+                        .<Class<?>, Class<?>> of()));
    }
 
    @Test
@@ -208,7 +213,9 @@ public class SyncProxyTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testWrongTypedException() throws IllegalArgumentException, SecurityException,
             NoSuchMethodException, IOException {
-      SyncProxy.create(SyncWrongException.class, new Async());
+      SyncProxy.proxy(SyncWrongException.class, new SyncProxy(SyncWrongException.class,
+               new Async(), new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap
+                        .<Class<?>, Class<?>> of()));
    }
 
    private static interface SyncNoTimeOut {
@@ -225,7 +232,9 @@ public class SyncProxyTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testNoTimeOutException() throws IllegalArgumentException, SecurityException,
             NoSuchMethodException, IOException {
-      SyncProxy.create(SyncNoTimeOut.class, new Async());
+      SyncProxy.proxy(SyncNoTimeOut.class, new SyncProxy(SyncNoTimeOut.class, new Async(),
+               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap
+                        .<Class<?>, Class<?>> of()));
    }
 
 }

@@ -49,21 +49,21 @@ import com.google.inject.Module;
  */
 public class OpscodePlatformContextFactory {
 
-   public static RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createContext(
+   public static RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createContext(
             String identity, String rsaKey, Module... modules) {
       return new OpscodePlatformContextBuilder("opscodeplatform",
                new OpscodePlatformPropertiesBuilder(identity, rsaKey).build()).withModules(modules)
                .buildContext();
    }
 
-   public static RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createContext(
+   public static RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createContext(
             URI endpoint, String identity, String rsaKey, Module... modules) {
       return new OpscodePlatformContextBuilder("opscodeplatform",
                new OpscodePlatformPropertiesBuilder(identity, rsaKey).withEndpoint(endpoint)
                         .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createContext(
+   public static RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createContext(
             Properties properties, Module... modules) {
       return new OpscodePlatformContextBuilder("opscodeplatform",
                new OpscodePlatformPropertiesBuilder(properties).build()).withModules(modules)

@@ -27,34 +27,27 @@
  */
 package ${package};
 
-
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Properties;
 
-import javax.inject.Singleton;
-
-import org.jclouds.encryption.EncryptionService;
+import ${package}.config.${providerName}RestClientModule;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * Tests annotation parsing of {@code ${providerName}AsyncClient}
@@ -70,7 +63,7 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
       GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/item HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
       // now make sure request filters apply by replaying
@@ -79,7 +72,7 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
 
       assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/item HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
-      assertHeadersEqual(httpRequest, "Authorization: Basic Zm9vOmJhcg==\n");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nAuthorization: Basic Zm9vOmJhcg==\n");
       assertPayloadEquals(httpRequest, null);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -96,7 +89,7 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
       GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/item/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -109,6 +102,23 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
 
    }
 
+   public void testDelete() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ${providerName}AsyncClient.class.getMethod("delete", long.class);
+      GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(
+               method, 1);
+
+      assertRequestLineEquals(httpRequest,
+               "DELETE ${providerEndpoint}/item/1 HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
    @Override
    protected void checkFilters(GeneratedHttpRequest<${providerName}AsyncClient> httpRequest) {
       assertEquals(httpRequest.getFilters().size(), 1);
@@ -123,28 +133,13 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new ${providerName}RestClientModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), new ${providerName}PropertiesBuilder(
-                     new Properties()).build());
-            bind(URI.class).annotatedWith(${providerName}.class).toInstance(
-                     URI.create("${providerEndpoint}"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
+            Names.bindProperties(binder(), new ${providerName}PropertiesBuilder("user", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
          }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
-                  throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar", encryptionService);
-         }
-
       };
    }
 }

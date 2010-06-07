@@ -55,8 +55,8 @@ public class ComputeServiceContextImpl<X, Y> implements ComputeServiceContext {
 
    @SuppressWarnings("unchecked")
    @Override
-   public <A, S> RestContext<A, S> getProviderSpecificContext() {
-      return (RestContext<A, S>) providerSpecificContext;
+   public <S, A> RestContext<S, A> getProviderSpecificContext() {
+      return (RestContext<S, A>) providerSpecificContext;
    }
 
    @Override

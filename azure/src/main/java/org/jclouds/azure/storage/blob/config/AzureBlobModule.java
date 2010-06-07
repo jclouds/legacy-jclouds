@@ -24,6 +24,7 @@ import javax.inject.Provider;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.AzureBlobImpl;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
@@ -43,6 +44,8 @@ public class AzureBlobModule extends AbstractModule {
     */
    @Override
    protected void configure() {
+      // for converters
+      install(new BlobStoreObjectModule());
       bind(AzureBlob.Factory.class).to(AzureBlobFactory.class).in(Scopes.SINGLETON);
    }
 

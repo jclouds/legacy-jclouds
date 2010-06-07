@@ -49,10 +49,10 @@ public class EC2ContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<EC2AsyncClient, EC2Client> provideContext(Closer closer, EC2AsyncClient defaultApi,
+   RestContext<EC2Client, EC2AsyncClient> provideContext(Closer closer, EC2AsyncClient defaultApi,
             EC2Client synchApi, @EC2 URI endPoint,
             @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<EC2AsyncClient, EC2Client>(closer, defaultApi, synchApi, endPoint,
+      return new RestContextImpl<EC2Client, EC2AsyncClient>(closer, defaultApi, synchApi, endPoint,
                account);
    }
 

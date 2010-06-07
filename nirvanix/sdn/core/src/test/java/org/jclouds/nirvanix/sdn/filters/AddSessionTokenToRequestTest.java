@@ -37,7 +37,7 @@ import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -106,7 +106,7 @@ public class AddSessionTokenToRequestTest {
 
                   protected void configure() {
                      bind(DateService.class);
-                     Jsr330.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
+                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
                               "appname", "username", "password").build());
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {

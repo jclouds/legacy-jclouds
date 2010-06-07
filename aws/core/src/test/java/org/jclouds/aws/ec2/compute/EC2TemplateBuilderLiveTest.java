@@ -68,7 +68,7 @@ public class EC2TemplateBuilderLiveTest {
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-         assertEquals(defaultTemplate.getImage().getName(), "9.10");
+         assertEquals(defaultTemplate.getImage().getName(), "10.04");
          assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
          assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
          assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");

@@ -18,13 +18,11 @@
  */
 package org.jclouds.vcloud.config;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -32,15 +30,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.util.Jsr330;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
@@ -52,6 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -60,18 +57,14 @@ import com.google.inject.Injector;
 public class VCloudRestClientModuleTest {
 
    protected Injector createInjector() {
-      return Guice.createInjector(new VCloudRestClientModule(), new ParserModule(),
+      return Guice.createInjector(new VCloudRestClientModule(), new RestModule(),
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_VERSION)).to("0.8");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_USER)).to("user");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_KEY)).to("secret");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_ENDPOINT)).to(
-                              "http://localhost");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_SESSIONINTERVAL))
-                              .to("2");
-                     bind(UriBuilder.class).to(UriBuilderImpl.class);
+                     Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(URI
+                              .create("http://localhost"), "user", "pass").build(), "properties"));
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
                   }
                });
    }

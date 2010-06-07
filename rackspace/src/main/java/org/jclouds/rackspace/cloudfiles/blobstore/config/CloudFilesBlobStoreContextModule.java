@@ -56,7 +56,7 @@ public class CloudFilesBlobStoreContextModule extends CloudFilesContextModule {
       bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(CloudFilesBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStoreContext.class).to(
-               new TypeLiteral<BlobStoreContextImpl<CloudFilesAsyncClient, CloudFilesClient>>() {
+               new TypeLiteral<BlobStoreContextImpl<CloudFilesClient, CloudFilesAsyncClient>>() {
                }).in(Scopes.SINGLETON);
    }
 

@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.domain.Image.Visibility;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -56,7 +57,7 @@ public class ParseImageFromJsonTest {
       image
                .setManifest("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml");
       image.setState(1);
-      image.setVisibility("PUBLIC");
+      image.setVisibility(Visibility.PUBLIC);
       image.setOwner("mutdosch@us.ibm.com");
       image.setArchitecture("i386");
       image.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");

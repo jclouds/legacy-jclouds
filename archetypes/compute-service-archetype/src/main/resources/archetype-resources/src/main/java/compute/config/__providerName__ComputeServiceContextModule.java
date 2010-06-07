@@ -83,7 +83,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
                .to(
-                        new TypeLiteral<ComputeServiceContextImpl<${providerName}AsyncClient, ${providerName}Client>>() {
+                        new TypeLiteral<ComputeServiceContextImpl<${providerName}Client, ${providerName}AsyncClient>>() {
                         }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(${providerName}AddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(${providerName}ListNodesStrategy.class);

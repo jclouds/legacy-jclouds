@@ -28,8 +28,6 @@ import java.util.Collections;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -42,7 +40,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -52,11 +49,8 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    @BeforeTest
    void setUp() {
 
-      blobProvider = Guice.createInjector(
-               new BlobStoreObjectModule<AsyncBlobStore, BlobStore>(
-                        new TypeLiteral<AsyncBlobStore>() {
-                        }, new TypeLiteral<BlobStore>() {
-                        })).getInstance(Blob.Factory.class);
+      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
+               Blob.Factory.class);
    }
 
    @Test(expectedExceptions = NullPointerException.class)

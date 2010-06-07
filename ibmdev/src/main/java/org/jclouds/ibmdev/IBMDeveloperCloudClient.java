@@ -45,8 +45,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.rest.AuthorizationException;
 
 /**
  * Provides synchronous access to IBMDeveloperCloud.
@@ -56,7 +56,7 @@ import org.jclouds.ibmdev.domain.Image;
  * @see <a href="http://www-180.ibm.com/cloud/enterprise/beta/support" />
  * @author Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface IBMDeveloperCloudClient {
    /**
     * 
@@ -68,9 +68,31 @@ public interface IBMDeveloperCloudClient {
     * Returns the available Image identified by the supplied Image ID.
     * 
     * @return null if image is not found
-    * @throws HttpResponseException
+    * @throws AuthorizationException
     *            code 401 if the user is not authorized to view this image to section
     */
    Image getImage(long id);
 
+   /**
+    * Deletes Image identified by the supplied Image ID.
+    * 
+    * @throws AuthorizationException
+    *            code 401 if the user is not authorized to delete this image
+    * @throws IllegalStateException
+    *            code 412 if the image is in an invalid state to perform this operation
+    */
+   void deleteImage(long id);
+
+   /**
+    * If set to {@link Image.Visibility#PUBLIC}, makes the Image identified by the supplied Image ID
+    * publicly available for all users to create Instances of.
+    * 
+    * @return modified image or null, if image was not found.
+    * 
+    * @throws AuthorizationException
+    *            code 401 if the user is not authorized to change the visibility of this image
+    * @throws IllegalStateException
+    *            code 412 if the image is in an invalid state to perform this operation
+    */
+   Image setImageVisibility(long id, Image.Visibility visibility);
 }

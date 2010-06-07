@@ -41,25 +41,25 @@ import com.google.inject.Module;
  */
 public class SQSContextFactory {
 
-   public static RestContext<SQSAsyncClient, SQSClient> createContext(Properties properties,
+   public static RestContext<SQSClient, SQSAsyncClient> createContext(Properties properties,
             Module... modules) {
       return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<SQSAsyncClient, SQSClient> createContext(Properties properties,
+   public static RestContext<SQSClient, SQSAsyncClient> createContext(Properties properties,
             String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
       return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(properties).withCredentials(
                awsAccessKeyId, awsSecretAccessKey).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<SQSAsyncClient, SQSClient> createContext(String awsAccessKeyId,
+   public static RestContext<SQSClient, SQSAsyncClient> createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(awsAccessKeyId,
                awsSecretAccessKey).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<SQSAsyncClient, SQSClient> createContext(URI endpoint,
+   public static RestContext<SQSClient, SQSAsyncClient> createContext(URI endpoint,
             String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
       return new SQSContextBuilder("sqs", new SQSPropertiesBuilder(awsAccessKeyId,
                awsSecretAccessKey).withEndpoint(endpoint).build()).withModules(modules)

@@ -56,7 +56,7 @@ import com.google.inject.internal.Lists;
 @Test(groups = "live", sequential = true, testName = "ec2.ElasticBlockStoreClientLiveTest")
 public class ElasticBlockStoreClientLiveTest {
    private ElasticBlockStoreClient client;
-   private RestContext<EC2AsyncClient, EC2Client> context;
+   private RestContext<EC2Client, EC2AsyncClient> context;
    private String volumeId;
    private Snapshot snapshot;
 

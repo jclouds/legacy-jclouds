@@ -36,8 +36,8 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.services.GridServerClient;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -57,7 +57,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Resource
    protected Logger logger = Logger.NULL;
    private final Map<String, NodeState> serverStateToNodeState;
-   private final GridServerClient client;
+   private final GoGridClient client;
    private final Location location;
    private final Set<? extends Image> images;
 
@@ -79,7 +79,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    }
 
    @Inject
-   ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState, GridServerClient client,
+   ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState, GoGridClient client,
             Set<? extends Image> images, Location location) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
@@ -93,7 +93,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       final String tag = matcher.find() ? matcher.group(1) : null;
       Set<String> ipSet = ImmutableSet.of(from.getIp().getIp());
       NodeState state = serverStateToNodeState.get(from.getState().getName());
-      Credentials creds = client.getServerCredentialsList().get(from.getName());
+      Credentials creds = client.getServerServices().getServerCredentialsList().get(from.getName());
       Image image = null;
       try {
          image = Iterables.find(images, new FindImageForServer(location, from));

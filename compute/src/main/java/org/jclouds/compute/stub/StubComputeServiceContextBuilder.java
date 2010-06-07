@@ -24,23 +24,19 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
-import org.jclouds.compute.stub.config.StubComputeServiceContextModule.StubNodeMetadata;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class StubComputeServiceContextBuilder
-         extends
-         ComputeServiceContextBuilder<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>> {
+@SuppressWarnings("unchecked")
+public class StubComputeServiceContextBuilder extends
+         ComputeServiceContextBuilder<ConcurrentMap, ConcurrentMap> {
 
    public StubComputeServiceContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<ConcurrentMap<Integer, StubNodeMetadata>>() {
-      }, new TypeLiteral<ConcurrentMap<Integer, StubNodeMetadata>>() {
-      }, props);
+      super(providerName, ConcurrentMap.class, ConcurrentMap.class, props);
    }
 
    @Override

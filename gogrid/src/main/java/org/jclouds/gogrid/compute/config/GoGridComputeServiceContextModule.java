@@ -104,7 +104,7 @@ public class GoGridComputeServiceContextModule extends GoGridContextModule {
       }).to(ServerToNodeMetadata.class);
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<GoGridAsyncClient, GoGridClient>>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<GoGridClient, GoGridAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(GoGridAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(GoGridListNodesStrategy.class);

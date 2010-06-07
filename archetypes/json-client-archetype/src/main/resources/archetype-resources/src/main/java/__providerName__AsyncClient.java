@@ -26,15 +26,20 @@
  */
 package ${package};
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
+import ${package}.${providerName}Client;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -48,24 +53,32 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Endpoint(${providerName}.class)
 @RequestFilters(BasicAuthentication.class)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface ${providerName}AsyncClient {
    /*
     * TODO: define interface methods for ${providerName} 
     */
    
    /**
-    * @see ${providerName}AsyncClient#list()
+    * @see ${providerName}Client#list()
     */
    @GET
-   @Path("/item")
+   @Path("/items")
    ListenableFuture<String> list();
    
    /**
-    * @see ${providerName}AsyncClient#get(String)
+    * @see ${providerName}Client#get(long)
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/item/{itemId}")
+   @Path("/items/{itemId}")
    ListenableFuture<String> get(@PathParam("itemId") long id);
    
+   /**
+    * @see ${providerName}Client#delete
+    */
+   @DELETE
+   @Path("/items/{itemId}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> delete(@PathParam("itemId") long id);
 }

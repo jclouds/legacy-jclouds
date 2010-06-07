@@ -18,18 +18,24 @@
  */
 package org.jclouds.concurrent.internal;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
@@ -45,10 +51,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
-   public static <T> T create(Class<T> clazz, Object delegate) throws IllegalArgumentException,
+   public static <T> T proxy(Class<T> clazz, SyncProxy proxy) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-               new SyncProxy(clazz, delegate));
+      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
    }
 
    private final Object delegate;
@@ -56,13 +61,18 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
+   private final ConcurrentMap<ClassMethodArgs, Object> delegateMap;
+   private final Map<Class<?>, Class<?>> sync2Async;
    private static final Set<Method> objectMethods = ImmutableSet.of(Object.class.getMethods());
 
    @Inject
-   public SyncProxy(Class<?> declaring, Object delegate) throws SecurityException,
-            NoSuchMethodException {
-      this.delegate = delegate;
+   public SyncProxy(Class<?> declaring, Object async,
+            @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap,
+            Map<Class<?>, Class<?>> sync2Async) throws SecurityException, NoSuchMethodException {
+      this.delegateMap = delegateMap;
+      this.delegate = async;
       this.declaring = declaring;
+      this.sync2Async = sync2Async;
       if (!declaring.isAnnotationPresent(Timeout.class)) {
          throw new IllegalArgumentException(String.format(
                   "type %s does not specify a default @Timeout", declaring));
@@ -109,6 +119,12 @@ public class SyncProxy implements InvocationHandler {
          return this.hashCode();
       } else if (method.getName().equals("toString")) {
          return this.toString();
+      } else if (method.isAnnotationPresent(Delegate.class)) {
+         Class<?> asyncClass = sync2Async.get(method.getReturnType());
+         checkState(asyncClass != null, "please configure corresponding async class for "
+                  + method.getReturnType() + " in your RestClientModule");
+         Object returnVal =  delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
+         return returnVal;
       } else if (syncMethodMap.containsKey(method)) {
          return syncMethodMap.get(method).invoke(delegate, args);
       } else {

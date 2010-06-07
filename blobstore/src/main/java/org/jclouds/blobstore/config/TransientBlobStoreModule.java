@@ -28,7 +28,8 @@ import org.jclouds.Constants;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.domain.Location;
-import org.jclouds.util.Jsr330;
+import org.jclouds.internal.ClassMethodArgs;
+import com.google.inject.name.Names;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
@@ -48,14 +49,18 @@ public class TransientBlobStoreModule extends AbstractModule {
       }).toInstance(map);
       bind(new TypeLiteral<ConcurrentMap<String, Location>>() {
       }).toInstance(containerToLocation);
+      // delegation on stubs is not currently supported
+      bind(new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+      }).annotatedWith(Names.named("async")).toInstance(
+               new ConcurrentHashMap<ClassMethodArgs, Object>());
       bind(TransientAsyncBlobStore.class).in(Scopes.SINGLETON);
-      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to(0);
-      bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(0);
+      bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to(0);
+      bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(0);
    }
 
    @Provides
    @Singleton
    Set<Location> provideLocations(Location defaultLocation) {
-      return ImmutableSet.of( defaultLocation);
+      return ImmutableSet.of(defaultLocation);
    }
 }

@@ -43,14 +43,14 @@ import com.google.common.io.Closeables;
 public class ParseAuthenticationResponseFromHeaders implements
          Function<HttpResponse, AuthenticationResponse> {
 
-   private static final class AuthenticationResponseImpl implements AuthenticationResponse {
+   public static final class AuthenticationResponseImpl implements AuthenticationResponse {
 
       private final String authToken;
       private final String CDNManagementUrl;
       private final String serverManagementUrl;
       private final String storageUrl;
 
-      AuthenticationResponseImpl(String authToken, String CDNManagementUrl,
+      public AuthenticationResponseImpl(String authToken, String CDNManagementUrl,
                String serverManagementUrl, String storageUrl) {
          this.authToken = authToken;
          this.CDNManagementUrl = CDNManagementUrl;

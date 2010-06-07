@@ -39,7 +39,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
@@ -537,7 +537,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
             Properties props = new Properties();
             props.put(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK,
                      "https://vcloud.safesecureweb.com/network/1990");
-            Jsr330.bindProperties(binder(), checkNotNull(
+            Names.bindProperties(binder(), checkNotNull(
                      new VCloudPropertiesBuilder(props).build(), "properties"));
             bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));

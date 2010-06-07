@@ -18,19 +18,17 @@
  */
 package org.jclouds.atmosonline.saas;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobToObject;
-import org.jclouds.atmosonline.saas.config.AtmosObjectModule;
+import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.filters.SignRequest;
 import org.jclouds.atmosonline.saas.functions.ParseDirectoryListFromContentAndHeaders;
@@ -38,28 +36,24 @@ import org.jclouds.atmosonline.saas.functions.ParseObjectFromHeadersAndHttpConte
 import org.jclouds.atmosonline.saas.functions.ParseSystemMetadataFromHeaders;
 import org.jclouds.atmosonline.saas.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmosonline.saas.options.ListOptions;
-import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
+import com.google.common.base.Supplier;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -79,7 +73,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
       GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod,
-               "GET http://accesspoint.emccis.com/rest/namespace HTTP/1.1");
+               "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": text/xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -98,7 +92,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "directory");
 
       assertRequestLineEquals(httpMethod,
-               "GET http://accesspoint.emccis.com/rest/namespace/directory/ HTTP/1.1");
+               "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": text/xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -118,7 +112,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(httpMethod,
-               "GET http://accesspoint.emccis.com/rest/namespace HTTP/1.1");
+               "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
                + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
       assertPayloadEquals(httpMethod, null);
@@ -139,7 +133,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "directory", new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(httpMethod,
-               "GET http://accesspoint.emccis.com/rest/namespace/directory/ HTTP/1.1");
+               "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
                + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
       assertPayloadEquals(httpMethod, null);
@@ -158,7 +152,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "dir");
 
       assertRequestLineEquals(httpMethod,
-               "POST http://accesspoint.emccis.com/rest/namespace/dir/ HTTP/1.1");
+               "POST https://accesspoint.atmosonline.com/rest/namespace/dir/ HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -177,7 +171,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "dir", blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(httpMethod,
-               "POST http://accesspoint.emccis.com/rest/namespace/dir/hello HTTP/1.1");
+               "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
                + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
       assertPayloadEquals(httpMethod, "hello");
@@ -197,7 +191,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "dir", blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(httpMethod,
-               "PUT http://accesspoint.emccis.com/rest/namespace/dir/hello HTTP/1.1");
+               "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
                + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
       assertPayloadEquals(httpMethod, "hello");
@@ -216,7 +210,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "dir/file");
 
       assertRequestLineEquals(httpMethod,
-               "GET http://accesspoint.emccis.com/rest/namespace/dir/file HTTP/1.1");
+               "GET https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -234,7 +228,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "dir/file");
 
       assertRequestLineEquals(httpMethod,
-               "HEAD http://accesspoint.emccis.com/rest/namespace/dir/file HTTP/1.1");
+               "HEAD https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -251,7 +245,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
                "dir/file");
 
       assertRequestLineEquals(httpMethod,
-               "DELETE http://accesspoint.emccis.com/rest/namespace/dir/file HTTP/1.1");
+               "DELETE https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -288,33 +282,19 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new AtmosStorageRestClientModule() {
          @Override
          protected void configure() {
-            install(new BlobStoreObjectModule<AtmosStorageAsyncClient, AtmosStorageClient>(
-                     new TypeLiteral<AtmosStorageAsyncClient>() {
-                     }, new TypeLiteral<AtmosStorageClient>() {
-                     }));
-            install(new AtmosObjectModule());
-            Jsr330.bindProperties(binder(), checkNotNull(new AtmosStoragePropertiesBuilder(
-                     new Properties()).build(), "properties"));
-            bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
-                     URI.create("http://accesspoint.emccis.com"));
-            bind(String.class).annotatedWith(TimeStamp.class).toInstance("timestamp");
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
-                     .to("uid");
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
-                     .to(Base64.encodeBytes("key".getBytes()));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            bindConstant().annotatedWith(
-                     Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL)).to(1l);
-
+            Names.bindProperties(binder(), new AtmosStoragePropertiesBuilder(new Properties())
+                     .withCredentials("uid", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
          }
 
+         @Override
+         protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+            return "2009-11-08T15:54:08.897Z";
+         }
       };
    }
 }

@@ -44,10 +44,10 @@ public class HostingDotComVCloudContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient> provideContext(Closer closer,
+   RestContext<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> provideContext(Closer closer,
             HostingDotComVCloudAsyncClient asynchApi, HostingDotComVCloudClient defaultApi,
             @Org URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new RestContextImpl<HostingDotComVCloudAsyncClient, HostingDotComVCloudClient>(closer,
+      return new RestContextImpl<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient>(closer,
                asynchApi, defaultApi, endPoint, account);
    }
 

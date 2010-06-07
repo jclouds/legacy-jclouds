@@ -82,7 +82,7 @@ public class MainApp {
          }
 
          // Use Provider API
-         RestContext<S3AsyncClient, S3Client> providerContext = context
+         RestContext<S3Client, S3AsyncClient> providerContext = context
                   .getProviderSpecificContext();
          providerContext.getApi().getBucketLogging(containerName);
 

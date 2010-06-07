@@ -59,7 +59,7 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
       bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AzureBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStoreContext.class).to(
-               new TypeLiteral<BlobStoreContextImpl<AzureBlobAsyncClient, AzureBlobClient>>() {
+               new TypeLiteral<BlobStoreContextImpl<AzureBlobClient, AzureBlobAsyncClient>>() {
                }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
    }

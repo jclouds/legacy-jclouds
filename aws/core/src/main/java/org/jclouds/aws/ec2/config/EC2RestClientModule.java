@@ -28,6 +28,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.EC2AsyncClient;
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.ELB;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -56,7 +58,6 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
@@ -70,13 +71,12 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -86,7 +86,23 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class EC2RestClientModule extends AbstractModule {
+public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncClient> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
+            .<Class<?>, Class<?>> builder()//
+            .put(AMIClient.class, AMIAsyncClient.class)//
+            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+            .put(InstanceClient.class, InstanceAsyncClient.class)//
+            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+            .put(MonitoringClient.class, MonitoringAsyncClient.class)//
+            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+            .put(ElasticLoadBalancerClient.class, ElasticLoadBalancerAsyncClient.class)//
+            .build();
+
+   public EC2RestClientModule() {
+      super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
+   }
 
    @Provides
    @Singleton
@@ -108,12 +124,6 @@ public class EC2RestClientModule extends AbstractModule {
    @Singleton
    protected Predicate<IPSocket> socketTester(SocketOpen open) {
       return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
-   }
-
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
    }
 
    @Provides
@@ -152,7 +162,7 @@ public class EC2RestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @EC2
-   Map<String, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
+   Map<String, URI> provideRegions(EC2Client client) {
       // http://code.google.com/p/google-guice/issues/detail?id=483
       // guice doesn't remember when singleton providers throw exceptions.
       // in this case, if describeRegions fails, it is called again for
@@ -161,7 +171,7 @@ public class EC2RestClientModule extends AbstractModule {
       if (regionException != null)
          throw regionException;
       try {
-         return client.describeRegions();
+         return client.getAvailabilityZoneAndRegionServices().describeRegions();
       } catch (RuntimeException e) {
          this.regionException = e;
          throw e;
@@ -170,11 +180,12 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Map<String, String> provideAvailabilityZoneToRegions(AvailabilityZoneAndRegionClient client,
+   Map<String, String> provideAvailabilityZoneToRegions(EC2Client client,
             @EC2 Map<String, URI> regions) {
       Map<String, String> map = Maps.newHashMap();
       for (String region : regions.keySet()) {
-         for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {
+         for (AvailabilityZoneInfo zoneInfo : client.getAvailabilityZoneAndRegionServices()
+                  .describeAvailabilityZonesInRegion(region)) {
             map.put(zoneInfo.getZone(), region);
          }
       }
@@ -197,134 +208,12 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected AMIAsyncClient provideAMIAsyncClient(RestClientFactory factory) {
-      return factory.create(AMIAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public AMIClient provideAMIClient(AMIAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(AMIClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected ElasticIPAddressAsyncClient provideElasticIPAddressAsyncClient(
-            RestClientFactory factory) {
-      return factory.create(ElasticIPAddressAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   protected ElasticLoadBalancerAsyncClient provideElasticLoadBalancerAsyncClient(
-            RestClientFactory factory) {
-      return factory.create(ElasticLoadBalancerAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public ElasticIPAddressClient provideElasticIPAddressClient(ElasticIPAddressAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(ElasticIPAddressClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected InstanceAsyncClient provideInstanceAsyncClient(RestClientFactory factory) {
-      return factory.create(InstanceAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public InstanceClient provideInstanceClient(InstanceAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(InstanceClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected KeyPairAsyncClient provideKeyPairAsyncClient(RestClientFactory factory) {
-      return factory.create(KeyPairAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public KeyPairClient provideKeyPairClient(KeyPairAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(KeyPairClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected SecurityGroupAsyncClient provideSecurityGroupAsyncClient(RestClientFactory factory) {
-      return factory.create(SecurityGroupAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public SecurityGroupClient provideSecurityGroupClient(SecurityGroupAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(SecurityGroupClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected MonitoringAsyncClient provideMonitoringAsyncClient(RestClientFactory factory) {
-      return factory.create(MonitoringAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public MonitoringClient provideMonitoringClient(MonitoringAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(MonitoringClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected AvailabilityZoneAndRegionAsyncClient provideAvailabilityZoneAndRegionAsyncClient(
-            RestClientFactory factory) {
-      return factory.create(AvailabilityZoneAndRegionAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public AvailabilityZoneAndRegionClient provideAvailabilityZoneAndRegionClient(
-            AvailabilityZoneAndRegionAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(AvailabilityZoneAndRegionClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected ElasticBlockStoreAsyncClient provideElasticBlockStoreAsyncClient(
-            RestClientFactory factory) {
-      return factory.create(ElasticBlockStoreAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public ElasticBlockStoreClient provideElasticBlockStoreClient(ElasticBlockStoreAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(ElasticBlockStoreClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   public ElasticLoadBalancerClient provideElasticLoadBalancerClient(
-            ElasticLoadBalancerAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(ElasticLoadBalancerClient.class, client);
-   }
-
-   @Provides
-   @Singleton
    @EC2
    protected URI provideURI(@Named(EC2Constants.PROPERTY_EC2_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseAWSErrorFromXmlContent.class);
@@ -334,6 +223,7 @@ public class EC2RestClientModule extends AbstractModule {
                ParseAWSErrorFromXmlContent.class);
    }
 
+   @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
                AWSRedirectionRetryHandler.class);

@@ -61,7 +61,7 @@ public class AMIClientLiveTest {
    private String imageId = "ami-cdf819a4";
    private static final String DEFAULT_MANIFEST = "adrianimages/image.manifest.xml";
    private static final String DEFAULT_SNAPSHOT = "TODO";
-   private RestContext<EC2AsyncClient, EC2Client> context;
+   private RestContext<EC2Client, EC2AsyncClient> context;
 
    private Set<String> imagesToDeregister = Sets.newHashSet();
 

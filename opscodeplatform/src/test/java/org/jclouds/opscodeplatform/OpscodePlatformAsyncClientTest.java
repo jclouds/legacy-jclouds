@@ -49,7 +49,7 @@ import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -292,7 +292,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       return new OpscodePlatformRestClientModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), new OpscodePlatformPropertiesBuilder("user",
+            Names.bindProperties(binder(), new OpscodePlatformPropertiesBuilder("user",
                      SignedHeaderAuthTest.PRIVATE_KEY).build());
             install(new NullLoggingModule());
             super.configure();

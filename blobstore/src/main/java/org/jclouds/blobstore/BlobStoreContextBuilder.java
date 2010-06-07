@@ -23,25 +23,25 @@ import java.util.Properties;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
-public abstract class BlobStoreContextBuilder<A, S> extends RestContextBuilder<A, S> {
+public abstract class BlobStoreContextBuilder<S, A> extends RestContextBuilder<S, A> {
 
    @Override
-   public BlobStoreContextBuilder<A, S> withModules(Module... modules) {
-      return (BlobStoreContextBuilder<A, S>) super.withModules(modules);
+   public BlobStoreContextBuilder<S, A> withModules(Module... modules) {
+      return (BlobStoreContextBuilder<S, A>) super.withModules(modules);
    }
 
-   public BlobStoreContextBuilder(String providerName,TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType) {
-      this(providerName, asyncClientType, syncClientType, new Properties());
+   public BlobStoreContextBuilder(String providerName, Class<S> syncClientType,
+            Class<A> asyncClientType) {
+      this(providerName, syncClientType, asyncClientType, new Properties());
    }
 
-   public BlobStoreContextBuilder(String providerName,TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType,
-            Properties properties) {
-      super(providerName, asyncClientType, syncClientType, properties);
+   public BlobStoreContextBuilder(String providerName, Class<S> syncClientType,
+            Class<A> asyncClientType, Properties properties) {
+      super(providerName, syncClientType, asyncClientType, properties);
 
    }
 

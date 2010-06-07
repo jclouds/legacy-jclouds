@@ -18,16 +18,11 @@
  */
 package org.jclouds.nirvanix.sdn.config;
 
-import javax.inject.Singleton;
-
-import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.nirvanix.sdn.SDNAsyncClient;
 import org.jclouds.nirvanix.sdn.SDNClient;
-import org.jclouds.rest.RestClientFactory;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import org.jclouds.rest.config.RestClientModule;
 
 /**
  * Configures the SDN authentication service connection, including logging and http transport.
@@ -35,31 +30,19 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @RequiresHttp
-public class SDNRestClientModule extends AbstractModule {
+public class SDNRestClientModule extends RestClientModule<SDNClient, SDNAsyncClient> {
+
+   public SDNRestClientModule() {
+      super(SDNClient.class, SDNAsyncClient.class);
+   }
 
    @Override
    protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
+      install(new BlobStoreObjectModule());
+      super.configure();
    }
 
-   @Provides
-   @Singleton
-   protected SDNAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(SDNAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public SDNClient provideClient(SDNAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(SDNClient.class, client);
-   }
-
-   protected void bindErrorHandlers() {
-      // TODO
-   }
-
+   @Override
    protected void bindRetryHandlers() {
       // TODO retry on 401 by AuthenticateRequest.update()
    }

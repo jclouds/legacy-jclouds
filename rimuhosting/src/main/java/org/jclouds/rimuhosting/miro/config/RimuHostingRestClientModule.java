@@ -25,13 +25,12 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rimuhosting.miro.RimuHosting;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
@@ -42,7 +41,6 @@ import org.jclouds.rimuhosting.miro.predicates.ServerRunning;
 import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
 
 import com.google.common.base.Predicate;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -52,7 +50,12 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class RimuHostingRestClientModule extends AbstractModule {
+public class RimuHostingRestClientModule extends
+         RestClientModule<RimuHostingClient, RimuHostingAsyncClient> {
+
+   public RimuHostingRestClientModule() {
+      super(RimuHostingClient.class, RimuHostingAsyncClient.class);
+   }
 
    @Provides
    @Singleton
@@ -74,12 +77,6 @@ public class RimuHostingRestClientModule extends AbstractModule {
       return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
-
    @Provides
    @Singleton
    public RimuHostingAuthentication provideRimuHostingAuthentication(
@@ -90,31 +87,10 @@ public class RimuHostingRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected RimuHostingAsyncClient provideClient(RestClientFactory factory) {
-      return factory.create(RimuHostingAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public RimuHostingClient provideClient(RimuHostingAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(RimuHostingClient.class, client);
-   }
-
-   @Provides
-   @Singleton
    @RimuHosting
    protected URI provideURI(
             @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
-   }
-
-   protected void bindErrorHandlers() {
-      // TODO
-   }
-
-   protected void bindRetryHandlers() {
-      // TODO
    }
 
 }

@@ -52,10 +52,10 @@ public class TwitterContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<TwitterAsyncClient, TwitterClient> provideContext(Closer closer,
+   RestContext<TwitterClient, TwitterAsyncClient> provideContext(Closer closer,
             TwitterAsyncClient asyncApi, TwitterClient syncApi, @Twitter URI endPoint,
             @Named(TwitterConstants.PROPERTY_TWITTER_USER) String account) {
-      return new RestContextImpl<TwitterAsyncClient, TwitterClient>(closer, asyncApi, syncApi,
+      return new RestContextImpl<TwitterClient, TwitterAsyncClient>(closer, asyncApi, syncApi,
                endPoint, account);
    }
 

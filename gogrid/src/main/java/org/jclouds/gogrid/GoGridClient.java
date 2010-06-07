@@ -23,40 +23,50 @@
  */
 package org.jclouds.gogrid;
 
-import com.google.inject.ImplementedBy;
-import org.jclouds.gogrid.internal.GoGridClientImpl;
-import org.jclouds.gogrid.services.*;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.gogrid.services.GridImageClient;
+import org.jclouds.gogrid.services.GridIpClient;
+import org.jclouds.gogrid.services.GridJobClient;
+import org.jclouds.gogrid.services.GridLoadBalancerClient;
+import org.jclouds.gogrid.services.GridServerClient;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
  * @author Oleksiy Yarmula
  */
-@ImplementedBy(GoGridClientImpl.class)
-
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface GoGridClient {
 
-    /**
-     * Services with methods, related to managing servers
-     */
-    GridServerClient getServerServices();
+   /**
+    * Services with methods, related to managing servers
+    */
+   @Delegate
+   GridServerClient getServerServices();
 
-    /**
-     * Services with methods, related to retrieving jobs
-     */
-    GridJobClient getJobServices();
+   /**
+    * Services with methods, related to retrieving jobs
+    */
+   @Delegate
+   GridJobClient getJobServices();
 
-    /**
-     * Services with methods, related to retrieving IP addresses
-     */
-    GridIpClient getIpServices();
+   /**
+    * Services with methods, related to retrieving IP addresses
+    */
+   @Delegate
+   GridIpClient getIpServices();
 
-    /**
-     * Services with methods, related to managing load balancers.
-     */
-    GridLoadBalancerClient getLoadBalancerServices();
+   /**
+    * Services with methods, related to managing load balancers.
+    */
+   @Delegate
+   GridLoadBalancerClient getLoadBalancerServices();
 
-    /**
+   /**
     * Services with methods, related to managing images.
     */
-    GridImageClient getImageServices();
+   @Delegate
+   GridImageClient getImageServices();
 
 }

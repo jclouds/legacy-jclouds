@@ -16,29 +16,6 @@
  * limitations under the License.
  * ====================================================================
  */
-/**
- *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
- *
- * ====================================================================
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- * ====================================================================
- */
 package org.jclouds.gogrid.config;
 
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_SESSIONINTERVAL;
@@ -52,9 +29,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.ExpirableSupplier;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.IpState;
 import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.LoadBalancerOs;
@@ -86,12 +64,12 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -102,77 +80,18 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class GoGridRestClientModule extends AbstractModule {
+public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGridAsyncClient> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
+            .<Class<?>, Class<?>> builder()//
+            .put(GridServerClient.class, GridServerAsyncClient.class)//
+            .put(GridJobClient.class, GridJobAsyncClient.class)//
+            .put(GridIpClient.class, GridIpAsyncClient.class)//
+            .put(GridLoadBalancerClient.class, GridLoadBalancerAsyncClient.class)//
+            .put(GridImageClient.class, GridImageAsyncClient.class)//
+            .build();
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
-
-   @Provides
-   @Singleton
-   protected GridServerAsyncClient provideServerClient(RestClientFactory factory) {
-      return factory.create(GridServerAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public GridServerClient provideServerClient(GridServerAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(GridServerClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected GridJobAsyncClient provideJobClient(RestClientFactory factory) {
-      return factory.create(GridJobAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public GridJobClient provideJobClient(GridJobAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(GridJobClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected GridIpAsyncClient provideIpClient(RestClientFactory factory) {
-      return factory.create(GridIpAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public GridIpClient provideIpClient(GridIpAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(GridIpClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected GridLoadBalancerAsyncClient provideLoadBalancerClient(RestClientFactory factory) {
-      return factory.create(GridLoadBalancerAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public GridLoadBalancerClient provideLoadBalancerClient(GridLoadBalancerAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(GridLoadBalancerClient.class, client);
-   }
-
-   @Provides
-   @Singleton
-   protected GridImageAsyncClient provideImageClient(RestClientFactory factory) {
-      return factory.create(GridImageAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public GridImageClient provideImageClient(GridImageAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(GridImageClient.class, client);
+   public GoGridRestClientModule() {
+      super(GoGridClient.class, GoGridAsyncClient.class, DELEGATE_MAP);
    }
 
    @Provides
@@ -226,14 +145,11 @@ public class GoGridRestClientModule extends AbstractModule {
       }, seconds, TimeUnit.SECONDS);
    }
 
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(GoGridErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(GoGridErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(GoGridErrorHandler.class);
-   }
-
-   protected void bindRetryHandlers() {
-      // TODO
    }
 
 }

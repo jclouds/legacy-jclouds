@@ -47,7 +47,7 @@ import com.google.inject.internal.Lists;
 public class ElasticIPAddressClientLiveTest {
 
    private ElasticIPAddressClient client;
-   private RestContext<EC2AsyncClient, EC2Client> context;
+   private RestContext<EC2Client, EC2AsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

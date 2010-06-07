@@ -39,7 +39,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class ChefContextBuilder extends RestContextBuilder<ChefAsyncClient, ChefClient> {
+public class ChefContextBuilder extends RestContextBuilder<ChefClient, ChefAsyncClient> {
 
    public ChefContextBuilder(String providerName, Properties props) {
       super(providerName, ChefClient.class, ChefAsyncClient.class, props);

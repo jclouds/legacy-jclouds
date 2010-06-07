@@ -120,7 +120,7 @@ public class AtmosStorageClientLiveTest {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(
                "atmosonline", uid, key, ImmutableSet.<Module> of(new Log4JLoggingModule()));
-      RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = blobStoreContext
+      RestContext<AtmosStorageClient, AtmosStorageAsyncClient> context = blobStoreContext
                .getProviderSpecificContext();
       connection = context.getApi();
       for (DirectoryEntry entry : connection.listDirectories()) {

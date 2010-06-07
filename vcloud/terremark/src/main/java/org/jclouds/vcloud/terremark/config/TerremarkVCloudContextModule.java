@@ -44,10 +44,10 @@ public class TerremarkVCloudContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> provideContext(Closer closer,
+   RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> provideContext(Closer closer,
             TerremarkVCloudAsyncClient asynchApi, TerremarkVCloudClient defaultApi,
             @Org URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new RestContextImpl<TerremarkVCloudAsyncClient, TerremarkVCloudClient>(closer,
+      return new RestContextImpl<TerremarkVCloudClient, TerremarkVCloudAsyncClient>(closer,
                asynchApi, defaultApi, endPoint, account);
    }
 

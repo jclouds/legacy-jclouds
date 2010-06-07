@@ -61,7 +61,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
+      RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
    }
 

@@ -41,15 +41,16 @@ import com.google.inject.Module;
  */
 public class PCSContextFactory {
 
-   public static RestContext<PCSAsyncClient,PCSClient> createContext(URI endpoint, String user, String key,
-            Module... modules) {
+   public static RestContext<PCSClient, PCSAsyncClient> createContext(URI endpoint, String user,
+            String key, Module... modules) {
       return new PCSContextBuilder("mezeo", new PCSPropertiesBuilder(endpoint, user, key).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<PCSAsyncClient,PCSClient> createContext(Properties properties, Module... modules) {
-      return new PCSContextBuilder("mezeo", new PCSPropertiesBuilder(properties).build()).withModules(
-               modules).buildContext();
+   public static RestContext<PCSClient, PCSAsyncClient> createContext(Properties properties,
+            Module... modules) {
+      return new PCSContextBuilder("mezeo", new PCSPropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
    }
 
 }

@@ -29,18 +29,15 @@ import org.jclouds.twitter.config.TwitterRestClientModule;
 import org.jclouds.twitter.reference.TwitterConstants;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class TwitterContextBuilder extends RestContextBuilder<TwitterAsyncClient, TwitterClient> {
+public class TwitterContextBuilder extends RestContextBuilder<TwitterClient, TwitterAsyncClient> {
 
    public TwitterContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<TwitterAsyncClient>() {
-      }, new TypeLiteral<TwitterClient>() {
-      }, props);
+      super(providerName, TwitterClient.class, TwitterAsyncClient.class, props);
       checkNotNull(properties.getProperty(TwitterConstants.PROPERTY_TWITTER_USER));
       checkNotNull(properties.getProperty(TwitterConstants.PROPERTY_TWITTER_PASSWORD));
    }

@@ -45,6 +45,7 @@ import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
@@ -73,9 +74,9 @@ public class JavaUrlHttpCommandExecutorService extends
    @Inject
    public JavaUrlHttpCommandExecutorService(
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler,
+            DelegatingRetryHandler retryHandler,IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler,
             HttpWire wire, HttpUtils utils, HostnameVerifier verifier) {
-      super(ioWorkerExecutor, retryHandler, errorHandler, wire);
+      super(ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(utils.getMaxConnections()));
       this.utils = utils;

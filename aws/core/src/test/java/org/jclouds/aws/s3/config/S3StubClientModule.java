@@ -21,22 +21,17 @@ package org.jclouds.aws.s3.config;
 import java.net.URI;
 import java.util.Set;
 
-import javax.inject.Singleton;
-
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.internal.StubS3AsyncClient;
 import org.jclouds.blobstore.config.TransientBlobStoreModule;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.config.RestClientModule;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.ImmutableSet;
 
 /**
  * adds a stub alternative to invoking S3
@@ -44,24 +39,26 @@ import com.google.inject.internal.ImmutableSet;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class S3StubClientModule extends AbstractModule {
+public class S3StubClientModule extends RestClientModule<S3Client, S3AsyncClient> {
+
+   public S3StubClientModule() {
+      super(S3Client.class, S3AsyncClient.class);
+   }
 
    protected void configure() {
+      super.configure();
+      install(new S3ObjectModule());
       install(new ParserModule());
       install(new TransientBlobStoreModule());
-      bind(S3AsyncClient.class).to(StubS3AsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
       bind(String.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
       bind(new TypeLiteral<Set<String>>() {
-      }).annotatedWith(S3.class).toInstance(
-               ImmutableSet.of(Region.US_STANDARD, Region.US_WEST_1, Region.EU_WEST_1));
+      }).annotatedWith(S3.class).toInstance(Region.ALL);
    }
 
-   @Provides
-   @Singleton
-   public S3Client provideClient(S3AsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(S3Client.class, client);
+   @Override
+   protected void bindAsyncClient() {
+      bind(S3AsyncClient.class).to(StubS3AsyncClient.class).asEagerSingleton();
    }
 
 }

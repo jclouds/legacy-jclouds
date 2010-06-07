@@ -18,38 +18,35 @@
  */
 package org.jclouds.aws.sqs;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.reference.AWSConstants;
+import org.jclouds.aws.sqs.config.SQSRestClientModule;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
 import org.jclouds.aws.sqs.options.ListQueuesOptions;
+import org.jclouds.aws.sqs.reference.SQSConstants;
 import org.jclouds.aws.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.aws.sqs.xml.RegexQueueHandler;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.date.DateService;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -59,6 +56,7 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "sqs.SQSAsyncClientTest")
 public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
+
    public void testListQueuesInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", String.class, Array
@@ -66,9 +64,10 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method,
                (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 36\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 36\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=ListQueues");
 
       assertResponseParserClassEquals(method, httpMethod, RegexListQueuesResponseHandler.class);
@@ -85,9 +84,10 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
                ListQueuesOptions.Builder.queuePrefix("prefix"));
 
-      assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=ListQueues&QueueNamePrefix=prefix");
 
       assertResponseParserClassEquals(method, httpMethod, RegexListQueuesResponseHandler.class);
@@ -104,9 +104,10 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
                "queueName");
 
-      assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=CreateQueue&QueueName=queueName");
 
       assertResponseParserClassEquals(method, httpMethod, RegexQueueHandler.class);
@@ -123,9 +124,10 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
                "queueName", CreateQueueOptions.Builder.defaultVisibilityTimeout(45));
 
-      assertRequestLineEquals(httpMethod, "POST https://default/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 85\nContent-Type: application/x-www-form-urlencoded\nHost: default\n");
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 85\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-02-01&Action=CreateQueue&QueueName=queueName&DefaultVisibilityTimeout=45");
 
@@ -134,6 +136,14 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
+   }
+
+   public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class,
+               String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
+      for (String region : Iterables.filter(Region.ALL, not(equalTo("us-standard")))) {
+         processor.createRequest(method, region, "queueName");
+      }
    }
 
    @Override
@@ -150,39 +160,19 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new SQSRestClientModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new SQSPropertiesBuilder(new Properties())
-                     .build(), "properties"));
-            bind(URI.class).annotatedWith(SQS.class).toInstance(URI.create("https://default"));
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
+            Names.bindProperties(binder(), new SQSPropertiesBuilder(new Properties())
+                     .withCredentials("user", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
          }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String provide() {
+         @Override
+         protected String provideTimeStamp(final DateService dateService,
+                  @Named(SQSConstants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
             return "2009-11-08T15:54:08.897Z";
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         @SQS
-         Map<String, URI> provideMap() {
-            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
-                     .create("https://sqs.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
-                     .create("https://sqs.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-                     .create("https://sqs.us-west-1.amazonaws.com"));
          }
       };
    }

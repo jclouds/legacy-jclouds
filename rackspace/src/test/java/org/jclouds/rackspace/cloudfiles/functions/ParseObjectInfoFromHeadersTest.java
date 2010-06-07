@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.util.Jsr330;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code ParseContainerListFromJsonResponse}
@@ -48,8 +48,9 @@ public class ParseObjectInfoFromHeadersTest {
 
       @Override
       protected void configure() {
-         bindConstant().annotatedWith(
-                  Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("sdf");
+         bindConstant()
+                  .annotatedWith(Names.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to(
+                           "sdf");
       }
 
    });

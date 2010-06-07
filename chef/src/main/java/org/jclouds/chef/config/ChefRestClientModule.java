@@ -62,7 +62,7 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class ChefRestClientModule extends BaseChefRestClientModule<ChefAsyncClient, ChefClient> {
+public class ChefRestClientModule extends BaseChefRestClientModule<ChefClient, ChefAsyncClient> {
 
    public ChefRestClientModule() {
       super(ChefClient.class, ChefAsyncClient.class);

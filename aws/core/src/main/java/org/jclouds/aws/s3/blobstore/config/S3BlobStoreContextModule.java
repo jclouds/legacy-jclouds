@@ -65,7 +65,7 @@ public class S3BlobStoreContextModule extends S3ContextModule {
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStoreContext.class).to(
-               new TypeLiteral<BlobStoreContextImpl<S3AsyncClient, S3Client>>() {
+               new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
                }).in(Scopes.SINGLETON);
    }
 

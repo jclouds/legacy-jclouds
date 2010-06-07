@@ -32,6 +32,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.jclouds.Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
@@ -52,9 +53,9 @@ public class ApacheHCHttpCommandExecutorService extends
    @Inject
    ApacheHCHttpCommandExecutorService(
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler,
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler,
             HttpWire wire, HttpClient client) {
-      super(ioWorkerExecutor, retryHandler, errorHandler, wire);
+      super(ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.client = client;
    }
 

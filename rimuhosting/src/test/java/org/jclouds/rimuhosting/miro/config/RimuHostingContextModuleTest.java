@@ -18,28 +18,26 @@
  */
 package org.jclouds.rimuhosting.miro.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.rest.config.RestModule;
 import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -51,21 +49,16 @@ public class RimuHostingContextModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new RimuHostingRestClientModule(),
-               new RimuHostingContextModule() {
+               new RimuHostingContextModule(), new RestModule(), new ExecutorServiceModule(
+                        sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
                   @Override
                   protected void configure() {
-                     Jsr330.bindProperties(this.binder(),
-                              new RimuHostingPropertiesBuilder("apikey").build());
-                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-                        public Logger getLogger(String category) {
-                           return Logger.NULL;
-                        }
-                     });
-                     bind(UriBuilder.class).to(UriBuilderImpl.class);
-                     super.configure();
+                     Names.bindProperties(binder(), checkNotNull(new RimuHostingPropertiesBuilder(
+                              "apikey").build(), "properties"));
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
                   }
-               }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
+               });
    }
 
    @Test

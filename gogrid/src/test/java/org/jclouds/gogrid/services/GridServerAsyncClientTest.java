@@ -67,7 +67,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -334,7 +334,7 @@ public class GridServerAsyncClientTest extends RestClientTest<GridServerAsyncCli
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(new GoGridPropertiesBuilder(
+            Names.bindProperties(binder(), checkNotNull(new GoGridPropertiesBuilder(
                      new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(GoGrid.class).toInstance(
                      URI.create("https://api.gogrid.com/api"));

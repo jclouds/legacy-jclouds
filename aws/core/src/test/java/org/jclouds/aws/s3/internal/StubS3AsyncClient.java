@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutorService;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
@@ -84,6 +85,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * @author James Murty
  */
+@Singleton
 public class StubS3AsyncClient implements S3AsyncClient {
    private final DateService dateService;
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;

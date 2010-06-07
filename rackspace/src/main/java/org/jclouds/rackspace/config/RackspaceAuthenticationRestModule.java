@@ -41,7 +41,7 @@ import org.jclouds.rackspace.CloudFilesCDN;
 import org.jclouds.rackspace.CloudServers;
 import org.jclouds.rackspace.RackspaceAuthentication;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -67,8 +67,9 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    @Authentication
-   Supplier<String> provideAuthenticationTokenCache(final Supplier<AuthenticationResponse> supplier)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Supplier<String> provideAuthenticationTokenCache(
+            final Supplier<AuthenticationResponse> supplier) throws InterruptedException,
+            ExecutionException, TimeoutException {
       return new Supplier<String>() {
          public String get() {
             return supplier.get().getAuthToken();
@@ -79,7 +80,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
-            final RestClientFactory factory, @Named(PROPERTY_RACKSPACE_USER) final String user,
+            final AsyncClientFactory factory, @Named(PROPERTY_RACKSPACE_USER) final String user,
             @Named(PROPERTY_RACKSPACE_KEY) final String key) {
       return new ExpirableSupplier<AuthenticationResponse>(
                new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
@@ -102,7 +103,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    @TimeStamp
-   Supplier<Date> provideCacheBusterDate() {
+   protected Supplier<Date> provideCacheBusterDate() {
       return new ExpirableSupplier<Date>(new Supplier<Date>() {
          public Date get() {
             return new Date();

@@ -92,7 +92,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -129,7 +129,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<EC2AsyncClient, EC2Client>>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(LoadBalanceNodesStrategy.class).to(EC2LoadBalanceNodesStrategy.class);
       bind(DestroyLoadBalancerStrategy.class).to(EC2DestroyLoadBalancerStrategy.class);
@@ -139,7 +139,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
       bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
-      }).annotatedWith(Jsr330.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
+      }).annotatedWith(Names.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
                .in(Scopes.SINGLETON);
    }
 
@@ -160,7 +160,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.architecture(Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*");
+      return template.architecture(Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(
+               ".*10\\.?04.*");
    }
 
    // TODO make this more efficient for listNodes(); currently RunningInstanceToNodeMetadata is slow
@@ -171,13 +172,13 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
       protected Logger logger = Logger.NULL;
 
-      private final InstanceClient client;
+      private final EC2Client client;
       private final Map<String, URI> regionMap;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
       private final ExecutorService executor;
 
       @Inject
-      protected EC2ListNodesStrategy(InstanceClient client, @EC2 Map<String, URI> regionMap,
+      protected EC2ListNodesStrategy(EC2Client client, @EC2 Map<String, URI> regionMap,
                RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
                @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
          this.client = client;
@@ -204,7 +205,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
                         @Override
                         public Void call() throws Exception {
                            Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
-                                    .describeInstancesInRegion(region)),
+                                    .getInstanceServices().describeInstancesInRegion(region)),
                                     runningInstanceToNodeMetadata));
                            return null;
                         }
@@ -223,11 +224,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Singleton
    public static class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
-      private final InstanceClient client;
+      private final EC2Client client;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
 
       @Inject
-      protected EC2GetNodeMetadataStrategy(InstanceClient client,
+      protected EC2GetNodeMetadataStrategy(EC2Client client,
                RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
          this.client = client;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -239,7 +240,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          String region = parts[0];
          String instanceId = parts[1];
          RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
-                  client, region, instanceId));
+                  client.getInstanceServices(), region, instanceId));
          return runningInstanceToNodeMetadata.apply(runningInstance);
       }
 
@@ -250,8 +251,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       private final InstanceClient client;
 
       @Inject
-      protected EC2RebootNodeStrategy(InstanceClient client) {
-         this.client = client;
+      protected EC2RebootNodeStrategy(EC2Client client) {
+         this.client = client.getInstanceServices();
       }
 
       @Override

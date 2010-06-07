@@ -18,52 +18,43 @@
  */
 package org.jclouds.azure.storage.blob;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
-import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
+import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
-import org.testng.annotations.BeforeClass;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -72,7 +63,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "azureblob.AzureBlobAsyncClientTest")
-public class AzureBlobAsyncClientTest {
+public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClient> {
 
    public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobAsyncClient.class.getMethod("listContainers", Array.newInstance(
@@ -358,31 +349,29 @@ public class AzureBlobAsyncClientTest {
                MapHttp4xxCodesToExceptions.class);
    }
 
-   @BeforeClass
-   void setupFactory() {
-      Injector injector = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            Jsr330.bindProperties(this.binder(), new AzureBlobPropertiesBuilder("user", "key")
-                     .build());
-            bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
-                     URI.create("http://myaccount.blob.core.windows.net"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
-                     1l);
-         }
-      }, new AzureStorageRestClientModule(), new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
-      processor = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
-               }));
+   @Override
+   protected void checkFilters(GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod) {
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
    }
 
-   RestAnnotationProcessor<AzureBlobAsyncClient> processor;
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
+      };
+   }
+
+   @Override
+   protected Module createModule() {
+      return new AzureBlobRestClientModule() {
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(), new AzureBlobPropertiesBuilder(new Properties())
+                     .withCredentials("myaccount", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
+         }
+
+      };
+   }
 }

@@ -18,54 +18,49 @@
  */
 package org.jclouds.mezeo.pcs2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
-import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.mezeo.pcs2.PCSCloud.Response;
 import org.jclouds.mezeo.pcs2.blobstore.functions.BlobToPCSFile;
-import org.jclouds.mezeo.pcs2.config.PCSObjectModule;
+import org.jclouds.mezeo.pcs2.config.PCSRestClientModule;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.functions.AddMetadataItemIntoMap;
 import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
+import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.mezeo.pcs2.xml.ContainerHandler;
 import org.jclouds.mezeo.pcs2.xml.FileHandler;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -81,7 +76,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
       GeneratedHttpRequest<PCSAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
 
-      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/root HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://localhost/root HTTP/1.1");
       assertHeadersEqual(httpMethod, "X-Cloud-Depth: 2\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -97,7 +92,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
       GeneratedHttpRequest<PCSAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
 
-      assertRequestLineEquals(httpMethod, "POST http://localhost:8080/root/contents HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://localhost/root/contents HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 45\nContent-Type: application/vnd.csp.container-info+xml\n");
       assertPayloadEquals(httpMethod, "<container><name>container</name></container>");
@@ -293,35 +288,21 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new PCSRestClientModule() {
          @Override
          protected void configure() {
-            install(new PCSObjectModule());
-            install(new BlobStoreObjectModule<PCSAsyncClient, PCSClient>(
-                     new TypeLiteral<PCSAsyncClient>() {
-                     }, new TypeLiteral<PCSClient>() {
-                     }));
-            Jsr330.bindProperties(binder(), checkNotNull(new PCSPropertiesBuilder(
-                     new Properties()).build(), "properties"));
-            bind(URI.class).annotatedWith(PCS.class)
-                     .toInstance(URI.create("http://localhost:8080"));
-            bind(URI.class).annotatedWith(RootContainer.class).toInstance(
-                     URI.create("http://localhost:8080/root"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
+            Names.bindProperties(binder(), new PCSPropertiesBuilder(URI
+                     .create("http://localhost/stub"), "user", "key").build());
+            install(new NullLoggingModule());
+            super.configure();
          }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
-                  throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar", encryptionService);
+         @Override
+         protected Response provideCloudResponse(AsyncClientFactory factory, URI authenticationUri)
+                  throws InterruptedException, ExecutionException, TimeoutException {
+            return new CloudXlinkHandler.PCSCloudResponseImpl(ImmutableMap.<String, URI> of(
+                     "rootContainer", URI.create("http://localhost/root")));
          }
-
       };
    }
 }

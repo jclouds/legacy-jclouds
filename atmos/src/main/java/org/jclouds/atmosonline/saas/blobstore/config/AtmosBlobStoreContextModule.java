@@ -65,7 +65,7 @@ public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
       bind(BlobStore.class).to(AtmosBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStoreContext.class)
                .to(
-                        new TypeLiteral<BlobStoreContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>>() {
+                        new TypeLiteral<BlobStoreContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
    }

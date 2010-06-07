@@ -36,7 +36,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(RestContextImpl.class)
-public interface RestContext<A, S> {
+public interface RestContext<S, A> {
 
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.

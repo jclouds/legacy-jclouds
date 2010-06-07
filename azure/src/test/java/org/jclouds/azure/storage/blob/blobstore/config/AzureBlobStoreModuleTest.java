@@ -18,21 +18,21 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
-import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -43,21 +43,13 @@ import com.google.inject.Injector;
 public class AzureBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
-               sameThreadExecutor()), new JDKLoggingModule(), new AzureBlobStubClientModule(),
-               new AzureBlobStoreContextModule() {
+      return Guice.createInjector(new AzureBlobStubClientModule(),
+               new AzureBlobStoreContextModule(), new ExecutorServiceModule(sameThreadExecutor(),
+                        sameThreadExecutor()), new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
-                              .to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                              "key");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
-                              "http://localhost");
-                     super.configure();
+                     Names.bindProperties(binder(), checkNotNull(new AzureBlobPropertiesBuilder(
+                              "user", "secret").build(), "properties"));
                   }
                });
    }

@@ -36,7 +36,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.testng.annotations.Test;
@@ -86,7 +86,7 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), checkNotNull(
+            Names.bindProperties(binder(), checkNotNull(
                      new VCloudPropertiesBuilder(new Properties()).build(), "properties"));
             bind(URI.class).annotatedWith(org.jclouds.vcloud.endpoints.VCloudLogin.class)
                      .toInstance(URI.create("http://localhost:8080/login"));

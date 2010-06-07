@@ -35,7 +35,6 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.util.Jsr330;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -46,7 +45,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 
 /**
@@ -62,23 +61,23 @@ import com.google.inject.util.Types;
  * @author Adrian Cole, Andrew Newdigate
  * @see RestContext
  */
-public abstract class RestContextBuilder<A, S> {
+public abstract class RestContextBuilder<S, A> {
 
    protected final String providerName;
    protected final Properties properties;
    protected final List<Module> modules = new ArrayList<Module>(3);
-   protected final TypeLiteral<A> asyncClientType;
-   protected final TypeLiteral<S> syncClientType;
+   protected final Class<A> asyncClientType;
+   protected final Class<S> syncClientType;
 
-   protected RestContextBuilder(String providerName, TypeLiteral<A> asyncClientType,
-            TypeLiteral<S> syncClientType, Properties properties) {
+   protected RestContextBuilder(String providerName, Class<S> syncClientType,
+            Class<A> asyncClientType, Properties properties) {
       this.providerName = providerName;
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
       this.properties = properties;
    }
 
-   public RestContextBuilder<A, S> withModules(Module... modules) {
+   public RestContextBuilder<S, A> withModules(Module... modules) {
       this.modules.addAll(Arrays.asList(modules));
       return this;
    }
@@ -97,7 +96,7 @@ public abstract class RestContextBuilder<A, S> {
             Properties toBind = new Properties();
             toBind.putAll(checkNotNull(properties, "properties"));
             toBind.putAll(System.getProperties());
-            Jsr330.bindProperties(binder(), toBind);
+            Names.bindProperties(binder(), toBind);
          }
       });
       return Guice.createInjector(modules);
@@ -180,9 +179,9 @@ public abstract class RestContextBuilder<A, S> {
    }
 
    @SuppressWarnings("unchecked")
-   public RestContext<A, S> buildContext() {
+   public RestContext<S, A> buildContext() {
       Injector injector = buildInjector();
-      return (RestContext<A, S>) injector.getInstance(Key.get(Types.newParameterizedType(
-               RestContext.class, asyncClientType.getType(), syncClientType.getType())));
+      return (RestContext<S, A>) injector.getInstance(Key.get(Types.newParameterizedType(
+               RestContext.class, asyncClientType, syncClientType)));
    }
 }

@@ -78,7 +78,7 @@ public class BaseBlobStoreIntegrationTest {
    /**
     * two test groups integration and live.
     */
-   private volatile static BlockingQueue<String> containerJsr330 = new ArrayBlockingQueue<String>(
+   private volatile static BlockingQueue<String> containerNames = new ArrayBlockingQueue<String>(
             containerCount);
 
    /**
@@ -140,7 +140,7 @@ public class BaseBlobStoreIntegrationTest {
                   } else {
                      try {
                         createContainerAndEnsureEmpty(context, containerName);
-                        containerJsr330.put(containerName);
+                        containerNames.put(containerName);
                      } catch (Throwable e) {
                         e.printStackTrace();
                         // throw away the container and try again with the next index
@@ -149,8 +149,8 @@ public class BaseBlobStoreIntegrationTest {
                      }
                   }
                }
-               testContext.setAttribute("containerJsr330", containerJsr330);
-               System.err.printf("*** containers to test: %s%n", containerJsr330);
+               testContext.setAttribute("containerNames", containerNames);
+               System.err.printf("*** containers to test: %s%n", containerNames);
                // careful not to keep too many files open
                context.close();
                initialized = true;
@@ -297,7 +297,7 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    public String getContainerName() throws InterruptedException {
-      String containerName = containerJsr330.poll(30, TimeUnit.SECONDS);
+      String containerName = containerNames.poll(30, TimeUnit.SECONDS);
       assert containerName != null : "unable to get a container for the test";
       createContainerAndEnsureEmpty(containerName);
       return containerName;
@@ -316,7 +316,7 @@ public class BaseBlobStoreIntegrationTest {
 
    public void returnContainer(final String containerName) {
       if (containerName != null) {
-         containerJsr330.add(containerName);
+         containerNames.add(containerName);
          /*
           * Ensure that any returned container name actually exists on the server. Return of a
           * non-existent container introduces subtle testing bugs, where later unrelated tests will

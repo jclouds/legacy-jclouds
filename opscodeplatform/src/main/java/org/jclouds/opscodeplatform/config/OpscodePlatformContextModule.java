@@ -51,11 +51,11 @@ public class OpscodePlatformContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> provideContext(Closer closer,
+   RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> provideContext(Closer closer,
             OpscodePlatformAsyncClient asyncApi, OpscodePlatformClient syncApi,
             @OpscodePlatform URI endPoint,
             @Named(OpscodePlatformConstants.PROPERTY_OPSCODEPLATFORM_ENDPOINT) String account) {
-      return new RestContextImpl<OpscodePlatformAsyncClient, OpscodePlatformClient>(closer,
+      return new RestContextImpl<OpscodePlatformClient, OpscodePlatformAsyncClient>(closer,
                asyncApi, syncApi, endPoint, account);
    }
 

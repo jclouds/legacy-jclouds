@@ -39,7 +39,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class OpscodePlatformContextBuilder extends RestContextBuilder<OpscodePlatformAsyncClient, OpscodePlatformClient> {
+public class OpscodePlatformContextBuilder extends RestContextBuilder<OpscodePlatformClient, OpscodePlatformAsyncClient> {
 
    public OpscodePlatformContextBuilder(String providerName, Properties props) {
       super(providerName, OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, props);

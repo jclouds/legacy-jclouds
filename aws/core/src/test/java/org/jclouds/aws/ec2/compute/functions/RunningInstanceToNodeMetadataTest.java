@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Provider;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Image;
@@ -74,7 +75,9 @@ public class RunningInstanceToNodeMetadataTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testImageNotFoundAndLazyReturnsNull() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
+
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
@@ -105,12 +108,13 @@ public class RunningInstanceToNodeMetadataTest {
 
       replay(imageMap);
       replay(jcImage);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
@@ -122,6 +126,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);
@@ -131,6 +136,7 @@ public class RunningInstanceToNodeMetadataTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testImageNotFoundAndLazyFailsWithNPE() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -163,12 +169,13 @@ public class RunningInstanceToNodeMetadataTest {
 
       replay(imageMap);
       replay(jcImage);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
@@ -180,6 +187,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);
@@ -189,6 +197,7 @@ public class RunningInstanceToNodeMetadataTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testImageNotFoundAndLazySucceeds() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -224,12 +233,13 @@ public class RunningInstanceToNodeMetadataTest {
       replay(lateImage);
       replay(imageMap);
       replay(jcImage);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
@@ -242,6 +252,7 @@ public class RunningInstanceToNodeMetadataTest {
       verify(lateImage);
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);
@@ -252,6 +263,7 @@ public class RunningInstanceToNodeMetadataTest {
    @Test
    public void testApplyWithNoSecurityGroupCreatesTagOfIdPrefixedByTagAndNullCredentials()
             throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -282,12 +294,13 @@ public class RunningInstanceToNodeMetadataTest {
 
       replay(imageMap);
       replay(jcImage);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
@@ -299,6 +312,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);
@@ -309,6 +323,7 @@ public class RunningInstanceToNodeMetadataTest {
    @Test
    public void testApplyWithNoKeyPairCreatesTagOfParsedSecurityGroupAndNullCredentials()
             throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -338,12 +353,13 @@ public class RunningInstanceToNodeMetadataTest {
 
       replay(imageMap);
       replay(jcImage);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
@@ -355,6 +371,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);
@@ -365,7 +382,9 @@ public class RunningInstanceToNodeMetadataTest {
    @Test
    public void testApplyWithKeyPairCreatesTagOfParsedSecurityGroupAndCredentialsBasedOnIt()
             throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
+      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
@@ -404,13 +423,14 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
       replay(imageMap);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
       replay(jcImage);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
       NodeMetadata metadata = parser.apply(instance);
@@ -423,6 +443,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);
@@ -433,7 +454,9 @@ public class RunningInstanceToNodeMetadataTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testApplyWithTwoSecurityGroups() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
+      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
@@ -473,13 +496,14 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
       replay(imageMap);
+      replay(client);
       replay(amiClient);
       replay(credentialsMap);
       replay(credentialProvider);
       replay(instance);
       replay(jcImage);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(amiClient,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
                credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
@@ -493,6 +517,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       verify(imageMap);
       verify(jcImage);
+      verify(client);
       verify(amiClient);
       verify(credentialsMap);
       verify(credentialProvider);

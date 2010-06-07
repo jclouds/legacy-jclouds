@@ -77,7 +77,7 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class BaseChefRestClientModule<A, S> extends RestClientModule<A, S> {
+public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
 
    protected BaseChefRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);

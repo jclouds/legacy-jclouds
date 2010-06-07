@@ -40,10 +40,8 @@ import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
@@ -70,11 +68,13 @@ import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -106,21 +106,29 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.internal.Nullable;
 
 /**
- * Tests behavior of JaxrsUtil
+ * Creates http methods based on annotations on a class or interface.
  * 
  * @author Adrian Cole
  */
-@Singleton
 public class RestAnnotationProcessor<T> {
 
    @Resource
    protected Logger logger = Logger.NULL;
+
+   ClassMethodArgs caller;
+
+   @Inject(optional = true)
+   public void setCaller(@Named("caller") ClassMethodArgs caller) {
+      seedCache(caller.getMethod().getDeclaringClass());
+      this.caller = caller;
+   }
 
    private final Class<T> declaring;
 
@@ -269,9 +277,10 @@ public class RestAnnotationProcessor<T> {
             bindConstant(method);
          } else if (!method.getDeclaringClass().equals(declaring)) {
             logger.debug("skipping potentially overridden method %s", method);
+         } else if (method.isAnnotationPresent(Delegate.class)) {
+            logger.debug("skipping delegate method %s", method);
          } else if (!method.getName().startsWith("new")) {
-            throw new RuntimeException("Method is not annotated as either http or constant: "
-                     + method);
+            logger.trace("Method is not annotated as either http or constant: %s", method);
          }
       }
    }
@@ -320,18 +329,28 @@ public class RestAnnotationProcessor<T> {
 
    public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
       inputParamValidator.validateMethodParametersOrThrow(method, args);
-
-      URI endpoint = getEndpointFor(method, args);
+      URI endpoint;
+      if (caller != null) {
+         try {
+            endpoint = getEndpointFor(caller.getMethod(), caller.getArgs());
+         } catch (IllegalStateException e) {
+            endpoint = getEndpointFor(method, args);
+         }
+      } else {
+         endpoint = getEndpointFor(method, args);
+      }
 
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
       UriBuilder builder = addHostPrefixIfPresent(endpoint, method, args);
-      if (declaring.isAnnotationPresent(Path.class))
-         builder.path(declaring);
-      builder.path(method);
 
-      Multimap<String, String> tokenValues = encodeValues(getPathParamKeyValues(method, args),
-               skips);
+      Multimap<String, String> tokenValues = LinkedHashMultimap.create();
+
+      if (caller != null) {
+         builder.path(getPath(caller.getMethod().getDeclaringClass(), caller.getMethod(), caller
+                  .getArgs()));
+      }
+      tokenValues.putAll(addPathAndGetTokens(declaring, method, args, builder));
 
       Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
       Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
@@ -398,6 +417,23 @@ public class RestAnnotationProcessor<T> {
       request.getHeaders().putAll(headers);
       decorateRequest(request);
       return request;
+   }
+
+   private String getPath(Class<?> clazz, Method method, Object[] args) {
+      UriBuilder builder = uriBuilderProvider.get();
+      if (clazz.isAnnotationPresent(Path.class))
+         builder.path(clazz);
+      builder.path(method);
+      return builder.buildFromEncodedMap(
+               convertUnsafe(encodeValues(getPathParamKeyValues(method, args), skips))).getPath();
+   }
+
+   private Multimap<String, String> addPathAndGetTokens(Class<?> clazz, Method method,
+            Object[] args, UriBuilder builder) {
+      if (clazz.isAnnotationPresent(Path.class))
+         builder.path(clazz);
+      builder.path(method);
+      return encodeValues(getPathParamKeyValues(method, args), skips);
    }
 
    public URI replaceQuery(URI in, String newQuery,
@@ -612,7 +648,10 @@ public class RestAnnotationProcessor<T> {
          int index = map.keySet().iterator().next();
          Function<Object, URI> parser = injector.getInstance(annotation.parser());
          try {
-            return parser.apply(args[index]);
+            URI returnVal = parser.apply(args[index]);
+            checkArgument(returnVal != null, String.format(
+                     "endpoint for [%s] not configured for %s", args[index], method));
+            return returnVal;
          } catch (NullPointerException e) {
             logger.error("argument at index %d on method %s", index, method);
             throw e;
@@ -726,7 +765,7 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> constants = LinkedHashMultimap.create();
 
    public boolean isHttpMethod(Method method) {
-      return IsHttpMethod.getHttpMethods(method) != null;
+      return method.isAnnotationPresent(Path.class) || IsHttpMethod.getHttpMethods(method) != null;
    }
 
    public boolean isConstantDeclaration(Method method) {
@@ -1108,8 +1147,8 @@ public class RestAnnotationProcessor<T> {
          Endpoint annotation;
          if (method.isAnnotationPresent(Endpoint.class)) {
             annotation = method.getAnnotation(Endpoint.class);
-         } else if (declaring.isAnnotationPresent(Endpoint.class)) {
-            annotation = declaring.getAnnotation(Endpoint.class);
+         } else if (method.getDeclaringClass().isAnnotationPresent(Endpoint.class)) {
+            annotation = method.getDeclaringClass().getAnnotation(Endpoint.class);
          } else {
             throw new IllegalStateException(
                      "There must be an @Endpoint annotation on parameter, method or type: "

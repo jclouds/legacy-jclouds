@@ -61,7 +61,7 @@ public class IBMDeveloperCloudComputeServiceLiveTest extends BaseComputeServiceL
 
        public void testAssignability() throws Exception {
           @SuppressWarnings("unused")
-          RestContext<IBMDeveloperCloudAsyncClient, IBMDeveloperCloudClient> tmContext = new ComputeServiceContextFactory()
+          RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
                    .createContext(service, user, password).getProviderSpecificContext();
        }
 

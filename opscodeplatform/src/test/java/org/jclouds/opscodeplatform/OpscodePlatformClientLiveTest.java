@@ -49,8 +49,8 @@ import com.google.common.io.Files;
 @Test(groups = "live", testName = "chef.OpscodePlatformClientLiveTest")
 public class OpscodePlatformClientLiveTest {
 
-   private RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> validatorConnection;
-   private RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> clientConnection;
+   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> validatorConnection;
+   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> clientConnection;
 
    private String orgname;
    private String clientKey;
@@ -67,7 +67,7 @@ public class OpscodePlatformClientLiveTest {
                keyfile), Charsets.UTF_8));
    }
 
-   private RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createConnection(
+   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createConnection(
             String identity, String key) throws IOException {
       return OpscodePlatformContextFactory.createContext(identity, key, new Log4JLoggingModule());
    }

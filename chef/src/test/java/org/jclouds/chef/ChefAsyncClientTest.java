@@ -42,7 +42,7 @@ import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -153,7 +153,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       return new ChefRestClientModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), new ChefPropertiesBuilder("chef-validator",
+            Names.bindProperties(binder(), new ChefPropertiesBuilder("chef-validator",
                      SignedHeaderAuthTest.PRIVATE_KEY).build());
             install(new NullLoggingModule());
             super.configure();

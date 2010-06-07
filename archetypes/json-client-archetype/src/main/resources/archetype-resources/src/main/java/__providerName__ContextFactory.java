@@ -52,19 +52,19 @@ import com.google.inject.Module;
  */
 public class ${providerName}ContextFactory {
 
-   public static RestContext<${providerName}AsyncClient, ${providerName}Client> createContext(String user, String password,
+   public static RestContext<${providerName}Client, ${providerName}AsyncClient> createContext(String user, String password,
             Module... modules) {
       return new ${providerName}ContextBuilder("${artifactId}", new ${providerName}PropertiesBuilder(user, password).build())
                .withModules(modules).buildContext();
    }
    
-   public static RestContext<${providerName}AsyncClient, ${providerName}Client> createContext(URI endpoint, String user, String password,
+   public static RestContext<${providerName}Client, ${providerName}AsyncClient> createContext(URI endpoint, String user, String password,
             Module... modules) {
       return new ${providerName}ContextBuilder("${artifactId}", new ${providerName}PropertiesBuilder(user, password).withEndpoint(endpoint).build())
                .withModules(modules).buildContext();
    }
    
-   public static RestContext<${providerName}AsyncClient, ${providerName}Client> createContext(Properties properties, Module... modules) {
+   public static RestContext<${providerName}Client, ${providerName}AsyncClient> createContext(Properties properties, Module... modules) {
       return new ${providerName}ContextBuilder("${artifactId}", new ${providerName}PropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }

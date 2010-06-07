@@ -24,11 +24,11 @@ import javax.inject.Provider;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.internal.S3ObjectImpl;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 
 /**
  * Configures the domain object mappings needed for all S3 implementations
@@ -43,7 +43,9 @@ public class S3ObjectModule extends AbstractModule {
     */
    @Override
    protected void configure() {
-      bind(S3Object.Factory.class).to(S3ObjectFactory.class).in(Scopes.SINGLETON);
+      // for converters
+      install(new BlobStoreObjectModule());
+      bind(S3Object.Factory.class).to(S3ObjectFactory.class).asEagerSingleton();
    }
 
    private static class S3ObjectFactory implements S3Object.Factory {

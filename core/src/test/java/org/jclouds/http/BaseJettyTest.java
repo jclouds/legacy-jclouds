@@ -37,15 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 import org.jclouds.util.Utils;
@@ -66,18 +64,16 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 public abstract class BaseJettyTest {
 
    public static final class IntegrationContextBuilder extends
-            RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> {
+            RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> {
       private final int testPort;
 
       public IntegrationContextBuilder(String providerName, Properties properties, int testPort) {
-         super(providerName, new TypeLiteral<IntegrationTestAsyncClient>() {
-         }, new TypeLiteral<IntegrationTestClient>() {
-         }, properties);
+         super(providerName, IntegrationTestClient.class, IntegrationTestAsyncClient.class,
+                  properties);
          this.testPort = testPort;
       }
 
@@ -88,32 +84,14 @@ public abstract class BaseJettyTest {
 
       @Override
       protected void addClientModule(List<Module> modules) {
-         modules.add(new RestIntegrationTestClientModule());
+         modules.add(new RestClientModule<IntegrationTestClient, IntegrationTestAsyncClient>(
+                  syncClientType, asyncClientType) {
+         });
       }
+
    }
 
-   @ConfiguresRestClient
    @RequiresHttp
-   public static class RestIntegrationTestClientModule extends AbstractModule {
-      @Override
-      protected void configure() {
-
-      }
-
-      @Provides
-      @Singleton
-      public IntegrationTestAsyncClient provideAsyncClient(RestClientFactory factory) {
-         return factory.create(IntegrationTestAsyncClient.class);
-      }
-
-      @Provides
-      @Singleton
-      public IntegrationTestClient provideClient(IntegrationTestAsyncClient client)
-               throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-         return SyncProxy.create(IntegrationTestClient.class, client);
-      }
-   }
-
    public static class JettyContextModule extends AbstractModule {
       private final int testPort;
 
@@ -146,7 +124,7 @@ public abstract class BaseJettyTest {
    protected Injector injector;
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
-   protected RestContext<IntegrationTestAsyncClient, IntegrationTestClient> context;
+   protected RestContext<IntegrationTestClient, IntegrationTestAsyncClient> context;
    private int testPort;
    protected EncryptionService encryptionService;
    protected String md5;
@@ -320,7 +298,7 @@ public abstract class BaseJettyTest {
       return temp;
    }
 
-   public static RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> newBuilder(
+   public static RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> newBuilder(
             final int testPort, final Properties properties, Module connectionModule) {
       return new IntegrationContextBuilder("integration-test", properties, testPort)
                .withModules(connectionModule);

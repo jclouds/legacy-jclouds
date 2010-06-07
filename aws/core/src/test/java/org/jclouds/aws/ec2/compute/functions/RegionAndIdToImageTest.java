@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.Image;
@@ -46,50 +47,58 @@ public class RegionAndIdToImageTest {
    public void testApply() {
 
       ImageParser parser = createMock(ImageParser.class);
+      EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
                .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
-      
+
+      expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(images);
       expect(parser.apply(ec2Image)).andReturn(image);
 
+      replay(caller);
       replay(image);
       replay(parser);
       replay(client);
 
-      RegionAndIdToImage function = new RegionAndIdToImage(parser, client);
+      RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
       assertEquals(function.apply(new RegionAndName("region", "ami")), image);
 
+      verify(caller);
       verify(image);
       verify(parser);
       verify(client);
 
    }
-   
+
    @Test
    public void testApplyNotFound() {
 
       ImageParser parser = createMock(ImageParser.class);
+      EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
                .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
-      
+
+      expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(images);
       expect(parser.apply(ec2Image)).andThrow(new ResourceNotFoundException());
 
+      replay(caller);
       replay(image);
       replay(parser);
       replay(client);
 
-      RegionAndIdToImage function = new RegionAndIdToImage(parser, client);
+      RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
 
       assertEquals(function.apply(new RegionAndName("region", "ami")), null);
 
+      verify(caller);
       verify(image);
       verify(parser);
       verify(client);

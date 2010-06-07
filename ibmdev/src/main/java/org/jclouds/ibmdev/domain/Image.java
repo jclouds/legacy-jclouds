@@ -29,10 +29,22 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class Image {
+   public enum Visibility {
+
+      PUBLIC,
+
+      SHARED,
+
+      PRIVATE;
+   }
+
    private String name;
+   /**
+    * Note that this isn't a URI, as parsing fails due to IBM including '{' characters in the path.
+    */
    private String manifest;
    private int state;
-   private String visibility;
+   private Visibility visibility;
    private String owner;
    private String architecture;
    private String platform;
@@ -40,6 +52,9 @@ public class Image {
    private long location;
    private Set<String> supportedInstanceTypes = Sets.newLinkedHashSet();
    private Set<String> productCodes = Sets.newLinkedHashSet();
+   /**
+    * Note that this isn't a URI, as parsing fails due to IBM including '{' characters in the path.
+    */
    private String documentation;
    private long id;
    private String description;
@@ -68,11 +83,11 @@ public class Image {
       this.state = state;
    }
 
-   public String getVisibility() {
+   public Visibility getVisibility() {
       return visibility;
    }
 
-   public void setVisibility(String visibility) {
+   public void setVisibility(Visibility visibility) {
       this.visibility = visibility;
    }
 

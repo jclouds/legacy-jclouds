@@ -68,7 +68,7 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class OpscodePlatformRestClientModule extends
-         BaseChefRestClientModule<OpscodePlatformAsyncClient, OpscodePlatformClient> {
+         BaseChefRestClientModule<OpscodePlatformClient, OpscodePlatformAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
             .<Class<?>, Class<?>> builder()//
             .put(ChefClient.class, ChefAsyncClient.class)//

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -60,7 +60,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
          props
                   .put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
                            "https://vcloud.safesecureweb.com/network/1990");
-         Jsr330.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props)
+         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props)
                   .build(), "properties"));
       }
 

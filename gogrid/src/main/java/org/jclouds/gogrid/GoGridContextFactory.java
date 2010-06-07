@@ -52,13 +52,13 @@ import com.google.inject.Module;
  */
 public class GoGridContextFactory {
 
-   public static RestContext<GoGridAsyncClient, GoGridClient> createContext(String user,
+   public static RestContext<GoGridClient, GoGridAsyncClient> createContext(String user,
             String password, Module... modules) {
       return new GoGridContextBuilder("gogrid", new GoGridPropertiesBuilder(user, password).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<GoGridAsyncClient, GoGridClient> createContext(Properties properties,
+   public static RestContext<GoGridClient, GoGridAsyncClient> createContext(Properties properties,
             Module... modules) {
       return new GoGridContextBuilder("gogrid", new GoGridPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();

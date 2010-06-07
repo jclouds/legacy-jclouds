@@ -81,7 +81,7 @@ public class SpeedTest {
       String queueName = args[2];
       int messageCount = Integer.parseInt(args[3]);
 
-      RestContext<SQSAsyncClient, SQSClient> context = isEnterprise ? SQSContextFactory
+      RestContext<SQSClient, SQSAsyncClient> context = isEnterprise ? SQSContextFactory
                .createContext(accesskeyid, secretkey, new NullLoggingModule(),
                         new EnterpriseConfigurationModule()) : SQSContextFactory.createContext(
                accesskeyid, secretkey, new NullLoggingModule());
@@ -119,7 +119,7 @@ public class SpeedTest {
    }
 
    private static void runTests(int messageCount, String contextName,
-            RestContext<SQSAsyncClient, SQSClient> context, Set<Queue> queues)
+            RestContext<SQSClient, SQSAsyncClient> context, Set<Queue> queues)
             throws InterruptedException {
       String message = "1";
       long timeOut = messageCount * 200; // minimum rate should be at least 5/second
@@ -150,7 +150,7 @@ public class SpeedTest {
    }
 
    private static void createQueues(String queueName,
-            RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext, Set<Queue> queues) {
+            RestContext<SQSClient, SQSAsyncClient> nullLoggingDefaultContext, Set<Queue> queues) {
       for (String region : REGIONS) {
          logger.info("creating queue: %s in region %s", queueName, region);
          queues.add(nullLoggingDefaultContext.getApi().createQueueInRegion(region, queueName));
@@ -158,7 +158,7 @@ public class SpeedTest {
    }
 
    private static boolean purgeQueues(String queueName,
-            RestContext<SQSAsyncClient, SQSClient> nullLoggingDefaultContext) {
+            RestContext<SQSClient, SQSAsyncClient> nullLoggingDefaultContext) {
       boolean deleted = false;
       for (String region : REGIONS) {
          try {

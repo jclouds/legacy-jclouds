@@ -29,18 +29,15 @@ import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class PCSContextBuilder extends RestContextBuilder<PCSAsyncClient, PCSClient> {
+public class PCSContextBuilder extends RestContextBuilder<PCSClient, PCSAsyncClient> {
 
    public PCSContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<PCSAsyncClient>() {
-      }, new TypeLiteral<PCSClient>() {
-      }, props);
+      super(providerName, PCSClient.class, PCSAsyncClient.class, props);
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_USER));
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_PASSWORD));
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_ENDPOINT));

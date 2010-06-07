@@ -20,21 +20,21 @@ package org.jclouds.aws.s3.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.Jsr330;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
+import org.jclouds.rest.config.RestModule;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -139,14 +139,14 @@ public class RequestAuthorizeSignatureTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new S3RestClientModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()), new ParserModule(),
+      injector = Guice.createInjector(new RestModule(), new S3RestClientModule(),
+               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new AbstractModule() {
-
                   protected void configure() {
-                     Jsr330.bindProperties(binder(), checkNotNull(
+                     Names.bindProperties(binder(), checkNotNull(
                               new S3PropertiesBuilder("foo", "bar")).build());
-                     bind(UriBuilder.class).to(UriBuilderImpl.class);
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
                   }
                });
       filter = injector.getInstance(RequestAuthorizeSignature.class);

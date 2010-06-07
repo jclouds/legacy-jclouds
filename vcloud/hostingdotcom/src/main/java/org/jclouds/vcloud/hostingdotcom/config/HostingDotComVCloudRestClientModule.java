@@ -23,14 +23,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudAsyncClient;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
 import org.jclouds.vcloud.predicates.TaskSuccess;
@@ -45,30 +43,23 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class HostingDotComVCloudRestClientModule extends VCloudRestClientModule {
+public class HostingDotComVCloudRestClientModule extends
+         BaseVCloudRestClientModule<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> {
 
-   @Provides
-   @Singleton
-   protected HostingDotComVCloudAsyncClient provideHostingDotComVCloudAsyncClient(
-            VCloudAsyncClient in) {
-      return (HostingDotComVCloudAsyncClient) in;
-   }
-
-   @Override
-   protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(HostingDotComVCloudAsyncClient.class);
+   public HostingDotComVCloudRestClientModule() {
+      super(HostingDotComVCloudClient.class, HostingDotComVCloudAsyncClient.class);
    }
 
    @Provides
    @Singleton
-   protected HostingDotComVCloudClient provideHostingDotComVCloudClient(VCloudClient in) {
-      return (HostingDotComVCloudClient) in;
+   protected VCloudAsyncClient provideVCloudAsyncClient(HostingDotComVCloudAsyncClient in) {
+      return in;
    }
 
-   @Override
-   public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(HostingDotComVCloudClient.class, client);
+   @Provides
+   @Singleton
+   protected VCloudClient provideVCloudClient(HostingDotComVCloudClient in) {
+      return in;
    }
 
    @Override

@@ -43,7 +43,7 @@ import com.google.inject.TypeLiteral;
 /**
  * @author ${author}
  */
-public class ${providerName}ContextBuilder extends ComputeServiceContextBuilder<${providerName}AsyncClient, ${providerName}Client> {
+public class ${providerName}ContextBuilder extends ComputeServiceContextBuilder<${providerName}Client, ${providerName}AsyncClient> {
 
     public ${providerName}ContextBuilder(String providerName, Properties props) {
         super(providerName, new TypeLiteral<${providerName}AsyncClient>() {}, 

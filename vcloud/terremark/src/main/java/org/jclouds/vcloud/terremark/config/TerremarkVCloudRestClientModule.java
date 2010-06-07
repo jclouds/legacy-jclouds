@@ -23,14 +23,12 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 
@@ -43,29 +41,23 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
+public class TerremarkVCloudRestClientModule extends
+         BaseVCloudRestClientModule<TerremarkVCloudClient, TerremarkVCloudAsyncClient> {
 
-   @Provides
-   @Singleton
-   protected TerremarkVCloudAsyncClient provideTerremarkVCloudAsyncClient(VCloudAsyncClient in) {
-      return (TerremarkVCloudAsyncClient) in;
-   }
-
-   @Override
-   protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(TerremarkVCloudAsyncClient.class);
+   public TerremarkVCloudRestClientModule() {
+      super(TerremarkVCloudClient.class, TerremarkVCloudAsyncClient.class);
    }
 
    @Provides
    @Singleton
-   protected TerremarkVCloudClient provideTerremarkVCloudClient(VCloudClient in) {
-      return (TerremarkVCloudClient) in;
+   protected VCloudAsyncClient provideVCloudAsyncClient(TerremarkVCloudAsyncClient in) {
+      return in;
    }
 
-   @Override
-   public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(TerremarkVCloudClient.class, client);
+   @Provides
+   @Singleton
+   protected VCloudClient provideVCloudClient(TerremarkVCloudClient in) {
+      return in;
    }
 
    @Singleton

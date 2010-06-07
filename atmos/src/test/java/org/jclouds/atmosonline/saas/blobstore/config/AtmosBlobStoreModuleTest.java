@@ -18,21 +18,21 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.Constants;
+import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
-import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -43,31 +43,16 @@ import com.google.inject.Injector;
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(),
-               sameThreadExecutor()), new JDKLoggingModule(), new AtmosStorageStubClientModule(),
-               new AtmosBlobStoreContextModule("atmos") {
+      return Guice.createInjector(new AtmosStorageStubClientModule(),
+               new AtmosBlobStoreContextModule("atmos"), new ExecutorServiceModule(sameThreadExecutor(),
+                        sameThreadExecutor()), new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY)).to("key");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
-                              "http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-                     bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS))
-                              .to("1");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST)).to("1");
-                     super.configure();
+                     Names.bindProperties(binder(), checkNotNull(new AtmosStoragePropertiesBuilder(
+                              "user", "key").build(), "properties"));
                   }
                });
    }
-
    @Test
    void testContextImpl() {
 

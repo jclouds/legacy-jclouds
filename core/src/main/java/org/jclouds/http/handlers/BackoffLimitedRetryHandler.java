@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.handlers;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -25,6 +27,7 @@ import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
@@ -72,7 +75,7 @@ import com.google.inject.Inject;
  * 
  * @author James Murty
  */
-public class BackoffLimitedRetryHandler implements HttpRetryHandler {
+public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOExceptionRetryHandler {
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
@@ -80,9 +83,17 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
+   public boolean shouldRetryRequest(HttpCommand command, IOException error) {
+      return ifReplayableBackoffAndReturnTrue(command);
+
+   }
+
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       Closeables.closeQuietly(response.getContent());
+      return ifReplayableBackoffAndReturnTrue(command);
+   }
 
+   private boolean ifReplayableBackoffAndReturnTrue(HttpCommand command) {
       command.incrementFailureCount();
 
       if (!command.isReplayable()) {

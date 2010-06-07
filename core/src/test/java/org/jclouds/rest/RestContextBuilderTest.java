@@ -36,7 +36,6 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in RestContextBuilder<String,String>
@@ -87,9 +86,7 @@ public class RestContextBuilderTest {
    class TestRestContextBuilder extends RestContextBuilder<String, String> {
 
       protected TestRestContextBuilder(Properties properties) {
-         super("test", new TypeLiteral<String>() {
-         }, new TypeLiteral<String>() {
-         }, properties);
+         super("test", String.class, String.class, properties);
       }
 
       @Override

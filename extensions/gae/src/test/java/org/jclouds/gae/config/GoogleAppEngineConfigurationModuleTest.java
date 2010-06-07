@@ -31,7 +31,7 @@ import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -60,7 +60,7 @@ public class GoogleAppEngineConfigurationModuleTest {
       Injector i = Guice.createInjector(new GoogleAppEngineConfigurationModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), properties);
+            Names.bindProperties(binder(), properties);
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
@@ -71,7 +71,7 @@ public class GoogleAppEngineConfigurationModuleTest {
          }
       });
       HttpCommandExecutorService client = i.getInstance(HttpCommandExecutorService.class);
-      i.getInstance(Key.get(ExecutorService.class, Jsr330.named(Constants.PROPERTY_USER_THREADS)));
+      i.getInstance(Key.get(ExecutorService.class, Names.named(Constants.PROPERTY_USER_THREADS)));
       // TODO check single threaded;
       assert client instanceof GaeHttpCommandExecutorService;
    }

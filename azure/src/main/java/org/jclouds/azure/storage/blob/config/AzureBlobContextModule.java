@@ -27,7 +27,6 @@ import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
@@ -35,26 +34,24 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 @RequiresHttp
 public class AzureBlobContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      // for converters
-      install(new BlobStoreObjectModule<AzureBlobAsyncClient, AzureBlobClient>(
-               new TypeLiteral<AzureBlobAsyncClient>() {
-               }, new TypeLiteral<AzureBlobClient>() {
-               }));      install(new AzureBlobModule());
    }
 
    @Provides
    @Singleton
-   RestContext<AzureBlobAsyncClient, AzureBlobClient> provideContext(Closer closer,
+   RestContext<AzureBlobClient, AzureBlobAsyncClient> provideContext(Closer closer,
             AzureBlobAsyncClient asyncApi, AzureBlobClient defaultApi, @AzureBlob URI endPoint,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-      return new RestContextImpl<AzureBlobAsyncClient, AzureBlobClient>(closer, asyncApi,
+      return new RestContextImpl<AzureBlobClient, AzureBlobAsyncClient>(closer, asyncApi,
                defaultApi, endPoint, account);
    }
 

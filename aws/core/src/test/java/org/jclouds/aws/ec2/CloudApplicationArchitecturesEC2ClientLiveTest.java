@@ -97,10 +97,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                .buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client
-               .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
-      hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client
-               .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
+      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client),
+               180, 5, TimeUnit.SECONDS);
+      hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client), 180, 5, TimeUnit.SECONDS);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 180, 1, TimeUnit.SECONDS);
    }

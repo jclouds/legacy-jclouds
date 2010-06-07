@@ -18,28 +18,25 @@
  */
 package org.jclouds.gogrid.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.gogrid.GoGridPropertiesBuilder;
 import org.jclouds.gogrid.handlers.GoGridErrorHandler;
-import org.jclouds.gogrid.reference.GoGridConstants;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.Jsr330;
+import org.jclouds.rest.config.RestModule;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -50,37 +47,17 @@ import com.google.inject.Injector;
 public class GoGridContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new GoGridRestClientModule(), new GoGridContextModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(GoGridConstants.PROPERTY_GOGRID_USER)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(GoGridConstants.PROPERTY_GOGRID_PASSWORD))
-                     .to("password");
-            bindConstant().annotatedWith(Jsr330.named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT))
-                     .to("http://localhost");
-            bindConstant().annotatedWith(
-                     Jsr330.named(GoGridConstants.PROPERTY_GOGRID_SESSIONINTERVAL)).to("30");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST))
-                     .to("1");
-            bindConstant().annotatedWith(
-                     Jsr330.named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)).to("0");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
-                     .to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_CONNECTION_TIMEOUT)).to(
-                     "30");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_SO_TIMEOUT)).to("10");
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-            bind(UriBuilder.class).to(UriBuilderImpl.class);
-            super.configure();
-         }
-      }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
+      return Guice.createInjector(new GoGridRestClientModule(), new GoGridContextModule(),
+               new RestModule(), new ExecutorServiceModule(sameThreadExecutor(),
+                        sameThreadExecutor()), new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     Names.bindProperties(binder(), checkNotNull(new GoGridPropertiesBuilder(
+                              "user", "key").build(), "properties"));
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
+                  }
+               });
    }
 
    @Test

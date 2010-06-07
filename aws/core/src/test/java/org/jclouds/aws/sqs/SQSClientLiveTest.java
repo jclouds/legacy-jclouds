@@ -50,7 +50,7 @@ public class SQSClientLiveTest {
 
    private SQSClient client;
 
-   private RestContext<SQSAsyncClient, SQSClient> context;
+   private RestContext<SQSClient, SQSAsyncClient> context;
 
    private EncryptionService encryptionService = new JCEEncryptionService();
    private Set<Queue> queues = Sets.newHashSet();

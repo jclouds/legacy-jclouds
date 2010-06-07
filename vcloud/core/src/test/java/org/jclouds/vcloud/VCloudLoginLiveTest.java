@@ -39,8 +39,8 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -53,7 +53,6 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VCloudLogin}
@@ -70,7 +69,7 @@ public class VCloudLoginLiveTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      protected VCloudLoginAsyncClient provideVCloudLogin(RestClientFactory factory) {
+      protected VCloudLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
          return factory.create(VCloudLoginAsyncClient.class);
       }
 
@@ -136,9 +135,8 @@ public class VCloudLoginLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>("vcloud",
-               new TypeLiteral<VCloudLoginAsyncClient>() {
-               }, new TypeLiteral<VCloudLoginAsyncClient>() {
-               }, new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
+               VCloudLoginAsyncClient.class, VCloudLoginAsyncClient.class,
+               new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
 
          public void addContextModule(String providerName, List<Module> modules) {
             modules.add(new VCloudLoginContextModule());

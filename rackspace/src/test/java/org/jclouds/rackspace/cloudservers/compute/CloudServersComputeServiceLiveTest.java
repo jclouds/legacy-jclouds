@@ -68,7 +68,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<CloudServersAsyncClient, CloudServersClient> tmContext = new ComputeServiceContextFactory()
+      RestContext<CloudServersClient, CloudServersAsyncClient> tmContext = new ComputeServiceContextFactory()
                .createContext(service, user, password).getProviderSpecificContext();
    }
 

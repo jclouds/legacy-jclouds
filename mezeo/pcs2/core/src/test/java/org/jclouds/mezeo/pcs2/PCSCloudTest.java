@@ -39,7 +39,7 @@ import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -83,7 +83,7 @@ public class PCSCloudTest {
          protected void configure() {
             bind(URI.class).annotatedWith(PCS.class)
                      .toInstance(URI.create("http://localhost:8080"));
-            Jsr330.bindProperties(this.binder(), new PCSPropertiesBuilder(URI
+            Names.bindProperties(this.binder(), new PCSPropertiesBuilder(URI
                      .create("http://localhost:8080"), "user", "key").build());
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {

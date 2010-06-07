@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2;
 
-import org.jclouds.aws.ec2.internal.EC2AsyncClientImpl;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
@@ -28,58 +27,65 @@ import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.SecurityGroupAsyncClient;
-
-import com.google.inject.ImplementedBy;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides asynchronous access to EC2 services.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(EC2AsyncClientImpl.class)
 public interface EC2AsyncClient {
    /**
     * Provides asynchronous access to AMI services.
     */
+   @Delegate
    AMIAsyncClient getAMIServices();
 
    /**
     * Provides asynchronous access to Elastic IP Address services.
     */
+   @Delegate
    ElasticIPAddressAsyncClient getElasticIPAddressServices();
 
    /**
     * Provides asynchronous access to Instance services.
     */
+   @Delegate
    InstanceAsyncClient getInstanceServices();
 
    /**
     * Provides asynchronous access to KeyPair services.
     */
+   @Delegate
    KeyPairAsyncClient getKeyPairServices();
 
    /**
     * Provides asynchronous access to SecurityGroup services.
     */
+   @Delegate
    SecurityGroupAsyncClient getSecurityGroupServices();
 
    /**
     * Provides asynchronous access to Monitoring services.
     */
+   @Delegate
    MonitoringAsyncClient getMonitoringServices();
 
    /**
     * Provides asynchronous access to Availability Zones and Regions services.
     */
+   @Delegate
    AvailabilityZoneAndRegionAsyncClient getAvailabilityZoneAndRegionServices();
 
    /**
     * Provides asynchronous access to Elastic Block Store services.
     */
+   @Delegate
    ElasticBlockStoreAsyncClient getElasticBlockStoreServices();
 
    /**
     * Provides asynchronous access to Elastic Load Balancer services.
     */
+   @Delegate
    ElasticLoadBalancerAsyncClient getElasticLoadBalancerServices();
 }

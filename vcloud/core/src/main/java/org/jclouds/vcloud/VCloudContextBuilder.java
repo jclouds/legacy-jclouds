@@ -48,12 +48,10 @@ import com.google.inject.TypeLiteral;
  * @see VCloudComputeServiceContext
  */
 public class VCloudContextBuilder extends
-         ComputeServiceContextBuilder<VCloudAsyncClient, VCloudClient> {
+         ComputeServiceContextBuilder<VCloudClient, VCloudAsyncClient> {
 
    public VCloudContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<VCloudAsyncClient>() {
-      }, new TypeLiteral<VCloudClient>() {
-      }, props);
+      super(providerName, VCloudClient.class, VCloudAsyncClient.class, props);
    }
 
    @Override
@@ -73,7 +71,7 @@ public class VCloudContextBuilder extends
                .buildInjector()
                .getInstance(
                         Key
-                                 .get(new TypeLiteral<ComputeServiceContextImpl<VCloudAsyncClient, VCloudClient>>() {
+                                 .get(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
                                  }));
    }
 }

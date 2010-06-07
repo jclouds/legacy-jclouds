@@ -19,26 +19,25 @@
 package org.jclouds.aws.s3.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.Jsr330;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
+import org.jclouds.rest.config.RestModule;
+import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -61,17 +60,15 @@ public class S3UtilsTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      Injector injector = Guice.createInjector(new S3RestClientModule(), new ParserModule(),
+      Injector injector = Guice.createInjector(new RestModule(), new S3RestClientModule(),
+               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
                new AbstractModule() {
-
-                  @Override
                   protected void configure() {
-                     bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
-                     Jsr330.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user", "key")
-                     .build(), "properties"));
-                     bind(UriBuilder.class).to(UriBuilderImpl.class);
+                     Names.bindProperties(binder(), checkNotNull(
+                              new S3PropertiesBuilder("foo", "bar")).build());
+                     bind(TransformingHttpCommandExecutorService.class).toInstance(
+                              createMock(TransformingHttpCommandExecutorService.class));
                   }
-
                });
       utils = injector.getInstance(S3Utils.class);
       response = new HttpResponse();

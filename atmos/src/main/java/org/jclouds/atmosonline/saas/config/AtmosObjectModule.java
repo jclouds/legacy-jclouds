@@ -26,6 +26,7 @@ import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.atmosonline.saas.domain.internal.AtmosObjectImpl;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
@@ -45,6 +46,8 @@ public class AtmosObjectModule extends AbstractModule {
     */
    @Override
    protected void configure() {
+      // for converters
+      install(new BlobStoreObjectModule());
       bind(AtmosObject.Factory.class).to(AtmosObjectFactory.class).in(Scopes.SINGLETON);
    }
 

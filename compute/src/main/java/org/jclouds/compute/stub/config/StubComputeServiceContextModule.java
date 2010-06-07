@@ -157,12 +157,12 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
    }
 
+   @SuppressWarnings("unchecked")
    @Provides
    @Singleton
-   RestContext<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>> provideRestContext(
-            Closer closer) {
-      return new RestContextImpl<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>>(
-               closer, nodes, nodes, URI.create("http://stub"), System.getProperty("user.name"));
+   RestContext<ConcurrentMap, ConcurrentMap> provideRestContext(Closer closer) {
+      return new RestContextImpl<ConcurrentMap, ConcurrentMap>(closer, nodes, nodes, URI
+               .create("http://stub"), System.getProperty("user.name"));
    }
 
    // NORMAL STUFF
@@ -172,13 +172,12 @@ public class StubComputeServiceContextModule extends AbstractModule {
       this.providerName = providerName;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
       bind(new TypeLiteral<ComputeServiceContext>() {
-      })
-               .to(
-                        new TypeLiteral<ComputeServiceContextImpl<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>>>() {
-                        }).in(Scopes.SINGLETON);
+      }).to(new TypeLiteral<ComputeServiceContextImpl<ConcurrentMap, ConcurrentMap>>() {
+      }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(StubAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(StubListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(StubGetNodeMetadataStrategy.class);

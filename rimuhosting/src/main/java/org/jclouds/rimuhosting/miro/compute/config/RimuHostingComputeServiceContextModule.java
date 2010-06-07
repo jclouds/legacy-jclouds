@@ -112,7 +112,7 @@ public class RimuHostingComputeServiceContextModule extends RimuHostingContextMo
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
                .to(
-                        new TypeLiteral<ComputeServiceContextImpl<RimuHostingAsyncClient, RimuHostingClient>>() {
+                        new TypeLiteral<ComputeServiceContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Server, Iterable<String>>>() {
       }).to(ServerToPublicAddresses.class);

@@ -61,10 +61,10 @@ public class GoGridContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<GoGridAsyncClient, GoGridClient> provideContext(Closer closer,
+   RestContext<GoGridClient, GoGridAsyncClient> provideContext(Closer closer,
             GoGridAsyncClient asyncApi, GoGridClient syncApi, @GoGrid URI endPoint,
             @Named(GoGridConstants.PROPERTY_GOGRID_USER) String account) {
-      return new RestContextImpl<GoGridAsyncClient, GoGridClient>(closer, asyncApi, syncApi,
+      return new RestContextImpl<GoGridClient, GoGridAsyncClient>(closer, asyncApi, syncApi,
                endPoint, account);
    }
 

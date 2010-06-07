@@ -24,18 +24,16 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.twitter.Twitter;
 import org.jclouds.twitter.TwitterAsyncClient;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.reference.TwitterConstants;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -45,12 +43,10 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class TwitterRestClientModule extends AbstractModule {
+public class TwitterRestClientModule extends RestClientModule<TwitterClient, TwitterAsyncClient> {
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
+   public TwitterRestClientModule() {
+      super(TwitterClient.class, TwitterAsyncClient.class);
    }
 
    @Provides
@@ -64,30 +60,9 @@ public class TwitterRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected TwitterAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(TwitterAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public TwitterClient provideClient(TwitterAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(TwitterClient.class, client);
-   }
-
-   @Provides
-   @Singleton
    @Twitter
    protected URI provideURI(@Named(TwitterConstants.PROPERTY_TWITTER_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
-   }
-
-   protected void bindErrorHandlers() {
-      // TODO
-   }
-
-   protected void bindRetryHandlers() {
-      // TODO
    }
 
 }

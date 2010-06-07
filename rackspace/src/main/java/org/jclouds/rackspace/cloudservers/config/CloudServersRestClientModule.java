@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -39,10 +38,9 @@ import org.jclouds.rackspace.cloudservers.handlers.ParseCloudServersErrorFromHtt
 import org.jclouds.rackspace.cloudservers.predicates.ServerActive;
 import org.jclouds.rackspace.cloudservers.predicates.ServerDeleted;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Predicate;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -51,10 +49,11 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class CloudServersRestClientModule extends AbstractModule {
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
+public class CloudServersRestClientModule extends
+         RestClientModule<CloudServersClient, CloudServersAsyncClient> {
+
+   public CloudServersRestClientModule() {
+      super(CloudServersClient.class, CloudServersAsyncClient.class);
    }
 
    @Provides
@@ -77,19 +76,7 @@ public class CloudServersRestClientModule extends AbstractModule {
       return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
 
-   @Provides
-   @Singleton
-   protected CloudServersAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(CloudServersAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public CloudServersClient provideClient(CloudServersAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(CloudServersClient.class, client);
-   }
-
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseCloudServersErrorFromHttpResponse.class);

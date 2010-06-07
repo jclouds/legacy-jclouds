@@ -25,6 +25,7 @@ package org.jclouds.rest.internal;
  */
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -35,8 +36,10 @@ import org.jclouds.Constants;
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
+import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
@@ -48,7 +51,7 @@ import com.google.inject.TypeLiteral;
 @Singleton
 public class AsyncRestClientProxy<T> implements InvocationHandler {
    private final Injector injector;
-   private final RestAnnotationProcessor<T> util;
+   private final RestAnnotationProcessor<T> annotationProcessor;
    private final Class<T> declaring;
    private final Factory commandFactory;
 
@@ -61,15 +64,18 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    @Resource
    protected Logger logger = Logger.NULL;
+   private final ConcurrentMap<ClassMethodArgs, Object> delegateMap;
 
    @SuppressWarnings("unchecked")
    @Inject
    public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
-            TypeLiteral<T> typeLiteral) {
+            TypeLiteral<T> typeLiteral,
+            @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
-      this.util = util;
+      this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;
+      this.delegateMap = delegateMap;
    }
 
    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
@@ -81,7 +87,9 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          return this.hashCode();
       } else if (method.getName().startsWith("new")) {
          return injector.getInstance(method.getReturnType());
-      } else if (util.getDelegateOrNull(method) != null
+      } else if (method.isAnnotationPresent(Delegate.class)) {
+         return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
+      } else if (annotationProcessor.getDelegateOrNull(method) != null
                && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
          return createFuture(method, args);
       } else {
@@ -91,9 +99,9 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    private ListenableFuture<?> createFuture(Method method, Object[] args) throws ExecutionException {
-      method = util.getDelegateOrNull(method);
+      method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
-      Function<Exception, ?> exceptionParser = util
+      Function<Exception, ?> exceptionParser = annotationProcessor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
       // in case there is an exception creating the request, we should at least pass in args
       if (exceptionParser instanceof InvocationContext) {
@@ -101,7 +109,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       }
       GeneratedHttpRequest<T> request;
       try {
-         request = util.createRequest(method, args);
+         request = annotationProcessor.createRequest(method, args);
          if (exceptionParser instanceof InvocationContext) {
             ((InvocationContext) exceptionParser).setContext(request);
          }
@@ -118,7 +126,8 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request
                .getRequestLine());
 
-      Function<HttpResponse, ?> transformer = util.createResponseParser(method, request);
+      Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method,
+               request);
       logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method
                .getName(), transformer.getClass().getSimpleName());
 

@@ -29,7 +29,6 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link AtmosBlobStoreContext} or {@link Injector} instances based on the most commonly
@@ -45,12 +44,10 @@ import com.google.inject.TypeLiteral;
  * @see AtmosBlobStoreContext
  */
 public class AtmosStorageContextBuilder extends
-         BlobStoreContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> {
+         BlobStoreContextBuilder<AtmosStorageClient, AtmosStorageAsyncClient> {
 
    public AtmosStorageContextBuilder(String providerName, Properties props) {
-      super(providerName, new TypeLiteral<AtmosStorageAsyncClient>() {
-      }, new TypeLiteral<AtmosStorageClient>() {
-      }, props);
+      super(providerName, AtmosStorageClient.class, AtmosStorageAsyncClient.class, props);
    }
 
    @Override

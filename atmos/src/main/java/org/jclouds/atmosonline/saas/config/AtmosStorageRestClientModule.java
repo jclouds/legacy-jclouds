@@ -33,7 +33,6 @@ import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
 import org.jclouds.concurrent.ExpirableSupplier;
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
@@ -43,10 +42,9 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -57,31 +55,23 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class AtmosStorageRestClientModule extends AbstractModule {
+public class AtmosStorageRestClientModule extends
+         RestClientModule<AtmosStorageClient, AtmosStorageAsyncClient> {
+   public AtmosStorageRestClientModule() {
+      super(AtmosStorageClient.class, AtmosStorageAsyncClient.class);
+   }
+
+   @Override
+   protected void configure() {
+      install(new AtmosObjectModule());
+      super.configure();
+   }
+
    @Provides
    @Singleton
    @AtmosStorage
    protected URI provideAuthenticationURI(@Named(PROPERTY_EMCSAAS_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
-   }
-
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
-
-   @Provides
-   @Singleton
-   protected AtmosStorageAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(AtmosStorageAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public AtmosStorageClient provideClient(AtmosStorageAsyncClient client)
-            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      return SyncProxy.create(AtmosStorageClient.class, client);
    }
 
    @Provides
@@ -104,6 +94,7 @@ public class AtmosStorageRestClientModule extends AbstractModule {
       }, seconds, TimeUnit.SECONDS);
    }
 
+   @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
                ParseAtmosStorageErrorFromXmlContent.class);
@@ -113,6 +104,7 @@ public class AtmosStorageRestClientModule extends AbstractModule {
                ParseAtmosStorageErrorFromXmlContent.class);
    }
 
+   @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
                AtmosStorageClientErrorRetryHandler.class);

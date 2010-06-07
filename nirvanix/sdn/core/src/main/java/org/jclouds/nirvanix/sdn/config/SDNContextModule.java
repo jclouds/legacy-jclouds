@@ -23,7 +23,6 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.nirvanix.sdn.SDN;
@@ -35,7 +34,6 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 @RequiresHttp
 public class SDNContextModule extends AbstractModule {
@@ -45,19 +43,14 @@ public class SDNContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      // for converters to work.
-      install(new BlobStoreObjectModule<SDNAsyncClient, SDNClient>(
-               new TypeLiteral<SDNAsyncClient>() {
-               }, new TypeLiteral<SDNClient>() {
-               }));
    }
 
    @Provides
    @Singleton
-   RestContext<SDNAsyncClient, SDNClient> provideContext(Closer closer, SDNAsyncClient async,
+   RestContext<SDNClient, SDNAsyncClient> provideContext(Closer closer, SDNAsyncClient async,
             SDNClient defaultApi, @SDN URI endPoint,
             @Named(SDNConstants.PROPERTY_SDN_USERNAME) String account) {
-      return new RestContextImpl<SDNAsyncClient, SDNClient>(closer, async, defaultApi, endPoint,
+      return new RestContextImpl<SDNClient, SDNAsyncClient>(closer, async, defaultApi, endPoint,
                account);
    }
 

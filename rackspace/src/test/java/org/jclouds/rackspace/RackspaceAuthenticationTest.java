@@ -36,7 +36,7 @@ import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -78,7 +78,7 @@ public class RackspaceAuthenticationTest {
       Injector injector = Guice.createInjector(new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(this.binder(), new RackspacePropertiesBuilder("user", "key")
+            Names.bindProperties(this.binder(), new RackspacePropertiesBuilder("user", "key")
                      .build());
             bind(URI.class).annotatedWith(Authentication.class).toInstance(
                      URI.create("http://localhost:8080"));

@@ -33,12 +33,12 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
-import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -118,7 +118,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
             .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN,
                      NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
-   private final AMIClient amiClient;
+   private final EC2Client client;
    private final Map<RegionAndName, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Provider<Set<? extends Image>> images;
@@ -128,14 +128,14 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @Inject
    RunningInstanceToNodeMetadata(
-            AMIClient amiClient,
+            EC2Client client,
             Map<RegionAndName, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
             Provider<Set<? extends Image>> images, // to facilitate on-demand refresh of image list
             ConcurrentMap<RegionAndName, Image> imageMap,
             Set<? extends Location> locations,
             @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
-      this.amiClient = checkNotNull(amiClient, "amiClient");
+      this.client = checkNotNull(client, "client");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.images = checkNotNull(images, "images");
@@ -267,9 +267,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) {
-      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(amiClient
-               .describeImagesInRegion(from.getRegion(), DescribeImagesOptions.Builder
-                        .imageIds(from.getImageId())));
+      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices()
+               .describeImagesInRegion(from.getRegion(),
+                        DescribeImagesOptions.Builder.imageIds(from.getImageId())));
       return checkNotNull(credentialProvider.execute(image), "login from image: "
                + from.getImageId()).account;
    }

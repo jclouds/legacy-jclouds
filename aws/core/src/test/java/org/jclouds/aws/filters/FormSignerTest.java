@@ -31,7 +31,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -68,15 +68,15 @@ public class FormSignerTest {
                sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
 
          protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
+            bindConstant().annotatedWith(Names.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
                      "foo");
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
+            bindConstant().annotatedWith(Names.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
                      .to("bar");
-            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL))
+            bindConstant().annotatedWith(Names.named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL))
                      .to(30);
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_IO_WORKER_THREADS))
+            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS))
                      .to("1");
-            bindConstant().annotatedWith(Jsr330.named(Constants.PROPERTY_USER_THREADS)).to("1");
+            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to("1");
          }
 
          @SuppressWarnings("unused")

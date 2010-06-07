@@ -48,8 +48,8 @@ import com.google.common.io.Files;
 @Test(groups = "live", testName = "chef.ChefClientLiveTest")
 public class ChefClientLiveTest {
 
-   private RestContext<ChefAsyncClient, ChefClient> validatorConnection;
-   private RestContext<ChefAsyncClient, ChefClient> clientConnection;
+   private RestContext<ChefClient, ChefAsyncClient> validatorConnection;
+   private RestContext<ChefClient, ChefAsyncClient> clientConnection;
 
    private String clientKey;
    private String endpoint;
@@ -70,7 +70,7 @@ public class ChefClientLiveTest {
                Charsets.UTF_8));
    }
 
-   private RestContext<ChefAsyncClient, ChefClient> createConnection(String identity, String key)
+   private RestContext<ChefClient, ChefAsyncClient> createConnection(String identity, String key)
             throws IOException {
       return ChefContextFactory.createContext(URI.create(endpoint), identity, key,
                new Log4JLoggingModule());

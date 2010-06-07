@@ -31,7 +31,7 @@ import org.jclouds.nirvanix.sdn.SDN;
 import org.jclouds.nirvanix.sdn.SDNAuthentication;
 import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
-import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -57,7 +57,7 @@ public class RestSDNAuthenticationModule extends AbstractModule {
 
    @Provides
    @SessionToken
-   protected String provideSessionToken(RestClientFactory factory,
+   protected String provideSessionToken(AsyncClientFactory factory,
             @Named(SDNConstants.PROPERTY_SDN_APPKEY) String appKey,
             @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username,
             @Named(SDNConstants.PROPERTY_SDN_PASSWORD) String password)

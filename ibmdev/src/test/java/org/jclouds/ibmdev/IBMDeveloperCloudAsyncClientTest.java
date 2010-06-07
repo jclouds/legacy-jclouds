@@ -23,7 +23,6 @@
  */
 package org.jclouds.ibmdev;
 
-
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -36,15 +35,18 @@ import javax.inject.Singleton;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.functions.ParseImageFromJson;
 import org.jclouds.ibmdev.functions.ParseImagesFromJson;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -61,12 +63,13 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "ibmdevelopercloud.IBMDeveloperCloudAsyncClientTest")
 public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDeveloperCloudAsyncClient> {
 
-
    public void testListImages() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listImages");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor
+               .createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
+      assertRequestLineEquals(httpRequest,
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
       assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -74,9 +77,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
+      assertRequestLineEquals(httpRequest,
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
-      assertHeadersEqual(httpRequest, "Accept: application/json\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertHeadersEqual(httpRequest,
+               "Accept: application/json\nAuthorization: Basic Zm9vOmJhcg==\n");
       assertPayloadEquals(httpRequest, null);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -90,9 +95,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGetImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("getImage", long.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, 1);
+      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(
+               method, 1);
 
-      assertRequestLineEquals(httpRequest, "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest,
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
       assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -100,6 +107,45 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       // note that get methods should convert 404's to null
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDeleteImage() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = IBMDeveloperCloudAsyncClient.class.getMethod("deleteImage", long.class);
+      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(
+               method, 1);
+
+      assertRequestLineEquals(httpRequest,
+               "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testSetImageVisibility() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = IBMDeveloperCloudAsyncClient.class.getMethod("setImageVisibility",
+               long.class, Image.Visibility.class);
+      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(
+               method, 1, Image.Visibility.PUBLIC);
+
+      assertRequestLineEquals(httpRequest,
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
+      assertHeadersEqual(httpRequest,
+               "Accept: application/json\nContent-Length: 23\nContent-Type: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"visibility\":\"PUBLIC\"}");
+
+      assertResponseParserClassEquals(method, httpRequest, ParseImageFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
@@ -123,8 +169,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       return new AbstractModule() {
          @Override
          protected void configure() {
-            Jsr330.bindProperties(binder(), new IBMDeveloperCloudPropertiesBuilder(
-                     new Properties()).build());
+            Names.bindProperties(binder(),
+                     new IBMDeveloperCloudPropertiesBuilder(new Properties()).build());
             bind(URI.class).annotatedWith(IBMDeveloperCloud.class).toInstance(
                      URI.create("https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

@@ -27,7 +27,7 @@ import javax.inject.Named;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.util.Jsr330;
+import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -46,9 +46,9 @@ public class LifeCycleModuleTest {
    @Test
    void testBindsExecutor() {
       Injector i = createInjector();
-      assert i.getInstance(Key.get(ExecutorService.class, Jsr330
+      assert i.getInstance(Key.get(ExecutorService.class, Names
                .named(Constants.PROPERTY_USER_THREADS))) != null;
-      assert i.getInstance(Key.get(ExecutorService.class, Jsr330
+      assert i.getInstance(Key.get(ExecutorService.class, Names
                .named(Constants.PROPERTY_IO_WORKER_THREADS))) != null;
    }
 
@@ -87,7 +87,7 @@ public class LifeCycleModuleTest {
    @Test
    void testCloserClosesExecutor() throws IOException {
       Injector i = createInjector();
-      ExecutorService executor = i.getInstance(Key.get(ExecutorService.class, Jsr330
+      ExecutorService executor = i.getInstance(Key.get(ExecutorService.class, Names
                .named(Constants.PROPERTY_USER_THREADS)));
       assert !executor.isShutdown();
       Closer closer = i.getInstance(Closer.class);
@@ -98,10 +98,10 @@ public class LifeCycleModuleTest {
    @Test
    void testCloserPreDestroyOrder() throws IOException {
       Injector i = createInjector();
-      ExecutorService userThreads = i.getInstance(Key.get(ExecutorService.class, Jsr330
+      ExecutorService userThreads = i.getInstance(Key.get(ExecutorService.class, Names
                .named(Constants.PROPERTY_USER_THREADS)));
       assert !userThreads.isShutdown();
-      ExecutorService ioThreads = i.getInstance(Key.get(ExecutorService.class, Jsr330
+      ExecutorService ioThreads = i.getInstance(Key.get(ExecutorService.class, Names
                .named(Constants.PROPERTY_IO_WORKER_THREADS)));
       assert !ioThreads.isShutdown();
       Closer closer = i.getInstance(Closer.class);

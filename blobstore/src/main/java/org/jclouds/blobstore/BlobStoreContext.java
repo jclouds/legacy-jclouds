@@ -99,7 +99,7 @@ public interface BlobStoreContext {
     * @return a context you can use to the access provider or vendor specific api underlying this
     *         context.
     */
-   <A, S> RestContext<A, S> getProviderSpecificContext();
+   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    /**
     * closes threads and resources related to this connection.
