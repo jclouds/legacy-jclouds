@@ -26,8 +26,8 @@ import java.util.Date;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.ibmdev.domain.Image;
-import org.jclouds.ibmdev.domain.Image.Visibility;
+import org.jclouds.ibmdev.domain.Instance;
+import org.jclouds.ibmdev.domain.Instance.Software;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -36,14 +36,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code ParseImageFromJson}
+ * Tests behavior of {@code ParseInstanceFromJson}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "ibmdev.ParseImageFromJsonTest")
-public class ParseImageFromJsonTest {
+@Test(groups = "unit", sequential = true, testName = "ibmdev.ParseInstanceFromJsonTest")
+public class ParseInstanceFromJsonTest {
 
-   private ParseImageFromJson handler;
+   private ParseInstanceFromJson handler;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
@@ -54,32 +54,17 @@ public class ParseImageFromJsonTest {
             super.configure();
          }
       });
-      handler = injector.getInstance(ParseImageFromJson.class);
+      handler = injector.getInstance(ParseInstanceFromJson.class);
    }
 
    public void test() {
+      Instance instance = new Instance(new Date(1260472231726l), ImmutableSet.of(new Software(
+               "10 SP2", "OS", "SUSE Linux Enterprise")), "129.33.197.78", 7430l, "DEFAULT", "ABC",
+               "MEDIUM", 5, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", 1, 3l, ImmutableSet
+                        .<String> of(), "ABC", 7430l, new Date(1263064240837l));
 
-      Image image = new Image();
-      image.setName("Rational Requirements Composer");
-      image
-               .setManifest("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml");
-      image.setState(1);
-      image.setVisibility(Visibility.PUBLIC);
-      image.setOwner("mutdosch@us.ibm.com");
-      image.setArchitecture("i386");
-      image.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");
-      image.setCreatedTime(new Date(1265647398000l));
-      image.setLocation(1);
-      image.setSupportedInstanceTypes(ImmutableSet.of("LARGE", "MEDIUM"));
-      // image.setProductCodes();
-      image
-               .setDocumentation("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/GettingStarted.html");
-      image.setId(10005598);
-      image
-               .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
-
-      Image compare = handler.apply(new HttpResponse(ParseImageFromJsonTest.class
-               .getResourceAsStream("/image.json")));
-      assertEquals(compare, image);
+      Instance compare = handler.apply(new HttpResponse(ParseInstanceFromJsonTest.class
+               .getResourceAsStream("/instance.json")));
+      assertEquals(compare, instance);
    }
 }

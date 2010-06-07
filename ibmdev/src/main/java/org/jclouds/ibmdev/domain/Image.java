@@ -18,6 +18,7 @@
  */
 package org.jclouds.ibmdev.domain;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -48,7 +49,7 @@ public class Image {
    private String owner;
    private String architecture;
    private String platform;
-   private long createdTime;
+   private Date createdTime;
    private long location;
    private Set<String> supportedInstanceTypes = Sets.newLinkedHashSet();
    private Set<String> productCodes = Sets.newLinkedHashSet();
@@ -115,11 +116,11 @@ public class Image {
       this.platform = platform;
    }
 
-   public long getCreatedTime() {
+   public Date getCreatedTime() {
       return createdTime;
    }
 
-   public void setCreatedTime(long createdTime) {
+   public void setCreatedTime(Date createdTime) {
       this.createdTime = createdTime;
    }
 
@@ -176,7 +177,7 @@ public class Image {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
-      result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
+      result = prime * result + ((createdTime == null) ? 0 : createdTime.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((documentation == null) ? 0 : documentation.hashCode());
       result = prime * result + (int) (id ^ (id >>> 32));
@@ -207,7 +208,10 @@ public class Image {
             return false;
       } else if (!architecture.equals(other.architecture))
          return false;
-      if (createdTime != other.createdTime)
+      if (createdTime == null) {
+         if (other.createdTime != null)
+            return false;
+      } else if (!createdTime.equals(other.createdTime))
          return false;
       if (description == null) {
          if (other.description != null)

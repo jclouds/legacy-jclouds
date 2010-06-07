@@ -31,6 +31,8 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.http.functions.config.ParserModule.LongDateAdapter;
 import org.jclouds.ibmdev.IBMDeveloperCloud;
 import org.jclouds.ibmdev.IBMDeveloperCloudAsyncClient;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
@@ -80,6 +82,12 @@ public class IBMDeveloperCloudRestClientModule extends
                IBMDeveloperCloudErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
                IBMDeveloperCloudErrorHandler.class);
+   }
+
+   @Override
+   protected void configure() {
+      bind(DateAdapter.class).to(LongDateAdapter.class);
+      super.configure();
    }
 
 }

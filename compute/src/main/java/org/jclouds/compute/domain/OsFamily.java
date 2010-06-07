@@ -37,7 +37,7 @@ public enum OsFamily {
    /**
     * Oracle Enterprise Linux
     */
-   OEL, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, GENTOO, WINDOWS;
+   OEL, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, SUSE, GENTOO, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }

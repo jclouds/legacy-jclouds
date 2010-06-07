@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.rest.AuthorizationException;
 
 /**
@@ -95,4 +96,33 @@ public interface IBMDeveloperCloudClient {
     *            code 412 if the image is in an invalid state to perform this operation
     */
    Image setImageVisibility(long id, Image.Visibility visibility);
+
+   /**
+    * 
+    * @return the list of Instances that the authenticated user manages.
+    * @throws AuthorizationException
+    *            code 401 if the currently authenticated user is not authorized to view this
+    *            information
+    */
+   Set<? extends Instance> listInstances();
+
+   /**
+    * Returns the Instance that the authenticated user manages with the specified {@code id}
+    * 
+    * @return null if instance is not found
+    * @throws AuthorizationException
+    *            code 401 if the currently authenticated user is not authorized to view this
+    *            instance
+    */
+   Instance getInstance(long id);
+
+   /**
+    * Deletes the Instance that the authenticated user manages with the specified {@code id}
+    * 
+    * @throws AuthorizationException
+    *            code 401 if the user is not authorized to delete this instance
+    * @throws IllegalStateException
+    *            code 412 if the instance is in an invalid state to perform this operation
+    */
+   void deleteInstance(long id);
 }

@@ -149,6 +149,22 @@ public class ParserModule extends AbstractModule {
       }
 
    }
+   
+   @Singleton
+   public static class LongDateAdapter implements DateAdapter {
+
+      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+         return new JsonPrimitive(src.getTime());
+      }
+
+      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+               throws JsonParseException {
+         long toParse = json.getAsJsonPrimitive().getAsLong();
+         Date toReturn = new Date(toParse);
+         return toReturn;
+      }
+
+   }
 
    @Singleton
    public static class GsonAdapterBindings {

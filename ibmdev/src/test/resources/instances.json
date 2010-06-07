@@ -1,0 +1,46 @@
+{
+"instances":[ 
+ {
+  "launchTime":1260472231726, 
+  "software": 
+     [ 
+       { "version":"10 SP2", "type":"OS", "name":"SUSE Linux Enterprise" } 
+     ], 
+  "ip":"129.33.197.78", 
+  "requestId":"7430", 
+  "keyName":"DEFAULT", 
+  "name":"ABC", 
+  "instanceType":"MEDIUM", 
+  "status":5, 
+  "owner":"aadelucc@us.ibm.com", 
+  "hostname":"vm723.developer.ihost.com", 
+  "location":"1", 
+  "imageId":"3", 
+  "productCodes":[], 
+  "requestName":"ABC",
+  "id":"7430", 
+  "expirationTime":1263064240837
+ },
+  {
+  "launchTime":1260472231727, 
+  "software": 
+     [ 
+       { "version":"10 SP3", "type":"OS", "name":"SUSE Linux Enterprise" } 
+     ], 
+  "ip":"129.33.197.79", 
+  "requestId":"7431", 
+  "keyName":"DEFAULT", 
+  "name":"ABC", 
+  "instanceType":"MEDIUM", 
+  "status":6, 
+  "owner":"aadelucc@us.ibm.com", 
+  "hostname":"vm723.developer.ihost.com", 
+  "location":"2", 
+  "imageId":"4", 
+  "productCodes":[], 
+  "requestName":"ABC",
+  "id":"7431", 
+  "expirationTime":1263064240838
+ }
+]
+}

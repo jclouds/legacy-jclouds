@@ -20,6 +20,7 @@
 package org.jclouds.ibmdev.functions;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
@@ -44,7 +45,13 @@ public class ParseImagesFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new ParserModule() {
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(LongDateAdapter.class);
+            super.configure();
+         }
+      });
       handler = injector.getInstance(ParseImagesFromJson.class);
    }
 
@@ -59,7 +66,7 @@ public class ParseImagesFromJsonTest {
       image1.setOwner("SYSTEM");
       image1.setArchitecture("i386");
       image1.setPlatform("SUSE Linux Enterprise/10 SP2");
-      image1.setCreatedTime(1240632000000l);
+      image1.setCreatedTime(new Date(1240632000000l));
       image1.setLocation(1);
       image1.setSupportedInstanceTypes(ImmutableSet.of("SMALL", "MEDIUM", "LARGE"));
       image1.setProductCodes(ImmutableSet.of("fd2d0478b132490897526b9b4433a334"));
@@ -78,7 +85,7 @@ public class ParseImagesFromJsonTest {
       image2.setOwner("mutdosch@us.ibm.com");
       image2.setArchitecture("i386");
       image2.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");
-      image2.setCreatedTime(1265647398869l);
+      image2.setCreatedTime(new Date(1265647398869l));
       image2.setLocation(1);
       image2.setSupportedInstanceTypes(ImmutableSet.of("LARGE", "MEDIUM"));
       // image.setProductCodes();

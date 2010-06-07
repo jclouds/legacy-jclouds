@@ -36,8 +36,11 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.ibmdev.binders.BindImageVisibilityToJsonPayload;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.functions.ParseImageFromJson;
 import org.jclouds.ibmdev.functions.ParseImagesFromJson;
+import org.jclouds.ibmdev.functions.ParseInstanceFromJson;
+import org.jclouds.ibmdev.functions.ParseInstancesFromJson;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -95,5 +98,30 @@ public interface IBMDeveloperCloudAsyncClient {
    @ResponseParser(ParseImageFromJson.class)
    ListenableFuture<Image> setImageVisibility(@PathParam("imageId") long id,
             @BinderParam(BindImageVisibilityToJsonPayload.class) Image.Visibility visibility);
+
+   /**
+    * @see IBMDeveloperCloudClient#listInstances()
+    */
+   @GET
+   @Path("/instances")
+   @ResponseParser(ParseInstancesFromJson.class)
+   ListenableFuture<Set<? extends Instance>> listInstances();
+
+   /**
+    * @see IBMDeveloperCloudClient#getInstance(long)
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/instances/{instanceId}")
+   @ResponseParser(ParseInstanceFromJson.class)
+   ListenableFuture<Instance> getInstance(@PathParam("instanceId") long id);
+
+   /**
+    * @see IBMDeveloperCloudClient#deleteInstance
+    */
+   @DELETE
+   @Path("/instances/{instanceId}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteInstance(@PathParam("instanceId") long id);
 
 }

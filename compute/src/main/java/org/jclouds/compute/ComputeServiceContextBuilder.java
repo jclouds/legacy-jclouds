@@ -64,8 +64,8 @@ public abstract class ComputeServiceContextBuilder<S, A> extends RestContextBuil
    public ComputeServiceContext buildComputeServiceContext() {
       // need the generic type information
       return (ComputeServiceContext) buildInjector().getInstance(
-               Key.get(Types.newParameterizedType(ComputeServiceContextImpl.class, asyncClientType,
-                        syncClientType)));
+               Key.get(Types.newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
+                        asyncClientType)));
    }
 
    protected void addImageResolutionModuleIfNotPresent() {

@@ -30,6 +30,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Set;
 
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -71,4 +72,19 @@ public class IBMDeveloperCloudClientLiveTest {
       }
    }
 
+   @Test
+   public void testListInstances() throws Exception {
+      Set<? extends Instance> response = connection.listInstances();
+      assertNotNull(response);
+   }
+
+   @Test
+   public void testGetInstance() throws Exception {
+      Set<? extends Instance> response = connection.listInstances();
+      assertNotNull(response);
+      if (response.size() > 0) {
+         Instance instance = Iterables.get(response, 0);
+         assertEquals(connection.getInstance(instance.getId()).getId(), instance.getId());
+      }
+   }
 }
