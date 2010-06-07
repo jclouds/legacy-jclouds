@@ -21,16 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.opscodeplatform;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.chef.config.ChefContextModule;
-import org.jclouds.chef.config.ChefRestClientModule;
 import org.jclouds.chef.reference.ChefConstants;
+import org.jclouds.opscodeplatform.config.OpscodePlatformContextModule;
+import org.jclouds.opscodeplatform.config.OpscodePlatformRestClientModule;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
@@ -39,21 +39,21 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class ChefContextBuilder extends RestContextBuilder<ChefAsyncClient, ChefClient> {
+public class OpscodePlatformContextBuilder extends RestContextBuilder<OpscodePlatformAsyncClient, OpscodePlatformClient> {
 
-   public ChefContextBuilder(String providerName, Properties props) {
-      super(providerName, ChefClient.class, ChefAsyncClient.class, props);
+   public OpscodePlatformContextBuilder(String providerName, Properties props) {
+      super(providerName, OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, props);
       checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_IDENTITY));
       checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_RSA_KEY));
    }
 
    protected void addClientModule(List<Module> modules) {
-      modules.add(new ChefRestClientModule());
+      modules.add(new OpscodePlatformRestClientModule());
    }
 
    @Override
    protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new ChefContextModule(providerName));
+      modules.add(new OpscodePlatformContextModule(providerName));
    }
 
 }

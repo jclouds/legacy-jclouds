@@ -39,50 +39,50 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.opscodeplatform.config;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
+import java.util.Map;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.rest.AuthorizationException;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.chef.ChefAsyncClient;
+import org.jclouds.chef.ChefClient;
+import org.jclouds.chef.config.BaseChefRestClientModule;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.opscodeplatform.OpscodePlatform;
+import org.jclouds.opscodeplatform.OpscodePlatformAsyncClient;
+import org.jclouds.opscodeplatform.OpscodePlatformClient;
+import org.jclouds.opscodeplatform.reference.OpscodePlatformConstants;
+import org.jclouds.rest.ConfiguresRestClient;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provides;
 
 /**
- * Provides synchronous access to Chef.
- * <p/>
+ * Configures the Opscode Platform connection.
  * 
- * @see ChefAsyncClient
- * @see <a href="TODO: insert URL of Chef documentation" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ChefClient {
-   String listCookbooks();
+@RequiresHttp
+@ConfiguresRestClient
+public class OpscodePlatformRestClientModule extends
+         BaseChefRestClientModule<OpscodePlatformAsyncClient, OpscodePlatformClient> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
+            .<Class<?>, Class<?>> builder()//
+            .put(ChefClient.class, ChefAsyncClient.class)//
+            .build();
 
-   /**
-    * creates a new client
-    * 
-    * @return the private key of the client. You can then use this client name and private key to
-    *         access the Opscode API.
-    * @throws AuthorizationException
-    *            <p/>
-    *            "401 Unauthorized" if the caller is not a recognized user.
-    *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a client.
-    * @throws HttpResponseException
-    *            "409 Conflict" if the client already exists
-    */
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   String createClient(String name);
+   public OpscodePlatformRestClientModule() {
+      super(OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, DELEGATE_MAP);
+   }
 
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   String generateKeyForClient(String name);
-
-   Set<String> listClients();
-
-   boolean clientExists(String name);
-
-   void deleteClient(String name);
-
+   @Provides
+   @Singleton
+   @OpscodePlatform
+   protected URI provideURI(
+            @Named(OpscodePlatformConstants.PROPERTY_OPSCODEPLATFORM_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
+   }
 }

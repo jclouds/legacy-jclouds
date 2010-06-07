@@ -21,43 +21,44 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.chef.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_ENDPOINT;
+import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_IDENTITY;
+import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_RSA_KEY;
+import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_TIMESTAMP_INTERVAL;
 
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.chef.internal.BaseChefPropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in Chef Clients
  * 
  * @author Adrian Cole
  */
-public class ChefPropertiesBuilder extends BaseChefPropertiesBuilder {
+public abstract class BaseChefPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_CHEF_ENDPOINT, "http://localhost:4000");
+      properties.setProperty(PROPERTY_CHEF_TIMESTAMP_INTERVAL, "1");
       return properties;
    }
 
-   public ChefPropertiesBuilder(Properties properties) {
+   public BaseChefPropertiesBuilder(Properties properties) {
       super(properties);
    }
 
-   public ChefPropertiesBuilder(String identity, String rsaKey) {
-      super(URI.create("http://localhost:4000"), identity, rsaKey);
+   public BaseChefPropertiesBuilder(URI endpoint, String identity, String rsaKey) {
+      super();
+      withCredentials(identity, rsaKey);
+      withEndpoint(endpoint);
    }
 
-   public ChefPropertiesBuilder(URI endpoint, String identity, String rsaKey) {
-      super(endpoint, identity, rsaKey);
-   }
-
-   public ChefPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_CHEF_ENDPOINT, checkNotNull(endpoint, "endpoint").toString());
+   public BaseChefPropertiesBuilder withCredentials(String identity, String rsaKey) {
+      properties.setProperty(PROPERTY_CHEF_IDENTITY, checkNotNull(identity, "identity"));
+      properties.setProperty(PROPERTY_CHEF_RSA_KEY, checkNotNull(rsaKey, "password"));
       return this;
    }
 }

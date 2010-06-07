@@ -34,14 +34,14 @@
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-chef</artifactId>
-    <name>jclouds Chef core</name>
-    <description>jclouds components to access Chef</description>
+    <artifactId>jclouds-opscodeplatform</artifactId>
+    <name>jclouds Opscode Platform core</name>
+    <description>jclouds components to access Opscode Platform</description>
 
     <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/chef</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/chef</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/chef</url>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/opscodeplatform</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/opscodeplatform</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk/opscodeplatform</url>
     </scm>
     
     <!-- bootstrapping: need to fetch the project POM -->
@@ -60,42 +60,22 @@
     </repositories>
     
     <properties>
-        <jclouds.chef.identity>chef-validator</jclouds.chef.identity>
-        <jclouds.chef.rsa-key>/etc/chef/validation.pem</jclouds.chef.rsa-key>
-        <jclouds.chef.endpoint>http://localhost:4000</jclouds.chef.endpoint>
-        <jclouds.test.user>${jclouds.chef.identity}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.chef.rsa-key}</jclouds.test.key>
-        <jclouds.test.endpoint>${jclouds.chef.endpoint}</jclouds.test.endpoint>
+        <jclouds.opscodeplatform.org>MYORG</jclouds.opscodeplatform.org>
+        <jclouds.opscodeplatform.rsa-key>/etc/chef/validation.pem</jclouds.opscodeplatform.rsa-key>
+        <jclouds.test.user>${jclouds.opscodeplatform.org}</jclouds.test.user>
+        <jclouds.test.key>${jclouds.opscodeplatform.rsa-key}</jclouds.test.key>
     </properties>
-
     <dependencies>
         <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15</artifactId>
-            <version>1.44</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <artifactId>jclouds-chef</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <artifactId>jclouds-chef</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-log4j</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

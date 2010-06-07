@@ -39,50 +39,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.opscodeplatform;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.rest.AuthorizationException;
+import javax.inject.Qualifier;
 
 /**
- * Provides synchronous access to Chef.
- * <p/>
+ * Related to a Opscode Platform resource.
  * 
- * @see ChefAsyncClient
- * @see <a href="TODO: insert URL of Chef documentation" />
  * @author Adrian Cole
+ * 
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ChefClient {
-   String listCookbooks();
-
-   /**
-    * creates a new client
-    * 
-    * @return the private key of the client. You can then use this client name and private key to
-    *         access the Opscode API.
-    * @throws AuthorizationException
-    *            <p/>
-    *            "401 Unauthorized" if the caller is not a recognized user.
-    *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a client.
-    * @throws HttpResponseException
-    *            "409 Conflict" if the client already exists
-    */
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   String createClient(String name);
-
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   String generateKeyForClient(String name);
-
-   Set<String> listClients();
-
-   boolean clientExists(String name);
-
-   void deleteClient(String name);
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface OpscodePlatform {
 
 }

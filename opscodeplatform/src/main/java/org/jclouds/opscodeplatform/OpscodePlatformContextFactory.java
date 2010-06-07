@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.opscodeplatform;
 
 import java.net.URI;
 import java.util.Properties;
@@ -33,8 +33,8 @@ import org.jclouds.rest.RestContext;
 import com.google.inject.Module;
 
 /**
- * Creates {@link RestContext} for {@link ChefClient} instances based on the most commonly requested
- * arguments.
+ * Creates {@link RestContext} for {@link OpscodePlatformClient} instances based on the most
+ * commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -44,27 +44,30 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  * @see RestContext
- * @see ChefClient
- * @see ChefAsyncClient
+ * @see OpscodePlatformClient
+ * @see OpscodePlatformAsyncClient
  */
-public class ChefContextFactory {
+public class OpscodePlatformContextFactory {
 
-   public static RestContext<ChefAsyncClient, ChefClient> createContext(String identity,
-            String rsaKey, Module... modules) {
-      return new ChefContextBuilder("chef", new ChefPropertiesBuilder(identity, rsaKey).build())
-               .withModules(modules).buildContext();
-   }
-
-   public static RestContext<ChefAsyncClient, ChefClient> createContext(URI endpoint,
+   public static RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createContext(
             String identity, String rsaKey, Module... modules) {
-      return new ChefContextBuilder("chef", new ChefPropertiesBuilder(identity, rsaKey)
-               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
+      return new OpscodePlatformContextBuilder("opscodeplatform",
+               new OpscodePlatformPropertiesBuilder(identity, rsaKey).build()).withModules(modules)
+               .buildContext();
    }
 
-   public static RestContext<ChefAsyncClient, ChefClient> createContext(Properties properties,
-            Module... modules) {
-      return new ChefContextBuilder("chef", new ChefPropertiesBuilder(properties).build())
-               .withModules(modules).buildContext();
+   public static RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createContext(
+            URI endpoint, String identity, String rsaKey, Module... modules) {
+      return new OpscodePlatformContextBuilder("opscodeplatform",
+               new OpscodePlatformPropertiesBuilder(identity, rsaKey).withEndpoint(endpoint)
+                        .build()).withModules(modules).buildContext();
+   }
+
+   public static RestContext<OpscodePlatformAsyncClient, OpscodePlatformClient> createContext(
+            Properties properties, Module... modules) {
+      return new OpscodePlatformContextBuilder("opscodeplatform",
+               new OpscodePlatformPropertiesBuilder(properties).build()).withModules(modules)
+               .buildContext();
    }
 
 }

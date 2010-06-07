@@ -21,39 +21,44 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.opscodeplatform;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.opscodeplatform.reference.OpscodePlatformConstants.PROPERTY_OPSCODEPLATFORM_ENDPOINT;
 
-import java.util.List;
+import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.chef.config.ChefContextModule;
-import org.jclouds.chef.config.ChefRestClientModule;
-import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.rest.RestContextBuilder;
-
-import com.google.inject.Module;
+import org.jclouds.chef.internal.BaseChefPropertiesBuilder;
 
 /**
+ * Builds properties used in Chef Clients
  * 
  * @author Adrian Cole
  */
-public class ChefContextBuilder extends RestContextBuilder<ChefAsyncClient, ChefClient> {
-
-   public ChefContextBuilder(String providerName, Properties props) {
-      super(providerName, ChefClient.class, ChefAsyncClient.class, props);
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_IDENTITY));
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_RSA_KEY));
-   }
-
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new ChefRestClientModule());
-   }
-
+public class OpscodePlatformPropertiesBuilder extends BaseChefPropertiesBuilder {
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new ChefContextModule(providerName));
+   protected Properties defaultProperties() {
+      Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_OPSCODEPLATFORM_ENDPOINT, "https://api.opscode.com");
+      return properties;
    }
 
+   public OpscodePlatformPropertiesBuilder(Properties properties) {
+      super(properties);
+   }
+
+   public OpscodePlatformPropertiesBuilder(URI endpoint, String identity, String rsaKey) {
+      super(endpoint, identity, rsaKey);
+   }
+
+   public OpscodePlatformPropertiesBuilder(String identity, String rsaKey) {
+      super(URI.create("https://api.opscode.com"), identity, rsaKey);
+   }
+
+   public BaseChefPropertiesBuilder withEndpoint(URI endpoint) {
+      properties.setProperty(PROPERTY_OPSCODEPLATFORM_ENDPOINT, checkNotNull(endpoint, "endpoint")
+               .toString());
+      return this;
+   }
 }

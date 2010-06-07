@@ -28,11 +28,10 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.chef.domain.User;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -52,102 +51,65 @@ public class ChefClientLiveTest {
    private RestContext<ChefAsyncClient, ChefClient> validatorConnection;
    private RestContext<ChefAsyncClient, ChefClient> clientConnection;
 
-   private String orgname;
    private String clientKey;
+   private String endpoint;
+   private String validator;
 
    public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
 
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      orgname = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
+      validator = System.getProperty("jclouds.test.user");
+      if (validator == null || validator.equals(""))
+         validator = "chef-validator";
       String keyfile = System.getProperty("jclouds.test.key");
       if (keyfile == null || keyfile.equals(""))
-         keyfile = System.getProperty("user.home") + "/chef/validation.pem";
-      validatorConnection = createConnection(orgname + "-validator", Files.toString(new File(
-               keyfile), Charsets.UTF_8));
+         keyfile = "/etc/chef/validation.pem";
+      validatorConnection = createConnection(validator, Files.toString(new File(keyfile),
+               Charsets.UTF_8));
    }
 
    private RestContext<ChefAsyncClient, ChefClient> createConnection(String identity, String key)
             throws IOException {
-      return ChefContextFactory.createContext(identity, key, new Log4JLoggingModule());
+      return ChefContextFactory.createContext(URI.create(endpoint), identity, key,
+               new Log4JLoggingModule());
    }
 
    @Test
-   public void testListClientsInOrg() throws Exception {
-      Set<String> clients = validatorConnection.getApi().listClientsInOrg(orgname);
+   public void testListClients() throws Exception {
+      Set<String> clients = validatorConnection.getApi().listClients();
       assertNotNull(clients);
-      assert clients.contains(orgname + "-validator");
+      assert clients.contains(validator) : "validator: " + validator + " not in: " + clients;
    }
 
-   @Test(dependsOnMethods = "testListClientsInOrg")
-   public void testCreateClientInOrg() throws Exception {
-      validatorConnection.getApi().deleteClientInOrg(orgname, PREFIX);
-      clientKey = validatorConnection.getApi().createClientInOrg(orgname, PREFIX);
+   @Test(dependsOnMethods = "testListClients")
+   public void testCreateClient() throws Exception {
+      validatorConnection.getApi().deleteClient(PREFIX);
+      clientKey = validatorConnection.getApi().createClient(PREFIX);
       assertNotNull(clientKey);
       System.out.println(clientKey);
       clientConnection = createConnection(PREFIX, clientKey);
-      clientConnection.getApi().clientExistsInOrg(orgname, PREFIX);
+      clientConnection.getApi().clientExists(PREFIX);
    }
 
-   @Test(dependsOnMethods = "testCreateClientInOrg")
-   public void testGenerateKeyForClientInOrg() throws Exception {
-      clientKey = validatorConnection.getApi().generateKeyForClientInOrg(orgname, PREFIX);
+   @Test(dependsOnMethods = "testCreateClient")
+   public void testGenerateKeyForClient() throws Exception {
+      clientKey = validatorConnection.getApi().generateKeyForClient(PREFIX);
       assertNotNull(clientKey);
       clientConnection.close();
       clientConnection = createConnection(PREFIX, clientKey);
-      clientConnection.getApi().clientExistsInOrg(orgname, PREFIX);
+      clientConnection.getApi().clientExists(PREFIX);
    }
 
-   @Test(dependsOnMethods = "testCreateClientInOrg")
-   public void testClientExistsInOrg() throws Exception {
-      assertNotNull(validatorConnection.getApi().clientExistsInOrg(orgname, PREFIX));
+   @Test(dependsOnMethods = "testCreateClient")
+   public void testClientExists() throws Exception {
+      assertNotNull(validatorConnection.getApi().clientExists(PREFIX));
    }
 
-   @Test(expectedExceptions = AuthorizationException.class)
-   public void testGetOrgFailsForValidationKey() throws Exception {
-      validatorConnection.getApi().getOrg(orgname);
-   }
-
-   @Test(dependsOnMethods = "testGenerateKeyForClientInOrg", expectedExceptions = AuthorizationException.class)
-   public void testGetOrgFailsForClient() throws Exception {
-      clientConnection.getApi().getOrg(orgname);
-   }
-
-   @Test(enabled = false)
-   public void testGetUser() throws Exception {
-      User user = validatorConnection.getApi().getUser(orgname);
-      assertNotNull(user);
-   }
-
-   @Test(enabled = false)
-   public void testCreateUser() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testUpdateUser() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testDeleteUser() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testCreateOrg() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testUpdateOrg() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testDeleteOrg() throws Exception {
-      // TODO
-
+   @Test(dependsOnMethods = "testGenerateKeyForClient")
+   public void testListCookbooks() throws Exception {
+      System.err.println(clientConnection.getApi().listCookbooks());
    }
 
    @AfterClass(groups = { "live" })

@@ -41,38 +41,18 @@
  */
 package org.jclouds.chef.config;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMReader;
 import org.jclouds.chef.Chef;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.handlers.ChefErrorHandler;
 import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.concurrent.ExpirableSupplier;
-import org.jclouds.concurrent.internal.SyncProxy;
-import org.jclouds.date.DateService;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.annotation.Redirection;
-import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientFactory;
 
-import com.google.common.base.Supplier;
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -82,56 +62,10 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class ChefRestClientModule extends AbstractModule {
+public class ChefRestClientModule extends BaseChefRestClientModule<ChefAsyncClient, ChefClient> {
 
-   @Provides
-   @TimeStamp
-   protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-      return cache.get();
-   }
-
-   /**
-    * borrowing concurrency code to ensure that caching takes place properly
-    */
-   @Provides
-   @TimeStamp
-   Supplier<String> provideTimeStampCache(
-            @Named(ChefConstants.PROPERTY_CHEF_TIMESTAMP_INTERVAL) long seconds,
-            final DateService dateService) {
-      return new ExpirableSupplier<String>(new Supplier<String>() {
-         public String get() {
-            return dateService.iso8601SecondsDateFormat();
-         }
-      }, seconds, TimeUnit.SECONDS);
-   }
-
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
-
-   @Provides
-   @Singleton
-   public PrivateKey provideKey(@Named(ChefConstants.PROPERTY_CHEF_RSA_KEY) String key)
-            throws IOException {
-      // TODO do this without adding a provider
-      Security.addProvider(new BouncyCastleProvider());
-      KeyPair pair = KeyPair.class.cast(new PEMReader(new StringReader(key)).readObject());
-      return pair.getPrivate();
-   }
-
-   @Provides
-   @Singleton
-   protected ChefAsyncClient provideClient(RestClientFactory factory) {
-      return factory.create(ChefAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   public ChefClient provideClient(ChefAsyncClient provider) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(ChefClient.class, provider);
+   public ChefRestClientModule() {
+      super(ChefClient.class, ChefAsyncClient.class);
    }
 
    @Provides
@@ -139,19 +73,6 @@ public class ChefRestClientModule extends AbstractModule {
    @Chef
    protected URI provideURI(@Named(ChefConstants.PROPERTY_CHEF_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
-   }
-   
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ChefErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ChefErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ChefErrorHandler.class);
-   }
-
-   protected void bindRetryHandlers() {
-      // TODO
    }
 
 }
