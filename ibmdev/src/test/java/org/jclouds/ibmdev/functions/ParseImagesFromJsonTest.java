@@ -19,8 +19,6 @@
 
 package org.jclouds.ibmdev.functions;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.Set;
 
@@ -92,6 +90,7 @@ public class ParseImagesFromJsonTest {
 
       Set<? extends Image> compare = handler.apply(new HttpResponse(ParseImagesFromJsonTest.class
                .getResourceAsStream("/images.json")));
-      assertEquals(compare, ImmutableSet.of(image1, image2));
+      assert (compare.contains(image1));
+      assert (compare.contains(image2));
    }
 }
