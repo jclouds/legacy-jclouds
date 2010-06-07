@@ -53,6 +53,7 @@
     <module>chef</module>
     <module>opscodeplatform</module>
     <module>ibmdev</module>
+    <module>boxdotnet</module>
   </modules>
     <build>
         <plugins>

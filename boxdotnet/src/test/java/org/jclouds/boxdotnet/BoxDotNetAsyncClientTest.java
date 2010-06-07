@@ -1,7 +1,3 @@
-#set( $lcaseProviderName = ${providerName.toLowerCase()} )
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
  *
  * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
@@ -25,14 +21,14 @@
  * under the License.
  * ====================================================================
  */
-package ${package};
+package org.jclouds.boxdotnet;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import ${package}.config.${providerName}RestClientModule;
+import org.jclouds.boxdotnet.config.BoxDotNetRestClientModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
@@ -50,19 +46,19 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 /**
- * Tests annotation parsing of {@code ${providerName}AsyncClient}
+ * Tests annotation parsing of {@code BoxDotNetAsyncClient}
  * 
- * @author ${author}
+ * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "${lcaseProviderName}.${providerName}AsyncClientTest")
-public class ${providerName}AsyncClientTest extends RestClientTest<${providerName}AsyncClient> {
+@Test(groups = "unit", testName = "boxdotnet.BoxDotNetAsyncClientTest")
+public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClient> {
 
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ${providerName}AsyncClient.class.getMethod("list");
-      GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(method);
+      Method method = BoxDotNetAsyncClient.class.getMethod("list");
+      GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/items HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -70,7 +66,7 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/items HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
       assertHeadersEqual(httpRequest, "Accept: application/json\nAuthorization: Basic dXNlcjprZXk=\n");
       assertPayloadEquals(httpRequest, null);
@@ -85,10 +81,10 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
    }
 
    public void testGet() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ${providerName}AsyncClient.class.getMethod("get", long.class);
-      GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(method, 1);
+      Method method = BoxDotNetAsyncClient.class.getMethod("get", long.class);
+      GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpRequest, "GET ${providerEndpoint}/items/1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
       assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -103,12 +99,12 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
    }
 
    public void testDelete() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ${providerName}AsyncClient.class.getMethod("delete", long.class);
-      GeneratedHttpRequest<${providerName}AsyncClient> httpRequest = processor.createRequest(
+      Method method = BoxDotNetAsyncClient.class.getMethod("delete", long.class);
+      GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(
                method, 1);
 
       assertRequestLineEquals(httpRequest,
-               "DELETE ${providerEndpoint}/items/1 HTTP/1.1");
+               "DELETE https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
       assertHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -120,23 +116,23 @@ public class ${providerName}AsyncClientTest extends RestClientTest<${providerNam
 
    }
    @Override
-   protected void checkFilters(GeneratedHttpRequest<${providerName}AsyncClient> httpRequest) {
+   protected void checkFilters(GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest) {
       assertEquals(httpRequest.getFilters().size(), 1);
       assertEquals(httpRequest.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<${providerName}AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<${providerName}AsyncClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<BoxDotNetAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<BoxDotNetAsyncClient>>() {
       };
    }
 
    @Override
    protected Module createModule() {
-      return new ${providerName}RestClientModule() {
+      return new BoxDotNetRestClientModule() {
          @Override
          protected void configure() {
-            Names.bindProperties(binder(), new ${providerName}PropertiesBuilder("user", "key").build());
+            Names.bindProperties(binder(), new BoxDotNetPropertiesBuilder("user", "key").build());
             install(new NullLoggingModule());
             super.configure();
          }
