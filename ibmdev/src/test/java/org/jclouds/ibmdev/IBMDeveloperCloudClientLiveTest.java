@@ -110,7 +110,7 @@ public class IBMDeveloperCloudClientLiveTest {
 
    @Test
    public void testListInstancesFromRequestReturnsNull() throws Exception {
-      Set<? extends Instance> response = connection.listInstancesFromRequest(Long.MAX_VALUE+"");
+      Set<? extends Instance> response = connection.listInstancesFromRequest(Long.MAX_VALUE + "");
       assertNull(response);
    }
 
@@ -275,7 +275,7 @@ public class IBMDeveloperCloudClientLiveTest {
       assert (allVolumes.contains(volume)) : String.format("volume %s not in %s", volume, volume);
    }
 
-   private static final String IMAGE_ID = "3";// RHEL
+   private static final String IMAGE_ID = "11";// Rational Insight
 
    /**
     * cannot run an instance due to 500 errors:
@@ -286,9 +286,12 @@ public class IBMDeveloperCloudClientLiveTest {
    @Test(expectedExceptions = HttpResponseException.class, dependsOnMethods = { "testAddPublicKey",
             "testAllocateIpAddress", "testCreateVolume" })
    public void testCreateInstanceWithOptions() throws Exception {
-      instance = connection.createInstanceInLocation(location.getId(), TAG, IMAGE_ID, "SMALL",
+      instance = connection.createInstanceInLocation(location.getId(), TAG, IMAGE_ID, "LARGE",
                attachIp(ip.getId()).authorizePublicKey(key.getName()).mountVolume(volume.getId(),
-                        "/mnt"));
+                        "/mnt").configurationData(
+                        ImmutableMap.of("insight_admin_password", "myPassword1",
+                                 "db2_admin_password", "myPassword2", "report_user_password",
+                                 "myPassword3")));
       assertEquals(instance.getLocation(), location.getId());
       assertNotNull(instance.getHostname());
       assertEquals(instance.getIp(), ip.getIp());

@@ -57,6 +57,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -528,15 +529,18 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
                CreateInstanceOptions[].class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(
                method, "location", "name", "22", "instanceType", new CreateInstanceOptions()
-                        .attachIp("1").authorizePublicKey("MOO").mountVolume("2", "/mnt"));
+                        .attachIp("1").authorizePublicKey("MOO").mountVolume("2", "/mnt").configurationData(
+                                 ImmutableMap.of("insight_admin_password", "myPassword1",
+                                          "db2_admin_password", "myPassword2", "report_user_password",
+                                          "myPassword3")));
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
       assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 122\nContent-Type: application/x-www-form-urlencoded\n");
+               "Accept: application/json\nContent-Length: 221\nContent-Type: application/x-www-form-urlencoded\n");
       assertPayloadEquals(
                httpRequest,
-               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.2.mnt=%2Fmnt");
+               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.2.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3");
 
       assertResponseParserClassEquals(method, httpRequest, ParseInstanceFromJson.class);
       assertSaxResponseParserClassEquals(method, null);

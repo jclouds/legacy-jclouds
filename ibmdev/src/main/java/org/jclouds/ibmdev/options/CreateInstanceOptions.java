@@ -20,6 +20,9 @@ package org.jclouds.ibmdev.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
@@ -68,6 +71,20 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
 
    /**
     * 
+    * @param configurationData
+    *           extra configuration to pass to the instance
+    */
+   public CreateInstanceOptions configurationData(Map<String, String> configurationData) {
+      checkNotNull(configurationData, "configurationData");
+      for (Entry<String, String> entry : configurationData.entrySet()) {
+         formParameters.removeAll(entry.getKey());
+         formParameters.put(entry.getKey(), entry.getValue());
+      }
+      return this;
+   }
+
+   /**
+    * 
     * @param id
     *           The ID of a static IP address to associate with this instance
     */
@@ -79,6 +96,14 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
    }
 
    public static class Builder {
+
+      /**
+       * @see CreateInstanceOptions#configurationData(Map<String, String> )
+       */
+      public static CreateInstanceOptions configurationData(Map<String, String> configurationData) {
+         CreateInstanceOptions options = new CreateInstanceOptions();
+         return options.configurationData(configurationData);
+      }
 
       /**
        * @see CreateInstanceOptions#mountVolume(String, String )
