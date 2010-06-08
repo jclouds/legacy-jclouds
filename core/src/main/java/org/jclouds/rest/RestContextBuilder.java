@@ -182,6 +182,6 @@ public abstract class RestContextBuilder<S, A> {
    public RestContext<S, A> buildContext() {
       Injector injector = buildInjector();
       return (RestContext<S, A>) injector.getInstance(Key.get(Types.newParameterizedType(
-               RestContext.class, asyncClientType, syncClientType)));
+               RestContext.class, syncClientType, asyncClientType)));
    }
 }
