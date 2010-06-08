@@ -58,10 +58,10 @@ public class ParseInstanceFromJsonTest {
    }
 
    public void test() {
-      Instance instance = new Instance(new Date(1260472231726l), ImmutableSet.of(new Software(
-               "10 SP2", "OS", "SUSE Linux Enterprise")), "129.33.197.78", "7430", "DEFAULT", "ABC",
-               "MEDIUM", 5, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", "1", "3", ImmutableSet
-                        .<String> of(), "ABC", "7430", new Date(1263064240837l));
+      Instance instance = new Instance(new Date(1260472231726l), ImmutableSet.<Software> of(new Software(
+               "SUSE Linux Enterprise", "OS", "10 SP2")), "129.33.197.78", "7430", "DEFAULT",
+               "ABC", "MEDIUM", 5, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", "1", "3",
+               ImmutableSet.<String> of(), "ABC", "7430", new Date(1263064240837l));
 
       Instance compare = handler.apply(new HttpResponse(ParseInstanceFromJsonTest.class
                .getResourceAsStream("/instance.json")));

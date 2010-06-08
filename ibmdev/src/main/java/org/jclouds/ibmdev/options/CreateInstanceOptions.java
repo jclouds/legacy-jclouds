@@ -51,7 +51,7 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
       formParameters.removeAll("volumeID");
       formParameters.put("volumeID", id + "");
 
-      String mountParam = String.format("oss.storage.id.%s.mnt", id);
+      String mountParam = String.format("oss.storage.id.0.mnt", id);
       formParameters.removeAll(mountParam);
       formParameters.put(mountParam, mountPoint);
       return this;
@@ -129,4 +129,5 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
          return options.authorizePublicKey(publicKeyName);
       }
    }
+
 }

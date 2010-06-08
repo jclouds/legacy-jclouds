@@ -62,6 +62,8 @@ public class ParseUtils {
    public static final Predicate<Address> CLEAN_ADDRESS = new Predicate<Address>() {
       @Override
       public boolean apply(Address input) {
+         if ("0".equals(input.getInstanceId()))
+            input.setInstanceId(null);
          if ("".equals(input.getIp()))
             input.setIp(null);
          return true;
@@ -69,11 +71,16 @@ public class ParseUtils {
    };
 
    private static final Set<String> emptyString = ImmutableSet.of("");
-
+   /**
+    * sometimes the service incorrectly returns an id of "0"
+    * http://www-180.ibm.com/cloud/enterprise/
+    * beta/ram/community/discussionTopic.faces?guid={DA689AEE
+    * -783C-6FE7-6F9F-DFEE9763F806}&v=1&fid=1068&tid=1526
+    */
    public static final Predicate<Volume> CLEAN_VOLUME = new Predicate<Volume>() {
       @Override
       public boolean apply(Volume input) {
-         if (new Long(0).equals(input.getInstanceId()))
+         if ("0".equals(input.getInstanceId()))
             input.setInstanceId(null);
          if (emptyString.equals(input.getProductCodes()))
             input.getProductCodes().clear();
@@ -95,6 +102,8 @@ public class ParseUtils {
       public boolean apply(Instance input) {
          if (emptyString.equals(input.getProductCodes()))
             input.getProductCodes().clear();
+         if ("".equals(input.getIp()))
+            input.setIp(null);
          return true;
       }
    };

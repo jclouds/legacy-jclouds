@@ -74,12 +74,14 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    public NodeMetadata apply(Instance from) {
       Matcher matcher = ALL_BEFORE_HYPHEN_HEX.matcher(from.getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
-      Set<String> ipSet = ImmutableSet.of(from.getIp());
+      Set<String> ipSet = from.getIp() != null ? ImmutableSet.of(from.getIp()) : ImmutableSet
+               .<String> of();
       NodeState state = instanceStateToNodeState.get(from.getStatus());
       Image image = images.get(from.getImageId());
+      String key = tag != null ? credentialsMap.get(tag) : null;
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations
                .get(image.getLocation()), null, ImmutableMap.<String, String> of(), tag, image,
                state, ipSet, ImmutableList.<String> of(), ImmutableMap.<String, String> of(),
-               new Credentials(image.getDefaultCredentials().account, credentialsMap.get(tag)));
+               new Credentials(image.getDefaultCredentials().account, key));
    }
 }

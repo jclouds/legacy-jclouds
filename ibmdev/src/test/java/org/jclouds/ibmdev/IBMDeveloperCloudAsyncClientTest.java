@@ -34,6 +34,7 @@ import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudRestClientModule;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.functions.GetFirstInstanceInList;
 import org.jclouds.ibmdev.functions.ParseAddressFromJson;
 import org.jclouds.ibmdev.functions.ParseAddressesFromJson;
 import org.jclouds.ibmdev.functions.ParseExpirationTimeFromJson;
@@ -514,7 +515,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       assertHeadersEqual(httpRequest,
                "Accept: application/json\nContent-Length: 57\nContent-Type: application/x-www-form-urlencoded\n");
       assertPayloadEquals(httpRequest, "location=1&imageID=22&name=name&instanceType=instanceType");
-      assertResponseParserClassEquals(method, httpRequest, ParseInstanceFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, GetFirstInstanceInList.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -540,9 +541,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
                "Accept: application/json\nContent-Length: 221\nContent-Type: application/x-www-form-urlencoded\n");
       assertPayloadEquals(
                httpRequest,
-               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.2.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3");
+               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.0.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3");
 
-      assertResponseParserClassEquals(method, httpRequest, ParseInstanceFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, GetFirstInstanceInList.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

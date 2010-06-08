@@ -108,10 +108,10 @@ public abstract class BaseJettyTest {
       @SuppressWarnings( { "unchecked" })
       @Provides
       @Singleton
-      RestContext<IntegrationTestAsyncClient, IntegrationTestClient> provideContext(Closer closer,
-               IntegrationTestAsyncClient aclient, IntegrationTestClient client,
+      RestContext<IntegrationTestClient, IntegrationTestAsyncClient> provideContext(Closer closer,
+               IntegrationTestClient aclient, IntegrationTestAsyncClient client,
                @Localhost URI endPoint) {
-         return new RestContextImpl(closer, aclient, client, endPoint, System
+         return new RestContextImpl(closer, client, aclient, endPoint, System
                   .getProperty("user.name"));
       }
    }

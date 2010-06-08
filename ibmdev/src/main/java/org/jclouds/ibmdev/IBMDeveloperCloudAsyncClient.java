@@ -43,6 +43,7 @@ import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.domain.Key;
 import org.jclouds.ibmdev.domain.Location;
 import org.jclouds.ibmdev.domain.Volume;
+import org.jclouds.ibmdev.functions.GetFirstInstanceInList;
 import org.jclouds.ibmdev.functions.ParseAddressFromJson;
 import org.jclouds.ibmdev.functions.ParseAddressesFromJson;
 import org.jclouds.ibmdev.functions.ParseExpirationTimeFromJson;
@@ -181,10 +182,11 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @POST
    @Path("/instances")
-   @ResponseParser(ParseInstanceFromJson.class)
-   ListenableFuture<Instance> createInstanceInLocation(@FormParam("location") String location,
-            @FormParam("name") String name, @FormParam("imageID") String imageID,
-            @FormParam("instanceType") String instanceType, CreateInstanceOptions... options);
+   @ResponseParser(GetFirstInstanceInList.class)
+   ListenableFuture<Instance> createInstanceInLocation(
+            @FormParam("location") String location, @FormParam("name") String name,
+            @FormParam("imageID") String imageID, @FormParam("instanceType") String instanceType,
+            CreateInstanceOptions... options);
 
    /**
     * @see IBMDeveloperCloudClient#deleteInstance

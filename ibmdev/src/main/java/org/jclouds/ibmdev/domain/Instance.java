@@ -69,7 +69,7 @@ public class Instance {
       private String type;
       private String name;
 
-      public Software(String version, String type, String name) {
+      public Software(String name, String type, String version) {
          this.version = version;
          this.type = type;
          this.name = name;
