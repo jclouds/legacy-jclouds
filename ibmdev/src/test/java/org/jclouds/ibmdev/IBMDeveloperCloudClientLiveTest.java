@@ -26,11 +26,16 @@ package org.jclouds.ibmdev;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.util.Set;
 
+import org.jclouds.ibmdev.domain.Address;
 import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.domain.Instance;
+import org.jclouds.ibmdev.domain.Key;
+import org.jclouds.ibmdev.domain.Location;
+import org.jclouds.ibmdev.domain.Volume;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -79,6 +84,12 @@ public class IBMDeveloperCloudClientLiveTest {
    }
 
    @Test
+   public void testListInstancesFromRequestReturnsNull() throws Exception {
+      Set<? extends Instance> response = connection.listInstancesFromRequest(Long.MAX_VALUE);
+      assertNull(response);
+   }
+
+   @Test
    public void testGetInstance() throws Exception {
       Set<? extends Instance> response = connection.listInstances();
       assertNotNull(response);
@@ -87,4 +98,59 @@ public class IBMDeveloperCloudClientLiveTest {
          assertEquals(connection.getInstance(instance.getId()).getId(), instance.getId());
       }
    }
+
+   @Test
+   public void testListKeys() throws Exception {
+      Set<? extends Key> response = connection.listKeys();
+      assertNotNull(response);
+   }
+
+   @Test
+   public void testGetKey() throws Exception {
+      Set<? extends Key> response = connection.listKeys();
+      assertNotNull(response);
+      if (response.size() > 0) {
+         Key key = Iterables.get(response, 0);
+         assertEquals(connection.getKey(key.getName()).getName(), key.getName());
+      }
+   }
+
+   @Test
+   public void testListVolumes() throws Exception {
+      Set<? extends Volume> response = connection.listVolumes();
+      assertNotNull(response);
+   }
+
+   @Test
+   public void testGetVolume() throws Exception {
+      Set<? extends Volume> response = connection.listVolumes();
+      assertNotNull(response);
+      if (response.size() > 0) {
+         Volume image = Iterables.get(response, 0);
+         assertEquals(connection.getVolume(image.getId()).getId(), image.getId());
+      }
+   }
+
+   @Test
+   public void testListLocations() throws Exception {
+      Set<? extends Location> response = connection.listLocations();
+      assertNotNull(response);
+   }
+
+   @Test
+   public void testGetLocation() throws Exception {
+      Set<? extends Location> response = connection.listLocations();
+      assertNotNull(response);
+      if (response.size() > 0) {
+         Location image = Iterables.get(response, 0);
+         assertEquals(connection.getLocation(image.getId()).getId(), image.getId());
+      }
+   }
+
+   @Test
+   public void testListAddresss() throws Exception {
+      Set<? extends Address> response = connection.listAddresses();
+      assertNotNull(response);
+   }
+
 }

@@ -39,19 +39,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.ibmdev.reference;
+package org.jclouds.ibmdev.functions;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.ibmdev.domain.Key;
+
+import com.google.gson.Gson;
 
 /**
- * Configuration properties and constants used in IBMDeveloperCloud connections.
- * 
  * @author Adrian Cole
  */
-public interface IBMDeveloperCloudConstants {
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT = "jclouds.ibmdevelopercloud.endpoint";
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_USER = "jclouds.ibmdevelopercloud.user";
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_PASSWORD = "jclouds.ibmdevelopercloud.password";
-   public static final String CAPABILITY_CAPACITY = "oss.storage.capacity";
-   public static final String CAPABILITY_FORMAT = "oss.storage.format";
-   public static final String CAPABILITY_I386 = "oss.instance.spec.i386";
-   public static final String CAPABILITY_x86_64 = "oss.instance.spec.x86_64";
+@Singleton
+public class ParseKeyFromJson extends ParseJson<Key> {
+   @Inject
+   public ParseKeyFromJson(Gson gson) {
+      super(gson);
+   }
+
+   @Override
+   protected Key apply(InputStream stream) {
+      try {
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), Key.class);
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+   }
 }
