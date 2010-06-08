@@ -55,7 +55,7 @@ public class LocationsHandlerTest extends BaseHandlerTest {
                         .<String, String> of(
 
                         ));
-      Location location1 = new Location(1, "US North East: Poughkeepsie, NY", null, "POK",
+      Location location1 = new Location("1", "US North East: Poughkeepsie, NY", null, "POK",
                capabilites);
 
       assertEquals(result, ImmutableSet.of(location1));
@@ -79,7 +79,7 @@ public class LocationsHandlerTest extends BaseHandlerTest {
                         .<String, String> of(
 
                         ));
-      Location location1 = new Location(1, "US North East: Poughkeepsie, NY", null, "POK",
+      Location location1 = new Location("1", "US North East: Poughkeepsie, NY", null, "POK",
                capabilites);
 
       capabilites = ImmutableMap.<String, Map<String, String>> of(
@@ -92,7 +92,7 @@ public class LocationsHandlerTest extends BaseHandlerTest {
                         .<String, String> of(
 
                         ));
-      Location location2 = new Location(1, "US North East: Poughkeepsie, NY", null, "POK",
+      Location location2 = new Location("1", "US North East: Poughkeepsie, NY", null, "POK",
                capabilites);
 
       assertEquals(result, ImmutableSet.of(location1, location2));

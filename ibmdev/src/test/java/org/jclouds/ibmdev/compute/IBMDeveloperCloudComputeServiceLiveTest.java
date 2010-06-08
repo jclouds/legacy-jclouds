@@ -32,37 +32,36 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-
 /**
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "ibmdevelopercloud.IBMDeveloperCloudComputeServiceLiveTest")
 public class IBMDeveloperCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
-       @BeforeClass
-       @Override
-       public void setServiceDefaults() {
-          service = "ibmdevelopercloud";
-       }
+   @BeforeClass
+   @Override
+   public void setServiceDefaults() {
+      service = "ibmdev";
+   }
 
-       @Test
-       public void testTemplateBuilder() {
-          Template defaultTemplate = client.templateBuilder().build();
-          assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
-          assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
-          assertEquals(defaultTemplate.getLocation().getId(), "DFW1");
-          assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
-       }
+   @Test
+   public void testTemplateBuilder() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.RHEL);
+      assertEquals(defaultTemplate.getLocation().getId(), "1");
+      assertEquals(defaultTemplate.getSize().getCores(), 2.0d);
+   }
 
-       @Override
-       protected JschSshClientModule getSshModule() {
-          return new JschSshClientModule();
-       }
+   @Override
+   protected JschSshClientModule getSshModule() {
+      return new JschSshClientModule();
+   }
 
-       public void testAssignability() throws Exception {
-          @SuppressWarnings("unused")
-          RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-                   .createContext(service, user, password).getProviderSpecificContext();
-       }
+   public void testAssignability() throws Exception {
+      @SuppressWarnings("unused")
+      RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
+               .createContext(service, user, password).getProviderSpecificContext();
+   }
 
-    }
+}

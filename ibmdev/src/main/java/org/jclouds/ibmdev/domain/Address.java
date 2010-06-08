@@ -27,14 +27,39 @@ import javax.annotation.Nullable;
  * @author Adrian Cole
  */
 public class Address {
-   private int state;
-   private int location;
-   private String ip;
-   private long id;
-   @Nullable
-   private Long instanceId;
 
-   public Address(int state, int location, String ip, long id, Long instanceId) {
+   public static enum State {
+      NEW, ALLOCATING, FREE, ATTACHED, RELEASING, RELEASED, FAILED;
+      public static State fromValue(int v) {
+         switch (v) {
+            case 0:
+               return NEW;
+            case 1:
+               return ALLOCATING;
+            case 2:
+               return FREE;
+            case 3:
+               return ATTACHED;
+            case 4:
+               return RELEASING;
+            case 5:
+               return RELEASED;
+            case 6:
+               return FAILED;
+            default:
+               throw new IllegalArgumentException("invalid state:" + v);
+         }
+      }
+   }
+
+   private int state;
+   private String location;
+   private String ip;
+   private String id;
+   @Nullable
+   private String instanceId;
+
+   public Address(int state, String location, String ip, String id, String instanceId) {
       this.state = state;
       this.location = location;
       this.ip = ip;
@@ -46,19 +71,19 @@ public class Address {
 
    }
 
-   public int getState() {
-      return state;
+   public State getState() {
+      return State.fromValue(state);
    }
 
    public void setState(int state) {
       this.state = state;
    }
 
-   public int getLocation() {
+   public String getLocation() {
       return location;
    }
 
-   public void setLocation(int location) {
+   public void setLocation(String location) {
       this.location = location;
    }
 
@@ -70,19 +95,19 @@ public class Address {
       this.ip = ip;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
-   public void setId(long id) {
+   public void setId(String id) {
       this.id = id;
    }
 
-   public Long getInstanceId() {
+   public String getInstanceId() {
       return instanceId;
    }
 
-   public void setInstanceId(Long instanceId) {
+   public void setInstanceId(String instanceId) {
       this.instanceId = instanceId;
    }
 
@@ -90,11 +115,10 @@ public class Address {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((ip == null) ? 0 : ip.hashCode());
-      result = prime * result + location;
-      result = prime * result + state;
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
       return result;
    }
 
@@ -107,7 +131,10 @@ public class Address {
       if (getClass() != obj.getClass())
          return false;
       Address other = (Address) obj;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (instanceId == null) {
          if (other.instanceId != null)
@@ -119,16 +146,17 @@ public class Address {
             return false;
       } else if (!ip.equals(other.ip))
          return false;
-      if (location != other.location)
-         return false;
-      if (state != other.state)
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", ip=" + ip + ", location=" + location + ", state=" + state
+      return "[id=" + id + ", ip=" + ip + ", location=" + location + ", state=" + getState()
                + ", instanceId=" + instanceId + "]";
    }
 

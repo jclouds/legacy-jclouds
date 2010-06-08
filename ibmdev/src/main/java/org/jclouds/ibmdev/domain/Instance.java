@@ -30,6 +30,40 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class Instance {
+   public static enum Status {
+      NEW, PROVISIONING, FAILED, REMOVED, REJECTED, ACTIVE, UNKNOWN, DEPROVISIONING, RESTARTING, STARTING, STOPPING, STOPPED;
+      public static Status fromValue(int v) {
+         switch (v) {
+            case 0:
+               return NEW;
+            case 1:
+               return PROVISIONING;
+            case 2:
+               return FAILED;
+            case 3:
+               return REMOVED;
+            case 4:
+               return REJECTED;
+            case 5:
+               return ACTIVE;
+            case 6:
+               return UNKNOWN;
+            case 7:
+               return DEPROVISIONING;
+            case 8:
+               return RESTARTING;
+            case 9:
+               return STARTING;
+            case 10:
+               return STOPPING;
+            case 11:
+               return STOPPED;
+            default:
+               throw new IllegalArgumentException("invalid state:" + v);
+         }
+      }
+   }
+
    public static class Software {
       private String version;
       private String type;
@@ -115,24 +149,24 @@ public class Instance {
    private Date launchTime;
    private Set<Software> software = Sets.newLinkedHashSet();
    private String ip;
-   private long requestId;
+   private String requestId;
    private String keyName;
    private String name;
    private String instanceType;
    private int status;
    private String owner;
    private String hostname;
-   private int location;
-   private long imageId;
+   private String location;
+   private String imageId;
    private Set<String> productCodes;
    private String requestName;
-   private long id;
+   private String id;
    private Date expirationTime;
 
-   public Instance(Date launchTime, Set<Software> software, String ip, long requestId,
+   public Instance(Date launchTime, Set<Software> software, String ip, String requestId,
             String keyName, String name, String instanceType, int status, String owner,
-            String hostname, int location, long imageId, Set<String> productCodes,
-            String requestName, long id, Date expirationTime) {
+            String hostname, String location, String imageId, Set<String> productCodes,
+            String requestName, String id, Date expirationTime) {
       this.launchTime = launchTime;
       this.software = software;
       this.ip = ip;
@@ -178,11 +212,11 @@ public class Instance {
       this.ip = ip;
    }
 
-   public long getRequestId() {
+   public String getRequestId() {
       return requestId;
    }
 
-   public void setRequestId(long requestId) {
+   public void setRequestId(String requestId) {
       this.requestId = requestId;
    }
 
@@ -210,8 +244,8 @@ public class Instance {
       this.instanceType = instanceType;
    }
 
-   public int getStatus() {
-      return status;
+   public Status getStatus() {
+      return Status.fromValue(status);
    }
 
    public void setStatus(int status) {
@@ -234,19 +268,19 @@ public class Instance {
       this.hostname = hostname;
    }
 
-   public int getLocation() {
+   public String getLocation() {
       return location;
    }
 
-   public void setLocation(int location) {
+   public void setLocation(String location) {
       this.location = location;
    }
 
-   public long getImageId() {
+   public String getImageId() {
       return imageId;
    }
 
-   public void setImageId(long imageId) {
+   public void setImageId(String imageId) {
       this.imageId = imageId;
    }
 
@@ -266,11 +300,11 @@ public class Instance {
       this.requestName = requestName;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
-   public void setId(long id) {
+   public void setId(String id) {
       this.id = id;
    }
 
@@ -286,22 +320,20 @@ public class Instance {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((expirationTime == null) ? 0 : expirationTime.hashCode());
       result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (int) imageId;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
       result = prime * result + ((ip == null) ? 0 : ip.hashCode());
       result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
       result = prime * result + ((launchTime == null) ? 0 : launchTime.hashCode());
-      result = prime * result + location;
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
-      result = prime * result + (int) (requestId ^ (requestId >>> 32));
+      result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
       result = prime * result + ((requestName == null) ? 0 : requestName.hashCode());
       result = prime * result + ((software == null) ? 0 : software.hashCode());
-      result = prime * result + status;
       return result;
    }
 
@@ -314,19 +346,20 @@ public class Instance {
       if (getClass() != obj.getClass())
          return false;
       Instance other = (Instance) obj;
-      if (expirationTime == null) {
-         if (other.expirationTime != null)
-            return false;
-      } else if (!expirationTime.equals(other.expirationTime))
-         return false;
       if (hostname == null) {
          if (other.hostname != null)
             return false;
       } else if (!hostname.equals(other.hostname))
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
-      if (imageId != other.imageId)
+      if (imageId == null) {
+         if (other.imageId != null)
+            return false;
+      } else if (!imageId.equals(other.imageId))
          return false;
       if (instanceType == null) {
          if (other.instanceType != null)
@@ -348,7 +381,10 @@ public class Instance {
             return false;
       } else if (!launchTime.equals(other.launchTime))
          return false;
-      if (location != other.location)
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -365,7 +401,10 @@ public class Instance {
             return false;
       } else if (!productCodes.equals(other.productCodes))
          return false;
-      if (requestId != other.requestId)
+      if (requestId == null) {
+         if (other.requestId != null)
+            return false;
+      } else if (!requestId.equals(other.requestId))
          return false;
       if (requestName == null) {
          if (other.requestName != null)
@@ -377,18 +416,16 @@ public class Instance {
             return false;
       } else if (!software.equals(other.software))
          return false;
-      if (status != other.status)
-         return false;
       return true;
    }
 
    @Override
    public String toString() {
       return "Instance [id=" + id + ", name=" + name + ", ip=" + ip + ", hostname=" + hostname
-               + ", status=" + status + ", instanceType=" + instanceType + ", location=" + location
-               + ", imageId=" + imageId + ", software=" + software + ", keyName=" + keyName
-               + ", launchTime=" + launchTime + ", expirationTime=" + expirationTime + ", owner="
-               + owner + ", productCodes=" + productCodes + ", requestId=" + requestId
+               + ", status=" + getStatus() + ", instanceType=" + instanceType + ", location="
+               + location + ", imageId=" + imageId + ", software=" + software + ", keyName="
+               + keyName + ", launchTime=" + launchTime + ", expirationTime=" + expirationTime
+               + ", owner=" + owner + ", productCodes=" + productCodes + ", requestId=" + requestId
                + ", requestName=" + requestName + "]";
    }
 

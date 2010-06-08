@@ -32,19 +32,43 @@ import com.google.common.collect.Sets;
  */
 public class Volume {
 
-   private Long instanceId;
+   public static enum State {
+      NEW, CREATING, DELETING, DELETED, UNMOUNTED, MOUNTED, FAILED;
+      public static State fromValue(int v) {
+         switch (v) {
+            case 0:
+               return NEW;
+            case 1:
+               return CREATING;
+            case 2:
+               return DELETING;
+            case 3:
+               return DELETED;
+            case 4:
+               return UNMOUNTED;
+            case 5:
+               return MOUNTED;
+            case 6:
+               return FAILED;
+            default:
+               throw new IllegalArgumentException("invalid state:" + v);
+         }
+      }
+   }
+
+   private String instanceId;
    private int state;
    private int size;
    private String owner;
    private Date createdTime;
-   private int location;
+   private String location;
    private Set<String> productCodes = Sets.newLinkedHashSet();
    private String format;
    private String name;
-   private long id;
+   private String id;
 
-   public Volume(Long instanceId, int state, int size, String owner, Date createdTime,
-            int location, Iterable<String> productCodes, String format, String name, long id) {
+   public Volume(String instanceId, int state, int size, String owner, Date createdTime,
+            String location, Iterable<String> productCodes, String format, String name, String id) {
       this.instanceId = instanceId;
       this.state = state;
       this.size = size;
@@ -61,16 +85,16 @@ public class Volume {
 
    }
 
-   public Long getInstanceId() {
+   public String getInstanceId() {
       return instanceId;
    }
 
-   public void setInstanceId(Long instanceId) {
+   public void setInstanceId(String instanceId) {
       this.instanceId = instanceId;
    }
 
-   public int getState() {
-      return state;
+   public State getState() {
+      return State.fromValue(state);
    }
 
    public void setState(int state) {
@@ -101,11 +125,11 @@ public class Volume {
       this.createdTime = createdTime;
    }
 
-   public int getLocation() {
+   public String getLocation() {
       return location;
    }
 
-   public void setLocation(int location) {
+   public void setLocation(String location) {
       this.location = location;
    }
 
@@ -133,11 +157,11 @@ public class Volume {
       this.name = name;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
-   public void setId(long id) {
+   public void setId(String id) {
       this.id = id;
    }
 
@@ -147,14 +171,13 @@ public class Volume {
       int result = 1;
       result = prime * result + ((createdTime == null) ? 0 : createdTime.hashCode());
       result = prime * result + ((format == null) ? 0 : format.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
-      result = prime * result + location;
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
       result = prime * result + size;
-      result = prime * result + state;
       return result;
    }
 
@@ -177,14 +200,20 @@ public class Volume {
             return false;
       } else if (!format.equals(other.format))
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (instanceId == null) {
          if (other.instanceId != null)
             return false;
       } else if (!instanceId.equals(other.instanceId))
          return false;
-      if (location != other.location)
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -203,14 +232,12 @@ public class Volume {
          return false;
       if (size != other.size)
          return false;
-      if (state != other.state)
-         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", size=" + size + ", state=" + state
+      return "[id=" + id + ", name=" + name + ", size=" + size + ", state=" + getState()
                + ", instanceId=" + instanceId + ", location=" + location + ", format=" + format
                + ", owner=" + owner + ", createdTime=" + createdTime + ", productCodes="
                + productCodes + "]";

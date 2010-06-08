@@ -65,7 +65,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  * @see <a href="http://www-180.ibm.com/cloud/enterprise/beta/support" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface IBMDeveloperCloudClient {
    /**
     * 
@@ -80,7 +80,7 @@ public interface IBMDeveloperCloudClient {
     * @throws AuthorizationException
     *            code 401 if the user is not authorized to view this image to section
     */
-   Image getImage(long id);
+   Image getImage(String id);
 
    /**
     * Deletes Image identified by the supplied Image ID.
@@ -90,7 +90,7 @@ public interface IBMDeveloperCloudClient {
     * @throws IllegalStateException
     *            code 412 if the image is in an invalid state to perform this operation
     */
-   void deleteImage(long id);
+   void deleteImage(String id);
 
    /**
     * If set to {@code Image.Visibility#PUBLIC}, makes the Image identified by the supplied Image ID
@@ -103,7 +103,7 @@ public interface IBMDeveloperCloudClient {
     * @throws IllegalStateException
     *            code 412 if the image is in an invalid state to perform this operation
     */
-   Image setImageVisibility(long id, Image.Visibility visibility);
+   Image setImageVisibility(String id, Image.Visibility visibility);
 
    /**
     * 
@@ -121,7 +121,7 @@ public interface IBMDeveloperCloudClient {
     * @throws AuthorizationException
     *            code 401 if the currently authenticated user is not authorized to view this request
     */
-   Set<? extends Instance> listInstancesFromRequest(long requestId);
+   Set<? extends Instance> listInstancesFromRequest(String requestId);
 
    /**
     * Returns the Instance that the authenticated user manages with the specified {@code id}
@@ -131,7 +131,7 @@ public interface IBMDeveloperCloudClient {
     *            code 401 if the currently authenticated user is not authorized to view this
     *            instance
     */
-   Instance getInstance(long id);
+   Instance getInstance(String id);
 
    /**
     * Requests a new Instance to be created.
@@ -175,7 +175,7 @@ public interface IBMDeveloperCloudClient {
     *            <p/>
     *            code 412 The instance is in an invalid state to perform this operation
     */
-   Date extendReservationForInstance(long id, Date expirationTime);
+   Date extendReservationForInstance(String id, Date expirationTime);
 
    /**
     * Restart the instance
@@ -198,7 +198,7 @@ public interface IBMDeveloperCloudClient {
     *            <p/>
     *            code 412 The instance is in an invalid state to perform this operation
     */
-   void restartInstance(long id, RestartInstanceOptions... options);
+   void restartInstance(String id, RestartInstanceOptions... options);
 
    /**
     * Saves an instance to a private image
@@ -224,7 +224,7 @@ public interface IBMDeveloperCloudClient {
     *            <p/>
     *            code 412 The instance is in an invalid state to perform this operation
     */
-   Image saveInstanceToImage(long id, String toImageName, String toImageDescription);
+   Image saveInstanceToImage(String id, String toImageName, String toImageDescription);
 
    /**
     * Deletes the Instance that the authenticated user manages with the specified {@code id}
@@ -234,7 +234,7 @@ public interface IBMDeveloperCloudClient {
     * @throws IllegalStateException
     *            code 412 if the instance is in an invalid state to perform this operation
     */
-   void deleteInstance(long id);
+   void deleteInstance(String id);
 
    /**
     * 
@@ -354,7 +354,7 @@ public interface IBMDeveloperCloudClient {
     *            code 401 if the currently authenticated user is not authorized to view this storage
     *            volume
     */
-   Volume getVolume(long id);
+   Volume getVolume(String id);
 
    /**
     * Remove the specified storage volume for the authenticated user.
@@ -365,7 +365,7 @@ public interface IBMDeveloperCloudClient {
     * @throws IllegalStateException
     *            code 412 if the storage volume is not in the correct state to be deleted
     */
-   void deleteVolume(long id);
+   void deleteVolume(String id);
 
    /**
     * 
@@ -382,7 +382,7 @@ public interface IBMDeveloperCloudClient {
     * @throws AuthorizationException
     *            code 401 if the user is not authorized
     */
-   Location getLocation(long id);
+   Location getLocation(String id);
 
    /**
     * 
@@ -394,6 +394,7 @@ public interface IBMDeveloperCloudClient {
    Set<? extends Address> listAddresses();
 
    /**
+    * 
     * Allocates a new static IP addresses for the authenticated user.
     * 
     * @param locationId
@@ -406,7 +407,7 @@ public interface IBMDeveloperCloudClient {
     * @throws IllegalStateException
     *            code 409 ifhere are not enough resources in the cloud to fulfill this request
     */
-   Address allocateAddressInLocation(long locationId);
+   Address allocateAddressInLocation(String locationId);
 
    /**
     * Used to release the specified static IP addresses for the authenticated user.
@@ -416,5 +417,5 @@ public interface IBMDeveloperCloudClient {
     * @throws IllegalStateException
     *            code 412 address is in an invalid state to perform this operation
     */
-   void releaseAddress(long id);
+   void releaseAddress(String id);
 }

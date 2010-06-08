@@ -44,7 +44,6 @@ package org.jclouds.ibmdev.functions;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -52,7 +51,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Instance;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 
 /**
@@ -65,14 +63,11 @@ public class ParseInstanceFromJson extends ParseJson<Instance> {
       super(gson);
    }
 
-   private static final Set<String> emptyString = ImmutableSet.of("");
-
    @Override
    protected Instance apply(InputStream stream) {
       try {
          Instance returnVal = gson.fromJson(new InputStreamReader(stream, "UTF-8"), Instance.class);
-         if (emptyString.equals(returnVal.getProductCodes()))
-            returnVal.getProductCodes().clear();
+         ParseUtils.CLEAN_INSTANCE.apply(returnVal);
          return returnVal;
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

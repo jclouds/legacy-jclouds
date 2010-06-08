@@ -58,8 +58,8 @@ public class ParseVolumeFromJsonTest {
 
    public void test() {
 
-      Volume volume = new Volume(2l, 5, 50, "aadelucc@us.ibm.com", new Date(1260469075119l), 1,
-               ImmutableSet.<String> of(), "ext3", "New Storage", 67l);
+      Volume volume = new Volume("2", 5, 50, "aadelucc@us.ibm.com", new Date(1260469075119l), "1",
+               ImmutableSet.<String> of(), "ext3", "New Storage", "67");
 
       Volume compare = handler.apply(new HttpResponse(ParseVolumeFromJsonTest.class
                .getResourceAsStream("/volume.json")));

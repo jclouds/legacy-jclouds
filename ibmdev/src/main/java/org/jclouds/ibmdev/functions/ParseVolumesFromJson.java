@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Volume;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 
@@ -47,17 +46,11 @@ public class ParseVolumesFromJson extends ParseJson<Set<? extends Volume>> {
       Set<Volume> volumes = Sets.newLinkedHashSet();
    }
 
-   private static final Set<String> emptyString = ImmutableSet.of("");
-
    @Override
    protected Set<? extends Volume> apply(InputStream stream) {
       try {
-         Set<Volume> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  VolumeListResponse.class).volumes;
-         for (Volume volume : list)
-            if (emptyString.equals(volume.getProductCodes()))
-               volume.getProductCodes().clear();
-         return list;
+         return ParseUtils.clean(gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+                  VolumeListResponse.class).volumes, ParseUtils.CLEAN_VOLUME);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

@@ -25,6 +25,7 @@ package org.jclouds.ibmdev;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT;
+import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_LOCATION;
 import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_PASSWORD;
 import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER;
 
@@ -42,7 +43,9 @@ public class IBMDeveloperCloudPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT, "https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403");
+      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT,
+               "https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403");
+      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_LOCATION, "1");
       return properties;
    }
 
@@ -62,8 +65,8 @@ public class IBMDeveloperCloudPropertiesBuilder extends PropertiesBuilder {
    }
 
    public IBMDeveloperCloudPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
+      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT,
+               checkNotNull(endpoint, "endpoint").toString());
       return this;
    }
 }

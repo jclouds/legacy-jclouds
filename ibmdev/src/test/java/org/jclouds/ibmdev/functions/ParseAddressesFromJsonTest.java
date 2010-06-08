@@ -54,8 +54,8 @@ public class ParseAddressesFromJsonTest {
    }
 
    public void test() {
-      Address address1 = new Address(2, 1, "129.33.196.243", 1217l, 1l);
-      Address address2 = new Address(3, 2, "129.33.196.244", 1218l, null);
+      Address address1 = new Address(2, "1", "129.33.196.243", "1217", "1");
+      Address address2 = new Address(3, "2", "129.33.196.244", "1218", null);
       Set<? extends Address> compare = handler.apply(new HttpResponse(
                ParseAddressesFromJsonTest.class.getResourceAsStream("/addresses.json")));
       assert (compare.contains(address1));

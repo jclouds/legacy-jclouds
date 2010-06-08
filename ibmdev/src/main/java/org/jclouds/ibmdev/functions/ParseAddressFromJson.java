@@ -66,7 +66,9 @@ public class ParseAddressFromJson extends ParseJson<Address> {
    @Override
    protected Address apply(InputStream stream) {
       try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), Address.class);
+         Address returnVal = gson.fromJson(new InputStreamReader(stream, "UTF-8"), Address.class);
+         ParseUtils.CLEAN_ADDRESS.apply(returnVal);
+         return returnVal;
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

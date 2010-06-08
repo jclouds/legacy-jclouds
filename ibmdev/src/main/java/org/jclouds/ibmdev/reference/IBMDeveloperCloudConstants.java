@@ -47,11 +47,13 @@ package org.jclouds.ibmdev.reference;
  * @author Adrian Cole
  */
 public interface IBMDeveloperCloudConstants {
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT = "jclouds.ibmdevelopercloud.endpoint";
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_USER = "jclouds.ibmdevelopercloud.user";
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_PASSWORD = "jclouds.ibmdevelopercloud.password";
+   public static final String PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT = "jclouds.ibmdev.endpoint";
+   public static final String PROPERTY_IBMDEVELOPERCLOUD_USER = "jclouds.ibmdev.user";
+   public static final String PROPERTY_IBMDEVELOPERCLOUD_PASSWORD = "jclouds.ibmdev.password";
    public static final String CAPABILITY_CAPACITY = "oss.storage.capacity";
    public static final String CAPABILITY_FORMAT = "oss.storage.format";
    public static final String CAPABILITY_I386 = "oss.instance.spec.i386";
    public static final String CAPABILITY_x86_64 = "oss.instance.spec.x86_64";
+   public static final String PROPERTY_IBMDEVELOPERCLOUD_LOCATION= "jclouds.ibmdev.location";
+
 }

@@ -36,7 +36,7 @@ import com.google.common.collect.Maps;
 public class LocationHandler extends ParseSax.HandlerWithResult<Location> {
    private StringBuilder currentText = new StringBuilder();
 
-   private int id;
+   private String id;
    private String name;
    private String description;
    private String location;
@@ -67,7 +67,7 @@ public class LocationHandler extends ParseSax.HandlerWithResult<Location> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equalsIgnoreCase("ID")) {
-         id = Integer.parseInt(currentText.toString().trim());
+         id = currentText.toString().trim();
       } else if (qName.equalsIgnoreCase("Name")) {
          name = currentText.toString().trim();
       } else if (qName.equalsIgnoreCase("Description")) {
@@ -79,7 +79,7 @@ public class LocationHandler extends ParseSax.HandlerWithResult<Location> {
       } else if (qName.equalsIgnoreCase("Location")) {
          if (currentText.toString().trim().equals("")) {
             this.loc = new Location(id, name, description, location, capabilities);
-            id = 0;
+            id = null;
             name = null;
             description = null;
             location = null;

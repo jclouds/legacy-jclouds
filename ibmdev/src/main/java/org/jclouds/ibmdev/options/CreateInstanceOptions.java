@@ -18,15 +18,9 @@
  */
 package org.jclouds.ibmdev.options;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.binders.BindToJsonPayload;
-
-import com.google.common.collect.Maps;
+import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
  * 
@@ -34,29 +28,11 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class CreateInstanceOptions extends BindToJsonPayload {
-   Long volumeID;
-   Long ip;
-   String publicKey = "DEFAULT";
-   Map<String, String> configurationData = Maps.newLinkedHashMap();
+public class CreateInstanceOptions extends BaseHttpRequestOptions {
 
-   @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
-      Map<String, Object> postData = Maps.newLinkedHashMap();
-      postData.putAll(postParams);
-      postData.put("publicKey", publicKey);
-      if (volumeID != null)
-         postData.put("volumeID", volumeID);
-      if (configurationData.size() > 0)
-         postData.put("configurationData", configurationData);
-      if (ip != null)
-         postData.put("ip", ip);
-      super.bindToRequest(request, postData);
-   }
-
-   @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
-      throw new IllegalStateException("CreateInstance is a POST operation");
+   public CreateInstanceOptions() {
+      super();
+      formParameters.put("publicKey", "DEFAULT");
    }
 
    /**
@@ -66,11 +42,15 @@ public class CreateInstanceOptions extends BindToJsonPayload {
     * @param mountPoint
     *           The mount point in which to mount the attached storage volume
     */
-   public CreateInstanceOptions mountVolume(long id, String mountPoint) {
-      checkArgument(id > 0, "volume id must be a positive number");
+   public CreateInstanceOptions mountVolume(String id, String mountPoint) {
+      checkNotNull(id, "volume id");
       checkNotNull(mountPoint, "mountPoint");
-      this.volumeID = id;
-      configurationData.put(String.format("oss.storage.id.%d.mnt", id), mountPoint);
+      formParameters.removeAll("volumeID");
+      formParameters.put("volumeID", id + "");
+
+      String mountParam = String.format("oss.storage.id.%s.mnt", id);
+      formParameters.removeAll(mountParam);
+      formParameters.put(mountParam, mountPoint);
       return this;
    }
 
@@ -81,7 +61,8 @@ public class CreateInstanceOptions extends BindToJsonPayload {
     */
    public CreateInstanceOptions authorizePublicKey(String publicKeyName) {
       checkNotNull(publicKeyName, "publicKeyName");
-      this.publicKey = publicKeyName;
+      formParameters.removeAll("publicKey");
+      formParameters.put("publicKey", publicKeyName);
       return this;
    }
 
@@ -90,26 +71,27 @@ public class CreateInstanceOptions extends BindToJsonPayload {
     * @param id
     *           The ID of a static IP address to associate with this instance
     */
-   public CreateInstanceOptions attachIp(long id) {
-      checkArgument(id > 0, "ip id must be a positive number");
-      this.ip = id;
+   public CreateInstanceOptions attachIp(String id) {
+      checkNotNull(id, "ip");
+      formParameters.removeAll("ip");
+      formParameters.put("ip", id + "");
       return this;
    }
 
    public static class Builder {
 
       /**
-       * @see CreateInstanceOptions#mountVolume(long, String  )
+       * @see CreateInstanceOptions#mountVolume(String, String )
        */
-      public static CreateInstanceOptions mountVolume(long id, String mountPoint) {
+      public static CreateInstanceOptions mountVolume(String id, String mountPoint) {
          CreateInstanceOptions options = new CreateInstanceOptions();
          return options.mountVolume(id, mountPoint);
       }
 
       /**
-       * @see CreateInstanceOptions#attachIp(long )
+       * @see CreateInstanceOptions#attachIp(String )
        */
-      public static CreateInstanceOptions attachIp(long id) {
+      public static CreateInstanceOptions attachIp(String id) {
          CreateInstanceOptions options = new CreateInstanceOptions();
          return options.attachIp(id);
       }

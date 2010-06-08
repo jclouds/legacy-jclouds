@@ -56,11 +56,11 @@ public class ParseVolumesFromJsonTest {
    }
 
    public void test() {
-      Volume volume1 = new Volume(2l, 5, 50, "aadelucc@us.ibm.com", new Date(1260469075119l), 1,
-               ImmutableSet.<String> of(), "ext3", "New Storage", 67l);
+      Volume volume1 = new Volume("2", 5, 50, "aadelucc@us.ibm.com", new Date(1260469075119l), "1",
+               ImmutableSet.<String> of(), "ext3", "New Storage", "67");
 
-      Volume volume2 = new Volume(null, 6, 51, "aadelucc@us.ibm.com", new Date(1260469075120l), 2,
-               ImmutableSet.<String> of("abrad"), "ext3", "New Storage1", 68l);
+      Volume volume2 = new Volume(null, 6, 51, "aadelucc@us.ibm.com", new Date(1260469075120l),
+               "2", ImmutableSet.<String> of("abrad"), "ext3", "New Storage1", "68");
 
       Set<? extends Volume> compare = handler.apply(new HttpResponse(ParseVolumesFromJsonTest.class
                .getResourceAsStream("/volumes.json")));

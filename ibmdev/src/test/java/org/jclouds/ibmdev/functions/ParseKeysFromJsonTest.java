@@ -56,9 +56,9 @@ public class ParseKeysFromJsonTest {
    }
 
    public void test() {
-      Key key1 = new Key(true, ImmutableSet.<Long> of(1l),
+      Key key1 = new Key(true, ImmutableSet.<String> of("1"),
                "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT", new Date(1260428507510l));
-      Key key2 = new Key(false, ImmutableSet.<Long> of(), "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+",
+      Key key2 = new Key(false, ImmutableSet.<String> of(), "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+",
                "BEAR", new Date(1260428507511l));
 
       Set<? extends Key> compare = handler.apply(new HttpResponse(ParseKeysFromJsonTest.class

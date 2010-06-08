@@ -34,13 +34,13 @@ import com.google.gson.annotations.SerializedName;
 public class Key {
    @SerializedName("default")
    private boolean isDefault;
-   private Set<Long> instanceIds = Sets.newLinkedHashSet();
+   private Set<String> instanceIds = Sets.newLinkedHashSet();
    private String keyMaterial;
    @SerializedName("keyName")
    private String name;
    private Date lastModifiedTime;
 
-   public Key(boolean isDefault, Iterable<Long> instanceIds, String keyMaterial, String name,
+   public Key(boolean isDefault, Iterable<String> instanceIds, String keyMaterial, String name,
             Date lastModifiedTime) {
       this.isDefault = isDefault;
       Iterables.addAll(this.instanceIds, instanceIds);
@@ -137,11 +137,11 @@ public class Key {
                + ", keyMaterial=" + keyMaterial + ", lastModifiedTime=" + lastModifiedTime + "]";
    }
 
-   public Set<Long> getInstanceIds() {
+   public Set<String> getInstanceIds() {
       return instanceIds;
    }
 
-   public void setInstanceIds(Set<Long> instanceIds) {
+   public void setInstanceIds(Set<String> instanceIds) {
       this.instanceIds = instanceIds;
    }
 

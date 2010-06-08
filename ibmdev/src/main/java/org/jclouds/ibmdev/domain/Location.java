@@ -30,13 +30,13 @@ import com.google.common.collect.Maps;
  */
 public class Location {
 
-   private final int id;
+   private final String id;
    private final String name;
    private final String description;
    private final String location;
    private final Map<String, Map<String, String>> capabilities = Maps.newLinkedHashMap();
 
-   public Location(int id, String name, String description, String location,
+   public Location(String id, String name, String description, String location,
             Map<String, Map<String, String>> capabilities) {
       this.id = id;
       this.name = name;
@@ -45,7 +45,7 @@ public class Location {
       this.capabilities.putAll(capabilities);
    }
 
-   public int getId() {
+   public String getId() {
       return id;
    }
 
@@ -71,7 +71,7 @@ public class Location {
       int result = 1;
       result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + id;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
@@ -96,7 +96,10 @@ public class Location {
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (location == null) {
          if (other.location != null)

@@ -53,7 +53,7 @@ public class LocationHandlerTest extends BaseHandlerTest {
                         .<String, String> of(
 
                         ));
-      Location expects = new Location(1, "US North East: Poughkeepsie, NY", null, "POK",
+      Location expects = new Location("1", "US North East: Poughkeepsie, NY", null, "POK",
                capabilites);
       assertEquals(result, expects);
    }

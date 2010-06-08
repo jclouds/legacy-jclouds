@@ -52,7 +52,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Instance;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 
@@ -70,17 +69,11 @@ public class ParseInstancesFromJson extends ParseJson<Set<? extends Instance>> {
       Set<Instance> instances = Sets.newLinkedHashSet();
    }
 
-   private static final Set<String> emptyString = ImmutableSet.of("");
-
    @Override
    protected Set<? extends Instance> apply(InputStream stream) {
       try {
-         Set<Instance> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  InstanceListResponse.class).instances;
-         for (Instance instance : list)
-            if (emptyString.equals(instance.getProductCodes()))
-               instance.getProductCodes().clear();
-         return list;
+         return ParseUtils.clean(gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+                  InstanceListResponse.class).instances, ParseUtils.CLEAN_INSTANCE);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

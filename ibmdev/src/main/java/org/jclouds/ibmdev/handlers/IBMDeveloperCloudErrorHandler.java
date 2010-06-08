@@ -56,6 +56,9 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
                   .getRequestLine(), response.getStatusLine());
          switch (response.getStatusCode()) {
             case 401:
+               exception = new AuthorizationException(command.getRequest(),
+                        message != null ? message : response.getStatusLine());
+               break;
             case 402:
             case 403:
                exception = new AuthorizationException(message, exception);

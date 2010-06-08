@@ -69,12 +69,12 @@ public class ParseImageFromJsonTest {
       image.setArchitecture("i386");
       image.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");
       image.setCreatedTime(new Date(1265647398000l));
-      image.setLocation(1);
+      image.setLocation("1");
       image.setSupportedInstanceTypes(ImmutableSet.of("LARGE", "MEDIUM"));
       // image.setProductCodes();
       image
                .setDocumentation("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/GettingStarted.html");
-      image.setId(10005598);
+      image.setId("10005598");
       image
                .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
 

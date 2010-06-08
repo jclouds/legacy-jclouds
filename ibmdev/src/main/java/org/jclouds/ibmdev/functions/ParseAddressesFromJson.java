@@ -72,7 +72,8 @@ public class ParseAddressesFromJson extends ParseJson<Set<? extends Address>> {
    @Override
    protected Set<? extends Address> apply(InputStream stream) {
       try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), AddressListResponse.class).addresses;
+         return ParseUtils.clean(gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+                  AddressListResponse.class).addresses, ParseUtils.CLEAN_ADDRESS);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

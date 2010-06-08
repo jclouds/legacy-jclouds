@@ -52,7 +52,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Image;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 
@@ -70,17 +69,11 @@ public class ParseImagesFromJson extends ParseJson<Set<? extends Image>> {
       Set<Image> images = Sets.newLinkedHashSet();
    }
 
-   private static final Set<String> emptyString = ImmutableSet.of("");
-
    @Override
    protected Set<? extends Image> apply(InputStream stream) {
       try {
-         Set<Image> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  ImageListResponse.class).images;
-         for (Image image : list)
-            if (emptyString.equals(image.getProductCodes()))
-               image.getProductCodes().clear();
-         return list;
+         return ParseUtils.clean(gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+                  ImageListResponse.class).images, ParseUtils.CLEAN_IMAGE);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

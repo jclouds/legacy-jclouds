@@ -21,7 +21,6 @@ package org.jclouds.ibmdev.functions;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,7 +28,6 @@ import javax.inject.Singleton;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Volume;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 
 /**
@@ -42,14 +40,11 @@ public class ParseVolumeFromJson extends ParseJson<Volume> {
       super(gson);
    }
 
-   private static final Set<String> emptyString = ImmutableSet.of("");
-
    @Override
    protected Volume apply(InputStream stream) {
       try {
          Volume returnVal = gson.fromJson(new InputStreamReader(stream, "UTF-8"), Volume.class);
-         if (emptyString.equals(returnVal.getProductCodes()))
-            returnVal.getProductCodes().clear();
+         ParseUtils.CLEAN_VOLUME.apply(returnVal);
          return returnVal;
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

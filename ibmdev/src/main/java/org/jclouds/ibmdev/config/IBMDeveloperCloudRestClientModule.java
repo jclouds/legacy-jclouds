@@ -20,6 +20,7 @@ package org.jclouds.ibmdev.config;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,11 +37,16 @@ import org.jclouds.http.functions.config.ParserModule.LongDateAdapter;
 import org.jclouds.ibmdev.IBMDeveloperCloud;
 import org.jclouds.ibmdev.IBMDeveloperCloudAsyncClient;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
+import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.handlers.IBMDeveloperCloudErrorHandler;
+import org.jclouds.ibmdev.predicates.InstanceActive;
+import org.jclouds.ibmdev.predicates.InstanceRemovedOrNotFound;
 import org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Predicate;
 import com.google.inject.Provides;
 
 /**
@@ -90,4 +96,17 @@ public class IBMDeveloperCloudRestClientModule extends
       super.configure();
    }
 
+   @Provides
+   @Singleton
+   @Named("ACTIVE")
+   protected Predicate<Instance> instanceActive(InstanceActive instanceActive) {
+      return new RetryablePredicate<Instance>(instanceActive, 600, 1, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("REMOVED")
+   Predicate<Instance> instanceRemoved(InstanceRemovedOrNotFound instanceRemoved) {
+      return new RetryablePredicate<Instance>(instanceRemoved, 5000, 500, TimeUnit.MILLISECONDS);
+   }
 }

@@ -30,7 +30,28 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class Image {
-   public enum Visibility {
+
+   public static enum State {
+      NEW, AVAILABLE, UNAVAILABLE, DELETED, CAPTURING;
+      public static State fromValue(int v) {
+         switch (v) {
+            case 0:
+               return NEW;
+            case 1:
+               return AVAILABLE;
+            case 2:
+               return UNAVAILABLE;
+            case 3:
+               return DELETED;
+            case 4:
+               return CAPTURING;
+            default:
+               throw new IllegalArgumentException("invalid state:" + v);
+         }
+      }
+   }
+
+   public static enum Visibility {
 
       PUBLIC,
 
@@ -50,14 +71,14 @@ public class Image {
    private String architecture;
    private String platform;
    private Date createdTime;
-   private long location;
+   private String location;
    private Set<String> supportedInstanceTypes = Sets.newLinkedHashSet();
    private Set<String> productCodes = Sets.newLinkedHashSet();
    /**
     * Note that this isn't a URI, as parsing fails due to IBM including '{' characters in the path.
     */
    private String documentation;
-   private long id;
+   private String id;
    private String description;
 
    public String getName() {
@@ -76,8 +97,8 @@ public class Image {
       this.manifest = manifest;
    }
 
-   public int getState() {
-      return state;
+   public State getState() {
+      return State.fromValue(state);
    }
 
    public void setState(int state) {
@@ -124,11 +145,11 @@ public class Image {
       this.createdTime = createdTime;
    }
 
-   public long getLocation() {
+   public String getLocation() {
       return location;
    }
 
-   public void setLocation(long location) {
+   public void setLocation(String location) {
       this.location = location;
    }
 
@@ -156,11 +177,11 @@ public class Image {
       this.documentation = documentation;
    }
 
-   public long getId() {
+   public String getId() {
       return id;
    }
 
-   public void setId(long id) {
+   public void setId(String id) {
       this.id = id;
    }
 
@@ -180,14 +201,13 @@ public class Image {
       result = prime * result + ((createdTime == null) ? 0 : createdTime.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((documentation == null) ? 0 : documentation.hashCode());
-      result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + (int) (location ^ (location >>> 32));
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((manifest == null) ? 0 : manifest.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       result = prime * result + ((platform == null) ? 0 : platform.hashCode());
       result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
-      result = prime * result + state;
       result = prime * result
                + ((supportedInstanceTypes == null) ? 0 : supportedInstanceTypes.hashCode());
       result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -223,9 +243,15 @@ public class Image {
             return false;
       } else if (!documentation.equals(other.documentation))
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
-      if (location != other.location)
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
          return false;
       if (manifest == null) {
          if (other.manifest != null)
@@ -252,8 +278,6 @@ public class Image {
             return false;
       } else if (!productCodes.equals(other.productCodes))
          return false;
-      if (state != other.state)
-         return false;
       if (supportedInstanceTypes == null) {
          if (other.supportedInstanceTypes != null)
             return false;
@@ -270,7 +294,7 @@ public class Image {
    @Override
    public String toString() {
       return "Image [id=" + id + ", name=" + name + ", location=" + location + ", manifest="
-               + manifest + ", platform=" + platform + ", state=" + state
+               + manifest + ", platform=" + platform + ", state=" + getState()
                + ", supportedInstanceTypes=" + supportedInstanceTypes + ", visibility="
                + visibility + "]";
    }

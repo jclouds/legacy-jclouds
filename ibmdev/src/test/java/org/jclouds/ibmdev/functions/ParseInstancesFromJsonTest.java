@@ -58,17 +58,17 @@ public class ParseInstancesFromJsonTest {
 
    public void test() {
       Instance instance1 = new Instance(new Date(1260472231726l), ImmutableSet.of(new Software(
-               "10 SP2", "OS", "SUSE Linux Enterprise")), "129.33.197.78", 7430l, "DEFAULT", "ABC",
-               "MEDIUM", 5, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", 1, 3l, ImmutableSet
-                        .<String> of(), "ABC", 7430l, new Date(1263064240837l));
-      
+               "10 SP2", "OS", "SUSE Linux Enterprise")), "129.33.197.78", "7430", "DEFAULT",
+               "ABC", "MEDIUM", 5, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", "1", "3",
+               ImmutableSet.<String> of(), "ABC", "7430", new Date(1263064240837l));
+
       Instance instance2 = new Instance(new Date(1260472231727l), ImmutableSet.of(new Software(
-               "10 SP3", "OS", "SUSE Linux Enterprise")), "129.33.197.79", 7431l, "DEFAULT", "ABC",
-               "MEDIUM", 6, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", 2, 4l, ImmutableSet
-                        .<String> of(), "ABC", 7431l, new Date(1263064240838l));
-      
-      Set<? extends Instance> compare = handler.apply(new HttpResponse(ParseInstancesFromJsonTest.class
-               .getResourceAsStream("/instances.json")));
+               "10 SP3", "OS", "SUSE Linux Enterprise")), "129.33.197.79", "7431", "DEFAULT",
+               "ABC", "MEDIUM", 6, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", "2", "4",
+               ImmutableSet.<String> of(), "ABC", "7431", new Date(1263064240838l));
+
+      Set<? extends Instance> compare = handler.apply(new HttpResponse(
+               ParseInstancesFromJsonTest.class.getResourceAsStream("/instances.json")));
       assert (compare.contains(instance1));
       assert (compare.contains(instance2));
    }

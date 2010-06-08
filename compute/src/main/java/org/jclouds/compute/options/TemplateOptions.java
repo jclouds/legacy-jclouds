@@ -206,6 +206,11 @@ public class TemplateOptions {
       return this;
    }
 
+   public TemplateOptions dontAuthorizePublicKey() {
+      this.publicKey = null;
+      return this;
+   }
+
    /**
     * authorized an rsa ssh key.
     */

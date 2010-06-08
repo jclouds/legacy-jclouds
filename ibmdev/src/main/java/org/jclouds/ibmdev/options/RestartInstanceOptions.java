@@ -20,12 +20,7 @@ package org.jclouds.ibmdev.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.binders.BindToJsonPayload;
-
-import com.google.common.collect.Maps;
+import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
  * 
@@ -33,23 +28,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class RestartInstanceOptions extends BindToJsonPayload {
-   String keyName;
-
-   @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
-      Map<String, Object> postData = Maps.newLinkedHashMap();
-      postData.putAll(postParams);
-      postData.put("state", "restart");
-      if (keyName != null)
-         postData.put("keyName", keyName);
-      super.bindToRequest(request, postData);
-   }
-
-   @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
-      throw new IllegalStateException("RestartInstance is a PUT operation");
-   }
+public class RestartInstanceOptions extends BaseHttpRequestOptions {
 
    /**
     * 
@@ -58,7 +37,8 @@ public class RestartInstanceOptions extends BindToJsonPayload {
     */
    public RestartInstanceOptions authorizePublicKey(String keyName) {
       checkNotNull(keyName, "keyName");
-      this.keyName = keyName;
+      formParameters.removeAll("keyName");
+      formParameters.put("keyName", keyName);
       return this;
    }
 

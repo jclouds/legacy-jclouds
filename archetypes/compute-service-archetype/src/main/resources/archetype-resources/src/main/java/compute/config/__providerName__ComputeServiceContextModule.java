@@ -112,7 +112,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    @Named("NAMING_CONVENTION")
    @Singleton
    String provideNamingConvention() {
-      return "%s-%d";
+      return "%s-%s";
    }
 
    @Singleton
