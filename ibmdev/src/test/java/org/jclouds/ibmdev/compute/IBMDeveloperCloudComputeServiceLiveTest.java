@@ -25,6 +25,8 @@ import org.jclouds.ibmdev.IBMDeveloperCloudClient;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.rest.RestContext;
@@ -51,6 +53,15 @@ public class IBMDeveloperCloudComputeServiceLiveTest extends BaseComputeServiceL
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.RHEL);
       assertEquals(defaultTemplate.getLocation().getId(), "1");
       assertEquals(defaultTemplate.getSize().getCores(), 2.0d);
+   }
+   
+   @Override
+   public void testListNodes() throws Exception {
+      for (ComputeMetadata node : client.listNodes()) {
+         assert node.getProviderId() != null;
+        // assert node.getLocation() != null;
+         assertEquals(node.getType(), ComputeType.NODE);
+      }
    }
 
    @Override

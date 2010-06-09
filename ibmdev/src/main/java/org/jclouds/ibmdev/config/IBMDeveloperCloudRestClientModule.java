@@ -100,7 +100,7 @@ public class IBMDeveloperCloudRestClientModule extends
    @Singleton
    @Named("ACTIVE")
    protected Predicate<Instance> instanceActive(InstanceActive instanceActive) {
-      return new RetryablePredicate<Instance>(instanceActive, 600, 1, TimeUnit.SECONDS);
+      return new RetryablePredicate<Instance>(instanceActive, 1200, 3, TimeUnit.SECONDS);
    }
 
    @Provides

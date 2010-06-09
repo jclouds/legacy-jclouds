@@ -265,7 +265,7 @@ public class GoGridLiveTest {
       assertNotNull(createdLoadBalancer.getVirtualIp());
       assertEquals(createdLoadBalancer.getVirtualIp().getIp().getIp(), vip.getIp());
 
-      LoadBalancer editedLoadBalancer = client.getLoadBalancerServices().editLoadBalancer(
+      LoadBalancer editedLoadBalancer = client.getLoadBalancerServices().editLoadBalancerNamed(
                nameOfLoadBalancer, Arrays.asList(new IpPortPair(realIp3, 8181)));
       assert loadBalancerLatestJobCompleted.apply(editedLoadBalancer);
       assertNotNull(editedLoadBalancer.getRealIpList());

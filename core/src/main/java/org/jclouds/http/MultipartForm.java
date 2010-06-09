@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import org.jclouds.util.InputStreamChain;
 import org.jclouds.util.Utils;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -42,6 +43,10 @@ public class MultipartForm {
    private long size;
 
    public MultipartForm(String boundary, Part... parts) {
+      this(boundary, Lists.newArrayList(parts));
+   }
+
+   public MultipartForm(String boundary, Iterable<? extends Part> parts) {
       String boundaryrn = boundary + rn;
       chain = new InputStreamChain();
       for (Part part : parts) {

@@ -446,8 +446,23 @@ public class IBMDeveloperCloudComputeServiceContextModule extends IBMDeveloperCl
                   (in.getPlatform().indexOf("Redhat") != -1) ? OsFamily.RHEL : OsFamily.SUSE, in
                            .getPlatform(),
                   (in.getPlatform().indexOf("32") != -1) ? Architecture.X86_32
-                           : Architecture.X86_64, new Credentials("root", null));
+                           : Architecture.X86_64, new Credentials("idcuser", null));
          this.rawImage = in;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         return rawImage.equals(obj);
+      }
+
+      @Override
+      public int hashCode() {
+         return rawImage.hashCode();
+      }
+
+      @Override
+      public String toString() {
+         return rawImage.toString();
       }
 
    }

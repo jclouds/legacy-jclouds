@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -60,6 +61,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.MultipartForm;
+import org.jclouds.http.MultipartForm.Part;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
@@ -86,6 +89,7 @@ import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.PartParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -98,6 +102,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
@@ -110,7 +116,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.Nullable;
 
 /**
  * Creates http methods based on annotations on a class or interface.
@@ -142,6 +147,7 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapPayloadParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
    private final Map<MethodKey, Method> delegationMap = Maps.newHashMap();
 
@@ -184,6 +190,16 @@ public class RestAnnotationProcessor<T> {
 
    private static final Class<? extends HttpRequestOptions[]> optionsVarArgsClass = new HttpRequestOptions[] {}
             .getClass();
+
+   private static final Function<? super Entry<String, String>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, String>, Part>() {
+
+      @Override
+      public Part apply(Entry<String, String> from) {
+         return new Part(ImmutableMultimap.of("Content-Disposition", String.format(
+                  "form-data; name=\"%s\"", from.getKey())), from.getValue());
+      }
+
+   };
 
    private final Map<Method, Set<Integer>> methodToIndexesOfOptions = new MapMaker()
             .makeComputingMap(new Function<Method, Set<Integer>>() {
@@ -270,6 +286,7 @@ public class RestAnnotationProcessor<T> {
                methodToIndexOfParamToPathParamAnnotations.get(method).get(index);
                methodToIndexOfParamToPostParamAnnotations.get(method).get(index);
                methodToIndexOfParamToParamParserAnnotations.get(method).get(index);
+               methodToIndexOfParamToPartParamAnnotations.get(method).get(index);
                methodToIndexesOfOptions.get(method);
             }
             delegationMap.put(new MethodKey(method), method);
@@ -401,7 +418,22 @@ public class RestAnnotationProcessor<T> {
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
 
-      if (formParams.size() > 0) {
+      List<? extends Part> parts = getParts(method, args);
+      if (parts.size() > 0) {
+         if (formParams.size() > 0) {
+            parts = Lists.newLinkedList(Iterables.concat(Iterables
+                     .<Entry<String, String>, Part> transform(formParams.entries(), ENTRY_TO_PART),
+                     parts));
+         }
+         MultipartForm form = new MultipartForm(BOUNDARY, parts);
+
+         request.setPayload(form.getData());
+         request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
+                  "multipart/form-data; boundary=" + BOUNDARY);
+
+         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.getSize() + "");
+
+      } else if (formParams.size() > 0) {
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
             headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
          request.setPayload(makeQueryLine(formParams, null, skips));
@@ -418,6 +450,8 @@ public class RestAnnotationProcessor<T> {
       decorateRequest(request);
       return request;
    }
+
+   public static final String BOUNDARY = "--JCLOUDS--";
 
    private String getPath(Class<?> clazz, Method method, Object[] args) {
       UriBuilder builder = uriBuilderProvider.get();
@@ -970,6 +1004,20 @@ public class RestAnnotationProcessor<T> {
          out.put(entry.getKey(), entry.getValue());
       }
       return out;
+   }
+
+   List<? extends Part> getParts(Method method, Object... args) {
+      List<Part> parts = Lists.newLinkedList();
+      Map<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations
+               .get(method);
+      for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.entrySet()) {
+         for (Annotation key : entry.getValue()) {
+            PartParam extractor = (PartParam) key;
+            Part part = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
+            parts.add(part);
+         }
+      }
+      return parts;
    }
 
    private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) {
