@@ -2,4 +2,4 @@ service=cloudservers
 driver=rackspace
 account=user
 key=your_key
-nodetag=name_of_your_server
+tag=name_of_your_server

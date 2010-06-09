@@ -25,6 +25,7 @@ import java.io.File;
  * @author Ivan Meredith
  */
 public class NodeElement {
+   private String id;
    private String tag;
    private String size;
    private String os;
@@ -167,6 +168,14 @@ public class NodeElement {
 
    public File getPublickeyfile() {
       return publickeyfile;
+   }
+
+   public void setId(String id) {
+      this.id = id;
+   }
+
+   public String getId() {
+      return id;
    }
 
 }

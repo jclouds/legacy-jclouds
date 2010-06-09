@@ -2,4 +2,4 @@ service=rimuhosting
 driver=rimuhosting
 account=apikey
 key=apikey
-nodetag=name_of_your_server
+tag=name_of_your_server
