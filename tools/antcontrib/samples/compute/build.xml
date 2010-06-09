@@ -93,44 +93,86 @@
     <compute actions="list-locations,list-sizes,list-images,list-details" provider="${jclouds.compute.url}" />
   </target>
 
-  <target name="reboot" description="reboot the node ${nodetag}">
+  <target name="reboot" depends="reboot-id,reboot-tag" />
+
+  <target name="reboot-id" description="reboot the node ${id}" unless="tag">
 
     <input
       message="Which node do you wish to reboot"
-      addproperty="nodetag"
+      addproperty="id"
     />
 
     <compute actions="reboot" provider="${jclouds.compute.url}">
-      <nodes tag="${nodetag}" />
+      <nodes id="${id}" />
     </compute>
   </target>
 
-  <target name="destroy" description="destroy the node ${nodetag}">
+  <target name="reboot-tag" description="reboot the nodes with tag ${tag}" unless="id" >
+
+    <input
+      message="Which tag do you wish to reboot"
+      addproperty="tag"
+    />
+
+    <compute actions="reboot" provider="${jclouds.compute.url}">
+      <nodes tag="${tag}" />
+    </compute>
+  </target>
+
+  <target name="destroy" depends="destroy-id,destroy-tag" />
+
+  <target name="destroy-id" description="destroy the node ${id}" unless="tag">
 
     <input
       message="Which node do you wish to destroy"
-      addproperty="nodetag"
+      addproperty="id"
     />
 
     <compute actions="destroy" provider="${jclouds.compute.url}">
-      <nodes tag="${nodetag}" />
+      <nodes id="${id}" />
     </compute>
   </target>
 
-  <target name="get" description="get the node ${nodetag}">
+  <target name="destroy-tag" description="destroy the nodes with tag ${tag}" unless="id" >
 
     <input
-      message="Which node do you wish to describe?"
-      addproperty="nodetag"
+      message="Which tag do you wish to destroy"
+      addproperty="tag"
+    />
+
+    <compute actions="destroy" provider="${jclouds.compute.url}">
+      <nodes tag="${tag}" />
+    </compute>
+  </target>
+
+  <target name="get" depends="get-tag,get-id" />
+
+  <target name="get-id" description="get the node ${id}" unless="tag">
+
+    <input
+      message="Which node do you wish to get"
+      addproperty="id"
     />
 
     <compute actions="get" provider="${jclouds.compute.url}">
-      <nodes tag="${nodetag}" />
+      <nodes id="${id}" />
+    </compute>
+  </target>
+
+  <target name="get-tag" description="get the nodes with tag ${tag}" unless="id" >
+
+    <input
+      message="Which tag do you wish to get"
+      addproperty="tag"
+    />
+
+    <compute actions="get" provider="${jclouds.compute.url}">
+      <nodes tag="${tag}" />
     </compute>
   </target>
 
   <property name="location" value="" />
-  <target name="create" description="create the node ${nodetag}">
+  <target name="create" description="create the node ${tag}">
     <property name="privatekeyfile" value="${user.home}/.ssh/id_rsa" />
     <property name="publickeyfile" value="${user.home}/.ssh/id_rsa.pub" />
     <property name="os" value="UBUNTU" />
@@ -138,11 +180,11 @@
 
     <input
       message="What do you want to tag your nodes with?"
-      addproperty="nodetag"
+      addproperty="tag"
     />
 
     <compute actions="create" provider="${jclouds.compute.url}">
-      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" tag="${nodetag}" count="${count}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" tag="${tag}" count="${count}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

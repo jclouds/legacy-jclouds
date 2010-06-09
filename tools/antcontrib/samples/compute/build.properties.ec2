@@ -2,4 +2,4 @@ service=ec2
 driver=aws
 account=accesskeyid
 key=secretaccesskey
-nodetag=we_create_and_delete_based_on_key_and_security_group_name_not_instance_id
+tag=we_create_and_delete_based_on_key_and_security_group_name_not_instance_id

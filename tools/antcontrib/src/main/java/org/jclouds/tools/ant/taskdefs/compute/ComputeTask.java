@@ -80,7 +80,7 @@ public class ComputeTask extends Task {
    }
 
    public static enum Action {
-      CREATE, GET, LIST, LIST_DETAILS, DESTROY, LIST_IMAGES, LIST_SIZES, LIST_LOCATIONS
+      CREATE, GET, LIST, LIST_DETAILS, DESTROY, REBOOT, LIST_IMAGES, LIST_SIZES, LIST_LOCATIONS
    }
 
    /**
@@ -110,6 +110,7 @@ public class ComputeTask extends Task {
          case CREATE:
          case GET:
          case DESTROY:
+         case REBOOT:
             if (nodeElement != null) {
                switch (action) {
                   case CREATE:
@@ -120,6 +121,9 @@ public class ComputeTask extends Task {
                      break;
                   case DESTROY:
                      destroy(computeService);
+                     break;
+                  case REBOOT:
+                     reboot(computeService);
                      break;
                }
             } else {
@@ -160,9 +164,9 @@ public class ComputeTask extends Task {
          log(String
                   .format(
                            "   image location=%s, id=%s, name=%s, version=%s, arch=%s, osfam=%s, osdesc=%s, desc=%s",
-                           image.getLocation(), image.getProviderId(), image.getName(), image.getVersion(),
-                           image.getArchitecture(), image.getOsFamily(), image.getOsDescription(),
-                           image.getDescription()));
+                           image.getLocation(), image.getProviderId(), image.getName(), image
+                                    .getVersion(), image.getArchitecture(), image.getOsFamily(),
+                           image.getOsDescription(), image.getDescription()));
       }
    }
 
@@ -185,8 +189,8 @@ public class ComputeTask extends Task {
    private void list(ComputeService computeService) {
       log("list");
       for (ComputeMetadata node : computeService.listNodes()) {
-         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getProviderId(), node
-                  .getName()));
+         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node
+                  .getProviderId(), node.getName()));
       }
    }
 
@@ -219,17 +223,37 @@ public class ComputeTask extends Task {
                   createdNode.getCredentials().account);
    }
 
+   private void reboot(ComputeService computeService) {
+      if (nodeElement.getId() != null) {
+         log(String.format("reboot id: %s", nodeElement.getId()));
+         computeService.rebootNode(nodeElement.getId());
+      } else {
+         log(String.format("reboot tag: %s", nodeElement.getTag()));
+         computeService.rebootNodesMatching(NodePredicates.withTag(nodeElement.getTag()));
+      }
+   }
+
    private void destroy(ComputeService computeService) {
-      log(String.format("destroy tag: %s", nodeElement.getTag()));
-      computeService.destroyNodesMatching(NodePredicates.withTag(nodeElement.getTag()));
+      if (nodeElement.getId() != null) {
+         log(String.format("destroy id: %s", nodeElement.getId()));
+         computeService.destroyNode(nodeElement.getId());
+      } else {
+         log(String.format("destroy tag: %s", nodeElement.getTag()));
+         computeService.destroyNodesMatching(NodePredicates.withTag(nodeElement.getTag()));
+      }
    }
 
    private void get(ComputeService computeService) {
-      log(String.format("get tag: %s", nodeElement.getTag()));
-      for (ComputeMetadata node : Iterables.filter(computeService
-               .listNodesDetailsMatching(NodePredicates.all()), NodePredicates.withTag(nodeElement
-               .getTag()))) {
-         logDetails(computeService, node);
+      if (nodeElement.getId() != null) {
+         log(String.format("get id: %s", nodeElement.getId()));
+         logDetails(computeService, computeService.getNodeMetadata(nodeElement.getId()));
+      } else {
+         log(String.format("get tag: %s", nodeElement.getTag()));
+         for (ComputeMetadata node : Iterables.filter(computeService
+                  .listNodesDetailsMatching(NodePredicates.all()), NodePredicates
+                  .withTag(nodeElement.getTag()))) {
+            logDetails(computeService, node);
+         }
       }
    }
 

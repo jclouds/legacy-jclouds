@@ -2,4 +2,4 @@ service=hostingdotcom
 driver=hostingdotcom
 account=user@youregistered.com
 key=password
-nodetag=name_of_your_vapp
+tag=name_of_your_vapp
