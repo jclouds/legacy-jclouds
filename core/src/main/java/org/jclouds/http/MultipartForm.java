@@ -18,18 +18,24 @@
  */
 package org.jclouds.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import org.jclouds.util.InputStreamChain;
-import org.jclouds.util.Utils;
+import javax.annotation.Nullable;
+import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.util.InputStreamChain;
+
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * 
@@ -57,9 +63,9 @@ public class MultipartForm {
    }
 
    private void addData(Part part) {
-      chain.addInputStream(part.getData());
+      chain.addInputStream(part.getContent());
       chain.addAsInputStream(rn);
-      size += part.getSize() + rn.length();
+      size += part.calculateSize() + rn.length();
    }
 
    private void addHeaders(String boundaryrn, Part part) {
@@ -83,39 +89,112 @@ public class MultipartForm {
       this("__redrose__", parts);
    }
 
-   public static class Part {
+   public static class Part implements Payload {
       private final Multimap<String, String> headers;
-      private final InputStream data;
-      private final long size;
+      private final Payload delegate;
 
-      public Part(Multimap<String, String> headers, InputStream data, long size) {
-         this.headers = headers;
-         this.data = data;
-         this.size = size;
+      private static class PartMap extends LinkedHashMap<String, String> {
+
+         /** The serialVersionUID */
+         private static final long serialVersionUID = -287387556008320212L;
+
+         static PartMap create(String name) {
+            PartMap map = new PartMap();
+            map.put("Content-Disposition", String.format("form-data; name=\"%s\"", checkNotNull(
+                     name, "name")));
+            return map;
+         }
+
+         static PartMap create(String name, String filename) {
+            PartMap map = new PartMap();
+            map.put("Content-Disposition", String.format("form-data; name=\"%s\"; filename=\"%s\"",
+                     checkNotNull(name, "name"), checkNotNull(filename, "filename")));
+            return map;
+         }
+
+         PartMap contentType(@Nullable String type) {
+            if (type != null)
+               put(HttpHeaders.CONTENT_TYPE, checkNotNull(type, "type"));
+            return this;
+         }
       }
 
-      public Part(Multimap<String, String> headers, String data) {
-         this(headers, Utils.toInputStream(data), data.length());
+      private Part(PartMap map, Payload delegate) {
+         this.delegate = checkNotNull(delegate, "delegate");
+         this.headers = ImmutableMultimap.copyOf(Multimaps.forMap((checkNotNull(map, "headers"))));
       }
 
-      public Part(Multimap<String, String> headers, File data) throws FileNotFoundException {
-         this(headers, new FileInputStream(data), data.length());
+      public static Part create(String name, String value) {
+         return new Part(PartMap.create(name), Payloads.newStringPayload(value));
       }
 
-      public Part(Multimap<String, String> headers, byte[] data) {
-         this(headers, new ByteArrayInputStream(data), data.length);
+      public static Part create(String name, Payload delegate, String contentType) {
+         return new Part(PartMap.create(name).contentType(contentType), delegate);
+      }
+
+      public static Part create(String name, FilePayload delegate, String contentType) {
+         return new Part(PartMap.create(name, delegate.getRawContent().getName()).contentType(
+                  contentType), delegate);
       }
 
       public Multimap<String, String> getHeaders() {
          return headers;
       }
 
-      public InputStream getData() {
-         return data;
+      @Override
+      public Long calculateSize() {
+         return delegate.calculateSize();
       }
 
-      public long getSize() {
-         return size;
+      @Override
+      public InputStream getContent() {
+         return delegate.getContent();
+      }
+
+      @Override
+      public Object getRawContent() {
+         return delegate.getContent();
+      }
+
+      @Override
+      public boolean isRepeatable() {
+         return delegate.isRepeatable();
+      }
+
+      @Override
+      public void writeTo(OutputStream outstream) throws IOException {
+         delegate.writeTo(outstream);
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((delegate == null) ? 0 : delegate.hashCode());
+         result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         Part other = (Part) obj;
+         if (delegate == null) {
+            if (other.delegate != null)
+               return false;
+         } else if (!delegate.equals(other.delegate))
+            return false;
+         if (headers == null) {
+            if (other.headers != null)
+               return false;
+         } else if (!headers.equals(other.headers))
+            return false;
+         return true;
       }
    }
 

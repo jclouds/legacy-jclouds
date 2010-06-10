@@ -62,7 +62,7 @@ public class BindBlobToMultipartFormTest {
 
    public void testSinglePart() throws IOException {
 
-      assertEquals(EXPECTS.length(), 131);
+      assertEquals(EXPECTS.length(), 113);
 
       BindBlobToMultipartForm binder = new BindBlobToMultipartForm();
 
@@ -71,7 +71,7 @@ public class BindBlobToMultipartFormTest {
 
       assertEquals(Utils.toStringAndClose((InputStream) request.getPayload().getRawContent()),
                EXPECTS);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 131 + "");
+      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 113 + "");
 
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
                "multipart/form-data; boundary=" + BOUNDRY);
@@ -80,7 +80,7 @@ public class BindBlobToMultipartFormTest {
    private static void addData(String boundary, String data, StringBuilder builder) {
       builder.append(boundary).append("\r\n");
       builder.append("Content-Disposition").append(": ").append(
-               "form-data; name=\"hello\"; filename=\"hello\"").append("\r\n");
+               "form-data; name=\"hello\"").append("\r\n");
       builder.append("Content-Type").append(": ").append("text/plain").append("\r\n");
       builder.append("\r\n");
       builder.append(data).append("\r\n");

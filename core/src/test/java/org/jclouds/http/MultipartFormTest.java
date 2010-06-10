@@ -18,18 +18,23 @@
  */
 package org.jclouds.http;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.MultipartForm.Part;
+import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.http.payloads.StringPayload;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests parsing of a request
@@ -54,10 +59,47 @@ public class MultipartFormTest {
       assertEquals(multipartForm.getSize(), 199);
    }
 
+   public static class MockFilePayload extends FilePayload {
+
+      private final StringPayload realPayload;
+
+      public MockFilePayload(String content) {
+         super(createMockFile(content));
+         this.realPayload = Payloads.newStringPayload(content);
+      }
+
+      private static File createMockFile(String content) {
+         File file = createMock(File.class);
+         expect(file.exists()).andReturn(true);
+         expect(file.getName()).andReturn("testfile.txt");
+         replay(file);
+         return file;
+      }
+
+      @Override
+      public Long calculateSize() {
+         return realPayload.calculateSize();
+      }
+
+      @Override
+      public InputStream getContent() {
+         return realPayload.getContent();
+      }
+
+      @Override
+      public boolean isRepeatable() {
+         return realPayload.isRepeatable();
+      }
+
+      @Override
+      public void writeTo(OutputStream outstream) throws IOException {
+         realPayload.writeTo(outstream);
+      }
+
+   }
+
    private Part newPart(String data) {
-      return new MultipartForm.Part(ImmutableMultimap.of("Content-Disposition",
-               "form-data; name=\"file\"; filename=\"testfile.txt\"", HttpHeaders.CONTENT_TYPE,
-               MediaType.TEXT_PLAIN), data);
+      return Part.create("file", new MockFilePayload(data), MediaType.TEXT_PLAIN);
    }
 
    private void addData(String boundary, String data, StringBuilder builder) {

@@ -84,10 +84,10 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
                httpMethod,
                "POST http://uploader/Upload.ashx?output=json&destFolderPath=adriansmovies&uploadToken=token HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 131\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+               "Content-Length: 113\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       StringBuffer expects = new StringBuffer();
       expects.append("----JCLOUDS--\r\n");
-      expects.append("Content-Disposition: form-data; name=\"hello\"; filename=\"hello\"\r\n");
+      expects.append("Content-Disposition: form-data; name=\"hello\"\r\n");
       expects.append("Content-Type: text/plain\r\n\r\n");
       expects.append("hello\r\n");
       expects.append("----JCLOUDS----\r\n");

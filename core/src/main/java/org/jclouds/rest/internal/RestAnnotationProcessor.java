@@ -62,6 +62,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.MultipartForm;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.MultipartForm.Part;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
@@ -102,7 +103,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
@@ -195,8 +195,7 @@ public class RestAnnotationProcessor<T> {
 
       @Override
       public Part apply(Entry<String, String> from) {
-         return new Part(ImmutableMultimap.of("Content-Disposition", String.format(
-                  "form-data; name=\"%s\"", from.getKey())), from.getValue());
+         return Part.create(from.getKey(), from.getValue());
       }
 
    };
@@ -1012,8 +1011,9 @@ public class RestAnnotationProcessor<T> {
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
-            PartParam extractor = (PartParam) key;
-            Part part = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
+            PartParam param = (PartParam) key;
+            Part part = Part.create(param.name(), Payloads.newPayload(args[entry.getKey()]), param
+                     .contentType());
             parts.add(part);
          }
       }

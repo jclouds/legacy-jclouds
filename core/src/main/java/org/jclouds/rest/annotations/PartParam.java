@@ -24,9 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jclouds.http.MultipartForm.Part;
-
-import com.google.common.base.Function;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Designates that this parameter will be bound to a multipart form.
@@ -36,17 +34,7 @@ import com.google.common.base.Function;
 @Target(PARAMETER)
 @Retention(RUNTIME)
 public @interface PartParam {
+   String name();
 
-   public static class ALREADY_PART implements Function<Object, Part> {
-
-      @Override
-      public Part apply(Object from) {
-         return Part.class.cast(from);
-      }
-   };
-
-   /**
-    * how to convert this to a part.
-    */
-   Class<? extends Function<Object, Part>> value() default ALREADY_PART.class;
+   String contentType() default MediaType.TEXT_PLAIN;
 }

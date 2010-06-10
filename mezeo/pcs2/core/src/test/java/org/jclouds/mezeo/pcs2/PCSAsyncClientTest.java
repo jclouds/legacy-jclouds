@@ -164,7 +164,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
       assertRequestLineEquals(httpMethod, "POST http://localhost/mycontainer/contents HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 131\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+               "Content-Length: 113\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       assertPayloadEquals(httpMethod, BindBlobToMultipartFormTest.EXPECTS);
 
       assertResponseParserClassEquals(method, httpMethod,
