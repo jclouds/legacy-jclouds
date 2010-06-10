@@ -18,6 +18,7 @@
  */
 package org.jclouds.ibmdev.domain;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 
@@ -61,10 +62,8 @@ public class Image {
    }
 
    private String name;
-   /**
-    * Note that this isn't a URI, as parsing fails due to IBM including '{' characters in the path.
-    */
-   private String manifest;
+
+   private URI manifest;
    private int state;
    private Visibility visibility;
    private String owner;
@@ -74,10 +73,7 @@ public class Image {
    private String location;
    private Set<String> supportedInstanceTypes = Sets.newLinkedHashSet();
    private Set<String> productCodes = Sets.newLinkedHashSet();
-   /**
-    * Note that this isn't a URI, as parsing fails due to IBM including '{' characters in the path.
-    */
-   private String documentation;
+   private URI documentation;
    private String id;
    private String description;
 
@@ -89,11 +85,11 @@ public class Image {
       this.name = name;
    }
 
-   public String getManifest() {
+   public URI getManifest() {
       return manifest;
    }
 
-   public void setManifest(String manifest) {
+   public void setManifest(URI manifest) {
       this.manifest = manifest;
    }
 
@@ -169,11 +165,11 @@ public class Image {
       this.productCodes = productCodes;
    }
 
-   public String getDocumentation() {
+   public URI getDocumentation() {
       return documentation;
    }
 
-   public void setDocumentation(String documentation) {
+   public void setDocumentation(URI documentation) {
       this.documentation = documentation;
    }
 

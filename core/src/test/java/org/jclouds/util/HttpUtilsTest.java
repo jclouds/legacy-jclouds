@@ -44,6 +44,12 @@ public class HttpUtilsTest extends PerformanceTest {
                "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
       assertEquals(HttpUtils.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
    }
+   
+   public void testIBM() {
+      URI ibm = HttpUtils
+               .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram/assetDetail/generalDetails.faces?guid={A31FF849-0E97-431A-0324-097385A46298}&v=1.2");
+      assertEquals(ibm.getQuery(), "guid={A31FF849-0E97-431A-0324-097385A46298}&v=1.2");
+   }
 
    public void testAtmos() {
       URI creds = HttpUtils

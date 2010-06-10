@@ -250,10 +250,16 @@ public class HttpUtils {
    /**
     * Used to extract the URI and authentication data from a String. Note that the java URI class
     * breaks, if there are special characters like '/' present. Otherwise, we wouldn't need this
-    * class, and we could simply use URI.create("uri").getUserData();
+    * class, and we could simply use URI.create("uri").getUserData();  Also, URI breaks if there 
+    * are curly braces.
     * 
     */
    public static URI createUri(String uriPath) {
+      List<String> onQuery = Lists.newArrayList(Splitter.on('?').split(uriPath));
+      if (onQuery.size() == 2){
+         onQuery.add(urlEncode(onQuery.remove(1), '=','&'));
+         uriPath = Joiner.on('?').join(onQuery);
+      }
       if (uriPath.indexOf('@') != 1) {
          List<String> parts = Lists.newArrayList(Splitter.on('@').split(uriPath));
          String path = parts.remove(parts.size() - 1);
@@ -268,7 +274,7 @@ public class HttpUtils {
          parts.add(urlEncode(path, ':'));
          uriPath = Joiner.on('/').join(parts);
       }
-
+      
       if (PATTERN_THAT_BREAKS_URI.matcher(uriPath).matches()) {
          // Compile and use regular expression
          Matcher matcher = URI_PATTERN.matcher(uriPath);
