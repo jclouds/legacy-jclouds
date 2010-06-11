@@ -45,6 +45,7 @@ See http://code.google.com/p/jclouds for details."
             options.ListContainerOptions]
            [org.jclouds.encryption.internal JCEEncryptionService]
            [java.util Arrays]
+           [java.security DigestOutputStream MessageDigest]
            [com.google.common.collect ImmutableSet]))
 
 (try
@@ -293,10 +294,10 @@ container, name, string -> etag"
 (defmethod download-blob OutputStream [container-name name target blobstore
                                        & [retries]]
   (let [blob (get-blob container-name name blobstore)
-        digest-stream (.md5OutputStream ;; TODO: not all clouds use MD5
-                       *encryption-service* target)]
-    (io/copy (.getContent blob) digest-stream)
-    (let [digest (.getMD5 digest-stream)
+        digest-stream (DigestOutputStream.
+                       target (MessageDigest/getInstance "MD5"))]
+    (.writeTo (.getPayload blob) digest-stream)
+    (let [digest (.digest (.getMessageDigest digest-stream))
           metadata-digest (.getContentMD5 (.getMetadata blob))]
       (when-not (Arrays/equals digest metadata-digest)
         (if (<= (or retries 0) *max-retries*)
