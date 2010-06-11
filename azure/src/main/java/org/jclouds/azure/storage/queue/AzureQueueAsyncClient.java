@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.queue;
 
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
@@ -33,9 +34,12 @@ import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.binders.BindToXmlStringPayload;
+import org.jclouds.azure.storage.queue.domain.QueueMessage;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
+import org.jclouds.azure.storage.queue.options.GetOptions;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
+import org.jclouds.azure.storage.queue.xml.QueueMessagesListHandler;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -64,7 +68,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * during processing will be wrapped in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
- * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
+ * @see <a href="http://msdn.microsoft.com/en-us/library/dd179363%28v=MSDN.10%29.aspx" />
  * @author Adrian Cole
  */
 @SkipEncoding('/')
@@ -89,6 +93,14 @@ public interface AzureQueueAsyncClient {
    @Path("{queue}")
    ListenableFuture<Boolean> createQueue(@PathParam("queue") String queue, CreateOptions... options);
 
+   /**
+    * @see AzureQueueClient#getMessages
+    */
+   @GET
+   @Path("{queue}/messages")
+   @XMLResponseParser(QueueMessagesListHandler.class)
+   ListenableFuture<Set<QueueMessage>> getMessages(@PathParam("queue") String queue, GetOptions... options);
+   
    /**
     * @see AzureQueueClient#deleteQueue
     */

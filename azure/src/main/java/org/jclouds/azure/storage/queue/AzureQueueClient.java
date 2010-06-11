@@ -18,15 +18,19 @@
  */
 package org.jclouds.azure.storage.queue;
 
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.azure.storage.queue.domain.QueueMessage;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
+import org.jclouds.azure.storage.queue.options.GetOptions;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.HttpResponseException;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -106,7 +110,8 @@ public interface AzureQueueClient {
     * it is added to the time it is retrieved and deleted. If a message is not retrieved before the
     * time-to-live interval expires, the message is removed from the queue.
     * 
-    * If the message is too large, the service returns status code 400 (Bad Request).
+    * @throws HttpResponseException
+    *            If the message is too large, the service returns status code 400 (Bad Request).
     * 
     */
    void putMessage(String queue, String message, PutMessageOptions... options);
@@ -123,4 +128,15 @@ public interface AzureQueueClient {
     */
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    void clearMessages(String queue);
+
+   /**
+    * The Get Messages operation retrieves one or more messages from the front of the queue.
+    * 
+    * @param queue
+    *           the name of the queue to retrieve messages from
+    * @param options
+    *           controls the number of messages to receive and the visibility window
+    */
+   Set<QueueMessage> getMessages(String queue, GetOptions... options);
+
 }

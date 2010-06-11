@@ -18,22 +18,26 @@
  */
 package org.jclouds.azure.storage.queue;
 
+import static org.jclouds.azure.storage.options.ListOptions.Builder.prefix;
+import static org.jclouds.azure.storage.queue.options.GetOptions.Builder.maxMessages;
+import static org.jclouds.azure.storage.queue.options.PutMessageOptions.Builder.withTTL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.security.SecureRandom;
+import java.util.Set;
 
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
-import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.azure.storage.queue.domain.QueueMessage;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
-import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 
 /**
@@ -41,7 +45,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "cloudservers.AzureQueueClientLiveTest")
+@Test(groups = "live", sequential = true, testName = "azurequeue.AzureQueueClientLiveTest")
 public class AzureQueueClientLiveTest {
    String account;
 
@@ -96,8 +100,8 @@ public class AzureQueueClientLiveTest {
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateQueue" })
    public void testListQueuesWithOptions() throws Exception {
-      BoundedSet<QueueMetadata> response = connection.listQueues(ListOptions.Builder.prefix(
-               privateQueue).maxResults(1));
+      BoundedSet<QueueMetadata> response = connection
+               .listQueues(prefix(privateQueue).maxResults(1));
       assert null != response;
       long initialQueueCount = response.size();
       assertTrue(initialQueueCount >= 0);
@@ -107,11 +111,21 @@ public class AzureQueueClientLiveTest {
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateQueue" })
    public void testPutMessage() throws Exception {
-      connection.putMessage(privateQueue, "holycow", PutMessageOptions.Builder.withTTL(4));
-      // TODO loop for up to 30 seconds checking if they are really gone
+      connection.putMessage(privateQueue, "holycow", withTTL(4));
+      connection.putMessage(privateQueue, "holymoo", withTTL(4));
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testPutMessage" })
+   public void testGetMessages() throws Exception {
+      Set<QueueMessage> messages = connection.getMessages(privateQueue, maxMessages(2));
+      QueueMessage m1 = Iterables.get(messages, 0);
+      assertEquals(m1.getMessageText(), "holycow");
+      QueueMessage m2 = Iterables.get(messages, 1);
+      assertEquals(m2.getMessageText(), "holymoo");
+      assertEquals(connection.getMessages(privateQueue).size(), 0);
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testGetMessages" })
    public void testDeleteQueue() throws Exception {
       connection.clearMessages(privateQueue);
       connection.deleteQueue(privateQueue);

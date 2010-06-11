@@ -20,6 +20,7 @@ package org.jclouds.azure.storage.queue;
 
 import static org.jclouds.azure.storage.options.CreateOptions.Builder.withMetadata;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
+import static org.jclouds.azure.storage.queue.options.GetOptions.Builder.maxMessages;
 import static org.jclouds.azure.storage.queue.options.PutMessageOptions.Builder.withTTL;
 import static org.testng.Assert.assertEquals;
 
@@ -31,8 +32,10 @@ import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.config.AzureQueueRestClientModule;
+import org.jclouds.azure.storage.queue.options.GetOptions;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
+import org.jclouds.azure.storage.queue.xml.QueueMessagesListHandler;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -54,6 +57,44 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit", testName = "azurequeue.AzureQueueAsyncClientTest")
 public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncClient> {
+
+   public void testGetMessages() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AzureQueueAsyncClient.class.getMethod("getMessages", String.class,
+               GetOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               "myqueue");
+
+      assertRequestLineEquals(httpRequest,
+               "GET https://myaccount.queue.core.windows.net/myqueue/messages HTTP/1.1");
+      assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, QueueMessagesListHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetMessagesOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = AzureQueueAsyncClient.class.getMethod("getMessages", String.class,
+               GetOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               "myqueue", maxMessages(1).visibilityTimeout(30));
+
+      assertRequestLineEquals(
+               httpRequest,
+               "GET https://myaccount.queue.core.windows.net/myqueue/messages?numofmessages=1&visibilitytimeout=30 HTTP/1.1");
+      assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, QueueMessagesListHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
 
    public void testListQueues() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureQueueAsyncClient.class.getMethod("listQueues", ListOptions[].class);
