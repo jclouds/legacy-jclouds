@@ -20,35 +20,32 @@ package org.jclouds.azure.storage.queue;
 
 import static org.jclouds.azure.storage.options.CreateOptions.Builder.withMetadata;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
+import static org.jclouds.azure.storage.queue.options.PutMessageOptions.Builder.withTTL;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Properties;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.config.AzureQueueRestClientModule;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
+import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code AzureQueueAsyncClient}
@@ -57,172 +54,157 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "azurequeue.AzureQueueAsyncClientTest")
 public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncClient> {
-   private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
-            .getClass();
-   private static final Class<? extends CreateOptions[]> createOptionsVarargsClass = new CreateOptions[] {}
-            .getClass();
 
-   public void testListQueues() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueAsyncClient.class.getMethod("listQueues", listOptionsVarargsClass);
+   public void testListQueues() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AzureQueueAsyncClient.class.getMethod("listQueues", ListOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method);
 
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 1);
-      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-09-19"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
-      // TODO check generic type of response parser
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+      assertRequestLineEquals(httpRequest,
+               "GET https://myaccount.queue.core.windows.net/?comp=list HTTP/1.1");
+      assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, AccountNameEnumerationResultsHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
    }
 
-   public void testListQueuesOptions() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueAsyncClient.class.getMethod("listQueues", listOptionsVarargsClass);
+   public void testListQueuesOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AzureQueueAsyncClient.class.getMethod("listQueues", ListOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               maxResults(1).marker("marker").prefix("prefix"));
 
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { maxResults(1).marker("marker").prefix("prefix") });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/");
-      assert httpMethod.getEndpoint().getQuery().contains("comp=list");
-      assert httpMethod.getEndpoint().getQuery().contains("marker=marker");
-      assert httpMethod.getEndpoint().getQuery().contains("maxresults=1");
-      assert httpMethod.getEndpoint().getQuery().contains("prefix=prefix");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 1);
-      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-09-19"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
-      // TODO check generic type of response parser
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+      assertRequestLineEquals(
+               httpRequest,
+               "GET https://myaccount.queue.core.windows.net/?comp=list&maxresults=1&marker=marker&prefix=prefix HTTP/1.1");
+      assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, AccountNameEnumerationResultsHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
    }
 
-   public void testCreateQueue() throws SecurityException, NoSuchMethodException {
+   public void testCreateQueue() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureQueueAsyncClient.class.getMethod("createQueue", String.class,
-               createOptionsVarargsClass);
+               CreateOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               "queue");
 
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "queue" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
-      assertEquals(httpMethod.getEndpoint().getQuery(), null);
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-09-19"));
-      assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
-      // TODO check generic type of response parser
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+      assertRequestLineEquals(httpRequest,
+               "PUT https://myaccount.queue.core.windows.net/queue HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Content-Length: 0\nx-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
    }
 
-   public void testCreateQueueOptions() throws SecurityException, NoSuchMethodException {
+   public void testCreateQueueOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+
       Method method = AzureQueueAsyncClient.class.getMethod("createQueue", String.class,
-               createOptionsVarargsClass);
+               CreateOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               "queue", withMetadata(ImmutableMultimap.of("foo", "bar")));
 
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "queue", withMetadata(ImmutableMultimap.of("foo", "bar")) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
-      assertEquals(httpMethod.getEndpoint().getQuery(), null);
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 3);
-      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-09-19"));
-      assertEquals(httpMethod.getHeaders().get("x-ms-meta-foo"), Collections.singletonList("bar"));
-      assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ReturnTrueIf2xx.class);
-      // TODO check generic type of response parser
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+      assertRequestLineEquals(httpRequest,
+               "PUT https://myaccount.queue.core.windows.net/queue HTTP/1.1");
+      assertHeadersEqual(httpRequest,
+               "Content-Length: 0\nx-ms-meta-foo: bar\nx-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
    }
 
-   public void testDeleteQueue() throws SecurityException, NoSuchMethodException {
+   public void testDeleteQueue() throws SecurityException, NoSuchMethodException, IOException {
+
       Method method = AzureQueueAsyncClient.class.getMethod("deleteQueue", String.class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               "queue");
 
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "queue" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.queue.core.windows.net");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
-      assertEquals(httpMethod.getEndpoint().getQuery(), null);
-      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
-      assertEquals(httpMethod.getHeaders().size(), 1);
-      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
-               .singletonList("2009-09-19"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               CloseContentAndReturn.class);
-      // TODO check generic type of response parser
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+      assertRequestLineEquals(httpRequest,
+               "DELETE https://myaccount.queue.core.windows.net/queue HTTP/1.1");
+      assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
+
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
    }
 
    public void testPutMessage() throws SecurityException, NoSuchMethodException, IOException {
+
       Method method = AzureQueueAsyncClient.class.getMethod("putMessage", String.class,
-               String.class, Array.newInstance(PutMessageOptions.class, 0).getClass());
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
+               String.class, PutMessageOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
                "queue", "message");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(httpRequest,
                "POST https://myaccount.queue.core.windows.net/queue/messages HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertHeadersEqual(httpRequest,
                "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(httpRequest,
                "<QueueMessage><MessageText>message</MessageText></QueueMessage>");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(httpRequest);
    }
 
    public void testPutMessageOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AzureQueueAsyncClient.class.getMethod("putMessage", String.class,
-               String.class, Array.newInstance(PutMessageOptions.class, 0).getClass());
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
-               "queue", "message", PutMessageOptions.Builder.withTTL(3));
 
-      assertRequestLineEquals(httpMethod,
+      Method method = AzureQueueAsyncClient.class.getMethod("putMessage", String.class,
+               String.class, PutMessageOptions[].class);
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
+               "queue", "message", withTTL(3));
+
+      assertRequestLineEquals(httpRequest,
                "POST https://myaccount.queue.core.windows.net/queue/messages?messagettl=3 HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertHeadersEqual(httpRequest,
                "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(httpRequest,
                "<QueueMessage><MessageText>message</MessageText></QueueMessage>");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(httpRequest);
    }
 
    public void testClearMessages() throws SecurityException, NoSuchMethodException, IOException {
+
       Method method = AzureQueueAsyncClient.class.getMethod("clearMessages", String.class);
-      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method,
                "queue");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(httpRequest,
                "DELETE https://myaccount.queue.core.windows.net/queue/messages HTTP/1.1");
-      assertHeadersEqual(httpMethod, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(httpRequest);
    }
 
    @Override
