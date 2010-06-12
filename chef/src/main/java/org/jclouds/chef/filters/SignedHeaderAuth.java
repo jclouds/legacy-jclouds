@@ -152,9 +152,9 @@ public class SignedHeaderAuth implements HttpRequestFilter {
       if (payload == null)
          return emptyStringHash;
       checkArgument(payload != null, "payload was null");
-      checkArgument(payload.isRepeatable(), "payload must be repeatable");
+      checkArgument(payload.isRepeatable(), "payload must be repeatable: " + payload);
       try {
-         return encryptionService.sha1Base64(Utils.toStringAndClose(payload.getContent()));
+         return encryptionService.sha1Base64(Utils.toStringAndClose(payload.getInput()));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for payload: " + payload, e);

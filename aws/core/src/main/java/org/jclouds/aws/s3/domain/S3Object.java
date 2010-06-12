@@ -25,7 +25,7 @@ import com.google.inject.internal.Nullable;
 
 /**
  * Amazon S3 is designed to store objects. Objects are stored in buckets and consist of a
- * {@link ObjectMetadataS3Object#getContent() value}, a {@link ObjectMetadata#getKey key},
+ * {@link ObjectMetadataS3Object#getInput() value}, a {@link ObjectMetadata#getKey key},
  * {@link ObjectMetadata#getUserMetadata() metadata}, and an access control policy.
  * 
  * @author Adrian Cole

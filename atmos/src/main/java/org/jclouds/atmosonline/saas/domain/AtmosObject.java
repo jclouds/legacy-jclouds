@@ -25,7 +25,7 @@ import com.google.inject.internal.Nullable;
 
 /**
  * Amazon Atmos is designed to store objects. Objects are stored in buckets and consist of a
- * {@link ObjectMetadataAtmosObject#getContent() value}, a {@link ObjectMetadata#getKey key},
+ * {@link ObjectMetadataAtmosObject#getInput() value}, a {@link ObjectMetadata#getKey key},
  * {@link ObjectMetadata#getUserMetadata() metadata}, and an access control policy.
  * 
  * @author Adrian Cole

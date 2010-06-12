@@ -27,7 +27,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * Amazon S3 is designed to store objects. Objects are stored in buckets and consist of a
- * {@link ObjectPropertiesBlob#getContent() value}, a {@link ObjectProperties#getKey key},
+ * {@link ObjectPropertiesBlob#getInput() value}, a {@link ObjectProperties#getKey key},
  * {@link ObjectProperties#getUserProperties() metadata}, and an access control policy.
  * 
  * @author Adrian Cole

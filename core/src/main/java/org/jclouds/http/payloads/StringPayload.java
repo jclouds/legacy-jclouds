@@ -47,7 +47,7 @@ public class StringPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public InputStream getContent() {
+   public InputStream getInput() {
       return Utils.toInputStream(content);
    }
 

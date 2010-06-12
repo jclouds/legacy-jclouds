@@ -120,7 +120,7 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
             String string = ((StringPayload) content).getRawContent();
             request.setPayload(string.getBytes());
          } else if (content instanceof InputStreamPayload || content instanceof FilePayload) {
-            InputStream i = content.getContent();
+            InputStream i = content.getInput();
             try {
                try {
                   request.setPayload(ByteStreams.toByteArray(i));

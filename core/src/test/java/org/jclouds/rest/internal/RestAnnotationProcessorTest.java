@@ -2013,7 +2013,7 @@ public class RestAnnotationProcessorTest {
       if (httpMethod.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String payload = Utils.toStringAndClose(httpMethod.getPayload().getContent());
+         String payload = Utils.toStringAndClose(httpMethod.getPayload().getInput());
          assertEquals(payload, toMatch);
       }
    }

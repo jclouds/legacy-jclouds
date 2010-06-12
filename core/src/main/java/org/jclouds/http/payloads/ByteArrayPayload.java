@@ -49,7 +49,7 @@ public class ByteArrayPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public InputStream getContent() {
+   public InputStream getInput() {
       return new ByteArrayInputStream(content);
    }
 

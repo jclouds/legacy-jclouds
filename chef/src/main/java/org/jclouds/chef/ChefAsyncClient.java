@@ -23,10 +23,12 @@
  */
 package org.jclouds.chef;
 
+import java.io.File;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -43,6 +45,7 @@ import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.PartParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -70,7 +73,23 @@ public interface ChefAsyncClient {
    ListenableFuture<String> listCookbooks();
 
    /**
-    * @see ChefClient#createClientanization
+    * @see ChefClient#createCookbook(String,File)
+    */
+   @POST
+   @Path("cookbooks")
+   ListenableFuture<String> createCookbook(@FormParam("name") String name,
+            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
+
+   /**
+    * @see ChefClient#createCookbook(String,byte[])
+    */
+   @POST
+   @Path("cookbooks")
+   ListenableFuture<String> createCookbook(@FormParam("name") String name,
+            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) byte[] content);
+
+   /**
+    * @see ChefClient#createClient
     */
    @POST
    @Path("clients")

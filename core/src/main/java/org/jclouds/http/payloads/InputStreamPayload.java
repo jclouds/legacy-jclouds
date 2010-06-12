@@ -49,7 +49,7 @@ public class InputStreamPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public InputStream getContent() {
+   public InputStream getInput() {
       return content;
    }
 
@@ -68,9 +68,9 @@ public class InputStreamPayload implements Payload {
    public void writeTo(OutputStream outstream) throws IOException {
       checkState(!written, "InputStreams can only be writted to an outputstream once");
       written = true;
-      InputStream in = getContent();
+      InputStream in = getInput();
       try {
-         ByteStreams.copy(getContent(), outstream);
+         ByteStreams.copy(getInput(), outstream);
       } finally {
          Closeables.closeQuietly(in);
       }

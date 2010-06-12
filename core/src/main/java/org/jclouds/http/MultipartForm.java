@@ -19,6 +19,7 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,59 +31,70 @@ import javax.annotation.Nullable;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.payloads.FilePayload;
-import org.jclouds.util.InputStreamChain;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
+import com.google.common.io.InputSupplier;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class MultipartForm {
+public class MultipartForm implements Payload {
    private static final String rn = "\r\n";
    private static final String dd = "--";
 
-   private final InputStreamChain chain;
+   private final InputSupplier<? extends InputStream> chain;
    private long size;
+   private boolean isRepeatable;
+   private boolean written;
 
    public MultipartForm(String boundary, Part... parts) {
       this(boundary, Lists.newArrayList(parts));
    }
 
+   @SuppressWarnings("unchecked")
    public MultipartForm(String boundary, Iterable<? extends Part> parts) {
       String boundaryrn = boundary + rn;
-      chain = new InputStreamChain();
+      isRepeatable = true;
+      InputSupplier<? extends InputStream> chain = ByteStreams.join();
       for (Part part : parts) {
-         addHeaders(boundaryrn, part);
-         addData(part);
+         if (!part.isRepeatable())
+            isRepeatable = false;
+         size += part.calculateSize();
+         chain = ByteStreams.join(chain, addLengthAndReturnHeaders(boundaryrn, part), part,
+                  addLengthAndReturnRn());
       }
-      addFooter(boundary);
+      chain = ByteStreams.join(chain, addLengthAndReturnFooter(boundary));
+      this.chain = chain;
    }
 
-   private void addData(Part part) {
-      chain.addInputStream(part.getContent());
-      chain.addAsInputStream(rn);
-      size += part.calculateSize() + rn.length();
+   private InputSupplier<? extends InputStream> addLengthAndReturnRn() {
+      size += rn.length();
+      return ByteStreams.newInputStreamSupplier(rn.getBytes());
    }
 
-   private void addHeaders(String boundaryrn, Part part) {
+   private InputSupplier<? extends InputStream> addLengthAndReturnHeaders(String boundaryrn,
+            Part part) {
       StringBuilder builder = new StringBuilder(dd).append(boundaryrn);
       for (Entry<String, String> entry : part.getHeaders().entries()) {
          String header = String.format("%s: %s%s", entry.getKey(), entry.getValue(), rn);
          builder.append(header);
       }
       builder.append(rn);
-      chain.addAsInputStream(builder.toString());
       size += builder.length();
+      return ByteStreams.newInputStreamSupplier(builder.toString().getBytes());
    }
 
-   private void addFooter(String boundary) {
+   private InputSupplier<? extends InputStream> addLengthAndReturnFooter(String boundary) {
       String end = dd + boundary + dd + rn;
-      chain.addAsInputStream(end);
       size += end.length();
+      return ByteStreams.newInputStreamSupplier(end.getBytes());
    }
 
    public MultipartForm(Part... parts) {
@@ -147,13 +159,13 @@ public class MultipartForm {
       }
 
       @Override
-      public InputStream getContent() {
-         return delegate.getContent();
+      public InputStream getInput() {
+         return delegate.getInput();
       }
 
       @Override
       public Object getRawContent() {
-         return delegate.getContent();
+         return delegate.getInput();
       }
 
       @Override
@@ -198,11 +210,47 @@ public class MultipartForm {
       }
    }
 
-   public long getSize() {
+   @Override
+   public Long calculateSize() {
       return size;
    }
 
-   public InputStream getData() {
-      return chain;
+   @Override
+   public InputStream getInput() {
+      try {
+         return chain.getInput();
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return null;
+      }
+   }
+
+   @Override
+   public Object getRawContent() {
+      return getInput();
+   }
+
+   @Override
+   public boolean isRepeatable() {
+      return isRepeatable;
+   }
+
+   @Override
+   public void writeTo(OutputStream outstream) throws IOException {
+      checkState(!written || !isRepeatable,
+               "InputStreams can only be writted to an outputstream once");
+      written = true;
+      InputStream in = getInput();
+      try {
+         ByteStreams.copy(getInput(), outstream);
+      } finally {
+         Closeables.closeQuietly(in);
+      }
+   }
+
+   @Override
+   public String toString() {
+      return "MultipartForm [chain=" + chain + ", isRepeatable=" + isRepeatable + ", size=" + size
+               + ", written=" + written + "]";
    }
 }

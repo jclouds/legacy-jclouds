@@ -26,8 +26,10 @@ package org.jclouds.chef;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Set;
 
@@ -38,6 +40,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 /**
@@ -108,6 +111,31 @@ public class ChefClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testGenerateKeyForClient")
+   public void testCreateCookbooks() throws Exception {
+      InputStream in = null;
+      try {
+         in = URI
+                  .create(
+                           "https://s3.amazonaws.com/opscode-community/cookbook_versions/tarballs/194/original/java.tar.gz")
+                  .toURL().openStream();
+
+         byte[] content = ByteStreams.toByteArray(in);
+
+         System.err.println(clientConnection.getApi().createCookbook("java-bytearray", content));
+
+         File file = File.createTempFile("foo", "bar");
+         Files.write(content, file);
+         file.deleteOnExit();
+
+         System.err.println(clientConnection.getApi().createCookbook("java-file", file));
+
+      } finally {
+         if (in != null)
+            in.close();
+      }
+   }
+
+   @Test(dependsOnMethods = "testCreateCookbooks")
    public void testListCookbooks() throws Exception {
       System.err.println(clientConnection.getApi().listCookbooks());
    }

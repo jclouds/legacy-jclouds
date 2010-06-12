@@ -90,7 +90,7 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
          String string = ((StringPayload) content).getRawContent();
          request.setPayload(string.getBytes());
       } else if (content instanceof InputStreamPayload || content instanceof FilePayload) {
-         InputStream i = content.getContent();
+         InputStream i = content.getInput();
          try {
             request.setPayload(ByteStreams.toByteArray(i));
          } finally {

@@ -55,8 +55,8 @@ public class MultipartFormTest {
 
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"));
 
-      assertEquals(Utils.toStringAndClose(multipartForm.getData()), expects);
-      assertEquals(multipartForm.getSize(), 199);
+      assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
+      assertEquals(multipartForm.calculateSize(), new Long(199));
    }
 
    public static class MockFilePayload extends FilePayload {
@@ -82,8 +82,8 @@ public class MultipartFormTest {
       }
 
       @Override
-      public InputStream getContent() {
-         return realPayload.getContent();
+      public InputStream getInput() {
+         return realPayload.getInput();
       }
 
       @Override
@@ -125,8 +125,12 @@ public class MultipartFormTest {
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"),
                newPart("goodbye"));
 
-      assertEquals(Utils.toStringAndClose(multipartForm.getData()), expects);
-      assertEquals(multipartForm.getSize(), 352);
+      assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
+
+      // test repeatable
+      assert multipartForm.isRepeatable();
+      assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
+      assertEquals(multipartForm.calculateSize(), new Long(352));
    }
 
 }

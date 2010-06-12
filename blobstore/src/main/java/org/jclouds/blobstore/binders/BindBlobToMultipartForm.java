@@ -41,9 +41,9 @@ public class BindBlobToMultipartForm implements Binder {
                .getMetadata().getContentType());
       
       MultipartForm form = new MultipartForm(BOUNDARY, part);
-      request.setPayload(form.getData());
+      request.setPayload(form.getInput());
       request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
                "multipart/form-data; boundary=" + BOUNDARY);
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.getSize() + "");
+      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.calculateSize() + "");
    }
 }

@@ -33,7 +33,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * Value type for an HTTP Blob service. Blobs are stored in {@link StorageMetadata containers} and consist
- * of a {@link org.jclouds.blobstore.domain.Value#getContent() value}, a {@link Blob#getKey key and
+ * of a {@link org.jclouds.blobstore.domain.Value#getInput() value}, a {@link Blob#getKey key and
  * 
  * @link Blob.Metadata#getUserMetadata() metadata}
  * 

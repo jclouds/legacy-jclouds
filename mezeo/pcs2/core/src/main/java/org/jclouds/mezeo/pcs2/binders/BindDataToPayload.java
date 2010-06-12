@@ -30,7 +30,7 @@ public class BindDataToPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       PCSFile object = (PCSFile) payload;
-      request.setPayload(checkNotNull(object.getPayload().getContent(), "object.getContent()"));
+      request.setPayload(checkNotNull(object.getPayload().getInput(), "object.getContent()"));
       request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
    }
 }

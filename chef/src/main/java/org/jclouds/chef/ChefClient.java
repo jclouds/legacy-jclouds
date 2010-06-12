@@ -41,6 +41,8 @@
  */
 package org.jclouds.chef;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -59,6 +61,10 @@ import org.jclouds.rest.AuthorizationException;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
    String listCookbooks();
+
+   String createCookbook(String name, File content);
+
+   String createCookbook(String name, byte[] content);
 
    /**
     * creates a new client

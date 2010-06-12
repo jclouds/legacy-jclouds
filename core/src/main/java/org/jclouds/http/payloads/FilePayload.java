@@ -52,7 +52,7 @@ public class FilePayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public InputStream getContent() {
+   public InputStream getInput() {
       try {
          return new FileInputStream(content);
       } catch (FileNotFoundException e) {
@@ -73,7 +73,7 @@ public class FilePayload implements Payload {
     */
    @Override
    public void writeTo(OutputStream outstream) throws IOException {
-      InputStream in = getContent();
+      InputStream in = getInput();
       try {
          Files.copy(content, outstream);
       } finally {

@@ -57,7 +57,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
       checkState(payload != null, "payload");
       if (payload instanceof InputStreamPayload) {
          MD5InputStreamResult result = encryptionService
-                  .generateMD5Result(((InputStreamPayload) payload).getContent());
+                  .generateMD5Result(((InputStreamPayload) payload).getInput());
          setContentMD5(result.md5);
          setContentLength(result.length);
          setPayload(result.data);
@@ -73,7 +73,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public InputStream getContent() {
-      return payload != null ? payload.getContent() : null;
+      return payload != null ? payload.getInput() : null;
    }
 
    /**

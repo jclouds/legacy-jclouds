@@ -46,7 +46,7 @@ public class MutableContentMetadata {
     * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
     * range, or startAt.
     * 
-    * @return the length in bytes that can be be obtained from {@link #getContent()}
+    * @return the length in bytes that can be be obtained from {@link #getInput()}
     * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
     * @see GetObjectOptions
     */

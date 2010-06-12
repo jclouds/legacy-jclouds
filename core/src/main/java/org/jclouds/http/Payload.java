@@ -22,21 +22,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.google.common.io.InputSupplier;
+
 /**
  * @author Adrian Cole
  */
-public interface Payload {
+public interface Payload extends InputSupplier<InputStream> {
 
    /**
     *  Creates a new InputStream object of the payload.
     */
-   InputStream getContent();
-   
+   InputStream getInput();
+
    /**
-    *  Payload in its original form.
+    * Payload in its original form.
     */
    Object getRawContent();
-   
+
    /**
     * Tells if the payload is capable of producing its data more than once.
     */

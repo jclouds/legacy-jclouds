@@ -426,11 +426,11 @@ public class RestAnnotationProcessor<T> {
          }
          MultipartForm form = new MultipartForm(BOUNDARY, parts);
 
-         request.setPayload(form.getData());
+         request.setPayload(form);
          request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
                   "multipart/form-data; boundary=" + BOUNDARY);
 
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.getSize() + "");
+         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.calculateSize() + "");
 
       } else if (formParams.size() > 0) {
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)

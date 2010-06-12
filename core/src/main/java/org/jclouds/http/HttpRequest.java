@@ -159,8 +159,8 @@ public class HttpRequest extends HttpMessage {
    }
 
    private void closeContentIfPresent() {
-      if (getPayload() != null && getPayload().getContent() != null) {
-         Closeables.closeQuietly(getPayload().getContent());
+      if (getPayload() != null && getPayload().getInput() != null) {
+         Closeables.closeQuietly(getPayload().getInput());
       }
    }
 

@@ -79,7 +79,7 @@ public class BindCFObjectToPayloadTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, testBlob());
 
-      assertEquals(Utils.toStringAndClose(request.getPayload().getContent()), "hello");
+      assertEquals(Utils.toStringAndClose(request.getPayload().getInput()), "hello");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 5 + "");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), MediaType.TEXT_PLAIN);
    }
@@ -93,7 +93,7 @@ public class BindCFObjectToPayloadTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, blob);
 
-      assertEquals(Utils.toStringAndClose(request.getPayload().getContent()), "hello");
+      assertEquals(Utils.toStringAndClose(request.getPayload().getInput()), "hello");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 5 + "");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.ETAG),
                "5d41402abc4b2a76b9719d911017c592");
