@@ -162,14 +162,14 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       return new ExpirableSupplier<VCloudSession>(
                new RetryOnTimeOutExceptionSupplier<VCloudSession>(new Supplier<VCloudSession>() {
                   public VCloudSession get() {
+                     // http://code.google.com/p/google-guice/issues/detail?id=483
+                     // guice doesn't remember when singleton providers throw exceptions.
+                     // in this case, if describeRegions fails, it is called again for
+                     // each provider method that depends on it. To short-circuit this,
+                     // we remember the last exception trusting that guice is single-threaded
+                     if (authException != null)
+                        throw authException;
                      try {
-                        // http://code.google.com/p/google-guice/issues/detail?id=483
-                        // guice doesn't remember when singleton providers throw exceptions.
-                        // in this case, if describeRegions fails, it is called again for
-                        // each provider method that depends on it. To short-circuit this,
-                        // we remember the last exception trusting that guice is single-threaded
-                        if (authException != null)
-                           throw authException;
                         return login.login().get(10, TimeUnit.SECONDS);
                      } catch (AuthorizationException e) {
                         BaseVCloudRestClientModule.this.authException = e;
