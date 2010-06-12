@@ -53,6 +53,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -149,6 +150,8 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       return URI.create(vcloudUri.toASCIIString().replace("/login", ""));
    }
 
+   private AuthorizationException authException = null;
+
    /**
     * borrowing concurrency code to ensure that caching takes place properly
     */
@@ -160,7 +163,17 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
                new RetryOnTimeOutExceptionSupplier<VCloudSession>(new Supplier<VCloudSession>() {
                   public VCloudSession get() {
                      try {
+                        // http://code.google.com/p/google-guice/issues/detail?id=483
+                        // guice doesn't remember when singleton providers throw exceptions.
+                        // in this case, if describeRegions fails, it is called again for
+                        // each provider method that depends on it. To short-circuit this,
+                        // we remember the last exception trusting that guice is single-threaded
+                        if (authException != null)
+                           throw authException;
                         return login.login().get(10, TimeUnit.SECONDS);
+                     } catch (AuthorizationException e) {
+                        BaseVCloudRestClientModule.this.authException = e;
+                        throw e;
                      } catch (Exception e) {
                         Throwables.propagate(e);
                         assert false : e;
@@ -237,7 +250,14 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException,
             TimeoutException, InterruptedException {
-      return discovery.getDefaultOrganization();
+      if (authException != null)
+         throw authException;
+      try {
+         return discovery.getDefaultOrganization();
+      } catch (AuthorizationException e) {
+         BaseVCloudRestClientModule.this.authException = e;
+         throw e;
+      }
    }
 
    @Provides
@@ -261,10 +281,17 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException,
             ExecutionException, TimeoutException {
-      org.jclouds.vcloud.domain.VDC vDC = client.getDefaultVDC();
-      Map<String, NamedResource> networks = vDC.getAvailableNetworks();
-      checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
-      return Iterables.get(networks.values(), 0).getLocation();
+      if (authException != null)
+         throw authException;
+      try {
+         org.jclouds.vcloud.domain.VDC vDC = client.getDefaultVDC();
+         Map<String, NamedResource> networks = vDC.getAvailableNetworks();
+         checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
+         return Iterables.get(networks.values(), 0).getLocation();
+      } catch (AuthorizationException e) {
+         BaseVCloudRestClientModule.this.authException = e;
+         throw e;
+      }
    }
 
    @Provides
