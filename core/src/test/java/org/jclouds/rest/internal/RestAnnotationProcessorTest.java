@@ -619,19 +619,22 @@ public class RestAnnotationProcessorTest {
    @Endpoint(Localhost.class)
    static interface TestMultipartForm {
       @POST
-      public void withStringPart(@PartParam(name = "fooble") String path);
+      void withStringPart(@PartParam(name = "fooble") String path);
 
       @POST
-      public void withParamStringPart(@FormParam("name") String name,
-               @PartParam(name = "file") String path);
+      void withParamStringPart(@FormParam("name") String name, @PartParam(name = "file") String path);
 
       @POST
-      public void withParamFilePart(@FormParam("name") String name,
-               @PartParam(name = "file") File path);
+      void withParamFilePart(@FormParam("name") String name, @PartParam(name = "file") File path);
 
       @POST
-      public void withParamFileBinaryPart(@FormParam("name") String name,
+      void withParamFileBinaryPart(@FormParam("name") String name,
                @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File path);
+
+      @POST
+      void withParamByteArrayBinaryPart(
+               @FormParam("name") String name,
+               @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
    }
 
    public void testMultipartWithStringPart() throws SecurityException, NoSuchMethodException,
@@ -641,11 +644,10 @@ public class RestAnnotationProcessorTest {
                .createRequest(method, "foobledata");
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertHeadersEqual(httpRequest,
-               "Content-Length: 119\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+               "Content-Length: 93\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       assertPayloadEquals(httpRequest,//
                "----JCLOUDS--\r\n" + //
                         "Content-Disposition: form-data; name=\"fooble\"\r\n" + //
-                        "Content-Type: text/plain\r\n" + //
                         "\r\n" + //
                         "foobledata\r\n" + //
                         "----JCLOUDS----\r\n");
@@ -659,7 +661,7 @@ public class RestAnnotationProcessorTest {
                .createRequest(method, "name", "foobledata");
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertHeadersEqual(httpRequest,
-               "Content-Length: 185\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+               "Content-Length: 159\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       assertPayloadEquals(httpRequest,//
                "----JCLOUDS--\r\n" + //
                         "Content-Disposition: form-data; name=\"name\"\r\n" + //
@@ -667,7 +669,6 @@ public class RestAnnotationProcessorTest {
                         "name\r\n" + // /
                         "----JCLOUDS--\r\n" + //
                         "Content-Disposition: form-data; name=\"file\"\r\n" + //
-                        "Content-Type: text/plain\r\n" + //
                         "\r\n" + //
                         "foobledata\r\n" + //
                         "----JCLOUDS----\r\n");
@@ -685,19 +686,48 @@ public class RestAnnotationProcessorTest {
                .createRequest(method, "name", file);
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
       assertHeadersEqual(httpRequest,
-               "Content-Length: 185\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+               "Content-Length: " + (172 + file.getName().length())
+               + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       assertPayloadEquals(httpRequest,//
                "----JCLOUDS--\r\n" + //
                         "Content-Disposition: form-data; name=\"name\"\r\n" + //
                         "\r\n" + //
                         "name\r\n" + // /
                         "----JCLOUDS--\r\n" + //
-                        "Content-Disposition: form-data; name=\"file\"\r\n" + //
-                        "Content-Type: text/plain\r\n" + //
+                        "Content-Disposition: form-data; name=\"file\"; filename=\""
+                        + file.getName() + "\"\r\n" + //
                         "\r\n" + //
                         "foobledata\r\n" + //
                         "----JCLOUDS----\r\n");
    }
+
+   public void testMultipartWithParamByteArrayPart() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = TestMultipartForm.class.getMethod("withParamByteArrayBinaryPart",
+               String.class, byte[].class);
+      GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class)
+               .createRequest(method, "name", "goo".getBytes());
+      assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
+      assertHeadersEqual(httpRequest,
+               "Content-Length: 216\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+      assertPayloadEquals(httpRequest,//
+               "----JCLOUDS--\r\n"
+                        + //
+                        "Content-Disposition: form-data; name=\"name\"\r\n"
+                        + //
+                        "\r\n"
+                        + //
+                        "name\r\n"
+                        + // /
+                        "----JCLOUDS--\r\n"
+                        + //
+                        "Content-Disposition: form-data; name=\"file\"; filename=\"name.tar.gz\"\r\n"
+                        + //
+                        "Content-Type: application/octet-stream\r\n" + //
+                        "\r\n" + //
+                        "goo\r\n" + //
+                        "----JCLOUDS----\r\n");
+   };
 
    public void testMultipartWithParamFileBinaryPart() throws SecurityException,
             NoSuchMethodException, IOException {
@@ -710,15 +740,21 @@ public class RestAnnotationProcessorTest {
       GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class)
                .createRequest(method, "name", file);
       assertRequestLineEquals(httpRequest, "POST http://localhost:9999 HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Content-Length: 194\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+      assertHeadersEqual(httpRequest, "Content-Length: " + (207 + file.getName().length())
+               + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       assertPayloadEquals(httpRequest,//
-               "----JCLOUDS--\r\n" + //
-                        "Content-Disposition: form-data; name=\"name\"\r\n" + //
-                        "\r\n" + //
-                        "name\r\n" + // /
-                        "----JCLOUDS--\r\n" + //
-                        "Content-Disposition: form-data; name=\"file\"\r\n" + //
+               "----JCLOUDS--\r\n"
+                        + //
+                        "Content-Disposition: form-data; name=\"name\"\r\n"
+                        + //
+                        "\r\n"
+                        + //
+                        "name\r\n"
+                        + // /
+                        "----JCLOUDS--\r\n"
+                        + //
+                        "Content-Disposition: form-data; name=\"file\"; filename=\""
+                        + file.getName() + "\"\r\n" + //
                         "Content-Type: application/octet-stream\r\n" + //
                         "\r\n" + //
                         "'(2\r\n" + //

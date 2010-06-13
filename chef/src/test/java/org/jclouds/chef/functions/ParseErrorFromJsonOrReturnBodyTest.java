@@ -22,50 +22,29 @@
  * ====================================================================
  */
 package org.jclouds.chef.functions;
+import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.inject.Singleton;
+import java.io.InputStream;
+import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.Utils;
-
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
+import org.testng.annotations.Test;
 
 /**
- * 
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class ParseErrorFromJsonOrNull implements Function<HttpResponse, String> {
-   Pattern pattern = Pattern.compile(".*error\": *\"([^\"]+)\".*");
+@Test(groups = "unit", testName = "chef.ParseErrorFromJsonOrReturnBodyTest")
+public class ParseErrorFromJsonOrReturnBodyTest {
 
-   @Override
-   public String apply(HttpResponse response) {
-      if (response.getContent() == null)
-         return null;
-      try {
-         return parse(Utils.toStringAndClose(response.getContent()));
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      } finally {
-         try {
-            response.getContent().close();
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-      }
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      InputStream is = Utils
+               .toInputStream("{\"error\":[\"invalid tarball: tarball root must contain java-bytearray\"]}");
+
+      ParseErrorFromJsonOrReturnBody parser = new ParseErrorFromJsonOrReturnBody();
+      String response = parser.apply(new HttpResponse(is));
+      assertEquals(response, "invalid tarball: tarball root must contain java-bytearray");
    }
 
-   public String parse(String in) {
-      Matcher matcher = pattern.matcher(in);
-      while (matcher.find()) {
-         return matcher.group(1);
-      }
-      return null;
-   }
 }

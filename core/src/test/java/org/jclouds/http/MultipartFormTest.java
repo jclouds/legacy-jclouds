@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.MultipartForm.Part;
+import org.jclouds.http.MultipartForm.Part.PartOptions;
 import org.jclouds.http.payloads.FilePayload;
 import org.jclouds.http.payloads.StringPayload;
 import org.jclouds.util.Utils;
@@ -99,7 +100,8 @@ public class MultipartFormTest {
    }
 
    private Part newPart(String data) {
-      return Part.create("file", new MockFilePayload(data), MediaType.TEXT_PLAIN);
+      return Part.create("file", new MockFilePayload(data), new PartOptions()
+               .contentType(MediaType.TEXT_PLAIN));
    }
 
    private void addData(String boundary, String data, StringBuilder builder) {

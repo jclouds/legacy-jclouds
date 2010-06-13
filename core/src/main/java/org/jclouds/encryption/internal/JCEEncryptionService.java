@@ -161,11 +161,27 @@ public class JCEEncryptionService extends BaseEncryptionService {
    }
 
    @Override
-   public String sha1Base64(String toEncode) throws NoSuchAlgorithmException,
+   public String sha1Base64(InputStream plainBytes) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException {
       MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-      byte[] digest = sha1.digest(toEncode.getBytes());
-      return toBase64String(digest);
+      byte[] buffer = new byte[1024];
+      long length = 0;
+      int numRead = -1;
+      try {
+         do {
+            numRead = plainBytes.read(buffer);
+            if (numRead > 0) {
+               length += numRead;
+               sha1.update(buffer, 0, numRead);
+            }
+         } while (numRead != -1);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      } finally {
+         Closeables.closeQuietly(plainBytes);
+      }
+
+      return toBase64String(sha1.digest());
    }
 
    @Override

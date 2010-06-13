@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -117,7 +116,7 @@ public class Utils {
       return e;
    }
 
-   public static String replaceTokens(String value, Collection<Entry<String, String>> tokenValues) {
+   public static String replaceTokens(String value, Iterable<Entry<String, String>> tokenValues) {
       for (Entry<String, String> tokenValue : tokenValues) {
          value = replaceAll(value, TOKEN_TO_PATTERN.get(tokenValue.getKey()), tokenValue.getValue());
       }

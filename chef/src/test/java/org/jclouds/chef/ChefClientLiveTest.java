@@ -26,7 +26,6 @@ package org.jclouds.chef;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,26 +50,37 @@ import com.google.common.io.Files;
 @Test(groups = "live", testName = "chef.ChefClientLiveTest")
 public class ChefClientLiveTest {
 
+   private static final String COOKBOOK_NAME = "mysql";
+   private static final String COOKBOOK_URI = "https://s3.amazonaws.com/opscode-community/cookbook_versions/tarballs/212/original/mysql.tar.gz";
    private RestContext<ChefClient, ChefAsyncClient> validatorConnection;
    private RestContext<ChefClient, ChefAsyncClient> clientConnection;
+   private RestContext<ChefClient, ChefAsyncClient> adminConnection;
 
    private String clientKey;
    private String endpoint;
    private String validator;
+   private String user;
+   private byte[] cookbookContent;
+   private File cookbookFile;
 
    public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
 
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
       endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
-      validator = System.getProperty("jclouds.test.user");
+      validator = System.getProperty("jclouds.test.validator");
       if (validator == null || validator.equals(""))
          validator = "chef-validator";
+      String validatorKey = System.getProperty("jclouds.test.validator.key");
+      if (validatorKey == null || validatorKey.equals(""))
+         validatorKey = "/etc/chef/validation.pem";
+      user = checkNotNull(System.getProperty("jclouds.test.user"));
       String keyfile = System.getProperty("jclouds.test.key");
       if (keyfile == null || keyfile.equals(""))
-         keyfile = "/etc/chef/validation.pem";
-      validatorConnection = createConnection(validator, Files.toString(new File(keyfile),
+         keyfile = System.getProperty("user.home") + "/chef/" + user + ".pem";
+      validatorConnection = createConnection(validator, Files.toString(new File(validatorKey),
                Charsets.UTF_8));
+      adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
    }
 
    private RestContext<ChefClient, ChefAsyncClient> createConnection(String identity, String key)
@@ -110,24 +120,22 @@ public class ChefClientLiveTest {
       assertNotNull(validatorConnection.getApi().clientExists(PREFIX));
    }
 
-   @Test(dependsOnMethods = "testGenerateKeyForClient")
-   public void testCreateCookbooks() throws Exception {
+   @Test
+   public void testCreateCookbook() throws Exception {
+      adminConnection.getApi().deleteCookbook(COOKBOOK_NAME);
       InputStream in = null;
       try {
-         in = URI
-                  .create(
-                           "https://s3.amazonaws.com/opscode-community/cookbook_versions/tarballs/194/original/java.tar.gz")
-                  .toURL().openStream();
+         in = URI.create(COOKBOOK_URI).toURL().openStream();
 
-         byte[] content = ByteStreams.toByteArray(in);
+         cookbookContent = ByteStreams.toByteArray(in);
 
-         System.err.println(clientConnection.getApi().createCookbook("java-bytearray", content));
+         cookbookFile = File.createTempFile("foo", ".tar.gz");
+         Files.write(cookbookContent, cookbookFile);
+         cookbookFile.deleteOnExit();
 
-         File file = File.createTempFile("foo", "bar");
-         Files.write(content, file);
-         file.deleteOnExit();
-
-         System.err.println(clientConnection.getApi().createCookbook("java-file", file));
+         adminConnection.getApi().createCookbook(COOKBOOK_NAME, cookbookFile);
+         adminConnection.getApi().deleteCookbook(COOKBOOK_NAME);
+         adminConnection.getApi().createCookbook(COOKBOOK_NAME, cookbookContent);
 
       } finally {
          if (in != null)
@@ -135,9 +143,17 @@ public class ChefClientLiveTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateCookbooks")
+   @Test(dependsOnMethods = "testCreateCookbook")
+   public void testUpdateCookbook() throws Exception {
+      adminConnection.getApi().updateCookbook(COOKBOOK_NAME, cookbookFile);
+      // TODO verify timestamp or something
+      adminConnection.getApi().updateCookbook(COOKBOOK_NAME, cookbookContent);
+   }
+
+   @Test(dependsOnMethods = "testUpdateCookbook")
    public void testListCookbooks() throws Exception {
-      System.err.println(clientConnection.getApi().listCookbooks());
+      for (String cookbook : adminConnection.getApi().listCookbooks())
+         System.err.println(adminConnection.getApi().getCookbook(cookbook));
    }
 
    @AfterClass(groups = { "live" })
@@ -146,5 +162,7 @@ public class ChefClientLiveTest {
          clientConnection.close();
       if (validatorConnection != null)
          validatorConnection.close();
+      if (adminConnection != null)
+         adminConnection.close();
    }
 }

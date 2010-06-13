@@ -163,12 +163,26 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
    }
 
    @Override
-   public String sha1Base64(String toEncode) throws NoSuchAlgorithmException,
+   public String sha1Base64(InputStream plainBytes) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException {
-      byte[] plainBytes = toEncode.getBytes();
       Digest digest = new SHA1Digest();
       byte[] resBuf = new byte[digest.getDigestSize()];
-      digest.update(plainBytes, 0, plainBytes.length);
+      byte[] buffer = new byte[1024];
+      long length = 0;
+      int numRead = -1;
+      try {
+         do {
+            numRead = plainBytes.read(buffer);
+            if (numRead > 0) {
+               length += numRead;
+               digest.update(buffer, 0, numRead);
+            }
+         } while (numRead != -1);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      } finally {
+         Closeables.closeQuietly(plainBytes);
+      }
       digest.doFinal(resBuf, 0);
       return toBase64String(resBuf);
    }

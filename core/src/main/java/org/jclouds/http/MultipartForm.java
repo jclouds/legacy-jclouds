@@ -53,6 +53,7 @@ public class MultipartForm implements Payload {
    private long size;
    private boolean isRepeatable;
    private boolean written;
+   private final Iterable<? extends Part> parts;
 
    public MultipartForm(String boundary, Part... parts) {
       this(boundary, Lists.newArrayList(parts));
@@ -60,6 +61,7 @@ public class MultipartForm implements Payload {
 
    @SuppressWarnings("unchecked")
    public MultipartForm(String boundary, Iterable<? extends Part> parts) {
+      this.parts = parts;
       String boundaryrn = boundary + rn;
       isRepeatable = true;
       InputSupplier<? extends InputStream> chain = ByteStreams.join();
@@ -102,6 +104,7 @@ public class MultipartForm implements Payload {
    }
 
    public static class Part implements Payload {
+      private final String name;
       private final Multimap<String, String> headers;
       private final Payload delegate;
 
@@ -129,24 +132,65 @@ public class MultipartForm implements Payload {
                put(HttpHeaders.CONTENT_TYPE, checkNotNull(type, "type"));
             return this;
          }
+
+         public static PartMap create(String name, Payload delegate, PartOptions options) {
+            String filename = options != null ? options.getFilename() : null;
+            if (delegate instanceof FilePayload)
+               filename = FilePayload.class.cast(delegate).getRawContent().getName();
+            PartMap returnVal;
+            returnVal = (filename != null) ? create(name, filename) : create(name);
+            if (options != null)
+               returnVal.contentType(options.getContentType());
+            return returnVal;
+
+         }
       }
 
-      private Part(PartMap map, Payload delegate) {
+      private Part(String name, PartMap map, Payload delegate) {
+         this.name = name;
          this.delegate = checkNotNull(delegate, "delegate");
          this.headers = ImmutableMultimap.copyOf(Multimaps.forMap((checkNotNull(map, "headers"))));
       }
 
+      public static class PartOptions {
+         private String contentType;
+         private String filename;
+
+         public PartOptions contentType(String contentType) {
+            this.contentType = checkNotNull(contentType, "contentType");
+            return this;
+         }
+
+         public PartOptions filename(String filename) {
+            this.filename = checkNotNull(filename, "filename");
+            return this;
+         }
+
+         public static class Builder {
+            public static PartOptions contentType(String contentType) {
+               return new PartOptions().contentType(contentType);
+            }
+
+            public static PartOptions filename(String filename) {
+               return new PartOptions().filename(filename);
+            }
+         }
+
+         public String getContentType() {
+            return contentType;
+         }
+
+         public String getFilename() {
+            return filename;
+         }
+      }
+
       public static Part create(String name, String value) {
-         return new Part(PartMap.create(name), Payloads.newStringPayload(value));
+         return new Part(name, PartMap.create(name), Payloads.newStringPayload(value));
       }
 
-      public static Part create(String name, Payload delegate, String contentType) {
-         return new Part(PartMap.create(name).contentType(contentType), delegate);
-      }
-
-      public static Part create(String name, FilePayload delegate, String contentType) {
-         return new Part(PartMap.create(name, delegate.getRawContent().getName()).contentType(
-                  contentType), delegate);
+      public static Part create(String name, Payload delegate, PartOptions options) {
+         return new Part(name, PartMap.create(name, delegate, options), delegate);
       }
 
       public Multimap<String, String> getHeaders() {
@@ -184,6 +228,7 @@ public class MultipartForm implements Payload {
          int result = 1;
          result = prime * result + ((delegate == null) ? 0 : delegate.hashCode());
          result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+         result = prime * result + ((name == null) ? 0 : name.hashCode());
          return result;
       }
 
@@ -206,7 +251,16 @@ public class MultipartForm implements Payload {
                return false;
          } else if (!headers.equals(other.headers))
             return false;
+         if (name == null) {
+            if (other.name != null)
+               return false;
+         } else if (!name.equals(other.name))
+            return false;
          return true;
+      }
+
+      public String getName() {
+         return name;
       }
    }
 
@@ -252,5 +306,9 @@ public class MultipartForm implements Payload {
    public String toString() {
       return "MultipartForm [chain=" + chain + ", isRepeatable=" + isRepeatable + ", size=" + size
                + ", written=" + written + "]";
+   }
+
+   public Iterable<? extends Part> getParts() {
+      return parts;
    }
 }

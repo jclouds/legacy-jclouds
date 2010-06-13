@@ -24,8 +24,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.core.MediaType;
-
 /**
  * Designates that this parameter will be bound to a multipart form.
  * 
@@ -34,7 +32,13 @@ import javax.ws.rs.core.MediaType;
 @Target(PARAMETER)
 @Retention(RUNTIME)
 public @interface PartParam {
+   // hacks as nulls are not allowed as default values
+   public static String NO_FILENAME = "---NO_FILENAME---";
+   public static String NO_CONTENT_TYPE = "---NO_CONTENT_TYPE---";
+
    String name();
 
-   String contentType() default MediaType.TEXT_PLAIN;
+   String contentType() default NO_CONTENT_TYPE;
+   
+   String filename() default NO_FILENAME;
 }

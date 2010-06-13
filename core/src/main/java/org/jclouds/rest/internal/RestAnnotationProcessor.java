@@ -64,6 +64,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.MultipartForm;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.MultipartForm.Part;
+import org.jclouds.http.MultipartForm.Part.PartOptions;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
@@ -417,7 +418,8 @@ public class RestAnnotationProcessor<T> {
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
 
-      List<? extends Part> parts = getParts(method, args);
+      List<? extends Part> parts = getParts(method, args, Iterables.concat(tokenValues.entries(),
+               formParams.entries()));
       if (parts.size() > 0) {
          if (formParams.size() > 0) {
             parts = Lists.newLinkedList(Iterables.concat(Iterables
@@ -1005,15 +1007,21 @@ public class RestAnnotationProcessor<T> {
       return out;
    }
 
-   List<? extends Part> getParts(Method method, Object... args) {
+   List<? extends Part> getParts(Method method, Object[] args,
+            Iterable<Entry<String, String>> iterable) {
       List<Part> parts = Lists.newLinkedList();
       Map<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
             PartParam param = (PartParam) key;
-            Part part = Part.create(param.name(), Payloads.newPayload(args[entry.getKey()]), param
-                     .contentType());
+            PartOptions options = new PartOptions();
+            if (!PartParam.NO_CONTENT_TYPE.equals(param.contentType()))
+               options.contentType(param.contentType());
+            if (!PartParam.NO_FILENAME.equals(param.filename()))
+               options.filename(replaceTokens(param.filename(), iterable));
+            Part part = Part.create(param.name(), Payloads.newPayload(args[entry.getKey()]),
+                     options);
             parts.add(part);
          }
       }

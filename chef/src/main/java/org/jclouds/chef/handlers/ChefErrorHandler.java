@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.chef.functions.ParseErrorFromJsonOrNull;
+import org.jclouds.chef.functions.ParseErrorFromJsonOrReturnBody;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -43,17 +43,16 @@ import com.google.common.io.Closeables;
 public class ChefErrorHandler implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
-   private final ParseErrorFromJsonOrNull errorParser;
+   private final ParseErrorFromJsonOrReturnBody errorParser;
 
    @Inject
-   ChefErrorHandler(ParseErrorFromJsonOrNull errorParser) {
+   ChefErrorHandler(ParseErrorFromJsonOrReturnBody errorParser) {
       this.errorParser = errorParser;
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
       String message = errorParser.apply(response);
-      Exception exception = message != null ? new HttpResponseException(command, response, message)
-               : new HttpResponseException(command, response);
+      Exception exception = new HttpResponseException(command, response, message);
       try {
          message = message != null ? message : String.format("%s -> %s", command.getRequest()
                   .getRequestLine(), response.getStatusLine());

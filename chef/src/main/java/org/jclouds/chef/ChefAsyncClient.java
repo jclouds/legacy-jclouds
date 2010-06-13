@@ -70,14 +70,15 @@ public interface ChefAsyncClient {
     */
    @GET
    @Path("cookbooks")
-   ListenableFuture<String> listCookbooks();
+   @ResponseParser(ParseKeySetFromJson.class)
+   ListenableFuture<Set<String>> listCookbooks();
 
    /**
     * @see ChefClient#createCookbook(String,File)
     */
    @POST
-   @Path("cookbooks")
-   ListenableFuture<String> createCookbook(@FormParam("name") String name,
+   @Path("name")
+   ListenableFuture<Void> createCookbook(@FormParam("name") String cookbookName,
             @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
 
    /**
@@ -85,8 +86,44 @@ public interface ChefAsyncClient {
     */
    @POST
    @Path("cookbooks")
-   ListenableFuture<String> createCookbook(@FormParam("name") String name,
-            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) byte[] content);
+   ListenableFuture<Void> createCookbook(
+            @FormParam("name") String cookbookName,
+            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
+
+   /**
+    * @see ChefClient#updateCookbook(String,File)
+    */
+   @PUT
+   @Path("cookbooks/{cookbookname}/_content")
+   ListenableFuture<Void> updateCookbook(
+            @PathParam("cookbookname") @FormParam("name") String cookbookName,
+            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
+
+   /**
+    * @see ChefClient#updateCookbook(String,byte[])
+    */
+   @PUT
+   @Path("cookbooks/{cookbookname}/_content")
+   ListenableFuture<Void> updateCookbook(
+            @PathParam("cookbookname") @FormParam("name") String cookbookName,
+            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
+
+   /**
+    * @see ChefCookbook#deleteCookbook
+    */
+   @DELETE
+   @Path("cookbooks/{cookbookname}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteCookbook(@PathParam("cookbookname") String cookbookName);
+
+   
+
+   /**
+    * @see ChefCookbook#getCookbook
+    */
+   @GET
+   @Path("cookbooks/{cookbookname}")
+   ListenableFuture<String> getCookbook(@PathParam("cookbookname") String cookbookName);
 
    /**
     * @see ChefClient#createClient

@@ -23,24 +23,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.jclouds.http.Payload;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 /**
  * @author Adrian Cole
  */
 public class FilePayload implements Payload {
    private final File content;
+   private final InputSupplier<FileInputStream> delegate;
 
    public FilePayload(File content) {
       checkArgument(checkNotNull(content, "content").exists(), "file must exist: " + content);
+      this.delegate = Files.newInputStreamSupplier(content);
       this.content = content;
    }
 
@@ -54,9 +57,10 @@ public class FilePayload implements Payload {
    @Override
    public InputStream getInput() {
       try {
-         return new FileInputStream(content);
-      } catch (FileNotFoundException e) {
-         throw new IllegalStateException("file " + content + " does not exist", e);
+         return delegate.getInput();
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return null;
       }
    }
 

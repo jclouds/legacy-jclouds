@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.security.PrivateKey;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -42,13 +43,16 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.MultipartForm;
 import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
+import org.jclouds.http.MultipartForm.Part;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
@@ -130,7 +134,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    @VisibleForTesting
    String hashPath(String path) {
       try {
-         return encryptionService.sha1Base64(canonicalPath(path));
+         return encryptionService.sha1Base64(Utils.toInputStream(canonicalPath(path)));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for path: " + path, e);
@@ -151,14 +155,34 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    String hashBody(Payload payload) {
       if (payload == null)
          return emptyStringHash;
+      payload = useTheFilePartIfForm(payload);
       checkArgument(payload != null, "payload was null");
       checkArgument(payload.isRepeatable(), "payload must be repeatable: " + payload);
       try {
-         return encryptionService.sha1Base64(Utils.toStringAndClose(payload.getInput()));
+         return encryptionService.sha1Base64(payload.getInput());
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for payload: " + payload, e);
       }
+   }
+
+   private Payload useTheFilePartIfForm(Payload payload) {
+      if (payload instanceof MultipartForm) {
+         Iterable<? extends Part> parts = MultipartForm.class.cast(payload).getParts();
+         try {
+            payload = Iterables.find(parts, new Predicate<Part>() {
+
+               @Override
+               public boolean apply(Part input) {
+                  return "file".equals(input.getName());
+               }
+
+            });
+         } catch (NoSuchElementException e) {
+
+         }
+      }
+      return payload;
    }
 
    public String sign(String toSign) {

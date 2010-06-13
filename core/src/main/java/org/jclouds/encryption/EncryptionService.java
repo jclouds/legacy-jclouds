@@ -52,7 +52,7 @@ public interface EncryptionService {
    String hmacSha256Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException;
 
-   String sha1Base64(String toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
+   String sha1Base64(InputStream toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
             InvalidKeyException;
 
    String hmacSha1Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,

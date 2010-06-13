@@ -24,6 +24,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.MultipartForm;
 import org.jclouds.http.MultipartForm.Part;
+import org.jclouds.http.MultipartForm.Part.PartOptions;
 import org.jclouds.rest.Binder;
 
 /**
@@ -36,10 +37,10 @@ public class BindBlobToMultipartForm implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       Blob object = (Blob) payload;
-      
-      Part part = Part.create(object.getMetadata().getName(), object.getPayload(), object
-               .getMetadata().getContentType());
-      
+
+      Part part = Part.create(object.getMetadata().getName(), object.getPayload(),
+               new PartOptions().contentType(object.getMetadata().getContentType()));
+
       MultipartForm form = new MultipartForm(BOUNDARY, part);
       request.setPayload(form.getInput());
       request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
