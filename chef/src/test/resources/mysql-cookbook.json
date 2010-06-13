@@ -1,0 +1,304 @@
+{
+	"templates": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?version=9.10&id=my.cnf.erb&platform=ubuntu", 
+			"specificity": "ubuntu-9.10", 
+			"name": "my.cnf.erb", 
+			"checksum": "fbab8006536e2504b46e457b46554ab7c54727e7830201331567542e8df70ab4"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?version=8.04&id=my.cnf.erb&platform=ubuntu", 
+			"specificity": "ubuntu-8.04", 
+			"name": "my.cnf.erb", 
+			"checksum": "5ef04441604a866a675153ce3bd8ec3db18d9c7392e38e4388fd33e949db3615"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=port_mysql.erb", 
+			"specificity": "default", 
+			"name": "port_mysql.erb", 
+			"checksum": "0146b4b31f9a4dba0526d1c586a8b8370d671dbf0031ef06dd82b439424a6692"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=mysql-server.seed.erb", 
+			"specificity": "default", 
+			"name": "mysql-server.seed.erb", 
+			"checksum": "797c295e0d5d2a30f1ed999b39b85b067e1043e58cb4bd9d365479ebcf2ceef2"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=debian.cnf.erb", 
+			"specificity": "default", 
+			"name": "debian.cnf.erb", 
+			"checksum": "a5e6a34ed8c2a85192f63af7864e9afb9df19a128e561202b4a816c3da636c6e"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=grants.sql.erb", 
+			"specificity": "default", 
+			"name": "grants.sql.erb", 
+			"checksum": "e11013b7bf2b78b386dcd4c97091b783eff217a4ec85bb4d13cf5dae0f3cb0d6"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=my.cnf.erb", 
+			"specificity": "default", 
+			"name": "my.cnf.erb", 
+			"checksum": "dea2a28182d835501f4d4096b0f9c5cb478fd57383d607b061ab04242d5f0954"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?version=10.04&id=my.cnf.erb&platform=ubuntu", 
+			"specificity": "ubuntu-10.04", 
+			"name": "my.cnf.erb", 
+			"checksum": "fbab8006536e2504b46e457b46554ab7c54727e7830201331567542e8df70ab4"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=my.cnf.erb&platform=redhat", 
+			"specificity": "redhat", 
+			"name": "my.cnf.erb", 
+			"checksum": "664eb39f181c03cfa1d93a6097d30cc9f259e1534490e89c5fa69841f5da572d"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/templates?id=my.cnf.erb&platform=centos", 
+			"specificity": "centos", 
+			"name": "my.cnf.erb", 
+			"checksum": "664eb39f181c03cfa1d93a6097d30cc9f259e1534490e89c5fa69841f5da572d"
+		}
+	], 
+	"attributes": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/attributes?id=server.rb", 
+			"name": "server.rb", 
+			"checksum": "6d3936ea2d5c40dac2120951af0b9fc76b7077567341f770a98cbfd6915531f9"
+		}
+	], 
+	"definitions": [
+	], 
+	"metadata": {
+		"conflicting": {
+		}, 
+		"attributes": {
+			"mysql/server_root_password": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "randomly generated", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Server Root Password", 
+				"description": "Randomly generated password for the mysqld root user"
+			}, 
+			"mysql/tunable/max_heap_table_size": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "32M", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Max Heap Table Size"
+			}, 
+			"mysql/bind_address": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "ipaddress", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Bind Address", 
+				"description": "Address that mysqld should listen on"
+			}, 
+			"mysql/datadir": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "/var/lib/mysql", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Data Directory", 
+				"description": "Location of mysql databases"
+			}, 
+			"mysql/tunable/wait_timeout": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "180", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Wait Timeout"
+			}, 
+			"mysql/tunable/back_log": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "128", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Back Log"
+			}, 
+			"mysql/tunable/net_read_timeout": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "30", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Net Read Timeout"
+			}, 
+			"mysql/tunable/max_connections": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "800", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Max Connections"
+			}, 
+			"mysql/tunable": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"type": "hash", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunables", 
+				"description": "Hash of MySQL tunable attributes"
+			}, 
+			"mysql/tunable/table_cache": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "128", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Table Cache"
+			}, 
+			"mysql/ec2_path": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "/mnt/mysql", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL EC2 Path", 
+				"description": "Location of mysql directory on EC2 instance EBS volumes"
+			}, 
+			"mysql/tunable/key_buffer": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "250M", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tuntable Key Buffer"
+			}, 
+			"mysql/tunable/net_write_timeout": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "30", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "MySQL Tunable Net Write Timeout"
+			}
+		}, 
+		"providing": {
+		}, 
+		"license": "Apache 2.0", 
+		"replacing": {
+		}, 
+		"long_description": "= DESCRIPTION:\n\nInstalls and configures MySQL client or server.\n\n= REQUIREMENTS:\n\n== Platform:\n\nBest tested on Ubuntu 9.04,9.10. On EC2, requires platform that supports -o bind option for the 'mount' command.\n\n== Cookbooks:\n\nRequires Opscode's openssl cookbook for secure password generation.\n\n= ATTRIBUTES: \n\n* mysql[:server_root_password] - Set the server's root password with this, default is a randomly generated password with OpenSSL::Random.random_bytes.\n* mysql[:server_repl_password] - Set the replication user 'repl' password with this, default is a randomly generated password with OpenSSL::Random.random_bytes.\n* mysql[:server_debian_password] - Set the debian-sys-maint user password with this, default is a randomly generated password with OpenSSL::Random.random_bytes.\n* mysql[:bind_address] - Listen address for MySQLd, default is node's ipaddress.\n* mysql[:datadir] - Location for mysql data directory, default is \"/var/lib/mysql\" \n* mysql[:ec2_path] - location of mysql datadir on EC2 nodes, default \"/mnt/mysql\" \n\nPerformance tuning attributes, each corresponds to the same-named parameter in my.cnf; default values listed\n\n* mysql[:tunable][:key_buffer]          = \"250M\"\n* mysql[:tunable][:max_connections]     = \"800\" \n* mysql[:tunable][:wait_timeout]        = \"180\" \n* mysql[:tunable][:net_write_timeout]   = \"30\" \n* mysql[:tunable][:net_write_timeout]   = \"30\" \n* mysql[:tunable][:back_log]            = \"128\" \n* mysql[:tunable][:table_cache]         = \"128\" \n* mysql[:tunable][:max_heap_table_size] = \"32M\" \n\n= USAGE:\n\nOn client nodes,\n\n  include_recipe \"mysql::client\"\n  \nAs the common use case is on systems with Ruby, we also install the MySQL RubyGem. Because we may want to be able to use the gem within another Chef recipe, we make sure the mysql development package and gem are installed first. The key is this:\n\n  r = package ... do\n    action :nothing\n  end\n  \n  r.run_action(:install)\n  \nThis creates a resource object for the package and does the installation before other recipes are parsed. You'll need to have the C compiler and such (ie, build-essential on Ubuntu) before running the recipes, but we already do that when installing Chef :-). If you want to be able to access a MySQL database via Ruby within another recipe, you could do so, like so:\n\n  Gem.clear_paths # needed for Chef to find the gem...\n  require 'mysql' # requires the mysql gem\n\n  execute \"create #{node[:railsapp][:db][:database]} database\" do\n    command \"/usr/bin/mysqladmin -u root -p#{node[:mysql][:server_root_password]} create #{node[:railsapp][:db][:database]}\"\n    not_if do\n      m = Mysql.new(\"localhost\", \"root\", @node[:mysql][:server_root_password])\n      m.list_dbs.include?(@node[:railsapp][:db][:database])\n    end\n  end\n\nOn server nodes, \n\n  include_recipe \"mysql::server\"\n  \nOn Debian/Ubuntu this will preseed the MySQL package with the randomly generated root password. You can of course change the password afterward, but this makes sure that there's a good password set. You can view it in the node data in the Chef Server webui. Sets a new password for debian-sys-maint user as well.\n\nAlso sets up 'repl' user grants for replication slaves.\n\nOn EC2 nodes,\n\n  include_recipe \"mysql::server_ec2\"\n  \nWhen the ec2_path doesn't exist we look for a mounted filesystem (eg, EBS) and move the datadir there.\n\nThe client recipe is already included by server and 'default' recipes.\n\n= LICENSE and AUTHOR:\n      \nAuthor:: Joshua Timberman (<joshua@opscode.com>)\nAuthor:: AJ Christensen (<aj@opscode.com>)\n\nCopyright:: 2009, Opscode, Inc\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n", 
+		"dependencies": {
+			"openssl": [
+			]
+		}, 
+		"groupings": {
+		}, 
+		"recommendations": {
+		}, 
+		"platforms": {
+			"debian": [
+			], 
+			"ubuntu": [
+			]
+		}, 
+		"description": "Installs and configures mysql for client or server", 
+		"version": "0.21.2", 
+		"maintainer": "Opscode, Inc.", 
+		"name": "mysql", 
+		"recipes": {
+			"mysql::client": "Installs packages required for mysql clients using run_action magic", 
+			"mysql::server_ec2": "Performs EC2-specific mountpoint manipulation", 
+			"mysql::server": "Installs packages required for mysql servers w/o manual intervention"
+		}, 
+		"suggestions": {
+		}, 
+		"maintainer_email": "cookbooks@opscode.com"
+	}, 
+	"resources": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/resources?id=database.rb", 
+			"name": "database.rb", 
+			"checksum": "84e759036cf80ba08eb23a232dca11ca0942f947798dba42fb7c7eebba7bf964"
+		}
+	], 
+	"files": [
+	], 
+	"name": "mysql", 
+	"libraries": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/libraries?id=database.rb", 
+			"name": "database.rb", 
+			"checksum": "515056944a9fc6eb966ee2c527862b4823d5adc7c3f7e27004631fa5a5d495a1"
+		}
+	], 
+	"recipes": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/recipes?id=server.rb", 
+			"name": "server.rb", 
+			"checksum": "9fb286a7968954503e7839acaa083c00bf399e7c56f60a74bc64644894c4b07e"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/recipes?id=server_ec2.rb", 
+			"name": "server_ec2.rb", 
+			"checksum": "ab13e15228f33190c6333d7b13d0af7636ceae6c7ccd2cd18b1f144c4b0e459b"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/recipes?id=default.rb", 
+			"name": "default.rb", 
+			"checksum": "2a220ff3c2323ee8d25369901376643ecc33e61dafcfb29982577ac3a5ab7716"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/recipes?id=client.rb", 
+			"name": "client.rb", 
+			"checksum": "729dbd2ec84130fac5a76497d515265ce648690cb278425d55e0e91d6e590f3a"
+		}
+	], 
+	"providers": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/mysql/providers?id=database.rb", 
+			"name": "database.rb", 
+			"checksum": "091b5faefaf0eebbc83c5361e1889baf4de2394749b7cf10f9509262e987d1f8"
+		}
+	]
+}

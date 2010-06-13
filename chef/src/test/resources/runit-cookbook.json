@@ -1,0 +1,150 @@
+{
+	"templates": [
+	], 
+	"attributes": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/attributes?id=default.rb", 
+			"name": "default.rb", 
+			"checksum": "1dffbe14afa3630aa4cb268508bb723b0fba33e2e33a8c517feedad981db3147"
+		}
+	], 
+	"definitions": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/definitions?id=runit_service.rb", 
+			"name": "runit_service.rb", 
+			"checksum": "32fe6fe902b0dfe1870cfbd4aad475039e0c3d661353b12cd54ed29c5020a9e7"
+		}
+	], 
+	"metadata": {
+		"conflicting": {
+		}, 
+		"attributes": {
+			"runit/sv_dir": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "/etc/sv", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "Runit sv directory", 
+				"description": "Location of services managed by runit"
+			}, 
+			"runit/service_dir": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "/etc/service", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "Runit service directory", 
+				"description": "Symlinks to services managed under runit"
+			}, 
+			"runit": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"type": "hash", 
+				"recipes": [
+				], 
+				"display_name": "Runit", 
+				"description": "Hash of runit attributes"
+			}, 
+			"runit/sv_bin": {
+				"required": "optional", 
+				"calculated": false, 
+				"choice": [
+				], 
+				"default": "/usr/bin/sv", 
+				"type": "string", 
+				"recipes": [
+				], 
+				"display_name": "Runit sv bin", 
+				"description": "Location of the sv binary"
+			}
+		}, 
+		"providing": {
+		}, 
+		"license": "Apache 2.0", 
+		"replacing": {
+		}, 
+		"long_description": "", 
+		"dependencies": {
+		}, 
+		"groupings": {
+		}, 
+		"recommendations": {
+		}, 
+		"platforms": {
+			"debian": [
+			], 
+			"ubuntu": [
+			]
+		}, 
+		"description": "Installs runit and provides runit_service definition", 
+		"version": "0.11.0", 
+		"maintainer": "Opscode, Inc.", 
+		"name": "runit", 
+		"recipes": {
+		}, 
+		"suggestions": {
+		}, 
+		"maintainer_email": "cookbooks@opscode.com"
+	}, 
+	"resources": [
+	], 
+	"files": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/files?version=7.04&id=runsvdir&platform=ubuntu", 
+			"specificity": "ubuntu-7.04", 
+			"name": "runsvdir", 
+			"checksum": "28c55f711453fd9d4fbf7cc747719e7976607f892fa61cfb348421858ef3dd5b"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/files?version=8.04&id=runsvdir&platform=ubuntu", 
+			"specificity": "ubuntu-8.04", 
+			"name": "runsvdir", 
+			"checksum": "28c55f711453fd9d4fbf7cc747719e7976607f892fa61cfb348421858ef3dd5b"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/files?id=runsvdir", 
+			"specificity": "default", 
+			"name": "runsvdir", 
+			"checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/files?id=runit.seed", 
+			"specificity": "default", 
+			"name": "runit.seed", 
+			"checksum": "9c675810fd4c0ec4fb8b2788ba8512990f436347834373445a9fb48c46d0aff0"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/files?version=7.10&id=runsvdir&platform=ubuntu", 
+			"specificity": "ubuntu-7.10", 
+			"name": "runsvdir", 
+			"checksum": "28c55f711453fd9d4fbf7cc747719e7976607f892fa61cfb348421858ef3dd5b"
+		}, 
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/files?version=6.10&id=runsvdir&platform=ubuntu", 
+			"specificity": "ubuntu-6.10", 
+			"name": "runsvdir", 
+			"checksum": "61e090e43b0ce746bd22e121422d7d05c04e9b9883dac3632418bdf7dc539b38"
+		}
+	], 
+	"name": "runit", 
+	"libraries": [
+	], 
+	"recipes": [
+		{
+			"uri": "https://api.opscode.com/organizations/jclouds/cookbooks/runit/recipes?id=default.rb", 
+			"name": "default.rb", 
+			"checksum": "76589110f5db8cf8b0a045ce0b3fc500046f6bb63c2d16d50cee6cfaaaeff29a"
+		}
+	], 
+	"providers": [
+	]
+}

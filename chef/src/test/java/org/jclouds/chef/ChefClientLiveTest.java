@@ -50,8 +50,8 @@ import com.google.common.io.Files;
 @Test(groups = "live", testName = "chef.ChefClientLiveTest")
 public class ChefClientLiveTest {
 
-   private static final String COOKBOOK_NAME = "mysql";
-   private static final String COOKBOOK_URI = "https://s3.amazonaws.com/opscode-community/cookbook_versions/tarballs/212/original/mysql.tar.gz";
+   private static final String COOKBOOK_NAME = "runit";
+   private static final String COOKBOOK_URI = "https://s3.amazonaws.com/opscode-community/cookbook_versions/tarballs/195/original/runit.tar.gz";
    private RestContext<ChefClient, ChefAsyncClient> validatorConnection;
    private RestContext<ChefClient, ChefAsyncClient> clientConnection;
    private RestContext<ChefClient, ChefAsyncClient> adminConnection;
