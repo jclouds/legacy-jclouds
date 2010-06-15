@@ -29,6 +29,7 @@ import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -42,12 +43,14 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
@@ -85,19 +88,71 @@ public class ComputeUtils {
    private final ExecutorService executor;
    protected final Predicate<NodeMetadata> nodeRunning;
    private final GetNodeMetadataStrategy getNode;
+   private final Timeouts timeouts;
+
+   public static final Map<org.jclouds.compute.domain.OsFamily, Map<String, String>> NAME_VERSION_MAP = ImmutableMap
+         .<org.jclouds.compute.domain.OsFamily, Map<String, String>> of(
+               org.jclouds.compute.domain.OsFamily.CENTOS, ImmutableMap
+                     .<String, String> builder().put("5.3", "5.3").put("5.4",
+                           "5.4").put("5.5", "5.5").build(),
+               org.jclouds.compute.domain.OsFamily.RHEL, ImmutableMap
+                     .<String, String> builder().put("5.3", "5.3").put("5.4",
+                           "5.4").put("5.5", "5.5").build(),
+               org.jclouds.compute.domain.OsFamily.UBUNTU, ImmutableMap
+                     .<String, String> builder().put("hardy", "8.04").put(
+                           "intrepid", "8.10").put("jaunty", "9.04").put(
+                           "karmic", "9.10").put("lucid", "10.04").put(
+                           "maverick", "10.10").build());
 
    @Inject
    public ComputeUtils(
          Predicate<IPSocket> socketTester,
          @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
-         GetNodeMetadataStrategy getNode,
+         GetNodeMetadataStrategy getNode, Timeouts timeouts,
          @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.nodeRunning = nodeRunning;
+      this.timeouts = timeouts;
       this.getNode = getNode;
       this.socketTester = socketTester;
       this.runScriptNotRunning = runScriptNotRunning;
       this.executor = executor;
+   }
+
+   public static String parseVersionOrReturnEmptyString(
+         org.jclouds.compute.domain.OsFamily family, final String in) {
+      if (NAME_VERSION_MAP.containsKey(family)) {
+         CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-',
+               '.'));
+         try {
+            String key = Iterables.find(NAME_VERSION_MAP.get(family).keySet(),
+                  contains);
+            return NAME_VERSION_MAP.get(family).get(key);
+         } catch (NoSuchElementException e) {
+            try {
+               return Iterables.find(NAME_VERSION_MAP.get(family).values(),
+                     contains);
+            } catch (NoSuchElementException e1) {
+            }
+         }
+      }
+      return "";
+   }
+
+   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(
+         String in) {
+      org.jclouds.compute.domain.OsFamily myOs = null;
+      for (org.jclouds.compute.domain.OsFamily os : org.jclouds.compute.domain.OsFamily
+            .values()) {
+         if (in.toLowerCase().replaceAll("\\s", "").indexOf(os.toString()) != -1) {
+            myOs = os;
+         }
+      }
+      return myOs;
+   }
+
+   public static Architecture parseArchitectureOrNull(String in) {
+      return in.indexOf("64") == -1 ? Architecture.X86_32 : Architecture.X86_64;
    }
 
    public static String createExecutionErrorMessage(
@@ -179,7 +234,11 @@ public class ComputeUtils {
                .getCredentials());
       else
          throw new IllegalStateException(
-               "node didn't achieve the state running: " + node);
+               String
+                     .format(
+                           "node didn't achieve the state running on node %s within %d seconds, final state: %s",
+                           node.getId(), timeouts.nodeRunning / 1000, node
+                                 .getState()));
 
       List<SshCallable<?>> callables = Lists.newArrayList();
       if (options.getRunScript() != null) {
@@ -329,6 +388,19 @@ public class ComputeUtils {
          }
       }
       return actualResponses;
+   }
+
+   private static final class CONTAINS_SUBSTRING implements Predicate<String> {
+      private final String in;
+
+      private CONTAINS_SUBSTRING(String in) {
+         this.in = in;
+      }
+
+      @Override
+      public boolean apply(String input) {
+         return in.indexOf(input) != -1;
+      }
    }
 
    public static interface SshCallable<T> extends Callable<T> {

@@ -22,6 +22,7 @@ import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.aws.ec2.util.EC2Utils.getAllRunningInstancesInRegion;
 import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
+import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
@@ -64,6 +65,7 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
+import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.predicates.InstancePresent;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
@@ -121,15 +123,14 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    public EC2ComputeServiceContextModule(String providerName) {
       this.providerName = providerName;
    }
-   
+
    @Provides
    @Singleton
    @Named("PRESENT")
    protected Predicate<RunningInstance> instancePresent(InstancePresent present) {
       return new RetryablePredicate<RunningInstance>(present, 3000, 200,
-               TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS);
    }
-
 
    @Override
    protected void configure() {
@@ -174,9 +175,12 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Named("DEFAULT")
-   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.architecture(Architecture.X86_32).osFamily(UBUNTU)
-            .imageNameMatches(".*10\\.?04.*").osDescriptionMatches("^ubuntu-images.*");
+   protected TemplateBuilder provideTemplate(@EC2 String region,
+         TemplateBuilder template) {
+      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest()
+            : template.architecture(Architecture.X86_32).osFamily(UBUNTU)
+                  .imageNameMatches(".*10\\.?04.*").osDescriptionMatches(
+                        "^ubuntu-images.*");
    }
 
    // TODO make this more efficient for listNodes(); currently
@@ -402,7 +406,11 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          holder.logger.debug(">> providing images");
 
          Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
-
+         final DescribeImagesOptions options;
+         if (amiOwners.length == 1 && amiOwners[0].equals("*"))
+            options = new DescribeImagesOptions();
+         else
+            options = ownedBy(amiOwners);
          for (final String region : regionMap.keySet()) {
             parallelResponses.put(region, ConcurrentUtils.makeListenable(
                   executor.submit(new Callable<Void>() {
@@ -410,7 +418,7 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
                      public Void call() throws Exception {
                         for (final org.jclouds.aws.ec2.domain.Image from : sync
                               .getAMIServices().describeImagesInRegion(region,
-                                    ownedBy(amiOwners))) {
+                                    options)) {
                            Image image = parser.apply(from);
                            if (image != null)
                               images.put(new RegionAndName(region, image

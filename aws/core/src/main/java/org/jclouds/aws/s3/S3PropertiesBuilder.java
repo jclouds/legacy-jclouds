@@ -23,10 +23,7 @@ import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_EU_WEST_1;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_US_STANDARD;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT_US_WEST_1;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
@@ -36,7 +33,10 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.s3.reference.S3Constants;
+
+import com.google.common.base.Joiner;
 
 /**
  * Builds properties used in S3 Connections
@@ -49,14 +49,28 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
-      properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_S3_ENDPOINT_US_STANDARD, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_S3_ENDPOINT_US_WEST_1, "https://s3-us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_S3_ENDPOINT_EU_WEST_1, "https://s3-eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1,
-               "https://s3-ap-southeast-1.amazonaws.com");
+      addEndpointProperties(properties);
       properties.setProperty(PROPERTY_S3_SESSIONINTERVAL, "60");
-      properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
+      properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX,
+            DIRECTORY_SUFFIX_FOLDER);
+      return properties;
+   }
+
+   protected Properties addEndpointProperties(Properties properties) {
+      properties.setProperty(PROPERTY_S3_REGIONS, Joiner.on(',').join(
+            Region.US_STANDARD, Region.US_WEST_1, Region.EU_WEST_1,
+            Region.AP_SOUTHEAST_1));
+
+      properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.US_STANDARD,
+            "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.US_WEST_1,
+            "https://s3-us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.EU_WEST_1,
+            "https://s3-eu-west-1.amazonaws.com");
+      properties.setProperty(
+            PROPERTY_S3_ENDPOINT + "." + Region.AP_SOUTHEAST_1,
+            "https://s3-ap-southeast-1.amazonaws.com");
       return properties;
    }
 
@@ -71,15 +85,16 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
 
    @Override
    public S3PropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(id, "awsAccessKeyId"));
+      properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(id,
+            "awsAccessKeyId"));
       properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(secret,
-               "awsSecretAccessKey"));
+            "awsSecretAccessKey"));
       return this;
    }
 
    public S3PropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
+      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, checkNotNull(
+            endpoint, "endpoint").toString());
       return this;
    }
 

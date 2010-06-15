@@ -1,0 +1,189 @@
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+	<requestId>7b893acf-7752-4e
+		2c-8c1a-3287a011b0df</requestId>
+	<imagesSet>
+		<item>
+			<imageId>emi-9ACB1363</imageId>
+			<imageLocation>centos-5.3-x86_64/centos.5-3.x86-64.img.manifest.xml
+			</imageLocation>
+			<imageState>available
+		</imageState>
+			<imageOwnerId>admin</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>
+				machine
+			</imageType>
+			<kernelId>eki-6CBD12F2</kernelId>
+			<ramdiskId>eri-A97113E4</ramdiskId>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>emi-D2D610D1</imageId>
+			<imageLocation>martin_try1/martin_try1.manifest.xml</imageLocation>
+			<imageState>
+				available
+			</imageState>
+			<imageOwnerId>dominic</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>machine</imageType>
+			<kernelId>eki-6CBD12F2</kernelId>
+			<ramdiskId>eri-A97113E4</ramdiskId>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>eri-A97113E4</imageId>
+			<imageLocation>initrd-64/initrd.img-2.6.28-11-generic.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>admin</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>ramdisk</imageType>
+			<rootDeviceType>
+				instance-store
+			</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>emi-B9A40FF6</imageId>
+			<imageLocation>ulteo4/ubuntu804-32-test.manifest.xml</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>gaelduval</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>
+				i386
+			</architecture>
+			<imageType>machine</imageType>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>
+				emi-D1991835
+			</imageId>
+			<imageLocation>jamestyj-test/Eucalyptus_Guest.x86_64-0.0.2.raw.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>jamestyj</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>machine</imageType>
+			<rootDeviceType>
+				instance-store
+				</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>emi-D8AB1044</imageId>
+			<imageLocation>test/ubuntu.9-04.x86-64.img.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>mymq0206</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>
+				x86_64
+			</architecture>
+			<imageType>machine</imageType>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>
+				emi-CBEA100C
+			</imageId>
+			<imageLocation>Lean/ubuntu.9-04.x86-64.img.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>
+				mashaobing1
+				</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>machine</imageType>
+			<kernelId>eki-6CBD12F2</kernelId>
+			<ramdiskId>eri-A97113E4</ramdiskId>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>emi-D176182B</imageId>
+			<imageLocation>jamestyj-test/Eucalyptus_Guest.x86_64-0.0.3.raw.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>
+				jamestyj
+			</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>machine</imageType>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>emi-D25E10CA</imageId>
+			<imageLocation>
+				biolinux/biolinux.qcow2.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>brainstorm</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>machine</imageType>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>
+				eki-6CBD12F2
+			</imageId>
+			<imageLocation>kernel-64/vmlinuz-2.6.28-11-generic.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>admin</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>x86_64</architecture>
+			<imageType>kernel</imageType>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+		<item>
+			<imageId>emi-2EDC1606</imageId>
+			<imageLocation>
+				ulteo2/Ulteo-SM-Scalability-Test-19feb2010.manifest.xml
+			</imageLocation>
+			<imageState>available</imageState>
+			<imageOwnerId>gaelduval</imageOwnerId>
+			<isPublic>true</isPublic>
+			<productCodes />
+			<architecture>i386</architecture>
+			<imageType>machine</imageType>
+			<rootDeviceType>instance-store</rootDeviceType>
+			<rootDeviceName>/dev/sda1</rootDeviceName>
+			<blockDeviceMapping />
+		</item>
+	</imagesSet>
+</DescribeImagesResponse>

@@ -32,7 +32,8 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<Map<String, URI>> {
+public class DescribeRegionsResponseHandler extends
+      ParseSax.HandlerWithResult<Map<String, URI>> {
    private StringBuilder currentText = new StringBuilder();
 
    private Map<String, URI> regionEndpoints = Maps.newHashMap();
@@ -47,10 +48,15 @@ public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<M
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("regionName")) {
-         region = currentText.toString().trim();
+         String pending = currentText.toString().trim();
+         if (pending.indexOf("Walrus") == -1)
+            region = pending;
       } else if (qName.equals("regionEndpoint")) {
-         regionEndpoint = URI.create(String.format("https://%s", currentText.toString().trim()));
-      } else if (qName.equals("item")) {
+         String pending = currentText.toString().trim();
+         if (pending.indexOf("Walrus") == -1)
+            regionEndpoint = URI.create(pending.startsWith("http") ? pending
+                  : String.format("https://%s", pending));
+      } else if (qName.equals("item") && region != null) {
          regionEndpoints.put(region, regionEndpoint);
          this.region = null;
          this.regionEndpoint = null;

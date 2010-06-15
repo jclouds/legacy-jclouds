@@ -29,6 +29,7 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -50,7 +51,8 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
          @Override
          protected void configure() {
-            bind(URI.class).annotatedWith(EC2.class).toInstance(URI.create("https://booya"));
+            bind(URI.class).annotatedWith(EC2.class).toInstance(
+                  URI.create("https://booya"));
          }
 
       });
@@ -60,31 +62,57 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
 
-      InputStream is = getClass().getResourceAsStream("/ec2/regionEndpoints.xml");
+      InputStream is = getClass().getResourceAsStream(
+            "/ec2/regionEndpoints.xml");
 
-      Map<String, URI> expected = ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
-               .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
-               .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-               .create("https://ec2.us-west-1.amazonaws.com"));
+      Map<String, URI> expected = ImmutableMap
+            .<String, URI> of(Region.EU_WEST_1, URI
+                  .create("https://ec2.eu-west-1.amazonaws.com"),
+                  Region.US_EAST_1, URI
+                        .create("https://ec2.us-east-1.amazonaws.com"),
+                  Region.US_WEST_1, URI
+                        .create("https://ec2.us-west-1.amazonaws.com"));
 
       Map<String, URI> result = factory.create(
-               injector.getInstance(DescribeRegionsResponseHandler.class)).parse(is);
+            injector.getInstance(DescribeRegionsResponseHandler.class)).parse(
+            is);
+
+      assertEquals(result, expected);
+   }
+
+   public void testEuc() {
+
+      InputStream is = Utils
+            .toInputStream("<DescribeRegionsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-11-30/\"><requestId>6a3b36f9-9ff4-47cf-87e3-285b08fbe5e5</requestId><regionInfo><item><regionName>Eucalyptus</regionName><regionEndpoint>http://173.205.188.130:8773/services/Eucalyptus</regionEndpoint></item><item><regionName>Walrus</regionName><regionEndpoint>http://173.205.188.130:8773/services/Walrus</regionEndpoint></item></regionInfo></DescribeRegionsResponse>");
+
+      Map<String, URI> expected = ImmutableMap.<String, URI> of("Eucalyptus",
+            URI.create("http://173.205.188.130:8773/services/Eucalyptus"));
+
+      Map<String, URI> result = factory.create(
+            injector.getInstance(DescribeRegionsResponseHandler.class)).parse(
+            is);
 
       assertEquals(result, expected);
    }
 
    public void testUnsupportedAdditionalRegionDoesntBreak() {
 
-      InputStream is = getClass().getResourceAsStream("/ec2/regionEndpoints-additional.xml");
+      InputStream is = getClass().getResourceAsStream(
+            "/ec2/regionEndpoints-additional.xml");
 
-      Map<String, URI> expected = ImmutableMap.<String, URI> of("jp-west-1", URI
-               .create("https://ec2.jp-west-1.amazonaws.com"), Region.EU_WEST_1, URI
-               .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
-               .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-               .create("https://ec2.us-west-1.amazonaws.com"));
+      Map<String, URI> expected = ImmutableMap
+            .<String, URI> of("jp-west-1", URI
+                  .create("https://ec2.jp-west-1.amazonaws.com"),
+                  Region.EU_WEST_1, URI
+                        .create("https://ec2.eu-west-1.amazonaws.com"),
+                  Region.US_EAST_1, URI
+                        .create("https://ec2.us-east-1.amazonaws.com"),
+                  Region.US_WEST_1, URI
+                        .create("https://ec2.us-west-1.amazonaws.com"));
 
       Map<String, URI> result = factory.create(
-               injector.getInstance(DescribeRegionsResponseHandler.class)).parse(is);
+            injector.getInstance(DescribeRegionsResponseHandler.class)).parse(
+            is);
 
       assertEquals(result, expected);
    }

@@ -72,6 +72,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                      exception);
             break;
          case 401:
+         case 403:
             exception = new AuthorizationException(command.getRequest(),
                   error != null ? error.getMessage() : response.getStatusLine());
             break;

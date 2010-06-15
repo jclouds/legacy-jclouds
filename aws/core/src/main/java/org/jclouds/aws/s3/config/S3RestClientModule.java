@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -48,11 +47,15 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.name.Names;
 
 /**
  * Configures the S3 connection, including logging and http transport.
@@ -61,11 +64,12 @@ import com.google.inject.Scopes;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class S3RestClientModule extends RestClientModule<S3Client, S3AsyncClient> {
+public class S3RestClientModule extends
+      RestClientModule<S3Client, S3AsyncClient> {
    public S3RestClientModule() {
       super(S3Client.class, S3AsyncClient.class);
    }
-   
+
    @Override
    protected void configure() {
       install(new S3ObjectModule());
@@ -91,8 +95,8 @@ public class S3RestClientModule extends RestClientModule<S3Client, S3AsyncClient
    @Provides
    @TimeStamp
    Supplier<String> provideTimeStampCache(
-            @Named(S3Constants.PROPERTY_S3_SESSIONINTERVAL) long seconds,
-            final DateService dateService) {
+         @Named(S3Constants.PROPERTY_S3_SESSIONINTERVAL) long seconds,
+         final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();
@@ -104,13 +108,15 @@ public class S3RestClientModule extends RestClientModule<S3Client, S3AsyncClient
    @Singleton
    @S3
    Map<String, URI> provideRegions(
-            @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_STANDARD) String usstandard,
-            @Named(S3Constants.PROPERTY_S3_ENDPOINT_US_WEST_1) String uswest,
-            @Named(S3Constants.PROPERTY_S3_ENDPOINT_AP_SOUTHEAST_1) String southeast,
-            @Named(S3Constants.PROPERTY_S3_ENDPOINT_EU_WEST_1) String euwest) {
-      return ImmutableMap.<String, URI> of(Region.US_STANDARD, URI.create(usstandard),
-               Region.AP_SOUTHEAST_1, URI.create(southeast), Region.US_WEST_1, URI.create(uswest),
-               Region.EU_WEST_1, URI.create(euwest));
+         @Named(S3Constants.PROPERTY_S3_REGIONS) String regionString,
+         Injector injector) {
+      Map<String, URI> regions = Maps.newLinkedHashMap();
+      for (String region : Splitter.on(',').split(regionString)) {
+         regions.put(region, URI.create(injector.getInstance(Key.get(
+               String.class, Names.named(S3Constants.PROPERTY_S3_ENDPOINT + "."
+                     + region)))));
+      }
+      return regions;
    }
 
    @Provides
@@ -123,7 +129,8 @@ public class S3RestClientModule extends RestClientModule<S3Client, S3AsyncClient
    @Provides
    @Singleton
    @S3
-   protected URI provideS3URI(@Named(S3Constants.PROPERTY_S3_ENDPOINT) String endpoint) {
+   protected URI provideS3URI(
+         @Named(S3Constants.PROPERTY_S3_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
@@ -131,24 +138,25 @@ public class S3RestClientModule extends RestClientModule<S3Client, S3AsyncClient
    @Singleton
    @S3
    String getDefaultRegion(@S3 URI uri, @S3 Map<String, URI> map) {
-      return ImmutableBiMap.<String, URI> builder().putAll(map).build().inverse().get(uri);
+      return ImmutableBiMap.<String, URI> builder().putAll(map).build()
+            .inverse().get(uri);
    }
 
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseAWSErrorFromXmlContent.class);
+            ParseAWSErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseAWSErrorFromXmlContent.class);
+            ParseAWSErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseAWSErrorFromXmlContent.class);
+            ParseAWSErrorFromXmlContent.class);
    }
 
    @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
-               AWSRedirectionRetryHandler.class);
+            AWSRedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-               AWSClientErrorRetryHandler.class);
+            AWSClientErrorRetryHandler.class);
    }
 }
