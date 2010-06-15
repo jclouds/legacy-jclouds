@@ -18,30 +18,16 @@
  */
 package org.jclouds.rackspace.cloudservers.config;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
-import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
-import org.jclouds.rackspace.cloudservers.predicates.ServerActive;
-import org.jclouds.rackspace.cloudservers.predicates.ServerDeleted;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-
-import com.google.common.base.Predicate;
-import com.google.inject.Provides;
 
 /**
  * 
@@ -54,26 +40,6 @@ public class CloudServersRestClientModule extends
 
    public CloudServersRestClientModule() {
       super(CloudServersClient.class, CloudServersAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   @Named("ACTIVE")
-   protected Predicate<Server> serverRunning(ServerActive stateRunning) {
-      return new RetryablePredicate<Server>(stateRunning, 600, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Named("DELETED")
-   protected Predicate<Server> serverDeleted(ServerDeleted stateDeleted) {
-      return new RetryablePredicate<Server>(stateDeleted, 600, 50, TimeUnit.MILLISECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected Predicate<IPSocket> socketTester(SocketOpen open) {
-      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
 
    @Override

@@ -20,27 +20,19 @@ package org.jclouds.rimuhosting.miro.config;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rimuhosting.miro.RimuHosting;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.filters.RimuHostingAuthentication;
-import org.jclouds.rimuhosting.miro.predicates.ServerDestroyed;
-import org.jclouds.rimuhosting.miro.predicates.ServerRunning;
 import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
 
-import com.google.common.base.Predicate;
 import com.google.inject.Provides;
 
 /**
@@ -51,7 +43,7 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class RimuHostingRestClientModule extends
-         RestClientModule<RimuHostingClient, RimuHostingAsyncClient> {
+      RestClientModule<RimuHostingClient, RimuHostingAsyncClient> {
 
    public RimuHostingRestClientModule() {
       super(RimuHostingClient.class, RimuHostingAsyncClient.class);
@@ -59,29 +51,9 @@ public class RimuHostingRestClientModule extends
 
    @Provides
    @Singleton
-   @Named("RUNNING")
-   protected Predicate<Server> serverRunning(ServerRunning stateRunning) {
-      return new RetryablePredicate<Server>(stateRunning, 600, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Named("DESTROYED")
-   protected Predicate<Server> serverDeleted(ServerDestroyed stateDeleted) {
-      return new RetryablePredicate<Server>(stateDeleted, 600, 50, TimeUnit.MILLISECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected Predicate<IPSocket> socketTester(SocketOpen open) {
-      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
    public RimuHostingAuthentication provideRimuHostingAuthentication(
-            @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String apikey)
-            throws UnsupportedEncodingException {
+         @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String apikey)
+         throws UnsupportedEncodingException {
       return new RimuHostingAuthentication(apikey);
    }
 
@@ -89,7 +61,7 @@ public class RimuHostingRestClientModule extends
    @Singleton
    @RimuHosting
    protected URI provideURI(
-            @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT) String endpoint) {
+         @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 

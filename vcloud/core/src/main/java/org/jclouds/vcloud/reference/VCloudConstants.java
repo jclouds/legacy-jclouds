@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.reference;
 
+
 /**
  * Configuration properties and constants used in VCloud connections.
  * 
@@ -50,5 +51,7 @@ public interface VCloudConstants {
    public static final String PROPERTY_VCLOUD_DEFAULT_DISK = "jclouds.vcloud.defaults.getdisksizekilobytes";
    public static final String PROPERTY_VCLOUD_XML_NAMESPACE = "jclouds.vcloud.xml.ns";
    public static final String PROPERTY_VCLOUD_XML_SCHEMA = "jclouds.vcloud.xml.schema";
+
+   public static final String PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED = "jclouds.vcloud.timeout.task-complete";
 
 }

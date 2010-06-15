@@ -18,6 +18,11 @@
  */
 package org.jclouds.compute.reference;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import com.google.inject.Inject;
+
 /**
  * 
  * @author Adrian Cole
@@ -26,5 +31,28 @@ public interface ComputeServiceConstants {
 
    public static final String COMPUTE_LOGGER = "jclouds.compute";
    public static final String LOCAL_PARTITION_GB_PATTERN = "disk_drive/%s/gb";
+   public static final String PROPERTY_TIMEOUT_NODE_TERMINATED = "jclouds.compute.timeout.node-terminated";
+   public static final String PROPERTY_TIMEOUT_NODE_RUNNING = "jclouds.compute.timeout.node-running";
+   public static final String PROPERTY_TIMEOUT_SCRIPT_COMPLETE = "jclouds.compute.timeout.script-complete";
+   public static final String PROPERTY_TIMEOUT_PORT_OPEN = "jclouds.compute.timeout.port-open";
 
+   @Singleton
+   static class Timeouts {
+      @Inject(optional = true)
+      @Named(PROPERTY_TIMEOUT_NODE_TERMINATED)
+      public long nodeTerminated = 600 * 1000;
+
+      @Inject(optional = true)
+      @Named(PROPERTY_TIMEOUT_NODE_RUNNING)
+      public long nodeRunning = 600 * 1000;
+
+      @Inject(optional = true)
+      @Named(PROPERTY_TIMEOUT_SCRIPT_COMPLETE)
+      public long scriptComplete = 600 * 1000;
+
+      @Inject(optional = true)
+      @Named(PROPERTY_TIMEOUT_PORT_OPEN)
+      public long portOpen = 130 * 1000;
+
+   }
 }

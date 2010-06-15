@@ -63,29 +63,31 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = parseErrorFromContentOrNull(command, response);
-         exception = error != null ? new AWSResponseException(command, response, error) : exception;
+         exception = error != null ? new AWSResponseException(command,
+               response, error) : exception;
          switch (response.getStatusCode()) {
-            case 400:
-               if (error.getCode().equals("InvalidAMIID.NotFound")
-                        || error.getCode().equals("InvalidAMIID.Malformed"))
-                  exception = new ResourceNotFoundException(error.getMessage(), exception);
-               break;
-            case 401:
-               exception = new AuthorizationException(command.getRequest(), error != null ? error
-                        .getMessage() : response.getStatusLine());
-               break;
-            case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String message = error != null ? error.getMessage() : String.format("%s -> %s",
-                           command.getRequest().getRequestLine(), response.getStatusLine());
-                  String container = command.getRequest().getEndpoint().getHost();
-                  String key = command.getRequest().getEndpoint().getPath();
-                  if (key == null || key.equals("/"))
-                     exception = new ContainerNotFoundException(container, message);
-                  else
-                     exception = new KeyNotFoundException(container, key, message);
-               }
-               break;
+         case 400:
+            if (error.getCode().endsWith(".NotFound"))
+               exception = new ResourceNotFoundException(error.getMessage(),
+                     exception);
+            break;
+         case 401:
+            exception = new AuthorizationException(command.getRequest(),
+                  error != null ? error.getMessage() : response.getStatusLine());
+            break;
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               String message = error != null ? error.getMessage() : String
+                     .format("%s -> %s", command.getRequest().getRequestLine(),
+                           response.getStatusLine());
+               String container = command.getRequest().getEndpoint().getHost();
+               String key = command.getRequest().getEndpoint().getPath();
+               if (key == null || key.equals("/"))
+                  exception = new ContainerNotFoundException(container, message);
+               else
+                  exception = new KeyNotFoundException(container, key, message);
+            }
+            break;
          }
       } finally {
          Closeables.closeQuietly(response.getContent());
@@ -93,12 +95,14 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       }
    }
 
-   AWSError parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
+   AWSError parseErrorFromContentOrNull(HttpCommand command,
+         HttpResponse response) {
       if (response.getContent() != null) {
          try {
             String content = Utils.toStringAndClose(response.getContent());
             if (content != null && content.indexOf('<') >= 0)
-               return utils.parseAWSErrorFromContent(command, response, content);
+               return utils
+                     .parseAWSErrorFromContent(command, response, content);
          } catch (IOException e) {
             logger.warn(e, "exception reading error from response", response);
          }

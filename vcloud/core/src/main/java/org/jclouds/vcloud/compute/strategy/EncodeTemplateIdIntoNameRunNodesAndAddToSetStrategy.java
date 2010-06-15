@@ -40,28 +40,32 @@ import com.google.common.base.Strings;
  */
 @Singleton
 public class EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy extends
-         EncodeTagIntoNameRunNodesAndAddToSetStrategy {
+      EncodeTagIntoNameRunNodesAndAddToSetStrategy {
 
    private final SecureRandom random;
 
    @Inject
    protected EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy(
-            AddNodeWithTagStrategy addNodeWithTagStrategy, ListNodesStrategy listNodesStrategy,
-            @Named("NAMING_CONVENTION") String nodeNamingConvention, ComputeUtils utils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor);
+         AddNodeWithTagStrategy addNodeWithTagStrategy,
+         ListNodesStrategy listNodesStrategy,
+         @Named("NAMING_CONVENTION") String nodeNamingConvention,
+         ComputeUtils utils,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention,
+            utils, executor);
       this.random = new SecureRandom();
    }
 
    /**
-    * Get a name corresponding to the tag-hex*5 where the first 3 hex correspond to the template id
-    * and the last a random number
+    * Get a name corresponding to the tag-hex*5 where the first 3 hex correspond
+    * to the template id and the last a random number
     * 
     */
    @Override
    protected String getNextName(final String tag, final Template template) {
-      return String.format(nodeNamingConvention, tag, Strings.padStart(Integer.toHexString(Integer
-               .parseInt(template.getImage().getProviderId())), 3, '0'), Strings.padStart(Integer
-               .toHexString(random.nextInt(255)), 2, '0'));
+      return String.format(nodeNamingConvention, tag, Strings.padStart(
+            Integer.toHexString(Integer.parseInt(template.getImage()
+                  .getProviderId())), 3, '0'), Strings.padStart(Integer
+            .toHexString(random.nextInt(255)), 2, '0'));
    }
 }

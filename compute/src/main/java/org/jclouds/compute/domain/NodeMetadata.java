@@ -32,8 +32,8 @@ import org.jclouds.domain.Credentials;
 public interface NodeMetadata extends ComputeMetadata {
 
    /**
-    * Tag used for all resources that belong to the same logical group. run, destroy commands are
-    * scoped to tag.
+    * Tag used for all resources that belong to the same logical group. run,
+    * destroy commands are scoped to tag.
     * 
     * @return tag for this node, or null, if not a part of a group
     * 
@@ -62,8 +62,8 @@ public interface NodeMetadata extends ComputeMetadata {
    Set<String> getPrivateAddresses();
 
    /**
-    * If possible, these are returned upon all detail requests. However, it is often the case that
-    * credentials are only available at "run" time.
+    * If possible, these are returned upon all detail requests. However, it is
+    * often the case that credentials are only available at "run" time.
     */
    Credentials getCredentials();
 

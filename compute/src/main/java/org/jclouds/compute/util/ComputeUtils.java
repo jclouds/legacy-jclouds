@@ -48,6 +48,7 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
@@ -82,52 +83,61 @@ public class ComputeUtils {
    protected final Predicate<CommandUsingClient> runScriptNotRunning;
    private final Predicate<IPSocket> socketTester;
    private final ExecutorService executor;
+   protected final Predicate<NodeMetadata> nodeRunning;
+   private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   public ComputeUtils(Predicate<IPSocket> socketTester,
-            @Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   public ComputeUtils(
+         Predicate<IPSocket> socketTester,
+         @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
+         GetNodeMetadataStrategy getNode,
+         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.nodeRunning = nodeRunning;
+      this.getNode = getNode;
       this.socketTester = socketTester;
       this.runScriptNotRunning = runScriptNotRunning;
       this.executor = executor;
    }
 
-   public static String createExecutionErrorMessage(Map<?, Exception> executionExceptions) {
+   public static String createExecutionErrorMessage(
+         Map<?, Exception> executionExceptions) {
       Formatter fmt = new Formatter().format("Execution failures:%n%n");
       int index = 1;
       for (Entry<?, Exception> errorMessage : executionExceptions.entrySet()) {
-         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
-                  .getSimpleName(), errorMessage.getKey(), Throwables
-                  .getStackTraceAsString(errorMessage.getValue()));
+         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue()
+               .getClass().getSimpleName(), errorMessage.getKey(), Throwables
+               .getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", executionExceptions.size()).toString();
    }
 
    public Map<?, ListenableFuture<Void>> runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(
-            final TemplateOptions options, Iterable<NodeMetadata> runningNodes,
-            final Set<NodeMetadata> goodNodes, final Map<NodeMetadata, Exception> badNodes) {
+         final TemplateOptions options, Iterable<NodeMetadata> runningNodes,
+         final Set<NodeMetadata> goodNodes,
+         final Map<NodeMetadata, Exception> badNodes) {
       Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
       for (final NodeMetadata node : runningNodes) {
          responses.put(node, makeListenable(executor
-                  .submit(runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(node, badNodes,
-                           goodNodes, options)), executor));
+               .submit(runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(
+                     node, badNodes, goodNodes, options)), executor));
       }
       return responses;
    }
 
    public Callable<Void> runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(
-            final NodeMetadata node, final Map<NodeMetadata, Exception> badNodes,
-            final Set<NodeMetadata> goodNodes, final TemplateOptions options) {
+         final NodeMetadata node, final Map<NodeMetadata, Exception> badNodes,
+         final Set<NodeMetadata> goodNodes, final TemplateOptions options) {
       return new Callable<Void>() {
          @Override
          public Void call() throws Exception {
             try {
-               runOptionsOnNode(node, options);
-               logger.debug("<< options applied node(%s)", node.getProviderId());
-               goodNodes.add(node);
+               NodeMetadata node1 = runOptionsOnNode(node, options);
+               logger.debug("<< options applied node(%s)", node1.getId());
+               goodNodes.add(node1);
             } catch (Exception e) {
-               logger.error(e, "<< problem applying options to node(%s): ", node.getProviderId(),
-                        Throwables.getRootCause(e).getMessage());
+               logger.error(e, "<< problem applying options to node(%s): ",
+                     node.getId(), Throwables.getRootCause(e).getMessage());
                badNodes.put(node, e);
             }
             return null;
@@ -136,19 +146,21 @@ public class ComputeUtils {
    }
 
    public static String createNodeErrorMessage(
-            Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
+         Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
       Formatter fmt = new Formatter().format("Node failures:%n%n");
       int index = 1;
-      for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
-         fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
-                  .getSimpleName(), errorMessage.getKey().getProviderId(), Throwables
-                  .getStackTraceAsString(errorMessage.getValue()));
+      for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes
+            .entrySet()) {
+         fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage
+               .getValue().getClass().getSimpleName(), errorMessage.getKey()
+               .getId(), Throwables.getStackTraceAsString(errorMessage
+               .getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
    }
 
    public static Iterable<? extends ComputeMetadata> filterByName(
-            Iterable<? extends ComputeMetadata> nodes, final String name) {
+         Iterable<? extends ComputeMetadata> nodes, final String name) {
       return Iterables.filter(nodes, new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(ComputeMetadata input) {
@@ -157,67 +169,92 @@ public class ComputeUtils {
       });
    }
 
-   public void runOptionsOnNode(NodeMetadata node, TemplateOptions options) {
+   public NodeMetadata runOptionsOnNode(NodeMetadata node,
+         TemplateOptions options) {
+      if (!options.shouldBlockUntilRunning())
+         return node;
+
+      if (nodeRunning.apply(node))
+         node = installNewCredentials(getNode.execute(node.getId()), node
+               .getCredentials());
+      else
+         throw new IllegalStateException(
+               "node didn't achieve the state running: " + node);
+
       List<SshCallable<?>> callables = Lists.newArrayList();
       if (options.getRunScript() != null) {
-         callables.add(runScriptOnNode(node, "runscript", options.getRunScript()));
+         callables.add(runScriptOnNode(node, "runscript", options
+               .getRunScript()));
       }
       if (options.getPublicKey() != null) {
          callables.add(authorizeKeyOnNode(node, options.getPublicKey()));
       }
 
-      // changing the key "MUST" come last or else the other commands may fail.
+      // changing the key "MUST" come last or else the other commands may
+      // fail.
       if (callables.size() > 0 || options.getPrivateKey() != null) {
-         runCallablesOnNode(node, callables, options.getPrivateKey() != null ? installKeyOnNode(
-                  node, options.getPrivateKey()) : null);
+         runCallablesOnNode(node, callables,
+               options.getPrivateKey() != null ? installKeyOnNode(node, options
+                     .getPrivateKey()) : null);
       }
 
       if (options.getPort() > 0) {
          checkNodeHasPublicIps(node);
-         blockUntilPortIsListeningOnPublicIp(options.getPort(), options.getSeconds(), Iterables
-                  .get(node.getPublicAddresses(), 0));
+         blockUntilPortIsListeningOnPublicIp(options.getPort(), options
+               .getSeconds(), Iterables.get(node.getPublicAddresses(), 0));
       }
+      return node;
    }
 
    private void checkNodeHasPublicIps(NodeMetadata node) {
       checkState(node.getPublicAddresses().size() > 0,
-               "node does not have IP addresses configured: " + node);
+            "node does not have IP addresses configured: " + node);
    }
 
-   private void blockUntilPortIsListeningOnPublicIp(int port, int seconds, String inetAddress) {
-      logger.debug(">> blocking on port %s:%d for %d seconds", inetAddress, port, seconds);
-      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, seconds,
-               1, TimeUnit.SECONDS);
+   private void blockUntilPortIsListeningOnPublicIp(int port, int seconds,
+         String inetAddress) {
+      logger.debug(">> blocking on port %s:%d for %d seconds", inetAddress,
+            port, seconds);
+      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(
+            socketTester, seconds, 1, TimeUnit.SECONDS);
       IPSocket socket = new IPSocket(inetAddress, port);
       boolean passed = tester.apply(socket);
       if (passed)
          logger.debug("<< port %s:%d opened", inetAddress, port);
       else
-         logger.warn("<< port %s:%d didn't open after %d seconds", inetAddress, port, seconds);
+         logger.warn("<< port %s:%d didn't open after %d seconds", inetAddress,
+               port, seconds);
    }
 
-   public InstallRSAPrivateKey installKeyOnNode(NodeMetadata node, String privateKey) {
+   public InstallRSAPrivateKey installKeyOnNode(NodeMetadata node,
+         String privateKey) {
       return new InstallRSAPrivateKey(node, privateKey);
    }
 
-   public AuthorizeRSAPublicKey authorizeKeyOnNode(NodeMetadata node, String publicKey) {
+   public AuthorizeRSAPublicKey authorizeKeyOnNode(NodeMetadata node,
+         String publicKey) {
       return new AuthorizeRSAPublicKey(node, publicKey);
    }
 
-   public RunScriptOnNode runScriptOnNode(NodeMetadata node, String scriptName, byte[] script) {
+   public RunScriptOnNode runScriptOnNode(NodeMetadata node, String scriptName,
+         byte[] script) {
       return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script);
    }
 
-   public RunScriptOnNode runScriptOnNodeAsDefaultUser(NodeMetadata node, String scriptName,
-            byte[] script) {
-      return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script, false);
+   public RunScriptOnNode runScriptOnNodeAsDefaultUser(NodeMetadata node,
+         String scriptName, byte[] script) {
+      return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script,
+            false);
    }
 
    public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node,
-            Iterable<? extends SshCallable<?>> parallel, @Nullable SshCallable<?> last) {
-      checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
+         Iterable<? extends SshCallable<?>> parallel,
+         @Nullable SshCallable<?> last) {
+      checkState(this.sshFactory != null,
+            "runScript requested, but no SshModule configured");
       checkNodeHasPublicIps(node);
-      checkNotNull(node.getCredentials().key, "credentials.key for node " + node.getProviderId());
+      checkNotNull(node.getCredentials().key, "credentials.key for node "
+            + node.getId());
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
          ssh.connect();
@@ -229,7 +266,8 @@ public class ComputeUtils {
    }
 
    private Map<SshCallable<?>, ?> runTasksUsingSshClient(
-            Iterable<? extends SshCallable<?>> parallel, SshCallable<?> last, SshClient ssh) {
+         Iterable<? extends SshCallable<?>> parallel, SshCallable<?> last,
+         SshClient ssh) {
       Map<SshCallable<?>, Object> responses = Maps.newHashMap();
       if (Iterables.size(parallel) > 0) {
          responses.putAll(runCallablesUsingSshClient(parallel, ssh));
@@ -246,37 +284,42 @@ public class ComputeUtils {
    }
 
    public SshClient createSshClientOncePortIsListeningOnNode(NodeMetadata node) {
-      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 22);
+      IPSocket socket = new IPSocket(Iterables
+            .get(node.getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
-      SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().account,
-               node.getCredentials().key.getBytes()) : sshFactory.create(socket, node
-               .getCredentials().account, node.getCredentials().key);
+      SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node
+            .getCredentials().account, node.getCredentials().key.getBytes())
+            : sshFactory.create(socket, node.getCredentials().account, node
+                  .getCredentials().key);
       return ssh;
    }
 
    private Map<SshCallable<?>, Object> runCallablesUsingSshClient(
-            Iterable<? extends SshCallable<?>> parallel, SshClient ssh) {
-      Map<SshCallable<?>, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
+         Iterable<? extends SshCallable<?>> parallel, SshClient ssh) {
+      Map<SshCallable<?>, ListenableFuture<?>> parallelResponses = Maps
+            .newHashMap();
 
       for (SshCallable<?> callable : parallel) {
          callable.setConnection(ssh, logger);
-         parallelResponses.put(callable, ConcurrentUtils.makeListenable(executor.submit(callable),
-                  executor));
+         parallelResponses.put(callable, ConcurrentUtils.makeListenable(
+               executor.submit(callable), executor));
       }
 
-      Map<SshCallable<?>, Exception> exceptions = awaitCompletion(parallelResponses, executor,
-               null, logger, "ssh");
+      Map<SshCallable<?>, Exception> exceptions = awaitCompletion(
+            parallelResponses, executor, null, logger, "ssh");
       if (exceptions.size() > 0)
-         throw new RuntimeException(String.format("error invoking callables on nodes: %s",
-                  exceptions));
+         throw new RuntimeException(String.format(
+               "error invoking callables on nodes: %s", exceptions));
       Map<SshCallable<?>, Object> newresponses = transform(parallelResponses);
       return newresponses;
    }
 
    @SuppressWarnings("unchecked")
-   public <T> Map<SshCallable<?>, T> transform(Map<SshCallable<?>, ListenableFuture<?>> responses) {
+   public <T> Map<SshCallable<?>, T> transform(
+         Map<SshCallable<?>, ListenableFuture<?>> responses) {
       Map<SshCallable<?>, T> actualResponses = Maps.newHashMap();
-      for (Map.Entry<SshCallable<?>, ListenableFuture<?>> entry : responses.entrySet()) {
+      for (Map.Entry<SshCallable<?>, ListenableFuture<?>> entry : responses
+            .entrySet()) {
          try {
             actualResponses.put(entry.getKey(), (T) entry.getValue().get());
          } catch (InterruptedException e) {
@@ -303,20 +346,24 @@ public class ComputeUtils {
       private final boolean runAsRoot;
       private Logger logger = Logger.NULL;
 
-      RunScriptOnNode(@Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
-               NodeMetadata node, String scriptName, byte[] script) {
+      RunScriptOnNode(
+            @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
+            NodeMetadata node, String scriptName, byte[] script) {
          this(runScriptNotRunning, node, scriptName, script, true);
       }
 
-      RunScriptOnNode(@Named("NOT_RUNNING") Predicate<CommandUsingClient> runScriptNotRunning,
-               NodeMetadata node, String scriptName, byte[] script, boolean runAsRoot) {
+      RunScriptOnNode(
+            @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
+            NodeMetadata node, String scriptName, byte[] script,
+            boolean runAsRoot) {
          this.runScriptNotRunning = runScriptNotRunning;
          this.node = checkNotNull(node, "node");
          this.scriptName = checkNotNull(scriptName, "scriptName");
-         this.script = new InitBuilder(scriptName, "/tmp/" + scriptName, "/tmp/" + scriptName,
-                  ImmutableMap.<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
-                           new String(checkNotNull(script, "script"))), String.class)).build(
-                  OsFamily.UNIX).getBytes();
+         this.script = new InitBuilder(scriptName, "/tmp/" + scriptName,
+               "/tmp/" + scriptName, ImmutableMap.<String, String> of(),
+               Iterables.toArray(Splitter.on("\n").split(
+                     new String(checkNotNull(script, "script"))), String.class))
+               .build(OsFamily.UNIX).getBytes();
          this.runAsRoot = runAsRoot;
       }
 
@@ -330,15 +377,18 @@ public class ComputeUtils {
             returnVal = runScriptAsRoot();
          else
             returnVal = runScriptAsDefaultUser();
-         runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName + " status", ssh));
+         runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName
+               + " status", ssh));
          logger.debug("<< complete(%d)", returnVal.getExitCode());
          if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
-            logger.debug("<< stdout from %s as %s@%s\n%s", scriptName,
-                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0),
-                     ssh.exec("./" + scriptName + " tail").getOutput());
-            logger.debug("<< stderr from %s as %s@%s\n%s", scriptName,
-                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0),
-                     ssh.exec("./" + scriptName + " tailerr").getOutput());
+            logger.debug("<< stdout from %s as %s@%s\n%s", scriptName, node
+                  .getCredentials().account, Iterables.get(node
+                  .getPublicAddresses(), 0), ssh.exec(
+                  "./" + scriptName + " tail").getOutput());
+            logger.debug("<< stderr from %s as %s@%s\n%s", scriptName, node
+                  .getCredentials().account, Iterables.get(node
+                  .getPublicAddresses(), 0), ssh.exec(
+                  "./" + scriptName + " tailerr").getOutput());
          }
          return returnVal;
       }
@@ -351,24 +401,28 @@ public class ComputeUtils {
 
       private ExecResponse runScriptAsRoot() {
          if (node.getCredentials().account.equals("root")) {
-            logger.debug(">> running %s as %s@%s", scriptName, node.getCredentials().account,
-                     Iterables.get(node.getPublicAddresses(), 0));
+            logger.debug(">> running %s as %s@%s", scriptName, node
+                  .getCredentials().account, Iterables.get(node
+                  .getPublicAddresses(), 0));
             return ssh.exec("./" + scriptName + " start");
          } else if (isKeyAuth(node)) {
-            logger.debug(">> running sudo %s as %s@%s", scriptName, node.getCredentials().account,
-                     Iterables.get(node.getPublicAddresses(), 0));
+            logger.debug(">> running sudo %s as %s@%s", scriptName, node
+                  .getCredentials().account, Iterables.get(node
+                  .getPublicAddresses(), 0));
             return ssh.exec("sudo ./" + scriptName + " start");
          } else {
-            logger.debug(">> running sudo -S %s as %s@%s", scriptName,
-                     node.getCredentials().account, Iterables.get(node.getPublicAddresses(), 0));
-            return ssh.exec(String.format("echo '%s'|sudo -S ./%s", node.getCredentials().key,
-                     scriptName + " start"));
+            logger.debug(">> running sudo -S %s as %s@%s", scriptName, node
+                  .getCredentials().account, Iterables.get(node
+                  .getPublicAddresses(), 0));
+            return ssh.exec(String.format("echo '%s'|sudo -S ./%s", node
+                  .getCredentials().key, scriptName + " start"));
          }
       }
 
       private ExecResponse runScriptAsDefaultUser() {
-         logger.debug(">> running script %s as %s@%s", scriptName, node.getCredentials().account,
-                  Iterables.get(node.getPublicAddresses(), 0));
+         logger.debug(">> running script %s as %s@%s", scriptName, node
+               .getCredentials().account, Iterables.get(node
+               .getPublicAddresses(), 0));
          return ssh.exec(String.format("./%s", scriptName + " start"));
       }
 
@@ -378,7 +432,8 @@ public class ComputeUtils {
       }
    }
 
-   public static class InstallRSAPrivateKey implements SshCallable<ExecResponse> {
+   public static class InstallRSAPrivateKey implements
+         SshCallable<ExecResponse> {
       private SshClient ssh;
       private final NodeMetadata node;
       private final String privateKey;
@@ -393,9 +448,12 @@ public class ComputeUtils {
       @Override
       public ExecResponse call() throws Exception {
          ssh.exec("mkdir .ssh");
-         ssh.put(".ssh/id_rsa", new ByteArrayInputStream(privateKey.getBytes()));
-         logger.debug(">> installing rsa key for %s@%s", node.getCredentials().account, Iterables
-                  .get(node.getPublicAddresses(), 0));
+         ssh
+               .put(".ssh/id_rsa", new ByteArrayInputStream(privateKey
+                     .getBytes()));
+         logger.debug(">> installing rsa key for %s@%s",
+               node.getCredentials().account, Iterables.get(node
+                     .getPublicAddresses(), 0));
          return ssh.exec("chmod 600 .ssh/id_rsa");
       }
 
@@ -411,7 +469,8 @@ public class ComputeUtils {
       }
    }
 
-   public static class AuthorizeRSAPublicKey implements SshCallable<ExecResponse> {
+   public static class AuthorizeRSAPublicKey implements
+         SshCallable<ExecResponse> {
       private SshClient ssh;
       private final NodeMetadata node;
       private final String publicKey;
@@ -426,10 +485,13 @@ public class ComputeUtils {
       @Override
       public ExecResponse call() throws Exception {
          ssh.exec("mkdir .ssh");
-         ssh.put(".ssh/id_rsa.pub", new ByteArrayInputStream(publicKey.getBytes()));
-         logger.debug(">> authorizing rsa public key for %s@%s", node.getCredentials().account,
-                  Iterables.get(node.getPublicAddresses(), 0));
-         ExecResponse returnVal = ssh.exec("cat .ssh/id_rsa.pub >> .ssh/authorized_keys");
+         ssh.put(".ssh/id_rsa.pub", new ByteArrayInputStream(publicKey
+               .getBytes()));
+         logger.debug(">> authorizing rsa public key for %s@%s", node
+               .getCredentials().account, Iterables.get(node
+               .getPublicAddresses(), 0));
+         ExecResponse returnVal = ssh
+               .exec("cat .ssh/id_rsa.pub >> .ssh/authorized_keys");
          returnVal = ssh.exec("chmod 600 .ssh/authorized_keys");
          logger.debug("<< complete(%d)", returnVal.getExitCode());
          return returnVal;
@@ -449,31 +511,36 @@ public class ComputeUtils {
 
    public static boolean isKeyAuth(NodeMetadata createdNode) {
       return createdNode.getCredentials().key != null
-               && createdNode.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----");
+            && createdNode.getCredentials().key
+                  .startsWith("-----BEGIN RSA PRIVATE KEY-----");
    }
 
    /**
-    * Given the instances of {@link NodeMetadata} (immutable) and {@link Credentials} (immutable),
-    * returns a new instance of {@link NodeMetadata} that has new credentials
+    * Given the instances of {@link NodeMetadata} (immutable) and
+    * {@link Credentials} (immutable), returns a new instance of
+    * {@link NodeMetadata} that has new credentials
     */
-   public static NodeMetadata installNewCredentials(NodeMetadata node, Credentials newCredentials) {
-      return new NodeMetadataImpl(node.getProviderId(), node.getName(), node.getId(), node
-               .getLocation(), node.getUri(), node.getUserMetadata(), node.getTag(), node
-               .getImage(), node.getState(), node.getPublicAddresses(), node.getPrivateAddresses(),
-               node.getExtra(), newCredentials);
+   public static NodeMetadata installNewCredentials(NodeMetadata node,
+         Credentials newCredentials) {
+      return new NodeMetadataImpl(node.getProviderId(), node.getName(), node
+            .getId(), node.getLocation(), node.getUri(),
+            node.getUserMetadata(), node.getTag(), node.getImage(), node
+                  .getState(), node.getPublicAddresses(), node
+                  .getPrivateAddresses(), node.getExtra(), newCredentials);
    }
 
    /**
-    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
-    * compute.properties to populate the set.
+    * Gets a set of supported providers. Idea stolen from pallets
+    * (supported-clouds). Uses compute.properties to populate the set.
     * 
-    * XXX: Pass in extra properties to support ones that aren't in compute.properties
+    * XXX: Pass in extra properties to support ones that aren't in
+    * compute.properties
     */
    public static Set<String> getSupportedProviders() {
       Properties properties = new Properties();
       try {
          properties.load(Resources.newInputStreamSupplier(
-                  Resources.getResource("compute.properties")).getInput());
+               Resources.getResource("compute.properties")).getInput());
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
@@ -484,7 +551,8 @@ public class ComputeUtils {
       for (Object key : keys) {
          String keyString = key.toString();
          if (keyString.endsWith(".contextbuilder")) {
-            providers.add(keyString.substring(0, keyString.length() - ".contextbuilder".length()));
+            providers.add(keyString.substring(0, keyString.length()
+                  - ".contextbuilder".length()));
          }
       }
       return providers;

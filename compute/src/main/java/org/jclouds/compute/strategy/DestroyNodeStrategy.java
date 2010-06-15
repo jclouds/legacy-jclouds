@@ -19,15 +19,19 @@
 
 package org.jclouds.compute.strategy;
 
+import org.jclouds.compute.domain.NodeMetadata;
 
 /**
- * terminates the node and blocks until it is no longer visible or in the state TERMINATED. If this
- * is the last node in a tagset, incidental resources are also destroyed.
+ * terminates the node
  * 
  * @author Adrian Cole
  */
 public interface DestroyNodeStrategy {
 
-   boolean execute(String id);
+   /**
+    * 
+    * @return null if the node wasn't found
+    */
+   NodeMetadata execute(String id);
 
 }

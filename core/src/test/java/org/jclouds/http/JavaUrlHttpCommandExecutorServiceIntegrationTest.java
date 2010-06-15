@@ -38,7 +38,7 @@ import com.google.inject.Module;
  */
 @Test
 public class JavaUrlHttpCommandExecutorServiceIntegrationTest extends
-         BaseHttpCommandExecutorServiceIntegrationTest {
+      BaseHttpCommandExecutorServiceIntegrationTest {
 
    protected Module createConnectionModule() {
       return new JavaUrlHttpCommandExecutorServiceModule();

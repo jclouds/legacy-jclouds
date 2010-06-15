@@ -24,6 +24,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAU
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
@@ -47,11 +48,14 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
-               "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+            "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE,
+            FenceMode.ALLOW_IN_OUT.toString());
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "80");
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED,
+            180l * 1000l + "");
       return properties;
    }
 
@@ -62,8 +66,9 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
 
    private void setNs() {
       if (properties.getProperty(PROPERTY_VCLOUD_XML_NAMESPACE) == null)
-         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v"
-                  + properties.getProperty(PROPERTY_VCLOUD_VERSION));
+         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
+               "http://www.vmware.com/vcloud/v"
+                     + properties.getProperty(PROPERTY_VCLOUD_VERSION));
    }
 
    public VCloudPropertiesBuilder(URI endpoint, String id, String secret) {
@@ -85,8 +90,8 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
    }
 
    public VCloudPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
+      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint,
+            "endpoint").toString());
       return this;
    }
 }

@@ -46,9 +46,9 @@ public class ServerToNodeMetadataTest {
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
       expect(server.getName()).andReturn("tag-ff").atLeastOnce();
-      expect(server.getState()).andReturn(new Option("RUNNING")).atLeastOnce();
+      expect(server.getState()).andReturn(new Option("NODE_RUNNING")).atLeastOnce();
 
-      expect(serverStateToNodeState.get("RUNNING")).andReturn(NodeState.RUNNING);
+      expect(serverStateToNodeState.get("NODE_RUNNING")).andReturn(NodeState.RUNNING);
       Location location = new LocationImpl(LocationScope.ZONE, "sanfran", "description", null);
 
       Map<String, Credentials> credentialsMap = createMock(Map.class);

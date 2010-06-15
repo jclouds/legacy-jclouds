@@ -63,13 +63,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getSecurityGroupServices();
+            context.getProviderSpecificContext().getApi())
+            .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getKeyPairServices();
+            context.getProviderSpecificContext().getApi()).getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getInstanceServices();
+            context.getProviderSpecificContext().getApi())
+            .getInstanceServices();
 
       String tag = this.tag + "optionsandlogin";
 
@@ -82,15 +84,17 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       try {
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
 
-         // create a security group that allows ssh in so that our scripts later will work
+         // create a security group that allows ssh in so that our scripts later
+         // will work
          securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, tag, IpProtocol.TCP, 22,
-                  22, "0.0.0.0/0");
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(null, tag,
+               IpProtocol.TCP, 22, 22, "0.0.0.0/0");
 
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1,
+               options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().account != null : first;
@@ -102,23 +106,27 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), tag);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag, "jclouds#" + tag));
+         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag,
+               "jclouds#" + tag));
 
          // make sure our dummy group has no rules
          SecurityGroup group = Iterables.getOnlyElement(securityGroupClient
-                  .describeSecurityGroupsInRegion(null, "jclouds#" + tag));
+               .describeSecurityGroupsInRegion(null, "jclouds#" + tag));
          assert group.getIpPermissions().size() == 0 : group;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(tag, first.getImage().getOsFamily(), new Credentials(first
-                  .getCredentials().account, result.getKeyMaterial()));
+         runScriptWithCreds(tag, first.getImage().getOsFamily(),
+               new Credentials(first.getCredentials().account, result
+                     .getKeyMaterial()));
 
       } finally {
          client.destroyNodesMatching(NodePredicates.withTag(tag));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag)
+                  .size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(
+                  null, tag).size(), 1);
          }
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
       }
@@ -127,13 +135,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testExtendedOptionsNoKeyPair() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getSecurityGroupServices();
+            context.getProviderSpecificContext().getApi())
+            .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getKeyPairServices();
+            context.getProviderSpecificContext().getApi()).getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getInstanceServices();
+            context.getProviderSpecificContext().getApi())
+            .getInstanceServices();
 
       String tag = this.tag + "optionsnokey";
 
@@ -149,7 +159,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          // create the security group
          securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1,
+               options);
          Credentials creds = nodes.iterator().next().getCredentials();
          assert creds == null;
 
@@ -160,31 +171,34 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), null);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag, "jclouds#" + tag));
+         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag,
+               "jclouds#" + tag));
 
          // make sure our dummy group has no rules
          SecurityGroup group = Iterables.getOnlyElement(securityGroupClient
-                  .describeSecurityGroupsInRegion(null, "jclouds#" + tag));
+               .describeSecurityGroupsInRegion(null, "jclouds#" + tag));
          assert group.getIpPermissions().size() == 0 : group;
 
       } finally {
          client.destroyNodesMatching(NodePredicates.withTag(tag));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
+            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(
+                  null, tag).size(), 1);
          }
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
       }
    }
 
    private RunningInstance getInstance(InstanceClient instanceClient, String id) {
-      RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
-               .describeInstancesInRegion(null, id)));
+      RunningInstance instance = Iterables
+            .getOnlyElement(Iterables.getOnlyElement(instanceClient
+                  .describeInstancesInRegion(null, id)));
       return instance;
    }
 
    private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient,
-            KeyPairClient keyPairClient, String tag) {
+         KeyPairClient keyPairClient, String tag) {
       try {
          securityGroupClient.deleteSecurityGroupInRegion(null, tag);
       } catch (Exception e) {

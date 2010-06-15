@@ -41,7 +41,8 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadata {
+public class NodeMetadataImpl extends ComputeMetadataImpl implements
+      NodeMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7924307572338157887L;
 
@@ -53,17 +54,19 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final String tag;
    private final Image image;
 
-   public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, @Nullable String tag, @Nullable Image image,
-            NodeState state, Iterable<String> publicAddresses,
-            Iterable<String> privateAddresses, Map<String, String> extra,
-            @Nullable Credentials credentials) {
+   public NodeMetadataImpl(String providerId, String name, String id,
+         Location location, URI uri, Map<String, String> userMetadata,
+         @Nullable String tag, @Nullable Image image, NodeState state,
+         Iterable<String> publicAddresses, Iterable<String> privateAddresses,
+         Map<String, String> extra, @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
       this.tag = tag;
       this.image = image;
       this.state = checkNotNull(state, "state");
-      Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses, "publicAddresses"));
-      Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses, "privateAddresses"));
+      Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses,
+            "publicAddresses"));
+      Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses,
+            "privateAddresses"));
       this.extra.putAll(checkNotNull(extra, "extra"));
       this.credentials = credentials;
    }
@@ -127,19 +130,22 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag=" + getTag() + ", name="
-               + getName() + ", location=" + getLocation() + ", uri=" + getUri() + ", image="
-               + getImage() + ", userMetadata=" + getUserMetadata() + ", state=" + getState()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses
-               + ", extra=" + getExtra() + "]";
+      return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag="
+            + getTag() + ", name=" + getName() + ", location=" + getLocation()
+            + ", uri=" + getUri() + ", image=" + getImage() + ", userMetadata="
+            + getUserMetadata() + ", state=" + getState()
+            + ", privateAddresses=" + privateAddresses + ", publicAddresses="
+            + publicAddresses + ", extra=" + getExtra() + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
-      result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
+      result = prime * result
+            + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
+      result = prime * result
+            + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((tag == null) ? 0 : tag.hashCode());
       result = prime * result + ((image == null) ? 0 : image.hashCode());
       return result;

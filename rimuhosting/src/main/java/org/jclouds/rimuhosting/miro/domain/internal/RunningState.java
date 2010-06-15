@@ -18,10 +18,9 @@
  */
 package org.jclouds.rimuhosting.miro.domain.internal;
 
-
 /**
  * States an instance can be in.
- *
+ * 
  * @author Ivan Meredith
  */
 public enum RunningState {

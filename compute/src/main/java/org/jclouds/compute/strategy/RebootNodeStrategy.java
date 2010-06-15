@@ -19,14 +19,15 @@
 
 package org.jclouds.compute.strategy;
 
+import org.jclouds.compute.domain.NodeMetadata;
 
 /**
- * Reboots a node unless it is in the state TERMINATED.
+ * Reboots a node unless it is in the state NODE_TERMINATED.
  * 
  * @author Adrian Cole
  */
 public interface RebootNodeStrategy {
 
-   boolean execute(String id);
+   NodeMetadata execute(String id);
 
 }

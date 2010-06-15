@@ -96,7 +96,7 @@ public class NodePredicates {
    }
 
    /**
-    * Return nodes with specified tag that are in the RUNNING state.
+    * Return nodes with specified tag that are in the NODE_RUNNING state.
     * 
     * @param tag
     *           tag to match the items
@@ -121,7 +121,7 @@ public class NodePredicates {
    /**
     * Match nodes with State == RUNNING
     */
-   public static final Predicate<NodeMetadata> ACTIVE = new Predicate<NodeMetadata>() {
+   public static final Predicate<NodeMetadata> RUNNING = new Predicate<NodeMetadata>() {
       @Override
       public boolean apply(NodeMetadata nodeMetadata) {
          return nodeMetadata.getState() == NodeState.RUNNING;
@@ -129,12 +129,12 @@ public class NodePredicates {
 
       @Override
       public String toString() {
-         return "ACTIVE";
+         return "RUNNING";
       }
    };
 
    /**
-    * Match nodes with State == TERMINATED
+    * Match nodes with State == NODE_TERMINATED
     */
    public static final Predicate<NodeMetadata> TERMINATED = new Predicate<NodeMetadata>() {
       @Override

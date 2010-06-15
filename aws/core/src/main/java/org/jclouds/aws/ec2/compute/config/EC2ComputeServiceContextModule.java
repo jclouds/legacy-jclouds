@@ -64,9 +64,11 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
+import org.jclouds.aws.ec2.predicates.InstancePresent;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -76,8 +78,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -92,11 +92,9 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import com.google.inject.name.Names;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
@@ -108,9 +106,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
- * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
+ * Configures the {@link ComputeServiceContext}; requires
+ * {@link EC2ComputeService} bound.
  * 
  * @author Adrian Cole
  */
@@ -121,26 +121,41 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    public EC2ComputeServiceContextModule(String providerName) {
       this.providerName = providerName;
    }
+   
+   @Provides
+   @Singleton
+   @Named("PRESENT")
+   protected Predicate<RunningInstance> instancePresent(InstancePresent present) {
+      return new RetryablePredicate<RunningInstance>(present, 3000, 200,
+               TimeUnit.MILLISECONDS);
+   }
+
 
    @Override
    protected void configure() {
       super.configure();
+      install(new ComputeServiceTimeoutsModule());
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
-      bind(LoadBalanceNodesStrategy.class).to(EC2LoadBalanceNodesStrategy.class);
-      bind(DestroyLoadBalancerStrategy.class).to(EC2DestroyLoadBalancerStrategy.class);
-      bind(RunNodesAndAddToSetStrategy.class).to(EC2RunNodesAndAddToSetStrategy.class);
+      })
+            .to(
+                  new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
+                  }).in(Scopes.SINGLETON);
+      bind(LoadBalanceNodesStrategy.class)
+            .to(EC2LoadBalanceNodesStrategy.class);
+      bind(DestroyLoadBalancerStrategy.class).to(
+            EC2DestroyLoadBalancerStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(
+            EC2RunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(EC2ListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
       bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
-      }).annotatedWith(Names.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class)
-               .in(Scopes.SINGLETON);
+      }).annotatedWith(Names.named("volumeMapping")).to(
+            RunningInstanceToStorageMappingUnix.class).in(Scopes.SINGLETON);
    }
 
    @Provides
@@ -160,11 +175,12 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.architecture(Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(
-               ".*10\\.?04.*");
+      return template.architecture(Architecture.X86_32).osFamily(UBUNTU)
+            .imageNameMatches(".*10\\.?04.*").osDescriptionMatches("^ubuntu-images.*");
    }
 
-   // TODO make this more efficient for listNodes(); currently RunningInstanceToNodeMetadata is slow
+   // TODO make this more efficient for listNodes(); currently
+   // RunningInstanceToNodeMetadata is slow
    // due to image parsing; consider using MapMaker. computing map
    @Singleton
    public static class EC2ListNodesStrategy implements ListNodesStrategy {
@@ -178,9 +194,10 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
       private final ExecutorService executor;
 
       @Inject
-      protected EC2ListNodesStrategy(EC2Client client, @EC2 Map<String, URI> regionMap,
-               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
-               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      protected EC2ListNodesStrategy(EC2Client client,
+            @EC2 Map<String, URI> regionMap,
+            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
          this.client = client;
          this.regionMap = regionMap;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -194,42 +211,44 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
       @Override
       public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
-               Predicate<ComputeMetadata> filter) {
+            Predicate<ComputeMetadata> filter) {
          final Set<NodeMetadata> nodes = Sets.newHashSet();
 
          Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
 
          for (final String region : regionMap.keySet()) {
-            parallelResponses.put(region, ConcurrentUtils.makeListenable(executor
-                     .submit(new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                           Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client
-                                    .getInstanceServices().describeInstancesInRegion(region)),
-                                    runningInstanceToNodeMetadata));
-                           return null;
-                        }
-                     }), executor));
+            parallelResponses.put(region, ConcurrentUtils.makeListenable(
+                  executor.submit(new Callable<Void>() {
+                     @Override
+                     public Void call() throws Exception {
+                        Iterables.addAll(nodes, Iterables.transform(Iterables
+                              .concat(client.getInstanceServices()
+                                    .describeInstancesInRegion(region)),
+                              runningInstanceToNodeMetadata));
+                        return null;
+                     }
+                  }), executor));
          }
-         Map<String, Exception> exceptions = awaitCompletion(parallelResponses, executor, null,
-                  logger, "nodes");
+         Map<String, Exception> exceptions = awaitCompletion(parallelResponses,
+               executor, null, logger, "nodes");
 
          if (exceptions.size() > 0)
-            throw new RuntimeException(String.format("error parsing nodes in regions: %s",
-                     exceptions));
+            throw new RuntimeException(String.format(
+                  "error parsing nodes in regions: %s", exceptions));
          return Iterables.filter(nodes, filter);
       }
    }
 
    @Singleton
-   public static class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+   public static class EC2GetNodeMetadataStrategy implements
+         GetNodeMetadataStrategy {
 
       private final EC2Client client;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
 
       @Inject
       protected EC2GetNodeMetadataStrategy(EC2Client client,
-               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
+            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
          this.client = client;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
       }
@@ -239,8 +258,9 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          String[] parts = parseHandle(id);
          String region = parts[0];
          String instanceId = parts[1];
-         RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(
-                  client.getInstanceServices(), region, instanceId));
+         RunningInstance runningInstance = Iterables
+               .getOnlyElement(getAllRunningInstancesInRegion(client
+                     .getInstanceServices(), region, instanceId));
          return runningInstanceToNodeMetadata.apply(runningInstance);
       }
 
@@ -249,34 +269,30 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Singleton
    public static class EC2RebootNodeStrategy implements RebootNodeStrategy {
       private final InstanceClient client;
+      private final GetNodeMetadataStrategy getNode;
 
       @Inject
-      protected EC2RebootNodeStrategy(EC2Client client) {
+      protected EC2RebootNodeStrategy(EC2Client client,
+            GetNodeMetadataStrategy getNode) {
          this.client = client.getInstanceServices();
+         this.getNode = getNode;
       }
 
       @Override
-      public boolean execute(String id) {
+      public NodeMetadata execute(String id) {
          String[] parts = parseHandle(id);
          String region = parts[0];
          String instanceId = parts[1];
          client.rebootInstancesInRegion(region, instanceId);
-         return true;
+         return getNode.execute(id);
       }
 
    }
 
    @Provides
    @Singleton
-   @Named("NOT_RUNNING")
-   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
-      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
-               TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected final Map<RegionAndName, KeyPair> credentialsMap(CreateUniqueKeyPair in) {
+   protected final Map<RegionAndName, KeyPair> credentialsMap(
+         CreateUniqueKeyPair in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();
@@ -284,7 +300,8 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
 
    @Provides
    @Singleton
-   protected final Map<RegionAndName, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
+   protected final Map<RegionAndName, String> securityGroupMap(
+         CreateSecurityGroupIfNeeded in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();
@@ -304,28 +321,33 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    @Provides
    @Singleton
    Set<? extends Size> provideSizes() {
-      return ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
-               EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
-               EC2Size.M2_4XLARGE);
+      return ImmutableSet.of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE,
+            EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE,
+            EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE);
    }
 
    @Provides
    @Singleton
-   Set<? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap) {
-      Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+   Set<? extends Location> provideLocations(
+         Map<String, String> availabilityZoneToRegionMap) {
+      Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName,
+            providerName, null);
       Set<Location> locations = Sets.newLinkedHashSet();
       for (String zone : availabilityZoneToRegionMap.keySet()) {
-         Location region = new LocationImpl(LocationScope.REGION, availabilityZoneToRegionMap
-                  .get(zone), availabilityZoneToRegionMap.get(zone), ec2);
+         Location region = new LocationImpl(LocationScope.REGION,
+               availabilityZoneToRegionMap.get(zone),
+               availabilityZoneToRegionMap.get(zone), ec2);
          locations.add(region);
-         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, region));
+         locations
+               .add(new LocationImpl(LocationScope.ZONE, zone, zone, region));
       }
       return locations;
    }
 
    @Provides
    @Singleton
-   Location getDefaultLocation(@EC2 final String region, Set<? extends Location> set) {
+   Location getDefaultLocation(@EC2 final String region,
+         Set<? extends Location> set) {
       return Iterables.find(set, new Predicate<Location>() {
 
          @Override
@@ -352,26 +374,28 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
    }
 
    @Provides
-   protected Set<? extends Image> provideImages(Map<RegionAndName, ? extends Image> map) {
+   protected Set<? extends Image> provideImages(
+         Map<RegionAndName, ? extends Image> map) {
       return ImmutableSet.copyOf(map.values());
    }
 
    @Provides
    @Singleton
    protected ConcurrentMap<RegionAndName, Image> provideImageMap(
-            RegionAndIdToImage regionAndIdToImage) {
+         RegionAndIdToImage regionAndIdToImage) {
       return new MapMaker().makeComputingMap(regionAndIdToImage);
    }
 
    @Provides
    @Singleton
-   protected Map<RegionAndName, ? extends Image> provideImages(final EC2Client sync,
-            @EC2 Map<String, URI> regionMap, final LogHolder holder,
-            Function<ComputeMetadata, String> indexer,
-            @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners, final ImageParser parser,
-            final ConcurrentMap<RegionAndName, Image> images,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Map<RegionAndName, ? extends Image> provideImages(
+         final EC2Client sync, @EC2 Map<String, URI> regionMap,
+         final LogHolder holder, Function<ComputeMetadata, String> indexer,
+         @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
+         final ImageParser parser,
+         final ConcurrentMap<RegionAndName, Image> images,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor)
+         throws InterruptedException, ExecutionException, TimeoutException {
       if (amiOwners.length == 0) {
          holder.logger.debug(">> no owners specified, skipping image parsing");
       } else {
@@ -380,30 +404,31 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
 
          for (final String region : regionMap.keySet()) {
-            parallelResponses.put(region, ConcurrentUtils.makeListenable(executor
-                     .submit(new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                           for (final org.jclouds.aws.ec2.domain.Image from : sync.getAMIServices()
-                                    .describeImagesInRegion(region, ownedBy(amiOwners))) {
-                              Image image = parser.apply(from);
-                              if (image != null)
-                                 images
-                                          .put(new RegionAndName(region, image.getProviderId()),
-                                                   image);
-                              else if (from.getImageType() == ImageType.MACHINE)
-                                 holder.logger.trace("<< image(%s) didn't parse", from.getId());
-                           }
-                           return null;
+            parallelResponses.put(region, ConcurrentUtils.makeListenable(
+                  executor.submit(new Callable<Void>() {
+                     @Override
+                     public Void call() throws Exception {
+                        for (final org.jclouds.aws.ec2.domain.Image from : sync
+                              .getAMIServices().describeImagesInRegion(region,
+                                    ownedBy(amiOwners))) {
+                           Image image = parser.apply(from);
+                           if (image != null)
+                              images.put(new RegionAndName(region, image
+                                    .getProviderId()), image);
+                           else if (from.getImageType() == ImageType.MACHINE)
+                              holder.logger.trace("<< image(%s) didn't parse",
+                                    from.getId());
                         }
-                     }), executor));
+                        return null;
+                     }
+                  }), executor));
          }
-         Map<String, Exception> exceptions = awaitCompletion(parallelResponses, executor, null,
-                  holder.logger, "images");
+         Map<String, Exception> exceptions = awaitCompletion(parallelResponses,
+               executor, null, holder.logger, "images");
 
          if (exceptions.size() > 0)
-            throw new RuntimeException(String.format("error parsing images in regions: %s",
-                     exceptions));
+            throw new RuntimeException(String.format(
+                  "error parsing images in regions: %s", exceptions));
 
          holder.logger.debug("<< images(%d)", images.size());
       }

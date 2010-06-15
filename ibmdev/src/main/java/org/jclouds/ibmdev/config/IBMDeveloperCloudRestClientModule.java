@@ -20,7 +20,6 @@ package org.jclouds.ibmdev.config;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -35,16 +34,11 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.ibmdev.IBMDeveloperCloud;
 import org.jclouds.ibmdev.IBMDeveloperCloudAsyncClient;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
-import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.handlers.IBMDeveloperCloudErrorHandler;
-import org.jclouds.ibmdev.predicates.InstanceActive;
-import org.jclouds.ibmdev.predicates.InstanceRemovedOrNotFound;
 import org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Predicate;
 import com.google.inject.Provides;
 
 /**
@@ -55,19 +49,19 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class IBMDeveloperCloudRestClientModule extends
-         RestClientModule<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> {
+      RestClientModule<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> {
 
    public IBMDeveloperCloudRestClientModule() {
       super(IBMDeveloperCloudClient.class, IBMDeveloperCloudAsyncClient.class);
    }
 
-
    @Provides
    @Singleton
    public BasicAuthentication provideBasicAuthentication(
-            @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER) String user,
-            @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_PASSWORD) String password,
-            EncryptionService encryptionService) throws UnsupportedEncodingException {
+         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER) String user,
+         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_PASSWORD) String password,
+         EncryptionService encryptionService)
+         throws UnsupportedEncodingException {
       return new BasicAuthentication(user, password, encryptionService);
    }
 
@@ -75,37 +69,23 @@ public class IBMDeveloperCloudRestClientModule extends
    @Singleton
    @IBMDeveloperCloud
    protected URI provideURI(
-            @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT) String endpoint) {
+         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               IBMDeveloperCloudErrorHandler.class);
+            IBMDeveloperCloudErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               IBMDeveloperCloudErrorHandler.class);
+            IBMDeveloperCloudErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               IBMDeveloperCloudErrorHandler.class);
+            IBMDeveloperCloudErrorHandler.class);
    }
 
    @Override
    protected void configure() {
       install(new IBMDeveloperCloudParserModule());
       super.configure();
-   }
-
-   @Provides
-   @Singleton
-   @Named("ACTIVE")
-   protected Predicate<Instance> instanceActive(InstanceActive instanceActive) {
-      return new RetryablePredicate<Instance>(instanceActive, 1200, 3, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Named("REMOVED")
-   Predicate<Instance> instanceRemoved(InstanceRemovedOrNotFound instanceRemoved) {
-      return new RetryablePredicate<Instance>(instanceRemoved, 5000, 500, TimeUnit.MILLISECONDS);
    }
 }

@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.security.SecureRandom;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Ip;
@@ -57,14 +57,17 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
    @Inject
    protected GoGridAddNodeWithTagStrategy(GoGridClient client,
-            Function<Server, NodeMetadata> serverToNodeMetadata, Function<Size, String> sizeToRam) {
+         Function<Server, NodeMetadata> serverToNodeMetadata,
+         Function<Size, String> sizeToRam, Timeouts timeouts) {
       this.client = client;
       this.serverToNodeMetadata = serverToNodeMetadata;
       this.sizeToRam = sizeToRam;
-      this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(
-               client.getJobServices()), 800, 20, TimeUnit.SECONDS);
+      this.serverLatestJobCompleted = new RetryablePredicate<Server>(
+            new ServerLatestJobCompleted(client.getJobServices()),
+            timeouts.nodeRunning * 9l / 10l);
       this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(
-               new ServerLatestJobCompleted(client.getJobServices()), 60, 20, TimeUnit.SECONDS);
+            new ServerLatestJobCompleted(client.getJobServices()),
+            timeouts.nodeRunning * 1l / 10l);
    }
 
    @Override
@@ -73,12 +76,15 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       boolean notStarted = true;
       int numOfRetries = 20;
       // lock-free consumption of a shared resource: IP address pool
-      while (notStarted) { // TODO: replace with Predicate-based thread collision avoidance for
+      while (notStarted) { // TODO: replace with Predicate-based thread
+         // collision avoidance for
          // simplicity
          Set<Ip> availableIps = client.getIpServices().getIpList(
-                  new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC));
+               new GetIpListOptions().onlyUnassigned().onlyWithType(
+                     IpType.PUBLIC));
          if (availableIps.size() == 0)
-            throw new RuntimeException("No public IPs available on this account.");
+            throw new RuntimeException(
+                  "No public IPs available on this account.");
          int ipIndex = new SecureRandom().nextInt(availableIps.size());
          Ip availableIp = Iterables.get(availableIps, ipIndex);
          try {
@@ -90,21 +96,22 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
             notStarted = true;
          }
       }
-      serverLatestJobCompleted.apply(addedServer);
-
-      client.getServerServices().power(addedServer.getName(), PowerCommand.START);
-      serverLatestJobCompletedShort.apply(addedServer);
-
-      addedServer = Iterables.getOnlyElement(client.getServerServices().getServersByName(
-               addedServer.getName()));
+      if (template.getOptions().shouldBlockUntilRunning()) {
+         serverLatestJobCompleted.apply(addedServer);
+         client.getServerServices().power(addedServer.getName(),
+               PowerCommand.START);
+         serverLatestJobCompletedShort.apply(addedServer);
+         addedServer = Iterables.getOnlyElement(client.getServerServices()
+               .getServersByName(addedServer.getName()));
+      }
       return serverToNodeMetadata.apply(addedServer);
    }
 
    private Server addServer(String name, Template template, Ip availableIp) {
       Server addedServer;
       addedServer = client.getServerServices().addServer(name,
-               checkNotNull(template.getImage().getProviderId()),
-               sizeToRam.apply(template.getSize()), availableIp.getIp());
+            checkNotNull(template.getImage().getProviderId()),
+            sizeToRam.apply(template.getSize()), availableIp.getIp());
       return addedServer;
    }
 }

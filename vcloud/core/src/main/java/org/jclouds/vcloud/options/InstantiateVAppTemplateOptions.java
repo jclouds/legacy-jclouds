@@ -42,14 +42,26 @@ public class InstantiateVAppTemplateOptions {
    private String fenceMode;
    private String dhcpEnabled;
    private String networkName;
+   private boolean blockOnDeploy = true;
    private Map<String, String> properties = Maps.newTreeMap();
 
-   public InstantiateVAppTemplateOptions productProperty(String key, String value) {
+   public boolean shouldBlockOnDeploy() {
+      return blockOnDeploy;
+   }
+
+   public InstantiateVAppTemplateOptions blockOnDeploy(boolean blockOnDeploy) {
+      this.blockOnDeploy = blockOnDeploy;
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions productProperty(String key,
+         String value) {
       properties.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
       return this;
    }
 
-   public InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+   public InstantiateVAppTemplateOptions productProperties(
+         Map<String, String> properties) {
       this.properties.putAll(checkNotNull(properties, "properties"));
       return this;
    }
@@ -88,7 +100,8 @@ public class InstantiateVAppTemplateOptions {
    }
 
    public InstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
-      this.network = checkNotNull(networkLocation, "networkLocation").toASCIIString();
+      this.network = checkNotNull(networkLocation, "networkLocation")
+            .toASCIIString();
       return this;
    }
 
@@ -125,6 +138,15 @@ public class InstantiateVAppTemplateOptions {
    }
 
    public static class Builder {
+
+      /**
+       * @see InstantiateVAppTemplateOptions#blockOnDeploy
+       */
+      public static InstantiateVAppTemplateOptions blockOnDeploy(
+            boolean blockOnDeploy) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.blockOnDeploy(blockOnDeploy);
+      }
 
       /**
        * @see InstantiateVAppTemplateOptions#processorCount(int)
@@ -169,7 +191,8 @@ public class InstantiateVAppTemplateOptions {
       /**
        * @see InstantiateVAppTemplateOptions#dhcpEnabled(boolean)
        */
-      public static InstantiateVAppTemplateOptions dhcpEnabled(boolean dhcpEnabled) {
+      public static InstantiateVAppTemplateOptions dhcpEnabled(
+            boolean dhcpEnabled) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.dhcpEnabled(dhcpEnabled);
       }
@@ -177,7 +200,8 @@ public class InstantiateVAppTemplateOptions {
       /**
        * @see InstantiateVAppTemplateOptions#networkName(String)
        */
-      public static InstantiateVAppTemplateOptions networkName(String networkName) {
+      public static InstantiateVAppTemplateOptions networkName(
+            String networkName) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.networkName(networkName);
       }
@@ -185,7 +209,8 @@ public class InstantiateVAppTemplateOptions {
       /**
        * @see InstantiateVAppTemplateOptions#productProperty(String,String)
        */
-      public static InstantiateVAppTemplateOptions productProperty(String key, String value) {
+      public static InstantiateVAppTemplateOptions productProperty(String key,
+            String value) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.productProperty(key, value);
       }
@@ -193,7 +218,8 @@ public class InstantiateVAppTemplateOptions {
       /**
        * @see InstantiateVAppTemplateOptions#setProperties(Map<String, String>)
        */
-      public static InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+      public static InstantiateVAppTemplateOptions productProperties(
+            Map<String, String> properties) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.productProperties(properties);
       }
@@ -201,10 +227,12 @@ public class InstantiateVAppTemplateOptions {
 
    @Override
    public String toString() {
-      return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount + ", memorySizeMegabytes="
-               + memorySizeMegabytes + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network="
-               + network + ", networkName=" + networkName + ", fenceMode=" + fenceMode
-               + ", dhcpEnabled=" + dhcpEnabled + ", properties=" + properties + "]";
+      return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount
+            + ", memorySizeMegabytes=" + memorySizeMegabytes
+            + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network="
+            + network + ", networkName=" + networkName + ", fenceMode="
+            + fenceMode + ", dhcpEnabled=" + dhcpEnabled + ", properties="
+            + properties + "]";
    }
 
    @Override
@@ -212,14 +240,21 @@ public class InstantiateVAppTemplateOptions {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((cpuCount == null) ? 0 : cpuCount.hashCode());
-      result = prime * result + ((dhcpEnabled == null) ? 0 : dhcpEnabled.hashCode());
-      result = prime * result + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
-      result = prime * result + ((fenceMode == null) ? 0 : fenceMode.hashCode());
       result = prime * result
-               + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes.hashCode());
+            + ((dhcpEnabled == null) ? 0 : dhcpEnabled.hashCode());
+      result = prime * result
+            + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
+      result = prime * result
+            + ((fenceMode == null) ? 0 : fenceMode.hashCode());
+      result = prime
+            * result
+            + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes
+                  .hashCode());
       result = prime * result + ((network == null) ? 0 : network.hashCode());
-      result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
-      result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+      result = prime * result
+            + ((networkName == null) ? 0 : networkName.hashCode());
+      result = prime * result
+            + ((properties == null) ? 0 : properties.hashCode());
       return result;
    }
 

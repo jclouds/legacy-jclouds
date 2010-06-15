@@ -34,6 +34,7 @@ import ${package}.config.${providerName}ContextModule;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
+import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -80,6 +81,7 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    @Override
    protected void configure() {
       super.configure();
+      install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
                .to(
@@ -91,12 +93,6 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
       bind(RebootNodeStrategy.class).to(${providerName}RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(${providerName}DestroyNodeStrategy.class);
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
-   }
-
-   @Provides
-   @Singleton
-   protected Predicate<IPSocket> socketTester(SocketOpen open) {
-      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
    }
    
    /**
@@ -203,14 +199,6 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
           return false;
       }
 
-   }
-
-   @Provides
-   @Singleton
-   @Named("NOT_RUNNING")
-   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
-      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
-               TimeUnit.SECONDS);
    }
    
    @Provides

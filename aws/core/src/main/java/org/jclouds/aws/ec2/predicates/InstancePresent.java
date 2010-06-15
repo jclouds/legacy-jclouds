@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -38,7 +37,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class InstanceStateRunning implements Predicate<RunningInstance> {
+public class InstancePresent implements Predicate<RunningInstance> {
 
    private final EC2Client client;
 
@@ -46,18 +45,15 @@ public class InstanceStateRunning implements Predicate<RunningInstance> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateRunning(EC2Client client) {
+   public InstancePresent(EC2Client client) {
       this.client = client;
    }
 
    public boolean apply(RunningInstance instance) {
-      logger.trace("looking for state on instance %s", instance);
+      logger.trace("looking for instance %s", instance);
       try {
          instance = refresh(instance);
-         logger.trace("%s: looking for instance state %s: currently: %s",
-               instance.getId(), InstanceState.RUNNING, instance
-                     .getInstanceState());
-         return instance.getInstanceState() == InstanceState.RUNNING;
+         return true;
       } catch (ResourceNotFoundException e) {
          return false;
       }

@@ -60,13 +60,9 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -80,15 +76,16 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGridAsyncClient> {
+public class GoGridRestClientModule extends
+      RestClientModule<GoGridClient, GoGridAsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
-            .<Class<?>, Class<?>> builder()//
-            .put(GridServerClient.class, GridServerAsyncClient.class)//
-            .put(GridJobClient.class, GridJobAsyncClient.class)//
-            .put(GridIpClient.class, GridIpAsyncClient.class)//
-            .put(GridLoadBalancerClient.class, GridLoadBalancerAsyncClient.class)//
-            .put(GridImageClient.class, GridImageAsyncClient.class)//
-            .build();
+         .<Class<?>, Class<?>> builder()//
+         .put(GridServerClient.class, GridServerAsyncClient.class)//
+         .put(GridJobClient.class, GridJobAsyncClient.class)//
+         .put(GridIpClient.class, GridIpAsyncClient.class)//
+         .put(GridLoadBalancerClient.class, GridLoadBalancerAsyncClient.class)//
+         .put(GridImageClient.class, GridImageAsyncClient.class)//
+         .build();
 
    public GoGridRestClientModule() {
       super(GoGridClient.class, GoGridAsyncClient.class, DELEGATE_MAP);
@@ -97,7 +94,8 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
    @Provides
    @Singleton
    @GoGrid
-   protected URI provideURI(@Named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT) String endpoint) {
+   protected URI provideURI(
+         @Named(GoGridConstants.PROPERTY_GOGRID_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
@@ -107,28 +105,28 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
       return cache.get();
    }
 
-   @Provides
-   @Singleton
-   protected Predicate<IPSocket> socketTester(SocketOpen open) {
-      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
-   }
-
    @SuppressWarnings("unchecked")
    @Provides
    @Singleton
    @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
    public Map<Class, Object> provideCustomAdapterBindings() {
       Map<Class, Object> bindings = Maps.newHashMap();
-      bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());
-      bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
-      bindings.put(LoadBalancerState.class, new CustomDeserializers.LoadBalancerStateAdapter());
+      bindings.put(ObjectType.class,
+            new CustomDeserializers.ObjectTypeAdapter());
+      bindings.put(LoadBalancerOs.class,
+            new CustomDeserializers.LoadBalancerOsAdapter());
+      bindings.put(LoadBalancerState.class,
+            new CustomDeserializers.LoadBalancerStateAdapter());
       bindings.put(LoadBalancerPersistenceType.class,
-               new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
-      bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
+            new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
+      bindings.put(LoadBalancerType.class,
+            new CustomDeserializers.LoadBalancerTypeAdapter());
       bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
       bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
-      bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
-      bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
+      bindings.put(ServerImageState.class,
+            new CustomDeserializers.ServerImageStateAdapter());
+      bindings.put(ServerImageType.class,
+            new CustomDeserializers.ServerImageTypeAdapter());
       return bindings;
    }
 
@@ -137,7 +135,8 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
     */
    @Provides
    @TimeStamp
-   Supplier<Long> provideTimeStampCache(@Named(PROPERTY_GOGRID_SESSIONINTERVAL) long seconds) {
+   Supplier<Long> provideTimeStampCache(
+         @Named(PROPERTY_GOGRID_SESSIONINTERVAL) long seconds) {
       return new ExpirableSupplier<Long>(new Supplier<Long>() {
          public Long get() {
             return System.currentTimeMillis() / 1000;
@@ -147,9 +146,12 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
 
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(GoGridErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(GoGridErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(GoGridErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+            GoGridErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+            GoGridErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+            GoGridErrorHandler.class);
    }
 
 }

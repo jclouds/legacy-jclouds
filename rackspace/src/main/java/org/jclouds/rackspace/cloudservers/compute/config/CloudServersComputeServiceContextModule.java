@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +37,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
+import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -54,8 +54,6 @@ import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -67,7 +65,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.compute.functions.ServerToNodeMetadata;
@@ -82,7 +79,6 @@ import org.jclouds.rackspace.reference.RackspaceConstants;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -92,12 +88,13 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
- * Configures the {@link CloudServersComputeServiceContext}; requires {@link BaseComputeService}
- * bound.
+ * Configures the {@link CloudServersComputeServiceContext}; requires
+ * {@link BaseComputeService} bound.
  * 
  * @author Adrian Cole
  */
-public class CloudServersComputeServiceContextModule extends CloudServersContextModule {
+public class CloudServersComputeServiceContextModule extends
+      CloudServersContextModule {
    private final String providerName;
 
    public CloudServersComputeServiceContextModule(String providerName) {
@@ -107,18 +104,22 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Override
    protected void configure() {
       super.configure();
+      install(new ComputeServiceTimeoutsModule());
       install(new RackspaceLocationsModule(providerName));
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
-      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
+      bind(LoadBalancerService.class).toProvider(
+            Providers.<LoadBalancerService> of(null));
       bind(new TypeLiteral<ComputeServiceContext>() {
       })
-               .to(
-                        new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
-                        }).in(Scopes.SINGLETON);
-      bind(AddNodeWithTagStrategy.class).to(CloudServersAddNodeWithTagStrategy.class);
+            .to(
+                  new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
+                  }).in(Scopes.SINGLETON);
+      bind(AddNodeWithTagStrategy.class).to(
+            CloudServersAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(CloudServersListNodesStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(CloudServersGetNodeMetadataStrategy.class);
+      bind(GetNodeMetadataStrategy.class).to(
+            CloudServersGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(CloudServersRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(CloudServersDestroyNodeStrategy.class);
    }
@@ -132,93 +133,93 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
-   String provideNamingConvention(@Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+   String provideNamingConvention(
+         @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
       return account + "-%s-%s";
    }
 
    @Singleton
-   public static class CloudServersRebootNodeStrategy implements RebootNodeStrategy {
+   public static class CloudServersRebootNodeStrategy implements
+         RebootNodeStrategy {
       private final CloudServersClient client;
-      private final Predicate<Server> serverActive;
+      private final GetNodeMetadataStrategy getNode;
 
       @Inject
       protected CloudServersRebootNodeStrategy(CloudServersClient client,
-               @Named("ACTIVE") Predicate<Server> serverActive) {
+            GetNodeMetadataStrategy getNode) {
          this.client = client;
-         this.serverActive = serverActive;
+         this.getNode = getNode;
       }
 
       @Override
-      public boolean execute(String id) {
+      public NodeMetadata execute(String id) {
          int serverId = Integer.parseInt(id);
          // if false server wasn't around in the first place
          client.rebootServer(serverId, RebootType.HARD);
-         Server server = client.getServer(serverId);
-         return server == null ? false : serverActive.apply(server);
+         return getNode.execute(id);
       }
 
    }
 
    @Singleton
-   public static class CloudServersDestroyNodeStrategy implements DestroyNodeStrategy {
+   public static class CloudServersDestroyNodeStrategy implements
+         DestroyNodeStrategy {
       private final CloudServersClient client;
-      private final Predicate<Server> serverDeleted;
+      private final GetNodeMetadataStrategy getNode;
 
       @Inject
       protected CloudServersDestroyNodeStrategy(CloudServersClient client,
-               @Named("DELETED") Predicate<Server> serverDeleted) {
+            GetNodeMetadataStrategy getNode) {
          this.client = client;
-         this.serverDeleted = serverDeleted;
+         this.getNode = getNode;
       }
 
       @Override
-      public boolean execute(String id) {
+      public NodeMetadata execute(String id) {
          int serverId = Integer.parseInt(id);
          // if false server wasn't around in the first place
-         if (!client.deleteServer(serverId))
-            return false;
-         Server server = client.getServer(serverId);
-         return server == null ? false : serverDeleted.apply(server);
+         client.deleteServer(serverId);
+         return getNode.execute(id);
       }
 
    }
 
    @Singleton
-   public static class CloudServersAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+   public static class CloudServersAddNodeWithTagStrategy implements
+         AddNodeWithTagStrategy {
       private final CloudServersClient client;
-      private final Predicate<Server> serverActive;
 
       @Inject
-      protected CloudServersAddNodeWithTagStrategy(CloudServersClient client,
-               @Named("ACTIVE") Predicate<Server> serverActive) {
+      protected CloudServersAddNodeWithTagStrategy(CloudServersClient client) {
          this.client = checkNotNull(client, "client");
-         this.serverActive = checkNotNull(serverActive, "serverActive");
       }
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         Server server = client.createServer(name, Integer.parseInt(template.getImage()
-                  .getProviderId()), Integer.parseInt(template.getSize().getProviderId()));
-         serverActive.apply(server);
-         return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "",
-                  new LocationImpl(LocationScope.HOST, server.getHostId(), server.getHostId(),
-                           template.getLocation()), null, server.getMetadata(), tag, template
-                           .getImage(), NodeState.RUNNING, server.getAddresses()
-                           .getPublicAddresses(), server.getAddresses().getPrivateAddresses(),
-                  ImmutableMap.<String, String> of(),
-                  new Credentials("root", server.getAdminPass()));
+         Server server = client.createServer(name, Integer.parseInt(template
+               .getImage().getProviderId()), Integer.parseInt(template
+               .getSize().getProviderId()));
+         return new NodeMetadataImpl(server.getId() + "", name, server.getId()
+               + "", new LocationImpl(LocationScope.HOST, server.getHostId(),
+               server.getHostId(), template.getLocation()), null, server
+               .getMetadata(), tag, template.getImage(), NodeState.PENDING,
+               server.getAddresses().getPublicAddresses(), server
+                     .getAddresses().getPrivateAddresses(), ImmutableMap
+                     .<String, String> of(), new Credentials("root", server
+                     .getAdminPass()));
       }
 
    }
 
    @Singleton
-   public static class CloudServersListNodesStrategy implements ListNodesStrategy {
+   public static class CloudServersListNodesStrategy implements
+         ListNodesStrategy {
       private final CloudServersClient client;
       private final Function<Server, NodeMetadata> serverToNodeMetadata;
 
       @Inject
       protected CloudServersListNodesStrategy(CloudServersClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata) {
+            Function<Server, NodeMetadata> serverToNodeMetadata) {
          this.client = client;
          this.serverToNodeMetadata = serverToNodeMetadata;
       }
@@ -230,21 +231,23 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
       @Override
       public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
-               Predicate<ComputeMetadata> filter) {
-         return Iterables.filter(Iterables.transform(client.listServers(ListOptions.Builder
-                  .withDetails()), serverToNodeMetadata), filter);
+            Predicate<ComputeMetadata> filter) {
+         return Iterables.filter(Iterables.transform(client
+               .listServers(ListOptions.Builder.withDetails()),
+               serverToNodeMetadata), filter);
       }
    }
 
    @Singleton
-   public static class CloudServersGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+   public static class CloudServersGetNodeMetadataStrategy implements
+         GetNodeMetadataStrategy {
 
       private final CloudServersClient client;
       private final Function<Server, NodeMetadata> serverToNodeMetadata;
 
       @Inject
       protected CloudServersGetNodeMetadataStrategy(CloudServersClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata) {
+            Function<Server, NodeMetadata> serverToNodeMetadata) {
          this.client = client;
          this.serverToNodeMetadata = serverToNodeMetadata;
       }
@@ -260,38 +263,30 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
    @Singleton
    @Provides
    Map<ServerStatus, NodeState> provideServerToNodeState() {
-      return ImmutableMap.<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE,
-               NodeState.RUNNING)//
-               .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
-               .put(ServerStatus.DELETED, NodeState.TERMINATED)//
-               .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-               .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-               .put(ServerStatus.MOVE, NodeState.PENDING)//
-               .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
-               .put(ServerStatus.RESCUE, NodeState.PENDING)//
-               .put(ServerStatus.ERROR, NodeState.ERROR)//
-               .put(ServerStatus.BUILD, NodeState.PENDING)//
-               .put(ServerStatus.RESTORING, NodeState.PENDING)//
-               .put(ServerStatus.PASSWORD, NodeState.PENDING)//
-               .put(ServerStatus.REBUILD, NodeState.PENDING)//
-               .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-               .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-               .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
-               .put(ServerStatus.REBOOT, NodeState.PENDING)//
-               .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-               .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
-   }
-
-   @Provides
-   @Singleton
-   @Named("NOT_RUNNING")
-   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
-      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
-               TimeUnit.SECONDS);
+      return ImmutableMap.<ServerStatus, NodeState> builder().put(
+            ServerStatus.ACTIVE, NodeState.RUNNING)//
+            .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
+            .put(ServerStatus.DELETED, NodeState.TERMINATED)//
+            .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
+            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
+            .put(ServerStatus.MOVE, NodeState.PENDING)//
+            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
+            .put(ServerStatus.RESCUE, NodeState.PENDING)//
+            .put(ServerStatus.ERROR, NodeState.ERROR)//
+            .put(ServerStatus.BUILD, NodeState.PENDING)//
+            .put(ServerStatus.RESTORING, NodeState.PENDING)//
+            .put(ServerStatus.PASSWORD, NodeState.PENDING)//
+            .put(ServerStatus.REBUILD, NodeState.PENDING)//
+            .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
+            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
+            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
+            .put(ServerStatus.REBOOT, NodeState.PENDING)//
+            .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
+            .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
    }
 
    @Provides
@@ -307,17 +302,19 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
 
    @Provides
    @Singleton
-   protected Set<? extends Size> provideSizes(CloudServersClient sync, Set<? extends Image> images,
-            Location location, LogHolder holder,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            Function<ComputeMetadata, String> indexer) throws InterruptedException,
-            TimeoutException, ExecutionException {
+   protected Set<? extends Size> provideSizes(CloudServersClient sync,
+         Set<? extends Image> images, Location location, LogHolder holder,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         Function<ComputeMetadata, String> indexer)
+         throws InterruptedException, TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
-      for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location,
-                  null, ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(),
-                  from.getDisk(), ImagePredicates.any()));
+      for (final Flavor from : sync.listFlavors(ListOptions.Builder
+            .withDetails())) {
+         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId()
+               + "", location, null, ImmutableMap.<String, String> of(), from
+               .getDisk() / 10, from.getRam(), from.getDisk(), ImagePredicates
+               .any()));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
@@ -329,17 +326,19 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
       protected Logger logger = Logger.NULL;
    }
 
-   public static final Pattern RACKSPACE_PATTERN = Pattern.compile("(([^ ]*) .*)");
+   public static final Pattern RACKSPACE_PATTERN = Pattern
+         .compile("(([^ ]*) .*)");
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final CloudServersClient sync, Location location,
-            LogHolder holder, Function<ComputeMetadata, String> indexer)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Set<? extends Image> provideImages(final CloudServersClient sync,
+         Location location, LogHolder holder,
+         Function<ComputeMetadata, String> indexer)
+         throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       for (final org.jclouds.rackspace.cloudservers.domain.Image from : sync
-               .listImages(ListOptions.Builder.withDetails())) {
+            .listImages(ListOptions.Builder.withDetails())) {
          OsFamily os = null;
          Architecture arch = Architecture.X86_64;
          String osDescription = "";
@@ -357,9 +356,11 @@ public class CloudServersComputeServiceContextModule extends CloudServersContext
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
-         images.add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location,
-                  null, ImmutableMap.<String, String> of(), from.getName(), version, os,
-                  osDescription, arch, new Credentials("root", null)));
+         images.add(new ImageImpl(from.getId() + "", from.getName(), from
+               .getId()
+               + "", location, null, ImmutableMap.<String, String> of(), from
+               .getName(), version, os, osDescription, arch, new Credentials(
+               "root", null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return images;

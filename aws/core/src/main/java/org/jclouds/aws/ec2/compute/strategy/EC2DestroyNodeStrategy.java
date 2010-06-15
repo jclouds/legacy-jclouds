@@ -27,14 +27,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.logging.Logger;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -46,25 +43,22 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final EC2Client ec2Client;
-   protected final Predicate<RunningInstance> instanceStateTerminated;
-   protected final GetNodeMetadataStrategy getNodeMetadataStrategy;
+   protected final GetNodeMetadataStrategy getNode;
 
    @Inject
    protected EC2DestroyNodeStrategy(EC2Client ec2Client,
-            @Named("TERMINATED") Predicate<RunningInstance> instanceStateTerminated,
-            GetNodeMetadataStrategy getNodeMetadataStrategy) {
+         GetNodeMetadataStrategy getNodeMetadataStrategy) {
       this.ec2Client = ec2Client;
-      this.instanceStateTerminated = instanceStateTerminated;
-      this.getNodeMetadataStrategy = getNodeMetadataStrategy;
+      this.getNode = getNodeMetadataStrategy;
    }
 
    @Override
-   public boolean execute(String id) {
+   public NodeMetadata execute(String id) {
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
-      ec2Client.getInstanceServices().terminateInstancesInRegion(region, instanceId);
-      return instanceStateTerminated.apply(Iterables.getOnlyElement(Iterables.concat(ec2Client
-               .getInstanceServices().describeInstancesInRegion(region, instanceId))));
+      ec2Client.getInstanceServices().terminateInstancesInRegion(region,
+            instanceId);
+      return getNode.execute(id);
    }
 }

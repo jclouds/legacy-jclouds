@@ -78,8 +78,8 @@ import com.google.inject.Injector;
 import com.google.inject.internal.ImmutableMap;
 
 /**
- * Adapted from the following sources: {@link http://gist.github.com/249915}, {@link http
- * ://www.capsunlock.net/2009/12/create-ebs-boot-ami.html}
+ * Adapted from the following sources: {@link http://gist.github.com/249915},
+ * {@link http ://www.capsunlock.net/2009/12/create-ebs-boot-ami.html}
  * <p/>
  * 
  * Generally disabled, as it incurs higher fees.
@@ -91,7 +91,9 @@ public class EBSBootEC2ClientLiveTest {
    // don't need a lot of space. 2GB should be more than enough for testing
    private static final int VOLUME_SIZE = 2;
    private static final String SCRIPT_END = "----COMPLETE----";
-   private static final String INSTANCE_PREFIX = System.getProperty("user.name") + ".ec2ebs";
+   private static final String INSTANCE_PREFIX = System
+         .getProperty("user.name")
+         + ".ec2ebs";
    private static final String IMAGE_ID = "ami-7e28ca17";
 
    private EC2Client client;
@@ -117,58 +119,70 @@ public class EBSBootEC2ClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new EC2ContextBuilder("ec2", new EC2PropertiesBuilder(user, password)
-               .build()).withModules(new Log4JLoggingModule(), new JschSshClientModule())
-               .buildInjector();
+      String user = checkNotNull(System.getProperty("jclouds.test.user"),
+            "jclouds.test.user");
+      String password = checkNotNull(System.getProperty("jclouds.test.key"),
+            "jclouds.test.key");
+      Injector injector = new EC2ContextBuilder("ec2",
+            new EC2PropertiesBuilder(user, password).build()).withModules(
+            new Log4JLoggingModule(), new JschSshClientModule())
+            .buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1,
+            TimeUnit.SECONDS);
 
-      VolumeAvailable volumeAvailable = injector.getInstance(VolumeAvailable.class);
-      volumeTester = new RetryablePredicate<Volume>(volumeAvailable, 60, 1, TimeUnit.SECONDS);
+      VolumeAvailable volumeAvailable = injector
+            .getInstance(VolumeAvailable.class);
+      volumeTester = new RetryablePredicate<Volume>(volumeAvailable, 60, 1,
+            TimeUnit.SECONDS);
 
-      SnapshotCompleted snapshotCompleted = injector.getInstance(SnapshotCompleted.class);
-      snapshotTester = new RetryablePredicate<Snapshot>(snapshotCompleted, 120, 3, TimeUnit.SECONDS);
+      SnapshotCompleted snapshotCompleted = injector
+            .getInstance(SnapshotCompleted.class);
+      snapshotTester = new RetryablePredicate<Snapshot>(snapshotCompleted, 120,
+            3, TimeUnit.SECONDS);
 
-      VolumeAttached volumeAttached = injector.getInstance(VolumeAttached.class);
-      attachTester = new RetryablePredicate<Attachment>(volumeAttached, 60, 1, TimeUnit.SECONDS);
+      VolumeAttached volumeAttached = injector
+            .getInstance(VolumeAttached.class);
+      attachTester = new RetryablePredicate<Attachment>(volumeAttached, 60, 1,
+            TimeUnit.SECONDS);
 
-      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client),
-               180, 5, TimeUnit.SECONDS);
+      runningTester = new RetryablePredicate<RunningInstance>(
+            new InstanceStateRunning(client), 180, 5, TimeUnit.SECONDS);
 
-      InstanceStateStopped instanceStateStopped = injector.getInstance(InstanceStateStopped.class);
-      stoppedTester = new RetryablePredicate<RunningInstance>(instanceStateStopped, 60, 1,
-               TimeUnit.SECONDS);
+      InstanceStateStopped instanceStateStopped = injector
+            .getInstance(InstanceStateStopped.class);
+      stoppedTester = new RetryablePredicate<RunningInstance>(
+            instanceStateStopped, 60, 1, TimeUnit.SECONDS);
 
       InstanceStateTerminated instanceStateTerminated = injector
-               .getInstance(InstanceStateTerminated.class);
-      terminatedTester = new RetryablePredicate<RunningInstance>(instanceStateTerminated, 60, 1,
-               TimeUnit.SECONDS);
+            .getInstance(InstanceStateTerminated.class);
+      terminatedTester = new RetryablePredicate<RunningInstance>(
+            instanceStateTerminated, 60, 1, TimeUnit.SECONDS);
 
       injector.injectMembers(socketOpen); // add logger
    }
 
    @Test(enabled = false)
-   void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   void testCreateSecurityGroupIngressCidr() throws InterruptedException,
+         ExecutionException, TimeoutException {
       securityGroupName = INSTANCE_PREFIX + "ingress";
 
       try {
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, securityGroupName);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
+               securityGroupName);
       } catch (Exception e) {
       }
 
-      client.getSecurityGroupServices().createSecurityGroupInRegion(null, securityGroupName,
-               securityGroupName);
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
-               securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
-               securityGroupName, IpProtocol.TCP, 443, 443, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null,
-               securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+      client.getSecurityGroupServices().createSecurityGroupInRegion(null,
+            securityGroupName, securityGroupName);
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(
+            null, securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(
+            null, securityGroupName, IpProtocol.TCP, 443, 443, "0.0.0.0/0");
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(
+            null, securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
    }
 
    @Test(enabled = false)
@@ -180,7 +194,8 @@ public class EBSBootEC2ClientLiveTest {
 
       }
 
-      keyPair = client.getKeyPairServices().createKeyPairInRegion(null, keyName);
+      keyPair = client.getKeyPairServices()
+            .createKeyPairInRegion(null, keyName);
       assertNotNull(keyPair);
       assertNotNull(keyPair.getKeyMaterial());
       assertNotNull(keyPair.getKeyFingerprint());
@@ -188,28 +203,34 @@ public class EBSBootEC2ClientLiveTest {
    }
 
    @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair",
-            "testCreateSecurityGroupIngressCidr" })
+         "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
       instance = createInstance(IMAGE_ID);
    }
 
-   private RunningInstance createInstance(String imageId) throws UnknownHostException {
+   private RunningInstance createInstance(String imageId)
+         throws UnknownHostException {
       RunningInstance instance = null;
       while (instance == null) {
          try {
-            System.out.printf("%d: running instance%n", System.currentTimeMillis());
-            Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
-                     // ec2
-                     // to
-                     // chose
-                     // an
-                     // availability
-                     // zone
-                     imageId, 1, // minimum instances
-                     1, // maximum instances
-                     withKeyName(keyPair.getKeyName())// key I created above
-                              .asType(InstanceType.M1_SMALL)// smallest instance size
-                              .withSecurityGroup(securityGroupName));// group I created above
+            System.out.printf("%d: running instance%n", System
+                  .currentTimeMillis());
+            Reservation reservation = client.getInstanceServices()
+                  .runInstancesInRegion(null, null, // allow
+                        // ec2
+                        // to
+                        // chose
+                        // an
+                        // availability
+                        // zone
+                        imageId, 1, // minimum instances
+                        1, // maximum instances
+                        withKeyName(keyPair.getKeyName())// key I created above
+                              .asType(InstanceType.M1_SMALL)// smallest instance
+                              // size
+                              .withSecurityGroup(securityGroupName));// group I
+            // created
+            // above
             instance = Iterables.getOnlyElement(reservation);
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
@@ -225,55 +246,62 @@ public class EBSBootEC2ClientLiveTest {
 
    @Test(enabled = false, dependsOnMethods = "testCreateRunningInstance")
    void testCreateAndAttachVolume() {
-      volume = client.getElasticBlockStoreServices().createVolumeInAvailabilityZone(
-               instance.getAvailabilityZone(), VOLUME_SIZE);
-      System.out.printf("%d: %s awaiting volume to become available%n", System.currentTimeMillis(),
-               volume.getId());
+      volume = client.getElasticBlockStoreServices()
+            .createVolumeInAvailabilityZone(instance.getAvailabilityZone(),
+                  VOLUME_SIZE);
+      System.out.printf("%d: %s awaiting volume to become available%n", System
+            .currentTimeMillis(), volume.getId());
 
       assert volumeTester.apply(volume);
 
-      Attachment attachment = client.getElasticBlockStoreServices().attachVolumeInRegion(
-               instance.getRegion(), volume.getId(), instance.getId(), "/dev/sdh");
+      Attachment attachment = client.getElasticBlockStoreServices()
+            .attachVolumeInRegion(instance.getRegion(), volume.getId(),
+                  instance.getId(), "/dev/sdh");
 
-      System.out.printf("%d: %s awaiting attachment to complete%n", System.currentTimeMillis(),
-               attachment.getId());
+      System.out.printf("%d: %s awaiting attachment to complete%n", System
+            .currentTimeMillis(), attachment.getId());
 
       assert attachTester.apply(attachment);
-      System.out.printf("%d: %s attachment complete%n", System.currentTimeMillis(), attachment
-               .getId());
+      System.out.printf("%d: %s attachment complete%n", System
+            .currentTimeMillis(), attachment.getId());
    }
 
-   // TODO use userData to do this, and make initbuilder an example for something else.
+   // TODO use userData to do this, and make initbuilder an example for
+   // something else.
    @BeforeTest
    void makeScript() {
 
       mkEbsBoot = new InitBuilder(
-               "mkebsboot",// name of the script
-               "/tmp",// working directory
-               "/tmp/logs",// location of stdout.log and stderr.log
-               ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint",
-                        "/mnt/ebs"),// variables used inside of the script
-               "echo creating a filesystem and mounting the ebs volume",// what to execute
-               "{md} {varl}IMAGE_DIR{varr} {varl}EBS_MOUNT_POINT{varr}",
-               "rm -rf {varl}IMAGE_DIR{varr}/*",
-               "yes| mkfs -t ext3 {varl}EBS_DEVICE{varr} 2>&-",
-               "mount {varl}EBS_DEVICE{varr} {varl}EBS_MOUNT_POINT{varr}",
-               "echo making a local working copy of the boot disk",
-               "rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / {varl}IMAGE_DIR{varr}",
-               "echo preparing the local working copy",
-               "touch {varl}IMAGE_DIR{varr}/etc/init.d/ec2-init-user-data",
-               "echo copying the local working copy to the ebs mount",
-               "{cd} {varl}IMAGE_DIR{varr}",
-               "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}", "echo size of ebs",
-               "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source",
-               "du -sk {varl}IMAGE_DIR{varr}", "rm -rf {varl}IMAGE_DIR{varr}/*",
-               "umount {varl}EBS_MOUNT_POINT{varr}", "echo " + SCRIPT_END).build(OsFamily.UNIX);
+            "mkebsboot",// name of the script
+            "/tmp",// working directory
+            "/tmp/logs",// location of stdout.log and stderr.log
+            ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh",
+                  "ebsMountPoint", "/mnt/ebs"),// variables used inside of the
+            // script
+            "echo creating a filesystem and mounting the ebs volume",// what to
+            // execute
+            "{md} {varl}IMAGE_DIR{varr} {varl}EBS_MOUNT_POINT{varr}",
+            "rm -rf {varl}IMAGE_DIR{varr}/*",
+            "yes| mkfs -t ext3 {varl}EBS_DEVICE{varr} 2>&-",
+            "mount {varl}EBS_DEVICE{varr} {varl}EBS_MOUNT_POINT{varr}",
+            "echo making a local working copy of the boot disk",
+            "rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / {varl}IMAGE_DIR{varr}",
+            "echo preparing the local working copy",
+            "touch {varl}IMAGE_DIR{varr}/etc/init.d/ec2-init-user-data",
+            "echo copying the local working copy to the ebs mount",
+            "{cd} {varl}IMAGE_DIR{varr}",
+            "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}",
+            "echo size of ebs", "du -sk {varl}EBS_MOUNT_POINT{varr}",
+            "echo size of source", "du -sk {varl}IMAGE_DIR{varr}",
+            "rm -rf {varl}IMAGE_DIR{varr}/*",
+            "umount {varl}EBS_MOUNT_POINT{varr}", "echo " + SCRIPT_END)
+            .build(OsFamily.UNIX);
    }
 
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
-      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22), "ubuntu",
-               keyPair.getKeyMaterial().getBytes());
+      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(),
+            22), "ubuntu", keyPair.getKeyMaterial().getBytes());
       try {
          ssh.connect();
       } catch (SshException e) {// try twice in case there is a network timeout
@@ -284,13 +312,13 @@ public class EBSBootEC2ClientLiveTest {
          ssh.connect();
       }
       try {
-         System.out.printf("%d: %s writing ebs script%n", System.currentTimeMillis(), instance
-                  .getId());
+         System.out.printf("%d: %s writing ebs script%n", System
+               .currentTimeMillis(), instance.getId());
          String script = "/tmp/mkebsboot-init.sh";
          ssh.put(script, new ByteArrayInputStream(mkEbsBoot.getBytes()));
 
-         System.out.printf("%d: %s launching ebs script%n", System.currentTimeMillis(), instance
-                  .getId());
+         System.out.printf("%d: %s launching ebs script%n", System
+               .currentTimeMillis(), instance.getId());
          ssh.exec("chmod 755 " + script);
          ssh.exec(script + " init");
          ExecResponse output = ssh.exec("sudo " + script + " start");
@@ -299,8 +327,8 @@ public class EBSBootEC2ClientLiveTest {
 
          assert !output.getOutput().trim().equals("") : output;
 
-         RetryablePredicate<String> scriptTester = new RetryablePredicate<String>(new ScriptTester(
-                  ssh, SCRIPT_END), 600, 10, TimeUnit.SECONDS);
+         RetryablePredicate<String> scriptTester = new RetryablePredicate<String>(
+               new ScriptTester(ssh, SCRIPT_END), 600, 10, TimeUnit.SECONDS);
          scriptTester.apply(script);
       } finally {
          if (ssh != null)
@@ -319,7 +347,8 @@ public class EBSBootEC2ClientLiveTest {
 
       @Override
       public boolean apply(String script) {
-         System.out.printf("%d: %s testing status%n", System.currentTimeMillis(), script);
+         System.out.printf("%d: %s testing status%n", System
+               .currentTimeMillis(), script);
          ExecResponse output = ssh.exec(script + " status");
          if (output.getOutput().trim().equals("")) {
             output = ssh.exec(script + " tail");
@@ -329,9 +358,11 @@ public class EBSBootEC2ClientLiveTest {
             } else {
                output = ssh.exec(script + " tailerr");
                String stderr = output.getOutput().trim();
-               throw new RuntimeException(String.format(
-                        "script %s ended without token: stdout.log: [%s]; stderr.log: [%s]; ",
-                        script, stdout, stderr));
+               throw new RuntimeException(
+                     String
+                           .format(
+                                 "script %s ended without token: stdout.log: [%s]; stderr.log: [%s]; ",
+                                 script, stdout, stderr));
             }
          }
          return false;
@@ -342,45 +373,52 @@ public class EBSBootEC2ClientLiveTest {
    @Test(enabled = false, dependsOnMethods = "testBundleInstance")
    void testAMIFromBundle() {
       volume = Iterables.getOnlyElement(client.getElasticBlockStoreServices()
-               .describeVolumesInRegion(volume.getRegion(), volume.getId()));
+            .describeVolumesInRegion(volume.getRegion(), volume.getId()));
       if (volume.getAttachments().size() > 0) {
          // should be cleanly unmounted, so force is not necessary.
-         client.getElasticBlockStoreServices().detachVolumeInRegion(instance.getRegion(),
-                  volume.getId(), false);
-         System.out.printf("%d: %s awaiting detachment to complete%n", System.currentTimeMillis(),
-                  volume.getId());
+         client.getElasticBlockStoreServices().detachVolumeInRegion(
+               instance.getRegion(), volume.getId(), false);
+         System.out.printf("%d: %s awaiting detachment to complete%n", System
+               .currentTimeMillis(), volume.getId());
          assert volumeTester.apply(volume);
       } else {
-         attachment = null; // protect test closer so that it doesn't try to detach
+         attachment = null; // protect test closer so that it doesn't try to
+         // detach
       }
-      snapshot = client.getElasticBlockStoreServices().createSnapshotInRegion(volume.getRegion(),
-               volume.getId(), withDescription("EBS Ubuntu Hardy"));
+      snapshot = client.getElasticBlockStoreServices().createSnapshotInRegion(
+            volume.getRegion(), volume.getId(),
+            withDescription("EBS Ubuntu Hardy"));
 
-      System.out.printf("%d: %s awaiting snapshot to complete%n", System.currentTimeMillis(),
-               snapshot.getId());
+      System.out.printf("%d: %s awaiting snapshot to complete%n", System
+            .currentTimeMillis(), snapshot.getId());
 
       assert snapshotTester.apply(snapshot);
-      Image image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
-               snapshot.getRegion(), imageIds(IMAGE_ID)));
-      String description = image.getDescription() == null ? "jclouds" : image.getDescription();
+      Image image = Iterables.getOnlyElement(client.getAMIServices()
+            .describeImagesInRegion(snapshot.getRegion(), imageIds(IMAGE_ID)));
+      String description = image.getDescription() == null ? "jclouds" : image
+            .getDescription();
 
-      System.out.printf("%d: %s creating ami from snapshot%n", System.currentTimeMillis(), snapshot
-               .getId());
+      System.out.printf("%d: %s creating ami from snapshot%n", System
+            .currentTimeMillis(), snapshot.getId());
 
-      String amiId = client.getAMIServices().registerUnixImageBackedByEbsInRegion(
-               snapshot.getRegion(),
-               "ebsboot-" + image.getId(),
-               snapshot.getId(),
-               withKernelId(image.getKernelId()).withRamdisk(image.getRamdiskId()).withDescription(
-                        description).asArchitecture(Architecture.I386));
+      String amiId = client.getAMIServices()
+            .registerUnixImageBackedByEbsInRegion(
+                  snapshot.getRegion(),
+                  "ebsboot-" + image.getId(),
+                  snapshot.getId(),
+                  withKernelId(image.getKernelId()).withRamdisk(
+                        image.getRamdiskId()).withDescription(description)
+                        .asArchitecture(Architecture.I386));
       try {
-         ebsImage = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
-                  snapshot.getRegion(), imageIds(amiId)));
+         ebsImage = Iterables.getOnlyElement(client.getAMIServices()
+               .describeImagesInRegion(snapshot.getRegion(), imageIds(amiId)));
       } catch (AWSResponseException e) {
          // TODO add a retry handler for this HTTP code 400 and the below error
          if (e.getError().getClass().equals("InvalidAMIID.NotFound"))
-            ebsImage = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
-                     snapshot.getRegion(), imageIds(amiId)));
+            ebsImage = Iterables
+                  .getOnlyElement(client.getAMIServices()
+                        .describeImagesInRegion(snapshot.getRegion(),
+                              imageIds(amiId)));
          else
             throw e;
       }
@@ -389,22 +427,22 @@ public class EBSBootEC2ClientLiveTest {
 
    @Test(enabled = false, dependsOnMethods = { "testAMIFromBundle" })
    public void testInstanceFromEBS() throws Exception {
-      System.out.printf("%d: %s creating instance from ebs-backed ami%n", System
-               .currentTimeMillis(), ebsImage.getId());
+      System.out.printf("%d: %s creating instance from ebs-backed ami%n",
+            System.currentTimeMillis(), ebsImage.getId());
 
       ebsInstance = createInstance(ebsImage.getId());
 
-      client.getInstanceServices().stopInstancesInRegion(ebsInstance.getRegion(), true,
-               ebsInstance.getId());
+      client.getInstanceServices().stopInstancesInRegion(
+            ebsInstance.getRegion(), true, ebsInstance.getId());
 
-      System.out.printf("%d: %s awaiting instance to stop %n", System.currentTimeMillis(),
-               ebsInstance.getId());
+      System.out.printf("%d: %s awaiting instance to stop %n", System
+            .currentTimeMillis(), ebsInstance.getId());
       stoppedTester.apply(ebsInstance);
       tryToChangeStuff();
-      System.out.printf("%d: %s awaiting instance to start %n", System.currentTimeMillis(),
-               ebsInstance.getId());
-      client.getInstanceServices().startInstancesInRegion(ebsInstance.getRegion(),
-               ebsInstance.getId());
+      System.out.printf("%d: %s awaiting instance to start %n", System
+            .currentTimeMillis(), ebsInstance.getId());
+      client.getInstanceServices().startInstancesInRegion(
+            ebsInstance.getRegion(), ebsInstance.getId());
       ebsInstance = blockUntilWeCanSshIntoInstance(ebsInstance);
    }
 
@@ -412,8 +450,10 @@ public class EBSBootEC2ClientLiveTest {
       assertEquals(ebsImage.getImageType(), ImageType.MACHINE);
       assertEquals(ebsImage.getRootDeviceType(), RootDeviceType.EBS);
       assertEquals(ebsImage.getRootDeviceName(), "/dev/sda1");
-      assertEquals(ebsImage.getEbsBlockDevices().entrySet(), ImmutableMap.of("/dev/sda1",
-               new Image.EbsBlockDevice(snapshot.getId(), VOLUME_SIZE, true)).entrySet());
+      assertEquals(ebsImage.getEbsBlockDevices().entrySet(), ImmutableMap.of(
+            "/dev/sda1",
+            new Image.EbsBlockDevice(snapshot.getId(), VOLUME_SIZE, true))
+            .entrySet());
    }
 
    private void tryToChangeStuff() {
@@ -426,56 +466,59 @@ public class EBSBootEC2ClientLiveTest {
    }
 
    private void setUserDataForInstanceInRegion() {
-      client.getInstanceServices().setUserDataForInstanceInRegion(null, ebsInstance.getId(),
-               "test".getBytes());
-      assertEquals("test", client.getInstanceServices().getUserDataForInstanceInRegion(null,
-               ebsInstance.getId()));
+      client.getInstanceServices().setUserDataForInstanceInRegion(null,
+            ebsInstance.getId(), "test".getBytes());
+      assertEquals("test", client.getInstanceServices()
+            .getUserDataForInstanceInRegion(null, ebsInstance.getId()));
    }
 
    private void setRamdiskForInstanceInRegion() {
-      String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(null,
-               ebsInstance.getId());
-      client.getInstanceServices()
-               .setRamdiskForInstanceInRegion(null, ebsInstance.getId(), ramdisk);
-      assertEquals(ramdisk, client.getInstanceServices().getRamdiskForInstanceInRegion(null,
-               ebsInstance.getId()));
+      String ramdisk = client.getInstanceServices()
+            .getRamdiskForInstanceInRegion(null, ebsInstance.getId());
+      client.getInstanceServices().setRamdiskForInstanceInRegion(null,
+            ebsInstance.getId(), ramdisk);
+      assertEquals(ramdisk, client.getInstanceServices()
+            .getRamdiskForInstanceInRegion(null, ebsInstance.getId()));
    }
 
    private void setKernelForInstanceInRegion() {
-      String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(null,
-               ebsInstance.getId());
-      client.getInstanceServices().setKernelForInstanceInRegion(null, ebsInstance.getId(),
-               oldKernel);
-      assertEquals(oldKernel, client.getInstanceServices().getKernelForInstanceInRegion(null,
-               ebsInstance.getId()));
+      String oldKernel = client.getInstanceServices()
+            .getKernelForInstanceInRegion(null, ebsInstance.getId());
+      client.getInstanceServices().setKernelForInstanceInRegion(null,
+            ebsInstance.getId(), oldKernel);
+      assertEquals(oldKernel, client.getInstanceServices()
+            .getKernelForInstanceInRegion(null, ebsInstance.getId()));
    }
 
    private void setInstanceTypeForInstanceInRegion() {
-      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null, ebsInstance.getId(),
-               InstanceType.C1_MEDIUM);
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
+            ebsInstance.getId(), InstanceType.C1_MEDIUM);
       assertEquals(InstanceType.C1_MEDIUM, client.getInstanceServices()
-               .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
-      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null, ebsInstance.getId(),
-               InstanceType.M1_SMALL);
+            .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(null,
+            ebsInstance.getId(), InstanceType.M1_SMALL);
       assertEquals(InstanceType.M1_SMALL, client.getInstanceServices()
-               .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
+            .getInstanceTypeForInstanceInRegion(null, ebsInstance.getId()));
    }
 
    private void setBlockDeviceMappingForInstanceInRegion() {
-      String volumeId = ebsInstance.getEbsBlockDevices().get("/dev/sda1").getVolumeId();
+      String volumeId = ebsInstance.getEbsBlockDevices().get("/dev/sda1")
+            .getVolumeId();
 
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
-      blockDeviceMapping.addEbsBlockDevice("/dev/sda1", new RunningInstance.EbsBlockDevice(
-               volumeId, false));
+      blockDeviceMapping.addEbsBlockDevice("/dev/sda1",
+            new RunningInstance.EbsBlockDevice(volumeId, false));
       try {
-         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null,
-                  ebsInstance.getId(), blockDeviceMapping);
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(
+               null, ebsInstance.getId(), blockDeviceMapping);
 
-         Map<String, RunningInstance.EbsBlockDevice> devices = client.getInstanceServices()
-                  .getBlockDeviceMappingForInstanceInRegion(null, ebsInstance.getId());
+         Map<String, RunningInstance.EbsBlockDevice> devices = client
+               .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(
+                     null, ebsInstance.getId());
          assertEquals(devices.size(), 1);
          String deviceName = Iterables.getOnlyElement(devices.keySet());
-         RunningInstance.EbsBlockDevice device = Iterables.getOnlyElement(devices.values());
+         RunningInstance.EbsBlockDevice device = Iterables
+               .getOnlyElement(devices.values());
 
          assertEquals(device.getVolumeId(), volumeId);
          assertEquals(deviceName, "/dev/sda1");
@@ -492,27 +535,36 @@ public class EBSBootEC2ClientLiveTest {
    private void setInstanceInitiatedShutdownBehaviorForInstanceInRegion() {
       try {
 
-         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
-                  ebsInstance.getId(), InstanceInitiatedShutdownBehavior.STOP);
+         client.getInstanceServices()
+               .setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                     ebsInstance.getId(),
+                     InstanceInitiatedShutdownBehavior.STOP);
 
-         assertEquals(InstanceInitiatedShutdownBehavior.STOP, client.getInstanceServices()
-                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
-                           ebsInstance.getId()));
-         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
-                  ebsInstance.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
+         assertEquals(InstanceInitiatedShutdownBehavior.STOP, client
+               .getInstanceServices()
+               .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                     ebsInstance.getId()));
+         client.getInstanceServices()
+               .setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                     ebsInstance.getId(),
+                     InstanceInitiatedShutdownBehavior.TERMINATE);
 
-         assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client.getInstanceServices()
-                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
-                           ebsInstance.getId()));
-         System.out.println("OK: setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
+         assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client
+               .getInstanceServices()
+               .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null,
+                     ebsInstance.getId()));
+         System.out
+               .println("OK: setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
       } catch (Exception e) {
-         System.err.println("setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
+         System.err
+               .println("setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
          e.printStackTrace();
       }
    }
 
    /**
-    * this tests "personality" as the file looked up was sent during instance creation
+    * this tests "personality" as the file looked up was sent during instance
+    * creation
     * 
     * @throws UnknownHostException
     */
@@ -528,13 +580,14 @@ public class EBSBootEC2ClientLiveTest {
       }
    }
 
-   private void doCheckKey(RunningInstance newDetails) throws UnknownHostException {
+   private void doCheckKey(RunningInstance newDetails)
+         throws UnknownHostException {
       doCheckKey(newDetails.getIpAddress());
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22), "ubuntu", keyPair
-               .getKeyMaterial().getBytes());
+      SshClient ssh = sshFactory.create(new IPSocket(address, 22), "ubuntu",
+            keyPair.getKeyMaterial().getBytes());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -545,26 +598,32 @@ public class EBSBootEC2ClientLiveTest {
       }
    }
 
-   private RunningInstance blockUntilWeCanSshIntoInstance(RunningInstance instance)
-            throws UnknownHostException {
-      System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance
-               .getId());
+   private RunningInstance blockUntilWeCanSshIntoInstance(
+         RunningInstance instance) throws UnknownHostException {
+      System.out.printf("%d: %s awaiting instance to run %n", System
+            .currentTimeMillis(), instance.getId());
       assert runningTester.apply(instance);
 
       // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               instance.getRegion(), instance.getId()); // last parameter (ids) narrows the search
+      Set<Reservation> reservations = client.getInstanceServices()
+            .describeInstancesInRegion(instance.getRegion(), instance.getId()); // last
+      // parameter
+      // (ids)
+      // narrows
+      // the
+      // search
 
-      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
+      instance = Iterables.getOnlyElement(Iterables
+            .getOnlyElement(reservations));
 
-      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
-               instance.getIpAddress());
+      System.out.printf("%d: %s awaiting ssh service to start%n", System
+            .currentTimeMillis(), instance.getIpAddress());
       assert socketTester.apply(new IPSocket(instance.getIpAddress(), 22));
-      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance
-               .getDnsName());
+      System.out.printf("%d: %s ssh service started%n", System
+            .currentTimeMillis(), instance.getDnsName());
       sshPing(instance);
-      System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instance
-               .getId());
+      System.out.printf("%d: %s ssh connection made%n", System
+            .currentTimeMillis(), instance.getId());
       return instance;
    }
 
@@ -572,8 +631,8 @@ public class EBSBootEC2ClientLiveTest {
    void cleanup() {
       if (ebsInstance != null) {
          try {
-            client.getInstanceServices().terminateInstancesInRegion(ebsInstance.getRegion(),
-                     ebsInstance.getId());
+            client.getInstanceServices().terminateInstancesInRegion(
+                  ebsInstance.getRegion(), ebsInstance.getId());
             terminatedTester.apply(ebsInstance);
          } catch (Exception e) {
             e.printStackTrace();
@@ -581,7 +640,8 @@ public class EBSBootEC2ClientLiveTest {
       }
       if (ebsImage != null) {
          try {
-            client.getAMIServices().deregisterImageInRegion(ebsImage.getRegion(), ebsImage.getId());
+            client.getAMIServices().deregisterImageInRegion(
+                  ebsImage.getRegion(), ebsImage.getId());
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -589,16 +649,16 @@ public class EBSBootEC2ClientLiveTest {
 
       if (snapshot != null) {
          try {
-            client.getElasticBlockStoreServices().deleteSnapshotInRegion(snapshot.getRegion(),
-                     snapshot.getId());
+            client.getElasticBlockStoreServices().deleteSnapshotInRegion(
+                  snapshot.getRegion(), snapshot.getId());
          } catch (Exception e) {
             e.printStackTrace();
          }
       }
       if (attachment != null) {
          try {
-            client.getElasticBlockStoreServices().detachVolumeInRegion(volume.getRegion(),
-                     volume.getId(), true);
+            client.getElasticBlockStoreServices().detachVolumeInRegion(
+                  volume.getRegion(), volume.getId(), true);
             assert volumeTester.apply(volume);
          } catch (Exception e) {
             e.printStackTrace();
@@ -606,8 +666,8 @@ public class EBSBootEC2ClientLiveTest {
       }
       if (instance != null) {
          try {
-            client.getInstanceServices().terminateInstancesInRegion(instance.getRegion(),
-                     instance.getId());
+            client.getInstanceServices().terminateInstancesInRegion(
+                  instance.getRegion(), instance.getId());
             terminatedTester.apply(instance);
          } catch (Exception e) {
             e.printStackTrace();
@@ -615,23 +675,24 @@ public class EBSBootEC2ClientLiveTest {
       }
       if (volume != null) {
          try {
-            client.getElasticBlockStoreServices().deleteVolumeInRegion(volume.getRegion(),
-                     volume.getId());
+            client.getElasticBlockStoreServices().deleteVolumeInRegion(
+                  volume.getRegion(), volume.getId());
          } catch (Exception e) {
             e.printStackTrace();
          }
       }
       if (keyPair != null) {
          try {
-            client.getKeyPairServices().deleteKeyPairInRegion(keyPair.getRegion(),
-                     keyPair.getKeyName());
+            client.getKeyPairServices().deleteKeyPairInRegion(
+                  keyPair.getRegion(), keyPair.getKeyName());
          } catch (Exception e) {
             e.printStackTrace();
          }
       }
       if (securityGroupName != null) {
          try {
-            client.getSecurityGroupServices().deleteSecurityGroupInRegion(null, securityGroupName);
+            client.getSecurityGroupServices().deleteSecurityGroupInRegion(null,
+                  securityGroupName);
          } catch (Exception e) {
             e.printStackTrace();
          }

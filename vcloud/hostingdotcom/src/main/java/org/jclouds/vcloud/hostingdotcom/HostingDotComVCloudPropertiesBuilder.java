@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.hostingdotcom;
 
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
 import java.net.URI;
 import java.util.Properties;
@@ -30,11 +31,15 @@ import org.jclouds.vcloud.VCloudPropertiesBuilder;
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
+public class HostingDotComVCloudPropertiesBuilder extends
+      VCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, "https://vcloud.safesecureweb.com/api");
+      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT,
+            "https://vcloud.safesecureweb.com/api");
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED,
+            45 * 60 * 1000l + "");
       return properties;
    }
 

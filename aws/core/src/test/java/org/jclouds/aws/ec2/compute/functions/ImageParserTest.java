@@ -52,7 +52,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/alestic_canonical.xml");
 
       Set<Image> result = parseImages(is);
-      assertEquals(result.size(), 6);
+      assertEquals(result.size(), 7);
 
       ImageParser parser = new ImageParser(
                new EC2PopulateDefaultLoginCredentialsForImageStrategy(), ImmutableSet
@@ -87,6 +87,9 @@ public class ImageParserTest extends BaseEC2HandlerTest {
                "063491364108"));
       assertEquals(alesticKarmic.getVersion(), "20090623");
 
+  
+      
+      
       org.jclouds.compute.domain.Image ubuntuKarmic = parser.apply(Iterables.get(result, 2));
 
       assertEquals(ubuntuKarmic.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
@@ -120,8 +123,24 @@ public class ImageParserTest extends BaseEC2HandlerTest {
                "063491364108"));
       assertEquals(alesticHardy.getVersion(), "20080905");
 
+      org.jclouds.compute.domain.Image ubuntuLucid = parser.apply(Iterables.get(result, 5));
+
+      assertEquals(ubuntuLucid.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
+      assertEquals(ubuntuLucid.getDescription(),
+               "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
+      assertEquals(ubuntuLucid.getProviderId(), "ami-c597c680");
+      assertEquals(ubuntuLucid.getLocation(), defaultLocation);
+      assertEquals(ubuntuLucid.getName(), "10.04");
+      assertEquals(ubuntuLucid.getOsDescription(),
+               "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
+      assertEquals(ubuntuLucid.getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(ubuntuLucid.getUserMetadata(), ImmutableMap.<String, String> of("owner",
+               "099720109477"));
+      assertEquals(ubuntuLucid.getVersion(), "20100427.1");
+
+      
       // should skip kernel
-      assert parser.apply(Iterables.get(result, 5)) == null;
+      assert parser.apply(Iterables.get(result, 6)) == null;
    }
 
    private Location defaultLocation = new LocationImpl(LocationScope.REGION, "us-east-1",

@@ -33,12 +33,13 @@ public class ServerRunning implements Predicate<Server> {
    }
 
    public boolean apply(Server server) {
-      logger.trace("looking for state on server %s", checkNotNull(server, "server"));
+      logger.trace("looking for state on server %s", checkNotNull(server,
+            "server"));
       server = refresh(server);
       if (server == null)
          return false;
-      logger.trace("%s: looking for server state %s: currently: %s", server.getId(),
-               RunningState.RUNNING, server.getState());
+      logger.trace("%s: looking for server state %s: currently: %s", server
+            .getId(), RunningState.RUNNING, server.getState());
       return server.getState() == RunningState.RUNNING;
    }
 

@@ -3,7 +3,6 @@ package org.jclouds.vcloud.bluelock.compute;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
@@ -25,18 +24,20 @@ public class BlueLockVCloudComputeClient extends BaseVCloudComputeClient {
 
    @Inject
    protected BlueLockVCloudComputeClient(
-            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-            VCloudClient client, Predicate<String> successTester,
-            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
-      super(client, successTester, notFoundTester, vAppStatusToNodeState);
+         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+         VCloudClient client, Predicate<String> successTester,
+         Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+      super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;
    }
 
    @Override
-   protected Map<String, String> parseAndValidateResponse(String templateId, VApp vAppResponse) {
-      Credentials credentials = credentialsProvider.execute(client.getVAppTemplate(templateId));
-      Map<String, String> toReturn = super.parseResponse(templateId, vAppResponse);
+   protected Map<String, String> parseAndValidateResponse(String templateId,
+         VApp vAppResponse) {
+      Credentials credentials = credentialsProvider.execute(client
+            .getVAppTemplate(templateId));
+      Map<String, String> toReturn = super.parseResponse(templateId,
+            vAppResponse);
       toReturn.put("username", credentials.account);
       toReturn.put("password", credentials.key);
       return toReturn;

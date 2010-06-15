@@ -68,6 +68,19 @@
             <blockDeviceMapping />
         </item>
         <item>
+            <imageId>ami-c597c680</imageId>
+            <imageLocation>ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>099720109477</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-3197c674</kernelId>
+            <name>ubuntu-images/ubuntu-lucid-10.04-i386-server-20100427.1</name>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping/>        
+        </item>
+        <item>
             <imageId>aki-fd15f694</imageId>
             <imageLocation>ubuntu-kernels-us/ubuntu-karmic-amd64-linux-image-2.6.31-302-ec2-v-2.6.31-302.7-kernel.img.manifest.xml</imageLocation>
             <imageState>available</imageState>

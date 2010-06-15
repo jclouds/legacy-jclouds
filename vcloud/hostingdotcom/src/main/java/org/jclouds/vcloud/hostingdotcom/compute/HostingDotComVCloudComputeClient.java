@@ -3,7 +3,6 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
@@ -23,17 +22,18 @@ import com.google.common.collect.ImmutableMap;
 public class HostingDotComVCloudComputeClient extends BaseVCloudComputeClient {
 
    @Inject
-   protected HostingDotComVCloudComputeClient(VCloudClient client, Predicate<String> successTester,
-            @Named("NOT_FOUND") Predicate<VApp> notFoundTester,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
-      super(client, successTester, notFoundTester, vAppStatusToNodeState);
+   protected HostingDotComVCloudComputeClient(VCloudClient client,
+         Predicate<String> successTester,
+         Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+      super(client, successTester, vAppStatusToNodeState);
    }
 
    @Override
-   protected Map<String, String> parseResponse(String templateId, VApp vAppResponse) {
+   protected Map<String, String> parseResponse(String templateId,
+         VApp vAppResponse) {
       HostingDotComVApp hVApp = HostingDotComVApp.class.cast(vAppResponse);
-      return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", hVApp
-               .getUsername(), "password", hVApp.getPassword());
+      return ImmutableMap.<String, String> of("id", vAppResponse.getId(),
+            "username", hVApp.getUsername(), "password", hVApp.getPassword());
    }
 
 }

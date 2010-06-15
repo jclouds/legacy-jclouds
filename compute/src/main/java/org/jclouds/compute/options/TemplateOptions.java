@@ -24,10 +24,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Arrays;
 
 /**
- * Contains options supported in the {@code ComputeService#runNodesWithTag} operation. <h2>
- * Usage</h2> The recommended way to instantiate a TemplateOptions object is to statically import
- * TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
- * needed):
+ * Contains options supported in the {@code ComputeService#runNodesWithTag}
+ * operation. <h2>
+ * Usage</h2> The recommended way to instantiate a TemplateOptions object is to
+ * statically import TemplateOptions.* and invoke a static creation method
+ * followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.compute.options.TemplateOptions.Builder.*;
@@ -41,301 +42,350 @@ import java.util.Arrays;
  */
 public class TemplateOptions {
 
-   public static final TemplateOptions NONE = new ImmutableTemplateOptions(new TemplateOptions());
+	public static final TemplateOptions NONE = new ImmutableTemplateOptions(
+			new TemplateOptions());
 
-   public static class ImmutableTemplateOptions extends TemplateOptions {
-      private final TemplateOptions delegate;
+	public static class ImmutableTemplateOptions extends TemplateOptions {
+		private final TemplateOptions delegate;
 
-      public ImmutableTemplateOptions(TemplateOptions delegate) {
-         this.delegate = delegate;
-      }
+		public ImmutableTemplateOptions(TemplateOptions delegate) {
+			this.delegate = delegate;
+		}
 
-      @Override
-      public String toString() {
-         return delegate.toString();
-      }
+		@Override
+		public String toString() {
+			return delegate.toString();
+		}
 
-      @Override
-      public <T extends TemplateOptions> T as(Class<T> clazz) {
-         return delegate.as(clazz);
-      }
+		@Override
+		public <T extends TemplateOptions> T as(Class<T> clazz) {
+			return delegate.as(clazz);
+		}
 
-      @Override
-      public TemplateOptions authorizePublicKey(String publicKey) {
-         return delegate.authorizePublicKey(publicKey);
-      }
+		@Override
+		public TemplateOptions authorizePublicKey(String publicKey) {
+			throw new IllegalArgumentException(
+					"authorizePublicKey is immutable");
+		}
 
-      @Override
-      public TemplateOptions blockOnPort(int port, int seconds) {
-         throw new IllegalArgumentException("port, seconds are immutable");
-      }
+		@Override
+		public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+			throw new IllegalArgumentException("blockUntilRunning is immutable");
+		}
 
-      @Override
-      public int[] getInboundPorts() {
-         return delegate.getInboundPorts();
-      }
+		@Override
+		public TemplateOptions blockOnPort(int port, int seconds) {
+			throw new IllegalArgumentException("port, seconds are immutable");
+		}
 
-      @Override
-      public int getPort() {
-         return delegate.getPort();
-      }
+		@Override
+		public int[] getInboundPorts() {
+			return delegate.getInboundPorts();
+		}
 
-      @Override
-      public String getPrivateKey() {
-         return delegate.getPrivateKey();
-      }
+		@Override
+		public int getPort() {
+			return delegate.getPort();
+		}
 
-      @Override
-      public String getPublicKey() {
-         return delegate.getPublicKey();
-      }
+		@Override
+		public String getPrivateKey() {
+			return delegate.getPrivateKey();
+		}
 
-      @Override
-      public byte[] getRunScript() {
-         return delegate.getRunScript();
-      }
+		@Override
+		public String getPublicKey() {
+			return delegate.getPublicKey();
+		}
 
-      @Override
-      public int getSeconds() {
-         return delegate.getSeconds();
-      }
+		@Override
+		public byte[] getRunScript() {
+			return delegate.getRunScript();
+		}
 
-      @Override
-      public TemplateOptions inboundPorts(int... ports) {
-         throw new IllegalArgumentException("ports is immutable");
-      }
+		@Override
+		public int getSeconds() {
+			return delegate.getSeconds();
+		}
 
-      @Override
-      public TemplateOptions installPrivateKey(String privateKey) {
-         throw new IllegalArgumentException("privateKey is immutable");
-      }
+		@Override
+		public boolean shouldBlockUntilRunning() {
+			return delegate.shouldBlockUntilRunning();
+		}
 
-      @Override
-      public boolean isIncludeMetadata() {
-         return delegate.isIncludeMetadata();
-      }
+		@Override
+		public TemplateOptions inboundPorts(int... ports) {
+			throw new IllegalArgumentException("ports is immutable");
+		}
 
-      @Override
-      public TemplateOptions runScript(byte[] script) {
-         throw new IllegalArgumentException("withMetadata is immutable");
-      }
+		@Override
+		public TemplateOptions installPrivateKey(String privateKey) {
+			throw new IllegalArgumentException("privateKey is immutable");
+		}
 
-      @Override
-      public TemplateOptions withMetadata() {
-         throw new IllegalArgumentException("withMetadata is immutable");
-      }
+		@Override
+		public boolean isIncludeMetadata() {
+			return delegate.isIncludeMetadata();
+		}
 
-   }
+		@Override
+		public TemplateOptions runScript(byte[] script) {
+			throw new IllegalArgumentException("withMetadata is immutable");
+		}
 
-   protected int[] inboundPorts = new int[] { 22 };
+		@Override
+		public TemplateOptions withMetadata() {
+			throw new IllegalArgumentException("withMetadata is immutable");
+		}
 
-   protected byte[] script;
+	}
 
-   protected String privateKey;
+	protected int[] inboundPorts = new int[] { 22 };
 
-   protected String publicKey;
+	protected byte[] script;
 
-   protected int port = -1;
+	protected String privateKey;
 
-   protected int seconds = -1;
+	protected String publicKey;
 
-   protected boolean includeMetadata;
+	protected int port = -1;
 
-   public int getPort() {
-      return port;
-   }
+	protected int seconds = -1;
 
-   public int getSeconds() {
-      return seconds;
-   }
+	protected boolean includeMetadata;
 
-   public int[] getInboundPorts() {
-      return inboundPorts;
-   }
+	protected boolean blockUntilRunning = true;
 
-   public byte[] getRunScript() {
-      return script;
-   }
+	public int getPort() {
+		return port;
+	}
 
-   public String getPrivateKey() {
-      return privateKey;
-   }
+	public int getSeconds() {
+		return seconds;
+	}
 
-   public String getPublicKey() {
-      return publicKey;
-   }
+	public int[] getInboundPorts() {
+		return inboundPorts;
+	}
 
-   public boolean isIncludeMetadata() {
-      return includeMetadata;
-   }
+	public byte[] getRunScript() {
+		return script;
+	}
 
-   public <T extends TemplateOptions> T as(Class<T> clazz) {
-      return clazz.cast(this);
-   }
+	public String getPrivateKey() {
+		return privateKey;
+	}
 
-   /**
-    * When the node is started, wait until the following port is active
-    */
-   public TemplateOptions blockOnPort(int port, int seconds) {
-      checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
-      checkArgument(seconds > 0, "seconds must be a positive integer");
-      this.port = port;
-      this.seconds = seconds;
-      return this;
-   }
+	public String getPublicKey() {
+		return publicKey;
+	}
 
-   /**
-    * This script will be executed as the root user upon system startup. This script gets a
-    * prologue, so no #!/bin/bash required, path set up, etc
-    */
-   public TemplateOptions runScript(byte[] script) {
-      checkArgument(checkNotNull(script, "script").length <= 16 * 1024,
-               "script cannot be larger than 16kb");
-      this.script = script;
-      return this;
-   }
+	public boolean isIncludeMetadata() {
+		return includeMetadata;
+	}
 
-   /**
-    * replaces the rsa ssh key used at login.
-    */
-   public TemplateOptions installPrivateKey(String privateKey) {
-      checkArgument(checkNotNull(privateKey, "privateKey").startsWith(
-               "-----BEGIN RSA PRIVATE KEY-----"),
-               "key should start with -----BEGIN RSA PRIVATE KEY-----");
-      this.privateKey = privateKey;
-      return this;
-   }
+	public boolean shouldBlockUntilRunning() {
+		return blockUntilRunning;
+	}
 
-   public TemplateOptions dontAuthorizePublicKey() {
-      this.publicKey = null;
-      return this;
-   }
+	public <T extends TemplateOptions> T as(Class<T> clazz) {
+		return clazz.cast(this);
+	}
 
-   /**
-    * authorized an rsa ssh key.
-    */
-   public TemplateOptions authorizePublicKey(String publicKey) {
-      checkArgument(checkNotNull(publicKey, "publicKey").startsWith("ssh-rsa"),
-               "key should start with ssh-rsa");
-      this.publicKey = publicKey;
-      return this;
-   }
+	/**
+	 * When the node is started, wait until the following port is active
+	 */
+	public TemplateOptions blockOnPort(int port, int seconds) {
+		checkArgument(port > 0 && port < 65536,
+				"port must be a positive integer < 65535");
+		checkArgument(seconds > 0, "seconds must be a positive integer");
+		this.port = port;
+		this.seconds = seconds;
+		return this;
+	}
 
-   /**
-    * Opens the set of ports to public access.
-    */
-   public TemplateOptions inboundPorts(int... ports) {
-      for (int port : ports)
-         checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
-      this.inboundPorts = ports;
-      return this;
-   }
+	/**
+	 * This script will be executed as the root user upon system startup. This
+	 * script gets a prologue, so no #!/bin/bash required, path set up, etc
+	 */
+	public TemplateOptions runScript(byte[] script) {
+		checkArgument(checkNotNull(script, "script").length <= 16 * 1024,
+				"script cannot be larger than 16kb");
+		this.script = script;
+		return this;
+	}
 
-   public TemplateOptions withMetadata() {
-      this.includeMetadata = true;
-      return this;
-   }
+	/**
+	 * replaces the rsa ssh key used at login.
+	 */
+	public TemplateOptions installPrivateKey(String privateKey) {
+		checkArgument(checkNotNull(privateKey, "privateKey").startsWith(
+				"-----BEGIN RSA PRIVATE KEY-----"),
+				"key should start with -----BEGIN RSA PRIVATE KEY-----");
+		this.privateKey = privateKey;
+		return this;
+	}
 
-   public static class Builder {
+	public TemplateOptions dontAuthorizePublicKey() {
+		this.publicKey = null;
+		return this;
+	}
 
-      /**
-       * @see TemplateOptions#inboundPorts
-       */
-      public static TemplateOptions inboundPorts(int... ports) {
-         TemplateOptions options = new TemplateOptions();
-         return options.inboundPorts(ports);
-      }
+	/**
+	 * if true, return when node(s) are NODE_RUNNING, if false, return as soon as the
+	 * server is provisioned.
+	 * <p/>
+	 * default is true
+	 */
+	public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+		this.blockUntilRunning = blockUntilRunning;
+		if (!blockUntilRunning)
+			port = seconds = -1;
+		return this;
+	}
 
-      /**
-       * @see TemplateOptions#port
-       */
-      public static TemplateOptions blockOnPort(int port, int seconds) {
-         TemplateOptions options = new TemplateOptions();
-         return options.blockOnPort(port, seconds);
-      }
+	/**
+	 * authorized an rsa ssh key.
+	 */
+	public TemplateOptions authorizePublicKey(String publicKey) {
+		checkArgument(checkNotNull(publicKey, "publicKey")
+				.startsWith("ssh-rsa"), "key should start with ssh-rsa");
+		this.publicKey = publicKey;
+		return this;
+	}
 
-      /**
-       * @see TemplateOptions#runScript
-       */
-      public static TemplateOptions runScript(byte[] script) {
-         TemplateOptions options = new TemplateOptions();
-         return options.runScript(script);
-      }
+	/**
+	 * Opens the set of ports to public access.
+	 */
+	public TemplateOptions inboundPorts(int... ports) {
+		for (int port : ports)
+			checkArgument(port > 0 && port < 65536,
+					"port must be a positive integer < 65535");
+		this.inboundPorts = ports;
+		return this;
+	}
 
-      /**
-       * @see TemplateOptions#installPrivateKey
-       */
-      public static TemplateOptions installPrivateKey(String rsaKey) {
-         TemplateOptions options = new TemplateOptions();
-         return options.installPrivateKey(rsaKey);
-      }
+	public TemplateOptions withMetadata() {
+		this.includeMetadata = true;
+		return this;
+	}
 
-      /**
-       * @see TemplateOptions#authorizePublicKey
-       */
-      public static TemplateOptions authorizePublicKey(String rsaKey) {
-         TemplateOptions options = new TemplateOptions();
-         return options.authorizePublicKey(rsaKey);
-      }
+	public static class Builder {
 
-      public static TemplateOptions withDetails() {
-         TemplateOptions options = new TemplateOptions();
-         return options.withMetadata();
-      }
+		/**
+		 * @see TemplateOptions#inboundPorts
+		 */
+		public static TemplateOptions inboundPorts(int... ports) {
+			TemplateOptions options = new TemplateOptions();
+			return options.inboundPorts(ports);
+		}
 
-   }
+		/**
+		 * @see TemplateOptions#port
+		 */
+		public static TemplateOptions blockOnPort(int port, int seconds) {
+			TemplateOptions options = new TemplateOptions();
+			return options.blockOnPort(port, seconds);
+		}
 
-   @Override
-   public String toString() {
-      return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
-               + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
-               + (script != null) + ", port:seconds=" + port + ":" + seconds
-               + ", metadata/details: " + includeMetadata + "]";
-   }
+		/**
+		 * @see TemplateOptions#blockUntilRunning
+		 */
+		public static TemplateOptions blockUntilRunning(
+				boolean blockUntilRunning) {
+			TemplateOptions options = new TemplateOptions();
+			return options.blockUntilRunning(blockUntilRunning);
+		}
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Arrays.hashCode(inboundPorts);
-      result = prime * result + (includeMetadata ? 1231 : 1237);
-      result = prime * result + port;
-      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
-      result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
-      result = prime * result + Arrays.hashCode(script);
-      result = prime * result + seconds;
-      return result;
-   }
+		/**
+		 * @see TemplateOptions#runScript
+		 */
+		public static TemplateOptions runScript(byte[] script) {
+			TemplateOptions options = new TemplateOptions();
+			return options.runScript(script);
+		}
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      TemplateOptions other = (TemplateOptions) obj;
-      if (!Arrays.equals(inboundPorts, other.inboundPorts))
-         return false;
-      if (includeMetadata != other.includeMetadata)
-         return false;
-      if (port != other.port)
-         return false;
-      if (privateKey == null) {
-         if (other.privateKey != null)
-            return false;
-      } else if (!privateKey.equals(other.privateKey))
-         return false;
-      if (publicKey == null) {
-         if (other.publicKey != null)
-            return false;
-      } else if (!publicKey.equals(other.publicKey))
-         return false;
-      if (!Arrays.equals(script, other.script))
-         return false;
-      if (seconds != other.seconds)
-         return false;
-      return true;
-   }
+		/**
+		 * @see TemplateOptions#installPrivateKey
+		 */
+		public static TemplateOptions installPrivateKey(String rsaKey) {
+			TemplateOptions options = new TemplateOptions();
+			return options.installPrivateKey(rsaKey);
+		}
+
+		/**
+		 * @see TemplateOptions#authorizePublicKey
+		 */
+		public static TemplateOptions authorizePublicKey(String rsaKey) {
+			TemplateOptions options = new TemplateOptions();
+			return options.authorizePublicKey(rsaKey);
+		}
+
+		public static TemplateOptions withDetails() {
+			TemplateOptions options = new TemplateOptions();
+			return options.withMetadata();
+		}
+
+	}
+
+	@Override
+	public String toString() {
+		return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts)
+				+ ", privateKey=" + (privateKey != null) + ", publicKey="
+				+ (publicKey != null) + ", runScript=" + (script != null)
+				+ ", blockUntilRunning=" + blockUntilRunning
+				+ ", port:seconds=" + port + ":" + seconds
+				+ ", metadata/details: " + includeMetadata + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (blockUntilRunning ? 1231 : 1237);
+		result = prime * result + Arrays.hashCode(inboundPorts);
+		result = prime * result + (includeMetadata ? 1231 : 1237);
+		result = prime * result + port;
+		result = prime * result
+				+ ((privateKey == null) ? 0 : privateKey.hashCode());
+		result = prime * result
+				+ ((publicKey == null) ? 0 : publicKey.hashCode());
+		result = prime * result + Arrays.hashCode(script);
+		result = prime * result + seconds;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TemplateOptions other = (TemplateOptions) obj;
+		if (blockUntilRunning != other.blockUntilRunning)
+			return false;
+		if (!Arrays.equals(inboundPorts, other.inboundPorts))
+			return false;
+		if (includeMetadata != other.includeMetadata)
+			return false;
+		if (port != other.port)
+			return false;
+		if (privateKey == null) {
+			if (other.privateKey != null)
+				return false;
+		} else if (!privateKey.equals(other.privateKey))
+			return false;
+		if (publicKey == null) {
+			if (other.publicKey != null)
+				return false;
+		} else if (!publicKey.equals(other.publicKey))
+			return false;
+		if (!Arrays.equals(script, other.script))
+			return false;
+		if (seconds != other.seconds)
+			return false;
+		return true;
+	}
 }

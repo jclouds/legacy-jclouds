@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.config;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -32,9 +31,6 @@ import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.ELB;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
-import org.jclouds.aws.ec2.predicates.InstanceStateTerminated;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AMIClient;
@@ -66,14 +62,10 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -86,19 +78,22 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncClient> {
+public class EC2RestClientModule extends
+      RestClientModule<EC2Client, EC2AsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
-            .<Class<?>, Class<?>> builder()//
-            .put(AMIClient.class, AMIAsyncClient.class)//
-            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-            .put(InstanceClient.class, InstanceAsyncClient.class)//
-            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-            .put(MonitoringClient.class, MonitoringAsyncClient.class)//
-            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-            .put(ElasticLoadBalancerClient.class, ElasticLoadBalancerAsyncClient.class)//
-            .build();
+         .<Class<?>, Class<?>> builder()//
+         .put(AMIClient.class, AMIAsyncClient.class)//
+         .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+         .put(InstanceClient.class, InstanceAsyncClient.class)//
+         .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+         .put(MonitoringClient.class, MonitoringAsyncClient.class)//
+         .put(AvailabilityZoneAndRegionClient.class,
+               AvailabilityZoneAndRegionAsyncClient.class)//
+         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+         .put(ElasticLoadBalancerClient.class,
+               ElasticLoadBalancerAsyncClient.class)//
+         .build();
 
    public EC2RestClientModule() {
       super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
@@ -106,30 +101,9 @@ public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncCli
 
    @Provides
    @Singleton
-   @Named("RUNNING")
-   protected Predicate<RunningInstance> instanceStateRunning(InstanceStateRunning stateRunning) {
-      return new RetryablePredicate<RunningInstance>(stateRunning, 600, 3, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Named("TERMINATED")
-   protected Predicate<RunningInstance> instanceStateTerminated(
-            InstanceStateTerminated stateTerminated) {
-      return new RetryablePredicate<RunningInstance>(stateTerminated, 20000, 500,
-               TimeUnit.MILLISECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected Predicate<IPSocket> socketTester(SocketOpen open) {
-      return new RetryablePredicate<IPSocket>(open, 130, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
    @ELB
-   protected URI provideELBURI(@Named(EC2Constants.PROPERTY_ELB_ENDPOINT) String endpoint) {
+   protected URI provideELBURI(
+         @Named(EC2Constants.PROPERTY_ELB_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
@@ -137,21 +111,29 @@ public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncCli
    @Singleton
    @ELB
    Map<String, URI> provideELBRegions() {
-      return ImmutableMap.<String, URI> of(Region.US_EAST_1, URI
-               .create("https://elasticloadbalancing.us-east-1.amazonaws.com"), Region.US_WEST_1,
-               URI.create("https://elasticloadbalancing.us-west-1.amazonaws.com"),
-               Region.EU_WEST_1,
-               URI.create("https://elasticloadbalancing.eu-west-1.amazonaws.com"),
-               Region.AP_SOUTHEAST_1, URI
+      return ImmutableMap
+            .<String, URI> of(
+                  Region.US_EAST_1,
+                  URI
+                        .create("https://elasticloadbalancing.us-east-1.amazonaws.com"),
+                  Region.US_WEST_1,
+                  URI
+                        .create("https://elasticloadbalancing.us-west-1.amazonaws.com"),
+                  Region.EU_WEST_1,
+                  URI
+                        .create("https://elasticloadbalancing.eu-west-1.amazonaws.com"),
+                  Region.AP_SOUTHEAST_1,
+                  URI
                         .create("https://elasticloadbalancing.ap-southeast-1.amazonaws.com"));
    }
 
    @Provides
    @Singleton
    @EC2
-   String provideCurrentRegion(@EC2 Map<String, URI> regionMap, @EC2 URI currentUri) {
-      ImmutableBiMap<URI, String> map = ImmutableBiMap.<String, URI> builder().putAll(regionMap)
-               .build().inverse();
+   String provideCurrentRegion(@EC2 Map<String, URI> regionMap,
+         @EC2 URI currentUri) {
+      ImmutableBiMap<URI, String> map = ImmutableBiMap.<String, URI> builder()
+            .putAll(regionMap).build().inverse();
       String region = map.get(currentUri);
       assert region != null : currentUri + " not in " + map;
       return region;
@@ -181,11 +163,12 @@ public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncCli
    @Provides
    @Singleton
    Map<String, String> provideAvailabilityZoneToRegions(EC2Client client,
-            @EC2 Map<String, URI> regions) {
+         @EC2 Map<String, URI> regions) {
       Map<String, String> map = Maps.newHashMap();
       for (String region : regions.keySet()) {
-         for (AvailabilityZoneInfo zoneInfo : client.getAvailabilityZoneAndRegionServices()
-                  .describeAvailabilityZonesInRegion(region)) {
+         for (AvailabilityZoneInfo zoneInfo : client
+               .getAvailabilityZoneAndRegionServices()
+               .describeAvailabilityZonesInRegion(region)) {
             map.put(zoneInfo.getZone(), region);
          }
       }
@@ -195,9 +178,9 @@ public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncCli
    @Provides
    @TimeStamp
    protected String provideTimeStamp(final DateService dateService,
-            @Named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
+         @Named(EC2Constants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
       return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
-               + (expiration * 1000)));
+            + (expiration * 1000)));
    }
 
    @Provides
@@ -209,25 +192,26 @@ public class EC2RestClientModule extends RestClientModule<EC2Client, EC2AsyncCli
    @Provides
    @Singleton
    @EC2
-   protected URI provideURI(@Named(EC2Constants.PROPERTY_EC2_ENDPOINT) String endpoint) {
+   protected URI provideURI(
+         @Named(EC2Constants.PROPERTY_EC2_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseAWSErrorFromXmlContent.class);
+            ParseAWSErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseAWSErrorFromXmlContent.class);
+            ParseAWSErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseAWSErrorFromXmlContent.class);
+            ParseAWSErrorFromXmlContent.class);
    }
 
    @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
-               AWSRedirectionRetryHandler.class);
+            AWSRedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-               AWSClientErrorRetryHandler.class);
+            AWSClientErrorRetryHandler.class);
    }
 }

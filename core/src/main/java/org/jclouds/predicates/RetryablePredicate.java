@@ -34,24 +34,32 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 public class RetryablePredicate<T> implements Predicate<T> {
-   private final int maxWait;
-   private final int checkInterval;
+   private final long maxWait;
+   private final long period;
    private final Predicate<T> predicate;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public RetryablePredicate(Predicate<T> predicate, long maxWait, long checkInterval, TimeUnit unit) {
+   public RetryablePredicate(Predicate<T> predicate, long maxWait, long period,
+         TimeUnit unit) {
       this.predicate = predicate;
-      this.maxWait = (int) unit.toMillis(maxWait);
-      this.checkInterval = (int) unit.toMillis(checkInterval);
+      this.maxWait = unit.toMillis(maxWait);
+      this.period = unit.toMillis(period);
+   }
+
+   public RetryablePredicate(Predicate<T> predicate, long maxWait) {
+      this.predicate = predicate;
+      this.maxWait = maxWait;
+      this.period = 50l;
    }
 
    @Override
    public boolean apply(T input) {
       try {
+         long i = 1l;
          for (Date end = new Date(System.currentTimeMillis() + maxWait); before(end); Thread
-                  .sleep(checkInterval)) {
+               .sleep(nextMaxInterval(i++, end))) {
             if (predicate.apply(input)) {
                return true;
             } else if (atOrAfter(end)) {
@@ -59,9 +67,16 @@ public class RetryablePredicate<T> implements Predicate<T> {
             }
          }
       } catch (InterruptedException e) {
-         logger.warn(e, "predicate %s on %s interrupted, returning false", input, predicate);
+         logger.warn(e, "predicate %s on %s interrupted, returning false",
+               input, predicate);
       }
       return false;
+   }
+
+   long nextMaxInterval(long attempt, Date end) {
+      long interval = (period * (long) Math.pow(attempt, 2l));
+      long max = end.getTime() - System.currentTimeMillis();
+      return (interval > max) ? max : interval;
    }
 
    boolean before(Date end) {

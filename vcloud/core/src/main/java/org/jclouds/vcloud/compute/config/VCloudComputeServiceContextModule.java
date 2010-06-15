@@ -22,21 +22,19 @@ import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
+import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -44,7 +42,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
@@ -63,7 +60,6 @@ import org.jclouds.vcloud.endpoints.VCloud;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
@@ -103,6 +99,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Override
    protected void configure() {
       super.configure();
+      install(new ComputeServiceTimeoutsModule());
       bind(String.class).annotatedWith(VCloud.class).toInstance(providerName);
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
@@ -125,14 +122,6 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
    @Singleton
    protected String provideNamingConvention() {
       return "%s-%s%s";
-   }
-
-   @Provides
-   @Singleton
-   @Named("NOT_RUNNING")
-   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning) {
-      return new RetryablePredicate<CommandUsingClient>(Predicates.not(stateRunning), 600, 3,
-               TimeUnit.SECONDS);
    }
 
    protected void bindLoadBalancer() {

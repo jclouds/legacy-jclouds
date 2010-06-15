@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
@@ -36,17 +38,21 @@ import com.google.common.base.Predicate;
 public class VCloudRebootNodeStrategy implements RebootNodeStrategy {
    private final VCloudClient client;
    protected final Predicate<String> taskTester;
+   protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected VCloudRebootNodeStrategy(VCloudClient client, Predicate<String> taskTester) {
+   protected VCloudRebootNodeStrategy(VCloudClient client,
+         Predicate<String> taskTester, GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.taskTester = taskTester;
+      this.getNode = getNode;
    }
 
    @Override
-   public boolean execute(String id) {
+   public NodeMetadata execute(String id) {
       Task task = client.resetVApp(checkNotNull(id, "node.id"));
-      return taskTester.apply(task.getId());
+      taskTester.apply(task.getId());
+      return getNode.execute(id);
    }
 
 }

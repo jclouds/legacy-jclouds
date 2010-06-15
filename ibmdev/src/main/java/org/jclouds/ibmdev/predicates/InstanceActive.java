@@ -49,12 +49,15 @@ public class InstanceActive implements Predicate<Instance> {
    public boolean apply(Instance instance) {
       logger.trace("looking for state on instance %s", instance);
       instance = client.getInstance(instance.getId());
-      if (instance == null || instance.getStatus() == Instance.Status.FAILED)
+      if (instance == null)
          return false;
-      logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(),
-               Instance.Status.ACTIVE, instance.getStatus());
+      logger.trace("%s: looking for instance state %s: currently: %s", instance
+            .getId(), Instance.Status.ACTIVE, instance.getStatus());
+      if (instance.getStatus() == Instance.Status.FAILED)
+         throw new IllegalStateException("node " + instance.getId()
+               + " in location " + instance.getLocation()
+               + " is in a failed state");
       return instance.getStatus() == Instance.Status.ACTIVE;
-
    }
 
 }

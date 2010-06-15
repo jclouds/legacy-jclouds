@@ -66,18 +66,27 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context,
-            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Provider<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy,
-            RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<TemplateOptions> templateOptionsProvider, ComputeUtils utils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-            Map<RegionAndName, KeyPair> credentialsMap, Map<RegionAndName, String> securityGroupMap) {
-      super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
-               templateBuilderProvider, templateOptionsProvider, utils, executor);
+         Provider<Set<? extends Image>> images,
+         Provider<Set<? extends Size>> sizes,
+         Provider<Set<? extends Location>> locations,
+         ListNodesStrategy listNodesStrategy,
+         GetNodeMetadataStrategy getNodeMetadataStrategy,
+         RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+         RebootNodeStrategy rebootNodeStrategy,
+         DestroyNodeStrategy destroyNodeStrategy,
+         Provider<TemplateBuilder> templateBuilderProvider,
+         Provider<TemplateOptions> templateOptionsProvider,
+         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+         ComputeUtils utils,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         EC2Client ec2Client, Map<RegionAndName, KeyPair> credentialsMap,
+         Map<RegionAndName, String> securityGroupMap) {
+      super(context, images, sizes, locations, listNodesStrategy,
+            getNodeMetadataStrategy, runNodesAndAddToSetStrategy,
+            rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider,
+            templateOptionsProvider, nodeRunning, nodeTerminated, utils,
+            executor);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -86,38 +95,46 @@ public class EC2ComputeService extends BaseComputeService {
    private void deleteSecurityGroup(String region, String tag) {
       checkNotEmpty(tag, "tag");
       String group = "jclouds#" + tag;
-      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, group).size() > 0) {
+      if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(
+            region, group).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", group);
-         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, group);
+         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(
+               region, group);
          // TODO: test this clear happens
-         securityGroupMap.remove(new RegionNameAndIngressRules(region, tag, null, false));
+         securityGroupMap.remove(new RegionNameAndIngressRules(region, tag,
+               null, false));
          logger.debug("<< deleted securityGroup(%s)", group);
       }
    }
 
    private void deleteKeyPair(String region, String tag) {
-      for (KeyPair keyPair : ec2Client.getKeyPairServices().describeKeyPairsInRegion(region)) {
+      for (KeyPair keyPair : ec2Client.getKeyPairServices()
+            .describeKeyPairsInRegion(region)) {
          if (keyPair.getKeyName().matches("jclouds#" + tag + "-[0-9]+")) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
-            ec2Client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
+            ec2Client.getKeyPairServices().deleteKeyPairInRegion(region,
+                  keyPair.getKeyName());
             // TODO: test this clear happens
-            credentialsMap.remove(new RegionAndName(region, keyPair.getKeyName()));
+            credentialsMap.remove(new RegionAndName(region, keyPair
+                  .getKeyName()));
             logger.debug("<< deleted keyPair(%s)", keyPair.getKeyName());
          }
       }
    }
 
    /**
-    * like {@link BaseComputeService#destroyNodesMatching} except that this will clean implicit
-    * keypairs and security groups.
+    * like {@link BaseComputeService#destroyNodesMatching} except that this will
+    * clean implicit keypairs and security groups.
     */
    @Override
-   public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
+   public Set<? extends NodeMetadata> destroyNodesMatching(
+         Predicate<NodeMetadata> filter) {
       Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
       Map<String, String> regionTags = Maps.newHashMap();
       for (NodeMetadata nodeMetadata : deadOnes) {
          if (nodeMetadata.getTag() != null)
-            regionTags.put(parseHandle(nodeMetadata.getId())[0], nodeMetadata.getTag());
+            regionTags.put(parseHandle(nodeMetadata.getId())[0], nodeMetadata
+                  .getTag());
       }
       for (Entry<String, String> regionTag : regionTags.entrySet()) {
          deleteKeyPair(regionTag.getKey(), regionTag.getValue());
