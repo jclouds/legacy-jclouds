@@ -8,9 +8,9 @@ our current version is 1.0-beta-6
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, gogrid, rackspace, rimuhosting, vcloud, terremark, 
-                          hosting.com, bluelock, ibmdev
+                          eucalyptus, hosting.com, bluelock, ibmdev
 our blobstore api supports: s3, rackspace, azure, atmos online, att synaptic,
-                          transient (in-memory)
+                          walrus, googlestorage, transient (in-memory)
  
 BlobStore Example (Java):
   // init
