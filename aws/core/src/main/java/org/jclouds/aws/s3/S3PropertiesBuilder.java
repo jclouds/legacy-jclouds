@@ -22,8 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_AUTH_TAG;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_DEFAULT_REGIONS;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_HEADER_TAG;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SERVICE_EXPR;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
@@ -47,26 +51,34 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
-      addEndpointProperties(properties);
+      properties.setProperty(PROPERTY_S3_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_S3_HEADER_TAG, "aws");
+      properties.setProperty(PROPERTY_S3_SERVICE_EXPR,
+            "\\.s3[^.]*\\.amazonaws\\.com");
+      properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
+      addEndpoints(properties);
       properties.setProperty(PROPERTY_S3_SESSIONINTERVAL, "60");
       properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX,
             DIRECTORY_SUFFIX_FOLDER);
+
       return properties;
    }
 
-   protected Properties addEndpointProperties(Properties properties) {
+   protected Properties addEndpoints(Properties properties) {
       properties.setProperty(PROPERTY_S3_REGIONS, Joiner.on(',').join(
-            Region.US_STANDARD, Region.US_WEST_1, Region.EU_WEST_1,
+            Region.US_STANDARD, Region.US_EAST_1, Region.US_WEST_1, "EU",
             Region.AP_SOUTHEAST_1));
-
+      properties.setProperty(PROPERTY_S3_DEFAULT_REGIONS, Joiner.on(',').join(
+            Region.US_STANDARD, Region.US_EAST_1));
       properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.US_STANDARD,
             "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.US_EAST_1,
+            "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.US_WEST_1,
             "https://s3-us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_S3_ENDPOINT + "." + Region.EU_WEST_1,
+      properties.setProperty(PROPERTY_S3_ENDPOINT + "." + "EU",
             "https://s3-eu-west-1.amazonaws.com");
       properties.setProperty(
             PROPERTY_S3_ENDPOINT + "." + Region.AP_SOUTHEAST_1,

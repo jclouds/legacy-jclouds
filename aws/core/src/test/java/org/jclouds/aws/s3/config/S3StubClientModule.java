@@ -53,7 +53,7 @@ public class S3StubClientModule extends RestClientModule<S3Client, S3AsyncClient
       bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
       bind(String.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
       bind(new TypeLiteral<Set<String>>() {
-      }).annotatedWith(S3.class).toInstance(Region.ALL);
+      }).annotatedWith(S3.class).toInstance(Region.ALL_S3);
    }
 
    @Override

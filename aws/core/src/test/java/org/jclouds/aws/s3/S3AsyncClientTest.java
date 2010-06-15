@@ -90,7 +90,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class,
                String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
-      for (String region : Region.ALL) {
+      for (String region : Region.ALL_S3) {
          processor.createRequest(method, region, "bucket-name");
       }
    }
@@ -416,7 +416,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class,
                String.class, Array.newInstance(PutBucketOptions.class, 0).getClass());
       GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
-               Region.EU_WEST_1, "bucket");
+               "EU", "bucket");
 
       assertRequestLineEquals(httpMethod, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,

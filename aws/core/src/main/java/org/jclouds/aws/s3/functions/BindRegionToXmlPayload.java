@@ -20,19 +20,23 @@
 package org.jclouds.aws.s3.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_DEFAULT_REGIONS;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.s3.S3;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+
 /**
  * 
- * Depending on your latency and legal requirements, you can specify a location constraint that will
- * affect where your data physically resides.
+ * Depending on your latency and legal requirements, you can specify a location
+ * constraint that will affect where your data physically resides.
  * 
  * @author Adrian Cole
  * 
@@ -40,35 +44,36 @@ import org.jclouds.rest.binders.BindToStringPayload;
 @Singleton
 public class BindRegionToXmlPayload extends BindToStringPayload {
 
-   private final String defaultRegion;
+   private final Iterable<String> defaultRegions;
+   private final Iterable<String> regions;
 
    @Inject
-   BindRegionToXmlPayload(@S3 String defaultRegion) {
-      this.defaultRegion = defaultRegion;
+   BindRegionToXmlPayload(
+         @Named(PROPERTY_S3_DEFAULT_REGIONS) String defaultRegions,
+         @Named(PROPERTY_S3_REGIONS) String regions) {
+      this.defaultRegions = Splitter.on(',').split(defaultRegions);
+      this.regions = Splitter.on(',').split(regions);
    }
 
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
-      input = input == null ? defaultRegion : input;
-      checkArgument(input instanceof String, "this binder is only valid for Region!");
+      input = input == null ? Iterables.get(defaultRegions, 0) : input;
+      checkArgument(input instanceof String,
+            "this binder is only valid for Region!");
       String constraint = (String) input;
       String value = null;
-      if (Region.US_STANDARD.equals(constraint) || Region.US_EAST_1.equals(constraint)) {
+      if (Iterables.contains(defaultRegions, constraint)) {
          // nothing to bind as this is default.
          return;
-      } else if (Region.EU_WEST_1.equals(constraint))
-         value = "EU";
-      else if (Region.US_WEST_1.equals(constraint))
-         value = "us-west-1";
-      else if (Region.AP_SOUTHEAST_1.equals(constraint))
-         value = "ap-southeast-1";
-      else {
-         throw new IllegalStateException("unimplemented location: " + this);
+      } else if (Iterables.contains(regions, constraint)) {
+         value = constraint;
+      } else {
+         throw new IllegalStateException("unimplemented location: " + constraint);
       }
       String payload = String
-               .format(
-                        "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-                        value);
+            .format(
+                  "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+                  value);
       super.bindToRequest(request, payload);
 
    }

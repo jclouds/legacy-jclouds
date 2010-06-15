@@ -43,8 +43,10 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class BucketToResourceMetadata implements Function<BucketMetadata, StorageMetadata> {
+public class BucketToResourceMetadata implements
+      Function<BucketMetadata, StorageMetadata> {
    private final S3Client client;
+   private final Location onlyLocation;
    private final Set<? extends Location> locations;
 
    @Resource
@@ -53,6 +55,8 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
    @Inject
    BucketToResourceMetadata(S3Client client, Set<? extends Location> locations) {
       this.client = client;
+      this.onlyLocation = locations.size() == 1 ? Iterables.get(locations, 0)
+            : null;
       this.locations = locations;
    }
 
@@ -60,29 +64,37 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
       MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
       to.setType(StorageType.CONTAINER);
+      to.setLocation(onlyLocation != null ? onlyLocation : getLocation(from));
+      return to;
+   }
+
+   private Location getLocation(BucketMetadata from) {
       try {
          final String region = client.getBucketLocation(from.getName());
          if (region != null) {
             try {
-               to.setLocation(Iterables.find(locations, new Predicate<Location>() {
+               return Iterables.find(locations, new Predicate<Location>() {
 
                   @Override
                   public boolean apply(Location input) {
                      return input.getId().equals(region.toString());
                   }
 
-               }));
+               });
             } catch (NoSuchElementException e) {
-               logger.error("could not get location for region %s in %s", region, locations);
+               logger.error("could not get location for region %s in %s",
+                     region, locations);
             }
          } else {
             logger.error("could not get region for %s", from.getName());
          }
       } catch (ContainerNotFoundException e) {
-         logger.error(e,
-                  "could not get region for %s, as service suggests the bucket doesn't exist", from
-                           .getName());
+         logger
+               .error(
+                     e,
+                     "could not get region for %s, as service suggests the bucket doesn't exist",
+                     from.getName());
       }
-      return to;
+      return null;
    }
 }

@@ -27,8 +27,8 @@ import com.google.common.collect.ImmutableSet;
  * Regions used for all aws commands.
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?LocationSelection.html" />
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?LocationSelection.html"
+ *      />
  * 
  */
 public class Region {
@@ -37,8 +37,9 @@ public class Region {
     * <p/>
     * <h3>S3</h3>
     * <p/>
-    * In Amazon S3, the EU (Ireland) Region provides read-after-write consistency for PUTS of new
-    * objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS and DELETES.
+    * In Amazon S3, the EU (Ireland) Region provides read-after-write
+    * consistency for PUTS of new objects in your Amazon S3 bucket and eventual
+    * consistency for overwrite PUTS and DELETES.
     */
    public static final String EU_WEST_1 = "eu-west-1";
 
@@ -48,11 +49,13 @@ public class Region {
     * <p/>
     * <h3>S3</h3>
     * <p/>
-    * This is the default Region. All requests sent to s3.amazonaws.com go to this Region unless you
-    * specify a LocationConstraint on a bucket. The US Standard Region automatically places your
-    * data in either Amazon's east or west coast data centers depending on what will provide you
-    * with the lowest latency. To use this region, do not set the LocationConstraint bucket
-    * parameter. The US Standard Region provides eventual consistency for all requests.
+    * This is the default Region. All requests sent to s3.amazonaws.com go to
+    * this Region unless you specify a LocationConstraint on a bucket. The US
+    * Standard Region automatically places your data in either Amazon's east or
+    * west coast data centers depending on what will provide you with the lowest
+    * latency. To use this region, do not set the LocationConstraint bucket
+    * parameter. The US Standard Region provides eventual consistency for all
+    * requests.
     */
    public static final String US_STANDARD = "us-standard";
 
@@ -62,25 +65,27 @@ public class Region {
    public static final String US_EAST_1 = "us-east-1";
 
    /**
-    * US-West (Northern California) <h3>S3</h3> Uses Amazon S3 servers in Northern California
+    * US-West (Northern California) <h3>S3</h3> Uses Amazon S3 servers in
+    * Northern California
     * <p/>
-    * Optionally, use the endpoint s3-us-west-1.amazonaws.com on all requests to this bucket to
-    * reduce the latency you might experience after the first hour of creating a bucket in this
-    * Region.
+    * Optionally, use the endpoint s3-us-west-1.amazonaws.com on all requests to
+    * this bucket to reduce the latency you might experience after the first
+    * hour of creating a bucket in this Region.
     * <p/>
-    * In Amazon S3, the US-West (Northern California) Region provides read-after-write consistency
-    * for PUTS of new objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS
-    * and DELETES.
+    * In Amazon S3, the US-West (Northern California) Region provides
+    * read-after-write consistency for PUTS of new objects in your Amazon S3
+    * bucket and eventual consistency for overwrite PUTS and DELETES.
     */
    public static final String US_WEST_1 = "us-west-1";
 
    /**
-    * Region in Singapore, launched April 28, 2010. This region improves latency for Asia-based
-    * users
+    * Region in Singapore, launched April 28, 2010. This region improves latency
+    * for Asia-based users
     */
    public static final String AP_SOUTHEAST_1 = "ap-southeast-1";
 
-   public static Set<String> ALL = ImmutableSet.of(EU_WEST_1, US_STANDARD, US_EAST_1, US_WEST_1,
-            AP_SOUTHEAST_1);
-
+   public static Set<String> ALL_S3 = ImmutableSet.of("EU", US_STANDARD,
+         US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
+   public static Set<String> ALL_SQS = ImmutableSet.of(EU_WEST_1, US_STANDARD,
+         US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 }

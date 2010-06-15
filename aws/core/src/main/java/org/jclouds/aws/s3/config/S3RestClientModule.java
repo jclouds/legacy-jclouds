@@ -21,6 +21,7 @@ package org.jclouds.aws.s3.config;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -47,9 +48,10 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -137,9 +139,16 @@ public class S3RestClientModule extends
    @Provides
    @Singleton
    @S3
-   String getDefaultRegion(@S3 URI uri, @S3 Map<String, URI> map) {
-      return ImmutableBiMap.<String, URI> builder().putAll(map).build()
-            .inverse().get(uri);
+   String getDefaultRegion(@S3 final URI uri, @S3 Map<String, URI> map) {
+      return Iterables.find(map.entrySet(),
+            new Predicate<Entry<String, URI>>() {
+
+               @Override
+               public boolean apply(Entry<String, URI> input) {
+                  return input.getValue().equals(uri);
+               }
+
+            }).getKey();
    }
 
    @Override

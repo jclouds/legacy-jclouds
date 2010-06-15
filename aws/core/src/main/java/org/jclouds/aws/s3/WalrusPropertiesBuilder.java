@@ -1,5 +1,6 @@
 package org.jclouds.aws.s3;
 
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_DEFAULT_REGIONS;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
 
@@ -12,8 +13,9 @@ import java.util.Properties;
  */
 public class WalrusPropertiesBuilder extends S3PropertiesBuilder {
    @Override
-   protected Properties addEndpointProperties(Properties properties) {
+   protected Properties addEndpoints(Properties properties) {
       properties.setProperty(PROPERTY_S3_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_S3_DEFAULT_REGIONS, "Walrus");
       properties.setProperty(PROPERTY_S3_ENDPOINT,
             "http://173.205.188.130:8773/services/Walrus");
       properties.setProperty(PROPERTY_S3_ENDPOINT + ".Walrus",

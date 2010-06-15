@@ -37,9 +37,14 @@ public interface S3Constants extends AWSConstants, S3Headers {
    public static final String DELIMITER = "delimiter";
    public static final String PROPERTY_S3_ENDPOINT = "jclouds.s3.endpoint";
    public static final String PROPERTY_S3_REGIONS = "jclouds.s3.regions";
+   public static final String PROPERTY_S3_DEFAULT_REGIONS = "jclouds.s3.default-regions";
+
+   public static final String PROPERTY_S3_SERVICE_EXPR = "jclouds.service.expr";
    /**
     * how long do we wait before obtaining a new timestamp for requests.
     */
    public static final String PROPERTY_S3_SESSIONINTERVAL = "jclouds.s3.sessioninterval";
+   public static final String PROPERTY_S3_AUTH_TAG = "jclouds.s3.auth.tag";
+   public static final String PROPERTY_S3_HEADER_TAG = "jclouds.s3.header.tag";
 
 }
