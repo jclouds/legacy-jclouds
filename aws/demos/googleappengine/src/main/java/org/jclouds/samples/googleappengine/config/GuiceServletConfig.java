@@ -18,6 +18,11 @@
  */
 package org.jclouds.samples.googleappengine.config;
 
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_PORT_OPEN;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_SCRIPT_COMPLETE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -56,6 +61,11 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       Properties props = loadJCloudsProperties(servletContextEvent);
+      props.setProperty(PROPERTY_TIMEOUT_NODE_TERMINATED, "25000");
+      props.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, "25000");
+      props.setProperty(PROPERTY_TIMEOUT_SCRIPT_COMPLETE, "25000");
+      props.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, "25000");
+
       ImmutableSet<Module> modules = ImmutableSet
                .<Module> of(new GoogleAppEngineConfigurationModule());
       try {

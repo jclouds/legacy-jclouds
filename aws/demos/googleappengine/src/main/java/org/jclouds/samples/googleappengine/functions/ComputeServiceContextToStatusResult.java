@@ -19,22 +19,21 @@
 package org.jclouds.samples.googleappengine.functions;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.StatusResult;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 @Singleton
-public class ComputeServiceContextToStatusResult implements Function<String, StatusResult> {
+public class ComputeServiceContextToStatusResult implements
+      Function<String, StatusResult> {
 
    @Inject
    private Map<String, ComputeServiceContext> contexts;
@@ -44,14 +43,22 @@ public class ComputeServiceContextToStatusResult implements Function<String, Sta
 
    public StatusResult apply(final String contextName) {
       final ComputeServiceContext context = contexts.get(contextName);
-      final String host = context.getProviderSpecificContext().getEndPoint().getHost();
+      final String host = context.getProviderSpecificContext().getEndPoint()
+            .getHost();
       String status;
       String name = "not found";
       try {
          long start = System.currentTimeMillis();
-         Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
-         if (nodes.size() > 0)
-            name = Iterables.get(nodes, 0).getProviderId();
+         // set options that don't block so that we can avoid
+         // DeadLineExceededExceptions
+         TemplateOptions options = context.getComputeService()
+               .templateOptions().blockUntilRunning(false);
+
+         // set the name to the default template to show that
+         // it works
+         name = context.getComputeService().templateBuilder().options(options)
+               .build().toString();
+
          status = ((System.currentTimeMillis() - start) + "ms");
       } catch (Exception e) {
          logger.error(e, "Error listing service %s", contextName);
