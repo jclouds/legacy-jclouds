@@ -77,7 +77,7 @@ public class ChefClientLiveTest {
       user = checkNotNull(System.getProperty("jclouds.test.user"));
       String keyfile = System.getProperty("jclouds.test.key");
       if (keyfile == null || keyfile.equals(""))
-         keyfile = System.getProperty("user.home") + "/chef/" + user + ".pem";
+         keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
       validatorConnection = createConnection(validator, Files.toString(new File(validatorKey),
                Charsets.UTF_8));
       adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
