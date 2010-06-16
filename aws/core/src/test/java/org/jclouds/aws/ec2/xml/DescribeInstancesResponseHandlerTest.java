@@ -133,9 +133,9 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       contents.add(new Reservation(defaultRegion, ImmutableSet.of("default"),
             ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSet
                   .of("jclouds#euc"), "1", null, "emi-9ACB1363", "i-3FFA0762",
-                  InstanceState.SHUTTING_DOWN, InstanceType.M1_LARGE,
-                  "10.7.0.179", "eki-6CBD12F2", "jclouds#euc-17", dateService
-                        .iso8601DateParse("2010-06-16T03:06:19.771Z"), false,
+                  InstanceState.SHUTTING_DOWN, InstanceType.M1_LARGE, null,
+                  "eki-6CBD12F2", "jclouds#euc-17", dateService
+                        .iso8601DateParse("2010-06-16T03:06:19.000Z"), false,
                   "open", null, null, "10.7.0.179", ImmutableSet.<String> of(),
                   "eri-A97113E4", null, null, null,
                   RootDeviceType.INSTANCE_STORE, null, ImmutableMap

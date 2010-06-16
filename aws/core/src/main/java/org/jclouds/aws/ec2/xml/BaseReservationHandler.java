@@ -132,6 +132,9 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          amiLaunchIndex = currentOrNull();
       } else if (qName.equals("dnsName")) {
          dnsName = currentOrNull();
+         // Eucalyptus
+         if ("0.0.0.0".equals(dnsName))
+            dnsName = null;
       } else if (qName.equals("imageId")) {
          imageId = currentOrNull();
       } else if (qName.equals("instanceId")) {
@@ -147,7 +150,12 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("keyName")) {
          keyName = currentOrNull();
       } else if (qName.equals("launchTime")) {
-         launchTime = dateService.iso8601DateParse(currentOrNull());
+         try {
+            launchTime = dateService.iso8601DateParse(currentOrNull());
+         } catch (RuntimeException e) {
+            // Eucalyptus
+            launchTime = dateService.iso8601SecondsDateParse(currentOrNull());
+         }
       } else if (qName.equals("enabled")) {
          monitoring = Boolean.parseBoolean(currentOrNull());
       } else if (qName.equals("availabilityZone")) {
@@ -156,6 +164,9 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          platform = currentOrNull();
       } else if (qName.equals("privateDnsName")) {
          privateDnsName = currentOrNull();
+         // Eucalyptus
+         if ("0.0.0.0".equals(privateDnsName))
+            privateDnsName = null;
       } else if (qName.equals("privateIpAddress")) {
          privateIpAddress = currentOrNull();
       } else if (qName.equals("ramdiskId")) {
