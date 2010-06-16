@@ -58,13 +58,14 @@ public interface OpscodePlatformClient {
    /**
     * creates a new user
     * 
-    * @return the private key of the user. You can then use this user name and private key to access
-    *         the Opscode API.
+    * @return the private key of the user. You can then use this user name and
+    *         private key to access the Opscode API.
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a user.
+    *            "403 Forbidden" if the caller is not authorized to create a
+    *            user.
     */
    String createUser(User user);
 
@@ -73,9 +74,9 @@ public interface OpscodePlatformClient {
     * 
     * @throws AuthorizationException
     *            <p/>
-    *            “401 Unauthorized” if you are not a recognized user.
+    *            "401 Unauthorized" if you are not a recognized user.
     *            <p/>
-    *            “403 Forbidden” if you do not have Update rights on the user.
+    *            "403 Forbidden" if you do not have Update rights on the user.
     * @throws ResourceNotFoundException
     *            if the user does not exist.
     */
@@ -91,62 +92,64 @@ public interface OpscodePlatformClient {
    /**
     * deletes an existing user. Note: you must have delete rights on the user.
     * 
-    * @return the last state of the User object in question. * @throws AuthorizationException
-    *         <p/>
-    *         “401 Unauthorized” if you are not a recognized user.
-    *         <p/>
-    *         “403 Forbidden” if you do not have Delete rights on the user.
-    * @throws ResourceNotFoundException
+    * @return last state of the user you deleted or null, if not found
+    * @throws AuthorizationException
     *            <p/>
-    *            “404 Not Found” if the user does not exist.
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have Delete rights on the user.
     */
    User deleteUser(String username);
 
    /**
     * creates a new organization
     * 
-    * @return the private key of the organization. You can then use this organization name and
-    *         private key to access the Opscode API.
+    * @return the private key of the organization. You can then use this
+    *         organization name and private key to access the Opscode API.
     * @throws AuthorizationException
     *            <p/>
-    *            "401 Unauthorized" if the caller is not a recognized organization.
+    *            "401 Unauthorized" if the caller is not a recognized
+    *            organization.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a organization.
+    *            "403 Forbidden" if the caller is not authorized to create a
+    *            organization.
     */
    String createOrg(Organization organization);
 
    /**
-    * updates an existing organization. Note: you must have update rights on the organization.
+    * updates an existing organization. Note: you must have update rights on the
+    * organization.
     * 
     * @throws AuthorizationException
     *            <p/>
-    *            “401 Unauthorized” if you are not a recognized organization.
+    *            "401 Unauthorized" if you are not a recognized organization.
     *            <p/>
-    *            “403 Forbidden” if you do not have Update rights on the organization.
+    *            "403 Forbidden" if you do not have Update rights on the
+    *            organization.
     * @throws ResourceNotFoundException
     *            if the organization does not exist.
     */
    Organization updateOrg(Organization organization);
 
    /**
-    * retrieves an existing organization. Note: you must have update rights on the organization.
+    * retrieves an existing organization. Note: you must have update rights on
+    * the organization.
     * 
     * @return null, if the organization is not found
     */
    Organization getOrg(String organizationname);
 
    /**
-    * deletes an existing organization. Note: you must have delete rights on the organization.
+    * deletes an existing organization. Note: you must have delete rights on the
+    * organization.
     * 
-    * @return the last state of the Organization object in question. * @throws
-    *         AuthorizationException
-    *         <p/>
-    *         “401 Unauthorized” if you are not a recognized organization.
-    *         <p/>
-    *         “403 Forbidden” if you do not have Delete rights on the organization.
-    * @throws ResourceNotFoundException
+    * @return last state of the org you deleted or null, if not found
+    * @throws AuthorizationException
     *            <p/>
-    *            “404 Not Found” if the organization does not exist.
+    *            "401 Unauthorized" if you are not a recognized organization.
+    *            <p/>
+    *            "403 Forbidden" if you do not have Delete rights on the
+    *            organization.
     */
    Organization deleteOrg(String organizationname);
 }

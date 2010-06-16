@@ -79,7 +79,8 @@ public interface OpscodePlatformAsyncClient {
    @POST
    @Path("/users")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createUser(@BinderParam(BindToJsonPayload.class) User user);
+   ListenableFuture<String> createUser(
+         @BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#updateUser
@@ -88,7 +89,7 @@ public interface OpscodePlatformAsyncClient {
    @Path("/users/{username}")
    @ResponseParser(ParseUserFromJson.class)
    ListenableFuture<User> updateUser(
-            @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
+         @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#getUser
@@ -104,6 +105,7 @@ public interface OpscodePlatformAsyncClient {
     */
    @DELETE
    @Path("/users/{username}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(ParseUserFromJson.class)
    ListenableFuture<User> deleteUser(@PathParam("username") String username);
 
@@ -113,7 +115,8 @@ public interface OpscodePlatformAsyncClient {
    @POST
    @Path("/organizations")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createOrg(@BinderParam(BindToJsonPayload.class) Organization org);
+   ListenableFuture<String> createOrg(
+         @BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
     * @see ChefClient#updateOrg
@@ -122,7 +125,7 @@ public interface OpscodePlatformAsyncClient {
    @Path("/organizations/{orgname}")
    @ResponseParser(ParseOrganizationFromJson.class)
    ListenableFuture<Organization> updateOrg(
-            @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
+         @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
     * @see ChefClient#getOrg
@@ -138,6 +141,7 @@ public interface OpscodePlatformAsyncClient {
     */
    @DELETE
    @Path("/organizations/{orgname}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(ParseOrganizationFromJson.class)
    ListenableFuture<Organization> deleteOrg(@PathParam("orgname") String orgname);
 

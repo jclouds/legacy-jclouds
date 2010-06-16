@@ -63,37 +63,42 @@ public class ChefClientLiveTest {
    private byte[] cookbookContent;
    private File cookbookFile;
 
-   public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
+   public static final String PREFIX = System.getProperty("user.name")
+         + "-jcloudstest";
 
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
+      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+            "jclouds.test.endpoint");
       validator = System.getProperty("jclouds.test.validator");
       if (validator == null || validator.equals(""))
          validator = "chef-validator";
       String validatorKey = System.getProperty("jclouds.test.validator.key");
       if (validatorKey == null || validatorKey.equals(""))
-         validatorKey = "/etc/chef/validation.pem";
+         validatorKey = System.getProperty("user.home")
+               + "/.chef/validation.pem";
       user = checkNotNull(System.getProperty("jclouds.test.user"));
       String keyfile = System.getProperty("jclouds.test.key");
       if (keyfile == null || keyfile.equals(""))
          keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
-      validatorConnection = createConnection(validator, Files.toString(new File(validatorKey),
-               Charsets.UTF_8));
-      adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
+      validatorConnection = createConnection(validator, Files.toString(
+            new File(validatorKey), Charsets.UTF_8));
+      adminConnection = createConnection(user, Files.toString(
+            new File(keyfile), Charsets.UTF_8));
    }
 
-   private RestContext<ChefClient, ChefAsyncClient> createConnection(String identity, String key)
-            throws IOException {
-      return ChefContextFactory.createContext(URI.create(endpoint), identity, key,
-               new Log4JLoggingModule());
+   private RestContext<ChefClient, ChefAsyncClient> createConnection(
+         String identity, String key) throws IOException {
+      return ChefContextFactory.createContext(URI.create(endpoint), identity,
+            key, new Log4JLoggingModule());
    }
 
    @Test
    public void testListClients() throws Exception {
       Set<String> clients = validatorConnection.getApi().listClients();
       assertNotNull(clients);
-      assert clients.contains(validator) : "validator: " + validator + " not in: " + clients;
+      assert clients.contains(validator) : "validator: " + validator
+            + " not in: " + clients;
    }
 
    @Test(dependsOnMethods = "testListClients")
@@ -135,7 +140,8 @@ public class ChefClientLiveTest {
 
          adminConnection.getApi().createCookbook(COOKBOOK_NAME, cookbookFile);
          adminConnection.getApi().deleteCookbook(COOKBOOK_NAME);
-         adminConnection.getApi().createCookbook(COOKBOOK_NAME, cookbookContent);
+         adminConnection.getApi()
+               .createCookbook(COOKBOOK_NAME, cookbookContent);
 
       } finally {
          if (in != null)
@@ -158,6 +164,8 @@ public class ChefClientLiveTest {
 
    @AfterClass(groups = { "live" })
    public void teardownClient() throws IOException {
+      if (validatorConnection.getApi().clientExists(PREFIX))
+         validatorConnection.getApi().deleteClient(PREFIX);
       if (clientConnection != null)
          clientConnection.close();
       if (validatorConnection != null)

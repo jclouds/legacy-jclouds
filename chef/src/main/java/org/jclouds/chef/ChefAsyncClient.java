@@ -49,6 +49,7 @@ import org.jclouds.rest.annotations.PartParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -77,9 +78,10 @@ public interface ChefAsyncClient {
     * @see ChefClient#createCookbook(String,File)
     */
    @POST
-   @Path("name")
-   ListenableFuture<Void> createCookbook(@FormParam("name") String cookbookName,
-            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
+   @Path("cookbooks")
+   ListenableFuture<Void> createCookbook(
+         @FormParam("name") String cookbookName,
+         @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
 
    /**
     * @see ChefClient#createCookbook(String,byte[])
@@ -87,8 +89,8 @@ public interface ChefAsyncClient {
    @POST
    @Path("cookbooks")
    ListenableFuture<Void> createCookbook(
-            @FormParam("name") String cookbookName,
-            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
+         @FormParam("name") String cookbookName,
+         @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
 
    /**
     * @see ChefClient#updateCookbook(String,File)
@@ -96,8 +98,8 @@ public interface ChefAsyncClient {
    @PUT
    @Path("cookbooks/{cookbookname}/_content")
    ListenableFuture<Void> updateCookbook(
-            @PathParam("cookbookname") @FormParam("name") String cookbookName,
-            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
+         @PathParam("cookbookname") @FormParam("name") String cookbookName,
+         @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File content);
 
    /**
     * @see ChefClient#updateCookbook(String,byte[])
@@ -105,8 +107,8 @@ public interface ChefAsyncClient {
    @PUT
    @Path("cookbooks/{cookbookname}/_content")
    ListenableFuture<Void> updateCookbook(
-            @PathParam("cookbookname") @FormParam("name") String cookbookName,
-            @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
+         @PathParam("cookbookname") @FormParam("name") String cookbookName,
+         @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
 
    /**
     * @see ChefCookbook#deleteCookbook
@@ -114,16 +116,17 @@ public interface ChefAsyncClient {
    @DELETE
    @Path("cookbooks/{cookbookname}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteCookbook(@PathParam("cookbookname") String cookbookName);
-
-   
+   ListenableFuture<Void> deleteCookbook(
+         @PathParam("cookbookname") String cookbookName);
 
    /**
     * @see ChefCookbook#getCookbook
     */
    @GET
    @Path("cookbooks/{cookbookname}")
-   ListenableFuture<String> getCookbook(@PathParam("cookbookname") String cookbookName);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<String> getCookbook(
+         @PathParam("cookbookname") String cookbookName);
 
    /**
     * @see ChefClient#createClient
@@ -132,7 +135,7 @@ public interface ChefAsyncClient {
    @Path("clients")
    @ResponseParser(ParseKeyFromJson.class)
    ListenableFuture<String> createClient(
-            @BinderParam(BindClientnameToJsonPayload.class) String clientname);
+         @BinderParam(BindClientnameToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#generateKeyForClient
@@ -141,7 +144,7 @@ public interface ChefAsyncClient {
    @Path("clients/{clientname}")
    @ResponseParser(ParseKeyFromJson.class)
    ListenableFuture<String> generateKeyForClient(
-            @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
+         @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#clientExists
@@ -149,15 +152,26 @@ public interface ChefAsyncClient {
    @HEAD
    @Path("clients/{clientname}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> clientExists(@PathParam("clientname") String clientname);
+   ListenableFuture<Boolean> clientExists(
+         @PathParam("clientname") String clientname);
+
+   /**
+    * @see ChefClient#getClient
+    */
+   @GET
+   @Path("clients/{clientname}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Boolean> getClient(
+         @PathParam("clientname") String clientname);
 
    /**
     * @see ChefClient#deleteClient
     */
    @DELETE
    @Path("clients/{clientname}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteClient(@PathParam("clientname") String clientname);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<String> deleteClient(
+         @PathParam("clientname") String clientname);
 
    /**
     * @see ChefClient#listClients
