@@ -25,7 +25,7 @@ package org.jclouds.ibmdev;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ibmdev.options.CreateInstanceOptions.Builder.attachIp;
-import static org.jclouds.ibmdev.options.CreateInstanceOptions.Builder.configurationData;
+import static org.jclouds.ibmdev.options.CreateInstanceOptions.Builder.authorizePublicKey;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -95,6 +95,13 @@ public class IBMDeveloperCloudClientLiveTest {
       connection = (IBMDeveloperCloudClient) IBMDeveloperCloudContextFactory
             .createContext(user, password, new Log4JLoggingModule())
             .getProviderSpecificContext().getApi();
+      for (Instance instance : connection.listInstances()) {
+         try {
+            connection.deleteInstance(instance.getId());
+         } catch (Exception e) {
+
+         }
+      }
    }
 
    @Test
@@ -261,7 +268,7 @@ public class IBMDeveloperCloudClientLiveTest {
             allAddresses);
    }
 
-   @Test(enabled = false, dependsOnMethods = "testGetLocation")
+   @Test(dependsOnMethods = "testGetLocation")
    public void testCreateVolume() throws Exception {
       try {
          volume = connection.createVolumeInLocation(location.getId(), TAG,
@@ -312,26 +319,29 @@ public class IBMDeveloperCloudClientLiveTest {
 
    private static final String IMAGE_ID = "11";// Rational Insight
 
-   @Test(dependsOnMethods = { "testAddPublicKey", "testAllocateIpAddress" })
+   @Test(dependsOnMethods = { "testAddPublicKey" })
    public void testCreateInstance() throws Exception {
-      for (Instance instance : connection.listInstances()) {
-         try {
-            connection.deleteInstance(instance.getId());
-         } catch (Exception e) {
-
-         }
-      }
-
-      System.err.println(connection.getImage(IMAGE_ID));
       instance = connection.createInstanceInLocation(location.getId(), TAG,
-            IMAGE_ID, SIZE, configurationData(
-                  ImmutableMap.of("insight_admin_password", "myPassword1",
-                        "db2_admin_password", "myPassword2",
-                        "report_user_password", "myPassword3"))
-                  .authorizePublicKey(key.getName()));
+            IMAGE_ID, SIZE, authorizePublicKey(key.getName())
+                  .configurationData(
+                        ImmutableMap.of("insight_admin_password",
+                              "myPassword1", "db2_admin_password",
+                              "myPassword2", "report_user_password",
+                              "myPassword3")));
+
+      assertBeginState(instance, TAG);
+      blockUntilRunning(instance);
+      assertRunning(instance, TAG);
+
+   }
+
+   private void assertRunning(Instance instance, String name)
+         throws AssertionError {
+      instance = connection.getInstance(instance.getId());
+
       try {
-         assertIpHostAndStatusNEW(instance);
-         assertConsistent(instance, TAG);
+         assertIpHostAndStatusACTIVE(instance);
+         assertConsistent(instance, name);
       } catch (NullPointerException e) {
          System.err.println(instance);
          throw e;
@@ -339,7 +349,9 @@ public class IBMDeveloperCloudClientLiveTest {
          System.err.println(instance);
          throw e;
       }
+   }
 
+   private void blockUntilRunning(Instance instance) {
       long start = System.currentTimeMillis();
       assert new RetryablePredicate<Instance>(new InstanceActive(connection),
             15 * 60 * 1000).apply(instance) : connection.getInstance(instance
@@ -347,12 +359,13 @@ public class IBMDeveloperCloudClientLiveTest {
 
       System.out.println(((System.currentTimeMillis() - start) / 1000)
             + " seconds");
+   }
 
-      instance = connection.getInstance(instance.getId());
-
+   private void assertBeginState(Instance instance, String name)
+         throws AssertionError {
       try {
-         assertIpHostAndStatusACTIVE(instance);
-         assertConsistent(instance, TAG);
+         assertIpHostAndStatusNEW(instance);
+         assertConsistent(instance, name);
       } catch (NullPointerException e) {
          System.err.println(instance);
          throw e;
@@ -360,12 +373,11 @@ public class IBMDeveloperCloudClientLiveTest {
          System.err.println(instance);
          throw e;
       }
-
    }
 
-   private void assertConsistent(Instance instance, String TAG) {
+   private void assertConsistent(Instance instance, String name) {
       assertNotNull(instance.getId());
-      assertEquals(instance.getName(), TAG);
+      assertEquals(instance.getName(), name);
       assertEquals(instance.getInstanceType(), SIZE);
       assertEquals(instance.getLocation(), location.getId());
       assertEquals(instance.getImageId(), IMAGE_ID);
@@ -375,7 +387,7 @@ public class IBMDeveloperCloudClientLiveTest {
       assertNotNull(instance.getExpirationTime());
       assertEquals(instance.getOwner(), user);
       assertEquals(instance.getProductCodes(), ImmutableSet.<String> of());
-      assertEquals(instance.getRequestName(), TAG);
+      assertEquals(instance.getRequestName(), name);
       assertNotNull(instance.getRequestId());
    }
 
@@ -398,10 +410,11 @@ public class IBMDeveloperCloudClientLiveTest {
     * .faces?guid={
     * DA689AEE-783C-6FE7-6F9F-DFEE9763F806}&v=1&fid=1068&tid=1523#topic
     */
-   @Test(enabled = false, dependsOnMethods = { "testAddPublicKey",
-         "testAllocateIpAddress", "testCreateVolume" })
+   @Test(dependsOnMethods = { "testAddPublicKey", "testAllocateIpAddress",
+         "testCreateVolume" })
    public void testCreateInstanceWithVolume() throws Exception {
-      instance2 = connection.createInstanceInLocation(location.getId(), TAG,
+      String name = TAG + "1";
+      instance2 = connection.createInstanceInLocation(location.getId(), name,
             IMAGE_ID, SIZE, attachIp(ip.getId()).authorizePublicKey(
                   key.getName()).mountVolume(volume.getId(), "/mnt")
                   .configurationData(
@@ -409,7 +422,10 @@ public class IBMDeveloperCloudClientLiveTest {
                               "myPassword1", "db2_admin_password",
                               "myPassword2", "report_user_password",
                               "myPassword3")));
-      //
+
+      assertBeginState(instance2, name);
+      blockUntilRunning(instance2);
+      assertRunning(instance2, name);
 
       volume = connection.getVolume(volume.getId());
       assertEquals(volume.getInstanceId(), instance2.getId());
@@ -443,14 +459,12 @@ public class IBMDeveloperCloudClientLiveTest {
          } catch (Exception e) {
 
          }
+      if (ip != null)
+         try {
+            connection.releaseAddress(ip.getId());
+         } catch (Exception e) {
 
-      // resource contention on ip addresses... lets save it
-      // if (ip != null)
-      // try {
-      // connection.releaseAddress(ip.getId());
-      // } catch (Exception e) {
-      //
-      // }
+         }
       if (key != null)
          try {
             connection.deleteKey(key.getName());
