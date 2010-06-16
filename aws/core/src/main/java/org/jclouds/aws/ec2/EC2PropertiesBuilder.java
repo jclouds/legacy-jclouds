@@ -49,7 +49,7 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       // authorized key executes after ssh has started
       properties.setProperty("jclouds.ssh.max_retries", "6");
       properties.setProperty("jclouds.ssh.retryable_messages",
-               "Auth fail,invalid data,End of IO Stream Read,Connection reset");
+               "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
       return properties;
    }
 

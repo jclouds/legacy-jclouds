@@ -141,7 +141,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final String privateDnsName;
    @Nullable
    private final String privateIpAddress;
-   private final Set<String> productCodes;
+   private final Set<String> productCodes = Sets.newLinkedHashSet();
    @Nullable
    private final String ramdiskId;
    @Nullable
@@ -186,7 +186,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.platform = platform;
       this.privateDnsName = privateDnsName; // nullable on runinstances.
       this.privateIpAddress = privateIpAddress;
-      this.productCodes = checkNotNull(productCodes, "productCodes");
+      Iterables.addAll(this.productCodes, checkNotNull(productCodes, "productCodes"));
       this.ramdiskId = ramdiskId;
       this.reason = reason;
       this.subnetId = subnetId;

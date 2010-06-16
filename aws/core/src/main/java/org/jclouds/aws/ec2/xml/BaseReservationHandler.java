@@ -52,7 +52,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    protected final String defaultRegion;
 
    @Inject
-   public BaseReservationHandler(DateService dateService, @EC2 String defaultRegion) {
+   public BaseReservationHandler(DateService dateService,
+         @EC2 String defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }
@@ -89,7 +90,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    protected boolean inProductCodes;
    protected boolean inGroups;
    private boolean inBlockDeviceMapping;
-   private Map<String, RunningInstance.EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private Map<String, RunningInstance.EbsBlockDevice> ebsBlockDevices = Maps
+         .newHashMap();
 
    private String volumeId;
    private Attachment.Status attachmentStatus;
@@ -99,7 +101,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private String deviceName;
    private String rootDeviceName;
 
-   public void startElement(String uri, String name, String qName, Attributes attrs) {
+   public void startElement(String uri, String name, String qName,
+         Attributes attrs) {
       if (qName.equals("instancesSet")) {
          inInstances = true;
       } else if (qName.equals("productCodesSet")) {
@@ -180,11 +183,14 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("volumeId")) {
          volumeId = currentOrNull();
       } else if (qName.equals("status")) {
-         attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
+         attachmentStatus = Attachment.Status.fromValue(currentText.toString()
+               .trim());
       } else if (qName.equals("attachTime")) {
-         attachTime = dateService.iso8601DateParse(currentText.toString().trim());
+         attachTime = dateService.iso8601DateParse(currentText.toString()
+               .trim());
       } else if (qName.equals("deleteOnTermination")) {
-         deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
+         deleteOnTermination = Boolean.parseBoolean(currentText.toString()
+               .trim());
       } else if (qName.equals("rootDeviceName")) {
          rootDeviceName = currentOrNull();
       } else if (qName.equals("item")) {
@@ -195,8 +201,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
 
    protected void inItem() {
       if (inBlockDeviceMapping) {
-         ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId,
-                  attachmentStatus, attachTime, deleteOnTermination));
+         ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(
+               volumeId, attachmentStatus, attachTime, deleteOnTermination));
          this.deviceName = null;
          this.volumeId = null;
          this.attachmentStatus = null;
@@ -204,13 +210,27 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          this.deleteOnTermination = true;
       } else if (inInstances && !inProductCodes && !inBlockDeviceMapping) {
          String region = EC2Utils.findRegionInArgsOrNull(request);
+
+         // Eucalyptus
+         if (ipAddress == null && dnsName != null
+               && dnsName.matches(".*[0-9]$")) {
+            ipAddress = dnsName;
+            dnsName = null;
+         }
+
+         if (privateIpAddress == null && privateDnsName != null
+               && privateDnsName.matches(".*[0-9]$")) {
+            privateIpAddress = privateDnsName;
+            privateDnsName = null;
+         }
          if (region == null)
             region = defaultRegion;
-         instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId,
-                  instanceId, instanceState, instanceType, ipAddress, kernelId, keyName,
-                  launchTime, monitoring, availabilityZone, platform, privateDnsName,
-                  privateIpAddress, productCodes, ramdiskId, reason, subnetId, vpcId,
-                  rootDeviceType, rootDeviceName, ebsBlockDevices));
+         instances.add(new RunningInstance(region, groupIds, amiLaunchIndex,
+               dnsName, imageId, instanceId, instanceState, instanceType,
+               ipAddress, kernelId, keyName, launchTime, monitoring,
+               availabilityZone, platform, privateDnsName, privateIpAddress,
+               productCodes, ramdiskId, reason, subnetId, vpcId,
+               rootDeviceType, rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -245,8 +265,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       String region = EC2Utils.findRegionInArgsOrNull(request);
       if (region == null)
          region = defaultRegion;
-      Reservation info = new Reservation(region, groupIds, instances, ownerId, requesterId,
-               reservationId);
+      Reservation info = new Reservation(region, groupIds, instances, ownerId,
+            requesterId, reservationId);
       this.groupIds = Sets.newTreeSet();
       this.instances = Sets.newTreeSet();
       this.ownerId = null;

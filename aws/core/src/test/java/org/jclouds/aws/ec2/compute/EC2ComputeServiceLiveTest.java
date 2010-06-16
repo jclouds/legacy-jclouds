@@ -52,7 +52,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "eucalyptus";
+      service = "ec2";
    }
 
    @Override
