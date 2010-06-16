@@ -74,7 +74,8 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
     * @param configurationData
     *           extra configuration to pass to the instance
     */
-   public CreateInstanceOptions configurationData(Map<String, String> configurationData) {
+   public CreateInstanceOptions configurationData(
+         Map<String, String> configurationData) {
       checkNotNull(configurationData, "configurationData");
       for (Entry<String, String> entry : configurationData.entrySet()) {
          formParameters.removeAll(entry.getKey());
@@ -100,7 +101,8 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateInstanceOptions#configurationData(Map<String, String> )
        */
-      public static CreateInstanceOptions configurationData(Map<String, String> configurationData) {
+      public static CreateInstanceOptions configurationData(
+            Map<String, String> configurationData) {
          CreateInstanceOptions options = new CreateInstanceOptions();
          return options.configurationData(configurationData);
       }
@@ -108,7 +110,8 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateInstanceOptions#mountVolume(String, String )
        */
-      public static CreateInstanceOptions mountVolume(String id, String mountPoint) {
+      public static CreateInstanceOptions mountVolume(String id,
+            String mountPoint) {
          CreateInstanceOptions options = new CreateInstanceOptions();
          return options.mountVolume(id, mountPoint);
       }
@@ -124,7 +127,8 @@ public class CreateInstanceOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateInstanceOptions#authorizePublicKey(String )
        */
-      public static CreateInstanceOptions authorizePublicKey(String publicKeyName) {
+      public static CreateInstanceOptions authorizePublicKey(
+            String publicKeyName) {
          CreateInstanceOptions options = new CreateInstanceOptions();
          return options.authorizePublicKey(publicKeyName);
       }

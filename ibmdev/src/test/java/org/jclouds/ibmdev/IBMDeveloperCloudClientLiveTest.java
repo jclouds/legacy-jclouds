@@ -328,7 +328,7 @@ public class IBMDeveloperCloudClientLiveTest {
                   ImmutableMap.of("insight_admin_password", "myPassword1",
                         "db2_admin_password", "myPassword2",
                         "report_user_password", "myPassword3"))
-                  .authorizePublicKey(key.getName()).attachIp(ip.getId()));
+                  .authorizePublicKey(key.getName()));
       try {
          assertIpHostAndStatusNEW(instance);
          assertConsistent(instance, TAG);
@@ -342,11 +342,13 @@ public class IBMDeveloperCloudClientLiveTest {
 
       long start = System.currentTimeMillis();
       assert new RetryablePredicate<Instance>(new InstanceActive(connection),
-            600, 2, TimeUnit.SECONDS).apply(instance) : connection
-            .getInstance(instance.getId());
+            15 * 60 * 1000).apply(instance) : connection.getInstance(instance
+            .getId());
 
       System.out.println(((System.currentTimeMillis() - start) / 1000)
             + " seconds");
+
+      instance = connection.getInstance(instance.getId());
 
       try {
          assertIpHostAndStatusACTIVE(instance);
