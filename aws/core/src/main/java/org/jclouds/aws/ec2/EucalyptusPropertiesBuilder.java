@@ -34,7 +34,7 @@ public class EucalyptusPropertiesBuilder extends EC2PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_EC2_ENDPOINT,
-            "http://173.205.188.130:8773/services/Eucalyptus");
+            "http://ecc.eucalyptus.com:8773/services/Eucalyptus");
       // TODO
       // properties.setProperty(PROPERTY_ELB_ENDPOINT,
       // "https://elasticloadbalancing.us-east-1.amazonaws.com");

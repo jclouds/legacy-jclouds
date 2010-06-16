@@ -17,9 +17,9 @@ public class WalrusPropertiesBuilder extends S3PropertiesBuilder {
       properties.setProperty(PROPERTY_S3_REGIONS, "Walrus");
       properties.setProperty(PROPERTY_S3_DEFAULT_REGIONS, "Walrus");
       properties.setProperty(PROPERTY_S3_ENDPOINT,
-            "http://173.205.188.130:8773/services/Walrus");
+            "http://ecc.eucalyptus.com:8773/services/Walrus");
       properties.setProperty(PROPERTY_S3_ENDPOINT + ".Walrus",
-            "http://173.205.188.130:8773/services/Walrus");
+            "http://ecc.eucalyptus.com:8773/services/Walrus");
       return properties;
    }
 
