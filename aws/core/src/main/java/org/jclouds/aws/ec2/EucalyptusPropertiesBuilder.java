@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2;
 
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_ENDPOINT;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_PORT_OPEN;
 
 import java.util.Properties;
 
@@ -38,6 +39,8 @@ public class EucalyptusPropertiesBuilder extends EC2PropertiesBuilder {
       // properties.setProperty(PROPERTY_ELB_ENDPOINT,
       // "https://elasticloadbalancing.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
+      properties.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, 5 * 60 * 1000 + "");
+
       return properties;
    }
 

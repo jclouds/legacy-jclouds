@@ -29,6 +29,7 @@ import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
@@ -262,10 +263,14 @@ public class EC2ComputeServiceContextModule extends EC2ContextModule {
          String[] parts = parseHandle(id);
          String region = parts[0];
          String instanceId = parts[1];
-         RunningInstance runningInstance = Iterables
-               .getOnlyElement(getAllRunningInstancesInRegion(client
-                     .getInstanceServices(), region, instanceId));
-         return runningInstanceToNodeMetadata.apply(runningInstance);
+         try {
+            RunningInstance runningInstance = Iterables
+                  .getOnlyElement(getAllRunningInstancesInRegion(client
+                        .getInstanceServices(), region, instanceId));
+            return runningInstanceToNodeMetadata.apply(runningInstance);
+         } catch (NoSuchElementException e) {
+            return null;
+         }
       }
 
    }
