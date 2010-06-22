@@ -35,15 +35,17 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
 /**
- * This object will parse the body of an HttpResponse and return the result of type <T> back to the
- * caller.
+ * This object will parse the body of an HttpResponse and return the result of
+ * type <T> back to the caller.
  * 
  * @author Adrian Cole
  */
-public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext {
+public class ParseSax<T> implements Function<HttpResponse, T>,
+      InvocationContext {
 
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
@@ -74,13 +76,19 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
          parser.parse(new InputSource(from));
          return getHandler().getResult();
       } catch (Exception e) {
-         StringBuilder message = new StringBuilder();
-         if (request != null)
-            message.append("Error parsing input for ").append(request.getRequestLine())
-                     .append(": ");
-         message.append(e.getMessage());
-         logger.error(e, message.toString());
-         throw new HttpException(message.toString(), e);
+         if (request != null) {
+
+            StringBuilder message = new StringBuilder();
+            message.append("Error parsing input for ").append(
+                  request.getRequestLine()).append(": ");
+            message.append(e.getMessage());
+            logger.error(e, message.toString());
+            throw new HttpException(message.toString(), e);
+         } else {
+            Throwables.propagate(e);
+            assert false : "should have propagated: " + e;
+            return null;
+         }
       } finally {
          Closeables.closeQuietly(from);
       }
@@ -91,14 +99,17 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    }
 
    /**
-    * Handler that produces a useable domain object accessible after parsing completes.
+    * Handler that produces a useable domain object accessible after parsing
+    * completes.
     * 
     * @author Adrian Cole
     */
-   public abstract static class HandlerWithResult<T> extends DefaultHandler implements
-            InvocationContext {
+   public abstract static class HandlerWithResult<T> extends DefaultHandler
+         implements InvocationContext {
       protected GeneratedHttpRequest<?> request;
+
       public abstract T getResult();
+
       @Override
       public void setContext(GeneratedHttpRequest<?> request) {
          this.request = request;
