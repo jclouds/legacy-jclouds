@@ -18,14 +18,14 @@
  */
 package org.jclouds.vcloud.reference;
 
-
 /**
  * Configuration properties and constants used in VCloud connections.
  * 
  * @author Adrian Cole
  */
 public interface VCloudConstants {
-   public static final String PROPERTY_VCLOUD_VERSION = "jclouds.vcloud.version";
+   public static final String PROPERTY_VCLOUD_VERSION_API = "jclouds.vcloud.version.api";
+   public static final String PROPERTY_VCLOUD_VERSION_SCHEMA = "jclouds.vcloud.version.schema";
    public static final String PROPERTY_VCLOUD_ENDPOINT = "jclouds.vcloud.endpoint";
    public static final String PROPERTY_VCLOUD_USER = "jclouds.vcloud.user";
    public static final String PROPERTY_VCLOUD_KEY = "jclouds.vcloud.key";
@@ -33,22 +33,9 @@ public interface VCloudConstants {
     * automatically renew vcloud token before this interval expires.
     */
    public static final String PROPERTY_VCLOUD_SESSIONINTERVAL = "jclouds.vcloud.sessioninterval";
-   /**
-    * cpus
-    */
-   public static final String PROPERTY_VCLOUD_DEFAULT_CPUCOUNT = "jclouds.vcloud.defaults.cpucount";
-   /**
-    * megabytes
-    */
-   public static final String PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED = "jclouds.vcloud.defaults.dhcpenabled";
+   public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
    public static final String PROPERTY_VCLOUD_DEFAULT_FENCEMODE = "jclouds.vcloud.defaults.fencemode";
 
-   public static final String PROPERTY_VCLOUD_DEFAULT_MEMORY = "jclouds.vcloud.defaults.memorysizemegabytes";
-   public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
-   /**
-    * kilobytes
-    */
-   public static final String PROPERTY_VCLOUD_DEFAULT_DISK = "jclouds.vcloud.defaults.getdisksizekilobytes";
    public static final String PROPERTY_VCLOUD_XML_NAMESPACE = "jclouds.vcloud.xml.ns";
    public static final String PROPERTY_VCLOUD_XML_SCHEMA = "jclouds.vcloud.xml.schema";
 

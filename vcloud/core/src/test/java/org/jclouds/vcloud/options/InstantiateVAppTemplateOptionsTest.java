@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.options;
 
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.dhcpEnabled;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.disk;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.fenceMode;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.inNetwork;
@@ -55,7 +54,8 @@ public class InstantiateVAppTemplateOptionsTest {
 
    @Test
    public void testInNetworkStatic() {
-      InstantiateVAppTemplateOptions options = inNetwork(URI.create("http://localhost"));
+      InstantiateVAppTemplateOptions options = inNetwork(URI
+            .create("http://localhost"));
       assertEquals(options.getNetwork(), "http://localhost");
    }
 
@@ -119,27 +119,14 @@ public class InstantiateVAppTemplateOptionsTest {
    @Test
    public void testFenceMode() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.fenceMode(FenceMode.BLOCK_IN_OUT);
-      assertEquals(options.getFenceMode(), "blockInOut");
+      options.fenceMode(FenceMode.BRIDGED);
+      assertEquals(options.getFenceMode(), "bridged");
    }
 
    @Test
    public void testFenceModeStatic() {
-      InstantiateVAppTemplateOptions options = fenceMode(FenceMode.BLOCK_IN_OUT);
-      assertEquals(options.getFenceMode(), "blockInOut");
-   }
-
-   @Test
-   public void testDhcpEnabled() {
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.dhcpEnabled(true);
-      assertEquals(options.getDhcpEnabled(), "true");
-   }
-
-   @Test
-   public void testDhcpEnabledStatic() {
-      InstantiateVAppTemplateOptions options = dhcpEnabled(true);
-      assertEquals(options.getDhcpEnabled(), "true");
+      InstantiateVAppTemplateOptions options = fenceMode(FenceMode.BRIDGED);
+      assertEquals(options.getFenceMode(), "bridged");
    }
 
 }

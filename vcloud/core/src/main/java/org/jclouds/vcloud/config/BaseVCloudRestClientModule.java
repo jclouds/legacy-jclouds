@@ -26,7 +26,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_API;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -82,6 +82,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
+import com.google.inject.internal.Maps;
 
 /**
  * Configures the VCloud authentication service connection, including logging
@@ -125,12 +126,34 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Org
    @Singleton
-   protected URI provideOrg(Supplier<VCloudSession> cache,
+   protected URI provideOrg(@Org Iterable<NamedResource> orgs) {
+      return Iterables.getLast(orgs).getLocation();
+   }
+
+   @Provides
+   @Named("VDC_TO_ORG")
+   @Singleton
+   protected Map<String, String> provideVDCtoORG(@Org Iterable<NamedResource> orgs,
+         VCloudClient client) {
+      Map<String, String> returnVal = Maps.newLinkedHashMap();
+      for (NamedResource orgr : orgs) {
+         for (NamedResource vdc : client.getOrganization(orgr.getId())
+               .getVDCs().values()) {
+            returnVal.put(vdc.getId(), orgr.getId());
+         }
+      }
+      return returnVal;
+   }
+
+   @Provides
+   @Org
+   @Singleton
+   protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache,
          @Named(PROPERTY_VCLOUD_USER) String user) {
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: "
             + user);
-      return Iterables.getLast(discovery.getOrgs().values()).getLocation();
+      return discovery.getOrgs().values();
    }
 
    @Provides
@@ -192,7 +215,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @org.jclouds.vcloud.endpoints.VCloudLogin
    protected URI provideAuthenticationURI(
          VCloudVersionsAsyncClient versionService,
-         @Named(PROPERTY_VCLOUD_VERSION) String version)
+         @Named(PROPERTY_VCLOUD_VERSION_API) String version)
          throws InterruptedException, ExecutionException, TimeoutException {
       SortedMap<String, URI> versions = versionService.getSupportedVersions()
             .get(180, TimeUnit.SECONDS);

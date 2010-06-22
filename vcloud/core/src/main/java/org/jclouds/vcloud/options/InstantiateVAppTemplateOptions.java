@@ -40,7 +40,6 @@ public class InstantiateVAppTemplateOptions {
    private String diskSizeKilobytes;
    private String network;
    private String fenceMode;
-   private String dhcpEnabled;
    private String networkName;
    private boolean blockOnDeploy = true;
    private Map<String, String> properties = Maps.newTreeMap();
@@ -77,13 +76,8 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
-   public InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
+   public InstantiateVAppTemplateOptions fenceMode(String fenceMode) {
       this.fenceMode = checkNotNull(fenceMode, "fenceMode").toString();
-      return this;
-   }
-
-   public InstantiateVAppTemplateOptions dhcpEnabled(boolean dhcpEnabled) {
-      this.dhcpEnabled = dhcpEnabled + "";
       return this;
    }
 
@@ -127,10 +121,6 @@ public class InstantiateVAppTemplateOptions {
 
    public String getFenceMode() {
       return fenceMode;
-   }
-
-   public String getDhcpEnabled() {
-      return dhcpEnabled;
    }
 
    public Map<String, String> getProperties() {
@@ -183,18 +173,9 @@ public class InstantiateVAppTemplateOptions {
       /**
        * @see InstantiateVAppTemplateOptions#fenceMode(FenceMode)
        */
-      public static InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
+      public static InstantiateVAppTemplateOptions fenceMode(String fenceMode) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.fenceMode(fenceMode);
-      }
-
-      /**
-       * @see InstantiateVAppTemplateOptions#dhcpEnabled(boolean)
-       */
-      public static InstantiateVAppTemplateOptions dhcpEnabled(
-            boolean dhcpEnabled) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.dhcpEnabled(dhcpEnabled);
       }
 
       /**
@@ -231,8 +212,7 @@ public class InstantiateVAppTemplateOptions {
             + ", memorySizeMegabytes=" + memorySizeMegabytes
             + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network="
             + network + ", networkName=" + networkName + ", fenceMode="
-            + fenceMode + ", dhcpEnabled=" + dhcpEnabled + ", properties="
-            + properties + "]";
+            + fenceMode + ", properties=" + properties + "]";
    }
 
    @Override
@@ -240,8 +220,6 @@ public class InstantiateVAppTemplateOptions {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((cpuCount == null) ? 0 : cpuCount.hashCode());
-      result = prime * result
-            + ((dhcpEnabled == null) ? 0 : dhcpEnabled.hashCode());
       result = prime * result
             + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
       result = prime * result
@@ -271,11 +249,6 @@ public class InstantiateVAppTemplateOptions {
          if (other.cpuCount != null)
             return false;
       } else if (!cpuCount.equals(other.cpuCount))
-         return false;
-      if (dhcpEnabled == null) {
-         if (other.dhcpEnabled != null)
-            return false;
-      } else if (!dhcpEnabled.equals(other.dhcpEnabled))
          return false;
       if (diskSizeKilobytes == null) {
          if (other.diskSizeKilobytes != null)

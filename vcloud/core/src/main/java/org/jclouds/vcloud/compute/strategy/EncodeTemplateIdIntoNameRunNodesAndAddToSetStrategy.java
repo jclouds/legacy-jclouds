@@ -50,10 +50,11 @@ public class EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy extends
          ListNodesStrategy listNodesStrategy,
          @Named("NAMING_CONVENTION") String nodeNamingConvention,
          ComputeUtils utils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         SecureRandom random) {
       super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention,
             utils, executor);
-      this.random = new SecureRandom();
+      this.random = random;
    }
 
    /**

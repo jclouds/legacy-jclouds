@@ -39,11 +39,13 @@ public class StaticSizeProvider implements Provider<Set<? extends Size>> {
    @Override
    public Set<? extends Size> get() {
       Set<Size> sizes = Sets.newHashSet();
-      for (int cpus : new int[] { 1, 2, 4 })
+      for (int cpus : new int[] { 1, 2, 4, 8 })
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 }) {
             String id = String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10);
-            sizes.add(new SizeImpl(id, null, id, null, null, ImmutableMap.<String, String> of(),
-                     cpus, ram, 10, ImagePredicates.any()));
+            sizes
+                  .add(new SizeImpl(id, null, id, null, null, ImmutableMap
+                        .<String, String> of(), cpus, ram, 10, ImagePredicates
+                        .any()));
          }
       return sizes;
    }

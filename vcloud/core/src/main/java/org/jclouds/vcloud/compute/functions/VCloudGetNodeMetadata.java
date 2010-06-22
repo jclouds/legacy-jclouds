@@ -50,8 +50,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
- * bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires
+ * {@link BaseVCloudComputeClient} bound.
  * 
  * @author Adrian Cole
  */
@@ -70,50 +70,59 @@ public class VCloudGetNodeMetadata {
 
    // hex [][][] are templateId, last two are instanceId
    public static final Pattern TAG_PATTERN_WITH_TEMPLATE = Pattern
-            .compile("([^-]+)-([0-9a-f][0-9a-f][0-9a-f])[0-9a-f]+");
+         .compile("([^-]+)-([0-9a-f][0-9a-f][0-9a-f])[0-9a-f]+");
 
-   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-[0-9]+");
+   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern
+         .compile("([^-]+)-[0-9]+");
 
    @Inject
-   protected VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResourceInVDC findLocationForResourceInVDC,
-            Provider<Set<? extends Image>> images) {
+   VCloudGetNodeMetadata(VCloudClient client,
+         VCloudComputeClient computeClient,
+         Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
+         FindLocationForResourceInVDC findLocationForResourceInVDC,
+         Provider<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
       this.getExtra = checkNotNull(getExtra, "getExtra");
-      this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC,
-               "findLocationForResourceInVDC");
+      this.findLocationForResourceInVDC = checkNotNull(
+            findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.computeClient = checkNotNull(computeClient, "computeClient");
-      this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
+      this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState,
+            "vAppStatusToNodeState");
    }
 
-   protected NodeMetadata getNodeMetadataByIdInVDC(String id) {
+   public NodeMetadata execute(String id) {
       VApp vApp = client.getVApp(id);
 
       String tag = null;
       Image image = null;
-      Matcher matcher = TAG_PATTERN_WITH_TEMPLATE.matcher(vApp.getName());
+      Matcher matcher = vApp.getName() != null ? TAG_PATTERN_WITH_TEMPLATE
+            .matcher(vApp.getName()) : null;
 
-      final Location location = findLocationForResourceInVDC.apply(vApp, vApp.getVDC().getId());
-      if (matcher.find()) {
+      final Location location = findLocationForResourceInVDC.apply(vApp, vApp
+            .getVDC().getId());
+      if (matcher != null && matcher.find()) {
          tag = matcher.group(1);
-         String templateIdInHexWithoutLeadingZeros = matcher.group(2).replaceAll("^[0]+", "");
-         final String templateId = Integer.parseInt(templateIdInHexWithoutLeadingZeros, 16) + "";
+         String templateIdInHexWithoutLeadingZeros = matcher.group(2)
+               .replaceAll("^[0]+", "");
+         final String templateId = Integer.parseInt(
+               templateIdInHexWithoutLeadingZeros, 16)
+               + "";
          try {
             image = Iterables.find(images.get(), new Predicate<Image>() {
 
                @Override
                public boolean apply(Image input) {
                   return input.getProviderId().equals(templateId)
-                           && input.getLocation().equals(location);
+                        && input.getLocation().equals(location);
                }
 
             });
          } catch (NoSuchElementException e) {
-            logger.warn(
-                     "could not find a matching image for vapp %s; vapptemplate %s in location %s",
-                     vApp, templateId, location);
+            logger
+                  .warn(
+                        "could not find a matching image for vapp %s; vapptemplate %s in location %s",
+                        vApp, templateId, location);
          }
       } else {
          matcher = TAG_PATTERN_WITHOUT_TEMPLATE.matcher(vApp.getName());
@@ -123,9 +132,10 @@ public class VCloudGetNodeMetadata {
             tag = "NOTAG-" + vApp.getName();
          }
       }
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(), location, vApp
-               .getLocation(), ImmutableMap.<String, String> of(), tag, image,
-               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(id),
-               computeClient.getPrivateAddresses(id), getExtra.apply(vApp), null);
+      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(),
+            location, vApp.getLocation(), ImmutableMap.<String, String> of(),
+            tag, image, vAppStatusToNodeState.get(vApp.getStatus()),
+            computeClient.getPublicAddresses(id), computeClient
+                  .getPrivateAddresses(id), getExtra.apply(vApp), null);
    }
 }

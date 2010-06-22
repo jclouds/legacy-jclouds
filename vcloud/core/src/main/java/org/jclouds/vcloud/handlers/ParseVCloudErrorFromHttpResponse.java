@@ -56,6 +56,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
             case 401:
                exception = new AuthorizationException(command.getRequest(), content);
                break;
+            case 403: // TODO temporary as terremark mistakenly uses this for vApp not found.
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {
                   String path = command.getRequest().getEndpoint().getPath();

@@ -57,7 +57,7 @@ public interface Network extends NamedResource {
    /**
     * return the network’s fence modes.
     */
-   Set<FenceMode> getFenceModes();
+   Set<String> getFenceModes();
 
    /**
     * return True if the network provides DHCP services

@@ -39,10 +39,10 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
-   private NamedResource org;
-   private Map<String, NamedResource> vdcs = Maps.newLinkedHashMap();
-   private Map<String, NamedResource> tasksLists = Maps.newLinkedHashMap();
-   private Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
+   protected NamedResource org;
+   protected Map<String, NamedResource> vdcs = Maps.newLinkedHashMap();
+   protected Map<String, NamedResource> tasksLists = Maps.newLinkedHashMap();
+   protected Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
 
    public Organization getResult() {
       return new OrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalogs, vdcs,

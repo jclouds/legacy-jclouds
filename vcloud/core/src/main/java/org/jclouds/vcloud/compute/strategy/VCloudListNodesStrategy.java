@@ -18,20 +18,16 @@
  */
 package org.jclouds.vcloud.compute.strategy;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -39,12 +35,9 @@ import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
-import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.VAppStatus;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -55,25 +48,30 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudListNodesStrategy extends VCloudGetNodeMetadata implements ListNodesStrategy {
+public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
+   protected final VCloudGetNodeMetadata getNodeMetadata;
+   protected final VCloudClient client;
+   protected final FindLocationForResourceInVDC findLocationForResourceInVDC;
 
    @Inject
-   protected VCloudListNodesStrategy(VCloudClient client, VCloudComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResourceInVDC findLocationForResourceInVDC,
-            Provider<Set<? extends Image>> images) {
-      super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC,
-               images);
+   protected VCloudListNodesStrategy(VCloudClient client,
+         VCloudGetNodeMetadata getNodeMetadata,
+         FindLocationForResourceInVDC findLocationForResourceInVDC) {
+      this.client = client;
+      this.getNodeMetadata = getNodeMetadata;
+      this.findLocationForResourceInVDC = findLocationForResourceInVDC;
    }
 
    @Override
    public Iterable<ComputeMetadata> list() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+      for (NamedResource vdc : client.getDefaultOrganization().getVDCs()
+            .values()) {
+         for (NamedResource resource : client.getVDC(vdc.getId())
+               .getResourceEntities().values()) {
             if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
                nodes.add(convertVAppToComputeMetadata(vdc, resource));
             }
@@ -82,19 +80,25 @@ public class VCloudListNodesStrategy extends VCloudGetNodeMetadata implements Li
       return nodes;
    }
 
-   private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
-      Location location = findLocationForResourceInVDC.apply(resource, vdc.getId());
-      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(), resource.getName(),
-               resource.getId(), location, null, ImmutableMap.<String, String> of());
+   private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc,
+         NamedResource resource) {
+      Location location = findLocationForResourceInVDC.apply(resource, vdc
+            .getId());
+      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(),
+            resource.getName(), resource.getId(), location, null, ImmutableMap
+                  .<String, String> of());
    }
 
    @Override
-   public Iterable<NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
+   public Iterable<NodeMetadata> listDetailsOnNodesMatching(
+         Predicate<ComputeMetadata> filter) {
       Set<NodeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+      for (NamedResource vdc : client.getDefaultOrganization().getVDCs()
+            .values()) {
+         for (NamedResource resource : client.getVDC(vdc.getId())
+               .getResourceEntities().values()) {
             if (resource.getType().equals(VCloudMediaType.VAPP_XML)
-                     && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
+                  && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
                addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
             }
          }
@@ -103,16 +107,17 @@ public class VCloudListNodesStrategy extends VCloudGetNodeMetadata implements Li
    }
 
    @VisibleForTesting
-   void addVAppToSetRetryingIfNotYetPresent(Set<NodeMetadata> nodes, NamedResource vdc,
-            NamedResource resource) {
+   void addVAppToSetRetryingIfNotYetPresent(Set<NodeMetadata> nodes,
+         NamedResource vdc, NamedResource resource) {
       NodeMetadata node = null;
       int i = 0;
       while (node == null && i++ < 3) {
          try {
-            node = getNodeMetadataByIdInVDC(resource.getId());
+            node = getNodeMetadata.execute(resource.getId());
             nodes.add(node);
          } catch (NullPointerException e) {
-            logger.warn("vApp %s not yet present in vdc %s", resource.getId(), vdc.getId());
+            logger.warn("vApp %s not yet present in vdc %s", resource.getId(),
+                  vdc.getId());
          }
       }
    }

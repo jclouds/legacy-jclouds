@@ -54,25 +54,33 @@ public class NetworkHandlerTest {
       InputStream is = getClass().getResourceAsStream("/network-terremark.xml");
       injector = Guice.createInjector(new ParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      Network result = factory.create(injector.getInstance(NetworkHandler.class)).parse(is);
-      assertEquals(result, new NetworkImpl("1708", "10.114.34.128/26", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"), null,
-               ImmutableSet.<String> of(), "10.114.34.129", "255.255.255.192", ImmutableSet
-                        .<FenceMode> of(FenceMode.ISOLATED), null, ImmutableSet.<NatRule> of(),
-               ImmutableSet.<FirewallRule> of()));
+      Network result = factory.create(
+            injector.getInstance(NetworkHandler.class)).parse(is);
+      assertEquals(
+            result,
+            new NetworkImpl(
+                  "1708",
+                  "10.114.34.128/26",
+                  URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"),
+                  null, ImmutableSet.<String> of(), "10.114.34.129",
+                  "255.255.255.192", ImmutableSet
+                        .<String> of(FenceMode.ISOLATED), null, ImmutableSet
+                        .<NatRule> of(), ImmutableSet.<FirewallRule> of()));
    }
 
    public void testHosting() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/network-hosting.xml");
       injector = Guice.createInjector(new ParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      Network result = (Network) factory.create(injector.getInstance(NetworkHandler.class)).parse(
-               is);
+      Network result = (Network) factory.create(
+            injector.getInstance(NetworkHandler.class)).parse(is);
       assertEquals(result, new NetworkImpl("1183", "188849 trust", URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/network/1183"), "188849 trust",
-               ImmutableSet.<String> of("76.12.32.110", "208.112.89.187"), "204.12.53.89",
-               "255.255.255.248", ImmutableSet.<FenceMode> of(), null, ImmutableSet.<NatRule> of(),
-               ImmutableSet.<FirewallRule> of()));
+            .create("https://vcloud.safesecureweb.com/api/v0.8/network/1183"),
+            "188849 trust", ImmutableSet.<String> of("76.12.32.110",
+                  "208.112.89.187"), "204.12.53.89", "255.255.255.248",
+            ImmutableSet.<String> of(), null, ImmutableSet.<NatRule> of(),
+            ImmutableSet.<FirewallRule> of()));
    }
 
 }

@@ -75,7 +75,7 @@ import com.google.inject.util.Providers;
  */
 public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
-   private final String providerName;
+   protected final String providerName;
 
    public VCloudComputeServiceContextModule(String providerName) {
       this.providerName = providerName;

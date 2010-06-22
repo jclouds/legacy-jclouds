@@ -31,11 +31,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.FenceMode;
-import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.HashMultimap;
@@ -45,6 +44,7 @@ import com.google.common.collect.Multimaps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindInstantiateVAppTemplateParamsToXmlPayload}
@@ -58,62 +58,67 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         props
-                  .put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
-                           "https://vcloud.safesecureweb.com/network/1990");
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
-                  "properties"));
+         props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
+               "https://vcloud.safesecureweb.com/network/1990");
+         Names.bindProperties(binder(), checkNotNull(
+               new VCloudPropertiesBuilder(props).build(), "properties"));
       }
    });
 
    public void testDefault() throws IOException {
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hosting.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
+            "/newvapp-hosting.xml"));
+      Multimap<String, String> headers = Multimaps
+            .synchronizedMultimap(HashMultimap.<String, String> create());
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getEndpoint()).andReturn(
+            URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
+      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null)
+            .atLeastOnce();
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+      map.put("template",
+            "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       binder.bindToRequest(request, map);
       verify(request);
 
    }
 
    public void testWithProcessorMemoryDisk() throws IOException {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.processorCount(1).memory(512).disk(1024);
+
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hostingcpumemdisk.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
+            "/newvapp-hostingcpumemdisk.xml"));
+      Multimap<String, String> headers = Multimaps
+            .synchronizedMultimap(HashMultimap.<String, String> create());
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
+      expect(request.getEndpoint()).andReturn(
+            URI.create("http://localhost/key")).anyTimes();
+      expect(request.getArgs()).andReturn(new Object[] { options })
+            .atLeastOnce();
+      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null)
+            .atLeastOnce();
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+      map.put("template",
+            "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       map.put("network", "https://vcloud.safesecureweb.com/network/1990");
-
-      map.put(ResourceType.PROCESSOR.value(), "1");
-      map.put(ResourceType.MEMORY.value(), "512");
-      map.put(ResourceType.DISK_DRIVE.value(), "1024");
 
       binder.bindToRequest(request, map);
       verify(request);
@@ -122,27 +127,29 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
    public void testWithNetworkNameDhcpFenceMode() throws IOException {
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hostingnetworknamedhcpfencemode.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
+            "/newvapp-hostingnetworknamedhcpfencemode.xml"));
+      Multimap<String, String> headers = Multimaps
+            .synchronizedMultimap(HashMultimap.<String, String> create());
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getEndpoint()).andReturn(
+            URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
+      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null)
+            .atLeastOnce();
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+            .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+      map.put("template",
+            "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       map.put("network", "https://vcloud.safesecureweb.com/network/1990");
       map.put("networkName", "aloha");
-      map.put("fenceMode", FenceMode.BRIDGED.toString());
-      map.put("dhcpEnabled", "true");
+      map.put("fenceMode", FenceMode.BRIDGED);
 
       binder.bindToRequest(request, map);
       verify(request);

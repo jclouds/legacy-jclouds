@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.FirewallRule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.NatRule;
@@ -45,15 +44,16 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    private final Set<String> dnsServers = Sets.newHashSet();
    private final String gateway;
    private final String netmask;
-   private final Set<FenceMode> fenceModes = Sets.newHashSet();
+   private final Set<String> fenceModes = Sets.newHashSet();
    @Nullable
    private final Boolean dhcp;
    private final Set<NatRule> natRules = Sets.newHashSet();
    private final Set<FirewallRule> firewallRules = Sets.newHashSet();
 
    public NetworkImpl(String id, String name, URI location, String description,
-            Set<String> dnsServers, String gateway, String netmask, Set<FenceMode> fenceModes,
-            Boolean dhcp, Set<NatRule> natRules, Set<FirewallRule> firewallRules) {
+         Set<String> dnsServers, String gateway, String netmask,
+         Set<String> fenceModes, Boolean dhcp, Set<NatRule> natRules,
+         Set<FirewallRule> firewallRules) {
       super(id, name, VCloudMediaType.NETWORK_XML, location);
       this.description = description;
       this.dnsServers.addAll(dnsServers);
@@ -96,7 +96,7 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    /**
     * {@inheritDoc}
     */
-   public Set<FenceMode> getFenceModes() {
+   public Set<String> getFenceModes() {
       return fenceModes;
    }
 
@@ -130,11 +130,15 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result
+            + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((dhcp == null) ? 0 : dhcp.hashCode());
-      result = prime * result + ((dnsServers == null) ? 0 : dnsServers.hashCode());
-      result = prime * result + ((fenceModes == null) ? 0 : fenceModes.hashCode());
-      result = prime * result + ((firewallRules == null) ? 0 : firewallRules.hashCode());
+      result = prime * result
+            + ((dnsServers == null) ? 0 : dnsServers.hashCode());
+      result = prime * result
+            + ((fenceModes == null) ? 0 : fenceModes.hashCode());
+      result = prime * result
+            + ((firewallRules == null) ? 0 : firewallRules.hashCode());
       result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
       result = prime * result + ((natRules == null) ? 0 : natRules.hashCode());
       result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
@@ -195,11 +199,12 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
 
    @Override
    public String toString() {
-      return "NetworkImpl [id=" + getId() + ", location=" + getLocation() + ", name=" + getName()
-               + ", type=" + getType() + ", description=" + description + ", dhcp=" + dhcp
-               + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes + ", firewallRules="
-               + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
-               + netmask + "]";
+      return "NetworkImpl [id=" + getId() + ", location=" + getLocation()
+            + ", name=" + getName() + ", type=" + getType() + ", description="
+            + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers
+            + ", fenceModes=" + fenceModes + ", firewallRules=" + firewallRules
+            + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
+            + netmask + "]";
    }
 
 }

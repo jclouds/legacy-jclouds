@@ -18,32 +18,24 @@
  */
 package org.jclouds.vcloud.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.base.CaseFormat;
-
 /**
  * 
- * The FenceMode specifies network constraints.
+ * The FenceMode element contains one of the following strings that specify how
+ * a network is connected to its parent network.
  * 
  * @author Adrian Cole
  */
-public enum FenceMode {
-
-   BRIDGED, ISOLATED, BLOCK_IN_OUT, ALLOW_IN, ALLOW_IN_OUT, ALLOW_OUT;
-   
-   public String value() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
-   }
-
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static FenceMode fromValue(String fenceMode) {
-      return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(fenceMode,
-               "fenceMode")));
-   }
-
+public interface FenceMode {
+   /**
+    * The two networks are bridged.
+    */
+   public static final String BRIDGED = "bridged";
+   /**
+    * The two networks are not connected.
+    */
+   public static final String ISOLATED = "isolated";
+   /**
+    * The two networks are connected as specified in their NatService elements.
+    */
+   public static final String NAT_ROUTED = "natRouted";
 }

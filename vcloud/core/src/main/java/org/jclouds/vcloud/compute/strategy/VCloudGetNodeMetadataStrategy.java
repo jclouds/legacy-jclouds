@@ -20,43 +20,30 @@ package org.jclouds.vcloud.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
-import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
-import org.jclouds.vcloud.domain.VAppStatus;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadata implements
+public class VCloudGetNodeMetadataStrategy  implements
          GetNodeMetadataStrategy {
 
+   protected final VCloudGetNodeMetadata getNodeMetadata;
+
    @Inject
-   protected VCloudGetNodeMetadataStrategy(VCloudClient client, VCloudComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResourceInVDC findLocationForResourceInVDC,
-            Provider<Set<? extends Image>> images) {
-      super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC,
-               images);
+   protected VCloudGetNodeMetadataStrategy(VCloudGetNodeMetadata getNodeMetadata) {
+     this.getNodeMetadata=getNodeMetadata;
    }
 
    @Override
    public NodeMetadata execute(String id) {
-      return getNodeMetadataByIdInVDC(checkNotNull(id, "node.id"));
+      return getNodeMetadata.execute(checkNotNull(id, "node.id"));
    }
 
 }

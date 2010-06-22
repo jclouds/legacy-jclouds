@@ -19,14 +19,14 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_API;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_SCHEMA;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -45,13 +45,11 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_API, "0.8");
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
             "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED, "false");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE,
-            FenceMode.ALLOW_IN_OUT.toString());
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "80");
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED,
@@ -62,18 +60,32 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
    public VCloudPropertiesBuilder(Properties properties) {
       super(properties);
       setNs();
+      setFenceMode();
    }
 
-   private void setNs() {
+   protected void setNs() {
       if (properties.getProperty(PROPERTY_VCLOUD_XML_NAMESPACE) == null)
          properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
                "http://www.vmware.com/vcloud/v"
-                     + properties.getProperty(PROPERTY_VCLOUD_VERSION));
+                     + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
+   }
+
+   protected void setFenceMode() {
+      if (properties.getProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) == null) {
+         if (properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA).startsWith(
+               "0.8"))
+            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE,
+                  "allowInOut");
+         else
+            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE,
+                  FenceMode.BRIDGED);
+      }
    }
 
    public VCloudPropertiesBuilder(URI endpoint, String id, String secret) {
       super();
       setNs();
+      setFenceMode();
       withCredentials(id, secret);
       withEndpoint(endpoint);
    }

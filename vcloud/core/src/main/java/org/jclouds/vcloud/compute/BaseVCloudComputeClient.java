@@ -70,7 +70,6 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
          String templateId, InstantiateVAppTemplateOptions options,
          int... portsToOpen) {
       checkNotNull(options, "options");
-
       logger.debug(
             ">> instantiating vApp vDC(%s) name(%s) template(%s) options(%s) ",
             vDCId, name, templateId, options);

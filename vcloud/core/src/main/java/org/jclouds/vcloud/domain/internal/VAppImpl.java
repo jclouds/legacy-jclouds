@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 import java.util.Set;
 
@@ -55,27 +57,30 @@ public class VAppImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(String id, String name, URI location, VAppStatus status, Long size,
-            NamedResource vDC, ListMultimap<String, String> networkToAddresses,
-            String operatingSystemDescription, VirtualSystem system,
-            Set<ResourceAllocation> resourceAllocations) {
-      this.id = id;
-      this.name = name;
-      this.location = location;
-      this.status = status;
-      this.size = size;
+   public VAppImpl(String id, String name, URI location, VAppStatus status,
+         Long size, NamedResource vDC,
+         ListMultimap<String, String> networkToAddresses,
+         String operatingSystemDescription, VirtualSystem system,
+         Set<ResourceAllocation> resourceAllocations) {
+      this.id = checkNotNull(id, "id");
+      this.name = checkNotNull(name, "name");
+      this.location = checkNotNull(location, "location");
+      this.status = checkNotNull(status, "status");
+      this.size = size;// hostingdotcom
       this.vDC = vDC;
-      this.networkToAddresses = networkToAddresses;
+      this.networkToAddresses = checkNotNull(networkToAddresses,
+            "networkToAddresses");
       this.operatingSystemDescription = operatingSystemDescription;
       this.system = system;
-      this.resourceAllocations = resourceAllocations;
+      this.resourceAllocations = checkNotNull(resourceAllocations,
+            "resourceAllocations");
       resourceAllocationByType = Multimaps.index(resourceAllocations,
-               new Function<ResourceAllocation, ResourceType>() {
-                  @Override
-                  public ResourceType apply(ResourceAllocation from) {
-                     return from.getType();
-                  }
-               });
+            new Function<ResourceAllocation, ResourceType>() {
+               @Override
+               public ResourceType apply(ResourceAllocation from) {
+                  return from.getType();
+               }
+            });
    }
 
    public VAppStatus getStatus() {
@@ -113,13 +118,21 @@ public class VAppImpl implements VApp {
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
-      result = prime * result
-               + ((operatingSystemDescription == null) ? 0 : operatingSystemDescription.hashCode());
-      result = prime * result
-               + ((resourceAllocationByType == null) ? 0 : resourceAllocationByType.hashCode());
-      result = prime * result
-               + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
+      result = prime
+            * result
+            + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
+      result = prime
+            * result
+            + ((operatingSystemDescription == null) ? 0
+                  : operatingSystemDescription.hashCode());
+      result = prime
+            * result
+            + ((resourceAllocationByType == null) ? 0
+                  : resourceAllocationByType.hashCode());
+      result = prime
+            * result
+            + ((resourceAllocations == null) ? 0 : resourceAllocations
+                  .hashCode());
       result = prime * result + ((size == null) ? 0 : size.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((system == null) ? 0 : system.hashCode());
@@ -159,12 +172,14 @@ public class VAppImpl implements VApp {
       if (operatingSystemDescription == null) {
          if (other.operatingSystemDescription != null)
             return false;
-      } else if (!operatingSystemDescription.equals(other.operatingSystemDescription))
+      } else if (!operatingSystemDescription
+            .equals(other.operatingSystemDescription))
          return false;
       if (resourceAllocationByType == null) {
          if (other.resourceAllocationByType != null)
             return false;
-      } else if (!resourceAllocationByType.equals(other.resourceAllocationByType))
+      } else if (!resourceAllocationByType
+            .equals(other.resourceAllocationByType))
          return false;
       if (resourceAllocations == null) {
          if (other.resourceAllocations != null)
@@ -212,11 +227,13 @@ public class VAppImpl implements VApp {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", location=" + location + ", name=" + name + ", networkToAddresses="
-               + networkToAddresses + ", operatingSystemDescription=" + operatingSystemDescription
-               + ", resourceAllocationByType=" + resourceAllocationByType
-               + ", resourceAllocations=" + resourceAllocations + ", size=" + size + ", status="
-               + status + ", system=" + system + ", vDC=" + vDC + "]";
+      return "[id=" + id + ", location=" + location + ", name=" + name
+            + ", networkToAddresses=" + networkToAddresses
+            + ", operatingSystemDescription=" + operatingSystemDescription
+            + ", resourceAllocationByType=" + resourceAllocationByType
+            + ", resourceAllocations=" + resourceAllocations + ", size=" + size
+            + ", status=" + status + ", system=" + system + ", vDC=" + vDC
+            + "]";
    }
 
    @Override

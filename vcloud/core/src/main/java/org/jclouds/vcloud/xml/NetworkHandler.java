@@ -24,7 +24,6 @@ import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.FirewallRule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.NatRule;
@@ -52,13 +51,13 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
 
    private String description;
 
-   private Set<String> dnsServers = Sets.newHashSet();
+   private Set<String> dnsServers = Sets.newLinkedHashSet();
    private String gateway;
    private String netmask;
-   private Set<FenceMode> fenceModes = Sets.newHashSet();
+   private Set<String> fenceModes = Sets.newLinkedHashSet();
    private Boolean dhcp;
-   private Set<NatRule> natRules = Sets.newHashSet();
-   private Set<FirewallRule> firewallRules = Sets.newHashSet();
+   private Set<NatRule> natRules = Sets.newLinkedHashSet();
+   private Set<FirewallRule> firewallRules = Sets.newLinkedHashSet();
 
    private String externalIP;
    private Integer externalPort;
@@ -71,13 +70,14 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
    private String sourcePort;
 
    public Network getResult() {
-      return new NetworkImpl(network.getId(), network.getName(), network.getLocation(),
-               description, dnsServers, gateway, netmask, fenceModes, dhcp, natRules, firewallRules);
+      return new NetworkImpl(network.getId(), network.getName(), network
+            .getLocation(), description, dnsServers, gateway, netmask,
+            fenceModes, dhcp, natRules, firewallRules);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName,
+         Attributes attributes) throws SAXException {
       if (qName.equals("Network")) {
          network = Utils.newNamedResource(attributes);
       }
@@ -93,11 +93,12 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("Netmask")) {
          netmask = currentOrNull();
       } else if (qName.equals("FenceMode")) {
-         fenceModes.add(FenceMode.fromValue(currentOrNull()));
+         fenceModes.add(currentOrNull());
       } else if (qName.equals("Dhcp")) {
          dhcp = new Boolean(currentOrNull());
       } else if (qName.equals("NatRule")) {
-         natRules.add(new NatRule(externalIP, externalPort, internalIP, internalPort));
+         natRules.add(new NatRule(externalIP, externalPort, internalIP,
+               internalPort));
          externalIP = null;
          externalPort = null;
          internalIP = null;
@@ -111,7 +112,8 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("InternalPort")) {
          internalPort = Integer.parseInt(currentOrNull());
       } else if (qName.equals("FirewallRule")) {
-         firewallRules.add(new FirewallRule(policy, protocol, sourceIP, sourcePort));
+         firewallRules.add(new FirewallRule(policy, protocol, sourceIP,
+               sourcePort));
          policy = null;
          protocol = null;
          sourceIP = null;
