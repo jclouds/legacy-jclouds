@@ -21,8 +21,7 @@ package org.jclouds.http.filters;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
@@ -31,6 +30,8 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -42,11 +43,11 @@ import org.jclouds.http.HttpRequestFilter;
 @Singleton
 public class BasicAuthentication implements HttpRequestFilter {
 
-   private final List<String> credentialList;
+   private final Set<String> credentialList;
 
    public BasicAuthentication(String user, String password, EncryptionService encryptionService)
             throws UnsupportedEncodingException {
-      this.credentialList = Collections.singletonList("Basic "
+      this.credentialList = ImmutableSet.of("Basic "
                + encryptionService.toBase64String(String.format("%s:%s",
                         checkNotNull(user, "user"), checkNotNull(password, "password")).getBytes(
                         "UTF-8")));
