@@ -23,8 +23,6 @@ import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -43,8 +41,122 @@ import com.google.common.collect.Sets;
  */
 public class NodePredicates {
 
+   private static class ParentLocationId implements
+         Predicate<ComputeMetadata> {
+      private final String id;
+
+      private ParentLocationId(String id) {
+         this.id = id;
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((id == null) ? 0 : id.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         ParentLocationId other = (ParentLocationId) obj;
+         if (id == null) {
+            if (other.id != null)
+               return false;
+         } else if (!id.equals(other.id))
+            return false;
+         return true;
+      }
+
+      @Override
+      public boolean apply(ComputeMetadata nodeMetadata) {
+         if (nodeMetadata.getLocation().getParent() == null)
+            return false;
+         return id.equals(nodeMetadata.getLocation().getParent().getId());
+      }
+
+      @Override
+      public String toString() {
+         return "ParentLocationId [id=" + id + "]";
+      }
+   }
+
+   private static class LocationId implements Predicate<ComputeMetadata> {
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((id == null) ? 0 : id.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         LocationId other = (LocationId) obj;
+         if (id == null) {
+            if (other.id != null)
+               return false;
+         } else if (!id.equals(other.id))
+            return false;
+         return true;
+      }
+
+      private final String id;
+
+      private LocationId(String id) {
+         this.id = id;
+      }
+
+      @Override
+      public boolean apply(ComputeMetadata nodeMetadata) {
+         return id.equals(nodeMetadata.getLocation().getId());
+      }
+
+      @Override
+      public String toString() {
+         return "locationId(" + id + ")";
+      }
+   }
+
    /**
-    * Return nodes with the specific ids Note: returns all nodes, regardless of the state.
+    * Return nodes in the specified location.
+    * 
+    * @param id
+    *           id of the location
+    * @return predicate
+    */
+   public static Predicate<ComputeMetadata> locationId(final String id) {
+      checkNotNull(id, "id must be defined");
+      return new LocationId(id);
+   }
+
+   /**
+    * Return nodes in the specified parent location.
+    * 
+    * @param id
+    *           id of the location
+    * @return predicate
+    */
+   public static Predicate<ComputeMetadata> parentLocationId(final String id) {
+      checkNotNull(id, "id must be defined");
+      return new ParentLocationId(id);
+   }
+
+   /**
+    * Return nodes with the specific ids Note: returns all nodes, regardless of
+    * the state.
     * 
     * @param ids
     *           ids of the resources
@@ -55,7 +167,7 @@ public class NodePredicates {
       final Set<String> search = Sets.newHashSet(ids);
       return new Predicate<ComputeMetadata>() {
          @Override
-         public boolean apply(@Nullable ComputeMetadata nodeMetadata) {
+         public boolean apply(ComputeMetadata nodeMetadata) {
             return search.contains(nodeMetadata.getProviderId());
          }
 
@@ -74,7 +186,8 @@ public class NodePredicates {
    }
 
    /**
-    * Return nodes with specified tag. Note: returns all nodes, regardless of the state.
+    * Return nodes with specified tag. Note: returns all nodes, regardless of
+    * the state.
     * 
     * @param tag
     *           tag to match the items
@@ -84,7 +197,7 @@ public class NodePredicates {
       checkNotEmpty(tag, "Tag must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
-         public boolean apply(@Nullable NodeMetadata nodeMetadata) {
+         public boolean apply(NodeMetadata nodeMetadata) {
             return tag.equals(nodeMetadata.getTag());
          }
 
@@ -108,7 +221,7 @@ public class NodePredicates {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
             return tag.equals(nodeMetadata.getTag())
-                     && nodeMetadata.getState() == NodeState.RUNNING;
+                  && nodeMetadata.getState() == NodeState.RUNNING;
          }
 
          @Override
