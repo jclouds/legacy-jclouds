@@ -234,12 +234,20 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
       logger.debug("<< deleted vApp(%s))", vApp.getId());
    }
 
+   /**
+    * @throws NullPointerException
+    *            if the node is not found
+    */
    @Override
    public Set<String> getPrivateAddresses(String id) {
       VApp vApp = client.getVApp(id);
       return Sets.newHashSet(vApp.getNetworkToAddresses().values());
    }
 
+   /**
+    * @throws NullPointerException
+    *            if the node is not found
+    */
    @Override
    public Set<String> getPublicAddresses(String id) {
       VApp vApp = client.getVApp(id);

@@ -21,25 +21,39 @@ package org.jclouds.vcloud.terremark.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Set;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
+import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
- * Tests behavior of {@code ComputeOptionServiceHandler}
+ * Tests behavior of {@code KeysHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.ComputeOptionHandlerTest")
-public class ComputeOptionHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.KeysHandlerTest")
+public class KeysHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/ComputeOption.xml");
+      InputStream is = getClass()
+            .getResourceAsStream("/terremark/keysList.xml");
 
-      ComputeOptions result = (ComputeOptions) factory.create(
-               injector.getInstance(ComputeOptionHandler.class)).parse(is);
-      assertEquals(result, new ComputeOptions(1, 512, 0.039f));
+      Set<KeyPair> result = factory.create(injector.getInstance(KeyPairsHandler.class))
+            .parse(is);
+      assertEquals(
+            result,
+            ImmutableSet
+                  .of(new KeyPair(
+                        9,
+                        URI
+                              .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/key/9"),
+                        "default", true, null,
+                        "4e:af:8a:9f:e9:d2:72:d7:4b:a0:da:98:72:98:4d:7d")));
+
    }
 }

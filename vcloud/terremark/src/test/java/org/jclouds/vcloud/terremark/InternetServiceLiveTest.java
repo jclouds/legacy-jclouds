@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 import java.util.SortedSet;
@@ -29,9 +28,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.terremark.domain.InternetService;
-import org.jclouds.vcloud.terremark.domain.InternetServiceConfiguration;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -56,21 +53,6 @@ public class InternetServiceLiveTest {
    @Test
    public void testGetAllInternetServices() throws Exception {
       tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC().getId());
-   }
-
-   @Test
-   public void testAddAndConfigureInternetService() throws InterruptedException {
-      InternetService is = tmClient.addInternetServiceToVDC(tmClient.getDefaultVDC().getId(),
-               "test-" + 22, Protocol.TCP, 22);
-      is = tmClient.configureInternetService(is.getId(), new InternetServiceConfiguration()
-               .changeNameTo("test-33"));
-      assertEquals(is.getName(), "test-33");
-      services.add(is);
-      PublicIpAddress ip = is.getPublicIpAddress();
-      for (int port : new int[] { 80, 8080 }) {
-         services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
-                  Protocol.HTTP, port));
-      }
    }
 
    private void delete(SortedSet<InternetService> set) {

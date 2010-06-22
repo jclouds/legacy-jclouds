@@ -18,19 +18,29 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
+import java.net.URI;
+
+import javax.annotation.Resource;
+
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
+import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.terremark.domain.KeyPair;
 
 /**
  * @author Adrian Cole
  */
-public class ComputeOptionHandler extends HandlerWithResult<ComputeOptions> {
+public class KeyPairHandler extends HandlerWithResult<KeyPair> {
 
+   @Resource
+   protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
 
-   int processorCount;
-   int memory;
-   float costPerHour;
+   private int id;
+   private URI location;
+   private String name;
+   private boolean isDefault;
+   private String privateKey;
+   private String fingerPrint;
 
    protected String currentOrNull() {
       String returnVal = currentText.toString().trim();
@@ -38,17 +48,23 @@ public class ComputeOptionHandler extends HandlerWithResult<ComputeOptions> {
    }
 
    @Override
-   public ComputeOptions getResult() {
-      return new ComputeOptions(processorCount, memory, costPerHour);
+   public KeyPair getResult() {
+      return new KeyPair(id, location, name, isDefault, privateKey, fingerPrint);
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("ProcessorCount")) {
-         processorCount = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Memory")) {
-         memory = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("CostPerHour")) {
-         costPerHour = Float.parseFloat(currentOrNull());
+      if (qName.equals("Id")) {
+         id = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("Href") && currentOrNull() != null) {
+         location = URI.create(currentOrNull());
+      } else if (qName.equals("Name")) {
+         this.name = currentOrNull();
+      } else if (qName.equals("IsDefault")) {
+         isDefault = Boolean.parseBoolean(currentOrNull());
+      } else if (qName.equals("PrivateKey")) {
+         privateKey = currentOrNull();
+      } else if (qName.equals("FingerPrint")) {
+         fingerPrint = currentOrNull();
       }
       currentText = new StringBuilder();
    }

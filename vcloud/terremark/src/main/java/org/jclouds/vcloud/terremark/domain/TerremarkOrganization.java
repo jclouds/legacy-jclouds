@@ -18,15 +18,22 @@
  */
 package org.jclouds.vcloud.terremark.domain;
 
-/**
- * 
- * Protocol for an {@link InternetService}
- * 
- * @author Adrian Cole
- * 
- */
-public enum Protocol {
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrganizationImpl;
+import org.jclouds.vcloud.terremark.endpoints.KeysList;
 
-   FTP, HTTP, HTTPS, TCP, UDP, PPTP, IPSEC;
+import com.google.inject.ImplementedBy;
+
+/**
+ * @author Adrian Cole
+ */
+@Org
+@ImplementedBy(TerremarkOrganizationImpl.class)
+public interface TerremarkOrganization extends Organization {
+
+   @KeysList
+   NamedResource getKeysList();
 
 }

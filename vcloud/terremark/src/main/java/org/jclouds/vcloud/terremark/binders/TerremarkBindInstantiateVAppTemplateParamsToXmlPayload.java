@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.terremark.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
@@ -29,6 +27,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.SortedMap;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,7 +37,6 @@ import javax.xml.transform.TransformerException;
 
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
-import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.ResourceType;
 
 import com.jamesmurty.utils.XMLBuilder;
@@ -50,39 +48,35 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 @Singleton
 public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
-         BindInstantiateVAppTemplateParamsToXmlPayload {
+      BindInstantiateVAppTemplateParamsToXmlPayload {
 
    @Inject
-   public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
-            @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
-            @Named(PROPERTY_VCLOUD_DEFAULT_DHCP_ENABLED) String defaultDhcpEnabled,
-            @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String defaultFenceMode,
-            @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
-            OptionalConstantsHolder optionalDefaults) {
-      super(stringBinder, ns, schema, defaultDhcpEnabled, defaultFenceMode, network,
-               optionalDefaults);
+   public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(
+         BindToStringPayload stringBinder,
+         @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
+         @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
+         @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
+         @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
+      super(stringBinder, ns, schema, network, fenceMode);
    }
 
    @Override
-   protected String generateXml(String name, String template, Map<String, String> properties,
-            SortedMap<ResourceType, String> virtualHardwareQuantity, String networkName,
-            FenceMode fenceMode, boolean dhcp, URI network) throws ParserConfigurationException,
-            FactoryConfigurationError, TransformerException {
-      checkNotNull(virtualHardwareQuantity.get(ResourceType.PROCESSOR),
-               "cpuCount must be present in instantiateVapp on terremark");
-      checkNotNull(virtualHardwareQuantity.get(ResourceType.MEMORY),
-               "memorySizeMegabytes must be present in instantiateVapp on terremark");
-      return super.generateXml(name, template, properties, virtualHardwareQuantity, networkName,
-               fenceMode, dhcp, network);
+   protected String generateXml(String name, String template,
+         Map<String, String> properties,
+         SortedMap<ResourceType, String> virtualHardwareQuantity,
+         String networkName, @Nullable String fenceMode, URI network)
+         throws ParserConfigurationException, FactoryConfigurationError,
+         TransformerException {
+      return super.generateXml(name, template, properties,
+            virtualHardwareQuantity, networkName, fenceMode, network);
    }
 
    @Override
    protected void addPropertiesifPresent(XMLBuilder instantiationParamsBuilder,
-            Map<String, String> properties) {
+         Map<String, String> properties) {
       if (properties.size() == 0) { // terremark requires the product section.
-         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1", ns).a("xmlns:ovf",
-                  "http://schemas.dmtf.org/ovf/envelope/1");
+         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1", ns).a(
+               "xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1");
       } else {
          super.addPropertiesifPresent(instantiationParamsBuilder, properties);
       }

@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.terremark.config;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -29,20 +30,25 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
+import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.terremark.endpoints.KeysList;
 
 import com.google.inject.Provides;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class TerremarkVCloudRestClientModule extends
-         BaseVCloudRestClientModule<TerremarkVCloudClient, TerremarkVCloudAsyncClient> {
+public class TerremarkVCloudRestClientModule
+      extends
+      BaseVCloudRestClientModule<TerremarkVCloudClient, TerremarkVCloudAsyncClient> {
 
    public TerremarkVCloudRestClientModule() {
       super(TerremarkVCloudClient.class, TerremarkVCloudAsyncClient.class);
@@ -50,7 +56,8 @@ public class TerremarkVCloudRestClientModule extends
 
    @Provides
    @Singleton
-   protected VCloudAsyncClient provideVCloudAsyncClient(TerremarkVCloudAsyncClient in) {
+   protected VCloudAsyncClient provideVCloudAsyncClient(
+         TerremarkVCloudAsyncClient in) {
       return in;
    }
 
@@ -60,12 +67,19 @@ public class TerremarkVCloudRestClientModule extends
       return in;
    }
 
+   @Provides
+   @KeysList
+   @Singleton
+   protected URI provideDefaultKeysList(Organization org) {
+      return TerremarkOrganization.class.cast(org).getKeysList().getLocation();
+   }
+
    @Singleton
    @Provides
    @Named("CreateInternetService")
    String provideCreateInternetService() throws IOException {
       return Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateInternetService.xml"));
+            "/terremark/CreateInternetService.xml"));
    }
 
    @Singleton
@@ -73,6 +87,14 @@ public class TerremarkVCloudRestClientModule extends
    @Named("CreateNodeService")
    String provideCreateNodeService() throws IOException {
       return Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateNodeService.xml"));
+            "/terremark/CreateNodeService.xml"));
+   }
+
+   @Singleton
+   @Provides
+   @Named("CreateKey")
+   String provideCreateKey() throws IOException {
+      return Utils.toStringAndClose(getClass().getResourceAsStream(
+            "/terremark/CreateKey.xml"));
    }
 }

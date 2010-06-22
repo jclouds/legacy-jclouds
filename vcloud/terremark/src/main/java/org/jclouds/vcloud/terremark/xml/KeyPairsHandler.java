@@ -18,14 +18,14 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
+import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -34,32 +34,32 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class ComputeOptionsHandler extends HandlerWithResult<SortedSet<ComputeOptions>> {
+public class KeyPairsHandler extends HandlerWithResult<Set<KeyPair>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private final ComputeOptionHandler handler;
-   SortedSet<ComputeOptions> result = Sets.newTreeSet();
+   private final KeyPairHandler handler;
+   Set<KeyPair> result = Sets.newLinkedHashSet();
 
    @Inject
-   public ComputeOptionsHandler(ComputeOptionHandler handler) {
+   public KeyPairsHandler(KeyPairHandler handler) {
       this.handler = handler;
    }
 
    @Override
-   public SortedSet<ComputeOptions> getResult() {
+   public Set<KeyPair> getResult() {
       return result;
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName,
+         Attributes attributes) throws SAXException {
       handler.startElement(uri, localName, qName, attributes);
    }
 
    public void endElement(String uri, String name, String qName) {
       handler.endElement(uri, name, qName);
-      if (qName.equals("ComputeOption")) {
+      if (qName.equals("Key")) {
          result.add(handler.getResult());
       }
    }

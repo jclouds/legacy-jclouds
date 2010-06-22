@@ -47,15 +47,17 @@ public class BindNodeConfigurationToXmlPayload extends BindToStringPayload {
    @SuppressWarnings("unchecked")
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
+      checkArgument(
+            checkNotNull(request, "request") instanceof GeneratedHttpRequest,
+            "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-      NodeConfiguration nodeConfiguration = (NodeConfiguration) checkNotNull(input,
-               "nodeConfiguration");
+      checkState(gRequest.getArgs() != null,
+            "args should be initialized at this point");
+      NodeConfiguration nodeConfiguration = (NodeConfiguration) checkNotNull(
+            input, "nodeConfiguration");
       checkArgument(nodeConfiguration.getDescription() != null
-               || nodeConfiguration.getEnabled() != null || nodeConfiguration.getName() != null,
-               "no configuration set");
+            || nodeConfiguration.getEnabled() != null
+            || nodeConfiguration.getName() != null, "no configuration set");
       try {
          super.bindToRequest(request, generateXml(nodeConfiguration));
       } catch (ParserConfigurationException e) {
@@ -69,10 +71,11 @@ public class BindNodeConfigurationToXmlPayload extends BindToStringPayload {
    }
 
    protected String generateXml(NodeConfiguration nodeConfiguration)
-            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+         throws ParserConfigurationException, FactoryConfigurationError,
+         TransformerException {
       XMLBuilder rootBuilder = XMLBuilder.create("NodeService").a("xmlns",
-               "urn:tmrk:vCloudExpress-1.0").a("xmlns:i",
-               "http://www.w3.org/2001/XMLSchema-instance");
+            "urn:tmrk:vCloudExpressExtensions-1.6").a("xmlns:i",
+            "http://www.w3.org/2001/XMLSchema-instance");
       if (nodeConfiguration.getDescription() != null)
          rootBuilder.e("Description").t(nodeConfiguration.getDescription());
       if (nodeConfiguration.getName() != null)
@@ -80,7 +83,8 @@ public class BindNodeConfigurationToXmlPayload extends BindToStringPayload {
       if (nodeConfiguration.getEnabled() != null)
          rootBuilder.e("Enabled").t(nodeConfiguration.getEnabled());
       Properties outputProperties = new Properties();
-      outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+      outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION,
+            "yes");
       return rootBuilder.asString(outputProperties);
    }
 

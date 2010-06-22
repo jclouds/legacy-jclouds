@@ -29,6 +29,7 @@ public class CustomizationParametersHandler extends HandlerWithResult<Customizat
    private StringBuilder currentText = new StringBuilder();
    boolean customizeNetwork;
    boolean customizePassword;
+   boolean customizeSSH;
 
    protected String currentOrNull() {
       String returnVal = currentText.toString().trim();
@@ -37,7 +38,8 @@ public class CustomizationParametersHandler extends HandlerWithResult<Customizat
 
    @Override
    public CustomizationParameters getResult() {
-      return new CustomizationParameters(customizeNetwork, customizePassword);
+      return new CustomizationParameters(customizeNetwork, customizePassword,
+            customizeSSH);
    }
 
    public void endElement(String uri, String name, String qName) {
@@ -45,6 +47,8 @@ public class CustomizationParametersHandler extends HandlerWithResult<Customizat
          customizeNetwork = Boolean.parseBoolean(currentOrNull());
       } else if (qName.equals("CustomizePassword")) {
          customizePassword = Boolean.parseBoolean(currentOrNull());
+      } else if (qName.equals("CustomizeSSH")) {
+         customizeSSH = Boolean.parseBoolean(currentOrNull());
       }
       currentText = new StringBuilder();
    }

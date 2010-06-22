@@ -77,7 +77,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
       map.put("description", "name TCP 22");
       binder.bindToRequest(request, map);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/unknown");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "346");
+      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "341");
       assertEquals(request.getPayload().getRawContent(), expected);
 
    }

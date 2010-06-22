@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -25,15 +26,14 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
-import org.jclouds.vcloud.terremark.domain.InternetServiceConfiguration;
-import org.jclouds.vcloud.terremark.domain.IpAddress;
+import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
@@ -42,29 +42,21 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
 
-   /**
-    * This call returns the compute options for the vApp. The compute options are the CPU and memory
-    * configurations supported by Terremark and by the guest operating system of the vApp. This call
-    * also returns the cost per hour for each configuration.
-    */
-   SortedSet<ComputeOptions> getComputeOptionsOfVApp(String vAppId);
+   @Override
+   TerremarkOrganization getDefaultOrganization();
 
-   SortedSet<ComputeOptions> getComputeOptionsOfCatalogItem(String catalogItemId);
+   @Override
+   TerremarkOrganization getOrganization(String orgId);
 
-   /**
-    * This call returns the customization options for the vApp. The response lists which
-    * customization options are supported for this particular vApp. The possible customization
-    * options are Network and Password.
-    */
-   CustomizationParameters getCustomizationOptionsOfVApp(String vAppId);
-
-   CustomizationParameters getCustomizationOptionsOfCatalogItem(String catalogItemId);
+   CustomizationParameters getCustomizationOptionsOfCatalogItem(
+         String catalogItemId);
 
    /**
     * This call returns a list of public IP addresses.
@@ -74,27 +66,26 @@ public interface TerremarkVCloudClient extends VCloudClient {
    void deletePublicIp(int ipId);
 
    /**
-    * The call creates a new internet server, including protocol and port information. The public IP
-    * is dynamically allocated.
+    * The call creates a new internet server, including protocol and port
+    * information. The public IP is dynamically allocated.
     * 
     */
-   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol,
-            int port, AddInternetServiceOptions... options);
+   InternetService addInternetServiceToVDC(String vDCId, String serviceName,
+         Protocol protocol, int port, AddInternetServiceOptions... options);
 
    /**
-    * This call adds an internet service to a known, existing public IP. This call is identical to
-    * Add Internet Service except you specify the public IP in the request.
+    * This call adds an internet service to a known, existing public IP. This
+    * call is identical to Add Internet Service except you specify the public IP
+    * in the request.
     * 
     */
-   InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName,
-            Protocol protocol, int port, AddInternetServiceOptions... options);
+   InternetService addInternetServiceToExistingIp(int existingIpId,
+         String serviceName, Protocol protocol, int port,
+         AddInternetServiceOptions... options);
 
    void deleteInternetService(int internetServiceId);
 
    InternetService getInternetService(int internetServiceId);
-
-   InternetService configureInternetService(int internetServiceId,
-            InternetServiceConfiguration nodeConfiguration);
 
    SortedSet<InternetService> getAllInternetServicesInVDC(String vDCId);
 
@@ -108,9 +99,10 @@ public interface TerremarkVCloudClient extends VCloudClient {
    /**
     * This call adds a node to an existing internet service.
     * <p/>
-    * Every vDC is assigned a network of 60 IP addresses that can be used as nodes. Each node can
-    * associated with multiple internet service. You can get a list of the available IP addresses by
-    * calling Get IP Addresses for a Network.
+    * Every vDC is assigned a network of 60 IP addresses that can be used as
+    * nodes. Each node can associated with multiple internet service. You can
+    * get a list of the available IP addresses by calling Get IP Addresses for a
+    * Network.
     * 
     * @param internetServiceId
     * @param ipAddress
@@ -120,7 +112,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * @return
     */
    Node addNode(int internetServiceId, String ipAddress, String name, int port,
-            AddNodeOptions... options);
+         AddNodeOptions... options);
 
    Node getNode(int nodeId);
 
@@ -130,11 +122,10 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    SortedSet<Node> getNodes(int internetServiceId);
 
-   SortedSet<IpAddress> getIpAddressesForNetwork(String networkId);
-
    /**
-    * This call configures the settings of an existing vApp by passing the new configuration. The
-    * existing vApp must be in a powered off state (status = 2).
+    * This call configures the settings of an existing vApp by passing the new
+    * configuration. The existing vApp must be in a powered off state (status =
+    * 2).
     * <p/>
     * You can change the following items for a vApp.
     * <ol>
@@ -143,8 +134,9 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * <li>Add a virtual disk</li>
     * <li>Delete a virtual disk</li>
     * </ol>
-    * You can make more than one change in a single request. For example, you can increase the
-    * number of virtual CPUs and the amount of virtual memory in the same request.
+    * You can make more than one change in a single request. For example, you
+    * can increase the number of virtual CPUs and the amount of virtual memory
+    * in the same request.
     * 
     * @param vApp
     *           vApp to change in power state off
@@ -154,4 +146,20 @@ public interface TerremarkVCloudClient extends VCloudClient {
     */
    Task configureVApp(VApp vApp, VAppConfiguration configuration);
 
+   /**
+    * This call returns the keys previously created for your organization.
+    */
+   Set<KeyPair> listKeyPairs();
+
+   Set<KeyPair> listKeyPairsInOrg(String orgId);
+
+   KeyPair generateKeyPairInOrg(String orgId, String name, boolean makeDefault);
+
+   KeyPair getKeyPair(int keyPairId);
+
+   // TODO
+   // KeyPair configureKeyPair(int keyPairId, KeyPairConfiguration
+   // keyPairConfiguration);
+
+   void deleteKeyPair(int keyPairId);
 }

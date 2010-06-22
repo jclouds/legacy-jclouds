@@ -1,0 +1,9 @@
+<Keys xmlns="urn:tmrk:vCloudExpressExtensions-1.6" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Key>
+		<Id>9</Id>
+		<Href>https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/key/9</Href>
+		<Name>default</Name>
+		<IsDefault>true</IsDefault>
+		<FingerPrint>4e:af:8a:9f:e9:d2:72:d7:4b:a0:da:98:72:98:4d:7d</FingerPrint>
+	</Key>
+</Keys>

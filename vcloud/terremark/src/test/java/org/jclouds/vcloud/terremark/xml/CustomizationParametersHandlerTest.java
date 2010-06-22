@@ -36,10 +36,12 @@ import org.testng.annotations.Test;
 public class CustomizationParametersHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/CustomizationParameters.xml");
+      InputStream is = getClass().getResourceAsStream(
+            "/terremark/CustomizationParameters.xml");
 
-      CustomizationParameters result = (CustomizationParameters) factory.create(
-               injector.getInstance(CustomizationParametersHandler.class)).parse(is);
-      assertEquals(result, new CustomizationParameters(true, false));
+      CustomizationParameters result = (CustomizationParameters) factory
+            .create(injector.getInstance(CustomizationParametersHandler.class))
+            .parse(is);
+      assertEquals(result, new CustomizationParameters(true, false, false));
    }
 }

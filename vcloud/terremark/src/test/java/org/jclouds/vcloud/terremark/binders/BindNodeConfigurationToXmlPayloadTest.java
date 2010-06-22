@@ -60,38 +60,38 @@ public class BindNodeConfigurationToXmlPayloadTest {
 
    public void testChangeName() throws IOException {
       NodeConfiguration config = new NodeConfiguration().changeNameTo("willie");
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpress-1.0\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name></NodeService>";
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name></NodeService>";
       assertConfigMakesPayload(config, expectedPayload);
    }
 
    public void testChangeDescription() throws IOException {
       NodeConfiguration config = new NodeConfiguration().changeDescriptionTo("description");
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpress-1.0\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>description</Description></NodeService>";
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>description</Description></NodeService>";
       assertConfigMakesPayload(config, expectedPayload);
    }
 
    public void testEnableTraffic() throws IOException {
       NodeConfiguration config = new NodeConfiguration().enableTraffic();
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpress-1.0\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Enabled>true</Enabled></NodeService>";
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Enabled>true</Enabled></NodeService>";
       assertConfigMakesPayload(config, expectedPayload);
    }
 
    public void testDisableTraffic() throws IOException {
       NodeConfiguration config = new NodeConfiguration().disableTraffic();
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpress-1.0\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Enabled>false</Enabled></NodeService>";
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Enabled>false</Enabled></NodeService>";
       assertConfigMakesPayload(config, expectedPayload);
    }
 
    public void testTwoOptions() throws IOException {
       NodeConfiguration config = new NodeConfiguration().disableTraffic().changeNameTo("willie");
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpress-1.0\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
       assertConfigMakesPayload(config, expectedPayload);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testNoOptions() throws IOException {
       NodeConfiguration config = new NodeConfiguration();
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpress-1.0\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
       assertConfigMakesPayload(config, expectedPayload);
    }
 

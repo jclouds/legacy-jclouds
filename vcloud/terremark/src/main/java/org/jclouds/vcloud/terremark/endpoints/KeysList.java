@@ -16,17 +16,24 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.domain;
+package org.jclouds.vcloud.terremark.endpoints;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * 
- * Protocol for an {@link InternetService}
+ * Related to Terremark SSH Keys List.
  * 
  * @author Adrian Cole
  * 
  */
-public enum Protocol {
-
-   FTP, HTTP, HTTPS, TCP, UDP, PPTP, IPSEC;
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface KeysList {
 
 }

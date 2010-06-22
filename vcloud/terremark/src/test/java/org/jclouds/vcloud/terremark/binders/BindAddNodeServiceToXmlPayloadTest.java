@@ -77,7 +77,7 @@ public class BindAddNodeServiceToXmlPayloadTest {
       map.put("description", "Some test node");
       binder.bindToRequest(request, map);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/unknown");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "356");
+      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "353");
       assertEquals(request.getPayload().getRawContent(), expected);
 
    }

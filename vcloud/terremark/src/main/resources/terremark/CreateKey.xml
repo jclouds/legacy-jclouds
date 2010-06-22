@@ -1,0 +1,5 @@
+<CreateKeyRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:tmrk:vCloudExpressExtensions-1.6">
+	<Name>{name}</Name>
+	<IsDefault>{isDefault}</IsDefault>
+</CreateKeyRequest>

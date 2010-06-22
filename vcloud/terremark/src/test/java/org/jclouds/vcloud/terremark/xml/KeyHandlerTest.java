@@ -18,32 +18,27 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
-
 /**
- * Tests behavior of {@code ComputeOptionsHandler}
+ * Tests behavior of {@code KeyHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.ComputeOptionsHandlerTest")
-public class ComputeOptionsHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.KeyHandlerTest")
+public class KeyHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/ComputeOptions.xml");
 
-      SortedSet<ComputeOptions> result = factory.create(
-               injector.getInstance(ComputeOptionsHandler.class)).parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new ComputeOptions(1, 512, 0.039f),
-               new ComputeOptions(8, 16384, 1.61f)));
+      // TODO
+      // InputStream is = getClass().getResourceAsStream("/terremark/key.xml");
+      // Key result = (Key)
+      // factory.create(injector.getInstance(KeyHandler.class)).parse(is);
+      // assertEquals(result, new Key(242, "Key for Jim", URI
+      // .create("https://services.vcloudexpress.terremark.com/api/v0.8/Keys/242"),
+      // "172.16.20.3", 80, false, "Some test node"));
    }
 }
