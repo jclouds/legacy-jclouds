@@ -73,14 +73,20 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
                "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
       EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
+      RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType()).withAdditionalInfo(tag);
+      
       String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template
                .getOptions());
-      Set<String> groups = getSecurityGroupsForTagAndOptions(region, tag, template.getOptions());
-
-      RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType())//
-               .withSecurityGroups(groups)//
-               .withAdditionalInfo(tag);
-
+      
+      String subnetId = template.getOptions().as(EC2TemplateOptions.class).getSubnetId();
+      if(subnetId != null)
+         instanceOptions.withSubnetId(subnetId);
+      
+      else  {
+         Set<String> groups = getSecurityGroupsForTagAndOptions(region, tag, template.getOptions());
+         instanceOptions.withSecurityGroups(groups);
+      }
+          
       if (keyPairName != null)
          instanceOptions.withKeyName(keyPairName);
 
