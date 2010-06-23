@@ -190,6 +190,71 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
+   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
+   public void testExtendedOptionsWithSubnetId() throws Exception {
+       
+      String subnetId = System.getProperty("jclouds.test.subnetId");
+      if(subnetId == null)
+      {
+          //Skip test and return
+          return;
+      }
+      SecurityGroupClient securityGroupClient = EC2Client.class.cast(
+            context.getProviderSpecificContext().getApi())
+            .getSecurityGroupServices();
+
+      KeyPairClient keyPairClient = EC2Client.class.cast(
+            context.getProviderSpecificContext().getApi()).getKeyPairServices();
+
+      InstanceClient instanceClient = EC2Client.class.cast(
+            context.getProviderSpecificContext().getApi())
+            .getInstanceServices();
+
+      String tag = this.tag + "optionswithsubnetid";
+
+      TemplateOptions options = client.templateOptions();
+
+      //options.as(EC2TemplateOptions.class).securityGroups(tag);
+      options.as(EC2TemplateOptions.class).keyPair(tag);
+      options.as(EC2TemplateOptions.class).withSubnetId(subnetId);
+
+      String startedId = null;
+      String nodeId = null;
+      try {
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+
+         // create the security group
+         //securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+
+         // create a keypair to pass in as well
+         KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
+
+         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1,
+               options);
+         
+         NodeMetadata first = Iterables.get(nodes, 0);
+         assert first.getCredentials() != null : first;
+         assert first.getCredentials().account != null : first;
+
+         startedId = Iterables.getOnlyElement(nodes).getProviderId();
+         nodeId = Iterables.getOnlyElement(nodes).getId();
+
+         RunningInstance instance = getInstance(instanceClient, startedId);
+
+         assertEquals(instance.getSubnetId(), subnetId);
+
+      } finally {
+         if (nodeId != null)
+             client.destroyNode(nodeId);
+         if (startedId != null) {
+            // ensure we didn't delete these resources!
+            assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag)
+                  .size(), 1);
+         }
+         cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+      }
+   }
+   
    private RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables
             .getOnlyElement(Iterables.getOnlyElement(instanceClient
