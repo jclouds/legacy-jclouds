@@ -59,34 +59,40 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
 
    @Inject
    CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(
-            Map<RegionAndName, KeyPair> credentialsMap,
-            Map<RegionAndName, String> securityGroupMap, CreateUniqueKeyPair createUniqueKeyPair,
-            CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded) {
+         Map<RegionAndName, KeyPair> credentialsMap,
+         Map<RegionAndName, String> securityGroupMap,
+         CreateUniqueKeyPair createUniqueKeyPair,
+         CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded) {
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
       this.createUniqueKeyPair = createUniqueKeyPair;
       this.createSecurityGroupIfNeeded = createSecurityGroupIfNeeded;
    }
 
-   public RunInstancesOptions execute(String region, String tag, Template template) {
+   public RunInstancesOptions execute(String region, String tag,
+         Template template) {
       checkArgument(template.getSize() instanceof EC2Size,
-               "unexpected image type. should be EC2Size, was: " + template.getSize().getClass());
+            "unexpected image type. should be EC2Size, was: "
+                  + template.getSize().getClass());
       EC2Size ec2Size = EC2Size.class.cast(template.getSize());
 
-      RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType()).withAdditionalInfo(tag);
-      
-      String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template
-               .getOptions());
-      
-      String subnetId = template.getOptions().as(EC2TemplateOptions.class).getSubnetId();
-      if(subnetId != null)
+      RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType())
+            .withAdditionalInfo(tag);
+
+      String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region,
+            tag, template.getOptions());
+
+      String subnetId = EC2TemplateOptions.class.cast(template.getOptions())
+            .getSubnetId();
+
+      if (subnetId != null) {
          instanceOptions.withSubnetId(subnetId);
-      
-      else  {
-         Set<String> groups = getSecurityGroupsForTagAndOptions(region, tag, template.getOptions());
+      } else {
+         Set<String> groups = getSecurityGroupsForTagAndOptions(region, tag,
+               template.getOptions());
          instanceOptions.withSecurityGroups(groups);
       }
-          
+
       if (keyPairName != null)
          instanceOptions.withKeyName(keyPairName);
 
@@ -94,33 +100,35 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    }
 
    @VisibleForTesting
-   String createNewKeyPairUnlessUserSpecifiedOtherwise(String region, String tag,
-            TemplateOptions options) {
+   String createNewKeyPairUnlessUserSpecifiedOtherwise(String region,
+         String tag, TemplateOptions options) {
       String keyPairName = null;
       boolean shouldAutomaticallyCreateKeyPair = true;
       if (options instanceof EC2TemplateOptions) {
          keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
          if (keyPairName == null)
-            shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
-                     .shouldAutomaticallyCreateKeyPair();
+            shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(
+                  options).shouldAutomaticallyCreateKeyPair();
       }
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          RegionAndName regionAndName = new RegionAndName(region, tag);
          KeyPair keyPair = createUniqueKeyPair.apply(regionAndName);
          // get or create incidental resources
-         // TODO race condition. we were using MapMaker, but it doesn't seem to refresh properly
+         // TODO race condition. we were using MapMaker, but it doesn't seem to
+         // refresh properly
          // when
          // another thread
          // deletes a key
-         credentialsMap.put(new RegionAndName(region, keyPair.getKeyName()), keyPair);
+         credentialsMap.put(new RegionAndName(region, keyPair.getKeyName()),
+               keyPair);
          keyPairName = keyPair.getKeyName();
       }
       return keyPairName;
    }
 
    @VisibleForTesting
-   Set<String> getSecurityGroupsForTagAndOptions(String region, @Nullable String tag,
-            TemplateOptions options) {
+   Set<String> getSecurityGroupsForTagAndOptions(String region,
+         @Nullable String tag, TemplateOptions options) {
       Set<String> groups = Sets.newLinkedHashSet();
 
       if (tag != null) {
@@ -130,19 +138,21 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
          RegionNameAndIngressRules regionNameAndIngessRulesForMarkerGroup;
 
          if (options instanceof EC2TemplateOptions
-                  && EC2TemplateOptions.class.cast(options).getGroupIds().size() > 0) {
-            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region,
-                     markerGroup, new int[] {}, false);
+               && EC2TemplateOptions.class.cast(options).getGroupIds().size() > 0) {
+            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(
+                  region, markerGroup, new int[] {}, false);
             groups.addAll(EC2TemplateOptions.class.cast(options).getGroupIds());
 
          } else {
-            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region,
-                     markerGroup, options.getInboundPorts(), true);
+            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(
+                  region, markerGroup, options.getInboundPorts(), true);
          }
 
-         if (!securityGroupMap.containsKey(regionNameAndIngessRulesForMarkerGroup)) {
+         if (!securityGroupMap
+               .containsKey(regionNameAndIngessRulesForMarkerGroup)) {
             securityGroupMap.put(regionNameAndIngessRulesForMarkerGroup,
-                     createSecurityGroupIfNeeded.apply(regionNameAndIngessRulesForMarkerGroup));
+                  createSecurityGroupIfNeeded
+                        .apply(regionNameAndIngessRulesForMarkerGroup));
          }
       }
       return groups;
