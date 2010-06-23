@@ -53,6 +53,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    private Set<String> groupIds = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
+   private String subnetId;
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
@@ -92,6 +93,16 @@ public class EC2TemplateOptions extends TemplateOptions {
    public EC2TemplateOptions noKeyPair() {
       checkState(keyPair == null, "you cannot specify both options keyPair and noKeyPair");
       this.noKeyPair = true;
+      return this;
+   }
+   
+   /**
+    * Specifies the subnetId used to run instances in
+    */
+   public EC2TemplateOptions withSubnetId(String subnetId) {
+      checkNotNull(subnetId, "subnetId cannot be null");
+      Utils.checkNotEmpty(subnetId, "subnetId must be non-empty");
+      this.subnetId = subnetId;
       return this;
    }
 
@@ -177,6 +188,14 @@ public class EC2TemplateOptions extends TemplateOptions {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.withMetadata());
       }
+      
+      /**
+       * @see TemplateOptions#withSubnetId
+       */
+      public static EC2TemplateOptions withSubnetId(String subnetId) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.withSubnetId(subnetId));
+      }
 
    }
 
@@ -256,8 +275,17 @@ public class EC2TemplateOptions extends TemplateOptions {
    public boolean shouldAutomaticallyCreateKeyPair() {
       return !noKeyPair;
    }
+   
+   
+   /**
+    * @return subnetId to use when running the instance or null.
+    */
+   public String getSubnetId()
+   {
+      return subnetId;
+   }
 
-   @Override
+@Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
@@ -288,6 +316,8 @@ public class EC2TemplateOptions extends TemplateOptions {
          return false;
       if (noKeyPair != other.noKeyPair)
          return false;
+      if (!subnetId.equals(other.subnetId))
+         return false;
       return true;
    }
 
@@ -296,8 +326,8 @@ public class EC2TemplateOptions extends TemplateOptions {
       return "EC2TemplateOptions [groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair="
                + noKeyPair + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
                + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
-               + (script != null) + ", port:seconds=" + port + ":" + seconds
-               + ", metadata/details: " + includeMetadata + "]";
+               + (script != null) + ", port:seconds=" + port + ":" + seconds + ", subnetId="
+               + subnetId + ", metadata/details: " + includeMetadata + "]";
    }
 
 }
