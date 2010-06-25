@@ -29,6 +29,8 @@ import org.jclouds.rackspace.CloudServers;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -44,12 +46,13 @@ public class CloudServersContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<CloudServersClient, CloudServersAsyncClient> provideContext(Closer closer,
-            CloudServersAsyncClient asynchApi, CloudServersClient defaultApi,
-            @CloudServers URI endPoint,
-            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-      return new RestContextImpl<CloudServersClient, CloudServersAsyncClient>(closer, asynchApi,
-               defaultApi, endPoint, account);
+   RestContext<CloudServersClient, CloudServersAsyncClient> provideContext(
+         Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+         CloudServersAsyncClient asynchApi, CloudServersClient defaultApi,
+         @CloudServers URI endPoint,
+         @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+      return new RestContextImpl<CloudServersClient, CloudServersAsyncClient>(
+            closer, http, asyncHttp, defaultApi, asynchApi, endPoint, account);
    }
 
 }

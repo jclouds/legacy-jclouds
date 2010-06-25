@@ -24,6 +24,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.endpoints.Org;
@@ -44,11 +46,13 @@ public class HostingDotComVCloudContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> provideContext(Closer closer,
-            HostingDotComVCloudAsyncClient asynchApi, HostingDotComVCloudClient defaultApi,
-            @Org URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new RestContextImpl<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient>(closer,
-               asynchApi, defaultApi, endPoint, account);
+   RestContext<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> provideContext(
+         Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+         HostingDotComVCloudAsyncClient asynchApi,
+         HostingDotComVCloudClient defaultApi, @Org URI endPoint,
+         @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+      return new RestContextImpl<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient>(
+            closer, http, asyncHttp, defaultApi, asynchApi, endPoint, account);
    }
 
 }

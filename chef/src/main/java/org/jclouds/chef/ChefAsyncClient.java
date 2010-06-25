@@ -37,14 +37,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.chef.binders.BindChecksumsToJsonPayload;
 import org.jclouds.chef.binders.BindClientnameToJsonPayload;
 import org.jclouds.chef.binders.BindGenerateKeyForClientToJsonPayload;
+import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.functions.ParseKeyFromJson;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
+import org.jclouds.chef.functions.ParseSandboxFromJson;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.PartParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -65,7 +69,18 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Endpoint(Chef.class)
 @RequestFilters(SignedHeaderAuth.class)
 @Consumes(MediaType.APPLICATION_JSON)
+@Headers(keys = "X-Chef-Version", values = "0.9.0")
 public interface ChefAsyncClient {
+
+   /**
+    * @see ChefClient#getUploadUrisForContent
+    */
+   @POST
+   @Path("sandboxes")
+   @ResponseParser(ParseSandboxFromJson.class)
+   ListenableFuture<Sandbox> getUploadUrisForContent(
+         @BinderParam(BindChecksumsToJsonPayload.class) Set<String> checksums);
+
    /**
     * @see ChefCookbooks#listCookbooks
     */

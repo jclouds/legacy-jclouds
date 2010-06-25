@@ -28,6 +28,8 @@ import org.jclouds.mezeo.pcs2.PCS;
 import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.PCSClient;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -50,11 +52,12 @@ public class PCSContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<PCSClient, PCSAsyncClient> provideContext(Closer closer, PCSAsyncClient async,
-            PCSClient defaultApi, @PCS URI endPoint,
-            @Named(PCSConstants.PROPERTY_PCS2_USER) String account) {
-      return new RestContextImpl<PCSClient, PCSAsyncClient>(closer, async, defaultApi, endPoint,
-               account);
+   RestContext<PCSClient, PCSAsyncClient> provideContext(Closer closer,
+         HttpClient http, HttpAsyncClient asyncHttp, PCSAsyncClient async,
+         PCSClient defaultApi, @PCS URI endPoint,
+         @Named(PCSConstants.PROPERTY_PCS2_USER) String account) {
+      return new RestContextImpl<PCSClient, PCSAsyncClient>(closer, http,
+            asyncHttp, defaultApi, async, endPoint, account);
    }
 
 }

@@ -16,44 +16,36 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.rest;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
-import com.google.common.io.InputSupplier;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.Payload;
 
 /**
+ * Simple client
+ * 
  * @author Adrian Cole
  */
-public interface Payload extends InputSupplier<InputStream> {
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface HttpClient {
+
+   void put(URI location, Payload payload);
+
+   void post(URI location, Payload payload);
+
+   boolean exists(URI location);
 
    /**
-    * Creates a new InputStream object of the payload.
+    * @return null if the resource didn't exist.
     */
-   InputStream getInput();
+   InputStream get(URI location);
 
    /**
-    * Payload in its original form.
+    * @return false if the resource didn't exist.
     */
-   Object getRawContent();
-
-   /**
-    * Tells if the payload is capable of producing its data more than once.
-    */
-   boolean isRepeatable();
-
-   /**
-    * Writes the payload content to the output stream.
-    * 
-    * @throws IOException
-    */
-   void writeTo(OutputStream outstream) throws IOException;
-
-   /**
-    * Attempts to determine the size of the payload
-    */
-   Long calculateSize();
-
+   boolean delete(URI location);
 }

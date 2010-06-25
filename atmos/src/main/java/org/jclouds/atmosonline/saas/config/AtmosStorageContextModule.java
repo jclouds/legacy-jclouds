@@ -29,6 +29,8 @@ import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -48,12 +50,13 @@ public class AtmosStorageContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<AtmosStorageClient, AtmosStorageAsyncClient> provideContext(Closer closer,
-            AtmosStorageAsyncClient async, AtmosStorageClient defaultApi,
-            @AtmosStorage URI endPoint,
-            @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String account) {
-      return new RestContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>(closer, async,
-               defaultApi, endPoint, account);
+   RestContext<AtmosStorageClient, AtmosStorageAsyncClient> provideContext(
+         Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+         AtmosStorageAsyncClient async, AtmosStorageClient defaultApi,
+         @AtmosStorage URI endPoint,
+         @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String account) {
+      return new RestContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>(
+            closer, http, asyncHttp, defaultApi, async, endPoint, account);
    }
 
 }

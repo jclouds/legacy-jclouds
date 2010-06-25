@@ -39,6 +39,8 @@ import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -59,7 +61,8 @@ public class RackspaceAuthenticationLiveTest {
 
    @ConfiguresRestClient
    @RequiresHttp
-   private final class RestRackspaceAuthenticationClientModule extends AbstractModule {
+   private final class RestRackspaceAuthenticationClientModule extends
+         AbstractModule {
 
       @SuppressWarnings("unused")
       @Provides
@@ -74,16 +77,18 @@ public class RackspaceAuthenticationLiveTest {
       }
    }
 
-   private final class RackspaceAuthenticationContextModule extends AbstractModule {
+   private final class RackspaceAuthenticationContextModule extends
+         AbstractModule {
 
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<RackspaceAuthentication, RackspaceAuthentication> provideContext(Closer closer,
-               RackspaceAuthentication api, @Authentication URI endPoint,
-               @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         return new RestContextImpl<RackspaceAuthentication, RackspaceAuthentication>(closer, api,
-                  api, endPoint, account);
+      RestContext<RackspaceAuthentication, RackspaceAuthentication> provideContext(
+            Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+            RackspaceAuthentication api, @Authentication URI endPoint,
+            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+         return new RestContextImpl<RackspaceAuthentication, RackspaceAuthentication>(
+               closer, http, asyncHttp, api, api, endPoint, account);
       }
 
       @Override
@@ -92,16 +97,18 @@ public class RackspaceAuthenticationLiveTest {
       }
    }
 
-   String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-   String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+   String account = checkNotNull(System.getProperty("jclouds.test.user"),
+         "jclouds.test.user");
+   String key = checkNotNull(System.getProperty("jclouds.test.key"),
+         "jclouds.test.key");
 
    private RestContext<RackspaceAuthentication, RackspaceAuthentication> context;
 
    @Test
    public void testAuthentication() throws Exception {
       RackspaceAuthentication authentication = context.getAsyncApi();
-      AuthenticationResponse response = authentication.authenticate(account, key).get(10,
-               TimeUnit.SECONDS);
+      AuthenticationResponse response = authentication.authenticate(account,
+            key).get(10, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(response.getStorageUrl());
       assertNotNull(response.getCDNManagementUrl());
@@ -118,8 +125,9 @@ public class RackspaceAuthenticationLiveTest {
    @BeforeClass
    void setupFactory() {
       context = new RestContextBuilder<RackspaceAuthentication, RackspaceAuthentication>(
-               "rackspace", RackspaceAuthentication.class, RackspaceAuthentication.class,
-               new RackspacePropertiesBuilder(account, key).build()) {
+            "rackspace", RackspaceAuthentication.class,
+            RackspaceAuthentication.class, new RackspacePropertiesBuilder(
+                  account, key).build()) {
          @Override
          protected void addClientModule(List<Module> modules) {
             modules.add(new RestRackspaceAuthenticationClientModule());
@@ -127,12 +135,14 @@ public class RackspaceAuthenticationLiveTest {
          }
 
          @Override
-         protected void addContextModule(String providerName, List<Module> modules) {
+         protected void addContextModule(String providerName,
+               List<Module> modules) {
             modules.add(new RackspaceAuthenticationContextModule());
 
          }
-      }.withModules(new Log4JLoggingModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))
-               .buildContext();
+      }.withModules(
+            new Log4JLoggingModule(),
+            new ExecutorServiceModule(sameThreadExecutor(),
+                  sameThreadExecutor())).buildContext();
    }
 }

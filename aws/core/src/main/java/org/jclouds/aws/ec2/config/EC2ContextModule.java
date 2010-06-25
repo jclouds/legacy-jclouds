@@ -30,6 +30,8 @@ import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -50,10 +52,11 @@ public class EC2ContextModule extends AbstractModule {
    @Provides
    @Singleton
    RestContext<EC2Client, EC2AsyncClient> provideContext(Closer closer,
-         EC2AsyncClient defaultApi, EC2Client synchApi, @EC2 URI endPoint,
+         HttpClient http, HttpAsyncClient asyncHttp, EC2AsyncClient defaultApi,
+         EC2Client synchApi, @EC2 URI endPoint,
          @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<EC2Client, EC2AsyncClient>(closer, defaultApi,
-            synchApi, endPoint, account);
+      return new RestContextImpl<EC2Client, EC2AsyncClient>(closer, http,
+            asyncHttp, synchApi, defaultApi, endPoint, account);
    }
 
 }

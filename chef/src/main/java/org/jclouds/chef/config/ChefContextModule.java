@@ -46,13 +46,15 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.chef.Chef;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.reference.ChefConstants;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -63,11 +65,11 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class ChefContextModule extends AbstractModule {
-   
+
    public ChefContextModule(String providerName) {
       // providerName ignored right now
    }
-   
+
    @Override
    protected void configure() {
       // example of how to customize bindings
@@ -76,9 +78,12 @@ public class ChefContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<ChefClient, ChefAsyncClient> provideContext(Closer closer, ChefAsyncClient asyncApi,
-            ChefClient syncApi, @Chef URI endPoint, @Named(ChefConstants.PROPERTY_CHEF_IDENTITY) String account) {
-      return new RestContextImpl<ChefClient, ChefAsyncClient>(closer, asyncApi, syncApi, endPoint, account);
+   RestContext<ChefClient, ChefAsyncClient> provideContext(Closer closer,
+         HttpClient http, HttpAsyncClient asyncHttp, ChefAsyncClient asyncApi,
+         ChefClient syncApi, @Chef URI endPoint,
+         @Named(ChefConstants.PROPERTY_CHEF_IDENTITY) String account) {
+      return new RestContextImpl<ChefClient, ChefAsyncClient>(closer, http,
+            asyncHttp, syncApi, asyncApi, endPoint, account);
    }
 
 }

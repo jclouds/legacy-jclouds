@@ -45,6 +45,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
@@ -60,6 +61,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
+   Sandbox getUploadUrisForContent(Set<String> checksums);
 
    /**
     * 

@@ -19,7 +19,6 @@
 package org.jclouds.http;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 
@@ -66,10 +65,6 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id);
-
-   @GET
-   @Path("{path}")
-   ListenableFuture<InputStream> downloadStream(@PathParam("path") String path);
 
    @GET
    @Path("{path}")

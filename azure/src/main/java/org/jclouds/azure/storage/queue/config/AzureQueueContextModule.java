@@ -29,6 +29,8 @@ import org.jclouds.azure.storage.queue.AzureQueueClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -47,11 +49,16 @@ public class AzureQueueContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<AzureQueueClient, AzureQueueAsyncClient> provideContext(Closer closer,
-            AzureQueueAsyncClient asynchApi, AzureQueueClient defaultApi, @AzureQueue URI endPoint,
-            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-      return new RestContextImpl<AzureQueueClient, AzureQueueAsyncClient>(closer, asynchApi,
-               defaultApi, endPoint, account);
+   RestContext<AzureQueueClient, AzureQueueAsyncClient> provideContext(
+         Closer closer,
+         HttpClient http,
+         HttpAsyncClient asyncHttp,
+         AzureQueueAsyncClient asynchApi,
+         AzureQueueClient defaultApi,
+         @AzureQueue URI endPoint,
+         @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
+      return new RestContextImpl<AzureQueueClient, AzureQueueAsyncClient>(
+            closer, http, asyncHttp, defaultApi, asynchApi, endPoint, account);
    }
 
 }

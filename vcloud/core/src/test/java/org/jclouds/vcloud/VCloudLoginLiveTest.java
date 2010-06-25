@@ -41,6 +41,8 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -64,12 +66,14 @@ public class VCloudLoginLiveTest {
 
    @RequiresHttp
    @ConfiguresRestClient
-   private static final class VCloudLoginRestClientModule extends AbstractModule {
+   private static final class VCloudLoginRestClientModule extends
+         AbstractModule {
 
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      protected VCloudLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
+      protected VCloudLoginAsyncClient provideVCloudLogin(
+            AsyncClientFactory factory) {
          return factory.create(VCloudLoginAsyncClient.class);
       }
 
@@ -77,8 +81,10 @@ public class VCloudLoginLiveTest {
       @Provides
       @Singleton
       public BasicAuthentication provideBasicAuthentication(
-               @Named(PROPERTY_VCLOUD_USER) String user, @Named(PROPERTY_VCLOUD_KEY) String key,
-               EncryptionService encryptionService) throws UnsupportedEncodingException {
+            @Named(PROPERTY_VCLOUD_USER) String user,
+            @Named(PROPERTY_VCLOUD_KEY) String key,
+            EncryptionService encryptionService)
+            throws UnsupportedEncodingException {
          return new BasicAuthentication(user, key, encryptionService);
       }
 
@@ -102,10 +108,11 @@ public class VCloudLoginLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudLoginAsyncClient, VCloudLoginAsyncClient> provideContext(Closer closer,
-               VCloudLoginAsyncClient api, @VCloudLogin URI endPoint) {
-         return new RestContextImpl<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(closer, api,
-                  api, endPoint, "");
+      RestContext<VCloudLoginAsyncClient, VCloudLoginAsyncClient> provideContext(
+            Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+            VCloudLoginAsyncClient api, @VCloudLogin URI endPoint) {
+         return new RestContextImpl<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(
+               closer, http, asyncHttp, api, api, endPoint, "");
       }
 
       @Override
@@ -120,7 +127,8 @@ public class VCloudLoginLiveTest {
    public void testLogin() throws Exception {
       VCloudLoginAsyncClient authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
-         VCloudSession response = authentication.login().get(45, TimeUnit.SECONDS);
+         VCloudSession response = authentication.login().get(45,
+               TimeUnit.SECONDS);
          assertNotNull(response);
          assertNotNull(response.getVCloudToken());
          assertNotNull(response.getOrgs());
@@ -129,14 +137,17 @@ public class VCloudLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint")
-               + "/v0.8/login";
-      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>("vcloud",
-               VCloudLoginAsyncClient.class, VCloudLoginAsyncClient.class,
-               new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
+      String endpoint = checkNotNull(System
+            .getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint")
+            + "/v0.8/login";
+      String account = checkNotNull(System.getProperty("jclouds.test.user"),
+            "jclouds.test.user");
+      String key = checkNotNull(System.getProperty("jclouds.test.key"),
+            "jclouds.test.key");
+      context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(
+            "vcloud", VCloudLoginAsyncClient.class,
+            VCloudLoginAsyncClient.class, new VCloudPropertiesBuilder(URI
+                  .create(endpoint), account, key).build()) {
 
          public void addContextModule(String providerName, List<Module> modules) {
             modules.add(new VCloudLoginContextModule());
@@ -147,8 +158,9 @@ public class VCloudLoginLiveTest {
             modules.add(new VCloudLoginRestClientModule());
          }
 
-      }.withModules(new Log4JLoggingModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))
-               .buildContext();
+      }.withModules(
+            new Log4JLoggingModule(),
+            new ExecutorServiceModule(sameThreadExecutor(),
+                  sameThreadExecutor())).buildContext();
    }
 }

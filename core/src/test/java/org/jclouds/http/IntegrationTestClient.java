@@ -19,7 +19,6 @@
 package org.jclouds.http;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -39,8 +38,6 @@ public interface IntegrationTestClient {
    String synch(String id);
 
    String download(String id);
-
-   InputStream downloadStream(String id);
 
    String downloadException(String id, HttpRequestOptions options);
 

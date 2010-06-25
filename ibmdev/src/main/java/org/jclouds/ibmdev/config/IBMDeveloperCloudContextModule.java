@@ -51,6 +51,8 @@ import org.jclouds.ibmdev.IBMDeveloperCloudAsyncClient;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
 import org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -58,7 +60,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the IBMDeveloperCloud connection, including logging and http transport.
+ * Configures the IBMDeveloperCloud connection, including logging and http
+ * transport.
  * 
  * @author Adrian Cole
  */
@@ -76,12 +79,16 @@ public class IBMDeveloperCloudContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> provideContext(Closer closer,
-            IBMDeveloperCloudAsyncClient asyncApi, IBMDeveloperCloudClient syncApi,
-            @IBMDeveloperCloud URI endPoint,
-            @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER) String account) {
-      return new RestContextImpl<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>(closer,
-               asyncApi, syncApi, endPoint, account);
+   RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> provideContext(
+         Closer closer,
+         HttpClient http,
+         HttpAsyncClient asyncHttp,
+         IBMDeveloperCloudAsyncClient asyncApi,
+         IBMDeveloperCloudClient syncApi,
+         @IBMDeveloperCloud URI endPoint,
+         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER) String account) {
+      return new RestContextImpl<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>(
+            closer, http, asyncHttp, syncApi, asyncApi, endPoint, account);
    }
 
 }

@@ -24,6 +24,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -45,10 +47,12 @@ public class VCloudContextModule extends AbstractModule {
    @Provides
    @Singleton
    RestContext<VCloudClient, VCloudAsyncClient> provideContext(Closer closer,
-            VCloudAsyncClient asynchApi, VCloudClient defaultApi, @Org URI endPoint,
-            @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new RestContextImpl<VCloudClient, VCloudAsyncClient>(closer, asynchApi, defaultApi,
-               endPoint, account);
+         HttpClient http, HttpAsyncClient asyncHttp,
+         VCloudAsyncClient asynchApi, VCloudClient defaultApi,
+         @Org URI endPoint,
+         @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+      return new RestContextImpl<VCloudClient, VCloudAsyncClient>(closer, http,
+            asyncHttp, defaultApi, asynchApi, endPoint, account);
    }
 
 }

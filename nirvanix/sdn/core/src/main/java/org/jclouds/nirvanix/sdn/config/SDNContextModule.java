@@ -29,6 +29,8 @@ import org.jclouds.nirvanix.sdn.SDN;
 import org.jclouds.nirvanix.sdn.SDNAsyncClient;
 import org.jclouds.nirvanix.sdn.SDNClient;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -47,11 +49,12 @@ public class SDNContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<SDNClient, SDNAsyncClient> provideContext(Closer closer, SDNAsyncClient async,
-            SDNClient defaultApi, @SDN URI endPoint,
-            @Named(SDNConstants.PROPERTY_SDN_USERNAME) String account) {
-      return new RestContextImpl<SDNClient, SDNAsyncClient>(closer, async, defaultApi, endPoint,
-               account);
+   RestContext<SDNClient, SDNAsyncClient> provideContext(Closer closer,
+         HttpClient http, HttpAsyncClient asyncHttp, SDNAsyncClient async,
+         SDNClient defaultApi, @SDN URI endPoint,
+         @Named(SDNConstants.PROPERTY_SDN_USERNAME) String account) {
+      return new RestContextImpl<SDNClient, SDNAsyncClient>(closer, http,
+            asyncHttp, defaultApi, async, endPoint, account);
    }
 
 }

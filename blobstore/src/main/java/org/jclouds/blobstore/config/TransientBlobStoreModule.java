@@ -29,13 +29,16 @@ import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.domain.Location;
 import org.jclouds.internal.ClassMethodArgs;
-import com.google.inject.name.Names;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.config.BinderUtils;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 public class TransientBlobStoreModule extends AbstractModule {
 
@@ -45,17 +48,20 @@ public class TransientBlobStoreModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
-      }).toInstance(map);
+      bind(
+            new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
+            }).toInstance(map);
       bind(new TypeLiteral<ConcurrentMap<String, Location>>() {
       }).toInstance(containerToLocation);
       // delegation on stubs is not currently supported
       bind(new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
       }).annotatedWith(Names.named("async")).toInstance(
-               new ConcurrentHashMap<ClassMethodArgs, Object>());
+            new ConcurrentHashMap<ClassMethodArgs, Object>());
       bind(TransientAsyncBlobStore.class).in(Scopes.SINGLETON);
-      bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to(0);
-      bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(0);
+      bindConstant()
+            .annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to(0);
+      bindConstant().annotatedWith(
+            Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(0);
    }
 
    @Provides
@@ -63,4 +69,17 @@ public class TransientBlobStoreModule extends AbstractModule {
    Set<Location> provideLocations(Location defaultLocation) {
       return ImmutableSet.of(defaultLocation);
    }
+
+   @Provides
+   @Singleton
+   HttpClient provideClient() {
+      return BinderUtils.newNullProxy(HttpClient.class);
+   }
+
+   @Provides
+   @Singleton
+   HttpAsyncClient provideAsyncClient() {
+      return BinderUtils.newNullProxy(HttpAsyncClient.class);
+   }
+
 }

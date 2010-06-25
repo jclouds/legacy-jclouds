@@ -27,6 +27,8 @@ import javax.inject.Inject;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 
 /**
  * @author Adrian Cole
@@ -40,9 +42,15 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final Closer closer;
    private final URI endPoint;
    private final String account;
+   private final HttpClient simpleClient;
+   private final HttpAsyncClient simpleAsyncClient;
 
    @Inject
-   public RestContextImpl(Closer closer, A asyncApi, S syncApi, URI endPoint, String account) {
+   public RestContextImpl(Closer closer, HttpClient simpleClient,
+         HttpAsyncClient simpleAsyncClient, S syncApi, A asyncApi,
+         URI endPoint, String account) {
+      this.simpleClient = simpleClient;
+      this.simpleAsyncClient = simpleAsyncClient;
       this.asyncApi = asyncApi;
       this.syncApi = syncApi;
       this.closer = closer;
@@ -55,6 +63,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
     * 
     * @see Closer
     */
+   @Override
    public void close() {
       try {
          closer.close();
@@ -63,20 +72,34 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       }
    }
 
+   @Override
    public String getAccount() {
       return account;
    }
 
+   @Override
    public A getAsyncApi() {
       return asyncApi;
    }
 
+   @Override
    public S getApi() {
       return syncApi;
    }
 
+   @Override
    public URI getEndPoint() {
       return endPoint;
+   }
+
+   @Override
+   public HttpAsyncClient asyncHttp() {
+      return this.simpleAsyncClient;
+   }
+
+   @Override
+   public HttpClient http() {
+      return this.simpleClient;
    }
 
 }

@@ -30,6 +30,8 @@ import org.jclouds.aws.sqs.SQSClient;
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -52,11 +54,12 @@ public class SQSContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<SQSClient, SQSAsyncClient> provideContext(Closer closer, SQSAsyncClient defaultApi,
-            SQSClient synchApi, @SQS URI endPoint,
-            @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<SQSClient, SQSAsyncClient>(closer, defaultApi, synchApi, endPoint,
-               account);
+   RestContext<SQSClient, SQSAsyncClient> provideContext(Closer closer,
+         HttpClient http, HttpAsyncClient asyncHttp, SQSAsyncClient defaultApi,
+         SQSClient synchApi, @SQS URI endPoint,
+         @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
+      return new RestContextImpl<SQSClient, SQSAsyncClient>(closer, http,
+            asyncHttp, synchApi, defaultApi, endPoint, account);
    }
 
 }

@@ -37,6 +37,8 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -59,11 +61,13 @@ public class VCloudVersionsLiveTest {
 
    @RequiresHttp
    @ConfiguresRestClient
-   private static final class VCloudVersionsRestClientModule extends AbstractModule {
+   private static final class VCloudVersionsRestClientModule extends
+         AbstractModule {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      protected VCloudVersionsAsyncClient provideVCloudVersions(AsyncClientFactory factory) {
+      protected VCloudVersionsAsyncClient provideVCloudVersions(
+            AsyncClientFactory factory) {
          return factory.create(VCloudVersionsAsyncClient.class);
       }
 
@@ -86,9 +90,10 @@ public class VCloudVersionsLiveTest {
       @Provides
       @Singleton
       RestContext<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient> provideContext(
-               Closer closer, VCloudVersionsAsyncClient api, @VCloud URI endPoint) {
-         return new RestContextImpl<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(closer,
-                  api, api, endPoint, "");
+            Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+            VCloudVersionsAsyncClient api, @VCloud URI endPoint) {
+         return new RestContextImpl<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(
+               closer, http, asyncHttp, api, api, endPoint, "");
       }
 
       @Override
@@ -103,8 +108,8 @@ public class VCloudVersionsLiveTest {
    public void testGetSupportedVersions() throws Exception {
       VCloudVersionsAsyncClient authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
-         SortedMap<String, URI> response = authentication.getSupportedVersions().get(45,
-                  TimeUnit.SECONDS);
+         SortedMap<String, URI> response = authentication
+               .getSupportedVersions().get(45, TimeUnit.SECONDS);
          assertNotNull(response);
          assertNotNull(response.containsKey("0.8"));
       }
@@ -112,13 +117,16 @@ public class VCloudVersionsLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint");
-      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String endpoint = checkNotNull(System
+            .getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
+      String account = checkNotNull(System.getProperty("jclouds.test.user"),
+            "jclouds.test.user");
+      String key = checkNotNull(System.getProperty("jclouds.test.key"),
+            "jclouds.test.key");
       context = new RestContextBuilder<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(
-               "vcloud", VCloudVersionsAsyncClient.class, VCloudVersionsAsyncClient.class,
-               new VCloudPropertiesBuilder(URI.create(endpoint), account, key).build()) {
+            "vcloud", VCloudVersionsAsyncClient.class,
+            VCloudVersionsAsyncClient.class, new VCloudPropertiesBuilder(URI
+                  .create(endpoint), account, key).build()) {
 
          public void addContextModule(String providerName, List<Module> modules) {
 
@@ -130,8 +138,9 @@ public class VCloudVersionsLiveTest {
             modules.add(new VCloudVersionsRestClientModule());
          }
 
-      }.withModules(new Log4JLoggingModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()))
-               .buildContext();
+      }.withModules(
+            new Log4JLoggingModule(),
+            new ExecutorServiceModule(sameThreadExecutor(),
+                  sameThreadExecutor())).buildContext();
    }
 }

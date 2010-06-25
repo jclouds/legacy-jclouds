@@ -46,13 +46,15 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.boxdotnet.BoxDotNet;
 import org.jclouds.boxdotnet.BoxDotNetAsyncClient;
 import org.jclouds.boxdotnet.BoxDotNetClient;
 import org.jclouds.boxdotnet.reference.BoxDotNetConstants;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -63,11 +65,11 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class BoxDotNetContextModule extends AbstractModule {
-   
+
    public BoxDotNetContextModule(String providerName) {
       // providerName ignored right now
    }
-   
+
    @Override
    protected void configure() {
       // example of how to customize bindings
@@ -76,9 +78,13 @@ public class BoxDotNetContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<BoxDotNetClient, BoxDotNetAsyncClient> provideContext(Closer closer, BoxDotNetAsyncClient asyncApi,
-            BoxDotNetClient syncApi, @BoxDotNet URI endPoint, @Named(BoxDotNetConstants.PROPERTY_BOXDOTNET_USER) String account) {
-      return new RestContextImpl<BoxDotNetClient, BoxDotNetAsyncClient>(closer, asyncApi, syncApi, endPoint, account);
+   RestContext<BoxDotNetClient, BoxDotNetAsyncClient> provideContext(
+         Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+         BoxDotNetAsyncClient asyncApi, BoxDotNetClient syncApi,
+         @BoxDotNet URI endPoint,
+         @Named(BoxDotNetConstants.PROPERTY_BOXDOTNET_USER) String account) {
+      return new RestContextImpl<BoxDotNetClient, BoxDotNetAsyncClient>(closer,
+            http, asyncHttp, syncApi, asyncApi, endPoint, account);
    }
 
 }

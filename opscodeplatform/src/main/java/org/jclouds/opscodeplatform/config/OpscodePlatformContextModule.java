@@ -28,6 +28,8 @@ import org.jclouds.opscodeplatform.OpscodePlatform;
 import org.jclouds.opscodeplatform.OpscodePlatformAsyncClient;
 import org.jclouds.opscodeplatform.OpscodePlatformClient;
 import org.jclouds.opscodeplatform.reference.OpscodePlatformConstants;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -35,7 +37,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the OpscodePlatform connection, including logging and http transport.
+ * Configures the OpscodePlatform connection, including logging and http
+ * transport.
  * 
  * @author Adrian Cole
  */
@@ -51,12 +54,16 @@ public class OpscodePlatformContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> provideContext(Closer closer,
-            OpscodePlatformAsyncClient asyncApi, OpscodePlatformClient syncApi,
-            @OpscodePlatform URI endPoint,
-            @Named(OpscodePlatformConstants.PROPERTY_OPSCODEPLATFORM_ENDPOINT) String account) {
-      return new RestContextImpl<OpscodePlatformClient, OpscodePlatformAsyncClient>(closer,
-               asyncApi, syncApi, endPoint, account);
+   RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> provideContext(
+         Closer closer,
+         HttpClient http,
+         HttpAsyncClient asyncHttp,
+         OpscodePlatformAsyncClient asyncApi,
+         OpscodePlatformClient syncApi,
+         @OpscodePlatform URI endPoint,
+         @Named(OpscodePlatformConstants.PROPERTY_OPSCODEPLATFORM_ENDPOINT) String account) {
+      return new RestContextImpl<OpscodePlatformClient, OpscodePlatformAsyncClient>(
+            closer, http, asyncHttp, syncApi, asyncApi, endPoint, account);
    }
 
 }

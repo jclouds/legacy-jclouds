@@ -28,12 +28,14 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.jclouds.chef.config.ChefRestClientModule;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
 import org.jclouds.chef.functions.ParseKeyFromJson;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
+import org.jclouds.chef.functions.ParseSandboxFromJson;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
@@ -48,6 +50,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -61,6 +64,34 @@ import com.google.inject.name.Names;
 @Test(groups = "unit", testName = "chef.ChefAsyncClientTest")
 public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
+   public void testGetUploadUrisForContent() throws SecurityException,
+         NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod(
+            "getUploadUrisForContent", Set.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
+            .createRequest(method, ImmutableSet.of(
+                  "0189e76ccc476701d6b374e5a1a27347",
+                  "0c5ecd7788cf4f6c7de2a57193897a6c",
+                  "1dda05ed139664f1f89b9dec482b77c0"));
+
+      assertRequestLineEquals(httpRequest,
+            "POST http://localhost:4000/sandboxes HTTP/1.1");
+      assertHeadersEqual(
+            httpRequest,
+            "Accept: application/json\nContent-Length: 135\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
+      assertPayloadEquals(
+            httpRequest,
+            "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}");
+
+      assertResponseParserClassEquals(method, httpRequest,
+            ParseSandboxFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
    public void testGetCookbook() throws SecurityException,
          NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("getCookbook",
@@ -69,7 +100,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             .createRequest(method, "cookbook");
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:4000/cookbooks/cookbook HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertHeadersEqual(httpRequest,
+            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -89,7 +121,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             .createRequest(method, "cookbook");
       assertRequestLineEquals(httpRequest,
             "DELETE http://localhost:4000/cookbooks/cookbook HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertHeadersEqual(httpRequest,
+            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -128,7 +161,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             httpRequest,
             "Accept: application/json\nContent-Length: "
                   + (file.getName().length() + 206)
-                  + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+                  + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, COOOKBOOK_BODY.replace(
             "cookbook.tar.gz", file.getName()));
 
@@ -152,7 +185,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             "POST http://localhost:4000/cookbooks HTTP/1.1");
       assertHeadersEqual(
             httpRequest,
-            "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+            "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, COOOKBOOK_BODY);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -181,7 +214,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             httpRequest,
             "Accept: application/json\nContent-Length: "
                   + (file.getName().length() + 206)
-                  + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+                  + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, COOOKBOOK_BODY.replace(
             "cookbook.tar.gz", file.getName()));
 
@@ -205,7 +238,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             "PUT http://localhost:4000/cookbooks/cookbook/_content HTTP/1.1");
       assertHeadersEqual(
             httpRequest,
-            "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+            "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, COOOKBOOK_BODY);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -225,7 +258,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:4000/cookbooks HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertHeadersEqual(httpRequest,
+            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -245,7 +279,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             .createRequest(method, "client");
       assertRequestLineEquals(httpRequest,
             "HEAD http://localhost:4000/clients/client HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertHeadersEqual(httpRequest,
+            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -265,7 +300,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             .createRequest(method, "client");
       assertRequestLineEquals(httpRequest,
             "DELETE http://localhost:4000/clients/client HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertHeadersEqual(httpRequest,
+            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -287,7 +323,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             "PUT http://localhost:4000/clients/client HTTP/1.1");
       assertHeadersEqual(
             httpRequest,
-            "Accept: application/json\nContent-Length: 44\nContent-Type: application/json\n");
+            "Accept: application/json\nContent-Length: 44\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest,
             "{\"clientname\":\"client\", \"private_key\": true}");
 
@@ -311,7 +347,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             "POST http://localhost:4000/clients HTTP/1.1");
       assertHeadersEqual(
             httpRequest,
-            "Accept: application/json\nContent-Length: 23\nContent-Type: application/json\n");
+            "Accept: application/json\nContent-Length: 23\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\"}");
 
       assertResponseParserClassEquals(method, httpRequest,
@@ -331,7 +367,8 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:4000/clients HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertHeadersEqual(httpRequest,
+            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest,

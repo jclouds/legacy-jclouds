@@ -39,7 +39,8 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class S3StubClientModule extends RestClientModule<S3Client, S3AsyncClient> {
+public class S3StubClientModule extends
+      RestClientModule<S3Client, S3AsyncClient> {
 
    public S3StubClientModule() {
       super(S3Client.class, S3AsyncClient.class);
@@ -50,7 +51,8 @@ public class S3StubClientModule extends RestClientModule<S3Client, S3AsyncClient
       install(new S3ObjectModule());
       install(new ParserModule());
       install(new TransientBlobStoreModule());
-      bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
+      bind(URI.class).annotatedWith(S3.class).toInstance(
+            URI.create("https://localhost/s3stub"));
       bind(String.class).annotatedWith(S3.class).toInstance(Region.US_STANDARD);
       bind(new TypeLiteral<Set<String>>() {
       }).annotatedWith(S3.class).toInstance(Region.ALL_S3);
@@ -60,5 +62,4 @@ public class S3StubClientModule extends RestClientModule<S3Client, S3AsyncClient
    protected void bindAsyncClient() {
       bind(S3AsyncClient.class).to(StubS3AsyncClient.class).asEagerSingleton();
    }
-
 }

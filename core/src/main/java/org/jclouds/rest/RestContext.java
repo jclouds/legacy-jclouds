@@ -28,8 +28,8 @@ import com.google.inject.ImplementedBy;
 /**
  * Represents an authenticated context to the cloud.
  * 
- * <h2>Note</h2> Please issue {@link #close()} when you are finished with this context in order to
- * release resources.
+ * <h2>Note</h2> Please issue {@link #close()} when you are finished with this
+ * context in order to release resources.
  * 
  * 
  * @author Adrian Cole
@@ -39,19 +39,25 @@ import com.google.inject.ImplementedBy;
 public interface RestContext<S, A> {
 
    /**
-    * low-level api to the cloud. Threadsafe implementations will return a singleton.
+    * low-level api to the cloud. Threadsafe implementations will return a
+    * singleton.
     * 
-    * @return a connection to the cloud where all methods return {@link ListenableFuture}s
+    * @return a connection to the cloud where all methods return
+    *         {@link ListenableFuture}s
     */
    A getAsyncApi();
 
    /**
-    * reflects a tuned connection to the cloud which calls {@link #getAsyncApi()} with predetermined
-    * timeouts.
+    * reflects a tuned connection to the cloud which calls
+    * {@link #getAsyncApi()} with predetermined timeouts.
     * 
     * @return a connection to the cloud where all methods block
     */
    S getApi();
+
+   HttpAsyncClient asyncHttp();
+
+   HttpClient http();
 
    URI getEndPoint();
 

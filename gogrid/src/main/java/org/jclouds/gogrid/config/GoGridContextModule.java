@@ -36,6 +36,8 @@ import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.reference.GoGridConstants;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -62,21 +64,24 @@ public class GoGridContextModule extends AbstractModule {
    @Provides
    @Singleton
    RestContext<GoGridClient, GoGridAsyncClient> provideContext(Closer closer,
-            GoGridAsyncClient asyncApi, GoGridClient syncApi, @GoGrid URI endPoint,
-            @Named(GoGridConstants.PROPERTY_GOGRID_USER) String account) {
-      return new RestContextImpl<GoGridClient, GoGridAsyncClient>(closer, asyncApi, syncApi,
-               endPoint, account);
+         HttpClient http, HttpAsyncClient asyncHttp,
+         GoGridAsyncClient asyncApi, GoGridClient syncApi,
+         @GoGrid URI endPoint,
+         @Named(GoGridConstants.PROPERTY_GOGRID_USER) String account) {
+      return new RestContextImpl<GoGridClient, GoGridAsyncClient>(closer, http,
+            asyncHttp, syncApi, asyncApi, endPoint, account);
    }
 
    @Singleton
    public static class DateSecondsAdapter implements DateAdapter {
 
-      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+      public JsonElement serialize(Date src, Type typeOfSrc,
+            JsonSerializationContext context) {
          return new JsonPrimitive(src.getTime());
       }
 
-      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
+      public Date deserialize(JsonElement json, Type typeOfT,
+            JsonDeserializationContext context) throws JsonParseException {
          String toParse = json.getAsJsonPrimitive().getAsString();
          return new Date(Long.valueOf(toParse));
       }

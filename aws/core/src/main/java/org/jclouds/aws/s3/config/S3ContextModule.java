@@ -28,6 +28,8 @@ import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -47,11 +49,12 @@ public class S3ContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<S3Client, S3AsyncClient> provideContext(Closer closer, S3AsyncClient defaultApi,
-            S3Client syncApi, @S3 URI endPoint,
-            @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<S3Client, S3AsyncClient>(closer, defaultApi, syncApi, endPoint,
-               account);
+   RestContext<S3Client, S3AsyncClient> provideContext(Closer closer,
+         HttpClient http, HttpAsyncClient asyncHttp, S3AsyncClient defaultApi,
+         S3Client syncApi, @S3 URI endPoint,
+         @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
+      return new RestContextImpl<S3Client, S3AsyncClient>(closer, http,
+            asyncHttp, syncApi, defaultApi, endPoint, account);
    }
 
 }

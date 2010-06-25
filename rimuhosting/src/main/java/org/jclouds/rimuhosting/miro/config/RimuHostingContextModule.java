@@ -26,6 +26,8 @@ import javax.inject.Singleton;
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rimuhosting.miro.RimuHosting;
@@ -49,11 +51,13 @@ public class RimuHostingContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<RimuHostingClient, RimuHostingAsyncClient> provideContext(Closer closer,
-            RimuHostingAsyncClient asyncApi, RimuHostingClient syncApi, @RimuHosting URI endPoint,
-            @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String account) {
-      return new RestContextImpl<RimuHostingClient, RimuHostingAsyncClient>(closer, asyncApi,
-               syncApi, endPoint, account);
+   RestContext<RimuHostingClient, RimuHostingAsyncClient> provideContext(
+         Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
+         RimuHostingAsyncClient asyncApi, RimuHostingClient syncApi,
+         @RimuHosting URI endPoint,
+         @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String account) {
+      return new RestContextImpl<RimuHostingClient, RimuHostingAsyncClient>(
+            closer, http, asyncHttp, syncApi, asyncApi, endPoint, account);
    }
 
 }

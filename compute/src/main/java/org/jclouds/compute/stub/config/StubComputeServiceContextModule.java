@@ -66,8 +66,11 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Predicate;
@@ -154,12 +157,26 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
    }
 
+   @Provides
+   @Singleton
+   HttpClient provideClient() {
+      return BinderUtils.newNullProxy(HttpClient.class);
+   }
+
+   @Provides
+   @Singleton
+   HttpAsyncClient provideAsyncClient() {
+      return BinderUtils.newNullProxy(HttpAsyncClient.class);
+   }
+
    @SuppressWarnings("unchecked")
    @Provides
    @Singleton
-   RestContext<ConcurrentMap, ConcurrentMap> provideRestContext(Closer closer) {
-      return new RestContextImpl<ConcurrentMap, ConcurrentMap>(closer, nodes,
-            nodes, URI.create("http://stub"), System.getProperty("user.name"));
+   RestContext<ConcurrentMap, ConcurrentMap> provideRestContext(Closer closer,
+         HttpClient http, HttpAsyncClient asyncHttp) {
+      return new RestContextImpl<ConcurrentMap, ConcurrentMap>(closer, http,
+            asyncHttp, nodes, nodes, URI.create("http://stub"), System
+                  .getProperty("user.name"));
    }
 
    // NORMAL STUFF

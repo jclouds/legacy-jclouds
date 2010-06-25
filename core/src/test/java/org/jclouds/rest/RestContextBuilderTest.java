@@ -81,6 +81,16 @@ public class RestContextBuilderTest {
          return null;
       }
 
+      @Override
+      public HttpAsyncClient asyncHttp() {
+         return null;
+      }
+
+      @Override
+      public HttpClient http() {
+         return null;
+      }
+
    }
 
    class TestRestContextBuilder extends RestContextBuilder<String, String> {
@@ -111,7 +121,8 @@ public class RestContextBuilderTest {
       List<Module> modules = new ArrayList<Module>();
       HttpModule module = new HttpModule();
       modules.add(module);
-      new TestRestContextBuilder(new Properties()).addHttpModuleIfNeededAndNotPresent(modules);
+      new TestRestContextBuilder(new Properties())
+            .addHttpModuleIfNeededAndNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -121,7 +132,8 @@ public class RestContextBuilderTest {
       List<Module> modules = new ArrayList<Module>();
       LoggingModule module = new NullLoggingModule();
       modules.add(module);
-      new TestRestContextBuilder(new Properties()).addLoggingModuleIfNotPresent(modules);
+      new TestRestContextBuilder(new Properties())
+            .addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -133,7 +145,8 @@ public class RestContextBuilderTest {
       modules.add(loggingModule);
       HttpModule httpModule = new HttpModule();
       modules.add(httpModule);
-      TestRestContextBuilder builder = new TestRestContextBuilder(new Properties());
+      TestRestContextBuilder builder = new TestRestContextBuilder(
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
@@ -144,7 +157,8 @@ public class RestContextBuilderTest {
    @Test
    public void testAddBothWhenDoesntRequireHttp() {
       List<Module> modules = new ArrayList<Module>();
-      TestRestContextBuilder builder = new TestRestContextBuilder(new Properties());
+      TestRestContextBuilder builder = new TestRestContextBuilder(
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 1);
@@ -163,7 +177,8 @@ public class RestContextBuilderTest {
    public void testAddBothWhenLive() {
       List<Module> modules = new ArrayList<Module>();
       modules.add(new RequiresHttpModule());
-      TestRestContextBuilder builder = new TestRestContextBuilder(new Properties());
+      TestRestContextBuilder builder = new TestRestContextBuilder(
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 3);
@@ -186,7 +201,8 @@ public class RestContextBuilderTest {
          protected void configure() {
          }
       };
-      TestRestContextBuilder builder = new TestRestContextBuilder(new Properties());
+      TestRestContextBuilder builder = new TestRestContextBuilder(
+            new Properties());
       builder.withModules(module1, module2);
 
    }
