@@ -49,45 +49,46 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
-            "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+               "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "80");
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED,
-            180l * 1000l + "");
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 180l * 1000l + "");
       return properties;
    }
 
    public VCloudPropertiesBuilder(Properties properties) {
       super(properties);
-      setNs();
-      setFenceMode();
    }
 
    protected void setNs() {
       if (properties.getProperty(PROPERTY_VCLOUD_XML_NAMESPACE) == null)
-         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
-               "http://www.vmware.com/vcloud/v"
-                     + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
+         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v"
+                  + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
    }
 
    protected void setFenceMode() {
       if (properties.getProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) == null) {
-         if (properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA).startsWith(
-               "0.8"))
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE,
-                  "allowInOut");
+         if (properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA).startsWith("0.8"))
+            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, "allowInOut");
          else
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE,
-                  FenceMode.BRIDGED);
+            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED);
       }
    }
 
    public VCloudPropertiesBuilder(URI endpoint, String id, String secret) {
       super();
-      setNs();
-      setFenceMode();
       withCredentials(id, secret);
       withEndpoint(endpoint);
+   }
+
+   public VCloudPropertiesBuilder withApiVersion(String version) {
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_API, "0.8");
+      return this;
+   }
+
+   public VCloudPropertiesBuilder withSchemaVersion(String version) {
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
+      return this;
    }
 
    public VCloudPropertiesBuilder withTokenExpiration(long seconds) {
@@ -102,8 +103,15 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
    }
 
    public VCloudPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint,
-            "endpoint").toString());
+      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint, "endpoint")
+               .toString());
       return this;
+   }
+
+   @Override
+   public Properties build() {
+      setNs();
+      setFenceMode();
+      return super.build();
    }
 }

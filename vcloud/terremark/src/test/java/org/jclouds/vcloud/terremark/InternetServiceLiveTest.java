@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
@@ -86,9 +87,16 @@ public class InternetServiceLiveTest {
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new TerremarkVCloudContextBuilder("terremark",
-               new TerremarkVCloudPropertiesBuilder(account, key).build()).withModules(
-               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+
+      TerremarkVCloudPropertiesBuilder propertiesBuilder = new TerremarkVCloudPropertiesBuilder(
+               account, key);
+
+      String endpoint = System.getProperty("jclouds.test.endpoint");
+      if (endpoint != null && !"".equals(endpoint))
+         propertiesBuilder.withEndpoint(URI.create(endpoint));
+
+      Injector injector = new TerremarkVCloudContextBuilder("terremark", propertiesBuilder.build())
+               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
 

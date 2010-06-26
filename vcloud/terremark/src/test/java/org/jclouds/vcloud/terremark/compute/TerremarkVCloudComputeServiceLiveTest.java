@@ -46,6 +46,9 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
    @BeforeClass
    @Override
    public void setServiceDefaults() {
+      String endpoint = System.getProperty("jclouds.test.endpoint");
+      if (endpoint != null && !"".equals(endpoint))
+         System.setProperty("terremark.endpoint", endpoint);
       service = "terremark";
       tag = "trmk";
    }

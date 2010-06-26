@@ -31,8 +31,10 @@
     <name>jclouds terremark Components Core</name>
     <description>jclouds Core components to access terremark</description>
     <properties>
+        <jclouds.terremark.endpoint></jclouds.terremark.endpoint>
         <jclouds.test.user>${jclouds.terremark.user}</jclouds.test.user>
         <jclouds.test.key>${jclouds.terremark.password}</jclouds.test.key>
+        <jclouds.test.endpoint>${jclouds.terremark.password}</jclouds.test.endpoint>
     </properties>
 
     <scm>
