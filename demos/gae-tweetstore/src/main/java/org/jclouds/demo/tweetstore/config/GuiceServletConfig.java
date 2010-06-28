@@ -36,7 +36,6 @@ import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.twitter.TwitterClient;
-import org.jclouds.twitter.TwitterContextFactory;
 
 import com.google.appengine.api.labs.taskqueue.Queue;
 import com.google.appengine.api.labs.taskqueue.QueueFactory;
@@ -75,12 +74,12 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
       Module googleModule = new GoogleAppEngineConfigurationModule();
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
-      // shared across all blobstores and used to retrieve tweets
-      twitterClient = TwitterContextFactory.createContext(props, googleModule).getApi();
-
-      // common namespace for storing tweets
-      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-               PROPERTY_TWEETSTORE_CONTAINER);
+//      // shared across all blobstores and used to retrieve tweets
+//      twitterClient = TwitterContextFactory.createContext(props, googleModule).getApi();
+//
+//      // common namespace for storing tweets
+//      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
+//               PROPERTY_TWEETSTORE_CONTAINER);
 
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();

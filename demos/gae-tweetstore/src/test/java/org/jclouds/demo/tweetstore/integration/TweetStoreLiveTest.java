@@ -20,8 +20,6 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
-import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_PASSWORD;
-import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_USER;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +31,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
-import org.jclouds.twitter.TwitterPropertiesBuilder;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
@@ -66,9 +63,9 @@ public class TweetStoreLiveTest {
       // WATCH THIS.. when adding a new context, you must update the string
       props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, "cloudfiles,s3,azureblob");
 
-      props = new TwitterPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
-               System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
+      // props = new TwitterPropertiesBuilder(props).withCredentials(
+      // checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
+      // System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
       // TODO FIX
       //
       // props = new S3PropertiesBuilder(props)

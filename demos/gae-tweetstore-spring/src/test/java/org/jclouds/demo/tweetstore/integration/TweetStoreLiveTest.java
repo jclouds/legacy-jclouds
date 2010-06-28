@@ -20,8 +20,6 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
-import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_PASSWORD;
-import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_USER;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +31,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.config.SpringServletConfig;
-import org.jclouds.twitter.TwitterPropertiesBuilder;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
@@ -64,12 +61,11 @@ public class TweetStoreLiveTest {
                .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
 
       // WATCH THIS.. when adding a new context, you must update the string
-      props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS,
-               "cloudfiles,s3,azureblob");
-
-      props = new TwitterPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
-               System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
+      props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, "cloudfiles,s3,azureblob");
+      // TODO
+      // props = new TwitterPropertiesBuilder(props).withCredentials(
+      // checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
+      // System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
       // TODO FIX
 
       // props = new S3PropertiesBuilder(props)
@@ -96,21 +92,21 @@ public class TweetStoreLiveTest {
    void clearAndCreateContainers() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
-       // TODO FIX
-//      BlobStoreContextFactory factory = new BlobStoreContextFactory();
-//      BlobStoreContext s3Context = factory.createContext("s3", checkNotNull(System
-//               .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
-//               .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
-//
-//      BlobStoreContext cfContext = factory.createContext("cloudfiles", checkNotNull(System
-//               .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
-//               PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
-//
-//      BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
-//               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
-//               .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
-//
-//      this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
+      // TODO FIX
+      // BlobStoreContextFactory factory = new BlobStoreContextFactory();
+      // BlobStoreContext s3Context = factory.createContext("s3", checkNotNull(System
+      // .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
+      // .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
+      //
+      // BlobStoreContext cfContext = factory.createContext("cloudfiles", checkNotNull(System
+      // .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
+      // PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
+      //
+      // BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
+      // .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
+      // .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
+      //
+      // this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
       boolean deleted = false;
       for (BlobStoreContext context : contexts) {
          if (context.getBlobStore().containerExists(container)) {

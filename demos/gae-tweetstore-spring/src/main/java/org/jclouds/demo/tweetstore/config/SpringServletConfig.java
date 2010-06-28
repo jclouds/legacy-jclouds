@@ -41,7 +41,6 @@ import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.twitter.TwitterClient;
-import org.jclouds.twitter.TwitterContextFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -84,7 +83,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       Module googleModule = new GoogleAppEngineConfigurationModule();
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
-      twitterClient = TwitterContextFactory.createContext(props, googleModule).getApi();
+//TODO      twitterClient = TwitterContextFactory.createContext(props, googleModule).getApi();
 
       // common namespace for storing tweets
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
