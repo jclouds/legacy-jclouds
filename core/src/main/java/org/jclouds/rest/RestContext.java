@@ -59,7 +59,7 @@ public interface RestContext<S, A> {
 
    URI getEndpoint();
 
-   String getPrincipal();
+   String getIdentity();
 
    String getProvider();
 

@@ -87,7 +87,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    }
 
    @Override
-   public String getPrincipal() {
+   public String getIdentity() {
       return identity;
    }
 

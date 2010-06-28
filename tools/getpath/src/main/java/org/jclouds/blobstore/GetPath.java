@@ -90,7 +90,7 @@ public class GetPath {
          String path = container + "/" + directory;
          InputStreamMap map = context.createInputStreamMap(path);
          System.out.printf("fetching %d entries from %s %s%n", map.size(), context
-                  .getProviderSpecificContext().getPrincipal(), path);
+                  .getProviderSpecificContext().getIdentity(), path);
          for (Entry<String, InputStream> entry : map.entrySet()) {
             System.out.printf("getting file: %s/%s%n", path, entry.getKey());
             input = entry.getValue();
