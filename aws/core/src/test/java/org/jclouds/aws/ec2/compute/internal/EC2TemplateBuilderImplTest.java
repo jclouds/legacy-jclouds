@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
+import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
@@ -64,13 +65,13 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    Image knownImage = createNiceMock(Image.class);
 
    ConcurrentMap<RegionAndName, Image> imageMap = new MapMaker()
-            .makeComputingMap(new Function<RegionAndName, Image>() {
-               @Override
-               public Image apply(RegionAndName from) {
-                  return from.equals(knownRegionAndName) ? knownImage : null;
-               }
+         .makeComputingMap(new Function<RegionAndName, Image>() {
+            @Override
+            public Image apply(RegionAndName from) {
+               return from.equals(knownRegionAndName) ? knownImage : null;
+            }
 
-            });
+         });
 
    @BeforeTest
    void setup() {
@@ -78,27 +79,36 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    }
 
    @Override
+   protected TemplateOptions provideTemplateOptions() {
+      return new EC2TemplateOptions();
+   }
+
+   @Override
    protected EC2TemplateBuilderImpl createTemplateBuilder(
-            Provider<Set<? extends Location>> locations, Provider<Set<? extends Image>> images,
-            Provider<Set<? extends Size>> sizes, Location defaultLocation,
-            Provider<TemplateOptions> optionsProvider,
-            Provider<TemplateBuilder> templateBuilderProvider) {
-      return new EC2TemplateBuilderImpl(locations, images, sizes, defaultLocation, optionsProvider,
-               templateBuilderProvider, imageMap);
+         Provider<Set<? extends Location>> locations,
+         Provider<Set<? extends Image>> images,
+         Provider<Set<? extends Size>> sizes, Location defaultLocation,
+         Provider<TemplateOptions> optionsProvider,
+         Provider<TemplateBuilder> templateBuilderProvider) {
+      return new EC2TemplateBuilderImpl(locations, images, sizes,
+            defaultLocation, optionsProvider, templateBuilderProvider, imageMap);
    }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testParseOnDemand() {
-      Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
+      Location location = new LocationImpl(LocationScope.REGION, "region",
+            "region", null);
 
       Provider<Set<? extends Location>> locations = Providers
-               .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
-      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
-               .<Image> of());
-      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
-               .<Size> of(new SizeImpl("1", "1", "region/1", location, null, ImmutableMap
-                        .<String, String> of(), 1, 1, 1, ImagePredicates.any())));
+            .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
+      Provider<Set<? extends Image>> images = Providers
+            .<Set<? extends Image>> of(ImmutableSet.<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers
+            .<Set<? extends Size>> of(ImmutableSet
+                  .<Size> of(new SizeImpl("1", "1", "region/1", location, null,
+                        ImmutableMap.<String, String> of(), 1, 1, 1,
+                        ImagePredicates.any())));
 
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
@@ -116,8 +126,8 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
-               defaultLocation, optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images,
+            sizes, defaultLocation, optionsProvider, templateBuilderProvider);
 
       assertEquals(template.imageId("ami").build().getImage(), knownImage);
 
@@ -131,15 +141,18 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testParseOnDemandNotFound() {
-      Location location = new LocationImpl(LocationScope.REGION, "region", "region", null);
+      Location location = new LocationImpl(LocationScope.REGION, "region",
+            "region", null);
 
       Provider<Set<? extends Location>> locations = Providers
-               .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
-      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
-               .<Image> of());
-      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
-               .<Size> of(new SizeImpl("1", "1", "region/1", location, null, ImmutableMap
-                        .<String, String> of(), 1, 1, 1, ImagePredicates.any())));
+            .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
+      Provider<Set<? extends Image>> images = Providers
+            .<Set<? extends Image>> of(ImmutableSet.<Image> of());
+      Provider<Set<? extends Size>> sizes = Providers
+            .<Set<? extends Size>> of(ImmutableSet
+                  .<Size> of(new SizeImpl("1", "1", "region/1", location, null,
+                        ImmutableMap.<String, String> of(), 1, 1, 1,
+                        ImagePredicates.any())));
 
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
@@ -149,7 +162,8 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
 
       expect(defaultLocation.getId()).andReturn("region");
       expect(optionsProvider.get()).andReturn(defaultOptions);
-      expect(knownImage.getArchitecture()).andReturn(Architecture.X86_32).atLeastOnce();
+      expect(knownImage.getArchitecture()).andReturn(Architecture.X86_32)
+            .atLeastOnce();
 
       replay(knownImage);
       replay(defaultOptions);
@@ -157,8 +171,8 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(locations, images, sizes,
-               defaultLocation, optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(locations, images,
+            sizes, defaultLocation, optionsProvider, templateBuilderProvider);
 
       assertEquals(template.imageId("bad").build().getImage(), knownImage);
 

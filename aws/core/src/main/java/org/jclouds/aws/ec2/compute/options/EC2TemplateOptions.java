@@ -99,7 +99,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    /**
     * Specifies the subnetId used to run instances in
     */
-   public EC2TemplateOptions withSubnetId(String subnetId) {
+   public EC2TemplateOptions subnetId(String subnetId) {
       checkNotNull(subnetId, "subnetId cannot be null");
       Utils.checkNotEmpty(subnetId, "subnetId must be non-empty");
       this.subnetId = subnetId;
@@ -192,9 +192,9 @@ public class EC2TemplateOptions extends TemplateOptions {
       /**
        * @see TemplateOptions#withSubnetId
        */
-      public static EC2TemplateOptions withSubnetId(String subnetId) {
+      public static EC2TemplateOptions subnetId(String subnetId) {
          EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.withSubnetId(subnetId));
+         return EC2TemplateOptions.class.cast(options.subnetId(subnetId));
       }
 
    }
@@ -286,14 +286,15 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
 @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
-      result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
-      result = prime * result + (noKeyPair ? 1231 : 1237);
-      return result;
-   }
+public int hashCode() {
+   final int prime = 31;
+   int result = super.hashCode();
+   result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
+   result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
+   result = prime * result + (noKeyPair ? 1231 : 1237);
+   result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
+   return result;
+}
 
    @Override
    public boolean equals(Object obj) {
@@ -316,7 +317,10 @@ public class EC2TemplateOptions extends TemplateOptions {
          return false;
       if (noKeyPair != other.noKeyPair)
          return false;
-      if (!subnetId.equals(other.subnetId))
+      if (subnetId == null) {
+         if (other.subnetId != null)
+            return false;
+      } else if (!subnetId.equals(other.subnetId))
          return false;
       return true;
    }

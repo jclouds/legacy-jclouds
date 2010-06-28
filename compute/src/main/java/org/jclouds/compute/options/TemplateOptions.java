@@ -339,53 +339,53 @@ public class TemplateOptions {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (blockUntilRunning ? 1231 : 1237);
-		result = prime * result + Arrays.hashCode(inboundPorts);
-		result = prime * result + (includeMetadata ? 1231 : 1237);
-		result = prime * result + port;
-		result = prime * result
-				+ ((privateKey == null) ? 0 : privateKey.hashCode());
-		result = prime * result
-				+ ((publicKey == null) ? 0 : publicKey.hashCode());
-		result = prime * result + Arrays.hashCode(script);
-		result = prime * result + seconds;
-		return result;
-	}
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (blockUntilRunning ? 1231 : 1237);
+      result = prime * result + Arrays.hashCode(inboundPorts);
+      result = prime * result + (includeMetadata ? 1231 : 1237);
+      result = prime * result + port;
+      result = prime * result
+            + ((privateKey == null) ? 0 : privateKey.hashCode());
+      result = prime * result
+            + ((publicKey == null) ? 0 : publicKey.hashCode());
+      result = prime * result + Arrays.hashCode(script);
+      result = prime * result + seconds;
+      return result;
+   }
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TemplateOptions other = (TemplateOptions) obj;
-		if (blockUntilRunning != other.blockUntilRunning)
-			return false;
-		if (!Arrays.equals(inboundPorts, other.inboundPorts))
-			return false;
-		if (includeMetadata != other.includeMetadata)
-			return false;
-		if (port != other.port)
-			return false;
-		if (privateKey == null) {
-			if (other.privateKey != null)
-				return false;
-		} else if (!privateKey.equals(other.privateKey))
-			return false;
-		if (publicKey == null) {
-			if (other.publicKey != null)
-				return false;
-		} else if (!publicKey.equals(other.publicKey))
-			return false;
-		if (!Arrays.equals(script, other.script))
-			return false;
-		if (seconds != other.seconds)
-			return false;
-		return true;
-	}
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      TemplateOptions other = (TemplateOptions) obj;
+      if (blockUntilRunning != other.blockUntilRunning)
+         return false;
+      if (!Arrays.equals(inboundPorts, other.inboundPorts))
+         return false;
+      if (includeMetadata != other.includeMetadata)
+         return false;
+      if (port != other.port)
+         return false;
+      if (privateKey == null) {
+         if (other.privateKey != null)
+            return false;
+      } else if (!privateKey.equals(other.privateKey))
+         return false;
+      if (publicKey == null) {
+         if (other.publicKey != null)
+            return false;
+      } else if (!publicKey.equals(other.publicKey))
+         return false;
+      if (!Arrays.equals(script, other.script))
+         return false;
+      if (seconds != other.seconds)
+         return false;
+      return true;
+   }
 }

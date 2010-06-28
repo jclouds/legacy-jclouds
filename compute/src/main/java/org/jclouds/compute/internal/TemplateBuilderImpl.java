@@ -20,6 +20,7 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -67,7 +68,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    private final Provider<Set<? extends Image>> images;
    private final Provider<Set<? extends Size>> sizes;
    private final Provider<Set<? extends Location>> locations;
-   private final Provider<TemplateOptions> optionsProvider;
+   protected final Provider<TemplateOptions> optionsProvider;
    private final Provider<TemplateBuilder> defaultTemplateProvider;
    private final Location defaultLocation;
 
@@ -102,9 +103,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Inject
    protected TemplateBuilderImpl(Provider<Set<? extends Location>> locations,
-            Provider<Set<? extends Image>> images, Provider<Set<? extends Size>> sizes,
-            Location defaultLocation, Provider<TemplateOptions> optionsProvider,
-            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
+         Provider<Set<? extends Image>> images,
+         Provider<Set<? extends Size>> sizes, Location defaultLocation,
+         Provider<TemplateOptions> optionsProvider,
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
@@ -170,10 +172,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getOsDescription().contains(osDescription)
-                        || input.getOsDescription().matches(osDescription); /*
-                                                                             * note: matches()
-                                                                             * expects a regex!
-                                                                             */
+                     || input.getOsDescription().matches(osDescription); /*
+                                                                          * note:
+                                                                          * matches
+                                                                          * ()
+                                                                          * expects
+                                                                          * a
+                                                                          * regex
+                                                                          * !
+                                                                          */
          }
          return returnVal;
       }
@@ -187,10 +194,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getVersion().contains(imageVersion)
-                        || input.getVersion().matches(imageVersion); /*
-                                                                      * note: matches() expects a
-                                                                      * regex!
-                                                                      */
+                     || input.getVersion().matches(imageVersion); /*
+                                                                   * note:
+                                                                   * matches()
+                                                                   * expects a
+                                                                   * regex!
+                                                                   */
          }
          return returnVal;
       }
@@ -204,7 +213,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getName().contains(imageName)
-                        || input.getName().matches(imageName); /* note: matches() expects a regex! */
+                     || input.getName().matches(imageName); /*
+                                                             * note: matches()
+                                                             * expects a regex!
+                                                             */
          }
          return returnVal;
       }
@@ -218,11 +230,16 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getDescription().equals(imageDescription)
-                        || input.getDescription().contains(imageDescription)
-                        || input.getDescription().matches(imageDescription); /*
-                                                                              * note: matches()
-                                                                              * expects a regex!
-                                                                              */
+                     || input.getDescription().contains(imageDescription)
+                     || input.getDescription().matches(imageDescription); /*
+                                                                           * note:
+                                                                           * matches
+                                                                           * ()
+                                                                           * expects
+                                                                           * a
+                                                                           * regex
+                                                                           * !
+                                                                           */
          }
          return returnVal;
       }
@@ -255,13 +272,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return input.getRam() >= TemplateBuilderImpl.this.minRam;
       }
    };
-   private final Predicate<Size> sizePredicate = Predicates.and(sizeIdPredicate, locationPredicate,
-            sizeCoresPredicate, sizeRamPredicate);
+   private final Predicate<Size> sizePredicate = Predicates.and(
+         sizeIdPredicate, locationPredicate, sizeCoresPredicate,
+         sizeRamPredicate);
 
    static final Ordering<Size> DEFAULT_SIZE_ORDERING = new Ordering<Size>() {
       public int compare(Size left, Size right) {
-         return ComparisonChain.start().compare(left.getCores(), right.getCores()).compare(
-                  left.getRam(), right.getRam()).compare(left.getDisk(), right.getDisk()).result();
+         return ComparisonChain.start().compare(left.getCores(),
+               right.getCores()).compare(left.getRam(), right.getRam())
+               .compare(left.getDisk(), right.getDisk()).result();
       }
    };
    static final Ordering<Size> BY_CORES_ORDERING = new Ordering<Size>() {
@@ -271,12 +290,13 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
-         return ComparisonChain.start().compare(left.getName(), right.getName(),
-                  Ordering.<String> natural().nullsLast()).compare(left.getVersion(),
-                  right.getVersion(), Ordering.<String> natural().nullsLast()).compare(
-                  left.getOsDescription(), right.getOsDescription(),
-                  Ordering.<String> natural().nullsLast()).compare(left.getArchitecture(),
-                  right.getArchitecture()).result();
+         return ComparisonChain.start().compare(left.getName(),
+               right.getName(), Ordering.<String> natural().nullsLast())
+               .compare(left.getVersion(), right.getVersion(),
+                     Ordering.<String> natural().nullsLast()).compare(
+                     left.getOsDescription(), right.getOsDescription(),
+                     Ordering.<String> natural().nullsLast()).compare(
+                     left.getArchitecture(), right.getArchitecture()).result();
       }
    };
 
@@ -414,42 +434,46 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    protected Location resolveLocation() {
-      Location location = Iterables.find(locations.get(), new Predicate<Location>() {
+      Location location = Iterables.find(locations.get(),
+            new Predicate<Location>() {
 
-         @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(locationId);
-         }
+               @Override
+               public boolean apply(Location input) {
+                  return input.getId().equals(locationId);
+               }
 
-      });
+            });
       logger.debug("<<   matched location(%s)", location);
       return location;
    }
 
-   protected Size resolveSize(Ordering<Size> sizeOrdering, final List<? extends Image> images) {
+   protected Size resolveSize(Ordering<Size> sizeOrdering,
+         final List<? extends Image> images) {
       Size size;
       try {
-         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = Iterables.filter(sizes
-                  .get(), new Predicate<Size>() {
-            @Override
-            public boolean apply(final Size size) {
-               boolean returnVal = false;
-               if (size != null)
-                  returnVal = Iterables.any(images, new Predicate<Image>() {
+         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = Iterables
+               .filter(sizes.get(), new Predicate<Size>() {
+                  @Override
+                  public boolean apply(final Size size) {
+                     boolean returnVal = false;
+                     if (size != null)
+                        returnVal = Iterables.any(images,
+                              new Predicate<Image>() {
 
-                     @Override
-                     public boolean apply(Image input) {
-                        return size.supportsImage(input);
-                     }
+                                 @Override
+                                 public boolean apply(Image input) {
+                                    return size.supportsImage(input);
+                                 }
 
-                  });
-               return returnVal;
-            }
-         });
-         size = sizeOrdering.max(Iterables.filter(sizesThatAreCompatibleWithOurImages,
-                  sizePredicate));
+                              });
+                     return returnVal;
+                  }
+               });
+         size = sizeOrdering.max(Iterables.filter(
+               sizesThatAreCompatibleWithOurImages, sizePredicate));
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes.get());
+         throw new NoSuchElementException("size didn't match: " + toString()
+               + "\n" + sizes.get());
       }
       logger.debug("<<   matched size(%s)", size);
       return size;
@@ -460,7 +484,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       if (!biggest)
          sizeOrdering = sizeOrdering.reverse();
       if (fastest)
-         sizeOrdering = Ordering.compound(ImmutableList.of(BY_CORES_ORDERING, sizeOrdering));
+         sizeOrdering = Ordering.compound(ImmutableList.of(BY_CORES_ORDERING,
+               sizeOrdering));
       return sizeOrdering;
    }
 
@@ -472,15 +497,18 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected List<? extends Image> resolveImages() {
       Predicate<Image> imagePredicate = buildImagePredicate();
       try {
-         Iterable<? extends Image> matchingImages = Iterables.filter(images.get(), imagePredicate);
+         Iterable<? extends Image> matchingImages = Iterables.filter(images
+               .get(), imagePredicate);
          if (logger.isTraceEnabled())
             logger.trace("<<   matched images(%s)", matchingImages);
-         List<? extends Image> maxImages = Utils.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
+         List<? extends Image> maxImages = Utils.multiMax(
+               DEFAULT_IMAGE_ORDERING, matchingImages);
          if (logger.isTraceEnabled())
             logger.trace("<<   best images(%s)", maxImages);
          return maxImages;
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images.get());
+         throw new NoSuchElementException("image didn't match: " + toString()
+               + "\n" + images.get());
       }
    }
 
@@ -592,15 +620,35 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder options(TemplateOptions options) {
-      this.options = checkNotNull(options, "options");
+      this.options = optionsProvider.get();
+      copyTemplateOptions(checkNotNull(options, "options"), this.options);
       return this;
+   }
+
+   protected void copyTemplateOptions(TemplateOptions from, TemplateOptions to) {
+      if (!Arrays.equals(to.getInboundPorts(), from.getInboundPorts()))
+         to.inboundPorts(from.getInboundPorts());
+      if (from.getRunScript() != null)
+         to.runScript(from.getRunScript());
+      if (from.getPrivateKey() != null)
+         to.installPrivateKey(from.getPrivateKey());
+      if (from.getPublicKey() != null)
+         to.authorizePublicKey(from.getPublicKey());
+      if (from.getPort() != -1)
+         to.blockOnPort(from.getPort(), from.getSeconds());
+      if (from.isIncludeMetadata())
+         to.withMetadata();
+      if (!from.shouldBlockUntilRunning())
+         to.blockUntilRunning(false);
    }
 
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
-      return os == null && arch == null && locationId == null && imageId == null && sizeId == null
-               && osDescription == null && imageVersion == null && imageName == null
-               && imageDescription == null && minCores == 0 && minRam == 0 && !biggest && !fastest;
+      return os == null && arch == null && locationId == null
+            && imageId == null && sizeId == null && osDescription == null
+            && imageVersion == null && imageName == null
+            && imageDescription == null && minCores == 0 && minRam == 0
+            && !biggest && !fastest;
    }
 
    /**
@@ -613,11 +661,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Override
    public String toString() {
-      return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest + ", imageName="
-               + imageName + ", imageDescription=" + imageDescription + ", imageId=" + imageId
-               + ", imageVersion=" + imageVersion + ", location=" + locationId + ", minCores="
-               + minCores + ", minRam=" + minRam + ", os=" + os + ", osDescription="
-               + osDescription + ", sizeId=" + sizeId + "]";
+      return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest
+            + ", imageName=" + imageName + ", imageDescription="
+            + imageDescription + ", imageId=" + imageId + ", imageVersion="
+            + imageVersion + ", location=" + locationId + ", minCores="
+            + minCores + ", minRam=" + minRam + ", os=" + os
+            + ", osDescription=" + osDescription + ", sizeId=" + sizeId + "]";
    }
 
 }

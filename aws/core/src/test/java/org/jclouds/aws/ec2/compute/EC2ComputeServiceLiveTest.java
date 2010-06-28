@@ -216,7 +216,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       //options.as(EC2TemplateOptions.class).securityGroups(tag);
       options.as(EC2TemplateOptions.class).keyPair(tag);
-      options.as(EC2TemplateOptions.class).withSubnetId(subnetId);
+      options.as(EC2TemplateOptions.class).subnetId(subnetId);
 
       String startedId = null;
       String nodeId = null;
