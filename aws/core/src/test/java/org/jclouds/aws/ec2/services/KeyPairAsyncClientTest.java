@@ -45,9 +45,10 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
       GeneratedHttpRequest<KeyPairAsyncClient> httpMethod = processor.createRequest(method, null,
                "mykey");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 53\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 53\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DeleteKeyPair&KeyName=mykey");
 
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
@@ -63,9 +64,10 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
       GeneratedHttpRequest<KeyPairAsyncClient> httpMethod = processor.createRequest(method,
                (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeKeyPairs");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -82,9 +84,10 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
       GeneratedHttpRequest<KeyPairAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2");
 

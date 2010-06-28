@@ -18,12 +18,9 @@
  */
 package org.jclouds.rackspace;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -37,29 +34,13 @@ public class RackspacePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_RACKSPACE_ENDPOINT, "https://api.mosso.com");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.mosso.com");
+      properties.setProperty(PROPERTY_API_VERSION, "TODO");
       return properties;
    }
 
    public RackspacePropertiesBuilder(Properties properties) {
       super(properties);
-   }
-
-   public RackspacePropertiesBuilder(String id, String secret) {
-      super();
-      withCredentials(id, secret);
-   }
-
-   public RackspacePropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_RACKSPACE_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
-      return this;
-   }
-
-   public RackspacePropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_RACKSPACE_ENDPOINT,
-               checkNotNull(endpoint, "endpoint").toString());
-      return this;
    }
 
 }

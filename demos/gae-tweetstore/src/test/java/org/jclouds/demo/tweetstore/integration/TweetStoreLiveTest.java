@@ -19,15 +19,7 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_KEY;
-import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_UID;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_PASSWORD;
 import static org.jclouds.twitter.reference.TwitterConstants.PROPERTY_TWITTER_USER;
 
@@ -39,21 +31,14 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
-import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
-import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.twitter.TwitterPropertiesBuilder;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Starts up the Google App Engine for Java Development environment and deploys an application which
@@ -79,29 +64,28 @@ public class TweetStoreLiveTest {
                .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
 
       // WATCH THIS.. when adding a new context, you must update the string
-      props
-               .setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS,
-                        "cloudfiles,s3,azureblob");
+      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, "cloudfiles,s3,azureblob");
 
       props = new TwitterPropertiesBuilder(props).withCredentials(
                checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
                System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
-
-      props = new S3PropertiesBuilder(props)
-               .withCredentials(
-                        checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
-                                 PROPERTY_AWS_ACCESSKEYID),
-                        System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
-                                 PROPERTY_AWS_SECRETACCESSKEY)).build();
-
-      props = new CloudFilesPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
-               System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY)).build();
-
-      props = new AzureBlobPropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT),
-                        PROPERTY_AZURESTORAGE_ACCOUNT),
-               System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
+      // TODO FIX
+      //
+      // props = new S3PropertiesBuilder(props)
+      // .withCredentials(
+      // checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
+      // PROPERTY_AWS_ACCESSKEYID),
+      // System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
+      // PROPERTY_AWS_SECRETACCESSKEY)).build();
+      //
+      // props = new CloudFilesPropertiesBuilder(props).withCredentials(
+      // checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
+      // System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY)).build();
+      //
+      // props = new AzureBlobPropertiesBuilder(props).withCredentials(
+      // checkNotNull(System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT),
+      // PROPERTY_AZURESTORAGE_ACCOUNT),
+      // System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
 
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
@@ -111,25 +95,26 @@ public class TweetStoreLiveTest {
    void clearAndCreateContainers() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
-      BlobStoreContextFactory factory = new BlobStoreContextFactory();
-      BlobStoreContext s3Context = factory.createContext("s3", checkNotNull(System
-               .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
-               .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
-
-      BlobStoreContext cfContext = factory.createContext("cloudfiles", checkNotNull(System
-               .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
-               PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
-
-      BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
-               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
-               .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
-
-      this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
+      // BlobStoreContextFactory factory = new BlobStoreContextFactory();
+      // TODO FIX
+      // BlobStoreContext s3Context = factory.createContext("s3", checkNotNull(System
+      // .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
+      // .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
+      //
+      // BlobStoreContext cfContext = factory.createContext("cloudfiles", checkNotNull(System
+      // .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
+      // PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
+      //
+      // BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
+      // .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
+      // .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
+      //
+      // this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
       boolean deleted = false;
       for (BlobStoreContext context : contexts) {
          if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context
-                     .getProviderSpecificContext().getEndPoint());
+                     .getProviderSpecificContext().getEndpoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -140,7 +125,7 @@ public class TweetStoreLiveTest {
       }
       for (BlobStoreContext context : contexts) {
          System.err.printf("creating container %s at %s%n", container, context
-                  .getProviderSpecificContext().getEndPoint());
+                  .getProviderSpecificContext().getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
@@ -181,7 +166,7 @@ public class TweetStoreLiveTest {
       Thread.sleep(20000);
       for (BlobStoreContext context : contexts) {
          assert context.createInputStreamMap(container).size() > 0 : context
-                  .getProviderSpecificContext().getEndPoint();
+                  .getProviderSpecificContext().getEndpoint();
       }
    }
 

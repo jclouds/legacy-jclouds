@@ -23,17 +23,17 @@
  */
 package org.jclouds.boxdotnet;
 
+import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.jclouds.boxdotnet.config.BoxDotNetRestClientModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
-import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -41,9 +41,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Tests annotation parsing of {@code BoxDotNetAsyncClient}
@@ -68,7 +66,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
-      assertHeadersEqual(httpRequest, "Accept: application/json\nAuthorization: Basic dXNlcjprZXk=\n");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -128,14 +126,8 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
    }
 
    @Override
-   protected Module createModule() {
-      return new BoxDotNetRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new BoxDotNetPropertiesBuilder("user", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-      };
+   public ContextSpec<BoxDotNetClient, BoxDotNetAsyncClient> createContextSpec() {
+      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity", "credential",
+               BoxDotNetClient.class, BoxDotNetAsyncClient.class);
    }
 }

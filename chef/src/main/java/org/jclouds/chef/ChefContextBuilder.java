@@ -23,14 +23,10 @@
  */
 package org.jclouds.chef;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.chef.config.ChefContextModule;
 import org.jclouds.chef.config.ChefRestClientModule;
-import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
@@ -41,19 +37,12 @@ import com.google.inject.Module;
  */
 public class ChefContextBuilder extends RestContextBuilder<ChefClient, ChefAsyncClient> {
 
-   public ChefContextBuilder(String providerName, Properties props) {
-      super(providerName, ChefClient.class, ChefAsyncClient.class, props);
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_IDENTITY));
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_RSA_KEY));
+   public ChefContextBuilder(Properties props) {
+      super(ChefClient.class, ChefAsyncClient.class, props);
    }
 
    protected void addClientModule(List<Module> modules) {
       modules.add(new ChefRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new ChefContextModule(providerName));
    }
 
 }

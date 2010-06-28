@@ -41,19 +41,10 @@
  */
 package org.jclouds.chef.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.jclouds.chef.Chef;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-
-import com.google.inject.Provides;
 
 /**
  * Configures the Chef connection.
@@ -66,13 +57,6 @@ public class ChefRestClientModule extends BaseChefRestClientModule<ChefClient, C
 
    public ChefRestClientModule() {
       super(ChefClient.class, ChefAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
-   @Chef
-   protected URI provideURI(@Named(ChefConstants.PROPERTY_CHEF_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
    }
 
 }

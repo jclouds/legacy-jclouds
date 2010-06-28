@@ -26,6 +26,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.SortedSet;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rimuhosting.miro.domain.Image;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
@@ -34,6 +36,9 @@ import org.jclouds.rimuhosting.miro.domain.ServerInfo;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code RimuHostingClient}
@@ -44,15 +49,15 @@ import org.testng.annotations.Test;
 public class RimuHostingClientLiveTest {
 
    private RimuHostingClient connection;
+   private RestContext<RimuHostingClient, RimuHostingAsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String password = checkNotNull(System.getProperty("jclouds.test.key"),
-            "jclouds.test.key");
+      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      this.context = new RestContextFactory().createContext("rimuhosting", password, password,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+      this.connection = context.getApi();
 
-      connection = (RimuHostingClient) RimuHostingContextFactory.createContext(
-            password, new Log4JLoggingModule()).getProviderSpecificContext()
-            .getApi();
    }
 
    @Test
@@ -82,8 +87,8 @@ public class RimuHostingClientLiveTest {
    @Test
    public void testLifeCycle() {
       // Get the first image, we dont really care what it is in this test.
-      NewServerResponse serverResponse = connection.createServer(
-            "test.ivan.api.com", "lenny", "MIRO1B");
+      NewServerResponse serverResponse = connection.createServer("test.ivan.api.com", "lenny",
+               "MIRO1B");
       Server server = serverResponse.getServer();
       // Now we have the server, lets restart it
       assertNotNull(server.getId());

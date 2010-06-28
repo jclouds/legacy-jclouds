@@ -22,7 +22,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Snapshot.Status;
 import org.jclouds.aws.ec2.util.EC2Utils;
@@ -50,7 +50,7 @@ public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
    private String ownerAlias;
 
    @Inject
-   public SnapshotHandler(DateService dateService, @EC2 String defaultRegion) {
+   public SnapshotHandler(DateService dateService, @Region String defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }

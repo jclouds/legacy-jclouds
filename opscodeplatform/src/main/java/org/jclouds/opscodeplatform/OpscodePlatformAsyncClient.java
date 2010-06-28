@@ -44,7 +44,6 @@ import org.jclouds.chef.functions.ParseUserFromJson;
 import org.jclouds.chef.functions.Username;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -62,7 +61,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="TODO: insert URL of provider documentation" />
  * @author Adrian Cole
  */
-@Endpoint(OpscodePlatform.class)
 @RequestFilters(SignedHeaderAuth.class)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface OpscodePlatformAsyncClient {
@@ -79,8 +77,7 @@ public interface OpscodePlatformAsyncClient {
    @POST
    @Path("/users")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createUser(
-         @BinderParam(BindToJsonPayload.class) User user);
+   ListenableFuture<String> createUser(@BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#updateUser
@@ -89,7 +86,7 @@ public interface OpscodePlatformAsyncClient {
    @Path("/users/{username}")
    @ResponseParser(ParseUserFromJson.class)
    ListenableFuture<User> updateUser(
-         @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
+            @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#getUser
@@ -115,8 +112,7 @@ public interface OpscodePlatformAsyncClient {
    @POST
    @Path("/organizations")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createOrg(
-         @BinderParam(BindToJsonPayload.class) Organization org);
+   ListenableFuture<String> createOrg(@BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
     * @see ChefClient#updateOrg
@@ -125,7 +121,7 @@ public interface OpscodePlatformAsyncClient {
    @Path("/organizations/{orgname}")
    @ResponseParser(ParseOrganizationFromJson.class)
    ListenableFuture<Organization> updateOrg(
-         @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
+            @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
     * @see ChefClient#getOrg

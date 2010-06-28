@@ -22,7 +22,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
  */
 public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<Set<KeyPair>> {
    @Inject
-   @EC2
+   @Region
    String defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();

@@ -52,20 +52,17 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Signs the S3 request.
  * 
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html"
- *      />
+ * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html" />
  * @author Adrian Cole
  * 
  */
 @Singleton
-public class RequestAuthorizeSignature implements HttpRequestFilter,
-      RequestSigner {
+public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSigner {
    private final String[] firstHeadersToSign = new String[] { "Content-MD5",
-         HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
+            HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
-   public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl",
-         "torrent", "logging", "location", "requestPayment");
+   public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging",
+            "location", "requestPayment");
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -82,13 +79,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
 
    @Inject
    public RequestAuthorizeSignature(SignatureWire signatureWire,
-         @Named(S3Constants.PROPERTY_S3_AUTH_TAG) String authTag,
-         @Named(S3Constants.PROPERTY_S3_SERVICE_EXPR) String srvExpr,
-         @Named(S3Constants.PROPERTY_S3_HEADER_TAG) String headerTag,
-         @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
-         @Named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
-         @TimeStamp Provider<String> timeStampProvider,
-         EncryptionService encryptionService) {
+            @Named(S3Constants.PROPERTY_S3_AUTH_TAG) String authTag,
+            @Named(S3Constants.PROPERTY_S3_SERVICE_EXPR) String srvExpr,
+            @Named(S3Constants.PROPERTY_S3_HEADER_TAG) String headerTag,
+            @Named(Constants.PROPERTY_IDENTITY) String accessKey,
+            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey,
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.srvExpr = srvExpr;
       this.headerTag = headerTag;
       this.authTag = authTag;
@@ -121,21 +117,18 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
    }
 
    private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
-         throws HttpException {
+            throws HttpException {
       String signature = sign(toSign);
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
-      request.getHeaders().replaceValues(
-            HttpHeaders.AUTHORIZATION,
-            Collections.singletonList(authTag + " " + accessKey + ":"
-                  + signature));
+      request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
+               Collections.singletonList(authTag + " " + accessKey + ":" + signature));
    }
 
    public String sign(String toSign) {
       String signature;
       try {
-         signature = encryptionService.hmacSha1Base64(toSign, secretKey
-               .getBytes());
+         signature = encryptionService.hmacSha1Base64(toSign, secretKey.getBytes());
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -148,7 +141,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
 
    private void replaceDateHeader(HttpRequest request) {
       request.getHeaders().replaceValues(HttpHeaders.DATE,
-            Collections.singletonList(timeStampProvider.get()));
+               Collections.singletonList(timeStampProvider.get()));
    }
 
    private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
@@ -157,8 +150,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
          if (header.startsWith("x-" + headerTag + "-")) {
             toSign.append(header.toLowerCase()).append(":");
             for (String value : request.getHeaders().get(header)) {
-               toSign.append(Utils.replaceAll(value, NEWLINE_PATTERN, ""))
-                     .append(",");
+               toSign.append(Utils.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
             }
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");
@@ -168,8 +160,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
 
    private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
       for (String header : firstHeadersToSign)
-         toSign.append(valueOrEmpty(request.getHeaders().get(header))).append(
-               "\n");
+         toSign.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
    @VisibleForTesting
@@ -177,7 +168,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
       String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
       if (hostHeader == null)
          hostHeader = checkNotNull(request.getEndpoint().getHost(),
-               "request.getEndPoint().getHost()");
+                  "request.getEndPoint().getHost()");
       if (hostHeader.matches(".*" + srvExpr))
          toSign.append("/").append(hostHeader.replaceAll(srvExpr, ""));
    }
@@ -208,7 +199,6 @@ public class RequestAuthorizeSignature implements HttpRequestFilter,
    }
 
    private String valueOrEmpty(Collection<String> collection) {
-      return (collection != null && collection.size() >= 1) ? collection
-            .iterator().next() : "";
+      return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
    }
 }

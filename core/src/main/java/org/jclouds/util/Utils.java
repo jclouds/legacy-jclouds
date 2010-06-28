@@ -27,22 +27,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContextBuilder;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
@@ -280,5 +288,114 @@ public class Utils {
     */
    public static void checkNotEmpty(String nullableString, String message) {
       checkArgument(nullableString != null && nullableString.length() > 0, message);
+   }
+
+   /**
+    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
+    * rest.properties to populate the set.
+    * 
+    */
+   public static Iterable<String> getSupportedProviders() {
+      return getSupportedProvidersOfType(RestContextBuilder.class);
+   }
+
+   /**
+    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
+    * rest.properties to populate the set.
+    * 
+    */
+   @SuppressWarnings("unchecked")
+   public static Iterable<String> getSupportedProvidersOfType(
+            Class<? extends RestContextBuilder> type) {
+      Properties properties = new Properties();
+      try {
+         properties.load(Utils.class.getResourceAsStream("/rest.properties"));
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+      return getSupportedProvidersOfTypeInProperties(type, properties);
+   }
+
+   @SuppressWarnings("unchecked")
+   public static Iterable<String> getSupportedProvidersOfTypeInProperties(
+            final Class<? extends RestContextBuilder> type, final Properties properties) {
+      return Iterables.filter(Iterables.transform(Iterables.filter(properties.entrySet(),
+               new Predicate<Map.Entry<Object, Object>>() {
+
+                  @Override
+                  public boolean apply(Entry<Object, Object> input) {
+                     String keyString = input.getKey().toString();
+                     return keyString.endsWith(".contextbuilder") || keyString.endsWith(".sync");
+                  }
+
+               }), new Function<Map.Entry<Object, Object>, String>() {
+
+         @Override
+         public String apply(Entry<Object, Object> from) {
+            String keyString = from.getKey().toString();
+            try {
+               String provider = Iterables.get(Splitter.on('.').split(keyString), 0);
+               Class<RestContextBuilder<Object, Object>> clazz = resolveContextBuilderClass(
+                        provider, properties);
+               if (type.isAssignableFrom(clazz))
+                  return provider;
+            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
+               Throwables.propagate(e);
+            }
+            return null;
+         }
+
+      }), Predicates.notNull());
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <S, A> Class<RestContextBuilder<S, A>> resolveContextBuilderClass(String provider,
+            Properties properties) throws ClassNotFoundException, IllegalArgumentException,
+            SecurityException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+      String contextBuilderClassName = properties.getProperty(provider + ".contextbuilder");
+      String syncClassName = properties.getProperty(provider + ".sync");
+      String asyncClassName = properties.getProperty(provider + ".async");
+      if (syncClassName != null) {
+         checkArgument(asyncClassName != null, "please configure async class for " + syncClassName);
+         Class.forName(syncClassName);
+         Class.forName(asyncClassName);
+         return (Class<RestContextBuilder<S, A>>) (contextBuilderClassName != null ? Class
+                  .forName(contextBuilderClassName) : RestContextBuilder.class);
+      } else {
+         checkArgument(contextBuilderClassName != null, "please configure contextbuilder class");
+         return (Class<RestContextBuilder<S, A>>) Class.forName(contextBuilderClassName);
+      }
+   }
+
+   public static <S, A> RestContextBuilder<S, A> initContextBuilder(
+            Class<RestContextBuilder<S, A>> contextBuilderClass, @Nullable Class<S> sync,
+            @Nullable Class<A> async, Properties properties) throws ClassNotFoundException,
+            IllegalArgumentException, SecurityException, InstantiationException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      checkArgument(properties != null, "please configure properties for " + contextBuilderClass);
+      try {
+         return (RestContextBuilder<S, A>) contextBuilderClass.getConstructor(Properties.class)
+                  .newInstance(properties);
+      } catch (NoSuchMethodException e) {
+         checkArgument(sync != null, "please configure sync class for " + contextBuilderClass);
+         checkArgument(async != null, "please configure async class for " + contextBuilderClass);
+         return (RestContextBuilder<S, A>) contextBuilderClass.getConstructor(sync.getClass(),
+                  async.getClass(), Properties.class).newInstance(sync, async, properties);
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   public static Class<PropertiesBuilder> resolvePropertiesBuilderClass(String providerName,
+            Properties props) throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      String propertiesBuilderClassName = props.getProperty(providerName + ".propertiesbuilder",
+               null);
+      if (propertiesBuilderClassName != null) {
+         return (Class<PropertiesBuilder>) Class.forName(propertiesBuilderClassName);
+      } else {
+         return PropertiesBuilder.class;
+      }
    }
 }

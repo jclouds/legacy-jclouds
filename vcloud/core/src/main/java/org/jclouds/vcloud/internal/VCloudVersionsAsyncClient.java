@@ -24,9 +24,7 @@ import java.util.SortedMap;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -35,11 +33,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Establishes a context with a VCloud endpoint.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
- *      />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Endpoint(VCloud.class)
 public interface VCloudVersionsAsyncClient {
 
    /**

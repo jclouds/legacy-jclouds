@@ -1,7 +1,7 @@
 package org.jclouds.vcloud.bluelock;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -45,7 +45,7 @@ public class VCloudSessionRefreshLiveTest {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
       Properties props = new Properties();
-      props.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 40 + "");
+      props.setProperty(PROPERTY_SESSION_INTERVAL, 40 + "");
 
       context = new ComputeServiceContextFactory().createContext("bluelock", account, key,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), props);

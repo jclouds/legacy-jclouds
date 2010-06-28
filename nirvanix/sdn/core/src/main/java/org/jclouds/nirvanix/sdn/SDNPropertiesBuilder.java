@@ -18,17 +18,10 @@
  */
 package org.jclouds.nirvanix.sdn;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.Constants;
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.nirvanix.sdn.reference.SDNConstants;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 /**
  * Builds properties used in SDN Clients
@@ -40,7 +33,8 @@ public class SDNPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT, "http://services.nirvanix.com");
+      properties.setProperty(Constants.PROPERTY_API_VERSION, "TODO");
+      properties.setProperty(Constants.PROPERTY_ENDPOINT, "http://services.nirvanix.com");
       return properties;
    }
 
@@ -48,34 +42,4 @@ public class SDNPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   public SDNPropertiesBuilder(String appkey, String appname, String username, String password) {
-      super();
-      withCredentials(appkey, appname, username, password);
-   }
-
-   public SDNPropertiesBuilder withCredentials(String appkey, String appname, String username,
-            String password) {
-      properties.setProperty(SDNConstants.PROPERTY_SDN_APPKEY, checkNotNull(appkey, "appkey"));
-      properties.setProperty(SDNConstants.PROPERTY_SDN_APPNAME, checkNotNull(appname, "appname"));
-      properties
-               .setProperty(SDNConstants.PROPERTY_SDN_USERNAME, checkNotNull(username, "username"));
-      properties
-               .setProperty(SDNConstants.PROPERTY_SDN_PASSWORD, checkNotNull(password, "password"));
-      return this;
-   }
-
-   public SDNPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
-   }
-
-   @Override
-   public SDNPropertiesBuilder withCredentials(String account, String key) {
-      List<String> parts = Lists.newArrayList(Splitter.on('/').split(account));
-      if (parts.size() != 3) {
-         throw new IllegalArgumentException("account syntax is appkey/appname/username");
-      }
-      return withCredentials(parts.get(0), parts.get(1), parts.get(2), key);
-   }
 }

@@ -41,29 +41,16 @@
  */
 package org.jclouds.boxdotnet.config;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import org.jclouds.boxdotnet.BoxDotNetAsyncClient;
+import org.jclouds.boxdotnet.BoxDotNetClient;
+import org.jclouds.boxdotnet.handlers.BoxDotNetErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.encryption.EncryptionService;
-
-import org.jclouds.boxdotnet.BoxDotNet;
-import org.jclouds.boxdotnet.BoxDotNetClient;
-import org.jclouds.boxdotnet.BoxDotNetAsyncClient;
-import org.jclouds.boxdotnet.reference.BoxDotNetConstants;
-import org.jclouds.boxdotnet.handlers.BoxDotNetErrorHandler;
-
-import com.google.inject.Provides;
 
 /**
  * Configures the BoxDotNet connection.
@@ -72,38 +59,18 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class BoxDotNetRestClientModule  extends
+public class BoxDotNetRestClientModule extends
          RestClientModule<BoxDotNetClient, BoxDotNetAsyncClient> {
 
    public BoxDotNetRestClientModule() {
       super(BoxDotNetClient.class, BoxDotNetAsyncClient.class);
    }
 
-   @Provides
-   @Singleton
-   public BasicAuthentication provideBasicAuthentication(
-            @Named(BoxDotNetConstants.PROPERTY_BOXDOTNET_USER) String user,
-            @Named(BoxDotNetConstants.PROPERTY_BOXDOTNET_PASSWORD) String password,
-            EncryptionService encryptionService)
-            throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password, encryptionService);
-   }
-
-   @Provides
-   @Singleton
-   @BoxDotNet
-   protected URI provideURI(@Named(BoxDotNetConstants.PROPERTY_BOXDOTNET_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
-   }
-
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               BoxDotNetErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               BoxDotNetErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               BoxDotNetErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(BoxDotNetErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(BoxDotNetErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(BoxDotNetErrorHandler.class);
    }
 
    @Override

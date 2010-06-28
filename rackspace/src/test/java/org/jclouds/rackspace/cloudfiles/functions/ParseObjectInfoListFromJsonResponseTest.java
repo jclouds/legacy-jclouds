@@ -46,7 +46,15 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoListFromJsonResponseTest")
 public class ParseObjectInfoListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new ParserModule(){
+
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         super.configure();
+      }
+      
+   });
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/cloudfiles/test_list_container.json");

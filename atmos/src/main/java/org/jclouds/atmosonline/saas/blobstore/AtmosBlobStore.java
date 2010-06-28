@@ -43,7 +43,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
@@ -64,7 +64,7 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   AtmosBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
+   AtmosBlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
             Set<? extends Location> locations, AtmosStorageClient sync, ObjectToBlob object2Blob,
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,

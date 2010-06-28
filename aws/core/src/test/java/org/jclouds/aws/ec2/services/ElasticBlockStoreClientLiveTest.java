@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.options.DescribeSnapshotsOptions.Builder.snaps
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,6 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
@@ -39,13 +39,16 @@ import org.jclouds.aws.ec2.predicates.VolumeAvailable;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.Module;
 import com.google.inject.internal.Lists;
 
 /**
@@ -61,12 +64,12 @@ public class ElasticBlockStoreClientLiveTest {
    private Snapshot snapshot;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   public void setupClient() throws IOException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getProviderSpecificContext();
+      context = new RestContextFactory().createContext("ec2", user, password, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
       client = context.getApi().getElasticBlockStoreServices();
    }
 

@@ -18,32 +18,33 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.EC2PropertiesBuilder;
-import org.jclouds.aws.ec2.ELB;
+import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.config.EC2RestClientModule;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.date.DateService;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 
 /**
  * 
@@ -51,6 +52,30 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
+   @RequiresHttp
+   @ConfiguresRestClient
+   protected static class StubEC2RestClientModule extends EC2RestClientModule {
+
+      @Override
+      protected String provideTimeStamp(final DateService dateService,
+               @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
+         return "2009-11-08T15:54:08.897Z";
+      }
+
+      @Override
+      protected Map<String, URI> provideRegions(Injector client) {
+         return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
+                  .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
+                  .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
+                  .create("https://ec2.us-west-1.amazonaws.com"));
+      }
+
+      @Override
+      protected Map<String, String> provideAvailabilityZoneToRegions(EC2Client client,
+               @org.jclouds.aws.Region Map<String, URI> regions) {
+         return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
+      }
+   }
 
    protected FormSigner filter;
 
@@ -66,69 +91,20 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
 
    @Override
    @BeforeTest
-   protected void setupFactory() {
+   protected void setupFactory() throws IOException {
       super.setupFactory();
       this.filter = injector.getInstance(FormSigner.class);
    }
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), checkNotNull(new EC2PropertiesBuilder("user", "key")
-                     .build(), "properties"));
-            bind(URI.class).annotatedWith(EC2.class).toInstance(
-                     URI.create("https://ec2.amazonaws.com"));
-            bind(URI.class).annotatedWith(ELB.class).toInstance(
-                     URI.create("https://elasticloadbalancing.us-east-1.amazonaws.com"));
-            bind(String.class).annotatedWith(EC2.class).toInstance(Region.US_EAST_1);
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String provide() {
-            return "2009-11-08T15:54:08.897Z";
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         @EC2
-         Map<String, URI> provideMap() {
-            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
-                     .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
-                     .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-                     .create("https://ec2.us-west-1.amazonaws.com"));
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         @ELB
-         Map<String, URI> provideELBRegions() {
-            return ImmutableMap.<String, URI> of(Region.US_EAST_1, URI
-                     .create("https://elasticloadbalancing.us-east-1.amazonaws.com"),
-                     Region.US_WEST_1, URI
-                              .create("https://elasticloadbalancing.us-west-1.amazonaws.com"),
-                     Region.EU_WEST_1, URI
-                              .create("https://elasticloadbalancing.eu-west-1.amazonaws.com"),
-                     Region.AP_SOUTHEAST_1, URI
-                              .create("https://elasticloadbalancing.ap-southeast-1.amazonaws.com"));
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         Map<String, String> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
-         }
-      };
+      return new StubEC2RestClientModule();
    }
+
+   @Override
+   public ContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec("ec2", "identity", "credential",
+               new Properties());
+   }
+
 }

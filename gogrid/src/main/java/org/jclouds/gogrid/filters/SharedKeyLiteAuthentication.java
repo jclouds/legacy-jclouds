@@ -26,6 +26,8 @@ package org.jclouds.gogrid.filters;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.net.URI;
 
@@ -36,7 +38,6 @@ import javax.inject.Named;
 import org.jclouds.Constants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.gogrid.reference.GoGridConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
@@ -61,9 +62,9 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyLiteAuthentication(@Named(GoGridConstants.PROPERTY_GOGRID_USER) String apiKey,
-            @Named(GoGridConstants.PROPERTY_GOGRID_PASSWORD) String secret,
-            @TimeStamp Long timeStamp, EncryptionService encryptionService) {
+   public SharedKeyLiteAuthentication(@Named(PROPERTY_IDENTITY) String apiKey,
+            @Named(PROPERTY_CREDENTIAL) String secret, @TimeStamp Long timeStamp,
+            EncryptionService encryptionService) {
       this.encryptionService = encryptionService;
       this.apiKey = apiKey;
       this.secret = secret;

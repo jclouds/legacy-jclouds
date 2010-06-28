@@ -27,7 +27,6 @@ import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.AzureAsyncBlobStore;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStore;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
-import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -38,8 +37,10 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -49,11 +50,10 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobStoreContextModule extends AzureBlobContextModule {
+public class AzureBlobStoreContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      super.configure();
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).in(Scopes.SINGLETON);
@@ -66,8 +66,8 @@ public class AzureBlobStoreContextModule extends AzureBlobContextModule {
 
    @Provides
    @Singleton
-   Location getLocation() {
-      return new LocationImpl(LocationScope.PROVIDER, "azureblob", "azureblob", null);
+   Location getLocation(@Provider String name) {
+      return new LocationImpl(LocationScope.PROVIDER, name, name, null);
    }
 
    @Provides

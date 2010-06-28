@@ -30,15 +30,12 @@ import java.util.concurrent.Executors;
 import org.jclouds.date.DateServiceTest;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance")
-public class PerformanceTest {
+public abstract class PerformanceTest {
    protected static int LOOP_COUNT = 1000;
    protected static int THREAD_COUNT = 1000;
    protected ExecutorService exec;

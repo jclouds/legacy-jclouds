@@ -23,11 +23,8 @@ import java.util.Properties;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
+import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContextFactory;
-import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -36,7 +33,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudFilesTestInitializer extends BaseTestInitializer {
+public class CloudFilesTestInitializer extends TransientBlobStoreTestInitializer {
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
@@ -44,12 +41,6 @@ public class CloudFilesTestInitializer extends BaseTestInitializer {
       return (BlobStoreContext) new BlobStoreContextFactory().createContext("cloudfiles", account,
                key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
                new Properties());
-   }
-
-   @Override
-   protected BlobStoreContext createStubContext() {
-      return CloudFilesContextFactory.createContext("user", "pass",
-               new StubRackspaceAuthenticationModule(), new CloudFilesStubClientModule());
    }
 
 }

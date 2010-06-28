@@ -18,20 +18,13 @@
  */
 package org.jclouds.aws.reference;
 
-import org.jclouds.Constants;
-
 /**
- * Configuration properties and constants used in AWS connections.
+ * Configuration properties and constants used in amazon connections.
  * 
  * @author Adrian Cole
  */
-public interface AWSConstants extends Constants {
-   public static final String ENDPOINT = "Endpoint";
-   public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
-   public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
+public interface AWSConstants {
+   public static final String PROPERTY_REGIONS = "jclouds.aws.regions";
+   public static final String PROPERTY_DEFAULT_REGIONS = "jclouds.aws.default_regions";
 
-   /**
-    * how long do we wait before expiring requests.
-    */
-   public static final String PROPERTY_AWS_EXPIREINTERVAL = "jclouds.aws.expireinterval";
 }

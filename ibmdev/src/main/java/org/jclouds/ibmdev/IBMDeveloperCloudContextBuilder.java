@@ -38,8 +38,8 @@ import com.google.inject.Module;
 public class IBMDeveloperCloudContextBuilder extends
          ComputeServiceContextBuilder<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> {
 
-   public IBMDeveloperCloudContextBuilder(String providerName, Properties props) {
-      super(providerName, IBMDeveloperCloudClient.class, IBMDeveloperCloudAsyncClient.class, props);
+   public IBMDeveloperCloudContextBuilder(Properties props) {
+      super(IBMDeveloperCloudClient.class, IBMDeveloperCloudAsyncClient.class, props);
    }
 
    protected void addClientModule(List<Module> modules) {
@@ -47,8 +47,8 @@ public class IBMDeveloperCloudContextBuilder extends
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new IBMDeveloperCloudComputeServiceContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new IBMDeveloperCloudComputeServiceContextModule());
    }
 
 }

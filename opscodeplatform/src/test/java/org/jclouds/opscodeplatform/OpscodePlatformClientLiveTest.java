@@ -28,18 +28,22 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.chef.domain.User;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code OpscodePlatformClient}
@@ -69,7 +73,9 @@ public class OpscodePlatformClientLiveTest {
 
    private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createConnection(
             String identity, String key) throws IOException {
-      return OpscodePlatformContextFactory.createContext(identity, key, new Log4JLoggingModule());
+      Properties props = new Properties();
+      return new RestContextFactory().createContext("opscodeplatform", identity, key, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), props);
    }
 
    @Test

@@ -18,31 +18,30 @@
  */
 package org.jclouds.vcloud;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
+import org.jclouds.vcloud.VCloudLoginLiveTest.VCloudLoginClient;
+import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -83,27 +82,25 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
+      return new Module() {
+
          @Override
-         protected void configure() {
-            Names.bindProperties(binder(), checkNotNull(
-                     new VCloudPropertiesBuilder(new Properties()).build(), "properties"));
-            bind(URI.class).annotatedWith(org.jclouds.vcloud.endpoints.VCloudLogin.class)
-                     .toInstance(URI.create("http://localhost:8080/login"));
-            try {
-               bind(BasicAuthentication.class).toInstance(
-                        new BasicAuthentication("user", "pass", new JCEEncryptionService()));
-            } catch (UnsupportedEncodingException e) {
-               throw new RuntimeException(e);
-            }
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
+         public void configure(Binder binder) {
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @VCloudLogin
+         URI provideURI(@Provider URI uri) {
+            return uri;
          }
 
       };
    }
 
+   @Override
+   public ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {
+      return contextSpec("test", "http://localhost:8080/login", "1", "identity", "credential",
+               VCloudLoginClient.class, VCloudLoginAsyncClient.class);
+   }
 }

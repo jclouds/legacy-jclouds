@@ -26,12 +26,10 @@ import java.util.Date;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.config.ParserModule;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,6 +38,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 
 @Test(groups = "unit", testName = "aws.FormSignerTest")
 public class FormSignerTest {
@@ -68,14 +67,10 @@ public class FormSignerTest {
                sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
 
          protected void configure() {
-            bindConstant().annotatedWith(Names.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "foo");
-            bindConstant().annotatedWith(Names.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("bar");
-            bindConstant().annotatedWith(Names.named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL))
-                     .to(30);
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS))
-                     .to("1");
+            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IDENTITY)).to("foo");
+            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_CREDENTIAL)).to("bar");
+            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_SESSION_INTERVAL)).to(30);
+            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
             bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to("1");
          }
 
@@ -83,7 +78,7 @@ public class FormSignerTest {
          @Provides
          @TimeStamp
          protected String provideTimeStamp(final DateService dateService,
-                  @Named(AWSConstants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
+                  @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
             return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
                      + (expiration * 1000)));
          }

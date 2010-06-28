@@ -18,20 +18,11 @@
  */
 package org.jclouds.azure.storage.blob.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
-import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-
-import com.google.inject.Provides;
 
 /**
  * Configures the Azure Blob Service connection, including logging and http transport.
@@ -51,14 +42,6 @@ public class AzureBlobRestClientModule extends
    protected void configure() {
       install(new AzureBlobModule());
       super.configure();
-   }
-
-   @Provides
-   @Singleton
-   @AzureBlob
-   protected URI provideAuthenticationURI(
-            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
    }
 
 }

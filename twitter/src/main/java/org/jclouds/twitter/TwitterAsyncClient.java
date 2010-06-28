@@ -24,7 +24,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.twitter.domain.Status;
@@ -40,7 +39,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href= "http://apiwiki.twitter.com/Twitter-REST-API-Method" />
  * @author Adrian Cole
  */
-@Endpoint(Twitter.class)
 @RequestFilters(BasicAuthentication.class)
 public interface TwitterAsyncClient {
 

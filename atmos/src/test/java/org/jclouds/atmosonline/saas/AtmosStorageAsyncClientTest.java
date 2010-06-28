@@ -40,16 +40,18 @@ import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -275,26 +277,34 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
    @BeforeClass
    @Override
-   protected void setupFactory() {
+   protected void setupFactory() throws IOException {
       super.setupFactory();
       blobToObject = injector.getInstance(BlobToObject.class);
    }
 
    @Override
    protected Module createModule() {
-      return new AtmosStorageRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new AtmosStoragePropertiesBuilder(new Properties())
-                     .withCredentials("uid", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-         @Override
-         protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-            return "2009-11-08T15:54:08.897Z";
-         }
-      };
+      return new TestAtmosStorageRestClientModule();
    }
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   private static final class TestAtmosStorageRestClientModule extends AtmosStorageRestClientModule {
+      @Override
+      protected void configure() {
+         super.configure();
+      }
+
+      @Override
+      protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+         return "Thu, 05 Jun 2008 16:38:19 GMT";
+      }
+   }
+
+   @Override
+   public ContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec("atmosonline", "identity", "credential",
+               new Properties());
+   }
+
 }

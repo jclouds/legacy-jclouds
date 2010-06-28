@@ -1,6 +1,8 @@
 package org.jclouds.blobstore.config;
 
-import java.net.URI;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Singleton;
 
@@ -9,44 +11,47 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.HttpAsyncClient;
-import org.jclouds.rest.HttpClient;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.rest.internal.RestContextImpl;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the {@link TransientBlobStoreContext}; requires
- * {@link TransientAsyncBlobStore} bound.
+ * Configures the {@link TransientBlobStoreContext}; requires {@link TransientAsyncBlobStore} bound.
  * 
  * @author Adrian Cole
  */
-public class TransientBlobStoreContextModule extends
-      RestClientModule<TransientBlobStore, AsyncBlobStore> {
+public class TransientBlobStoreContextModule extends AbstractModule {
 
-   public TransientBlobStoreContextModule() {
-      super(TransientBlobStore.class, AsyncBlobStore.class);
-   }
+   // must be singleton for all threads and all objects or tests may fail;
+   static final ConcurrentHashMap<String, ConcurrentMap<String, Blob>> map = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
+   static final ConcurrentHashMap<String, Location> containerToLocation = new ConcurrentHashMap<String, Location>();
 
    @Override
    protected void configure() {
-      super.configure();
+      bind(new TypeLiteral<BlobStoreContext>() {
+      }).to(new TypeLiteral<BlobStoreContextImpl<TransientBlobStore, AsyncBlobStore>>() {
+      }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
+      }).toInstance(map);
+      bind(new TypeLiteral<ConcurrentMap<String, Location>>() {
+      }).toInstance(containerToLocation);
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
-      bind(BlobStoreContext.class)
-            .to(
-                  new TypeLiteral<BlobStoreContextImpl<TransientBlobStore, AsyncBlobStore>>() {
-                  }).in(Scopes.SINGLETON);
+   }
+
+   @Provides
+   @Singleton
+   Set<Location> provideLocations(Location defaultLocation) {
+      return ImmutableSet.of(defaultLocation);
    }
 
    @Provides
@@ -58,25 +63,7 @@ public class TransientBlobStoreContextModule extends
    @Provides
    @Singleton
    Location provideDefaultLocation() {
-      return new LocationImpl(LocationScope.PROVIDER, "transient", "transient",
-            null);
-   }
-
-   @Override
-   protected void bindAsyncClient() {
-      bind(AsyncBlobStore.class).to(TransientAsyncBlobStore.class)
-            .asEagerSingleton();
-   }
-
-   @Provides
-   @Singleton
-   RestContext<TransientBlobStore, AsyncBlobStore> provideContext(
-         Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
-         TransientBlobStore sync, AsyncBlobStore async) {
-      return new RestContextImpl<TransientBlobStore, AsyncBlobStore>(closer,
-            http, asyncHttp, sync, async, URI
-                  .create("http://localhost/transient"), System
-                  .getProperty("user.name"));
+      return new LocationImpl(LocationScope.PROVIDER, "transient", "transient", null);
    }
 
 }

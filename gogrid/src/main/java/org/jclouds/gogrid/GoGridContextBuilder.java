@@ -44,8 +44,8 @@ import com.google.inject.TypeLiteral;
 public class GoGridContextBuilder extends
          ComputeServiceContextBuilder<GoGridClient, GoGridAsyncClient> {
 
-   public GoGridContextBuilder(String providerName, Properties props) {
-      super(providerName, GoGridClient.class, GoGridAsyncClient.class, props);
+   public GoGridContextBuilder(Properties props) {
+      super(GoGridClient.class, GoGridAsyncClient.class, props);
    }
 
    protected void addClientModule(List<Module> modules) {
@@ -53,8 +53,8 @@ public class GoGridContextBuilder extends
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new GoGridComputeServiceContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new GoGridComputeServiceContextModule());
    }
 
    @Override

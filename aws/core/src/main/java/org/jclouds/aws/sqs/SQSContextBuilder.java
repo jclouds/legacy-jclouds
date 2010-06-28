@@ -21,7 +21,6 @@ package org.jclouds.aws.sqs;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.aws.sqs.config.SQSContextModule;
 import org.jclouds.aws.sqs.config.SQSRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -45,23 +44,12 @@ import com.google.inject.Module;
  */
 public class SQSContextBuilder extends RestContextBuilder<SQSClient, SQSAsyncClient> {
 
-   public SQSContextBuilder(String providerName, Properties props) {
-      super(providerName, SQSClient.class, SQSAsyncClient.class, props);
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new SQSContextModule(providerName));
+   public SQSContextBuilder(Properties props) {
+      super(SQSClient.class, SQSAsyncClient.class, props);
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new SQSRestClientModule());
    }
-
-   @Override
-   public SQSContextBuilder withModules(Module... modules) {
-      return (SQSContextBuilder) super.withModules(modules);
-   }
-
 }

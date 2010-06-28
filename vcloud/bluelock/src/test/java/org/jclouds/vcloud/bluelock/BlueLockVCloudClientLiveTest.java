@@ -20,14 +20,16 @@ package org.jclouds.vcloud.bluelock;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Properties;
+
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.inject.Injector;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code BlueLockVCloudClient}
@@ -42,11 +44,9 @@ public class BlueLockVCloudClientLiveTest extends VCloudClientLiveTest {
    public void setupClient() {
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new BlueLockVCloudContextBuilder("bluelock",
-               new BlueLockVCloudPropertiesBuilder(account, key).build()).withModules(
-               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
-
-      connection = injector.getInstance(VCloudClient.class);
+      context = new RestContextFactory().createContext("bluelock", account, key, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), new Properties());
+      connection = context.getApi();
    }
 
 }

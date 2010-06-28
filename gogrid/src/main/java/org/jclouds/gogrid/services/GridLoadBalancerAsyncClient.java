@@ -29,7 +29,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
 import org.jclouds.gogrid.binders.BindRealIpPortPairsToQueryParams;
@@ -41,7 +41,6 @@ import org.jclouds.gogrid.functions.ParseLoadBalancerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseLoadBalancerListFromJsonResponse;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -51,9 +50,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * @author Oleksiy Yarmula
  */
-@Endpoint(GoGrid.class)
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = "1.4")
+@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
 public interface GridLoadBalancerAsyncClient {
 
    /**

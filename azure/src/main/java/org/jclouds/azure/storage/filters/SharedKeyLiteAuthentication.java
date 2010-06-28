@@ -33,7 +33,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -69,8 +68,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    @Inject
    public SharedKeyLiteAuthentication(SignatureWire signatureWire,
-            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account,
-            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY) String encodedKey,
+            @Named(Constants.PROPERTY_IDENTITY) String account,
+            @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey,
             @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.encryptionService = encryptionService;
       this.signatureWire = signatureWire;

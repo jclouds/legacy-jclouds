@@ -31,7 +31,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
@@ -66,7 +65,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://apidocs.rimuhosting.com" />
  */
 @RequestFilters(RimuHostingAuthentication.class)
-@Endpoint(RimuHosting.class)
 public interface RimuHostingAsyncClient {
 
    /**
@@ -91,7 +89,7 @@ public interface RimuHostingAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<SortedSet<Server>> getServerList();
-   
+
    /**
     * @see RimuHostingClient#getPricingPlanList
     */
@@ -114,7 +112,8 @@ public interface RimuHostingAsyncClient {
    @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
    @MapBinder(CreateServerOptions.class)
    ListenableFuture<NewServerResponse> createServer(@MapPayloadParam("name") String name,
-            @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId, CreateServerOptions ... options);
+            @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId,
+            CreateServerOptions... options);
 
    /**
     * @see RimuHostingClient#getServer

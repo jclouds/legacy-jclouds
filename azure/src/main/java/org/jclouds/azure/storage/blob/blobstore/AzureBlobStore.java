@@ -45,7 +45,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
@@ -67,7 +67,7 @@ public class AzureBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
+   AzureBlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
             Set<? extends Location> locations, AzureBlobClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,

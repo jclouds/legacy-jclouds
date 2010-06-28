@@ -20,6 +20,7 @@ package org.jclouds.vfs.provider.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.blobstore.util.BlobStoreUtils.newBlob;
 import static org.jclouds.util.Patterns.LEADING_SLASHES;
 import static org.jclouds.util.Patterns.TRAILING_SLASHES;
 
@@ -57,7 +58,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
@@ -241,8 +241,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       File file = allocateFile();
       checkState(file != null, "file was null");
       if (metadata != null) {
-         return new BlobStoreOutputStream(file, getBlobStore(), BlobStoreUtilsImpl.newBlob(
-                  getBlobStore(), metadata));
+         return new BlobStoreOutputStream(file, getBlobStore(), newBlob(getBlobStore(), metadata));
       } else {
          return new BlobStoreOutputStream(file, getBlobStore(), getBlobStore().newBlob(
                   getNameTrimLeadingSlashes()));

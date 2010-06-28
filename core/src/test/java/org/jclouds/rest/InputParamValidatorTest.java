@@ -18,33 +18,27 @@
  */
 package org.jclouds.rest;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.predicates.validators.AllLowerCaseValidator;
-import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.rest.internal.RestAnnotationProcessorTest;
-import com.google.inject.name.Names;
 import org.testng.TestException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -55,7 +49,6 @@ public class InputParamValidatorTest {
 
    @Timeout(duration = 1000, timeUnit = TimeUnit.SECONDS)
    @SkipEncoding('/')
-   @Endpoint(RestAnnotationProcessorTest.Localhost.class)
    class InputParamValidatorForm {
       @POST
       @ParamValidators( { AllLowerCaseValidator.class })
@@ -120,7 +113,6 @@ public class InputParamValidatorTest {
    public void testWrongPredicateTypeLiteral() throws Exception {
       @Timeout(duration = 1000, timeUnit = TimeUnit.SECONDS)
       @SkipEncoding('/')
-      @Endpoint(RestAnnotationProcessorTest.Localhost.class)
       class WrongValidator {
          @SuppressWarnings("unused")
          @POST
@@ -149,28 +141,12 @@ public class InputParamValidatorTest {
 
    @BeforeClass
    void setupFactory() {
-      injector = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named("testaccount")).to("ralphie");
-            bind(URI.class).annotatedWith(RestAnnotationProcessorTest.Localhost.class).toInstance(
-                     URI.create("http://localhost:8080"));
-            Names.bindProperties(binder(), new PropertiesBuilder() {
 
-               @Override
-               public PropertiesBuilder withCredentials(String account, String key) {
-                  return null;
-               }
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(
+               "test", "http://localhost:9999", "1", "userFoo", null, IntegrationTestClient.class,
+               IntegrationTestAsyncClient.class);
 
-               @Override
-               public PropertiesBuilder withEndpoint(URI endpoint) {
-                  return null;
-               }
-            }.build());
-         }
-
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      injector = createContextBuilder(contextSpec).buildInjector();
 
    }
 

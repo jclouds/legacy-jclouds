@@ -26,7 +26,6 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -47,18 +46,17 @@ import com.google.inject.Module;
 public class CloudFilesContextBuilder extends
          BlobStoreContextBuilder<CloudFilesClient, CloudFilesAsyncClient> {
 
-   public CloudFilesContextBuilder(String providerName, Properties props) {
-      super(providerName, CloudFilesClient.class, CloudFilesAsyncClient.class, props);
+   public CloudFilesContextBuilder(Properties props) {
+      super(CloudFilesClient.class, CloudFilesAsyncClient.class, props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new CloudFilesBlobStoreContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new CloudFilesBlobStoreContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new RackspaceAuthenticationRestModule());
       modules.add(new CloudFilesRestClientModule());
    }
 }

@@ -29,7 +29,6 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 
 import com.google.common.base.Supplier;
@@ -45,8 +44,8 @@ public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Locat
    private final String providerName;
 
    @Inject
-   OrgAndVDCToLocationProvider(@VCloud String providerName, Supplier<VCloudSession> cache,
-            VCloudClient client) {
+   OrgAndVDCToLocationProvider(@org.jclouds.rest.annotations.Provider String providerName,
+            Supplier<VCloudSession> cache, VCloudClient client) {
       this.providerName = providerName;
       this.cache = cache;
       this.client = client;

@@ -98,7 +98,7 @@ public class ParserModule extends AbstractModule {
       return gson.create();
    }
 
-   @ImplementedBy(Iso8601DateAdapter.class)
+   @ImplementedBy(CDateAdapter.class)
    public static interface DateAdapter extends JsonSerializer<Date>, JsonDeserializer<Date> {
 
    }

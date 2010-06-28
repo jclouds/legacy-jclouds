@@ -18,14 +18,12 @@
  */
 package org.jclouds.aws.s3.reference;
 
-import org.jclouds.aws.reference.AWSConstants;
-
 /**
  * Configuration properties and constants used in S3 connections.
  * 
  * @author Adrian Cole
  */
-public interface S3Constants extends AWSConstants, S3Headers {
+public interface S3Constants {
 
    /**
     * S3 service's XML Namespace, as used in XML request and response documents.
@@ -35,15 +33,9 @@ public interface S3Constants extends AWSConstants, S3Headers {
    public static final String MARKER = "marker";
    public static final String MAX_KEYS = "max-keys";
    public static final String DELIMITER = "delimiter";
-   public static final String PROPERTY_S3_ENDPOINT = "jclouds.s3.endpoint";
-   public static final String PROPERTY_S3_REGIONS = "jclouds.s3.regions";
-   public static final String PROPERTY_S3_DEFAULT_REGIONS = "jclouds.s3.default-regions";
 
    public static final String PROPERTY_S3_SERVICE_EXPR = "jclouds.service.expr";
-   /**
-    * how long do we wait before obtaining a new timestamp for requests.
-    */
-   public static final String PROPERTY_S3_SESSIONINTERVAL = "jclouds.s3.sessioninterval";
+
    public static final String PROPERTY_S3_AUTH_TAG = "jclouds.s3.auth.tag";
    public static final String PROPERTY_S3_HEADER_TAG = "jclouds.s3.header.tag";
 

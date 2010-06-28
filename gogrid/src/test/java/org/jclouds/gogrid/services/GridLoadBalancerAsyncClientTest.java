@@ -18,47 +18,30 @@
  */
 package org.jclouds.gogrid.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
-import javax.inject.Singleton;
-
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.gogrid.GoGrid;
-import org.jclouds.gogrid.GoGridPropertiesBuilder;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.LoadBalancerPersistenceType;
 import org.jclouds.gogrid.domain.LoadBalancerType;
-import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseLoadBalancerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseLoadBalancerListFromJsonResponse;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
-import org.jclouds.logging.Logger;
-import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * @author Oleksiy Yarmula
  */
-public class GridLoadBalancerAsyncClientTest extends RestClientTest<GridLoadBalancerAsyncClient> {
+public class GridLoadBalancerAsyncClientTest extends
+         BaseGoGridAsyncClientTest<GridLoadBalancerAsyncClient> {
 
    @Test
    public void testGetLoadBalancerList() throws NoSuchMethodException, IOException {
@@ -230,40 +213,9 @@ public class GridLoadBalancerAsyncClientTest extends RestClientTest<GridLoadBala
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
-   }
-
-   @Override
    protected TypeLiteral<RestAnnotationProcessor<GridLoadBalancerAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<GridLoadBalancerAsyncClient>>() {
       };
    }
 
-   @Override
-   protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), checkNotNull(new GoGridPropertiesBuilder(
-                     new Properties()).build(), "properties"));
-            bind(URI.class).annotatedWith(GoGrid.class).toInstance(
-                     URI.create("https://api.gogrid.com/api"));
-            bind(Logger.LoggerFactory.class).toInstance(new Logger.LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @Provides
-         @Singleton
-         @SuppressWarnings("unused")
-         public SharedKeyLiteAuthentication provideAuthentication(
-                  EncryptionService encryptionService) throws UnsupportedEncodingException {
-            return new SharedKeyLiteAuthentication("foo", "bar", 1267243795L, encryptionService);
-         }
-      };
-   }
 }

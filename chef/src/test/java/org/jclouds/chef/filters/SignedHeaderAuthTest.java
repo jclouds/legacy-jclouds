@@ -23,9 +23,6 @@
  */
 package org.jclouds.chef.filters;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -34,6 +31,7 @@ import java.net.URI;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.util.Properties;
 
 import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
@@ -41,15 +39,12 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMReader;
-import org.jclouds.chef.ChefPropertiesBuilder;
-import org.jclouds.chef.config.ChefRestClientModule;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.rest.config.RestModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -57,11 +52,11 @@ import org.testng.annotations.Test;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * 
@@ -214,17 +209,11 @@ public class SignedHeaderAuthTest {
     */
    @BeforeClass
    protected void createFilter() throws IOException {
-      Injector injector = Guice.createInjector(new RestModule(), new ChefRestClientModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(
-                              new ChefPropertiesBuilder(URI.create("http://localhost"), "foo",
-                                       "bar")).build());
-                     bind(TransformingHttpCommandExecutorService.class).toInstance(
-                              createMock(TransformingHttpCommandExecutorService.class));
-                  }
-               });
+
+      Injector injector = new RestContextFactory().createContextBuilder("chef", USER_ID,
+               PRIVATE_KEY, ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule()),
+               new Properties()).buildInjector();
+
       encryptionService = injector.getInstance(EncryptionService.class);
       Security.addProvider(new BouncyCastleProvider());
 

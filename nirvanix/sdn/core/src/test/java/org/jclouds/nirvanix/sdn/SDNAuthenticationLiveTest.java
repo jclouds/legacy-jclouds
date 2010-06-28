@@ -20,25 +20,25 @@ package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Singleton;
-
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.AsyncClientFactory;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SDNAuthentication}
@@ -47,38 +47,38 @@ import com.google.inject.Provides;
  */
 @Test(groups = "live", testName = "sdn.SDNAuthenticationLiveTest")
 public class SDNAuthenticationLiveTest {
-   String appname = checkNotNull(System.getProperty("jclouds.test.appname"), "jclouds.test.appname");
-   String appid = checkNotNull(System.getProperty("jclouds.test.appid"), "jclouds.test.appid");
-   String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-   String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private Injector injector;
+   private RestContext<SDNAuthClient, SDNAuthAsyncClient> context;
+
+   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
+   public interface SDNAuthClient {
+
+      String authenticate(String appKey, String user, String password);
+   }
+
+   private String credential;
+   private String identity;
 
    @Test
    public void testAuthentication() throws Exception {
-      SDNAuthentication authentication = injector.getInstance(SDNAuthentication.class);
-      String response = authentication.authenticate(appid, user, password)
-               .get(10, TimeUnit.SECONDS);
+      ArrayList<String> list = Lists.newArrayList(Splitter.on('/').split(credential));
+      String response = context.getApi().authenticate(list.get(0), list.get(1), identity);
       assertNotNull(response);
    }
 
    @BeforeClass
    void setupFactory() {
-      injector = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bind(URI.class).annotatedWith(SDN.class).toInstance(
-                     URI.create("http://services.nirvanix.com"));
-         }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         protected SDNAuthentication provideCloud(AsyncClientFactory factory) {
-            return factory.create(SDNAuthentication.class);
-         }
-      }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      String endpoint = "http://services.nirvanix.com";
+      identity = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      credential = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+
+      ContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint,
+               "1", identity, credential, SDNAuthClient.class, SDNAuthAsyncClient.class);
+
+      context = createContextBuilder(
+               contextSpec,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(
+                        sameThreadExecutor(), sameThreadExecutor()))).buildContext();
    }
 }

@@ -41,6 +41,9 @@
  */
 package org.jclouds.chef.config;
 
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.security.KeyPair;
@@ -55,7 +58,6 @@ import javax.inject.Singleton;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMReader;
 import org.jclouds.chef.handlers.ChefErrorHandler;
-import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
@@ -99,8 +101,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
     */
    @Provides
    @TimeStamp
-   Supplier<String> provideTimeStampCache(
-            @Named(ChefConstants.PROPERTY_CHEF_TIMESTAMP_INTERVAL) long seconds,
+   Supplier<String> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
@@ -111,8 +112,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Provides
    @Singleton
-   public PrivateKey provideKey(@Named(ChefConstants.PROPERTY_CHEF_RSA_KEY) String key)
-            throws IOException {
+   public PrivateKey provideKey(@Named(PROPERTY_CREDENTIAL) String key) throws IOException {
       // TODO do this without adding a provider
       Security.addProvider(new BouncyCastleProvider());
       KeyPair pair = KeyPair.class.cast(new PEMReader(new StringReader(key)).readObject());

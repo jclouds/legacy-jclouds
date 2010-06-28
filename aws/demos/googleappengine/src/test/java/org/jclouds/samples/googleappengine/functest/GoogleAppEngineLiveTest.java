@@ -19,8 +19,6 @@
 package org.jclouds.samples.googleappengine.functest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,20 +50,12 @@ public class GoogleAppEngineLiveTest {
             throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
+      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      props = new S3PropertiesBuilder(props)
-               .withCredentials(
-                        checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
-                                 PROPERTY_AWS_ACCESSKEYID),
-                        System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
-                                 PROPERTY_AWS_SECRETACCESSKEY)).build();
+      props = new S3PropertiesBuilder(props).credentials(user, password).build();
 
-      props = new EC2PropertiesBuilder(props)
-               .withCredentials(
-                        checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
-                                 PROPERTY_AWS_ACCESSKEYID),
-                        System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
-                                 PROPERTY_AWS_SECRETACCESSKEY)).build();
+      props = new EC2PropertiesBuilder(props).credentials(user, password).build();
 
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);

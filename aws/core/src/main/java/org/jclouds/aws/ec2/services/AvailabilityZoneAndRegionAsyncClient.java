@@ -29,15 +29,14 @@ import javax.annotation.Nullable;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.aws.ec2.options.DescribeRegionsOptions;
 import org.jclouds.aws.ec2.xml.DescribeAvailabilityZonesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeRegionsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -53,7 +52,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-11-30")
+@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface AvailabilityZoneAndRegionAsyncClient {
 
@@ -72,7 +71,6 @@ public interface AvailabilityZoneAndRegionAsyncClient {
     * @see AvailabilityZoneAndRegionClient#describeRegions
     */
    @POST
-   @Endpoint(EC2.class)
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeRegions")
    @XMLResponseParser(DescribeRegionsResponseHandler.class)

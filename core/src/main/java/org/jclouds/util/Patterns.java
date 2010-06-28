@@ -47,6 +47,7 @@ public class Patterns {
                      + "{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)b");
    public static final Pattern LEADING_SLASHES = Pattern.compile("^[/]+");
    public static final Pattern TRAILING_SLASHES = Pattern.compile("[/]*$");
+   public static final Pattern REST_CONTEXT_BUILDER = Pattern.compile("(.*ContextBuilder)<([^,]+), ?([^>]+)>");
 
    public final static Map<Character, Pattern> CHAR_TO_ENCODED_PATTERN = new MapMaker()
             .makeComputingMap(new Function<Character, Pattern>() {

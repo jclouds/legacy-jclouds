@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -38,7 +39,6 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -267,7 +267,7 @@ public class BaseBlobStoreIntegrationTest {
       Blob newObject = context.getBlobStore().getBlob(sourceContainer, key);
       assert newObject != null;
       try {
-         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(newObject), TEST_STRING);
+         assertEquals(getContentAsStringOrNullAndClose(newObject), TEST_STRING);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }

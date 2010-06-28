@@ -29,9 +29,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.functions.QueueLocation;
-import org.jclouds.aws.sqs.functions.RegionToEndpoint;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
 import org.jclouds.aws.sqs.options.ListQueuesOptions;
 import org.jclouds.aws.sqs.xml.RegexListQueuesResponseHandler;
@@ -52,9 +52,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-02-01")
+@FormParams(keys = VERSION, values = SQSAsyncClient.VERSION)
 @VirtualHost
 public interface SQSAsyncClient {
+   public static final String VERSION = "2009-02-01";
 
    /**
     * @see SQSClient#listQueuesInRegion

@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 
 import com.google.common.base.Function;
 
@@ -38,7 +38,7 @@ public class AvailabilityZoneToEndpoint implements Function<Object, URI> {
    private final Map<String, URI> regionToEndpoint;
 
    @Inject
-   public AvailabilityZoneToEndpoint(@EC2 Map<String, URI> regionToEndpoint,
+   public AvailabilityZoneToEndpoint(@Region Map<String, URI> regionToEndpoint,
             Map<String, String> availabilityZoneToRegion) {
       this.regionToEndpoint = regionToEndpoint;
       this.availabilityZoneToRegion = availabilityZoneToRegion;

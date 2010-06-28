@@ -28,11 +28,12 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.MonitoringState;
-import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -49,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-11-30")
+@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface MonitoringAsyncClient {
 

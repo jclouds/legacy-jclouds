@@ -18,13 +18,15 @@
  */
 package org.jclouds.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.createExecutionErrorMessage;
+import static org.jclouds.compute.util.ComputeServiceUtils.createNodeErrorMessage;
+
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.ssh.ExecResponse;
 
 /**
@@ -45,9 +47,9 @@ public class RunScriptOnNodesException extends Exception {
             @Nullable final RunScriptOptions options,
             Map<NodeMetadata, ExecResponse> successfulNodes, Map<?, Exception> executionExceptions,
             Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
-      super(String.format("error runScript on filtered nodes options(%s)%n%s%n%s",
-               options, ComputeUtils.createExecutionErrorMessage(executionExceptions), ComputeUtils
-                        .createNodeErrorMessage(failedNodes)));
+      super(String.format("error runScript on filtered nodes options(%s)%n%s%n%s", options,
+               createExecutionErrorMessage(executionExceptions),
+               createNodeErrorMessage(failedNodes)));
       this.runScript = runScript;
       this.options = options;
       this.successfulNodes = successfulNodes;

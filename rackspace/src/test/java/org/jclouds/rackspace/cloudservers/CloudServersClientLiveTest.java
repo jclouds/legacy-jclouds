@@ -32,6 +32,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.http.HttpResponseException;
@@ -39,7 +40,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rackspace.RackspacePropertiesBuilder;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
@@ -51,6 +51,7 @@ import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -62,8 +63,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code CloudServersClient}
@@ -82,9 +85,12 @@ public class CloudServersClientLiveTest {
    public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new CloudServersContextBuilder("cloudservers",
-               new RackspacePropertiesBuilder(user, password).build()).withModules(
-               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+
+      Injector injector = new RestContextFactory().createContextBuilder("cloudservers", user,
+               password,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()),
+               new Properties()).buildInjector();
+
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

@@ -28,7 +28,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
@@ -42,7 +41,6 @@ import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.queue.xml.QueueMessagesListHandler;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -74,7 +72,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding('/')
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
-@Endpoint(AzureQueue.class)
 public interface AzureQueueAsyncClient {
 
    /**
@@ -99,8 +96,9 @@ public interface AzureQueueAsyncClient {
    @GET
    @Path("{queue}/messages")
    @XMLResponseParser(QueueMessagesListHandler.class)
-   ListenableFuture<Set<QueueMessage>> getMessages(@PathParam("queue") String queue, GetOptions... options);
-   
+   ListenableFuture<Set<QueueMessage>> getMessages(@PathParam("queue") String queue,
+            GetOptions... options);
+
    /**
     * @see AzureQueueClient#deleteQueue
     */

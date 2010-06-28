@@ -18,7 +18,6 @@
  */
 package org.jclouds.mezeo.pcs2.config;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -27,16 +26,14 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.Constants;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.PCS;
 import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.PCSClient;
-import org.jclouds.mezeo.pcs2.PCSCloud;
-import org.jclouds.mezeo.pcs2.PCSCloud.Response;
+import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient;
+import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient.Response;
 import org.jclouds.mezeo.pcs2.endpoints.Contacts;
 import org.jclouds.mezeo.pcs2.endpoints.Metacontainers;
 import org.jclouds.mezeo.pcs2.endpoints.Projects;
@@ -46,7 +43,6 @@ import org.jclouds.mezeo.pcs2.endpoints.Shares;
 import org.jclouds.mezeo.pcs2.endpoints.Tags;
 import org.jclouds.mezeo.pcs2.endpoints.WebDAV;
 import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
-import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -74,32 +70,15 @@ public class PCSRestClientModule extends RestClientModule<PCSClient, PCSAsyncCli
 
    @Provides
    @Singleton
-   public BasicAuthentication provideBasicAuthentication(
-            @Named(PCSConstants.PROPERTY_PCS2_USER) String user,
-            @Named(PCSConstants.PROPERTY_PCS2_PASSWORD) String password,
-            EncryptionService encryptionService) throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password, encryptionService);
-   }
-
-   @Provides
-   @Singleton
-   protected Response provideCloudResponse(AsyncClientFactory factory, @PCS URI authenticationUri)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      return factory.create(PCSCloud.class).authenticate().get(10, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @PCS
-   protected URI provideAuthenticationURI(
-            @Named(PCSConstants.PROPERTY_PCS2_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
+   protected Response provideCloudResponse(AsyncClientFactory factory) throws InterruptedException,
+            ExecutionException, TimeoutException {
+      return factory.create(PCSCloudAsyncClient.class).authenticate().get(10, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @WebDAV
-   protected URI provideWebDAVURI(@Named(PCSConstants.PROPERTY_PCS2_ENDPOINT) String endpoint) {
+   protected URI provideWebDAVURI(@Named(Constants.PROPERTY_ENDPOINT) String endpoint) {
       return URI.create(endpoint.replaceAll("v2", "dav"));
    }
 

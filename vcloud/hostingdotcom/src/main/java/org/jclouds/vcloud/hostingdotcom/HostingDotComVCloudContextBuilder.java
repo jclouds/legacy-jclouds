@@ -45,13 +45,13 @@ import com.google.inject.Module;
  */
 public class HostingDotComVCloudContextBuilder extends VCloudContextBuilder {
 
-   public HostingDotComVCloudContextBuilder(String providerName, Properties props) {
-      super(providerName, props);
+   public HostingDotComVCloudContextBuilder(Properties props) {
+      super(props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new HostingDotComVCloudComputeServiceContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new HostingDotComVCloudComputeServiceContextModule());
    }
 
    @Override

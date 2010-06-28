@@ -34,26 +34,25 @@ import org.jclouds.rest.RestContext;
  * @author Adrian Cole
  */
 @Singleton
-public class ComputeServiceContextImpl<X, Y> implements ComputeServiceContext {
+public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    private final ComputeService computeService;
    private final LoadBalancerService loadBalancerService;
-   private final RestContext<X, Y> providerSpecificContext;
+   private final RestContext<S, A> providerSpecificContext;
 
+   @SuppressWarnings("unchecked")
    @Inject
    public ComputeServiceContextImpl(ComputeService computeService,
-            @Nullable LoadBalancerService loadBalancerService,
-            RestContext<X, Y> providerSpecificContext) {
+            @Nullable LoadBalancerService loadBalancerService, RestContext providerSpecificContext) {
+      this.providerSpecificContext = providerSpecificContext;
       this.computeService = checkNotNull(computeService, "computeService");
       this.loadBalancerService = loadBalancerService;
-      this.providerSpecificContext = checkNotNull(providerSpecificContext,
-               "providerSpecificContext");
    }
 
    public ComputeService getComputeService() {
       return computeService;
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings( { "unchecked", "hiding" })
    @Override
    public <S, A> RestContext<S, A> getProviderSpecificContext() {
       return (RestContext<S, A>) providerSpecificContext;

@@ -18,7 +18,8 @@
  */
 package org.jclouds.vcloud.hostingdotcom;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -27,31 +28,28 @@ import java.net.URI;
 import java.util.Properties;
 
 import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
-import org.jclouds.util.Utils;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
-import org.jclouds.vcloud.endpoints.Catalog;
-import org.jclouds.vcloud.endpoints.Network;
-import org.jclouds.vcloud.endpoints.VCloudApi;
-import org.jclouds.vcloud.endpoints.VDC;
-import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
-import org.jclouds.vcloud.endpoints.internal.VAppRoot;
+import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudRestClientModule;
+import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
+import com.google.common.base.Supplier;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -67,7 +65,7 @@ public class HostingDotComVCloudAsyncClientTest extends
       GeneratedHttpRequest<HostingDotComVCloudAsyncClient> httpMethod = processor
                .createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET https://catalog HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
                "Accept: application/vnd.vmware.vcloud.catalog+xml\nContent-Type: application/vnd.vmware.vcloud.catalog+xml\n");
@@ -91,64 +89,64 @@ public class HostingDotComVCloudAsyncClientTest extends
       return new TypeLiteral<RestAnnotationProcessor<HostingDotComVCloudAsyncClient>>() {
       };
    }
-
    @Override
    protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(
-                     new Properties()).build(), "properties"));
-            bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
-            bind(String.class).annotatedWith(CatalogItemRoot.class)
-                     .toInstance("http://catalogItem");
-            bind(URI.class).annotatedWith(VCloudApi.class).toInstance(URI.create("http://vcloud"));
-            bind(String.class).annotatedWith(VAppRoot.class).toInstance("http://vapp");
-            bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
-            bind(URI.class).annotatedWith(Network.class).toInstance(URI.create("http://network"));
-            bind(SetVCloudTokenCookie.class).toInstance(
-                     new SetVCloudTokenCookie(new Provider<String>() {
-
-                        public String get() {
-                           return "token";
-                        }
-
-                     }));
-
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         @Named("InstantiateVAppTemplateParams")
-         String provideInstantiateVAppTemplateParams() throws IOException {
-            return Utils.toStringAndClose(getClass().getResourceAsStream(
-                     "/terremark/InstantiateVAppTemplateParams.xml"));
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         @Named("CreateInternetService")
-         String provideCreateInternetService() throws IOException {
-            return Utils.toStringAndClose(getClass().getResourceAsStream(
-                     "/terremark/CreateInternetService.xml"));
-         }
-
-         @SuppressWarnings("unused")
-         @Singleton
-         @Provides
-         @Named("CreateNodeService")
-         String provideCreateNodeService() throws IOException {
-            return Utils.toStringAndClose(getClass().getResourceAsStream(
-                     "/terremark/CreateNodeService.xml"));
-         }
-      };
+      return new HostingDotComVCloudRestClientModuleExtension();
    }
 
+   @Override
+   public ContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec("hostingdotcom", "identity", "credential",
+               new Properties());
+   }
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   protected static class HostingDotComVCloudRestClientModuleExtension extends
+            HostingDotComVCloudRestClientModule {
+      @Override
+      protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
+               @Named(PROPERTY_API_VERSION) String version) {
+         return URI.create("https://vcloud/login");
+      }
+
+      @Override
+      protected URI provideOrg(@Org Iterable<NamedResource> orgs) {
+         return URI.create("https://org");
+
+      }
+
+      @Override
+      protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) String user) {
+         return URI.create("https://catalog");
+
+      }
+
+      @Override
+      protected Organization provideOrganization(VCloudClient discovery) {
+         return null;
+      }
+
+      @Override
+      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache,
+               @Named(PROPERTY_IDENTITY) String user) {
+         return null;
+      }
+
+      @Override
+      protected URI provideDefaultTasksList(Organization org) {
+         return URI.create("https://taskslist");
+      }
+
+      @Override
+      protected URI provideDefaultVDC(Organization org) {
+         return URI.create("https://vdc/1");
+      }
+
+      @Override
+      protected URI provideDefaultNetwork(VCloudClient client) {
+         return URI.create("https://vcloud.safesecureweb.com/network/1990");
+      }
+
+   }
 }

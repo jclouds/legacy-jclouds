@@ -1,20 +1,13 @@
 package org.jclouds.gogrid;
 
-import java.util.Properties;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.date.TimeStamp;
-import org.jclouds.gogrid.config.GoGridRestClientModule;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.gogrid.services.BaseGoGridAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
-import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -23,7 +16,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.GoGridClientTest")
-public class GoGridAsyncClientTest extends RestClientTest<GoGridAsyncClient> {
+public class GoGridAsyncClientTest extends BaseGoGridAsyncClientTest<GoGridAsyncClient> {
 
    private GoGridAsyncClient asyncClient;
    private GoGridClient syncClient;
@@ -54,32 +47,9 @@ public class GoGridAsyncClientTest extends RestClientTest<GoGridAsyncClient> {
 
    @BeforeClass
    @Override
-   protected void setupFactory() {
+   protected void setupFactory() throws IOException {
       super.setupFactory();
       asyncClient = injector.getInstance(GoGridAsyncClient.class);
       syncClient = injector.getInstance(GoGridClient.class);
-   }
-
-   @Override
-   protected Module createModule() {
-      return new GoGridRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new GoGridPropertiesBuilder(new Properties())
-                     .withCredentials("user", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-         @Override
-         protected Long provideTimeStamp(@TimeStamp Supplier<Long> cache) {
-            return 11111111l;
-         }
-      };
-   }
-
-   @Override
-   protected void checkFilters(GeneratedHttpRequest<GoGridAsyncClient> httpMethod) {
-
    }
 }

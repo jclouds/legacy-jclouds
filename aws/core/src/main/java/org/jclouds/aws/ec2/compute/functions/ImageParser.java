@@ -19,8 +19,8 @@
 package org.jclouds.aws.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeUtils.parseOsFamilyOrNull;
-import static org.jclouds.compute.util.ComputeUtils.parseVersionOrReturnEmptyString;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -54,22 +54,21 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class ImageParser implements
-      Function<org.jclouds.aws.ec2.domain.Image, Image> {
+public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, Image> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    public static final Pattern CANONICAL_PATTERN = Pattern
-         .compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
+            .compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
 
    // ex rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml
    public static final Pattern RIGHTSCALE_PATTERN = Pattern
-         .compile("[^/]*/([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
+            .compile("[^/]*/([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
 
    // ex 411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha
    public static final Pattern RIGHTIMAGE_PATTERN = Pattern
-         .compile("[^/]*/RightImage_([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
+            .compile("[^/]*/RightImage_([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
 
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Set<? extends Location> locations;
@@ -77,11 +76,9 @@ public class ImageParser implements
    private final Location defaultLocation;
 
    @Inject
-   ImageParser(
-         PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-         Set<? extends Location> locations, Location defaultLocation) {
-      this.credentialProvider = checkNotNull(credentialProvider,
-            "credentialProvider");
+   ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
+            Set<? extends Location> locations, Location defaultLocation) {
+      this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
 
@@ -99,8 +96,8 @@ public class ImageParser implements
       }
       OsFamily os = parseOsFamilyOrNull(from.getImageLocation());
       String name = parseVersionOrReturnEmptyString(os, from.getImageLocation());
-      String description = from.getDescription() != null ? from
-            .getDescription() : from.getImageLocation();
+      String description = from.getDescription() != null ? from.getDescription() : from
+               .getImageLocation();
       String osDescription = from.getImageLocation();
       String version = "";
 
@@ -128,24 +125,24 @@ public class ImageParser implements
 
          });
       } catch (NoSuchElementException e) {
-         System.err.printf("unknown region %s for image %s; not in %s", from
-               .getRegion(), from.getId(), locations);
-         location = new LocationImpl(LocationScope.REGION, from.getRegion(),
-               from.getRegion(), defaultLocation.getParent());
+         System.err.printf("unknown region %s for image %s; not in %s", from.getRegion(), from
+                  .getId(), locations);
+         location = new LocationImpl(LocationScope.REGION, from.getRegion(), from.getRegion(),
+                  defaultLocation.getParent());
       }
       return new ImageImpl(
-            from.getId(),
-            name,
-            from.getRegion() + "/" + from.getId(),
-            location,
-            null,
-            ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
-            description,
-            version,
-            os,
-            osDescription,
-            from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
-                  : Architecture.X86_64, defaultCredentials);
+               from.getId(),
+               name,
+               from.getRegion() + "/" + from.getId(),
+               location,
+               null,
+               ImmutableMap.<String, String> of("owner", from.getImageOwnerId()),
+               description,
+               version,
+               os,
+               osDescription,
+               from.getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
+                        : Architecture.X86_64, defaultCredentials);
 
    }
 
@@ -155,8 +152,8 @@ public class ImageParser implements
     *            if no configured matcher matches the manifest.
     */
    private Matcher getMatcherAndFind(String manifest) {
-      for (Pattern pattern : new Pattern[] { CANONICAL_PATTERN,
-            RIGHTIMAGE_PATTERN, RIGHTSCALE_PATTERN }) {
+      for (Pattern pattern : new Pattern[] { CANONICAL_PATTERN, RIGHTIMAGE_PATTERN,
+               RIGHTSCALE_PATTERN }) {
          Matcher matcher = pattern.matcher(manifest);
          if (matcher.find())
             return matcher;

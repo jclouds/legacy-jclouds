@@ -24,6 +24,7 @@ import static org.jclouds.azure.storage.queue.options.PutMessageOptions.Builder.
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Set;
 
@@ -33,12 +34,14 @@ import org.jclouds.azure.storage.queue.domain.QueueMessage;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code AzureQueueClient}
@@ -54,13 +57,11 @@ public class AzureQueueClientLiveTest {
    private String queuePrefix = System.getProperty("user.name") + "-azurequeue";
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   public void setupClient() throws IOException {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      Injector injector = new AzureQueueContextBuilder("azurequeue",
-               new AzureQueuePropertiesBuilder(account, key).build()).withModules(
-               new Log4JLoggingModule()).buildInjector();
-      connection = injector.getInstance(AzureQueueClient.class);
+      connection = (AzureQueueClient) new RestContextFactory().createContext("azurequeue", account,
+               key, ImmutableSet.<Module> of(new Log4JLoggingModule())).getApi();
    }
 
    @Test

@@ -28,10 +28,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
 import org.jclouds.aws.ec2.util.EC2Utils.GetRegionFromLocation;
+import org.jclouds.aws.elb.ELBClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.domain.Location;
@@ -46,13 +45,13 @@ public class EC2LoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final EC2Client ec2Client;
+   protected final ELBClient elbClient;
    protected final GetRegionFromLocation getRegionFromLocation;
 
    @Inject
-   protected EC2LoadBalanceNodesStrategy(EC2Client ec2Client,
+   protected EC2LoadBalanceNodesStrategy(ELBClient elbClient,
             GetRegionFromLocation getRegionFromLocation) {
-      this.ec2Client = ec2Client;
+      this.elbClient = elbClient;
       this.getRegionFromLocation = getRegionFromLocation;
    }
 
@@ -68,8 +67,6 @@ public class EC2LoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
          if (az.startsWith(region))
             availabilityZone = az;
       }
-
-      ElasticLoadBalancerClient elbClient = ec2Client.getElasticLoadBalancerServices();
 
       dnsName = elbClient.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort,
                instancePort, availabilityZone);

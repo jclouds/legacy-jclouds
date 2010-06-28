@@ -18,23 +18,20 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
-import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -43,15 +40,8 @@ import com.google.inject.Injector;
 public class AzureBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new AzureBlobStubClientModule(),
-               new AzureBlobStoreContextModule(), new ExecutorServiceModule(sameThreadExecutor(),
-                        sameThreadExecutor()), new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(new AzureBlobPropertiesBuilder(
-                              "user", "secret").build(), "properties"));
-                  }
-               });
+      return new RestContextFactory().createContextBuilder("azureblob", "uid", "key",
+               ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule())).buildInjector();
    }
 
    @Test

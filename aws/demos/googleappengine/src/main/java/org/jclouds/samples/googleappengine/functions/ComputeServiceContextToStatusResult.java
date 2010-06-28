@@ -43,7 +43,7 @@ public class ComputeServiceContextToStatusResult implements
 
    public StatusResult apply(final String contextName) {
       final ComputeServiceContext context = contexts.get(contextName);
-      final String host = context.getProviderSpecificContext().getEndPoint()
+      final String host = context.getProviderSpecificContext().getEndpoint()
             .getHost();
       String status;
       String name = "not found";

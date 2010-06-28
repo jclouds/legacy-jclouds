@@ -20,23 +20,29 @@ package org.jclouds.rest;
 
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -47,29 +53,52 @@ public abstract class RestClientTest<T> {
 
    protected RestAnnotationProcessor<T> processor;
 
-   protected Injector injector;
+   protected Module createModule() {
+      return new Module() {
 
-   protected abstract Module createModule();
+         @Override
+         public void configure(Binder binder) {
+
+         }
+
+      };
+   }
+
+   protected Injector injector;
 
    protected abstract void checkFilters(GeneratedHttpRequest<T> httpMethod);
 
    protected abstract TypeLiteral<RestAnnotationProcessor<T>> createTypeLiteral();
 
    @BeforeClass
-   protected void setupFactory() {
-
-      injector = Guice.createInjector(createModule(), new RestModule() {
-
-         @Override
-         protected void configure() {
-            bind(TransformingHttpCommandExecutorService.class).toInstance(
-                     createMock(TransformingHttpCommandExecutorService.class));
-            super.configure();
-         }
-
-      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
-
+   protected void setupFactory() throws IOException {
+      ContextSpec<?, ?> contextSpec = createContextSpec();
+      injector = createContextBuilder(contextSpec,
+               ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()))
+               .buildInjector();
       processor = injector.getInstance(Key.get(createTypeLiteral()));
+   }
+
+   abstract public ContextSpec<?, ?> createContextSpec();
+
+   @ConfiguresHttpCommandExecutorService
+   @ConfiguresExecutorService
+   public static class MockModule extends AbstractModule {
+      private final TransformingHttpCommandExecutorService mock;
+
+      public MockModule() {
+         this(createMock(TransformingHttpCommandExecutorService.class));
+      }
+
+      public MockModule(TransformingHttpCommandExecutorService mock) {
+         this.mock = mock;
+      }
+
+      @Override
+      protected void configure() {
+         install(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
+         bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
+      }
    }
 
    protected void assertPayloadEquals(GeneratedHttpRequest<T> httpMethod, String toMatch)

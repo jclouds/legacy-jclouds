@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
@@ -36,13 +36,7 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 public class RackspaceLocationsModule extends AbstractModule {
-   private final String providerName;
-
-   public RackspaceLocationsModule(String providerName) {
-      this.providerName = providerName;
-   }
 
    @Override
    protected void configure() {
@@ -50,7 +44,7 @@ public class RackspaceLocationsModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Location getLocation() {
+   Location getLocation(@Provider String providerName) {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       return new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider);
    }

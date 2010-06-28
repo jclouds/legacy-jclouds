@@ -23,10 +23,8 @@
  */
 package org.jclouds.chef;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.chef.internal.BaseChefPropertiesBuilder;
@@ -40,7 +38,7 @@ public class ChefPropertiesBuilder extends BaseChefPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_CHEF_ENDPOINT, "http://localhost:4000");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:4000");
       return properties;
    }
 
@@ -48,16 +46,4 @@ public class ChefPropertiesBuilder extends BaseChefPropertiesBuilder {
       super(properties);
    }
 
-   public ChefPropertiesBuilder(String identity, String rsaKey) {
-      super(URI.create("http://localhost:4000"), identity, rsaKey);
-   }
-
-   public ChefPropertiesBuilder(URI endpoint, String identity, String rsaKey) {
-      super(endpoint, identity, rsaKey);
-   }
-
-   public ChefPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_CHEF_ENDPOINT, checkNotNull(endpoint, "endpoint").toString());
-      return this;
-   }
 }

@@ -47,7 +47,6 @@ import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
@@ -68,9 +67,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="https://community.emc.com/community/labs/atmos_online" />
  * @author Adrian Cole
  */
-@Endpoint(AtmosStorage.class)
 @RequestFilters(SignRequest.class)
-@SkipEncoding( { '/' })
+@SkipEncoding('/')
 public interface AtmosStorageAsyncClient {
    /**
     * Creates a default implementation of AtmosObject

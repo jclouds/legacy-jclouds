@@ -43,7 +43,16 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudImages.ParseImageListFromJsonResponseTest")
 public class ParseImageListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new ParserModule() {
+
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         super.configure();
+      }
+
+   });
+
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStream() {

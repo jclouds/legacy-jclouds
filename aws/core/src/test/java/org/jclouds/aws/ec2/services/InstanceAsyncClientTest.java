@@ -59,9 +59,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
                (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeInstances");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -78,9 +79,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -98,9 +100,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 44\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 44\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=TerminateInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -118,9 +121,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                null, "ami-voo", 1, 1);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 76\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 76\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=1");
 
@@ -162,9 +166,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                true, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=StopInstances&Force=true&InstanceId.1=1&InstanceId.2=2");
 
@@ -181,9 +186,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=RebootInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -200,9 +206,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 40\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 40\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=StartInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -220,9 +227,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 83\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 83\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=userData&InstanceId=1");
 
@@ -240,9 +248,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=rootDeviceName&InstanceId=1");
 
@@ -260,9 +269,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 82\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 82\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=ramdisk&InstanceId=1");
 
@@ -280,9 +290,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 96\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 96\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=disableApiTermination&InstanceId=1");
 
@@ -300,9 +311,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 81\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 81\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=kernel&InstanceId=1");
 
@@ -320,9 +332,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=instanceType&InstanceId=1");
 
@@ -341,9 +354,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 108\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 108\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&InstanceId=1");
@@ -362,9 +376,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 93\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 93\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=blockDeviceMapping&InstanceId=1");
 
@@ -382,16 +397,17 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "test".getBytes());
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 100\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 100\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1");
       filter.filter(httpMethod);// ensure encoding worked properly
       assertPayloadEquals(
                httpMethod,
-               "Action=ModifyInstanceAttribute&Attribute=userData&InstanceId=1&Signature=LyanxPcmESLrkIIFu9RX2yGN1rSQmyF489LYcoszbFE%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Value=dGVzdA%3D%3D&Version=2009-11-30&AWSAccessKeyId=user");
+               "Action=ModifyInstanceAttribute&Attribute=userData&InstanceId=1&Signature=ch%2BpeYTRad241GAhjH9Wo2vKWlkgfNa3txM0lhPCBSM%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Value=dGVzdA%3D%3D&Version=2009-11-30&AWSAccessKeyId=identity");
 
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -407,9 +423,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "test");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 91\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 91\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=ramdisk&Value=test&InstanceId=1");
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
@@ -426,9 +443,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", "test");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 90\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 90\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=kernel&Value=test&InstanceId=1");
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
@@ -446,9 +464,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", true);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 105\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 105\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=disableApiTermination&Value=true&InstanceId=1");
@@ -467,9 +486,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", InstanceType.C1_MEDIUM);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 101\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 101\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=instanceType&Value=c1.medium&InstanceId=1");
@@ -489,9 +509,10 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", InstanceInitiatedShutdownBehavior.TERMINATE);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 122\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 122\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&Value=terminate&InstanceId=1");
@@ -515,17 +536,17 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
                "1", blockDeviceMapping);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 62\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 62\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true");
       filter.filter(httpMethod);// ensure encoding worked properly
       assertPayloadEquals(
                httpMethod,
-               "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&InstanceId=1&Signature=ME8%2FNeH5Zs3%2FY4otsKB0Q09mipVwoEkroUEChQ%2FMZao%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-11-30&AWSAccessKeyId=user");
-
+               "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&InstanceId=1&Signature=QOd9dFUmgBAsz3b5rWOE2wWgoB85vmhsVM9yNO2s7cE%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-11-30&AWSAccessKeyId=identity");
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -538,4 +559,5 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       return new TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>>() {
       };
    }
+
 }

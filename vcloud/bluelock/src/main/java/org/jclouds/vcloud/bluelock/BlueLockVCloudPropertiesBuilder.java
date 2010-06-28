@@ -18,9 +18,8 @@
  */
 package org.jclouds.vcloud.bluelock;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
@@ -34,15 +33,11 @@ public class BlueLockVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, "https://express.bluelock.com/api");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://express.bluelock.com/api");
       return properties;
    }
 
    public BlueLockVCloudPropertiesBuilder(Properties properties) {
       super(properties);
-   }
-
-   public BlueLockVCloudPropertiesBuilder(String id, String secret) {
-      super(URI.create("https://express.bluelock.com/api"), id, secret);
    }
 }

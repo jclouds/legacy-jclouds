@@ -22,22 +22,25 @@ import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.AzureQueueAsyncClient;
 import org.jclouds.azure.storage.queue.AzureQueueClient;
-import org.jclouds.azure.storage.queue.AzureQueueContextFactory;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.logging.ConsoleLogger;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Module;
 
 /**
  * This the Main class of an Application that tests your response time to amazon AzureQueue.
@@ -79,11 +82,12 @@ public class SpeedTest {
       String queueName = args[2];
       int messageCount = Integer.parseInt(args[3]);
 
-      RestContext<AzureQueueAsyncClient, AzureQueueClient> context = isEnterprise ? AzureQueueContextFactory
-               .createContext(account, encodedKey, new NullLoggingModule(),
-                        new EnterpriseConfigurationModule())
-               : AzureQueueContextFactory.createContext(account, encodedKey,
-                        new NullLoggingModule());
+      Set<Module> modules = isEnterprise ? ImmutableSet.<Module> of(new NullLoggingModule(),
+               new EnterpriseConfigurationModule()) : ImmutableSet
+               .<Module> of(new NullLoggingModule());
+
+      RestContext<AzureQueueClient, AzureQueueAsyncClient> context = new RestContextFactory()
+               .createContext("azurequeue", account, encodedKey, modules);
 
       try {
          if (purgeQueues(queueName, context)) {
@@ -117,7 +121,7 @@ public class SpeedTest {
    }
 
    private static void runTests(String queueName, int messageCount, String contextName,
-            RestContext<AzureQueueAsyncClient, AzureQueueClient> context)
+            RestContext<AzureQueueClient, AzureQueueAsyncClient> context)
             throws InterruptedException {
       String message = "1";
       long timeOut = messageCount * 200; // minimum rate should be at least 5/second
@@ -143,13 +147,13 @@ public class SpeedTest {
    }
 
    private static void createQueue(String queueName,
-            RestContext<AzureQueueAsyncClient, AzureQueueClient> nullLoggingDefaultContext) {
+            RestContext<AzureQueueClient, AzureQueueAsyncClient> nullLoggingDefaultContext) {
       logger.info("creating queue: %s", queueName);
       nullLoggingDefaultContext.getApi().createQueue(queueName);
    }
 
    private static boolean purgeQueues(String queueName,
-            RestContext<AzureQueueAsyncClient, AzureQueueClient> nullLoggingDefaultContext) {
+            RestContext<AzureQueueClient, AzureQueueAsyncClient> nullLoggingDefaultContext) {
       boolean deleted = false;
       try {
          SortedSet<QueueMetadata> result = Sets.newTreeSet(nullLoggingDefaultContext.getApi()

@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.POST;
 
@@ -37,7 +38,6 @@ import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -48,6 +48,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 @Test(groups = "unit", testName = "sdn.AddSessionTokenToRequestTest")
 public class AddSessionTokenToRequestTest {
@@ -106,8 +107,8 @@ public class AddSessionTokenToRequestTest {
 
                   protected void configure() {
                      bind(DateService.class);
-                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
-                              "appname", "username", "password").build());
+                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties())
+                              .credentials("appkey/appname/username", "password").build());
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {
                            return Logger.NULL;

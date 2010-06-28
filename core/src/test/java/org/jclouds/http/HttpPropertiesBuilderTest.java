@@ -18,7 +18,6 @@
  */
 package org.jclouds.http;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -39,18 +38,7 @@ public class HttpPropertiesBuilderTest {
       int poolMaxClients = 3382;
       int poolMaxSessionFailures = 857;
 
-      PropertiesBuilder builder = new PropertiesBuilder(new Properties()) {
-
-         @Override
-         public PropertiesBuilder withCredentials(String account, String key) {
-            return this;
-         }
-
-         @Override
-         public PropertiesBuilder withEndpoint(URI endpoint) {
-            return this;
-         }
-      };
+      PropertiesBuilder builder = new PropertiesBuilder(new Properties());
       builder.withMaxRetries(httpMaxRetries);
 
       builder.limitIoWorkerThreadsTo(poolIoWorkerThreads);

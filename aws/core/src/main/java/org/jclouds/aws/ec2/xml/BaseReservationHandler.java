@@ -26,7 +26,7 @@ import java.util.SortedSet;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.Reservation;
@@ -53,7 +53,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
 
    @Inject
    public BaseReservationHandler(DateService dateService,
-         @EC2 String defaultRegion) {
+         @Region String defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }

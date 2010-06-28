@@ -22,9 +22,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -36,6 +38,9 @@ import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
 /**
  * Tests behavior of {@code VCloudClient}
  * 
@@ -46,6 +51,7 @@ public class VCloudClientLiveTest {
 
    protected VCloudClient connection;
    protected String account;
+   protected RestContext<VCloudClient, VCloudAsyncClient> context;
 
    @Test
    public void testOrganization() throws Exception {
@@ -160,9 +166,13 @@ public class VCloudClientLiveTest {
                "jclouds.test.endpoint");
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      connection = new VCloudContextBuilder("vcloud", new VCloudPropertiesBuilder(URI
-               .create(endpoint), account, key).build()).withModules(new Log4JLoggingModule())
-               .buildContext().getApi();
+
+      Properties props = new Properties();
+      props.setProperty("vcloud.endpoint", endpoint);
+      context = new RestContextFactory().createContext("vcloud", account, key, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), props);
+
+      connection = context.getApi();
    }
 
 }

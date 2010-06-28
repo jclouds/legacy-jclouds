@@ -18,44 +18,131 @@
  */
 package org.jclouds.compute;
 
-import java.io.IOException;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+
 import java.util.Properties;
 
-import javax.inject.Inject;
+import javax.annotation.Nullable;
 
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
+
+import com.google.inject.Module;
 
 /**
  * Helper class to instantiate {@code ComputeServiceContext} instances.
  * 
  * @author Adrian Cole
  */
-public class ComputeServiceContextFactory extends
-         RestContextFactory<ComputeServiceContext, ComputeServiceContextBuilder<?, ?>> {
+public class ComputeServiceContextFactory {
+
+   private final RestContextFactory contextFactory;
 
    /**
     * Initializes with the default properties built-in to jclouds. This is typically stored in the
-    * classpath resource {@code compute.properties}
+    * classpath resource {@code rest.properties}
     * 
-    * @throws IOException
-    *            if the default properties file cannot be loaded
     * @see RestContextFactory#getPropertiesFromResource
     */
-   public ComputeServiceContextFactory() throws IOException {
-      super("compute.properties");
+   public ComputeServiceContextFactory() {
+      this(new RestContextFactory());
+   }
+
+   /**
+    * Finds definitions in the specified properties.
+    */
+   public ComputeServiceContextFactory(Properties properties) {
+      this(new RestContextFactory(properties));
    }
 
    /**
     * 
-    * Initializes the {@code ComputeServiceContext} definitions from the specified properties.
+    * Uses the supplied RestContextFactory to create {@link ComputeServiceContext}s
     */
-   @Inject
-   public ComputeServiceContextFactory(Properties properties) {
-      super(properties);
+   public ComputeServiceContextFactory(RestContextFactory restContextFactory) {
+      this.contextFactory = restContextFactory;
    }
 
-   @Override
-   protected ComputeServiceContext build(ComputeServiceContextBuilder<?, ?> contextBuilder) {
-      return contextBuilder.buildComputeServiceContext();
+   /**
+    * @see RestContextFactory#createContextBuilder(String, String, String)
+    */
+   public ComputeServiceContext createContext(String provider, String identity, String credential) {
+      return ComputeServiceContextBuilder.class.cast(
+               contextFactory.createContextBuilder(provider, identity, credential))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String, Properties)
+    */
+   public ComputeServiceContext createContext(String provider, Properties overrides) {
+      return ComputeServiceContextBuilder.class.cast(
+               contextFactory.createContextBuilder(provider, overrides))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String, Iterable)
+    */
+   public ComputeServiceContext createContext(String provider, Iterable<? extends Module> modules,
+            Properties overrides) {
+      return ComputeServiceContextBuilder.class.cast(
+               contextFactory.createContextBuilder(provider, modules, overrides))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String, String,String, Iterable)
+    */
+   public ComputeServiceContext createContext(String provider, @Nullable String identity,
+            @Nullable String credential, Iterable<? extends Module> modules) {
+      return ComputeServiceContextBuilder.class.cast(
+               contextFactory.createContextBuilder(provider, identity, credential, modules))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String, String,String, Iterable, Properties)
+    */
+   public ComputeServiceContext createContext(String providerName, @Nullable String identity,
+            @Nullable String credential, Iterable<? extends Module> modules, Properties overrides) {
+      return ComputeServiceContextBuilder.class.cast(
+               contextFactory.createContextBuilder(providerName, identity, credential, modules,
+                        overrides)).buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(ContextSpec)
+    */
+   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec) {
+      return ComputeServiceContextBuilder.class.cast(createContextBuilder(contextSpec))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(ContextSpec, Iterable)
+    */
+   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec,
+            Iterable<? extends Module> modules) {
+      return ComputeServiceContextBuilder.class.cast(createContextBuilder(contextSpec, modules))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(ContextSpec, Properties)
+    */
+   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec,
+            Properties overrides) {
+      return ComputeServiceContextBuilder.class.cast(createContextBuilder(contextSpec, overrides))
+               .buildComputeServiceContext();
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(ContextSpec, Iterable, Properties)
+    */
+   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec,
+            Iterable<? extends Module> modules, Properties overrides) {
+      return ComputeServiceContextBuilder.class.cast(
+               createContextBuilder(contextSpec, modules, overrides)).buildComputeServiceContext();
    }
 }

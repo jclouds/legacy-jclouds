@@ -23,15 +23,13 @@
  */
 package org.jclouds.chef.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_IDENTITY;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_RSA_KEY;
-import static org.jclouds.chef.reference.ChefConstants.PROPERTY_CHEF_TIMESTAMP_INTERVAL;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.chef.ChefAsyncClient;
 
 /**
  * Builds properties used in Chef Clients
@@ -42,23 +40,12 @@ public abstract class BaseChefPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_CHEF_TIMESTAMP_INTERVAL, "1");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, "1");
+      properties.setProperty(PROPERTY_API_VERSION, ChefAsyncClient.VERSION);
       return properties;
    }
 
    public BaseChefPropertiesBuilder(Properties properties) {
       super(properties);
-   }
-
-   public BaseChefPropertiesBuilder(URI endpoint, String identity, String rsaKey) {
-      super();
-      withCredentials(identity, rsaKey);
-      withEndpoint(endpoint);
-   }
-
-   public BaseChefPropertiesBuilder withCredentials(String identity, String rsaKey) {
-      properties.setProperty(PROPERTY_CHEF_IDENTITY, checkNotNull(identity, "identity"));
-      properties.setProperty(PROPERTY_CHEF_RSA_KEY, checkNotNull(rsaKey, "password"));
-      return this;
    }
 }

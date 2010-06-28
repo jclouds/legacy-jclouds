@@ -75,7 +75,7 @@ public class BlobStoreContextToStatusResult implements Function<String, StatusRe
 
    public StatusResult apply(final String contextName) {
       final BlobStoreContext context = contexts.get(contextName);
-      final String host = context.getProviderSpecificContext().getEndPoint().getHost();
+      final String host = context.getProviderSpecificContext().getEndpoint().getHost();
       try {
          StorageMetadata md = Iterables.getLast(Sets.newTreeSet(Iterables.filter(context
                   .getBlobStore().list(), new Predicate<StorageMetadata>() {

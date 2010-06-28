@@ -34,14 +34,13 @@ public abstract class BlobStoreContextBuilder<S, A> extends RestContextBuilder<S
       return (BlobStoreContextBuilder<S, A>) super.withModules(modules);
    }
 
-   public BlobStoreContextBuilder(String providerName, Class<S> syncClientType,
-            Class<A> asyncClientType) {
-      this(providerName, syncClientType, asyncClientType, new Properties());
+   public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType) {
+      this(syncClientType, asyncClientType, new Properties());
    }
 
-   public BlobStoreContextBuilder(String providerName, Class<S> syncClientType,
-            Class<A> asyncClientType, Properties properties) {
-      super(providerName, syncClientType, asyncClientType, properties);
+   public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType,
+            Properties properties) {
+      super(syncClientType, asyncClientType, properties);
 
    }
 

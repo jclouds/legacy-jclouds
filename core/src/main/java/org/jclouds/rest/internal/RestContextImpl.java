@@ -26,13 +26,22 @@ import javax.inject.Inject;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.Identity;
+import org.jclouds.rest.annotations.Provider;
+
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Resource
@@ -40,22 +49,27 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final A asyncApi;
    private final S syncApi;
    private final Closer closer;
-   private final URI endPoint;
-   private final String account;
+   private final URI endpoint;
+   private final String identity;
    private final HttpClient simpleClient;
    private final HttpAsyncClient simpleAsyncClient;
+   private final String provider;
+   private final String apiVersion;
 
    @Inject
-   public RestContextImpl(Closer closer, HttpClient simpleClient,
-         HttpAsyncClient simpleAsyncClient, S syncApi, A asyncApi,
-         URI endPoint, String account) {
+   RestContextImpl(Closer closer, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+            Injector injector, TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi,
+            @Provider URI endpoint, @Provider String provider, @Identity String identity,
+            @ApiVersion String apiVersion) {
       this.simpleClient = simpleClient;
       this.simpleAsyncClient = simpleAsyncClient;
-      this.asyncApi = asyncApi;
-      this.syncApi = syncApi;
+      this.asyncApi = injector.getInstance(Key.get(asyncApi));
+      this.syncApi = injector.getInstance(Key.get(syncApi));
       this.closer = closer;
-      this.endPoint = endPoint;
-      this.account = account;
+      this.endpoint = endpoint;
+      this.identity = identity;
+      this.provider = provider;
+      this.apiVersion = apiVersion;
    }
 
    /**
@@ -73,8 +87,8 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    }
 
    @Override
-   public String getAccount() {
-      return account;
+   public String getPrincipal() {
+      return identity;
    }
 
    @Override
@@ -88,8 +102,8 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    }
 
    @Override
-   public URI getEndPoint() {
-      return endPoint;
+   public URI getEndpoint() {
+      return endpoint;
    }
 
    @Override
@@ -102,4 +116,13 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       return this.simpleClient;
    }
 
+   @Override
+   public String getApiVersion() {
+      return apiVersion;
+   }
+
+   @Override
+   public String getProvider() {
+      return provider;
+   }
 }

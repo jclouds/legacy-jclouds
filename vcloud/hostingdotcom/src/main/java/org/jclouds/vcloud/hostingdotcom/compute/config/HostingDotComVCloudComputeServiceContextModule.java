@@ -34,10 +34,6 @@ import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient
 public class HostingDotComVCloudComputeServiceContextModule extends
          VCloudComputeServiceContextModule {
 
-   public HostingDotComVCloudComputeServiceContextModule(String providerName) {
-      super(providerName);
-   }
-
    @Override
    protected void configure() {
       super.configure();

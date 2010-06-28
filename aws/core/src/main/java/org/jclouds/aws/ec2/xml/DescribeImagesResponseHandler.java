@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
@@ -51,7 +51,7 @@ import com.google.common.collect.Sets;
 public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Set<Image>> {
 
    @Inject
-   public DescribeImagesResponseHandler(@EC2 String defaultRegion) {
+   public DescribeImagesResponseHandler(@Region String defaultRegion) {
       this.defaultRegion = defaultRegion;
    }
 

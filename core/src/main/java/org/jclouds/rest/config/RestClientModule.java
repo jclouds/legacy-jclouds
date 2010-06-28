@@ -24,19 +24,26 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * 
  * @author Adrian Cole
  */
 @ConfiguresRestClient
+@RequiresHttp
 public class RestClientModule<S, A> extends AbstractModule {
 
    protected final Class<A> asyncClientType;
@@ -44,19 +51,25 @@ public class RestClientModule<S, A> extends AbstractModule {
    protected final Map<Class<?>, Class<?>> delegates;
 
    public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegates) {
+            Map<Class<?>, Class<?>> delegates) {
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
       this.delegates = delegates;
    }
 
    public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      this(syncClientType, asyncClientType, ImmutableMap
-            .<Class<?>, Class<?>> of(syncClientType, asyncClientType));
+      this(syncClientType, asyncClientType, ImmutableMap.<Class<?>, Class<?>> of(syncClientType,
+               asyncClientType));
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
+      // Ensures the restcontext can be looked up without generic types.
+      bind(new TypeLiteral<RestContext>() {
+      }).to(
+               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
+                        syncClientType, asyncClientType))).in(Scopes.SINGLETON);
       bindAsyncClient();
       bindClient();
       bindErrorHandlers();
@@ -69,10 +82,8 @@ public class RestClientModule<S, A> extends AbstractModule {
     * ex.
     * 
     * <pre>
-    * bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
-    *       AWSRedirectionRetryHandler.class);
-    * bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-    *       AWSClientErrorRetryHandler.class);
+    * bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(AWSRedirectionRetryHandler.class);
+    * bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
     * </pre>
     * 
     */
@@ -85,12 +96,9 @@ public class RestClientModule<S, A> extends AbstractModule {
     * ex.
     * 
     * <pre>
-    * bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-    *       ParseAWSErrorFromXmlContent.class);
-    * bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-    *       ParseAWSErrorFromXmlContent.class);
-    * bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-    *       ParseAWSErrorFromXmlContent.class);
+    * bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAWSErrorFromXmlContent.class);
+    * bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseAWSErrorFromXmlContent.class);
+    * bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseAWSErrorFromXmlContent.class);
     * </pre>
     * 
     * 
@@ -103,15 +111,14 @@ public class RestClientModule<S, A> extends AbstractModule {
    }
 
    protected void bindClient() {
-      BinderUtils.bindClient(binder(), syncClientType, asyncClientType,
-            delegates);
+      BinderUtils.bindClient(binder(), syncClientType, asyncClientType, delegates);
    }
 
    @Provides
    @Singleton
    @Named("sync")
    ConcurrentMap<ClassMethodArgs, Object> provideSyncDelegateMap(
-         CreateClientForCaller createClientForCaller) {
+            CreateClientForCaller createClientForCaller) {
       createClientForCaller.sync2Async = delegates;
       return new MapMaker().makeComputingMap(createClientForCaller);
    }

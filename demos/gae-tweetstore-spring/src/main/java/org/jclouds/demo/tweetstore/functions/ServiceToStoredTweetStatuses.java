@@ -54,7 +54,7 @@ public class ServiceToStoredTweetStatuses implements Function<String, Iterable<S
 
    public Iterable<StoredTweetStatus> apply(String service) {
       BlobStoreContext context = contexts.get(service);
-      String host = context.getProviderSpecificContext().getEndPoint().getHost();
+      String host = context.getProviderSpecificContext().getEndpoint().getHost();
       try {
          BlobMap blobMap = context.createBlobMap(container);
          Set<String> blobs = blobMap.keySet();

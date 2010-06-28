@@ -29,13 +29,16 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.binders.BindBlockDeviceMappingToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.IfNotNullBindAvailabilityZoneToFormParam;
-import org.jclouds.aws.ec2.domain.*;
+import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
+import org.jclouds.aws.ec2.domain.InstanceStateChange;
+import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.functions.ConvertUnencodedBytesToBase64EncodedString;
-import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.aws.ec2.xml.BooleanValueHandler;
@@ -47,6 +50,7 @@ import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.StringValueHandler;
 import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -64,7 +68,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-11-30")
+@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface InstanceAsyncClient {
 
@@ -300,8 +304,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "instanceType" })
    ListenableFuture<Void> setInstanceTypeForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("InstanceId") String instanceId,
-            @FormParam("Value") String instanceType);
+            @FormParam("InstanceId") String instanceId, @FormParam("Value") String instanceType);
 
    /**
     * @see AMIClient#setInstanceInitiatedShutdownBehaviorForInstanceInRegion

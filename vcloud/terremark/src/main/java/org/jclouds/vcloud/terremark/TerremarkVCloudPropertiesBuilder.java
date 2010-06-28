@@ -18,10 +18,9 @@
  */
 package org.jclouds.vcloud.terremark;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_API;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
@@ -35,9 +34,8 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_API, "0.8a-ext1.6");
-      properties.setProperty(PROPERTY_VCLOUD_ENDPOINT,
-            "https://services.vcloudexpress.terremark.com/api");
+      properties.setProperty(PROPERTY_API_VERSION, "0.8a-ext1.6");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://services.vcloudexpress.terremark.com/api");
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "15");
       return properties;
@@ -47,8 +45,4 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
       super(properties);
    }
 
-   public TerremarkVCloudPropertiesBuilder(String id, String secret) {
-      super(URI.create("https://services.vcloudexpress.terremark.com/api"), id,
-            secret);
-   }
 }

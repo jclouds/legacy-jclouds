@@ -55,7 +55,6 @@ import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
@@ -81,12 +80,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudComputeServiceContextModule extends
-      VCloudComputeServiceContextModule {
-
-   public TerremarkVCloudComputeServiceContextModule(String providerName) {
-      super(providerName);
-   }
+public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
    @Provides
    @Singleton
@@ -101,19 +95,16 @@ public class TerremarkVCloudComputeServiceContextModule extends
    }
 
    @Singleton
-   public static class TerremarkVCloudAddNodeWithTagStrategy implements
-         AddNodeWithTagStrategy {
+   public static class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       protected final TerremarkVCloudClient client;
       protected final TerremarkVCloudComputeClient computeClient;
       protected final GetNodeMetadataStrategy getNode;
       protected final TemplateToInstantiateOptions getOptions;
 
       @Inject
-      protected TerremarkVCloudAddNodeWithTagStrategy(
-            TerremarkVCloudClient client,
-            TerremarkVCloudComputeClient computeClient,
-            GetNodeMetadataStrategy getNode,
-            TemplateToInstantiateOptions getOptions) {
+      protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudClient client,
+               TerremarkVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode,
+               TemplateToInstantiateOptions getOptions) {
          this.client = client;
          this.computeClient = computeClient;
          this.getNode = getNode;
@@ -122,12 +113,10 @@ public class TerremarkVCloudComputeServiceContextModule extends
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         TerremarkInstantiateVAppTemplateOptions options = getOptions
-               .apply(template);
-         Map<String, String> metaMap = computeClient.start(template
-               .getLocation().getId(), name, template.getImage()
-               .getProviderId(), options, template.getOptions()
-               .getInboundPorts());
+         TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
+         Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
+                  template.getImage().getProviderId(), options, template.getOptions()
+                           .getInboundPorts());
          return getNode.execute(metaMap.get("id"));
       }
 
@@ -135,17 +124,17 @@ public class TerremarkVCloudComputeServiceContextModule extends
 
    @Singleton
    public static class TemplateToInstantiateOptions implements
-         Function<Template, TerremarkInstantiateVAppTemplateOptions> {
+            Function<Template, TerremarkInstantiateVAppTemplateOptions> {
 
       @Override
       public TerremarkInstantiateVAppTemplateOptions apply(Template from) {
          TerremarkInstantiateVAppTemplateOptions options = processorCount(
-               Double.valueOf(from.getSize().getCores()).intValue()).memory(
-               from.getSize().getRam());
+                  Double.valueOf(from.getSize().getCores()).intValue()).memory(
+                  from.getSize().getRam());
          if (!from.getOptions().shouldBlockUntilRunning())
             options.blockOnDeploy(false);
-         String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(
-               from.getOptions()).getSshKeyFingerprint();
+         String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions())
+                  .getSshKeyFingerprint();
          if (sshKeyFingerprint != null)
             options.sshKeyFingerprint(sshKeyFingerprint);
 
@@ -156,22 +145,17 @@ public class TerremarkVCloudComputeServiceContextModule extends
    @Override
    protected void configure() {
       install(new ComputeServiceTimeoutsModule());
-      bind(String.class).annotatedWith(VCloud.class).toInstance(providerName);
       // NOTE
-      bind(AddNodeWithTagStrategy.class).to(
-            TerremarkVCloudAddNodeWithTagStrategy.class);
+      bind(AddNodeWithTagStrategy.class).to(TerremarkVCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
-      })
-            .to(
-                  new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
-                  }).in(Scopes.SINGLETON);
+      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
       // NOTE
       bind(RunNodesAndAddToSetStrategy.class).to(
-            TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
+               TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       // NOTE
-      bind(GetNodeMetadataStrategy.class).to(
-            TerremarkVCloudGetNodeMetadataStrategy.class);
+      bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bindLoadBalancer();
@@ -186,7 +170,7 @@ public class TerremarkVCloudComputeServiceContextModule extends
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
       bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
 
    }
@@ -219,9 +203,8 @@ public class TerremarkVCloudComputeServiceContextModule extends
    @Override
    protected void bindImages() {
       bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(
-            QueryCatalogForVAppTemplatesAndConvertToImagesProvider.class).in(
-            Scopes.SINGLETON);
+      }).toProvider(QueryCatalogForVAppTemplatesAndConvertToImagesProvider.class).in(
+               Scopes.SINGLETON);
    }
 
 }

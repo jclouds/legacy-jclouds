@@ -46,12 +46,12 @@ import com.google.inject.Module;
 public class AzureBlobContextBuilder extends
          BlobStoreContextBuilder<AzureBlobClient, AzureBlobAsyncClient> {
 
-   public AzureBlobContextBuilder(String providerName, Properties props) {
-      super(providerName, AzureBlobClient.class, AzureBlobAsyncClient.class, props);
+   public AzureBlobContextBuilder(Properties props) {
+      super(AzureBlobClient.class, AzureBlobAsyncClient.class, props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
+   protected void addContextModule(List<Module> modules) {
       modules.add(new AzureBlobStoreContextModule());
    }
 

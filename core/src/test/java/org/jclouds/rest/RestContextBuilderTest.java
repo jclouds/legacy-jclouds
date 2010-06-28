@@ -20,7 +20,6 @@ package org.jclouds.rest;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -54,75 +53,13 @@ public class RestContextBuilderTest {
       }
    }
 
-   class TestRestContext implements RestContext<String, String> {
-
-      public void close() {
-
-      }
-
-      public String getApi() {
-         return "";
-      }
-
-      public String getAsyncApi() {
-         return "";
-      }
-
-      public String getAccount() {
-         return "";
-
-      }
-
-      public URI getEndPoint() {
-         return URI.create("http://localhost");
-      }
-
-      public <T> T getApi(Class<T> clazz) {
-         return null;
-      }
-
-      @Override
-      public HttpAsyncClient asyncHttp() {
-         return null;
-      }
-
-      @Override
-      public HttpClient http() {
-         return null;
-      }
-
-   }
-
-   class TestRestContextBuilder extends RestContextBuilder<String, String> {
-
-      protected TestRestContextBuilder(Properties properties) {
-         super("test", String.class, String.class, properties);
-      }
-
-      @Override
-      public TestRestContext buildContext() {
-         return new TestRestContext();
-      }
-
-      @Override
-      protected void addContextModule(String providerName, List<Module> modules) {
-         // ignored as we add it directly above without use of injection
-      }
-
-      @Override
-      protected void addClientModule(List<Module> modules) {
-
-      }
-
-   }
-
    @Test
    public void testAddHttpModuleIfNotPresent() {
       List<Module> modules = new ArrayList<Module>();
       HttpModule module = new HttpModule();
       modules.add(module);
-      new TestRestContextBuilder(new Properties())
-            .addHttpModuleIfNeededAndNotPresent(modules);
+      new RestContextBuilder<String, String>(String.class, String.class, new Properties())
+               .addHttpModuleIfNeededAndNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -132,8 +69,8 @@ public class RestContextBuilderTest {
       List<Module> modules = new ArrayList<Module>();
       LoggingModule module = new NullLoggingModule();
       modules.add(module);
-      new TestRestContextBuilder(new Properties())
-            .addLoggingModuleIfNotPresent(modules);
+      new RestContextBuilder<String, String>(String.class, String.class, new Properties())
+               .addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -145,8 +82,8 @@ public class RestContextBuilderTest {
       modules.add(loggingModule);
       HttpModule httpModule = new HttpModule();
       modules.add(httpModule);
-      TestRestContextBuilder builder = new TestRestContextBuilder(
-            new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
+               String.class, String.class, new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
@@ -157,11 +94,33 @@ public class RestContextBuilderTest {
    @Test
    public void testAddBothWhenDoesntRequireHttp() {
       List<Module> modules = new ArrayList<Module>();
-      TestRestContextBuilder builder = new TestRestContextBuilder(
-            new Properties());
+      modules.add(new ConfiguresRestClientModule());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
+               String.class, String.class, new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
-      assertEquals(modules.size(), 1);
+      assertEquals(modules.size(), 2);
+      assert modules.remove(0) instanceof ConfiguresRestClientModule;
+      assert modules.remove(0) instanceof JDKLoggingModule;
+   }
+
+   @ConfiguresRestClient
+   static class ConfiguresRestClientModule implements Module {
+
+      public void configure(Binder arg0) {
+      }
+
+   }
+
+   @Test
+   public void testAddBothWhenDefault() {
+      List<Module> modules = new ArrayList<Module>();
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
+               String.class, String.class, new Properties());
+      builder.addHttpModuleIfNeededAndNotPresent(modules);
+      builder.addLoggingModuleIfNotPresent(modules);
+      assertEquals(modules.size(), 2);
+      assert modules.remove(0) instanceof JavaUrlHttpCommandExecutorServiceModule;
       assert modules.remove(0) instanceof JDKLoggingModule;
    }
 
@@ -177,8 +136,8 @@ public class RestContextBuilderTest {
    public void testAddBothWhenLive() {
       List<Module> modules = new ArrayList<Module>();
       modules.add(new RequiresHttpModule());
-      TestRestContextBuilder builder = new TestRestContextBuilder(
-            new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
+               String.class, String.class, new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 3);
@@ -201,8 +160,8 @@ public class RestContextBuilderTest {
          protected void configure() {
          }
       };
-      TestRestContextBuilder builder = new TestRestContextBuilder(
-            new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
+               String.class, String.class, new Properties());
       builder.withModules(module1, module2);
 
    }

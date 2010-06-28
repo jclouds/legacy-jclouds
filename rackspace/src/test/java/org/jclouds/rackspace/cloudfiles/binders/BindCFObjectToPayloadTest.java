@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -53,8 +54,9 @@ public class BindCFObjectToPayloadTest {
    private BlobToObject blob2Object;
 
    public BindCFObjectToPayloadTest() {
-      Injector injector = new CloudFilesContextBuilder("cloudfiles",
-               new CloudFilesPropertiesBuilder("id", "secret").build()).buildInjector();
+      Injector injector = new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(
+               new Properties()).provider("cloudfiles").credentials("id", "secret").build())
+               .buildInjector();
 
       blobProvider = injector.getInstance(Blob.Factory.class);
       binderProvider = injector.getInstance(Key

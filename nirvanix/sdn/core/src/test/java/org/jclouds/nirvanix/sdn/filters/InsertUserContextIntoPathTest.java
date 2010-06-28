@@ -26,6 +26,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.POST;
 
@@ -34,11 +35,11 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.SDNPropertiesBuilder;
+import org.jclouds.nirvanix.sdn.config.SDNAuthRestClientModule;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -47,6 +48,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 @Test(groups = "unit", sequential = true, testName = "sdn.InsertUserContextIntoPathTest")
 // sequential as easymock isn't threadsafe
@@ -94,6 +96,7 @@ public class InsertUserContextIntoPathTest {
                new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
 
                   protected void configure() {
+                     install(new SDNAuthRestClientModule());
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {
                            return Logger.NULL;
@@ -103,8 +106,8 @@ public class InsertUserContextIntoPathTest {
                      expect(sessionManager.getSessionToken()).andReturn("token").anyTimes();
                      replay(sessionManager);
                      bind(AddSessionTokenToRequest.class).toInstance(sessionManager);
-                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder("appkey",
-                              "appname", "username", "password").build());
+                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties())
+                              .credentials("appkey/appname/username", "password").build());
                   }
 
                });

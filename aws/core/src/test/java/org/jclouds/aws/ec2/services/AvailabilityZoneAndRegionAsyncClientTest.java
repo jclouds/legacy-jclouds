@@ -97,9 +97,10 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
                .createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeRegions");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -116,9 +117,10 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
                .createRequest(method, regions(Region.US_EAST_1, Region.US_WEST_1));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeRegions&RegionName.1=us-east-1&RegionName.2=us-west-1");
 

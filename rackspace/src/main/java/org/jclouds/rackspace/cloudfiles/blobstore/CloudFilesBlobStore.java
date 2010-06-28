@@ -19,7 +19,7 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl.createParentIfNeededAsync;
+import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
 
 import java.util.Set;
 
@@ -37,7 +37,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
@@ -69,8 +69,8 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   CloudFilesBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
-            Location defaultLocation, Set<? extends Location> locations, CloudFilesClient sync,
+   CloudFilesBlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
+            Set<? extends Location> locations, CloudFilesClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,

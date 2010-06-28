@@ -26,8 +26,11 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.handlers.ParseCloudFilesErrorFromHttpResponse;
+import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
+
+import com.google.inject.Module;
 
 /**
  * 
@@ -37,12 +40,20 @@ import org.jclouds.rest.config.RestClientModule;
 @RequiresHttp
 public class CloudFilesRestClientModule extends
          RestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
+   private Module authModule;
+
    public CloudFilesRestClientModule() {
+      this(new RackspaceAuthenticationRestModule());
+   }
+
+   public CloudFilesRestClientModule(Module authModule) {
       super(CloudFilesClient.class, CloudFilesAsyncClient.class);
+      this.authModule = authModule;
    }
 
    @Override
    protected void configure() {
+      install(authModule);
       install(new CFObjectModule());
       super.configure();
    }

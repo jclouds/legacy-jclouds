@@ -41,9 +41,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rackspace.RackspacePropertiesBuilder;
-import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 import org.jclouds.rackspace.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
@@ -64,21 +61,19 @@ import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rackspace.filters.AddTimestampQuery;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders.AuthenticationResponseImpl;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -999,43 +994,14 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
 
    }
 
-   @Override
    protected Module createModule() {
-      return new RackspaceAuthenticationRestModule() {
-         @Override
-         protected void configure() {
-            install(new CloudServersRestClientModule());
-            Names.bindProperties(binder(), new RackspacePropertiesBuilder(new Properties())
-                     .withCredentials("user", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-         @Override
-         protected AuthenticationResponse provideAuthenticationResponse(
-                  Supplier<AuthenticationResponse> supplier) {
-            return new AuthenticationResponseImpl("authToken", "http://CDNManagementUrl",
-                     "http://serverManagementUrl", "http://storageUrl");
-         }
-
-         @Override
-         public Supplier<String> provideAuthenticationTokenCache(
-                  Supplier<AuthenticationResponse> supplier) {
-            return new Supplier<String>() {
-               public String get() {
-                  return "testtoken";
-               }
-            };
-         }
-
-         @Override
-         public Supplier<Date> provideCacheBusterDate() {
-            return new Supplier<Date>() {
-               public Date get() {
-                  return new Date();
-               }
-            };
-         }
-      };
+      return new CloudServersRestClientModule(new TestRackspaceAuthenticationRestClientModule());
    }
+
+   @Override
+   public ContextSpec<CloudServersClient, CloudServersAsyncClient> createContextSpec() {
+      return new RestContextFactory().createContextSpec("cloudservers", "user", "password",
+               new Properties());
+   }
+
 }

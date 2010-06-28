@@ -20,12 +20,11 @@ package org.jclouds.rimuhosting.miro.reference;
 
 /**
  * Configuration properties and constants used in RimuHosting connections.
- *
+ * 
  * @author Adrian Cole
  */
 public interface RimuHostingConstants {
-   public static final String PROPERTY_RIMUHOSTING_ENDPOINT = "jclouds.rimuhosting.endpoint";
-   public static final String PROPERTY_RIMUHOSTING_APIKEY = "jclouds.rimuhosting.password";
+
    public static final String PROPERTY_RIMUHOSTING_DEFAULT_DC = "jclouds.rimuhosting.defaultdc";
 
 }

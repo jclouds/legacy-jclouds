@@ -1,8 +1,8 @@
 package org.jclouds.aws.s3;
 
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_DEFAULT_REGIONS;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
@@ -14,12 +14,11 @@ import java.util.Properties;
 public class WalrusPropertiesBuilder extends S3PropertiesBuilder {
    @Override
    protected Properties addEndpoints(Properties properties) {
-      properties.setProperty(PROPERTY_S3_REGIONS, "Walrus");
-      properties.setProperty(PROPERTY_S3_DEFAULT_REGIONS, "Walrus");
-      properties.setProperty(PROPERTY_S3_ENDPOINT,
-            "http://ecc.eucalyptus.com:8773/services/Walrus");
-      properties.setProperty(PROPERTY_S3_ENDPOINT + ".Walrus",
-            "http://ecc.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_DEFAULT_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://ecc.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_ENDPOINT + ".Walrus",
+               "http://ecc.eucalyptus.com:8773/services/Walrus");
       return properties;
    }
 
@@ -27,7 +26,4 @@ public class WalrusPropertiesBuilder extends S3PropertiesBuilder {
       super(properties);
    }
 
-   public WalrusPropertiesBuilder(String id, String secret) {
-      super(id, secret);
-   }
 }

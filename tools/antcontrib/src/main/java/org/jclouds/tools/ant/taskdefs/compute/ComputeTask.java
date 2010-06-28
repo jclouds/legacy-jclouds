@@ -18,7 +18,7 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
-import static org.jclouds.compute.util.ComputeUtils.isKeyAuth;
+import static org.jclouds.compute.util.ComputeServiceUtils.isKeyAuth;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.buildComputeMap;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.createTemplateFromElement;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.ipOrEmptyString;

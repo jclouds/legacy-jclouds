@@ -18,54 +18,57 @@
  */
 package org.jclouds.gogrid.services;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.gogrid.GoGrid;
+import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
+
+import java.util.Set;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindObjectNameToGetJobsRequestQueryParams;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseJobListFromJsonResponse;
 import org.jclouds.gogrid.options.GetJobListOptions;
-import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import java.util.Set;
-
-import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @author Oleksiy Yarmula
  */
-@Endpoint(GoGrid.class)
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = "1.3")
+@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
 public interface GridJobAsyncClient {
 
-    /**
+   /**
     * @see GridJobClient#getJobList(org.jclouds.gogrid.options.GetJobListOptions...)
     */
-    @GET
-    @ResponseParser(ParseJobListFromJsonResponse.class)
-    @Path("/grid/job/list")
-    ListenableFuture<Set<Job>> getJobList(GetJobListOptions... options);
+   @GET
+   @ResponseParser(ParseJobListFromJsonResponse.class)
+   @Path("/grid/job/list")
+   ListenableFuture<Set<Job>> getJobList(GetJobListOptions... options);
 
-    /**
+   /**
     * @see GridJobClient#getJobsForObjectName(String)
     */
-    @GET
-    @ResponseParser(ParseJobListFromJsonResponse.class)
-    @Path("/grid/job/list")
-    ListenableFuture<Set<Job>> getJobsForObjectName(
+   @GET
+   @ResponseParser(ParseJobListFromJsonResponse.class)
+   @Path("/grid/job/list")
+   ListenableFuture<Set<Job>> getJobsForObjectName(
             @BinderParam(BindObjectNameToGetJobsRequestQueryParams.class) String objectName);
 
-    /**
-    * @see GridJobClient#getJobsById(Long...)   
+   /**
+    * @see GridJobClient#getJobsById(Long...)
     */
-    @GET
-    @ResponseParser(ParseJobListFromJsonResponse.class)
-    @Path("/grid/job/get")
-    ListenableFuture<Set<Job>> getJobsById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
-
+   @GET
+   @ResponseParser(ParseJobListFromJsonResponse.class)
+   @Path("/grid/job/get")
+   ListenableFuture<Set<Job>> getJobsById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
 
 }

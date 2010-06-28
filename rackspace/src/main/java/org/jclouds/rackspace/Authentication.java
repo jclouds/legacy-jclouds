@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Represents an authenticated context to Rackspace.
+ * Represents a component related to Rackspace Cloud Files.
  * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
+ * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole
  * 
  */

@@ -20,11 +20,20 @@ package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.Constants.PROPERTY_API;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_PROVIDER;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import javax.inject.Inject;
 
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
@@ -34,7 +43,14 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.annotations.Api;
+import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
+import org.jclouds.rest.annotations.Provider;
+import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -45,6 +61,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 
@@ -61,20 +79,52 @@ import com.google.inject.util.Types;
  * @author Adrian Cole, Andrew Newdigate
  * @see RestContext
  */
-public abstract class RestContextBuilder<S, A> {
+public class RestContextBuilder<S, A> {
 
-   protected final String providerName;
-   protected final Properties properties;
-   protected final List<Module> modules = new ArrayList<Module>(3);
-   protected final Class<A> asyncClientType;
-   protected final Class<S> syncClientType;
+   static class BindPropertiesAndPrincipalContext extends AbstractModule {
+      protected Properties properties;
 
-   protected RestContextBuilder(String providerName, Class<S> syncClientType,
-            Class<A> asyncClientType, Properties properties) {
-      this.providerName = providerName;
-      this.asyncClientType = asyncClientType;
-      this.syncClientType = syncClientType;
-      this.properties = properties;
+      protected BindPropertiesAndPrincipalContext(Properties properties) {
+         this.properties = checkNotNull(properties, "properties");
+      }
+
+      @Override
+      protected void configure() {
+         Properties toBind = new Properties();
+         toBind.putAll(checkNotNull(properties, "properties"));
+         toBind.putAll(System.getProperties());
+         Names.bindProperties(binder(), toBind);
+         bind(String.class).annotatedWith(Provider.class).toInstance(
+                  checkNotNull(toBind.getProperty(PROPERTY_PROVIDER), PROPERTY_PROVIDER));
+         bind(URI.class).annotatedWith(Provider.class).toInstance(
+                  URI.create(checkNotNull(toBind.getProperty(PROPERTY_ENDPOINT),
+                           PROPERTY_ENDPOINT)));
+         if (toBind.containsKey(PROPERTY_API))
+            bind(String.class).annotatedWith(Api.class).toInstance(
+                     toBind.getProperty(PROPERTY_API));
+         if (toBind.containsKey(PROPERTY_API_VERSION))
+            bind(String.class).annotatedWith(ApiVersion.class).toInstance(
+                     toBind.getProperty(PROPERTY_API_VERSION));
+         if (toBind.containsKey(PROPERTY_IDENTITY))
+            bind(String.class).annotatedWith(Identity.class).toInstance(
+                     checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
+         if (toBind.containsKey(PROPERTY_CREDENTIAL))
+            bind(String.class).annotatedWith(Credential.class).toInstance(
+                     toBind.getProperty(PROPERTY_CREDENTIAL));
+      }
+   }
+
+   protected Properties properties;
+   protected List<Module> modules = new ArrayList<Module>(3);
+   protected Class<A> asyncClientType;
+   protected Class<S> syncClientType;
+
+   @Inject
+   public RestContextBuilder(Class<S> syncClientClass, Class<A> asyncClientClass,
+            Properties properties) {
+      this.asyncClientType = checkNotNull(asyncClientClass, "asyncClientType");
+      this.syncClientType = checkNotNull(syncClientClass, "syncClientType");
+      this.properties = checkNotNull(properties, "properties");
    }
 
    public RestContextBuilder<S, A> withModules(Module... modules) {
@@ -83,77 +133,108 @@ public abstract class RestContextBuilder<S, A> {
    }
 
    public Injector buildInjector() {
-
-      addContextModule(providerName, modules);
+      addContextModule(modules);
       addClientModuleIfNotPresent(modules);
       addLoggingModuleIfNotPresent(modules);
       addHttpModuleIfNeededAndNotPresent(modules);
       ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
-      modules.add(new AbstractModule() {
-         @Override
-         protected void configure() {
-            Properties toBind = new Properties();
-            toBind.putAll(checkNotNull(properties, "properties"));
-            toBind.putAll(System.getProperties());
-            Names.bindProperties(binder(), toBind);
-         }
-      });
+      modules.add(new BindPropertiesAndPrincipalContext(properties));
       return Guice.createInjector(modules);
    }
 
    @VisibleForTesting
-   protected void addLoggingModuleIfNotPresent(final List<Module> modules) {
+   protected void addLoggingModuleIfNotPresent(List<Module> modules) {
       if (!Iterables.any(modules, Predicates.instanceOf(LoggingModule.class)))
          modules.add(new JDKLoggingModule());
    }
 
    @VisibleForTesting
-   protected void addHttpModuleIfNeededAndNotPresent(final List<Module> modules) {
-      if (Iterables.any(modules, new Predicate<Module>() {
-         public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(RequiresHttp.class);
-         }
+   protected void addHttpModuleIfNeededAndNotPresent(List<Module> modules) {
+      if (defaultOrAtLeastOneModuleRequiresHttp(modules) && nothingConfiguresAnHttpService(modules))
+         modules.add(new JavaUrlHttpCommandExecutorServiceModule());
+   }
 
-      }) && (!Iterables.any(modules, new Predicate<Module>() {
+   private boolean nothingConfiguresAnHttpService(List<Module> modules) {
+      return (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresHttpCommandExecutorService.class);
          }
 
-      })))
-         modules.add(new JavaUrlHttpCommandExecutorServiceModule());
+      }));
    }
 
    @VisibleForTesting
-   protected abstract void addContextModule(String providerName, List<Module> modules);
+   protected void addContextModuleIfNotPresent(List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(ConfiguresRestContext.class);
+         }
+
+      })) {
+         addContextModule(modules);
+      }
+   }
 
    @VisibleForTesting
-   protected void ifHttpConfigureRestOtherwiseGuiceClientFactory(final List<Module> modules) {
-      if (Iterables.any(modules, new Predicate<Module>() {
-         public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(RequiresHttp.class);
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new AbstractModule() {
+
+         @SuppressWarnings("unchecked")
+         @Override
+         protected void configure() {
+            bind(
+                     (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContext.class,
+                              syncClientType, asyncClientType))).to(
+                     TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
+                              syncClientType, asyncClientType))).in(Scopes.SINGLETON);
+
          }
-      })) {
+
+      });
+   }
+
+   @VisibleForTesting
+   protected void ifHttpConfigureRestOtherwiseGuiceClientFactory(List<Module> modules) {
+      if (defaultOrAtLeastOneModuleRequiresHttp(modules)) {
          modules.add(new RestModule());
       }
    }
 
-   @VisibleForTesting
-   protected void addClientModuleIfNotPresent(final List<Module> modules) {
-      if (!Iterables.any(modules, new Predicate<Module>() {
-         public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(ConfiguresRestClient.class);
-         }
+   private boolean defaultOrAtLeastOneModuleRequiresHttp(List<Module> modules) {
+      return atLeastOneModuleRequiresHttp(modules) || !restClientModulePresent(modules);
+   }
 
-      })) {
+   private boolean atLeastOneModuleRequiresHttp(List<Module> modules) {
+      return Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(RequiresHttp.class);
+         }
+      });
+   }
+
+   @VisibleForTesting
+   protected void addClientModuleIfNotPresent(List<Module> modules) {
+      if (!restClientModulePresent(modules)) {
          addClientModule(modules);
       }
    }
 
-   protected abstract void addClientModule(final List<Module> modules);
+   private boolean restClientModulePresent(List<Module> modules) {
+      return Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(ConfiguresRestClient.class);
+         }
+
+      });
+   }
+
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new RestClientModule<S, A>(syncClientType, asyncClientType));
+   }
 
    @VisibleForTesting
-   protected void addExecutorServiceIfNotPresent(final List<Module> modules) {
+   protected void addExecutorServiceIfNotPresent(List<Module> modules) {
       if (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class);

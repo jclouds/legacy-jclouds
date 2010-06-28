@@ -20,7 +20,7 @@ package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
-import static org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl.createParentIfNeededAsync;
+import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -41,7 +41,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
@@ -79,7 +79,7 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   CloudFilesAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
+   CloudFilesAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
             Location defaultLocation, Set<? extends Location> locations, CloudFilesClient sync,
             CloudFilesAsyncClient async, ContainerToResourceMetadata container2ResourceMd,

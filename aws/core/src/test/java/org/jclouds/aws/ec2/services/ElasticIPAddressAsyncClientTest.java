@@ -48,9 +48,10 @@ public class ElasticIPAddressAsyncClientTest extends
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
                method, null, "127.0.0.1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DisassociateAddress&PublicIp=127.0.0.1");
 
@@ -67,9 +68,10 @@ public class ElasticIPAddressAsyncClientTest extends
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
                method, null, "127.0.0.1", "me");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1");
 
@@ -86,9 +88,10 @@ public class ElasticIPAddressAsyncClientTest extends
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
                method, null, "127.0.0.1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1");
 
       assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
@@ -104,9 +107,10 @@ public class ElasticIPAddressAsyncClientTest extends
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
                method, null, "127.0.0.1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeAddresses&PublicIp.1=127.0.0.1");
 
@@ -123,9 +127,10 @@ public class ElasticIPAddressAsyncClientTest extends
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
                method, (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=AllocateAddress");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);

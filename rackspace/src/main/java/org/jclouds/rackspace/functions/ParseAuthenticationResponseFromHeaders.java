@@ -29,7 +29,7 @@ import java.net.URI;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 
 import com.google.common.base.Function;
 import com.google.common.io.Closeables;

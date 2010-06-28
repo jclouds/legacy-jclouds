@@ -41,24 +41,17 @@
  */
 package org.jclouds.opscodeplatform.config;
 
-import java.net.URI;
 import java.util.Map;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.config.BaseChefRestClientModule;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.opscodeplatform.OpscodePlatform;
 import org.jclouds.opscodeplatform.OpscodePlatformAsyncClient;
 import org.jclouds.opscodeplatform.OpscodePlatformClient;
-import org.jclouds.opscodeplatform.reference.OpscodePlatformConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Provides;
 
 /**
  * Configures the Opscode Platform connection.
@@ -78,11 +71,4 @@ public class OpscodePlatformRestClientModule extends
       super(OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, DELEGATE_MAP);
    }
 
-   @Provides
-   @Singleton
-   @OpscodePlatform
-   protected URI provideURI(
-            @Named(OpscodePlatformConstants.PROPERTY_OPSCODEPLATFORM_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
-   }
 }

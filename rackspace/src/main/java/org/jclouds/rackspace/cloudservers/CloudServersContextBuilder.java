@@ -26,7 +26,6 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.cloudservers.compute.config.CloudServersComputeServiceContextModule;
 import org.jclouds.rackspace.cloudservers.config.CloudServersRestClientModule;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -47,14 +46,13 @@ import com.google.inject.Module;
 public class CloudServersContextBuilder extends
          ComputeServiceContextBuilder<CloudServersClient, CloudServersAsyncClient> {
 
-   public CloudServersContextBuilder(String providerName, Properties props) {
-      super(providerName, CloudServersClient.class, CloudServersAsyncClient.class, props);
+   public CloudServersContextBuilder(Properties props) {
+      super(CloudServersClient.class, CloudServersAsyncClient.class, props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new RackspaceAuthenticationRestModule());
-      modules.add(new CloudServersComputeServiceContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new CloudServersComputeServiceContextModule());
    }
 
    @Override

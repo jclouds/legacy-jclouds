@@ -80,7 +80,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("newName", "new-linux-server");
-      map.put("vApp", "https://services.vcloudexpress.terremark.com/api/vapp/201");
+      map.put("vApp", "https://vcloud.safesecureweb.com/api/v0.8/vapp/201");
       binder.bindToRequest(request, map);
       verify(request);
    }
@@ -104,7 +104,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("newName", "my-vapp");
-      map.put("vApp", "https://services.vcloudexpress.terremark.com/api/vapp/4181");
+      map.put("vApp", "https://vcloud.safesecureweb.com/api/v0.8/vapp/4181");
       binder.bindToRequest(request, map);
       verify(request);
    }

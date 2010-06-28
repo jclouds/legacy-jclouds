@@ -26,36 +26,36 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.Properties;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.mezeo.pcs2.PCSCloud.Response;
+import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient.Response;
 import org.jclouds.mezeo.pcs2.blobstore.functions.BlobToPCSFile;
 import org.jclouds.mezeo.pcs2.config.PCSRestClientModule;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.functions.AddMetadataItemIntoMap;
 import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
-import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.mezeo.pcs2.xml.ContainerHandler;
 import org.jclouds.mezeo.pcs2.xml.FileHandler;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -76,7 +76,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
       GeneratedHttpRequest<PCSAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
 
-      assertRequestLineEquals(httpMethod, "GET http://localhost/root HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://root HTTP/1.1");
       assertHeadersEqual(httpMethod, "X-Cloud-Depth: 2\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -92,7 +92,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
       GeneratedHttpRequest<PCSAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
 
-      assertRequestLineEquals(httpMethod, "POST http://localhost/root/contents HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://root/contents HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 45\nContent-Type: application/vnd.csp.container-info+xml\n");
       assertPayloadEquals(httpMethod, "<container><name>container</name></container>");
@@ -281,28 +281,40 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    @BeforeClass
    @Override
-   protected void setupFactory() {
+   protected void setupFactory() throws IOException {
       super.setupFactory();
       blobToPCSFile = injector.getInstance(BlobToPCSFile.class);
    }
 
    @Override
    protected Module createModule() {
-      return new PCSRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new PCSPropertiesBuilder(URI
-                     .create("http://localhost/stub"), "user", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
+      return new TestPCSRestClientModule();
+   }
 
-         @Override
-         protected Response provideCloudResponse(AsyncClientFactory factory, URI authenticationUri)
-                  throws InterruptedException, ExecutionException, TimeoutException {
-            return new CloudXlinkHandler.PCSCloudResponseImpl(ImmutableMap.<String, URI> of(
-                     "rootContainer", URI.create("http://localhost/root")));
-         }
-      };
+   @RequiresHttp
+   @ConfiguresRestClient
+   private static final class TestPCSRestClientModule extends PCSRestClientModule {
+      @Override
+      protected void configure() {
+         super.configure();
+      }
+
+      @Override
+      protected Response provideCloudResponse(AsyncClientFactory factory){
+         return null;
+      }
+      @Override
+      protected URI provideRootContainerUrl(Response response) {
+         return URI.create("http://root");
+      }
+   }
+
+   @Override
+   public ContextSpec<PCSClient, PCSAsyncClient> createContextSpec() {
+      Properties properties = new  Properties();
+      properties.setProperty("pcs.apiversion","foo");
+      properties.setProperty("pcs.endpoint","http://goo");
+      return new RestContextFactory().createContextSpec("pcs", "identity", "credential",
+               properties);
    }
 }

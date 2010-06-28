@@ -23,17 +23,15 @@ import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -44,9 +42,11 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.internal.ImmutableMap;
 
@@ -145,9 +145,12 @@ public class VCloudComputeClientLiveTest {
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint");
-      Injector injector = new VCloudContextBuilder("vcloud", new VCloudPropertiesBuilder(URI
-               .create(endpoint), account, key).build()).withModules(new Log4JLoggingModule(),
-               new JschSshClientModule()).buildInjector();
+
+      Properties props = new Properties();
+      props.setProperty("vcloud.endpoint", endpoint);
+      Injector injector = new RestContextFactory().createContextBuilder("vcloud", account, key,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
+
       computeClient = injector.getInstance(VCloudComputeClient.class);
       client = injector.getInstance(VCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<String>>() {

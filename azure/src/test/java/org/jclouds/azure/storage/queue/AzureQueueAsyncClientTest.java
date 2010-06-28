@@ -31,7 +31,6 @@ import java.util.Properties;
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
-import org.jclouds.azure.storage.queue.config.AzureQueueRestClientModule;
 import org.jclouds.azure.storage.queue.options.GetOptions;
 import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
@@ -39,16 +38,15 @@ import org.jclouds.azure.storage.queue.xml.QueueMessagesListHandler;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code AzureQueueAsyncClient}
@@ -65,7 +63,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "myqueue");
 
       assertRequestLineEquals(httpRequest,
-               "GET https://myaccount.queue.core.windows.net/myqueue/messages HTTP/1.1");
+               "GET https://identity.queue.core.windows.net/myqueue/messages HTTP/1.1");
       assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -85,7 +83,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(
                httpRequest,
-               "GET https://myaccount.queue.core.windows.net/myqueue/messages?numofmessages=1&visibilitytimeout=30 HTTP/1.1");
+               "GET https://identity.queue.core.windows.net/myqueue/messages?numofmessages=1&visibilitytimeout=30 HTTP/1.1");
       assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -101,7 +99,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       GeneratedHttpRequest<AzureQueueAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://myaccount.queue.core.windows.net/?comp=list HTTP/1.1");
+               "GET https://identity.queue.core.windows.net/?comp=list HTTP/1.1");
       assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -119,7 +117,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(
                httpRequest,
-               "GET https://myaccount.queue.core.windows.net/?comp=list&maxresults=1&marker=marker&prefix=prefix HTTP/1.1");
+               "GET https://identity.queue.core.windows.net/?comp=list&maxresults=1&marker=marker&prefix=prefix HTTP/1.1");
       assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -137,7 +135,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue");
 
       assertRequestLineEquals(httpRequest,
-               "PUT https://myaccount.queue.core.windows.net/queue HTTP/1.1");
+               "PUT https://identity.queue.core.windows.net/queue HTTP/1.1");
       assertHeadersEqual(httpRequest, "Content-Length: 0\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -157,7 +155,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue", withMetadata(ImmutableMultimap.of("foo", "bar")));
 
       assertRequestLineEquals(httpRequest,
-               "PUT https://myaccount.queue.core.windows.net/queue HTTP/1.1");
+               "PUT https://identity.queue.core.windows.net/queue HTTP/1.1");
       assertHeadersEqual(httpRequest,
                "Content-Length: 0\nx-ms-meta-foo: bar\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
@@ -176,7 +174,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue");
 
       assertRequestLineEquals(httpRequest,
-               "DELETE https://myaccount.queue.core.windows.net/queue HTTP/1.1");
+               "DELETE https://identity.queue.core.windows.net/queue HTTP/1.1");
       assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -196,7 +194,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue", "message");
 
       assertRequestLineEquals(httpRequest,
-               "POST https://myaccount.queue.core.windows.net/queue/messages HTTP/1.1");
+               "POST https://identity.queue.core.windows.net/queue/messages HTTP/1.1");
       assertHeadersEqual(httpRequest,
                "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest,
@@ -217,7 +215,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue", "message", withTTL(3));
 
       assertRequestLineEquals(httpRequest,
-               "POST https://myaccount.queue.core.windows.net/queue/messages?messagettl=3 HTTP/1.1");
+               "POST https://identity.queue.core.windows.net/queue/messages?messagettl=3 HTTP/1.1");
       assertHeadersEqual(httpRequest,
                "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest,
@@ -237,7 +235,7 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                "queue");
 
       assertRequestLineEquals(httpRequest,
-               "DELETE https://myaccount.queue.core.windows.net/queue/messages HTTP/1.1");
+               "DELETE https://identity.queue.core.windows.net/queue/messages HTTP/1.1");
       assertHeadersEqual(httpRequest, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(httpRequest, null);
 
@@ -261,16 +259,9 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
    }
 
    @Override
-   protected Module createModule() {
-      return new AzureQueueRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new AzureQueuePropertiesBuilder(new Properties())
-                     .withCredentials("myaccount", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-      };
+   public ContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec("azurequeue", "identity", "credential",
+               new Properties());
    }
+
 }

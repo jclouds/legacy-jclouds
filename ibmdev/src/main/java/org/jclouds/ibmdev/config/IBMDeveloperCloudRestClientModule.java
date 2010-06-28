@@ -18,28 +18,16 @@
  */
 package org.jclouds.ibmdev.config;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.ibmdev.IBMDeveloperCloud;
 import org.jclouds.ibmdev.IBMDeveloperCloudAsyncClient;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
 import org.jclouds.ibmdev.handlers.IBMDeveloperCloudErrorHandler;
-import org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-
-import com.google.inject.Provides;
 
 /**
  * Configures the IBMDeveloperCloud connection.
@@ -49,38 +37,20 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class IBMDeveloperCloudRestClientModule extends
-      RestClientModule<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> {
+         RestClientModule<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> {
 
    public IBMDeveloperCloudRestClientModule() {
       super(IBMDeveloperCloudClient.class, IBMDeveloperCloudAsyncClient.class);
    }
 
-   @Provides
-   @Singleton
-   public BasicAuthentication provideBasicAuthentication(
-         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER) String user,
-         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_PASSWORD) String password,
-         EncryptionService encryptionService)
-         throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password, encryptionService);
-   }
-
-   @Provides
-   @Singleton
-   @IBMDeveloperCloud
-   protected URI provideURI(
-         @Named(IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
-   }
-
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-            IBMDeveloperCloudErrorHandler.class);
+               IBMDeveloperCloudErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-            IBMDeveloperCloudErrorHandler.class);
+               IBMDeveloperCloudErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-            IBMDeveloperCloudErrorHandler.class);
+               IBMDeveloperCloudErrorHandler.class);
    }
 
    @Override

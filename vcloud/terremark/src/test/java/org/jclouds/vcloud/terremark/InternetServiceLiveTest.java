@@ -20,13 +20,15 @@ package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -35,8 +37,9 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code TerremarkVCloudClient}
@@ -48,6 +51,8 @@ public class InternetServiceLiveTest {
    TerremarkVCloudClient tmClient;
 
    private SortedSet<InternetService> services = Sets.newTreeSet();
+
+   private RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> context;
 
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
@@ -88,17 +93,14 @@ public class InternetServiceLiveTest {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      TerremarkVCloudPropertiesBuilder propertiesBuilder = new TerremarkVCloudPropertiesBuilder(
-               account, key);
-
       String endpoint = System.getProperty("jclouds.test.endpoint");
+      Properties props = new Properties();
       if (endpoint != null && !"".equals(endpoint))
-         propertiesBuilder.withEndpoint(URI.create(endpoint));
+         props.setProperty("terremark.endpoint", endpoint);
+      context = new RestContextFactory().createContext("terremark", account, key, ImmutableSet
+               .<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), props);
 
-      Injector injector = new TerremarkVCloudContextBuilder("terremark", propertiesBuilder.build())
-               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
-
-      tmClient = injector.getInstance(TerremarkVCloudClient.class);
+      tmClient = context.getApi();
 
    }
 

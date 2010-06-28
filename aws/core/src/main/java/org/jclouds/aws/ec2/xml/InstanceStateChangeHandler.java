@@ -22,7 +22,7 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.util.EC2Utils;
@@ -49,7 +49,7 @@ import com.google.common.collect.Sets;
 public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<InstanceStateChange>> {
    private StringBuilder currentText = new StringBuilder();
    @Inject
-   @EC2
+   @Region
    String defaultRegion;
 
    SortedSet<InstanceStateChange> instances = Sets.newTreeSet();

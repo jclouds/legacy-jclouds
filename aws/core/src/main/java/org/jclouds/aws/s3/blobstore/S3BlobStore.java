@@ -48,7 +48,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.Utils;
@@ -74,7 +74,7 @@ public class S3BlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   S3BlobStore(BlobStoreContext context, BlobStoreUtils blobUtils, Location defaultLocation,
+   S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
             Set<? extends Location> locations, S3Client sync,
             BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions,

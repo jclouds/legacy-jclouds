@@ -45,13 +45,13 @@ import com.google.inject.Module;
  */
 public class S3ContextBuilder extends BlobStoreContextBuilder<S3Client, S3AsyncClient> {
 
-   public S3ContextBuilder(String providerName, Properties props) {
-      super(providerName, S3Client.class, S3AsyncClient.class, props);
+   public S3ContextBuilder(Properties props) {
+      super(S3Client.class, S3AsyncClient.class, props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new S3BlobStoreContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new S3BlobStoreContextModule());
    }
 
    @Override

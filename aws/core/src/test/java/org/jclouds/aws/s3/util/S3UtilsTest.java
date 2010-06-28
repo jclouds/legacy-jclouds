@@ -18,33 +18,27 @@
  */
 package org.jclouds.aws.s3.util;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.rest.config.RestModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
 /**
@@ -59,66 +53,18 @@ public class S3UtilsTest {
    private HttpCommand command;
 
    @BeforeTest
-   protected void setUpInjector() {
-      Injector injector = Guice.createInjector(new RestModule(), new S3RestClientModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(
-                              new S3PropertiesBuilder("foo", "bar")).build());
-                     bind(TransformingHttpCommandExecutorService.class).toInstance(
-                              createMock(TransformingHttpCommandExecutorService.class));
-                  }
-               });
+   protected void setUpInjector() throws IOException {
+
+      Injector injector = new RestContextFactory().createContextBuilder("s3", "foo", "bar",
+               ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties())
+               .buildInjector();
+
       utils = injector.getInstance(S3Utils.class);
       response = new HttpResponse();
       response.setStatusCode(400);
       response.getHeaders().put(S3Headers.REQUEST_ID, "requestid");
       response.getHeaders().put(S3Headers.REQUEST_TOKEN, "requesttoken");
-      command = new HttpCommand() {
-
-         public int getRedirectCount() {
-            return 0;
-         }
-
-         public int incrementRedirectCount() {
-            return 0;
-         }
-
-         public boolean isReplayable() {
-            return false;
-         }
-
-         public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
-         }
-
-         public void changeToGETRequest() {
-         }
-
-         public Exception getException() {
-            return null;
-         }
-
-         public int getFailureCount() {
-            return 0;
-         }
-
-         public HttpRequest getRequest() {
-            return null;
-         }
-
-         public int incrementFailureCount() {
-            return 0;
-         }
-
-         public void setException(Exception exception) {
-
-         }
-
-         @Override
-         public void changePathTo(String newPath) {
-         }
-      };
+      command = createMock(HttpCommand.class);
 
    }
 

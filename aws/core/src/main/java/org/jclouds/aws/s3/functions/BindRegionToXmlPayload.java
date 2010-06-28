@@ -20,8 +20,8 @@
 package org.jclouds.aws.s3.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_DEFAULT_REGIONS;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,8 +35,8 @@ import com.google.common.collect.Iterables;
 
 /**
  * 
- * Depending on your latency and legal requirements, you can specify a location
- * constraint that will affect where your data physically resides.
+ * Depending on your latency and legal requirements, you can specify a location constraint that will
+ * affect where your data physically resides.
  * 
  * @author Adrian Cole
  * 
@@ -48,9 +48,8 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
    private final Iterable<String> regions;
 
    @Inject
-   BindRegionToXmlPayload(
-         @Named(PROPERTY_S3_DEFAULT_REGIONS) String defaultRegions,
-         @Named(PROPERTY_S3_REGIONS) String regions) {
+   BindRegionToXmlPayload(@Named(PROPERTY_DEFAULT_REGIONS) String defaultRegions,
+            @Named(PROPERTY_REGIONS) String regions) {
       this.defaultRegions = Splitter.on(',').split(defaultRegions);
       this.regions = Splitter.on(',').split(regions);
    }
@@ -58,8 +57,7 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
       input = input == null ? Iterables.get(defaultRegions, 0) : input;
-      checkArgument(input instanceof String,
-            "this binder is only valid for Region!");
+      checkArgument(input instanceof String, "this binder is only valid for Region!");
       String constraint = (String) input;
       String value = null;
       if (Iterables.contains(defaultRegions, constraint)) {
@@ -71,9 +69,9 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
          throw new IllegalStateException("unimplemented location: " + constraint);
       }
       String payload = String
-            .format(
-                  "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-                  value);
+               .format(
+                        "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+                        value);
       super.bindToRequest(request, payload);
 
    }

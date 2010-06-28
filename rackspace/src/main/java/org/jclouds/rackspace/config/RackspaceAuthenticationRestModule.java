@@ -18,10 +18,6 @@
  */
 package org.jclouds.rackspace.config;
 
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
-
 import java.net.URI;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -31,16 +27,19 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.CloudFilesCDN;
 import org.jclouds.rackspace.CloudServers;
-import org.jclouds.rackspace.RackspaceAuthentication;
-import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.RackspaceAuthAsyncClient;
+import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Supplier;
@@ -59,6 +58,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
    }
 
    /**
@@ -80,16 +80,17 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
-            final AsyncClientFactory factory, @Named(PROPERTY_RACKSPACE_USER) final String user,
-            @Named(PROPERTY_RACKSPACE_KEY) final String key) {
+            final AsyncClientFactory factory,
+            @Named(Constants.PROPERTY_IDENTITY) final String user,
+            @Named(Constants.PROPERTY_CREDENTIAL) final String key) {
       return new ExpirableSupplier<AuthenticationResponse>(
                new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
                         new Supplier<AuthenticationResponse>() {
                            public AuthenticationResponse get() {
                               try {
                                  ListenableFuture<AuthenticationResponse> response = factory
-                                          .create(RackspaceAuthentication.class).authenticate(user,
-                                                   key);
+                                          .create(RackspaceAuthAsyncClient.class).authenticate(
+                                                   user, key);
                                  return response.get(30, TimeUnit.SECONDS);
                               } catch (Exception e) {
                                  Throwables.propagate(e);
@@ -109,13 +110,6 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
             return new Date();
          }
       }, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   @Authentication
-   protected URI provideAuthenticationURI(@Named(PROPERTY_RACKSPACE_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
    }
 
    @Provides

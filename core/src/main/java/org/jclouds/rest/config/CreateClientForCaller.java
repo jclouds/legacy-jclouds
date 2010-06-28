@@ -43,25 +43,22 @@ public class CreateClientForCaller implements Function<ClassMethodArgs, Object> 
    Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   CreateClientForCaller(
-         @Named("async") ConcurrentMap<ClassMethodArgs, Object> asyncMap,
-         @Named("sync") Provider<ConcurrentMap<ClassMethodArgs, Object>> delegateMap) {
+   CreateClientForCaller(@Named("async") ConcurrentMap<ClassMethodArgs, Object> asyncMap,
+            @Named("sync") Provider<ConcurrentMap<ClassMethodArgs, Object>> delegateMap) {
       this.asyncMap = asyncMap;
       this.delegateMap = delegateMap;
    }
 
-   @SuppressWarnings("unchecked")
-   public Object apply(final ClassMethodArgs from) {
-      Class syncClass = from.getMethod().getReturnType();
-      Class asyncClass = sync2Async.get(syncClass);
-      checkState(asyncClass != null, "configuration error, sync class "
-            + syncClass.getName() + " not mapped to an async class");
+   public Object apply(ClassMethodArgs from) {
+      Class<?> syncClass = from.getMethod().getReturnType();
+      Class<?> asyncClass = sync2Async.get(syncClass);
+      checkState(asyncClass != null, "configuration error, sync class " + syncClass
+               + " not mapped to an async class");
       Object asyncClient = asyncMap.get(from);
-      checkState(asyncClient != null, "configuration error, sync client for "
-            + from + " not found");
+      checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
       try {
-         return SyncProxy.proxy(syncClass, new SyncProxy(syncClass,
-               asyncClient, delegateMap.get(), sync2Async));
+         return SyncProxy.proxy(syncClass, new SyncProxy(syncClass, asyncClient, delegateMap.get(),
+                  sync2Async));
       } catch (Exception e) {
          Throwables.propagate(e);
          assert false : "should have propagated";

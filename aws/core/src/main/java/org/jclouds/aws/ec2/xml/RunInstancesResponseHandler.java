@@ -20,7 +20,7 @@ package org.jclouds.aws.ec2.xml;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.date.DateService;
 
@@ -35,7 +35,7 @@ import org.jclouds.date.DateService;
 public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation> {
 
    @Inject
-   RunInstancesResponseHandler(DateService dateService, @EC2 String defaultRegion) {
+   RunInstancesResponseHandler(DateService dateService, @Region String defaultRegion) {
       super(dateService, defaultRegion);
    }
 

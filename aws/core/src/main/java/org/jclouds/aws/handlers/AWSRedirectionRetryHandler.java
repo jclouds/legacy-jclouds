@@ -25,7 +25,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
@@ -62,7 +61,7 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
             try {
                AWSError error = utils.parseAWSErrorFromContent(command, response, new String(
                         content));
-               String host = error.getDetails().get(AWSConstants.ENDPOINT);
+               String host = error.getDetails().get("Endpoint");
                if (host != null) {
                   if (host.equals(command.getRequest().getEndpoint().getHost())) {
                      // must be an amazon error related to

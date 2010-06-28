@@ -23,6 +23,7 @@ import static org.jclouds.aws.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -33,11 +34,14 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.inject.Module;
 import com.google.inject.internal.Lists;
 
 /**
@@ -56,12 +60,13 @@ public class SQSClientLiveTest {
    private Set<Queue> queues = Sets.newHashSet();
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   public void setupClient() throws IOException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      context = SQSContextFactory.createContext(user, password, new Log4JLoggingModule());
-      client = context.getApi();
+      context = new RestContextFactory().createContext("sqs", user, password, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
+      this.client = context.getApi();
    }
 
    @Test

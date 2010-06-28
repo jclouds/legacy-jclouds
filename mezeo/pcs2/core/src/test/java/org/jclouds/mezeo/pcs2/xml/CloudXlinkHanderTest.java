@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.mezeo.pcs2.PCSCloud;
+import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient;
 import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler.PCSCloudResponseImpl;
 import org.testng.annotations.Test;
 
@@ -54,9 +54,9 @@ public class CloudXlinkHanderTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/discovery.xml");
-      PCSCloud.Response list = new PCSCloudResponseImpl(map);
+      PCSCloudAsyncClient.Response list = new PCSCloudResponseImpl(map);
 
-      PCSCloud.Response result = (PCSCloud.Response) factory.create(
+      PCSCloudAsyncClient.Response result = (PCSCloudAsyncClient.Response) factory.create(
                injector.getInstance(CloudXlinkHandler.class)).parse(is);
 
       assertEquals(result, list);

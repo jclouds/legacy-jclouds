@@ -28,7 +28,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
@@ -39,6 +38,7 @@ import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
@@ -72,8 +72,8 @@ public class MainApp {
       String name = args[3];
 
       // Init
-      RestContext<EC2Client, EC2AsyncClient> context = EC2ContextFactory.createContext(accesskeyid,
-               secretkey).getProviderSpecificContext();
+      RestContext<EC2Client, EC2AsyncClient> context = new RestContextFactory().createContext(
+               "ec2", accesskeyid, secretkey);
 
       // Get a synchronous client
       EC2Client client = context.getApi();
@@ -164,12 +164,12 @@ public class MainApp {
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
       Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
-                                                                                              // ec2
-                                                                                              // to
-                                                                                              // chose
-                                                                                              // an
-                                                                                              // availability
-                                                                                              // zone
+               // ec2
+               // to
+               // chose
+               // an
+               // availability
+               // zone
                "ami-ccf615a5", // alestic ami allows auto-invoke of user data scripts
                1, // minimum instances
                1, // maximum instances

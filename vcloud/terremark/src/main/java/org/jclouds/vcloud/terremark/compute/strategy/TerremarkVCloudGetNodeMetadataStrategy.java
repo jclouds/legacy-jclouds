@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.terremark.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -29,7 +30,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
@@ -41,8 +41,7 @@ import org.jclouds.vcloud.terremark.domain.KeyPair;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudGetNodeMetadataStrategy extends
-      VCloudGetNodeMetadataStrategy {
+public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadataStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -50,9 +49,8 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends
    private final ConcurrentMap<OrgAndName, KeyPair> credentialsMap;
 
    @Inject
-   protected TerremarkVCloudGetNodeMetadataStrategy(
-         VCloudGetNodeMetadata getNodeMetadata,
-         ConcurrentMap<OrgAndName, KeyPair> credentialsMap) {
+   protected TerremarkVCloudGetNodeMetadataStrategy(VCloudGetNodeMetadata getNodeMetadata,
+            ConcurrentMap<OrgAndName, KeyPair> credentialsMap) {
       super(getNodeMetadata);
       this.credentialsMap = credentialsMap;
    }
@@ -61,7 +59,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends
    public NodeMetadata execute(String id) {
       try {
          NodeMetadata node = checkNotNull(getNodeMetadata.execute(checkNotNull(id, "node.id")),
-               "node: " + id);
+                  "node: " + id);
          if (node.getTag() != null) {
             node = installCredentialsFromCache(node);
          }
@@ -82,7 +80,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends
          if (account != null) {
             String privateKey = credentialsMap.get(orgAndName).getPrivateKey();
             Credentials creds = new Credentials(account, privateKey);
-            node = ComputeUtils.installNewCredentials(node, creds);
+            node = installNewCredentials(node, creds);
          }
       }
       return node;
@@ -98,17 +96,14 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends
       String account = null;
       if (node.getCredentials() != null)
          account = node.getCredentials().account;
-      else if (node.getImage() != null
-            && node.getImage().getDefaultCredentials() != null)
+      else if (node.getImage() != null && node.getImage().getDefaultCredentials() != null)
          account = node.getImage().getDefaultCredentials().account;
       return account;
    }
 
    NodeMetadata installDefaultCredentialsFromImage(NodeMetadata node) {
-      if (node.getImage() != null
-            && node.getImage().getDefaultCredentials() != null)
-         node = ComputeUtils.installNewCredentials(node, node.getImage()
-               .getDefaultCredentials());
+      if (node.getImage() != null && node.getImage().getDefaultCredentials() != null)
+         node = installNewCredentials(node, node.getImage().getDefaultCredentials());
       return node;
    }
 }

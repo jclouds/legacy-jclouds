@@ -30,7 +30,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Map.Entry;
 
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
+import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpUtils;
 
 import com.google.common.io.ByteStreams;
@@ -62,12 +63,17 @@ public class GetPath {
       File destinationDir = new File(args[1]);
       destinationDir.mkdirs();
 
-      BlobStoreContext context = new BlobStoreContextFactory().createContext(uri);
+      String provider = uri.getHost();
+      Credentials creds = Credentials.parse(uri);
+
+      BlobStoreContext context = new BlobStoreContextFactory().createContext(provider,
+               creds.account, creds.key);
+
       String path = uri.getPath();
       if (path.startsWith("/"))
          path = path.substring(1);
-      String container = BlobStoreUtilsImpl.parseContainerFromPath(path);
-      String directory = BlobStoreUtilsImpl.parsePrefixFromPath(path);
+      String container = BlobStoreUtils.parseContainerFromPath(path);
+      String directory = BlobStoreUtils.parsePrefixFromPath(path);
       copyDirectoryToDestination(context, container, directory, destinationDir);
    }
 
@@ -84,7 +90,7 @@ public class GetPath {
          String path = container + "/" + directory;
          InputStreamMap map = context.createInputStreamMap(path);
          System.out.printf("fetching %d entries from %s %s%n", map.size(), context
-                  .getProviderSpecificContext().getAccount(), path);
+                  .getProviderSpecificContext().getPrincipal(), path);
          for (Entry<String, InputStream> entry : map.entrySet()) {
             System.out.printf("getting file: %s/%s%n", path, entry.getKey());
             input = entry.getValue();

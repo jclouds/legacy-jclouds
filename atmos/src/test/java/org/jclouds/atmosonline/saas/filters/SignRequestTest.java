@@ -18,43 +18,40 @@
  */
 package org.jclouds.atmosonline.saas.filters;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.rest.config.RestModule;
-import com.google.inject.name.Names;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 @Test(groups = "unit", testName = "emcsaas.SignRequestTest")
 public class SignRequestTest {
 
    private static final String KEY = "LJLuryj6zs8ste6Y3jTGQp71xq0=";
 
-   private Injector injector;
    private SignRequest filter;
 
    @Test
@@ -84,22 +81,29 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new RestModule(), new AtmosStorageRestClientModule() {
-         protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-            return "Thu, 05 Jun 2008 16:38:19 GMT";
+      Injector injector = new RestContextFactory().createContextBuilder(
+               "atmosonline",
+               "user",
+               KEY,
+               ImmutableSet.<Module> of(new MockModule(), new TestAtmosStorageRestClientModule(),
+                        new NullLoggingModule()), new Properties()).buildInjector();
 
-         }
-      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(
-                              new AtmosStoragePropertiesBuilder("user", KEY)).build());
-                     bind(TransformingHttpCommandExecutorService.class).toInstance(
-                              createMock(TransformingHttpCommandExecutorService.class));
-                  }
-               });
       filter = injector.getInstance(SignRequest.class);
 
+   }
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   private static final class TestAtmosStorageRestClientModule extends AtmosStorageRestClientModule {
+      @Override
+      protected void configure() {
+         super.configure();
+      }
+
+      @Override
+      protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+         return "Thu, 05 Jun 2008 16:38:19 GMT";
+      }
    }
 
    public HttpRequest newRequest() {

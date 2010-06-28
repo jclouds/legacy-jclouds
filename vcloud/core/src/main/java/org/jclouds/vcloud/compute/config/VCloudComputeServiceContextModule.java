@@ -54,14 +54,13 @@ import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.endpoints.VCloud;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -73,13 +72,7 @@ import com.google.inject.util.Providers;
  * 
  * @author Adrian Cole
  */
-public class VCloudComputeServiceContextModule extends VCloudContextModule {
-
-   protected final String providerName;
-
-   public VCloudComputeServiceContextModule(String providerName) {
-      this.providerName = providerName;
-   }
+public class VCloudComputeServiceContextModule extends AbstractModule {
 
    @Singleton
    @Provides
@@ -98,9 +91,7 @@ public class VCloudComputeServiceContextModule extends VCloudContextModule {
 
    @Override
    protected void configure() {
-      super.configure();
       install(new ComputeServiceTimeoutsModule());
-      bind(String.class).annotatedWith(VCloud.class).toInstance(providerName);
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {

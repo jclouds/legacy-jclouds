@@ -31,8 +31,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.boxdotnet.BoxDotNetClient;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -43,26 +41,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to BoxDotNet via their REST API.
  * <p/>
- *
+ * 
  * @see BoxDotNetClient
  * @see <a href="TODO: insert URL of provider documentation" />
  * @author Adrian Cole
  */
-@Endpoint(BoxDotNet.class)
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface BoxDotNetAsyncClient {
    /*
-    * TODO: define interface methods for BoxDotNet 
+    * TODO: define interface methods for BoxDotNet
     */
-   
+
    /**
     * @see BoxDotNetClient#list()
     */
    @GET
    @Path("/items")
    ListenableFuture<String> list();
-   
+
    /**
     * @see BoxDotNetClient#get(long)
     */
@@ -70,7 +67,7 @@ public interface BoxDotNetAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/items/{itemId}")
    ListenableFuture<String> get(@PathParam("itemId") long id);
-   
+
    /**
     * @see BoxDotNetClient#delete
     */

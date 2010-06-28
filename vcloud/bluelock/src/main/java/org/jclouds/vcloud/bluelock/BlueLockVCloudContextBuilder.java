@@ -45,13 +45,13 @@ import com.google.inject.Module;
  */
 public class BlueLockVCloudContextBuilder extends VCloudContextBuilder {
 
-   public BlueLockVCloudContextBuilder(String providerName, Properties props) {
-      super(providerName, props);
+   public BlueLockVCloudContextBuilder(Properties props) {
+      super(props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new BlueLockVCloudComputeServiceContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new BlueLockVCloudComputeServiceContextModule());
    }
 
    @Override

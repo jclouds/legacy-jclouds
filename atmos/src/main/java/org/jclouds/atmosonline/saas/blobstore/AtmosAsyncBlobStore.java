@@ -52,7 +52,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.encryption.EncryptionService;
@@ -78,7 +78,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   AtmosAsyncBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
+   AtmosAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
             Location defaultLocation, Set<? extends Location> locations,
 

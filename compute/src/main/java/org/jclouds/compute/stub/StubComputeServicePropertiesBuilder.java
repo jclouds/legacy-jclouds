@@ -18,6 +18,10 @@
  */
 package org.jclouds.compute.stub;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -32,6 +36,9 @@ public class StubComputeServicePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost/stub");
+      properties.setProperty(PROPERTY_API_VERSION, "1");
+      properties.setProperty(PROPERTY_IDENTITY, System.getProperty("user.name"));
       return properties;
    }
 

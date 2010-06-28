@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.chef.config.ChefRestClientModule;
@@ -37,11 +38,14 @@ import org.jclouds.chef.functions.ParseKeyFromJson;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.chef.functions.ParseSandboxFromJson;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -54,7 +58,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Tests annotation parsing of {@code ChefAsyncClient}
@@ -64,27 +67,22 @@ import com.google.inject.name.Names;
 @Test(groups = "unit", testName = "chef.ChefAsyncClientTest")
 public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
-   public void testGetUploadUrisForContent() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod(
-            "getUploadUrisForContent", Set.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, ImmutableSet.of(
-                  "0189e76ccc476701d6b374e5a1a27347",
-                  "0c5ecd7788cf4f6c7de2a57193897a6c",
-                  "1dda05ed139664f1f89b9dec482b77c0"));
+   public void testGetUploadUrisForContent() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("getUploadUrisForContent", Set.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               ImmutableSet.of("0189e76ccc476701d6b374e5a1a27347",
+                        "0c5ecd7788cf4f6c7de2a57193897a6c", "1dda05ed139664f1f89b9dec482b77c0"));
 
-      assertRequestLineEquals(httpRequest,
-            "POST http://localhost:4000/sandboxes HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: 135\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
+               httpRequest,
+               "Accept: application/json\nContent-Length: 135\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}");
+               httpRequest,
+               "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}");
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ParseSandboxFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseSandboxFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -92,20 +90,15 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testGetCookbook() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("getCookbook",
-            String.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "cookbook");
-      assertRequestLineEquals(httpRequest,
-            "GET http://localhost:4000/cookbooks/cookbook HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
+   public void testGetCookbook() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("getCookbook", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               "cookbook");
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/cookbooks/cookbook HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -113,20 +106,16 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testDeleteCookbook() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("deleteCookbook",
-            String.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "cookbook");
+   public void testDeleteCookbook() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("deleteCookbook", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               "cookbook");
       assertRequestLineEquals(httpRequest,
-            "DELETE http://localhost:4000/cookbooks/cookbook HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
+               "DELETE http://localhost:4000/cookbooks/cookbook HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -136,37 +125,30 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    private static final String COOOKBOOK_BODY =
 
-   "----JCLOUDS--\r\n"
-         + "Content-Disposition: form-data; name=\"name\"\r\n\r\n"
-         + "cookbook\r\n"
-         + "----JCLOUDS--\r\n"
-         + "Content-Disposition: form-data; name=\"file\"; filename=\"cookbook.tar.gz\"\r\n"
-         + "Content-Type: application/octet-stream\r\n\r\n\r\n"
-         + "----JCLOUDS----\r\n";
+   "----JCLOUDS--\r\n" + "Content-Disposition: form-data; name=\"name\"\r\n\r\n" + "cookbook\r\n"
+            + "----JCLOUDS--\r\n"
+            + "Content-Disposition: form-data; name=\"file\"; filename=\"cookbook.tar.gz\"\r\n"
+            + "Content-Type: application/octet-stream\r\n\r\n\r\n" + "----JCLOUDS----\r\n";
 
-   public void testCreateCookbookFile() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("createCookbook",
-            String.class, File.class);
+   public void testCreateCookbookFile() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("createCookbook", String.class, File.class);
 
       File file = File.createTempFile("jclouds-chef=test", ".tar.gz");
       file.deleteOnExit();
       Files.write("".getBytes(), file);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "cookbook", file);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               "cookbook", file);
 
-      assertRequestLineEquals(httpRequest,
-            "POST http://localhost:4000/cookbooks HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/cookbooks HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: "
-                  + (file.getName().length() + 206)
-                  + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
-      assertPayloadEquals(httpRequest, COOOKBOOK_BODY.replace(
-            "cookbook.tar.gz", file.getName()));
+               httpRequest,
+               "Accept: application/json\nContent-Length: "
+                        + (file.getName().length() + 206)
+                        + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
+      assertPayloadEquals(httpRequest, COOOKBOOK_BODY.replace("cookbook.tar.gz", file.getName()));
 
-      assertResponseParserClassEquals(method, httpRequest,
-            CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -174,22 +156,19 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testCreateCookbookByte() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("createCookbook",
-            String.class, byte[].class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "cookbook", "".getBytes());
+   public void testCreateCookbookByte() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("createCookbook", String.class, byte[].class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               "cookbook", "".getBytes());
 
-      assertRequestLineEquals(httpRequest,
-            "POST http://localhost:4000/cookbooks HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/cookbooks HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
+               httpRequest,
+               "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, COOOKBOOK_BODY);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -197,29 +176,26 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testUpdateCookbookFile() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("updateCookbook",
-            String.class, File.class);
+   public void testUpdateCookbookFile() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("updateCookbook", String.class, File.class);
 
       File file = File.createTempFile("jclouds-chef=test", ".tar.gz");
       file.deleteOnExit();
       Files.write("".getBytes(), file);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "cookbook", file);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               "cookbook", file);
 
       assertRequestLineEquals(httpRequest,
-            "PUT http://localhost:4000/cookbooks/cookbook/_content HTTP/1.1");
+               "PUT http://localhost:4000/cookbooks/cookbook/_content HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: "
-                  + (file.getName().length() + 206)
-                  + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
-      assertPayloadEquals(httpRequest, COOOKBOOK_BODY.replace(
-            "cookbook.tar.gz", file.getName()));
+               httpRequest,
+               "Accept: application/json\nContent-Length: "
+                        + (file.getName().length() + 206)
+                        + "\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
+      assertPayloadEquals(httpRequest, COOOKBOOK_BODY.replace("cookbook.tar.gz", file.getName()));
 
-      assertResponseParserClassEquals(method, httpRequest,
-            CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -227,22 +203,20 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testUpdateCookbookByte() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("updateCookbook",
-            String.class, byte[].class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "cookbook", "".getBytes());
+   public void testUpdateCookbookByte() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("updateCookbook", String.class, byte[].class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
+               "cookbook", "".getBytes());
 
       assertRequestLineEquals(httpRequest,
-            "PUT http://localhost:4000/cookbooks/cookbook/_content HTTP/1.1");
+               "PUT http://localhost:4000/cookbooks/cookbook/_content HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
+               httpRequest,
+               "Accept: application/json\nContent-Length: 221\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, COOOKBOOK_BODY);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -250,20 +224,15 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testListCookbooks() throws SecurityException,
-         NoSuchMethodException, IOException {
+   public void testListCookbooks() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("listCookbooks");
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest,
-            "GET http://localhost:4000/cookbooks HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/cookbooks HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ParseKeySetFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -271,20 +240,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testClientExists() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("clientExists",
-            String.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "client");
-      assertRequestLineEquals(httpRequest,
-            "HEAD http://localhost:4000/clients/client HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
+   public void testClientExists() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("clientExists", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
+      assertRequestLineEquals(httpRequest, "HEAD http://localhost:4000/clients/client HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ReturnTrueIf2xx.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
 
@@ -292,20 +255,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testDeleteClient() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("deleteClient",
-            String.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "client");
-      assertRequestLineEquals(httpRequest,
-            "DELETE http://localhost:4000/clients/client HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
+   public void testDeleteClient() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("deleteClient", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
+      assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/clients/client HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -313,22 +270,17 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testGenerateKeyForClient() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("generateKeyForClient",
-            String.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "client");
-      assertRequestLineEquals(httpRequest,
-            "PUT http://localhost:4000/clients/client HTTP/1.1");
+   public void testGenerateKeyForClient() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ChefAsyncClient.class.getMethod("generateKeyForClient", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
+      assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/clients/client HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: 44\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
-      assertPayloadEquals(httpRequest,
-            "{\"clientname\":\"client\", \"private_key\": true}");
+               httpRequest,
+               "Accept: application/json\nContent-Length: 44\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
+      assertPayloadEquals(httpRequest, "{\"clientname\":\"client\", \"private_key\": true}");
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ParseKeyFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -336,22 +288,17 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testCreateClient() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = ChefAsyncClient.class.getMethod("createClient",
-            String.class);
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method, "client");
+   public void testCreateClient() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("createClient", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
 
-      assertRequestLineEquals(httpRequest,
-            "POST http://localhost:4000/clients HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/clients HTTP/1.1");
       assertHeadersEqual(
-            httpRequest,
-            "Accept: application/json\nContent-Length: 23\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
+               httpRequest,
+               "Accept: application/json\nContent-Length: 23\nContent-Type: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\"}");
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ParseKeyFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -359,20 +306,15 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testListClients() throws SecurityException,
-         NoSuchMethodException, IOException {
+   public void testListClients() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("listClients");
-      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor
-            .createRequest(method);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest,
-            "GET http://localhost:4000/clients HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-            "Accept: application/json\nX-Chef-Version: 0.9.0\n");
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/clients HTTP/1.1");
+      assertHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.0\n");
       assertPayloadEquals(httpRequest, null);
 
-      assertResponseParserClassEquals(method, httpRequest,
-            ParseKeySetFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -383,8 +325,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    @Override
    protected void checkFilters(GeneratedHttpRequest<ChefAsyncClient> httpRequest) {
       assertEquals(httpRequest.getFilters().size(), 1);
-      assertEquals(httpRequest.getFilters().get(0).getClass(),
-            SignedHeaderAuth.class);
+      assertEquals(httpRequest.getFilters().get(0).getClass(), SignedHeaderAuth.class);
    }
 
    @Override
@@ -395,19 +336,22 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new ChefRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new ChefPropertiesBuilder(
-                  "chef-validator", SignedHeaderAuthTest.PRIVATE_KEY).build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
+      return new TestChefRestClientModule();
+   }
 
-         @Override
-         protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-            return "timestamp";
-         }
-      };
+   @RequiresHttp
+   @ConfiguresRestClient
+   static class TestChefRestClientModule extends ChefRestClientModule {
+      @Override
+      protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+         return "timestamp";
+      }
+
+   }
+
+   @Override
+   public ContextSpec<ChefClient, ChefAsyncClient> createContextSpec() {
+      return new RestContextFactory().createContextSpec("chef", "user",
+               SignedHeaderAuthTest.PRIVATE_KEY, new Properties());
    }
 }

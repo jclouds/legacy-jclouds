@@ -22,7 +22,6 @@ import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
-import org.jclouds.aws.ec2.services.ElasticLoadBalancerAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
@@ -35,6 +34,8 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface EC2AsyncClient {
+   public final static String VERSION = "2009-11-30";
+
    /**
     * Provides asynchronous access to AMI services.
     */
@@ -83,9 +84,4 @@ public interface EC2AsyncClient {
    @Delegate
    ElasticBlockStoreAsyncClient getElasticBlockStoreServices();
 
-   /**
-    * Provides asynchronous access to Elastic Load Balancer services.
-    */
-   @Delegate
-   ElasticLoadBalancerAsyncClient getElasticLoadBalancerServices();
 }

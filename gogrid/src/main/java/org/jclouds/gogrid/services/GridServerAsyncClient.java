@@ -41,7 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
 import org.jclouds.gogrid.domain.Option;
@@ -55,7 +55,6 @@ import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonRespo
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -71,9 +70,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * @author Oleksiy Yarmula
  */
-@Endpoint(GoGrid.class)
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = "1.3")
+@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
 public interface GridServerAsyncClient {
 
    /**

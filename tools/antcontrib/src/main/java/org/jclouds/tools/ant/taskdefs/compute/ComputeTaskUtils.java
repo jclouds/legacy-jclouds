@@ -42,6 +42,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
@@ -76,18 +77,16 @@ public class ComputeTaskUtils {
          @SuppressWarnings("unchecked")
          @Override
          public ComputeServiceContext apply(URI from) {
-            try {
-               Properties props = getPropertiesFromResource("compute.properties");
-               props.putAll(projectProvider.get().getProperties());
-               // adding the properties to the factory will allow us to pass alternate endpoints
-               return new ComputeServiceContextFactory(props).createContext(from,
-                        ImmutableSet
-                                 .of((Module) new AntLoggingModule(projectProvider.get(),
-                                          ComputeServiceConstants.COMPUTE_LOGGER),
-                                          new JschSshClientModule()), props);
-            } catch (IOException e) {
-               throw new RuntimeException(e);
-            }
+            Properties props = getPropertiesFromResource("compute.properties");
+            props.putAll(projectProvider.get().getProperties());
+            // adding the properties to the factory will allow us to pass alternate endpoints
+            String provider = from.getHost();
+            Credentials creds = Credentials.parse(from);
+            return new ComputeServiceContextFactory(props).createContext(provider,
+                     creds.account, creds.key, ImmutableSet.of((Module) new AntLoggingModule(
+                              projectProvider.get(), ComputeServiceConstants.COMPUTE_LOGGER),
+                              new JschSshClientModule()), props);
+
          }
 
       });

@@ -25,26 +25,30 @@ import static org.jclouds.aws.ec2.options.RegisterImageOptions.Builder.withDescr
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.Module;
 import com.google.inject.internal.ImmutableMap;
 import com.google.inject.internal.Lists;
 
@@ -66,12 +70,12 @@ public class AMIClientLiveTest {
    private Set<String> imagesToDeregister = Sets.newHashSet();
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   public void setupClient() throws IOException {
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getProviderSpecificContext();
+      context = new RestContextFactory().createContext(
+               "ec2", user, password, ImmutableSet.<Module> of(new Log4JLoggingModule()));
       client = context.getApi().getAMIServices();
    }
 
@@ -80,7 +84,7 @@ public class AMIClientLiveTest {
       client.describeImagesInRegion(null, imageIds("ami-cdf819a3"));
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
+   @Test(expectedExceptions = AWSResponseException.class)
    public void testDescribeImageBadId() {
       client.describeImagesInRegion(null, imageIds("asdaasdsa"));
    }

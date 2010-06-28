@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.reference;
 
-import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.compute.ComputeService;
 
 /**
@@ -26,8 +25,7 @@ import org.jclouds.compute.ComputeService;
  * 
  * @author Adrian Cole
  */
-public interface EC2Constants extends AWSConstants {
-   public static final String PROPERTY_EC2_ENDPOINT = "jclouds.ec2.endpoint";
+public interface EC2Constants{
    /**
     * Listing the universe of amis is extremely expensive. set this to a comma separated value of
     * the ami owners you wish to use in {@link ComputeService}

@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -59,7 +58,7 @@ public class BaseEC2HandlerTest extends BaseHandlerTest {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
-         @EC2
+         @org.jclouds.aws.Region
          String provideDefaultRegion() {
             return defaultRegion;
          }

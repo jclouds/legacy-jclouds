@@ -23,18 +23,11 @@
  */
 package org.jclouds.boxdotnet;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.boxdotnet.BoxDotNetAsyncClient;
-import org.jclouds.boxdotnet.BoxDotNetClient;
-
-import org.jclouds.boxdotnet.config.BoxDotNetContextModule;
 import org.jclouds.boxdotnet.config.BoxDotNetRestClientModule;
-import org.jclouds.boxdotnet.reference.BoxDotNetConstants;
+import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 
@@ -42,21 +35,15 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BoxDotNetContextBuilder extends RestContextBuilder<BoxDotNetClient, BoxDotNetAsyncClient> {
+public class BoxDotNetContextBuilder extends
+         RestContextBuilder<BoxDotNetClient, BoxDotNetAsyncClient> {
 
-   public BoxDotNetContextBuilder(String providerName, Properties props) {
-      super(providerName, BoxDotNetClient.class, BoxDotNetAsyncClient.class, props);
-      checkNotNull(properties.getProperty(BoxDotNetConstants.PROPERTY_BOXDOTNET_USER));
-      checkNotNull(properties.getProperty(BoxDotNetConstants.PROPERTY_BOXDOTNET_PASSWORD));
+   public BoxDotNetContextBuilder(Properties props) {
+      super(BoxDotNetClient.class, BoxDotNetAsyncClient.class, props);
    }
 
    protected void addClientModule(List<Module> modules) {
       modules.add(new BoxDotNetRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new BoxDotNetContextModule(providerName));
    }
 
 }

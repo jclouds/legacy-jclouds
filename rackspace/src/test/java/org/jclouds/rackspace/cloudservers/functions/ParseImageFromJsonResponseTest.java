@@ -41,7 +41,15 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudservers.ParseImageFromJsonResponseTest")
 public class ParseImageFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new ParserModule() {
+
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         super.configure();
+      }
+
+   });
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStreamDetails() throws UnknownHostException {

@@ -35,7 +35,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PerformanceTest;
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.sqs.SQS;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
@@ -86,7 +85,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         @SQS
+         @org.jclouds.aws.Region
          Map<String, URI> provideRegions() {
             return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
                      .create("https://eu-west-1.queue.amazonaws.com"));

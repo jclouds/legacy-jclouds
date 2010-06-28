@@ -41,10 +41,6 @@ public class CloudFilesPropertiesBuilder extends RackspacePropertiesBuilder {
       super(properties);
    }
 
-   public CloudFilesPropertiesBuilder(String id, String secret) {
-      super(id, secret);
-   }
-
    protected CloudFilesPropertiesBuilder withMetaPrefix(String prefix) {
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, prefix);
       return this;

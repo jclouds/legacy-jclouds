@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.mezeo.pcs2.PCSCloud;
+import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -33,11 +33,11 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class CloudXlinkHandler extends ParseSax.HandlerWithResult<PCSCloud.Response> {
+public class CloudXlinkHandler extends ParseSax.HandlerWithResult<PCSCloudAsyncClient.Response> {
 
    private Map<String, URI> map = Maps.newHashMap();
 
-   public static class PCSCloudResponseImpl implements PCSCloud.Response {
+   public static class PCSCloudResponseImpl implements PCSCloudAsyncClient.Response {
       private final Map<String, URI> map;
 
       public PCSCloudResponseImpl(Map<String, URI> map) {
@@ -104,7 +104,7 @@ public class CloudXlinkHandler extends ParseSax.HandlerWithResult<PCSCloud.Respo
 
    }
 
-   public PCSCloud.Response getResult() {
+   public PCSCloudAsyncClient.Response getResult() {
       return new PCSCloudResponseImpl(map);
    }
 

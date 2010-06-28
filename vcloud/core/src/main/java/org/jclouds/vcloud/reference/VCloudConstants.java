@@ -24,15 +24,11 @@ package org.jclouds.vcloud.reference;
  * @author Adrian Cole
  */
 public interface VCloudConstants {
-   public static final String PROPERTY_VCLOUD_VERSION_API = "jclouds.vcloud.version.api";
    public static final String PROPERTY_VCLOUD_VERSION_SCHEMA = "jclouds.vcloud.version.schema";
-   public static final String PROPERTY_VCLOUD_ENDPOINT = "jclouds.vcloud.endpoint";
-   public static final String PROPERTY_VCLOUD_USER = "jclouds.vcloud.user";
-   public static final String PROPERTY_VCLOUD_KEY = "jclouds.vcloud.key";
+
    /**
     * automatically renew vcloud token before this interval expires.
     */
-   public static final String PROPERTY_VCLOUD_SESSIONINTERVAL = "jclouds.vcloud.sessioninterval";
    public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
    public static final String PROPERTY_VCLOUD_DEFAULT_FENCEMODE = "jclouds.vcloud.defaults.fencemode";
 

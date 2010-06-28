@@ -23,12 +23,8 @@
  */
 package org.jclouds.boxdotnet;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.boxdotnet.reference.BoxDotNetConstants.PROPERTY_BOXDOTNET_ENDPOINT;
-import static org.jclouds.boxdotnet.reference.BoxDotNetConstants.PROPERTY_BOXDOTNET_PASSWORD;
-import static org.jclouds.boxdotnet.reference.BoxDotNetConstants.PROPERTY_BOXDOTNET_USER;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -42,7 +38,7 @@ public class BoxDotNetPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_BOXDOTNET_ENDPOINT, "https://www.box.net/api/1.0/rest");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://www.box.net/api/1.0/rest");
       return properties;
    }
 
@@ -50,20 +46,4 @@ public class BoxDotNetPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   public BoxDotNetPropertiesBuilder(String id, String secret) {
-      super();
-      withCredentials(id, secret);
-   }
-
-   public BoxDotNetPropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_BOXDOTNET_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_BOXDOTNET_PASSWORD, checkNotNull(secret, "password"));
-      return this;
-   }
-
-   public BoxDotNetPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_BOXDOTNET_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
-   }
 }

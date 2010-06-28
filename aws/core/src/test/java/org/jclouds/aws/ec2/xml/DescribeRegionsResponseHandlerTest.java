@@ -25,10 +25,10 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.rest.annotations.Provider;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -51,7 +51,7 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
          @Override
          protected void configure() {
-            bind(URI.class).annotatedWith(EC2.class).toInstance(
+            bind(URI.class).annotatedWith(Provider.class).toInstance(
                   URI.create("https://booya"));
          }
 

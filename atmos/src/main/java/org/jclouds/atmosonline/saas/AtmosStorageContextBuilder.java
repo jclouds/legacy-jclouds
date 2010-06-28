@@ -46,13 +46,13 @@ import com.google.inject.Module;
 public class AtmosStorageContextBuilder extends
          BlobStoreContextBuilder<AtmosStorageClient, AtmosStorageAsyncClient> {
 
-   public AtmosStorageContextBuilder(String providerName, Properties props) {
-      super(providerName, AtmosStorageClient.class, AtmosStorageAsyncClient.class, props);
+   public AtmosStorageContextBuilder(Properties props) {
+      super(AtmosStorageClient.class, AtmosStorageAsyncClient.class, props);
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new AtmosBlobStoreContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new AtmosBlobStoreContextModule());
    }
 
    @Override

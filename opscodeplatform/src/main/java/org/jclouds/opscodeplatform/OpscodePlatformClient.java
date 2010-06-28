@@ -35,7 +35,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.Endpoint;
 
 /**
  * Provides synchronous access to the Opscode Platform.
@@ -52,20 +51,18 @@ public interface OpscodePlatformClient {
     */
    @Delegate
    @Path("/organizations/{orgname}")
-   @Endpoint(OpscodePlatform.class)
    ChefClient getChefClientForOrg(@PathParam("orgname") String orgname);
 
    /**
     * creates a new user
     * 
-    * @return the private key of the user. You can then use this user name and
-    *         private key to access the Opscode API.
+    * @return the private key of the user. You can then use this user name and private key to access
+    *         the Opscode API.
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a
-    *            user.
+    *            "403 Forbidden" if the caller is not authorized to create a user.
     */
    String createUser(User user);
 
@@ -104,52 +101,45 @@ public interface OpscodePlatformClient {
    /**
     * creates a new organization
     * 
-    * @return the private key of the organization. You can then use this
-    *         organization name and private key to access the Opscode API.
+    * @return the private key of the organization. You can then use this organization name and
+    *         private key to access the Opscode API.
     * @throws AuthorizationException
     *            <p/>
-    *            "401 Unauthorized" if the caller is not a recognized
-    *            organization.
+    *            "401 Unauthorized" if the caller is not a recognized organization.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a
-    *            organization.
+    *            "403 Forbidden" if the caller is not authorized to create a organization.
     */
    String createOrg(Organization organization);
 
    /**
-    * updates an existing organization. Note: you must have update rights on the
-    * organization.
+    * updates an existing organization. Note: you must have update rights on the organization.
     * 
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized organization.
     *            <p/>
-    *            "403 Forbidden" if you do not have Update rights on the
-    *            organization.
+    *            "403 Forbidden" if you do not have Update rights on the organization.
     * @throws ResourceNotFoundException
     *            if the organization does not exist.
     */
    Organization updateOrg(Organization organization);
 
    /**
-    * retrieves an existing organization. Note: you must have update rights on
-    * the organization.
+    * retrieves an existing organization. Note: you must have update rights on the organization.
     * 
     * @return null, if the organization is not found
     */
    Organization getOrg(String organizationname);
 
    /**
-    * deletes an existing organization. Note: you must have delete rights on the
-    * organization.
+    * deletes an existing organization. Note: you must have delete rights on the organization.
     * 
     * @return last state of the org you deleted or null, if not found
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized organization.
     *            <p/>
-    *            "403 Forbidden" if you do not have Delete rights on the
-    *            organization.
+    *            "403 Forbidden" if you do not have Delete rights on the organization.
     */
    Organization deleteOrg(String organizationname);
 }

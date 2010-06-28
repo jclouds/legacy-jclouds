@@ -18,7 +18,7 @@
  */
 package org.jclouds.azure.storage.config;
 
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +35,8 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -65,8 +67,7 @@ public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
     */
    @Provides
    @TimeStamp
-   protected Supplier<String> provideTimeStampCache(
-            @Named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL) long seconds,
+   protected Supplier<String> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
@@ -89,6 +90,12 @@ public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
                AzureStorageClientErrorRetryHandler.class);
+   }
+
+   @Override
+   protected void configure() {
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      super.configure();
    }
 
 }

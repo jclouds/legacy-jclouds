@@ -18,23 +18,20 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
-import org.jclouds.atmosonline.saas.config.AtmosStorageStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -43,16 +40,10 @@ import com.google.inject.Injector;
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new AtmosStorageStubClientModule(),
-               new AtmosBlobStoreContextModule("atmos"), new ExecutorServiceModule(sameThreadExecutor(),
-                        sameThreadExecutor()), new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(new AtmosStoragePropertiesBuilder(
-                              "user", "key").build(), "properties"));
-                  }
-               });
+      return new RestContextFactory().createContextBuilder("atmosonline", "uid", "key", ImmutableSet
+               .<Module> of(new MockModule(), new NullLoggingModule())).buildInjector();
    }
+
    @Test
    void testContextImpl() {
 

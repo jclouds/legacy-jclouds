@@ -21,8 +21,7 @@ package org.jclouds.nirvanix.sdn;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.nirvanix.sdn.config.RestSDNAuthenticationModule;
-import org.jclouds.nirvanix.sdn.config.SDNContextModule;
+import org.jclouds.nirvanix.sdn.config.SDNAuthRestClientModule;
 import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
 import org.jclouds.rest.RestContextBuilder;
 
@@ -34,19 +33,14 @@ import com.google.inject.Module;
  */
 public class SDNContextBuilder extends RestContextBuilder<SDNClient, SDNAsyncClient> {
 
-   public SDNContextBuilder(String providerName, Properties props) {
-      super(providerName, SDNClient.class, SDNAsyncClient.class, props);
+   public SDNContextBuilder(Properties props) {
+      super(SDNClient.class, SDNAsyncClient.class, props);
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new RestSDNAuthenticationModule());
+      modules.add(new SDNAuthRestClientModule());
       modules.add(new SDNRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new SDNContextModule(providerName));
    }
 
 }

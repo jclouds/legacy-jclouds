@@ -28,6 +28,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -44,11 +45,15 @@ import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code PCSDiscovery}
@@ -70,15 +75,21 @@ public class PCSClientLiveTest {
 
    };
 
+   private RestContext<PCSClient, PCSAsyncClient> context;
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      URI endpoint = URI.create(checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint"));
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+               "jclouds.test.endpoint");
 
-      connection = PCSContextFactory.createContext(endpoint, user, password,
-               new Log4JLoggingModule()).getApi();
+      Properties props = new Properties();
+      props.setProperty("pcs.endpoint", endpoint);
+      context = new RestContextFactory().createContext("pcs", user, password, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), props);
+
+      connection = context.getApi();
       ContainerList response = connection.list();
       for (ResourceInfo resource : response) {
          if (resource.getType() == StorageType.FOLDER

@@ -47,7 +47,6 @@ package org.jclouds.chef.reference;
  * @author Adrian Cole
  */
 public interface ChefConstants {
-   public static final String PROPERTY_CHEF_ENDPOINT = "jclouds.chef.endpoint";
    /**
     * There are generally 3 types of identities
     * <ul>
@@ -57,14 +56,12 @@ public interface ChefConstants {
     * </ul>
     * 
     */
-   public static final String PROPERTY_CHEF_IDENTITY = "jclouds.chef.identity";
+
    /**
     * The PEM-encoded key
     */
-   public static final String PROPERTY_CHEF_RSA_KEY = "jclouds.chef.rsa-key";
 
    /**
     * how often to refresh timestamps in seconds.
     */
-   public static final String PROPERTY_CHEF_TIMESTAMP_INTERVAL = "jclouds.chef.timestamp-interval";
 }

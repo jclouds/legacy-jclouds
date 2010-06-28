@@ -18,15 +18,13 @@
  */
 package org.jclouds.rackspace.cloudfiles.reference;
 
-import org.jclouds.rackspace.reference.RackspaceConstants;
 
 /**
  * Configuration properties and constants used in Cloud Files connections.
  * 
  * @author Adrian Cole
  */
-public interface CloudFilesConstants extends RackspaceConstants {
-
+public interface CloudFilesConstants {
    /**
     * For an integer value N, limits the number of results to at most N values.
     */

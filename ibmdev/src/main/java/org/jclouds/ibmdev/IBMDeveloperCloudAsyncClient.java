@@ -60,7 +60,6 @@ import org.jclouds.ibmdev.options.CreateInstanceOptions;
 import org.jclouds.ibmdev.options.RestartInstanceOptions;
 import org.jclouds.ibmdev.xml.LocationHandler;
 import org.jclouds.ibmdev.xml.LocationsHandler;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.ParamParser;
@@ -80,10 +79,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www-180.ibm.com/cloud/enterprise/beta/support" />
  * @author Adrian Cole
  */
-@Endpoint(IBMDeveloperCloud.class)
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
+@Path(IBMDeveloperCloudAsyncClient.VERSION)
 public interface IBMDeveloperCloudAsyncClient {
+   public static final String VERSION = "20090403";
 
    /**
     * @see IBMDeveloperCloudClient#listImages()
@@ -183,10 +183,9 @@ public interface IBMDeveloperCloudAsyncClient {
    @POST
    @Path("/instances")
    @ResponseParser(GetFirstInstanceInList.class)
-   ListenableFuture<Instance> createInstanceInLocation(
-            @FormParam("location") String location, @FormParam("name") String name,
-            @FormParam("imageID") String imageID, @FormParam("instanceType") String instanceType,
-            CreateInstanceOptions... options);
+   ListenableFuture<Instance> createInstanceInLocation(@FormParam("location") String location,
+            @FormParam("name") String name, @FormParam("imageID") String imageID,
+            @FormParam("instanceType") String instanceType, CreateInstanceOptions... options);
 
    /**
     * @see IBMDeveloperCloudClient#deleteInstance

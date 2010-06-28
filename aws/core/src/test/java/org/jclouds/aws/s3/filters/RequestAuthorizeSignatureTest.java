@@ -18,35 +18,30 @@
  */
 package org.jclouds.aws.s3.filters;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.aws.s3.config.S3RestClientModule;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.Constants;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.rest.config.RestModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
 @Test(groups = "unit", testName = "s3.RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest {
 
-   private Injector injector;
    private RequestAuthorizeSignature filter;
 
    @DataProvider(parallel = true)
@@ -76,8 +71,13 @@ public class RequestAuthorizeSignatureTest {
       while (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
          date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
          filter.filter(request);
-         iterations++;
-         assertEquals(signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION));
+         if (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date))
+            assert signature.equals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION)) : String
+                     .format("sig: %s != %s on attempt %s", signature, request
+                              .getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION), iterations);
+         else
+            iterations++;
+
       }
       System.out.printf("%s: %d iterations before the timestamp updated %n", Thread.currentThread()
                .getName(), iterations);
@@ -136,19 +136,17 @@ public class RequestAuthorizeSignatureTest {
    /**
     * before class, as we need to ensure that the filter is threadsafe.
     * 
+    * @throws IOException
+    * 
     */
    @BeforeClass
-   protected void createFilter() {
-      injector = Guice.createInjector(new RestModule(), new S3RestClientModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(
-                              new S3PropertiesBuilder("foo", "bar")).build());
-                     bind(TransformingHttpCommandExecutorService.class).toInstance(
-                              createMock(TransformingHttpCommandExecutorService.class));
-                  }
-               });
+   protected void createFilter() throws IOException {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_SESSION_INTERVAL, "1");
+      Injector injector = new RestContextFactory().createContextBuilder("s3", "foo", "bar",
+               ImmutableSet.of(new MockModule(), new NullLoggingModule()), overrides)
+               .buildInjector();
+
       filter = injector.getInstance(RequestAuthorizeSignature.class);
    }
 

@@ -19,12 +19,6 @@
 package org.jclouds.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -33,14 +27,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.azure.storage.blob.AzureBlobContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContextFactory;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -51,6 +43,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -62,7 +55,7 @@ public class GetPathLiveTest {
    public static final String PROPERTY_GETPATH_CONTAINER = "jclouds.getpath.container";
    public static final String PROPERTY_GETPATH_PATH = "jclouds.getpath.path";
 
-   private ImmutableSet<BlobStoreContext> contexts;
+   private Set<BlobStoreContext> contexts;
    private String container;
    private String path;
 
@@ -83,35 +76,29 @@ public class GetPathLiveTest {
             TimeoutException {
       container = checkNotNull(System.getProperty(PROPERTY_GETPATH_CONTAINER));
       path = checkNotNull(System.getProperty(PROPERTY_GETPATH_PATH));
-      BlobStoreContext s3Context = S3ContextFactory.createContext(checkNotNull(System
-               .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
-               .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY),
-               new Log4JLoggingModule());
-      urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
-               .getProperty(PROPERTY_AWS_ACCESSKEYID), System
-               .getProperty(PROPERTY_AWS_SECRETACCESSKEY), "s3", container, path));
 
-      BlobStoreContext cfContext = CloudFilesContextFactory.createContext(checkNotNull(System
-               .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
-               PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY), new Log4JLoggingModule());
-      urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
-               .getProperty(PROPERTY_RACKSPACE_USER), System.getProperty(PROPERTY_RACKSPACE_KEY),
-               "cloudfiles", container, path));
+      contexts = Sets.newLinkedHashSet();
+      BlobStoreContextFactory factory = new BlobStoreContextFactory();
+      for (String provider : new String[] { "s3", "cloudfiles", "azureblob" }) {
+         String identity = checkNotNull(System.getProperty("jclouds.test.identity." + provider),
+                  "jclouds.test.identity." + provider);
+         String credential = checkNotNull(
+                  System.getProperty("jclouds.test.credential." + provider),
+                  "jclouds.test.credential." + provider);
 
-      BlobStoreContext azContext = AzureBlobContextFactory.createContext(checkNotNull(System
-               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
-               .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY),
-               new Log4JLoggingModule());
-      urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", System
-               .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), System
-               .getProperty(PROPERTY_AZURESTORAGE_KEY), "azureblob", container, path));
+         contexts.add(factory.createContext(provider, identity, credential, ImmutableSet
+                  .of(new Log4JLoggingModule())));
 
-      this.contexts = ImmutableSet.of(s3Context, cfContext, azContext);
+         urisToTest.add(String.format("blobstore://%s:%s@%s/%s/%s", identity, credential,
+                  provider, container, path));
+
+      }
+
       boolean deleted = false;
       for (BlobStoreContext context : contexts) {
          if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context
-                     .getProviderSpecificContext().getEndPoint());
+                     .getProviderSpecificContext().getEndpoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -122,7 +109,7 @@ public class GetPathLiveTest {
       }
       for (BlobStoreContext context : contexts) {
          System.err.printf("creating container %s at %s%n", container, context
-                  .getProviderSpecificContext().getEndPoint());
+                  .getProviderSpecificContext().getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
@@ -131,7 +118,7 @@ public class GetPathLiveTest {
       }
       for (BlobStoreContext context : contexts) {
          System.err.printf("creating directory %s in container %s at %s%n", container, path,
-                  context.getProviderSpecificContext().getEndPoint());
+                  context.getProviderSpecificContext().getEndpoint());
          context.getBlobStore().createDirectory(container, path);
       }
    }
@@ -140,7 +127,7 @@ public class GetPathLiveTest {
    protected void addFiles() {
       for (BlobStoreContext context : contexts) {
          System.err.printf("adding files to container %s at %s%n", container, context
-                  .getProviderSpecificContext().getEndPoint());
+                  .getProviderSpecificContext().getEndpoint());
          context.createInputStreamMap(container + "/" + path).putAllStrings(fiveStrings);
       }
    }

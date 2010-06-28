@@ -18,30 +18,26 @@
  */
 package org.jclouds.azure.storage.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
+import java.io.IOException;
+
 import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
 import org.jclouds.azure.storage.handlers.AzureStorageClientErrorRetryHandler;
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.rest.config.RestModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -49,24 +45,9 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "azure.RestAzureStorageClientModuleTest")
 public class AzureStorageRestClientModuleTest {
 
-   Injector createInjector() {
-      return Guice.createInjector(new AzureBlobRestClientModule(), new RestModule() {
-
-         @Override
-         protected void configure() {
-            bind(TransformingHttpCommandExecutorService.class).toInstance(
-                     createMock(TransformingHttpCommandExecutorService.class));
-            super.configure();
-         }
-
-      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(new AzureBlobPropertiesBuilder(
-                              "user", "secret").build(), "properties"));
-                  }
-               });
+   Injector createInjector() throws IOException {
+      return new RestContextFactory().createContextBuilder("azurequeue", "foo", "bar",
+               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
    }
 
    @SuppressWarnings("unchecked")
@@ -84,28 +65,28 @@ public class AzureStorageRestClientModuleTest {
    }
 
    @Test
-   void testServerErrorHandler() {
+   void testServerErrorHandler() throws IOException {
       DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
       assertEquals(handler.getServerErrorHandler().getClass(),
                ParseAzureStorageErrorFromXmlContent.class);
    }
 
    @Test
-   void testClientErrorHandler() {
+   void testClientErrorHandler() throws IOException {
       DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
       assertEquals(handler.getClientErrorHandler().getClass(),
                ParseAzureStorageErrorFromXmlContent.class);
    }
 
    @Test
-   void testClientRetryHandler() {
+   void testClientRetryHandler() throws IOException {
       DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
       assertEquals(handler.getClientErrorRetryHandler().getClass(),
                AzureStorageClientErrorRetryHandler.class);
    }
 
    @Test
-   void testRedirectionRetryHandler() {
+   void testRedirectionRetryHandler() throws IOException {
       DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
       assertEquals(handler.getRedirectionRetryHandler().getClass(), RedirectionRetryHandler.class);
    }

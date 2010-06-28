@@ -49,10 +49,6 @@ import com.google.inject.TypeLiteral;
  */
 public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
-   public BlueLockVCloudComputeServiceContextModule(String providerName) {
-      super(providerName);
-   }
-
    @Override
    protected void configure() {
       super.configure();

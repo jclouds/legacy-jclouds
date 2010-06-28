@@ -63,15 +63,9 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.lifecycle.Closer;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.HttpAsyncClient;
-import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.config.BinderUtils;
-import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
@@ -140,7 +134,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
       @Inject
       public StubSocketOpen(ConcurrentMap<Integer, StubNodeMetadata> nodes,
-            @Named("PUBLIC_IP_PREFIX") String publicIpPrefix) {
+               @Named("PUBLIC_IP_PREFIX") String publicIpPrefix) {
          this.nodes = nodes;
          this.publicIpPrefix = publicIpPrefix;
       }
@@ -157,51 +151,20 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
    }
 
-   @Provides
-   @Singleton
-   HttpClient provideClient() {
-      return BinderUtils.newNullProxy(HttpClient.class);
-   }
-
-   @Provides
-   @Singleton
-   HttpAsyncClient provideAsyncClient() {
-      return BinderUtils.newNullProxy(HttpAsyncClient.class);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Provides
-   @Singleton
-   RestContext<ConcurrentMap, ConcurrentMap> provideRestContext(Closer closer,
-         HttpClient http, HttpAsyncClient asyncHttp) {
-      return new RestContextImpl<ConcurrentMap, ConcurrentMap>(closer, http,
-            asyncHttp, nodes, nodes, URI.create("http://stub"), System
-                  .getProperty("user.name"));
-   }
-
-   // NORMAL STUFF
-   private final String providerName;
-
-   public StubComputeServiceContextModule(String providerName) {
-      this.providerName = providerName;
-   }
-
    @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
-      install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<ComputeServiceContext>() {
-      })
-            .to(
-                  new TypeLiteral<ComputeServiceContextImpl<ConcurrentMap, ConcurrentMap>>() {
-                  }).in(Scopes.SINGLETON);
+      }).to(new TypeLiteral<ComputeServiceContextImpl<ConcurrentMap, ConcurrentMap>>() {
+      }).in(Scopes.SINGLETON);
+      install(new ComputeServiceTimeoutsModule());
+      bind(ConcurrentMap.class).toInstance(nodes);
       bind(AddNodeWithTagStrategy.class).to(StubAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(StubListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(StubGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(StubRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(StubDestroyNodeStrategy.class);
-      bind(LoadBalancerService.class).toProvider(
-            Providers.<LoadBalancerService> of(null));
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
    }
 
    @Provides
@@ -217,14 +180,12 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private NodeState state;
       private final ExecutorService service;
 
-      public StubNodeMetadata(String providerId, String name, String id,
-            Location location, URI uri, Map<String, String> userMetadata,
-            String tag, Image image, NodeState state,
-            Iterable<String> publicAddresses,
-            Iterable<String> privateAddresses, Map<String, String> extra,
-            Credentials credentials, ExecutorService service) {
-         super(providerId, name, id, location, uri, userMetadata, tag, image,
-               state, publicAddresses, privateAddresses, extra, credentials);
+      public StubNodeMetadata(String providerId, String name, String id, Location location,
+               URI uri, Map<String, String> userMetadata, String tag, Image image, NodeState state,
+               Iterable<String> publicAddresses, Iterable<String> privateAddresses,
+               Map<String, String> extra, Credentials credentials, ExecutorService service) {
+         super(providerId, name, id, location, uri, userMetadata, tag, image, state,
+                  publicAddresses, privateAddresses, extra, credentials);
          this.setState(state, 0);
          this.service = service;
       }
@@ -256,8 +217,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
    }
 
    @Singleton
-   public static class StubAddNodeWithTagStrategy implements
-         AddNodeWithTagStrategy {
+   public static class StubAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       private final Location location;
       private final ExecutorService service;
       private final ConcurrentMap<Integer, StubNodeMetadata> nodes;
@@ -267,13 +227,12 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private final String passwordPrefix;
 
       @Inject
-      public StubAddNodeWithTagStrategy(
-            ConcurrentMap<Integer, StubNodeMetadata> nodes, Location location,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            @Named("NODE_ID") Provider<Integer> idProvider,
-            @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
-            @Named("PRIVATE_IP_PREFIX") String privateIpPrefix,
-            @Named("PASSWORD_PREFIX") String passwordPrefix) {
+      public StubAddNodeWithTagStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes,
+               Location location, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+               @Named("NODE_ID") Provider<Integer> idProvider,
+               @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
+               @Named("PRIVATE_IP_PREFIX") String privateIpPrefix,
+               @Named("PASSWORD_PREFIX") String passwordPrefix) {
          this.nodes = nodes;
          this.location = location;
          this.service = Executors.newCachedThreadPool();
@@ -285,16 +244,14 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         checkArgument(location.equals(template.getLocation()),
-               "invalid location: " + template.getLocation());
+         checkArgument(location.equals(template.getLocation()), "invalid location: "
+                  + template.getLocation());
          int id = idProvider.get();
-         StubNodeMetadata node = new StubNodeMetadata(id + "", name, id + "",
-               location, null, ImmutableMap.<String, String> of(), tag,
-               template.getImage(), NodeState.PENDING, ImmutableSet
-                     .<String> of(publicIpPrefix + id), ImmutableSet
-                     .<String> of(privateIpPrefix + id), ImmutableMap
-                     .<String, String> of(), new Credentials("root",
-                     passwordPrefix + id), service);
+         StubNodeMetadata node = new StubNodeMetadata(id + "", name, id + "", location, null,
+                  ImmutableMap.<String, String> of(), tag, template.getImage(), NodeState.PENDING,
+                  ImmutableSet.<String> of(publicIpPrefix + id), ImmutableSet
+                           .<String> of(privateIpPrefix + id), ImmutableMap.<String, String> of(),
+                  new Credentials("root", passwordPrefix + id), service);
          nodes.put(id, node);
          node.setState(NodeState.RUNNING, 100);
          return node;
@@ -303,13 +260,11 @@ public class StubComputeServiceContextModule extends AbstractModule {
    }
 
    @Singleton
-   public static class StubGetNodeMetadataStrategy implements
-         GetNodeMetadataStrategy {
+   public static class StubGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
       private final ConcurrentMap<Integer, StubNodeMetadata> nodes;
 
       @Inject
-      protected StubGetNodeMetadataStrategy(
-            ConcurrentMap<Integer, StubNodeMetadata> nodes) {
+      protected StubGetNodeMetadataStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes) {
          this.nodes = nodes;
       }
 
@@ -324,8 +279,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private final ConcurrentMap<Integer, StubNodeMetadata> nodes;
 
       @Inject
-      protected StubListNodesStrategy(
-            ConcurrentMap<Integer, StubNodeMetadata> nodes) {
+      protected StubListNodesStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes) {
          this.nodes = nodes;
       }
 
@@ -336,7 +290,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
       @Override
       public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
-            Predicate<ComputeMetadata> filter) {
+               Predicate<ComputeMetadata> filter) {
          return Iterables.filter(nodes.values(), filter);
       }
    }
@@ -346,8 +300,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private final ConcurrentMap<Integer, StubNodeMetadata> nodes;
 
       @Inject
-      protected StubRebootNodeStrategy(
-            ConcurrentMap<Integer, StubNodeMetadata> nodes) {
+      protected StubRebootNodeStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes) {
          this.nodes = nodes;
       }
 
@@ -368,9 +321,8 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private final ExecutorService service;
 
       @Inject
-      protected StubDestroyNodeStrategy(
-            ConcurrentMap<Integer, StubNodeMetadata> nodes,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
+      protected StubDestroyNodeStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes,
+               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service) {
          this.nodes = nodes;
          this.service = service;
       }
@@ -412,45 +364,40 @@ public class StubComputeServiceContextModule extends AbstractModule {
    @Singleton
    protected Set<? extends Size> provideSizes() {
       return ImmutableSet.of(new StubSize("small", 1, 1740, 160, ImmutableSet
-            .of(Architecture.X86_32)), new StubSize("medium", 4, 7680, 850,
-            ImmutableSet.of(Architecture.X86_64)), new StubSize("large", 8,
-            15360, 1690, ImmutableSet.of(Architecture.X86_64)));
+               .of(Architecture.X86_32)), new StubSize("medium", 4, 7680, 850, ImmutableSet
+               .of(Architecture.X86_64)), new StubSize("large", 8, 15360, 1690, ImmutableSet
+               .of(Architecture.X86_64)));
    }
 
-   private static class StubSize extends
-         org.jclouds.compute.domain.internal.SizeImpl {
+   private static class StubSize extends org.jclouds.compute.domain.internal.SizeImpl {
       /** The serialVersionUID */
       private static final long serialVersionUID = -1842135761654973637L;
 
       StubSize(String type, int cores, int ram, int disk,
-            Iterable<Architecture> supportedArchitectures) {
-         super(type, type, type, null, null,
-               ImmutableMap.<String, String> of(), cores, ram, disk,
-               architectureIn(supportedArchitectures));
+               Iterable<Architecture> supportedArchitectures) {
+         super(type, type, type, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
+                  architectureIn(supportedArchitectures));
       }
    }
 
    @Provides
    @Singleton
    protected Set<? extends Image> provideImages(Location defaultLocation) {
-      return ImmutableSet.of(new ImageImpl("1", OsFamily.UBUNTU.name(), "1",
-            defaultLocation, null, ImmutableMap.<String, String> of(),
-            "stub ubuntu 32", "", OsFamily.UBUNTU, "ubuntu 64",
-            Architecture.X86_64, new Credentials("root", null)), new ImageImpl(
-            "2", OsFamily.UBUNTU.name(), "2", defaultLocation, null,
-            ImmutableMap.<String, String> of(), "stub ubuntu 64", "",
-            OsFamily.UBUNTU, "ubuntu 64", Architecture.X86_64, new Credentials(
-                  "root", null)), new ImageImpl("3", OsFamily.CENTOS.name(),
-            "3", defaultLocation, null, ImmutableMap.<String, String> of(),
-            "stub centos 64", "", OsFamily.CENTOS, "centos 64",
-            Architecture.X86_64, new Credentials("root", null)));
+      return ImmutableSet.of(new ImageImpl("1", OsFamily.UBUNTU.name(), "1", defaultLocation, null,
+               ImmutableMap.<String, String> of(), "stub ubuntu 32", "", OsFamily.UBUNTU,
+               "ubuntu 64", Architecture.X86_64, new Credentials("root", null)), new ImageImpl("2",
+               OsFamily.UBUNTU.name(), "2", defaultLocation, null, ImmutableMap
+                        .<String, String> of(), "stub ubuntu 64", "", OsFamily.UBUNTU, "ubuntu 64",
+               Architecture.X86_64, new Credentials("root", null)), new ImageImpl("3",
+               OsFamily.CENTOS.name(), "3", defaultLocation, null, ImmutableMap
+                        .<String, String> of(), "stub centos 64", "", OsFamily.CENTOS, "centos 64",
+               Architecture.X86_64, new Credentials("root", null)));
    }
 
    @Provides
    @Singleton
-   Location getLocation() {
-      Location provider = new LocationImpl(LocationScope.PROVIDER,
-            providerName, providerName, null);
+   Location getLocation(@org.jclouds.rest.annotations.Provider String providerName) {
+      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       return new LocationImpl(LocationScope.ZONE, "memory", "memory", provider);
    }
 

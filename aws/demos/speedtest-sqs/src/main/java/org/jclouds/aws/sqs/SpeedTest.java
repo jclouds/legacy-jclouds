@@ -33,11 +33,13 @@ import org.jclouds.logging.ConsoleLogger;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Module;
 
 /**
  * This the Main class of an Application that tests your response time to amazon SQS.
@@ -81,10 +83,12 @@ public class SpeedTest {
       String queueName = args[2];
       int messageCount = Integer.parseInt(args[3]);
 
-      RestContext<SQSClient, SQSAsyncClient> context = isEnterprise ? SQSContextFactory
-               .createContext(accesskeyid, secretkey, new NullLoggingModule(),
-                        new EnterpriseConfigurationModule()) : SQSContextFactory.createContext(
-               accesskeyid, secretkey, new NullLoggingModule());
+      Set<Module> modules = isEnterprise ? ImmutableSet.<Module> of(new NullLoggingModule(),
+               new EnterpriseConfigurationModule()) : ImmutableSet
+               .<Module> of(new NullLoggingModule());
+
+      RestContext<SQSClient, SQSAsyncClient> context = new RestContextFactory().createContext(
+               "sqs", accesskeyid, secretkey, modules);
 
       try {
          Set<Queue> queues = Sets.newHashSet();

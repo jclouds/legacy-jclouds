@@ -22,12 +22,12 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.s3.S3;
+import org.jclouds.aws.Region;
+import org.jclouds.aws.config.DefaultLocationProvider;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.S3BlobStore;
-import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -37,10 +37,10 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.rest.annotations.Provider;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -50,17 +50,12 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class S3BlobStoreContextModule extends S3ContextModule {
-   private final String providerName;
-
-   public S3BlobStoreContextModule(String providerName) {
-      this.providerName = providerName;
-   }
+public class S3BlobStoreContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      super.configure();
       install(new BlobStoreMapModule());
+      bind(Location.class).toProvider(DefaultLocationProvider.class).in(Scopes.SINGLETON);
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
@@ -71,20 +66,8 @@ public class S3BlobStoreContextModule extends S3ContextModule {
 
    @Provides
    @Singleton
-   Location getDefaultLocation(@S3 final String region, Set<? extends Location> locations) {
-      return Iterables.find(locations, new Predicate<Location>() {
-
-         @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(region);
-         }
-
-      });
-   }
-
-   @Provides
-   @Singleton
-   Set<? extends Location> provideLocations(@S3 Set<String> regions) {
+   Set<? extends Location> provideLocations(@Region Set<String> regions,
+            @Provider String providerName) {
       Set<Location> locations = Sets.newHashSet();
       Location s3 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (String zone : regions) {

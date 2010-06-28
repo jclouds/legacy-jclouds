@@ -75,13 +75,13 @@ See http://code.google.com/p/jclouds for details."
 
 (defn compute-service
   "Create a logged in context."
-  ([#^String service #^String account #^String key & options]
+  ([#^String service #^String principal #^String credential  & options]
      (let [module-keys (set (keys module-lookup))
            ext-modules (filter #(module-keys %) options)
            opts (apply hash-map (filter #(not (module-keys %)) options))]
        (.. (ComputeServiceContextFactory.)
            (createContext
-            service account key
+            service principal credential 
             (apply modules (concat ext-modules (opts :extensions)))
             (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
                     (Properties.) (dissoc opts :extensions)))

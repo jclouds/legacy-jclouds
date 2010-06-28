@@ -44,11 +44,13 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    private final RestContext<S, A> providerSpecificContext;
    private final ConsistencyModel consistencyModel;
 
+   @SuppressWarnings("unchecked")
    @Inject
    public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore,
-            BlobStore blobStore, RestContext<S, A> providerSpecificContext) {
-      this.providerSpecificContext = providerSpecificContext;
+            BlobStore blobStore, RestContext providerSpecificContext) {
+      // unravel guice and avoid passing in a million type args
+      this.providerSpecificContext = checkNotNull(providerSpecificContext, "providerSpecificContext");
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");

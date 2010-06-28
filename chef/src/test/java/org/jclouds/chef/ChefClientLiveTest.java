@@ -30,17 +30,21 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code ChefClient}
@@ -63,42 +67,39 @@ public class ChefClientLiveTest {
    private byte[] cookbookContent;
    private File cookbookFile;
 
-   public static final String PREFIX = System.getProperty("user.name")
-         + "-jcloudstest";
+   public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
 
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-            "jclouds.test.endpoint");
+      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
       validator = System.getProperty("jclouds.test.validator");
       if (validator == null || validator.equals(""))
          validator = "chef-validator";
       String validatorKey = System.getProperty("jclouds.test.validator.key");
       if (validatorKey == null || validatorKey.equals(""))
-         validatorKey = System.getProperty("user.home")
-               + "/.chef/validation.pem";
+         validatorKey = System.getProperty("user.home") + "/.chef/validation.pem";
       user = checkNotNull(System.getProperty("jclouds.test.user"));
       String keyfile = System.getProperty("jclouds.test.key");
       if (keyfile == null || keyfile.equals(""))
          keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
-      validatorConnection = createConnection(validator, Files.toString(
-            new File(validatorKey), Charsets.UTF_8));
-      adminConnection = createConnection(user, Files.toString(
-            new File(keyfile), Charsets.UTF_8));
+      validatorConnection = createConnection(validator, Files.toString(new File(validatorKey),
+               Charsets.UTF_8));
+      adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
    }
 
-   private RestContext<ChefClient, ChefAsyncClient> createConnection(
-         String identity, String key) throws IOException {
-      return ChefContextFactory.createContext(URI.create(endpoint), identity,
-            key, new Log4JLoggingModule());
+   private RestContext<ChefClient, ChefAsyncClient> createConnection(String identity, String key)
+            throws IOException {
+      Properties props = new Properties();
+      props.setProperty("chef.endpoint", endpoint);
+      return new RestContextFactory().createContext("chef", identity, key, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), props);
    }
 
    @Test
    public void testListClients() throws Exception {
       Set<String> clients = validatorConnection.getApi().listClients();
       assertNotNull(clients);
-      assert clients.contains(validator) : "validator: " + validator
-            + " not in: " + clients;
+      assert clients.contains(validator) : "validator: " + validator + " not in: " + clients;
    }
 
    @Test(dependsOnMethods = "testListClients")
@@ -140,8 +141,7 @@ public class ChefClientLiveTest {
 
          adminConnection.getApi().createCookbook(COOKBOOK_NAME, cookbookFile);
          adminConnection.getApi().deleteCookbook(COOKBOOK_NAME);
-         adminConnection.getApi()
-               .createCookbook(COOKBOOK_NAME, cookbookContent);
+         adminConnection.getApi().createCookbook(COOKBOOK_NAME, cookbookContent);
 
       } finally {
          if (in != null)

@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -72,6 +73,7 @@ public class ExecutorServiceModule extends AbstractModule {
    private final ExecutorService userExecutorFromConstructor;
    private final ExecutorService ioExecutorFromConstructor;
 
+   @Inject
    public ExecutorServiceModule(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {

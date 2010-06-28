@@ -31,7 +31,6 @@ import java.util.Properties;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
@@ -43,18 +42,17 @@ import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
-import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -71,7 +69,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -91,7 +89,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { maxResults(1).marker("marker").prefix("prefix") });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assert httpMethod.getEndpoint().getQuery().contains("comp=list");
       assert httpMethod.getEndpoint().getQuery().contains("marker=marker");
@@ -114,7 +112,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -135,7 +133,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
@@ -157,7 +155,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container",
                         withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -182,7 +180,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -203,7 +201,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
@@ -224,7 +222,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -249,7 +247,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=list");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -269,7 +267,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=list");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -288,7 +286,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.HEAD);
@@ -308,7 +306,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container", ImmutableMap.of("key", "value") });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=metadata");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -331,7 +329,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
                String.class, Map.class);
       GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container", "blob", ImmutableMap.of("key", "value") });
-      assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
+      assertEquals(httpMethod.getEndpoint().getHost(), "identity.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/blob");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=metadata");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -362,16 +360,8 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
    }
 
    @Override
-   protected Module createModule() {
-      return new AzureBlobRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new AzureBlobPropertiesBuilder(new Properties())
-                     .withCredentials("myaccount", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-      };
+   public ContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec("azureblob", "identity", "credential",
+               new Properties());
    }
 }

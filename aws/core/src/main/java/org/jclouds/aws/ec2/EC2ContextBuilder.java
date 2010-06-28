@@ -18,16 +18,26 @@
  */
 package org.jclouds.aws.ec2;
 
+import static com.google.common.base.Predicates.instanceOf;
+
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Properties;
+
 
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.aws.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.concurrent.config.ConfiguresExecutorService;
+import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -46,8 +56,8 @@ import com.google.inject.Module;
  */
 public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, EC2AsyncClient> {
 
-   public EC2ContextBuilder(String providerName, Properties props) {
-      super(providerName, EC2Client.class, EC2AsyncClient.class, props);
+   public EC2ContextBuilder(Properties props) {
+      super(EC2Client.class, EC2AsyncClient.class, props);
    }
 
    @Override
@@ -56,8 +66,8 @@ public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, E
    }
 
    @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new EC2ComputeServiceContextModule(providerName));
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new EC2ComputeServiceContextModule());
    }
 
    @Override
@@ -68,5 +78,24 @@ public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, E
    @Override
    protected void addImageResolutionModule() {
       modules.add(new EC2ResolveImagesModule());
+   }
+
+   @Override
+   public Injector buildInjector() {
+      try {
+         Iterables.find(modules, Predicates.instanceOf(ConfigureELBModule.class));
+      } catch (NoSuchElementException e) {
+         Iterable<Module> infra = Iterables.filter(modules, new Predicate<Module>() {
+            public boolean apply(Module input) {
+               return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class)
+                        || input.getClass().isAnnotationPresent(
+                                 ConfiguresHttpCommandExecutorService.class)
+                        || instanceOf(LoggingModule.class).apply(input);
+            }
+
+         });
+         modules.add(new ConfigureELBModule(infra, properties));
+      }
+      return super.buildInjector();
    }
 }

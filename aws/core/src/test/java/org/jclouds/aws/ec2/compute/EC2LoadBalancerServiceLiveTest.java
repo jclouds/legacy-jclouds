@@ -25,14 +25,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.domain.ElasticLoadBalancer;
-import org.jclouds.aws.ec2.services.ElasticLoadBalancerClient;
+import org.jclouds.aws.elb.ELBAsyncClient;
+import org.jclouds.aws.elb.ELBClient;
+import org.jclouds.aws.elb.domain.LoadBalancer;
 import org.jclouds.compute.BaseLoadBalancerServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -40,6 +47,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "ec2.EC2LoadBalancerServiceLiveTest")
 public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveTest {
+
+   private RestContext<ELBClient, ELBAsyncClient> elbContext;
 
    @BeforeClass
    @Override
@@ -52,21 +61,31 @@ public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       return new JschSshClientModule();
    }
 
+   @BeforeGroups(groups = { "live" })
+   public void setupELBClient()  {
+      elbContext = new RestContextFactory().createContext("elb", user, password,
+               ImmutableSet.of(new Log4JLoggingModule()));
+   }
+
+   @AfterGroups(groups = { "live" })
+   public void tearDownELBClient() {
+      if (elbContext != null)
+         elbContext.close();
+   }
+
    @Override
    protected void validateNodesInLoadBalancer() {
       // TODO create a LoadBalancer object and an appropriate list method so that this
       // does not have to be EC2 specific code
-      ElasticLoadBalancerClient elbClient = EC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getElasticLoadBalancerServices();
+      ELBClient elbClient = elbContext.getApi();
 
       Set<String> instanceIds = new HashSet<String>();
       for (NodeMetadata node : nodes) {
          instanceIds.add(node.getProviderId());
       }
-      Set<ElasticLoadBalancer> elbs = elbClient
-               .describeLoadBalancersInRegion(Region.US_EAST_1, tag);
+      Set<LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(Region.US_EAST_1, tag);
       assertNotNull(elbs);
-      ElasticLoadBalancer elb = elbs.iterator().next();
+      LoadBalancer elb = elbs.iterator().next();
       assertEquals(elb.getInstanceIds(), instanceIds);
    }
 

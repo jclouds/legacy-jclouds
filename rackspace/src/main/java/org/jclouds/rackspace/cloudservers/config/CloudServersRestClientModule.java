@@ -26,8 +26,11 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
+import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
+
+import com.google.inject.Module;
 
 /**
  * 
@@ -38,10 +41,23 @@ import org.jclouds.rest.config.RestClientModule;
 public class CloudServersRestClientModule extends
          RestClientModule<CloudServersClient, CloudServersAsyncClient> {
 
+   private Module authModule;
+
    public CloudServersRestClientModule() {
-      super(CloudServersClient.class, CloudServersAsyncClient.class);
+      this(new RackspaceAuthenticationRestModule());
    }
 
+   public CloudServersRestClientModule(Module authModule) {
+      super(CloudServersClient.class, CloudServersAsyncClient.class);
+      this.authModule = authModule;
+   }
+
+   @Override
+   protected void configure() {
+      install(authModule);
+      super.configure();
+   }
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
@@ -51,4 +67,5 @@ public class CloudServersRestClientModule extends
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
                ParseCloudServersErrorFromHttpResponse.class);
    }
+
 }

@@ -18,14 +18,11 @@
  */
 package org.jclouds.aws.ec2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.ec2.reference.EC2Constants.*;
-import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_ENDPOINT;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_EXPIREINTERVAL;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_ELB_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -39,17 +36,18 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_EC2_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_API_VERSION, EC2AsyncClient.VERSION);
       properties.setProperty(PROPERTY_ELB_ENDPOINT,
                "https://elasticloadbalancing.us-east-1.amazonaws.com");
-      properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, "60");
       // alestic, canonical, and rightscale
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477,411009282317");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
       properties.setProperty("jclouds.ssh.max_retries", "6");
-      properties.setProperty("jclouds.ssh.retryable_messages",
-               "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
+      properties
+               .setProperty("jclouds.ssh.retryable_messages",
+                        "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
       return properties;
    }
 
@@ -57,25 +55,7 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   public EC2PropertiesBuilder(String id, String secret) {
+   public EC2PropertiesBuilder() {
       super();
-      withCredentials(id, secret);
-   }
-
-   public EC2PropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(id, "awsAccessKeyId"));
-      properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(secret,
-               "awsSecretAccessKey"));
-      return this;
-   }
-
-   public EC2PropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_EC2_ENDPOINT, checkNotNull(endpoint, "endpoint").toString());
-      return this;
-   }
-
-   public EC2PropertiesBuilder withRequestExpiration(long seconds) {
-      properties.setProperty(PROPERTY_AWS_EXPIREINTERVAL, seconds + "");
-      return this;
    }
 }

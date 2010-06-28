@@ -66,7 +66,7 @@ import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
-import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.encryption.EncryptionService;
@@ -111,7 +111,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             ConcurrentMap<String, Location> containerToLocation,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory,
-            BlobStoreUtils blobUtils,
+            BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
             Location defaultLocation, Set<Location> locations) {
       super(context, blobUtils, service, defaultLocation, locations);

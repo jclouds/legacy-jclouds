@@ -20,19 +20,21 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Properties;
+
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.compute.VCloudComputeClientLiveTest;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
-import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudContextBuilder;
-import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.internal.ImmutableMap;
 
@@ -49,9 +51,10 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
    public void setupClient() {
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new HostingDotComVCloudContextBuilder("hostingdotcom",
-               new HostingDotComVCloudPropertiesBuilder(account, key).build()).withModules(
-               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+      Injector injector = new RestContextFactory().createContextBuilder("hostingdotcom", account,
+               key, ImmutableSet.<Module> of(new Log4JLoggingModule()), new Properties())
+               .buildInjector();
+
       computeClient = injector.getInstance(HostingDotComVCloudComputeClient.class);
       client = injector.getInstance(HostingDotComVCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<String>>() {

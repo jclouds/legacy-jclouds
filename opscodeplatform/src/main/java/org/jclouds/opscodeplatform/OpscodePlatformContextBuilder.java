@@ -23,13 +23,9 @@
  */
 package org.jclouds.opscodeplatform;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.opscodeplatform.config.OpscodePlatformContextModule;
 import org.jclouds.opscodeplatform.config.OpscodePlatformRestClientModule;
 import org.jclouds.rest.RestContextBuilder;
 
@@ -39,21 +35,16 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class OpscodePlatformContextBuilder extends RestContextBuilder<OpscodePlatformClient, OpscodePlatformAsyncClient> {
+public class OpscodePlatformContextBuilder extends
+         RestContextBuilder<OpscodePlatformClient, OpscodePlatformAsyncClient> {
 
-   public OpscodePlatformContextBuilder(String providerName, Properties props) {
-      super(providerName, OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, props);
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_IDENTITY));
-      checkNotNull(properties.getProperty(ChefConstants.PROPERTY_CHEF_RSA_KEY));
+   public OpscodePlatformContextBuilder(Properties props) {
+      super(OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, props);
+
    }
 
    protected void addClientModule(List<Module> modules) {
       modules.add(new OpscodePlatformRestClientModule());
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new OpscodePlatformContextModule(providerName));
    }
 
 }

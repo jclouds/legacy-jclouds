@@ -18,16 +18,11 @@
  */
 package org.jclouds.atmosonline.saas.config;
 
-import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT;
-import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL;
-
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
-import javax.inject.Singleton;
 
-import org.jclouds.atmosonline.saas.AtmosStorage;
+import org.jclouds.Constants;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
@@ -41,6 +36,8 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -63,15 +60,9 @@ public class AtmosStorageRestClientModule extends
 
    @Override
    protected void configure() {
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       install(new AtmosObjectModule());
       super.configure();
-   }
-
-   @Provides
-   @Singleton
-   @AtmosStorage
-   protected URI provideAuthenticationURI(@Named(PROPERTY_EMCSAAS_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
    }
 
    @Provides
@@ -85,7 +76,7 @@ public class AtmosStorageRestClientModule extends
     */
    @Provides
    @TimeStamp
-   Supplier<String> provideTimeStampCache(@Named(PROPERTY_EMCSAAS_SESSIONINTERVAL) long seconds,
+   Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
             final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {

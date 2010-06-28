@@ -227,7 +227,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          //securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(null, tag);
+         keyPairClient.createKeyPairInRegion(null, tag);
 
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1,
                options);

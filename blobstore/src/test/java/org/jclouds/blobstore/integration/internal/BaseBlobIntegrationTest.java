@@ -23,6 +23,7 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagMatches;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifModifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
+import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -46,7 +47,6 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.EncryptionService.MD5InputStreamResult;
 import org.jclouds.encryption.internal.JCEEncryptionService;
@@ -255,13 +255,12 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          addObjectAndValidateContent(containerName, key);
          Blob object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5));
-         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object1), TEST_STRING
-                  .substring(0, 6));
+         assertEquals(getContentAsStringOrNullAndClose(object1), TEST_STRING.substring(0, 6));
 
          Blob object2 = context.getBlobStore().getBlob(containerName, key,
                   range(6, TEST_STRING.length()));
-         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object2), TEST_STRING
-                  .substring(6, TEST_STRING.length()));
+         assertEquals(getContentAsStringOrNullAndClose(object2), TEST_STRING.substring(6,
+                  TEST_STRING.length()));
       } finally {
          returnContainer(containerName);
       }
@@ -278,7 +277,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          Blob object = context.getBlobStore().getBlob(containerName, key,
                   range(0, 5).range(6, TEST_STRING.length()));
 
-         assertEquals(BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object), TEST_STRING);
+         assertEquals(getContentAsStringOrNullAndClose(object), TEST_STRING);
       } finally {
          returnContainer(containerName);
       }
@@ -421,7 +420,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          assertNotNull(context.getBlobStore().putBlob(containerName, object));
          object = context.getBlobStore().getBlob(containerName, object.getMetadata().getName());
-         String returnedString = BlobStoreUtilsImpl.getContentAsStringOrNullAndClose(object);
+         String returnedString = getContentAsStringOrNullAndClose(object);
          assertEquals(returnedString, realObject);
          PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
          assert set.size() == 1 : set;

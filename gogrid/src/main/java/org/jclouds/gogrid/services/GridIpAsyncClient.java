@@ -27,12 +27,11 @@ import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import org.jclouds.gogrid.GoGrid;
+import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseIpListFromJsonResponse;
 import org.jclouds.gogrid.options.GetIpListOptions;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -44,9 +43,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Oleksiy Yarmula
  */
-@Endpoint(GoGrid.class)
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = "1.3")
+@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
 public interface GridIpAsyncClient {
 
    /**

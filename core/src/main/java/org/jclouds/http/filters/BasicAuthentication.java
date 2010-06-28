@@ -19,10 +19,14 @@
 package org.jclouds.http.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -45,7 +49,9 @@ public class BasicAuthentication implements HttpRequestFilter {
 
    private final Set<String> credentialList;
 
-   public BasicAuthentication(String user, String password, EncryptionService encryptionService)
+   @Inject
+   BasicAuthentication(@Named(PROPERTY_IDENTITY) String user,
+            @Named(PROPERTY_CREDENTIAL) String password, EncryptionService encryptionService)
             throws UnsupportedEncodingException {
       this.credentialList = ImmutableSet.of("Basic "
                + encryptionService.toBase64String(String.format("%s:%s",

@@ -18,7 +18,6 @@
  */
 package org.jclouds.gae.config;
 
-import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -31,12 +30,12 @@ import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.name.Names;
 
 /**
  * Tests the ability to configure a {@link GoogleAppEngineConfigurationModule}
@@ -47,15 +46,7 @@ import com.google.inject.Key;
 public class GoogleAppEngineConfigurationModuleTest {
 
    public void testConfigureBindsClient() {
-      final Properties properties = new PropertiesBuilder() {
-         public PropertiesBuilder withEndpoint(URI endpoint) {
-            return null;
-         }
-
-         public PropertiesBuilder withCredentials(String account, String key) {
-            return null;
-         }
-      }.build();
+      final Properties properties = new PropertiesBuilder().build();
 
       Injector i = Guice.createInjector(new GoogleAppEngineConfigurationModule() {
          @Override

@@ -24,7 +24,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URI;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,7 +32,6 @@ import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -47,7 +46,6 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -153,24 +151,7 @@ public class BackoffLimitedRetryHandlerTest {
    }
 
    private final RestAnnotationProcessor<IntegrationTestAsyncClient> processor = BaseJettyTest
-            .newBuilder(8100, new PropertiesBuilder() {
-
-               @Override
-               public PropertiesBuilder withCredentials(String account, String key) {
-                  return null;
-               }
-
-               @Override
-               public PropertiesBuilder withEndpoint(URI endpoint) {
-                  return null;
-               }
-            }.build(), new AbstractModule() {
-
-               @Override
-               protected void configure() {
-
-               }
-            })
+            .newBuilder(8100, new Properties())
             .buildInjector()
             .getInstance(
                      Key

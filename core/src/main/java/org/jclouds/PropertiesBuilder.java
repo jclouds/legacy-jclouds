@@ -18,7 +18,10 @@
  */
 package org.jclouds;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
@@ -26,17 +29,21 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTION_REUSE;
 import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
 import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
 import static org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_PROVIDER;
 import static org.jclouds.Constants.PROPERTY_PROXY_HOST;
 import static org.jclouds.Constants.PROPERTY_PROXY_PASSWORD;
 import static org.jclouds.Constants.PROPERTY_PROXY_PORT;
 import static org.jclouds.Constants.PROPERTY_PROXY_SYSTEM;
 import static org.jclouds.Constants.PROPERTY_PROXY_USER;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
-import java.net.URI;
 import java.util.Properties;
+
+import javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -45,7 +52,7 @@ import com.google.common.annotations.VisibleForTesting;
  * 
  * @author Adrian Cole, Andrew Newdigate
  */
-public abstract class PropertiesBuilder {
+public class PropertiesBuilder {
 
    /**
     * @see org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME
@@ -194,6 +201,7 @@ public abstract class PropertiesBuilder {
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
       props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
       props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
+      props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
       return props;
    }
 
@@ -202,9 +210,32 @@ public abstract class PropertiesBuilder {
       this.properties.putAll(properties);
    }
 
-   public abstract PropertiesBuilder withEndpoint(URI endpoint);
+   public PropertiesBuilder provider(String providerName) {
+      properties.setProperty(PROPERTY_PROVIDER, providerName);
+      return this;
+   }
 
-   public abstract PropertiesBuilder withCredentials(String account, String key);
+   public PropertiesBuilder endpoint(String endpoint) {
+      properties.setProperty(PROPERTY_ENDPOINT, endpoint);
+      return this;
+   }
+
+   public PropertiesBuilder apiVersion(String apiVersion) {
+      properties.setProperty(PROPERTY_API_VERSION, apiVersion);
+      return this;
+   }
+
+   public PropertiesBuilder credentials(String identity, @Nullable String credential) {
+      properties.setProperty(PROPERTY_IDENTITY, identity);
+      if (credential != null)
+         properties.setProperty(PROPERTY_CREDENTIAL, credential);
+      return this;
+   }
+
+   public PropertiesBuilder sessionInterval(long seconds) {
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, seconds + "");
+      return this;
+   }
 
    @VisibleForTesting
    public Properties build() {

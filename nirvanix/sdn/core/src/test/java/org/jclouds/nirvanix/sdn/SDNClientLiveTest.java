@@ -32,10 +32,14 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SDNClient}
@@ -50,17 +54,17 @@ public class SDNClientLiveTest {
 
    URI container1;
    URI container2;
+   private RestContext<SDNClient, SDNAsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String appname = checkNotNull(System.getProperty("jclouds.test.appname"),
-               "jclouds.test.appname");
-      String appid = checkNotNull(System.getProperty("jclouds.test.appid"), "jclouds.test.appid");
+
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = new SDNContextBuilder("nirvanix", new SDNPropertiesBuilder(appid, appname, user,
-               password).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
+      this.context = new RestContextFactory().createContext("sdn", user, password, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
+      this.connection = context.getApi();
    }
 
    public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException {

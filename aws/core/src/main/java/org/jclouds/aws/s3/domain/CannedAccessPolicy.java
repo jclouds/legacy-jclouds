@@ -45,19 +45,19 @@ public enum CannedAccessPolicy {
      */
     PRIVATE("private"),
     /**
-     * Owner gets FULL_CONTROL and the anonymous principal is granted READ
+     * Owner gets FULL_CONTROL and the anonymous identity is granted READ
      * access. If this policy is used on an object, it can be read from a
      * browser with no authentication.
      */
     PUBLIC_READ("public-read"),
     /**
-     * Owner gets FULL_CONTROL, the anonymous principal is granted READ and
+     * Owner gets FULL_CONTROL, the anonymous identity is granted READ and
      * WRITE access. This can be a useful policy to apply to a bucket, but is
      * generally not recommended.
      */
     PUBLIC_READ_WRITE("public-read-write"),
     /**
-     * Owner gets FULL_CONTROL, and any principal authenticated as a registered
+     * Owner gets FULL_CONTROL, and any identity authenticated as a registered
      * Amazon S3 user is granted READ access.
      */
     AUTHENTICATED_READ("authenticated-read");

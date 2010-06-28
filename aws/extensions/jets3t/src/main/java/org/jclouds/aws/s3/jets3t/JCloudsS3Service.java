@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -35,6 +34,7 @@ import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.http.options.GetOptions;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -46,6 +46,7 @@ import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Module;
 
 /**
@@ -74,8 +75,8 @@ public class JCloudsS3Service extends S3Service {
    protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
             throws S3ServiceException {
       super(awsCredentials);
-      context = S3ContextFactory.createContext(awsCredentials.getAccessKey(), awsCredentials
-               .getSecretKey(), modules);
+      context = new BlobStoreContextFactory().createContext("s3", awsCredentials.getAccessKey(),
+               awsCredentials.getSecretKey(), ImmutableList.<Module> copyOf(modules));
       connection = (S3Client) context.getProviderSpecificContext().getApi();
    }
 

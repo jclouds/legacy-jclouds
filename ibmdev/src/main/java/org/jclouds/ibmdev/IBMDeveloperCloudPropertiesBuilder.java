@@ -23,14 +23,11 @@
  */
 package org.jclouds.ibmdev;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_RUNNING;
-import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT;
 import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_LOCATION;
-import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_PASSWORD;
-import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_USER;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -44,11 +41,11 @@ public class IBMDeveloperCloudPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT,
-            "https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403");
+      properties.setProperty(PROPERTY_API_VERSION, IBMDeveloperCloudAsyncClient.VERSION);
+      properties.setProperty(PROPERTY_ENDPOINT,
+               "https://www-180.ibm.com/cloud/enterprise/beta/api/rest");
       properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_LOCATION, "1");
-      properties.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, (15 * 60 * 1000)
-            + "");
+      properties.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, (15 * 60 * 1000) + "");
       return properties;
    }
 
@@ -56,23 +53,4 @@ public class IBMDeveloperCloudPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   public IBMDeveloperCloudPropertiesBuilder(String id, String secret) {
-      super();
-      withCredentials(id, secret);
-   }
-
-   public IBMDeveloperCloudPropertiesBuilder withCredentials(String id,
-         String secret) {
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_USER, checkNotNull(id,
-            "user"));
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_PASSWORD, checkNotNull(
-            secret, "password"));
-      return this;
-   }
-
-   public IBMDeveloperCloudPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_ENDPOINT, checkNotNull(
-            endpoint, "endpoint").toString());
-      return this;
-   }
 }

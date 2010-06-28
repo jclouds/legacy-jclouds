@@ -18,29 +18,26 @@
  */
 package org.jclouds.aws.s3.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+
+import java.io.IOException;
+import java.util.Properties;
 
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.aws.s3.S3PropertiesBuilder;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -48,24 +45,11 @@ import com.google.inject.name.Names;
 @Test(groups = "unit", testName = "s3.S3RestClientModuleTest")
 public class S3RestClientModuleTest {
 
-   Injector createInjector() {
-      return Guice.createInjector(new S3RestClientModule(), new RestModule() {
+   Injector createInjector() throws IOException {
+      return new RestContextFactory().createContextBuilder("s3", "foo", "bar",
+               ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties())
+               .buildInjector();
 
-         @Override
-         protected void configure() {
-            bind(TransformingHttpCommandExecutorService.class).toInstance(
-                     createMock(TransformingHttpCommandExecutorService.class));
-            super.configure();
-         }
-
-      }, new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(new S3PropertiesBuilder("user",
-                              "key").build(), "properties"));
-                  }
-               });
    }
 
    @Test
@@ -82,26 +66,26 @@ public class S3RestClientModuleTest {
    }
 
    @Test
-   void testServerErrorHandler() {
+   void testServerErrorHandler() throws IOException {
       DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
       assertEquals(handler.getServerErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
    @Test
-   void testClientErrorHandler() {
+   void testClientErrorHandler() throws IOException {
       DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
       assertEquals(handler.getClientErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
    @Test
-   void testClientRetryHandler() {
+   void testClientRetryHandler() throws IOException {
       DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
       assertEquals(handler.getClientErrorRetryHandler().getClass(),
                AWSClientErrorRetryHandler.class);
    }
 
    @Test
-   void testRedirectionRetryHandler() {
+   void testRedirectionRetryHandler() throws IOException {
       DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
       assertEquals(handler.getRedirectionRetryHandler().getClass(),
                AWSRedirectionRetryHandler.class);

@@ -18,29 +18,23 @@
  */
 package org.jclouds.vcloud;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Properties;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.VCloudVersionsLiveTest.VCloudVersionsClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code VCloudVersions}
@@ -48,18 +42,13 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudVersionsTest")
-public class VCloudVersionsTest extends
-      RestClientTest<VCloudVersionsAsyncClient> {
+public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient> {
 
-   public void testLogin() throws SecurityException, NoSuchMethodException,
-         IOException {
-      Method method = VCloudVersionsAsyncClient.class
-            .getMethod("getSupportedVersions");
-      GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod = processor
-            .createRequest(method);
+   public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions");
+      GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod = processor.createRequest(method);
 
-      assertEquals(httpMethod.getRequestLine(),
-            "GET http://localhost:8080/versions HTTP/1.1");
+      assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
 
@@ -71,8 +60,7 @@ public class VCloudVersionsTest extends
    }
 
    @Override
-   protected void checkFilters(
-         GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 0);
    }
 
@@ -83,23 +71,9 @@ public class VCloudVersionsTest extends
    }
 
    @Override
-   protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), checkNotNull(
-                  new VCloudPropertiesBuilder(new Properties()).build(),
-                  "properties"));
-            bind(URI.class).annotatedWith(VCloud.class).toInstance(
-                  URI.create("http://localhost:8080"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-      };
+   public ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
+      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential",
+               VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
    }
 
 }

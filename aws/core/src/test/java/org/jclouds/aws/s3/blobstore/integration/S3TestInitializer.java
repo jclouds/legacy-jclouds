@@ -21,12 +21,10 @@ package org.jclouds.aws.s3.blobstore.integration;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableSet;
@@ -36,7 +34,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class S3TestInitializer extends BaseTestInitializer {
+public class S3TestInitializer extends TransientBlobStoreTestInitializer {
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
@@ -44,11 +42,6 @@ public class S3TestInitializer extends BaseTestInitializer {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
       return new BlobStoreContextFactory().createContext("s3", account, key, ImmutableSet.of(
                configurationModule, new Log4JLoggingModule()), new Properties());
-   }
-
-   @Override
-   protected BlobStoreContext createStubContext() {
-      return S3ContextFactory.createContext("user", "pass", new S3StubClientModule());
    }
 
 }

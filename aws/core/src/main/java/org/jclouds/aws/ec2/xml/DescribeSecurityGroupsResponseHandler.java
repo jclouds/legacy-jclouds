@@ -22,7 +22,7 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
 public class DescribeSecurityGroupsResponseHandler extends
          ParseSax.HandlerWithResult<SortedSet<SecurityGroup>> {
    @Inject
-   @EC2
+   @Region
    String defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();

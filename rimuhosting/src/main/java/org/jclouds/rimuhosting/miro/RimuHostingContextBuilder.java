@@ -27,7 +27,6 @@ import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceContextModule;
-import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -50,23 +49,13 @@ import com.google.inject.TypeLiteral;
 public class RimuHostingContextBuilder extends
          ComputeServiceContextBuilder<RimuHostingClient, RimuHostingAsyncClient> {
 
-   public RimuHostingContextBuilder(String providerName, Properties props) {
-      super(providerName, RimuHostingClient.class, RimuHostingAsyncClient.class, props);
+   public RimuHostingContextBuilder(Properties props) {
+      super(RimuHostingClient.class, RimuHostingAsyncClient.class, props);
    }
 
    @Override
-   public RimuHostingContextBuilder withModules(Module... modules) {
-      return (RimuHostingContextBuilder) super.withModules(modules);
-   }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new RimuHostingComputeServiceContextModule(providerName));
-   }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new RimuHostingRestClientModule());
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new RimuHostingComputeServiceContextModule());
    }
 
    @Override

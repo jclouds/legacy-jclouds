@@ -82,6 +82,13 @@ public interface Constants {
    public static final String PROPERTY_CONNECTION_TIMEOUT = "jclouds.connection_timeout";
 
    /**
+    * Long property. default (60)
+    * <p/>
+    * How many seconds to wait before creating a new session
+    */
+   public static final String PROPERTY_SESSION_INTERVAL = "jclouds.session_interval";
+
+   /**
     * Boolean property.
     * <p/>
     * Whether or not to use the proxy setup from the underlying operating system.
@@ -153,6 +160,50 @@ public interface Constants {
    /**
     * Name of the custom adapter bindings map for Gson
     */
-   public static final String PROPERTY_GSON_ADAPTERS = "jclouds.gson.adapters";
+   public static final String PROPERTY_GSON_ADAPTERS = "jclouds.gson_adapters";
+
+   /**
+    * String property.
+    * <p/>
+    * Explicitly identifies a provider of an api
+    */
+   public static final String PROPERTY_PROVIDER = "jclouds.provider";
+
+   /**
+    * String property.
+    * <p/>
+    * Explicitly identifies the name of a product that a provider may run
+    */
+   public static final String PROPERTY_API = "jclouds.api";
+
+   /**
+    * String property.
+    * <p/>
+    * Explicitly identifies the version of an api.
+    */
+   public static final String PROPERTY_API_VERSION = "jclouds.api_version";
+
+   /**
+    * String property.
+    * <p/>
+    * Explicitly identifies the most top-level endpoint to a service provider. This helps
+    * differentiate two providers of the same api, or a different environments providing the same
+    * api.
+    */
+   public static final String PROPERTY_ENDPOINT = "jclouds.endpoint";
+   /**
+    * String property.
+    * <p/>
+    * Explicitly sets the login identity into a provider
+    */
+   public static final String PROPERTY_IDENTITY = "jclouds.identity";
+
+   /**
+    * String property.
+    * <p/>
+    * Explicitly sets the secret, which when combined with the identity, will create an
+    * authenticated subject or session
+    */
+   public static final String PROPERTY_CREDENTIAL = "jclouds.credential";
 
 }

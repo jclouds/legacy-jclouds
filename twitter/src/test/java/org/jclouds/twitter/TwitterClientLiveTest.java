@@ -19,13 +19,16 @@
 package org.jclouds.twitter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
+import static org.jclouds.rest.RestContextFactory.createContext;
 
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
 import org.jclouds.twitter.domain.Status;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -38,20 +41,29 @@ import org.testng.annotations.Test;
 public class TwitterClientLiveTest {
 
    private TwitterClient connection;
+   private RestContext<TwitterClient, TwitterAsyncClient> context;
 
-   @BeforeGroups(groups = { "live" })
+   @BeforeGroups(groups = "live")
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = TwitterContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getApi();
+      context = createContext(contextSpec("twitter", "http://twitter.com", "1", user, password,
+               TwitterClient.class, TwitterAsyncClient.class));
+
+      connection = context.getApi();
    }
 
    @Test
    public void testGetMyMentions() throws Exception {
       SortedSet<Status> response = connection.getMyMentions();
       assert (response.size() > 0);
+   }
+
+   @AfterGroups(groups = "live")
+   void tearDown() {
+      if (context != null)
+         context.close();
    }
 
 }

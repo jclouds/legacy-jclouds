@@ -37,7 +37,6 @@ import org.jclouds.nirvanix.sdn.functions.ParseMetadataFromJsonResponse;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.QueryParams;
@@ -55,7 +54,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://developer.nirvanix.com/sitefiles/1000/API.html" />
  * @author Adrian Cole
  */
-@Endpoint(SDN.class)
 @RequestFilters(AddSessionTokenToRequest.class)
 @SkipEncoding( { '/', ':' })
 @QueryParams(keys = SDNQueryParams.OUTPUT, values = "json")

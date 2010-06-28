@@ -37,7 +37,6 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.samples.googleappengine.GetAllStatusController;
 
-import com.google.appengine.repackaged.com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Closeables;
@@ -68,14 +67,11 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
       ImmutableSet<Module> modules = ImmutableSet
                .<Module> of(new GoogleAppEngineConfigurationModule());
-      try {
-         blobsStoreContexts = ImmutableMap.<String, BlobStoreContext> of("s3",
-                  new BlobStoreContextFactory().createContext("s3", modules, props));
-         computeServiceContexts = ImmutableMap.<String, ComputeServiceContext> of("ec2",
-                  new ComputeServiceContextFactory().createContext("ec2", modules, props));
-      } catch (IOException e) {
-         Throwables.propagate(e);
-      }
+
+      blobsStoreContexts = ImmutableMap.<String, BlobStoreContext> of("s3",
+               new BlobStoreContextFactory().createContext("s3", modules, props));
+      computeServiceContexts = ImmutableMap.<String, ComputeServiceContext> of("ec2",
+               new ComputeServiceContextFactory().createContext("ec2", modules, props));
 
       super.contextInitialized(servletContextEvent);
    }

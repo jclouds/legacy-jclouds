@@ -21,16 +21,20 @@ package org.jclouds.aws.ec2.services;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code MonitoringClient}
@@ -45,28 +49,28 @@ public class MonitoringClientLiveTest {
    private RestContext<EC2Client, EC2AsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   public void setupClient() throws IOException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getProviderSpecificContext();
+      context = new RestContextFactory().createContext("ec2", user, password, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
       client = context.getApi().getMonitoringServices();
    }
 
    @Test(enabled = false)
    // TODO get instance
    public void testMonitorInstances() {
-      Map<String, MonitoringState> monitoringState = client.monitorInstancesInRegion(
-               null, DEFAULT_INSTANCE);
+      Map<String, MonitoringState> monitoringState = client.monitorInstancesInRegion(null,
+               DEFAULT_INSTANCE);
       assertEquals(monitoringState.get(DEFAULT_INSTANCE), MonitoringState.PENDING);
    }
 
    @Test(enabled = false)
    // TODO get instance
    public void testUnmonitorInstances() {
-      Map<String, MonitoringState> monitoringState = client.unmonitorInstancesInRegion(
-               null, DEFAULT_INSTANCE);
+      Map<String, MonitoringState> monitoringState = client.unmonitorInstancesInRegion(null,
+               DEFAULT_INSTANCE);
       assertEquals(monitoringState.get(DEFAULT_INSTANCE), MonitoringState.PENDING);
    }
 

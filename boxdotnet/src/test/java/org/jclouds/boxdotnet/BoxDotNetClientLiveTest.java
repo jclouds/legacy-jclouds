@@ -24,9 +24,12 @@
 package org.jclouds.boxdotnet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
+import static org.jclouds.rest.RestContextFactory.createContext;
 import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -39,14 +42,23 @@ import org.testng.annotations.Test;
 public class BoxDotNetClientLiveTest {
 
    private BoxDotNetClient connection;
+   private RestContext<BoxDotNetClient, BoxDotNetAsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = BoxDotNetContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getApi();
+      context = createContext(contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0",
+               user, password, BoxDotNetClient.class, BoxDotNetAsyncClient.class));
+
+      connection = context.getApi();
+   }
+
+   @AfterGroups(groups = "live")
+   void tearDown() {
+      if (context != null)
+         context.close();
    }
 
    @Test

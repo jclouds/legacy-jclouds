@@ -18,6 +18,9 @@
  */
 package org.jclouds.vcloud.compute.config.providers;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.parseArchitectureOrNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -36,7 +39,6 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -67,10 +69,10 @@ public class VCloudImageProvider implements Provider<Set<? extends Image>> {
 
    @Inject
    protected VCloudImageProvider(
-         VCloudClient client,
-         FindLocationForResourceInVDC findLocationForResourceInVDC,
-         PopulateDefaultLoginCredentialsForImageStrategy populateDefaultLoginCredentialsForImageStrategy,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            VCloudClient client,
+            FindLocationForResourceInVDC findLocationForResourceInVDC,
+            PopulateDefaultLoginCredentialsForImageStrategy populateDefaultLoginCredentialsForImageStrategy,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = client;
       this.findLocationForResourceInVDC = findLocationForResourceInVDC;
       this.populateDefaultLoginCredentialsForImageStrategy = populateDefaultLoginCredentialsForImageStrategy;
@@ -81,44 +83,38 @@ public class VCloudImageProvider implements Provider<Set<? extends Image>> {
    public Set<? extends Image> get() {
       final Set<Image> images = Sets.newHashSet();
       logger.debug(">> providing vAppTemplates");
-      for (final NamedResource vDC : client.getDefaultOrganization().getVDCs()
-            .values()) {
-         Map<String, NamedResource> resources = client.getVDC(vDC.getId())
-               .getResourceEntities();
+      for (final NamedResource vDC : client.getDefaultOrganization().getVDCs().values()) {
+         Map<String, NamedResource> resources = client.getVDC(vDC.getId()).getResourceEntities();
          Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
 
          for (final NamedResource resource : resources.values()) {
             if (resource.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-               responses.put(resource.getName(), ConcurrentUtils
-                     .makeListenable(executor.submit(new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                           OsFamily myOs = ComputeUtils
-                                 .parseOsFamilyOrNull(resource.getName());
-                           Architecture arch = ComputeUtils
-                                 .parseArchitectureOrNull(resource.getName());
+               responses.put(resource.getName(), ConcurrentUtils.makeListenable(executor
+                        .submit(new Callable<Void>() {
+                           @Override
+                           public Void call() throws Exception {
+                              OsFamily myOs = parseOsFamilyOrNull(resource.getName());
+                              Architecture arch = parseArchitectureOrNull(resource.getName());
 
-                           VAppTemplate template = client
-                                 .getVAppTemplate(resource.getId());
+                              VAppTemplate template = client.getVAppTemplate(resource.getId());
 
-                           Location location = findLocationForResourceInVDC
-                                 .apply(resource, vDC.getId());
-                           String name = getName(template.getName());
-                           images.add(new ImageImpl(resource.getId(), name,
-                                 resource.getId(), location, template
-                                       .getLocation(), ImmutableMap
-                                       .<String, String> of(), template
-                                       .getDescription(), "", myOs, name, arch,
-                                 populateDefaultLoginCredentialsForImageStrategy
-                                       .execute(template)));
-                           return null;
-                        }
-                     }), executor));
+                              Location location = findLocationForResourceInVDC.apply(resource, vDC
+                                       .getId());
+                              String name = getName(template.getName());
+                              images.add(new ImageImpl(resource.getId(), name, resource.getId(),
+                                       location, template.getLocation(), ImmutableMap
+                                                .<String, String> of(), template.getDescription(),
+                                       "", myOs, name, arch,
+                                       populateDefaultLoginCredentialsForImageStrategy
+                                                .execute(template)));
+                              return null;
+                           }
+                        }), executor));
 
             }
          }
-         ConcurrentUtils.awaitCompletion(responses, executor, null, logger,
-               "vAppTemplates in " + vDC);
+         ConcurrentUtils.awaitCompletion(responses, executor, null, logger, "vAppTemplates in "
+                  + vDC);
       }
       return images;
    }

@@ -50,19 +50,21 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Follows the book Cloud Application Architectures ISBN: 978-0-596-15636-7
@@ -91,15 +93,14 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException,
-         TimeoutException {
+ TimeoutException,
+            IOException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"),
             "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"),
             "jclouds.test.key");
-      Injector injector = new EC2ContextBuilder("ec2",
-            new EC2PropertiesBuilder(user, password).build()).withModules(
-            new Log4JLoggingModule(), new JschSshClientModule())
-            .buildInjector();
+      Injector injector =  new RestContextFactory().createContextBuilder(
+                        "ec2", user, password, ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(

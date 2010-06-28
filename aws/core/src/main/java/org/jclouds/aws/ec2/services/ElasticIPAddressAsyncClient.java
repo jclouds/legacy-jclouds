@@ -28,12 +28,13 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.binders.BindPublicIpsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
-import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -50,7 +51,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-11-30")
+@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface ElasticIPAddressAsyncClient {
 
@@ -72,8 +73,7 @@ public interface ElasticIPAddressAsyncClient {
    @FormParams(keys = ACTION, values = "AssociateAddress")
    ListenableFuture<Void> associateAddressInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("PublicIp") String publicIp,
-            @FormParam("InstanceId") String instanceId);
+            @FormParam("PublicIp") String publicIp, @FormParam("InstanceId") String instanceId);
 
    /**
     * @see BaseEC2Client#disassociateAddressInRegion

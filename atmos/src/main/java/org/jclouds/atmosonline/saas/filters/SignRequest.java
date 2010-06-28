@@ -18,6 +18,9 @@
  */
 package org.jclouds.atmosonline.saas.filters;
 
+import static org.jclouds.Constants.LOGGER_SIGNATURE;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
 
@@ -33,8 +36,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.Constants;
-import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
@@ -67,13 +68,12 @@ public class SignRequest implements HttpRequestFilter {
    Logger logger = Logger.NULL;
 
    @Resource
-   @Named(Constants.LOGGER_SIGNATURE)
+   @Named(LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SignRequest(SignatureWire signatureWire,
-            @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String uid,
-            @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY) String encodedKey,
+   public SignRequest(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String uid,
+            @Named(PROPERTY_CREDENTIAL) String encodedKey,
             @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.uid = uid;

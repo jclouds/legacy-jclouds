@@ -41,7 +41,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -83,8 +82,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @Inject
    public FormSigner(SignatureWire signatureWire,
-            @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
-            @Named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
+            @Named(Constants.PROPERTY_IDENTITY) String accessKey,
+            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey,
             @TimeStamp Provider<String> dateService, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;

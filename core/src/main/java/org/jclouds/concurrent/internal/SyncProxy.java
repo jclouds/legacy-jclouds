@@ -123,7 +123,7 @@ public class SyncProxy implements InvocationHandler {
          Class<?> asyncClass = sync2Async.get(method.getReturnType());
          checkState(asyncClass != null, "please configure corresponding async class for "
                   + method.getReturnType() + " in your RestClientModule");
-         Object returnVal =  delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
+         Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
          return returnVal;
       } else if (syncMethodMap.containsKey(method)) {
          return syncMethodMap.get(method).invoke(delegate, args);

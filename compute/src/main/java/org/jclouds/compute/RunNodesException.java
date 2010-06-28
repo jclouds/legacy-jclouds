@@ -18,12 +18,14 @@
  */
 package org.jclouds.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.createExecutionErrorMessage;
+import static org.jclouds.compute.util.ComputeServiceUtils.createNodeErrorMessage;
+
 import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.util.ComputeUtils;
 
 /**
  * 
@@ -48,10 +50,10 @@ public class RunNodesException extends Exception {
                         .format(
                                  "error running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)%n%s%n%s",
                                  count, count > 1 ? "s" : "", tag, template.getLocation().getId(),
-                                 template.getImage().getProviderId(), template.getSize().getProviderId(), template
-                                          .getOptions(), ComputeUtils
-                                          .createExecutionErrorMessage(executionExceptions),
-                                 ComputeUtils.createNodeErrorMessage(failedNodes)));
+                                 template.getImage().getProviderId(), template.getSize()
+                                          .getProviderId(), template.getOptions(),
+                                 createExecutionErrorMessage(executionExceptions),
+                                 createNodeErrorMessage(failedNodes)));
       this.tag = tag;
       this.count = count;
       this.template = template;

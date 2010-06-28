@@ -29,7 +29,7 @@ import java.util.SortedSet;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.gogrid.config.GoGridContextModule;
+import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobProperties;
 import org.jclouds.gogrid.domain.JobState;
@@ -80,7 +80,7 @@ public class ParseJobsFromJsonResponseTest {
    Injector i = Guice.createInjector(new ParserModule() {
       @Override
       protected void configure() {
-         bind(DateAdapter.class).to(GoGridContextModule.DateSecondsAdapter.class);
+         bind(DateAdapter.class).to(DateSecondsAdapter.class);
          super.configure();
       }
 

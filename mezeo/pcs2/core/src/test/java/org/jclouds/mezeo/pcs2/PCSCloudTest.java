@@ -18,36 +18,24 @@
  */
 package org.jclouds.mezeo.pcs2;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
-import javax.inject.Singleton;
-
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient.Response;
 import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
-import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -56,11 +44,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "pcs2.PCSCloudTest")
-public class PCSCloudTest {
+public class PCSCloudTest extends RestClientTest<PCSCloudAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
-      Method method = PCSCloud.class.getMethod("authenticate");
-      GeneratedHttpRequest<PCSCloud> httpMethod = processor.createRequest(method);
+      Method method = PCSCloudAsyncClient.class.getMethod("authenticate");
+      GeneratedHttpRequest<PCSCloudAsyncClient> httpMethod = processor.createRequest(method);
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/ HTTP/1.1");
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
@@ -73,37 +61,27 @@ public class PCSCloudTest {
                MapHttp4xxCodesToExceptions.class);
    }
 
-   private RestAnnotationProcessor<PCSCloud> processor;
-
-   @BeforeClass
-   void setupFactory() {
-
-      Injector injector = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bind(URI.class).annotatedWith(PCS.class)
-                     .toInstance(URI.create("http://localhost:8080"));
-            Names.bindProperties(this.binder(), new PCSPropertiesBuilder(URI
-                     .create("http://localhost:8080"), "user", "key").build());
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
-                  throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar", encryptionService);
-         }
-      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule());
-
-      processor = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<PCSCloud>>() {
-               }));
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<PCSCloudAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<PCSCloudAsyncClient>>() {
+      };
    }
+
+   @Override
+   public ContextSpec<PCSCloudClient, PCSCloudAsyncClient> createContextSpec() {
+      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential",
+               PCSCloudClient.class, PCSCloudAsyncClient.class);
+   }
+
+   @Override
+   protected void checkFilters(GeneratedHttpRequest<PCSCloudAsyncClient> httpMethod) {
+
+   }
+
+   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
+   public interface PCSCloudClient {
+
+      Response authenticate();
+   }
+
 }

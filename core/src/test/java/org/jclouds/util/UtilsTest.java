@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.google.inject.ProvisionException;
 import com.google.inject.internal.ImmutableList;
 import com.google.inject.spi.Message;
@@ -80,4 +81,11 @@ public class UtilsTest {
       Iterable<String> values = ImmutableList.of("1", "2", "2", "3");
       assertEquals(Utils.multiMax(Ordering.natural(), values), ImmutableList.of("3"));
    }
+
+   @Test
+   public void testSupportedProviders() {
+      Iterable<String> providers = Utils.getSupportedProviders();
+      assertEquals(Sets.newLinkedHashSet(providers), ImmutableSet.<String> of());
+   }
+
 }

@@ -28,11 +28,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Properties;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ibmdev.config.IBMDeveloperCloudRestClientModule;
 import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.functions.GetFirstInstanceInList;
 import org.jclouds.ibmdev.functions.ParseAddressFromJson;
@@ -50,8 +50,9 @@ import org.jclouds.ibmdev.options.CreateInstanceOptions;
 import org.jclouds.ibmdev.options.RestartInstanceOptions;
 import org.jclouds.ibmdev.xml.LocationHandler;
 import org.jclouds.ibmdev.xml.LocationsHandler;
-import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -60,9 +61,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Tests annotation parsing of {@code IBMDeveloperCloudAsyncClient}
@@ -90,7 +89,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
       assertHeadersEqual(httpRequest,
-               "Accept: application/json\nAuthorization: Basic Zm9vOmJhcg==\n");
+               "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImagesFromJson.class);
@@ -530,10 +529,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
                CreateInstanceOptions[].class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(
                method, "location", "name", "22", "instanceType", new CreateInstanceOptions()
-                        .attachIp("1").authorizePublicKey("MOO").mountVolume("2", "/mnt").configurationData(
+                        .attachIp("1").authorizePublicKey("MOO").mountVolume("2", "/mnt")
+                        .configurationData(
                                  ImmutableMap.of("insight_admin_password", "myPassword1",
-                                          "db2_admin_password", "myPassword2", "report_user_password",
-                                          "myPassword3")));
+                                          "db2_admin_password", "myPassword2",
+                                          "report_user_password", "myPassword3")));
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
@@ -675,16 +675,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    }
 
    @Override
-   protected Module createModule() {
-      return new IBMDeveloperCloudRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new IBMDeveloperCloudPropertiesBuilder("foo", "bar")
-                     .build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-      };
+   public ContextSpec<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> createContextSpec() {
+      return new RestContextFactory().createContextSpec("ibmdev", "identity", "credential",
+               new Properties());
    }
 }

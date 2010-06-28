@@ -71,7 +71,6 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.HostPrefixParam;
@@ -102,9 +101,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 @VirtualHost
 @SkipEncoding('/')
 @RequestFilters(RequestAuthorizeSignature.class)
-@Endpoint(S3.class)
 @BlobScope(CONTAINER)
 public interface S3AsyncClient {
+   public static final String VERSION = "2006-03-01";
 
    /**
     * Creates a default implementation of S3Object

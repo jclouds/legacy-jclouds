@@ -56,6 +56,8 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
 import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
@@ -66,7 +68,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Module;
 
 /**
  * End to end live test for GoGrid
@@ -86,14 +90,17 @@ public class GoGridLiveTest {
    private List<String> serversToDeleteAfterTheTests = new ArrayList<String>();
    private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
 
+   private RestContext<GoGridClient, GoGridAsyncClient> context;
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      client = GoGridContextFactory.createContext(user, password, new Log4JLoggingModule())
-               .getApi();
+      context = new RestContextFactory().createContext("gogrid", user, password, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
 
+      client = context.getApi();
       serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
                .getJobServices()), 800, 20, TimeUnit.SECONDS);
       loadBalancerLatestJobCompleted = new RetryablePredicate<LoadBalancer>(

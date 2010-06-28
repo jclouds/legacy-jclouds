@@ -44,8 +44,7 @@ public class AsyncClientProvider<A> implements Provider<A> {
    @Override
    @Singleton
    public A get() {
-      return (A) injector.getInstance(AsyncClientFactory.class).create(
-            asyncClientType);
+      return (A) injector.getInstance(AsyncClientFactory.class).create(asyncClientType);
    }
 
 }

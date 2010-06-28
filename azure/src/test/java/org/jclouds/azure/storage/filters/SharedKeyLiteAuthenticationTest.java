@@ -18,31 +18,25 @@
  */
 package org.jclouds.azure.storage.filters;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
-import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.rest.config.RestModule;
-import com.google.inject.name.Names;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * 
@@ -134,20 +128,13 @@ public class SharedKeyLiteAuthenticationTest {
 
    /**
     * before class, as we need to ensure that the filter is threadsafe.
+    * @throws IOException 
     * 
     */
    @BeforeClass
-   protected void createFilter() {
-      injector = Guice.createInjector(new RestModule(), new AzureBlobRestClientModule(),
-               new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
-               new AbstractModule() {
-                  protected void configure() {
-                     Names.bindProperties(binder(), checkNotNull(
-                              new AzureBlobPropertiesBuilder(ACCOUNT, KEY)).build());
-                     bind(TransformingHttpCommandExecutorService.class).toInstance(
-                              createMock(TransformingHttpCommandExecutorService.class));
-                  }
-               });
+   protected void createFilter() throws IOException {
+      injector = new RestContextFactory().createContextBuilder("azurequeue", ACCOUNT, KEY,
+               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
       filter = injector.getInstance(SharedKeyLiteAuthentication.class);
    }
 

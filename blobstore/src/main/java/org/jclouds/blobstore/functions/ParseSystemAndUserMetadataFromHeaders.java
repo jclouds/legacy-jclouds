@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.functions;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
 
 import java.util.Map.Entry;
 
@@ -28,7 +29,6 @@ import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -61,7 +61,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
-      String objectKey = BlobStoreUtilsImpl.getKeyFor(request, from);
+      String objectKey = getKeyFor(request, from);
       MutableBlobMetadata to = metadataFactory.get();
       to.setName(objectKey);
       setContentTypeOrThrowException(from, to);
@@ -117,7 +117,6 @@ public class ParseSystemAndUserMetadataFromHeaders implements
          metadata.setContentMD5(encryptionService.fromBase64String(contentMD5));
       }
    }
-
 
    @VisibleForTesting
    void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata)

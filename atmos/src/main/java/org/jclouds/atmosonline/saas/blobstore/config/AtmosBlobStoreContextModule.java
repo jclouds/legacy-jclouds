@@ -27,7 +27,6 @@ import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
-import org.jclouds.atmosonline.saas.config.AtmosStorageContextModule;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -38,8 +37,10 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -49,16 +50,11 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
-   private final String providerName;
-
-   public AtmosBlobStoreContextModule(String providerName) {
-      this.providerName = providerName;
-   }
+public class AtmosBlobStoreContextModule extends AbstractModule {
+ 
 
    @Override
    protected void configure() {
-      super.configure();
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).in(Scopes.SINGLETON);
@@ -72,7 +68,7 @@ public class AtmosBlobStoreContextModule extends AtmosStorageContextModule {
 
    @Provides
    @Singleton
-   Location getLocation() {
+   Location getLocation(@Provider String providerName) {
       return new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
    }
 

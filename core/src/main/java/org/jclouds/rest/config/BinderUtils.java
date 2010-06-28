@@ -33,31 +33,29 @@ import com.google.inject.Provider;
 public class BinderUtils {
 
    public static <K, V> void bindClient(Binder binder, Class<K> syncClientType,
-         Class<V> asyncClientType, Map<Class<?>, Class<?>> delegates) {
-      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType,
-            asyncClientType, delegates);
+            Class<V> asyncClientType, Map<Class<?>, Class<?>> delegates) {
+      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType, asyncClientType,
+               delegates);
       binder.requestInjection(asyncProvider);
       binder.bind(syncClientType).toProvider(asyncProvider);
    }
 
-   public static <T> void bindAsyncClient(Binder binder,
-         Class<T> asyncClientType) {
+   public static <T> void bindAsyncClient(Binder binder, Class<T> asyncClientType) {
       Provider<T> asyncProvider = new AsyncClientProvider<T>(asyncClientType);
       binder.requestInjection(asyncProvider);
       binder.bind(asyncClientType).toProvider(asyncProvider);
    }
-   
+
    @SuppressWarnings("unchecked")
    public static <T> T newNullProxy(Class<T> clazz) {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
-            new Class<?>[] { clazz }, new InvocationHandler() {
+      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
+               new InvocationHandler() {
 
-               @Override
-               public Object invoke(Object proxy, Method method, Object[] args)
-                     throws Throwable {
-                  return null;
-               }
+                  @Override
+                  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                     return null;
+                  }
 
-            });
+               });
    }
 }

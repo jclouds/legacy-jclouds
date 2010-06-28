@@ -29,20 +29,22 @@ import java.util.Properties;
 
 import javax.inject.Named;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.sqs.config.SQSRestClientModule;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
 import org.jclouds.aws.sqs.options.ListQueuesOptions;
-import org.jclouds.aws.sqs.reference.SQSConstants;
 import org.jclouds.aws.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.aws.sqs.xml.RegexQueueHandler;
 import org.jclouds.date.DateService;
-import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -57,111 +59,106 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "sqs.SQSAsyncClientTest")
 public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
-   public void testListQueuesInRegion() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion",
-            String.class, Array.newInstance(ListQueuesOptions.class, 0)
-                  .getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor
-            .createRequest(method, (String) null);
+   @RequiresHttp
+   @ConfiguresRestClient
+   private static final class TestSQSRestClientModule extends SQSRestClientModule {
+      @Override
+      protected void configure() {
+         super.configure();
+      }
 
-      assertRequestLineEquals(httpMethod,
-            "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      @Override
+      protected String provideTimeStamp(final DateService dateService,
+               @Named(Constants.PROPERTY_SESSION_INTERVAL) int expiration) {
+         return "2009-11-08T15:54:08.897Z";
+      }
+   }
+
+   public void testListQueuesInRegion() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", String.class, Array
+               .newInstance(ListQueuesOptions.class, 0).getClass());
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method,
+               (String) null);
+
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-            httpMethod,
-            "Content-Length: 36\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
+               httpMethod,
+               "Content-Length: 36\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=ListQueues");
 
-      assertResponseParserClassEquals(method, httpMethod,
-            RegexListQueuesResponseHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, RegexListQueuesResponseHandler.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
    }
 
-   public void testListQueuesInRegionOptions() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion",
-            String.class, Array.newInstance(ListQueuesOptions.class, 0)
-                  .getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor
-            .createRequest(method, null, ListQueuesOptions.Builder
-                  .queuePrefix("prefix"));
+   public void testListQueuesInRegionOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SQSAsyncClient.class.getMethod("listQueuesInRegion", String.class, Array
+               .newInstance(ListQueuesOptions.class, 0).getClass());
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
+               ListQueuesOptions.Builder.queuePrefix("prefix"));
 
-      assertRequestLineEquals(httpMethod,
-            "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-            httpMethod,
-            "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
+               httpMethod,
+               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=ListQueues&QueueNamePrefix=prefix");
+
+      assertResponseParserClassEquals(method, httpMethod, RegexListQueuesResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCreateQueueInRegion() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class,
+               String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
+               "queueName");
+
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-02-01&Action=CreateQueue&QueueName=queueName");
+
+      assertResponseParserClassEquals(method, httpMethod, RegexQueueHandler.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCreateQueueInRegionOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class,
+               String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
+      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor.createRequest(method, null,
+               "queueName", CreateQueueOptions.Builder.defaultVisibilityTimeout(45));
+
+      assertRequestLineEquals(httpMethod, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 85\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
-            "Version=2009-02-01&Action=ListQueues&QueueNamePrefix=prefix");
+               "Version=2009-02-01&Action=CreateQueue&QueueName=queueName&DefaultVisibilityTimeout=45");
 
-      assertResponseParserClassEquals(method, httpMethod,
-            RegexListQueuesResponseHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, RegexQueueHandler.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
    }
 
-   public void testCreateQueueInRegion() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion",
-            String.class, String.class, Array.newInstance(
-                  CreateQueueOptions.class, 0).getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor
-            .createRequest(method, null, "queueName");
-
-      assertRequestLineEquals(httpMethod,
-            "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-            httpMethod,
-            "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
-            "Version=2009-02-01&Action=CreateQueue&QueueName=queueName");
-
-      assertResponseParserClassEquals(method, httpMethod,
-            RegexQueueHandler.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpMethod);
-   }
-
-   public void testCreateQueueInRegionOptions() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion",
-            String.class, String.class, Array.newInstance(
-                  CreateQueueOptions.class, 0).getClass());
-      GeneratedHttpRequest<SQSAsyncClient> httpMethod = processor
-            .createRequest(method, null, "queueName",
-                  CreateQueueOptions.Builder.defaultVisibilityTimeout(45));
-
-      assertRequestLineEquals(httpMethod,
-            "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-            httpMethod,
-            "Content-Length: 85\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-            httpMethod,
-            "Version=2009-02-01&Action=CreateQueue&QueueName=queueName&DefaultVisibilityTimeout=45");
-
-      assertResponseParserClassEquals(method, httpMethod,
-            RegexQueueHandler.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpMethod);
-   }
-
-   public void testAllRegions() throws SecurityException,
-         NoSuchMethodException, IOException {
-      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion",
-            String.class, String.class, Array.newInstance(
-                  CreateQueueOptions.class, 0).getClass());
-      for (String region : Iterables.filter(Region.ALL_SQS,
-            not(equalTo("us-standard")))) {
+   public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SQSAsyncClient.class.getMethod("createQueueInRegion", String.class,
+               String.class, Array.newInstance(CreateQueueOptions.class, 0).getClass());
+      for (String region : Iterables.filter(Region.ALL_SQS, not(equalTo("us-standard")))) {
          processor.createRequest(method, region, "queueName");
       }
    }
@@ -180,21 +177,13 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new SQSRestClientModule() {
-         @Override
-         protected void configure() {
-            Names.bindProperties(binder(), new SQSPropertiesBuilder(
-                  new Properties()).withCredentials("user", "key").build());
-            install(new NullLoggingModule());
-            super.configure();
-         }
-
-         @Override
-         protected String provideTimeStamp(
-               final DateService dateService,
-               @Named(SQSConstants.PROPERTY_AWS_EXPIREINTERVAL) final int expiration) {
-            return "2009-11-08T15:54:08.897Z";
-         }
-      };
+      return new TestSQSRestClientModule();
    }
+
+   @Override
+   public ContextSpec<?, ?> createContextSpec() {
+      return new RestContextFactory().createContextSpec("sqs", "identity", "credential",
+               new Properties());
+   }
+
 }

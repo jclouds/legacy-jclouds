@@ -42,7 +42,6 @@ import com.google.appengine.api.labs.taskqueue.Queue;
 import com.google.appengine.api.labs.taskqueue.QueueFactory;
 import com.google.appengine.api.labs.taskqueue.TaskOptions.Method;
 import com.google.appengine.repackaged.com.google.common.base.Splitter;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
@@ -50,9 +49,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.google.inject.util.Jsr330;
 
 /**
  * Setup Logging and create Injector for use in testing S3.
@@ -70,11 +69,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    public void contextInitialized(ServletContextEvent servletContextEvent) {
 
       BlobStoreContextFactory blobStoreContextFactory = null;
-      try {
-         blobStoreContextFactory = new BlobStoreContextFactory();
-      } catch (IOException e) {
-         Throwables.propagate(e);
-      }
+      blobStoreContextFactory = new BlobStoreContextFactory();
 
       Properties props = loadJCloudsProperties(servletContextEvent);
 
@@ -128,7 +123,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
             }).toInstance(providerTypeToBlobStoreMap);
             bind(TwitterClient.class).toInstance(twitterClient);
-            bindConstant().annotatedWith(Jsr330.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
+            bindConstant().annotatedWith(Names.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
          }

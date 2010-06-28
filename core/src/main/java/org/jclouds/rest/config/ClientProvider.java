@@ -48,7 +48,7 @@ public class ClientProvider<S, A> implements Provider<S> {
 
    @Inject
    ClientProvider(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> sync2Async) {
+            Map<Class<?>, Class<?>> sync2Async) {
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
       this.sync2Async = sync2Async;
@@ -57,14 +57,13 @@ public class ClientProvider<S, A> implements Provider<S> {
    @Override
    @Singleton
    public S get() {
-      A client = (A) injector.getInstance(asyncClientType);
-      ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector
-            .getInstance(Key.get(
-                  new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
-                  }, Names.named("sync")));
+      A client = (A) injector.getInstance(Key.get(asyncClientType));
+      ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
+               new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+               }, Names.named("sync")));
       try {
-         return (S) SyncProxy.proxy(syncClientType, new SyncProxy(
-               syncClientType, client, delegateMap, sync2Async));
+         return (S) SyncProxy.proxy(syncClientType, new SyncProxy(syncClientType, client,
+                  delegateMap, sync2Async));
       } catch (Exception e) {
          Throwables.propagate(e);
          assert false : "should have propagated";

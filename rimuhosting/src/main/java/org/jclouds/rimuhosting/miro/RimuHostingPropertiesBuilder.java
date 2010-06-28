@@ -18,12 +18,10 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
-import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -37,34 +35,13 @@ public class RimuHostingPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_RIMUHOSTING_ENDPOINT, "https://rimuhosting.com/r");
+      properties.setProperty(PROPERTY_API_VERSION, "TODO");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://rimuhosting.com/r");
       properties.setProperty(PROPERTY_RIMUHOSTING_DEFAULT_DC, "DCDALLAS");
       return properties;
    }
 
    public RimuHostingPropertiesBuilder(Properties properties) {
       super(properties);
-   }
-
-   public RimuHostingPropertiesBuilder(String secret) {
-      super();
-      withCredentials(secret);
-   }
-
-   public RimuHostingPropertiesBuilder withCredentials(String secret) {
-      properties.setProperty(PROPERTY_RIMUHOSTING_APIKEY, checkNotNull(secret, "password"));
-      return this;
-   }
-
-   @Override
-   public RimuHostingPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_RIMUHOSTING_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
-   }
-
-   @Override
-   public PropertiesBuilder withCredentials(String account, String key) {
-      return withCredentials(account != null ? account : key);
    }
 }

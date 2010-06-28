@@ -49,9 +49,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "name");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 60\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 60\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DeleteSecurityGroup&GroupName=name");
 
@@ -69,9 +69,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "name", "description");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=CreateSecurityGroup&GroupDescription=description&GroupName=name");
 
@@ -89,9 +89,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeSecurityGroups");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -108,9 +108,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2");
 
@@ -129,9 +129,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
@@ -151,9 +151,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 131\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 131\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000");
@@ -173,9 +173,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 68\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 68\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
@@ -195,9 +195,9 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
                null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 128\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 128\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000");

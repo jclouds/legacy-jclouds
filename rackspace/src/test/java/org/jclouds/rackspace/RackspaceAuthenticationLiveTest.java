@@ -20,36 +20,24 @@ package org.jclouds.rackspace;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
+import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
-import org.jclouds.rackspace.reference.RackspaceConstants;
-import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.HttpAsyncClient;
-import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -59,56 +47,20 @@ import com.google.inject.Provides;
 @Test(groups = "live", testName = "rackspace.RackspaceAuthenticationLiveTest")
 public class RackspaceAuthenticationLiveTest {
 
-   @ConfiguresRestClient
-   @RequiresHttp
-   private final class RestRackspaceAuthenticationClientModule extends
-         AbstractModule {
+   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
+   public interface RackspaceAuthClient {
 
-      @SuppressWarnings("unused")
-      @Provides
-      @Singleton
-      RackspaceAuthentication provideClient(AsyncClientFactory factory) {
-         return factory.create(RackspaceAuthentication.class);
-      }
-
-      @Override
-      protected void configure() {
-
-      }
+      AuthenticationResponse authenticate(String user, String key);
    }
 
-   private final class RackspaceAuthenticationContextModule extends
-         AbstractModule {
-
-      @SuppressWarnings( { "unused" })
-      @Provides
-      @Singleton
-      RestContext<RackspaceAuthentication, RackspaceAuthentication> provideContext(
-            Closer closer, HttpClient http, HttpAsyncClient asyncHttp,
-            RackspaceAuthentication api, @Authentication URI endPoint,
-            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         return new RestContextImpl<RackspaceAuthentication, RackspaceAuthentication>(
-               closer, http, asyncHttp, api, api, endPoint, account);
-      }
-
-      @Override
-      protected void configure() {
-
-      }
-   }
-
-   String account = checkNotNull(System.getProperty("jclouds.test.user"),
-         "jclouds.test.user");
-   String key = checkNotNull(System.getProperty("jclouds.test.key"),
-         "jclouds.test.key");
-
-   private RestContext<RackspaceAuthentication, RackspaceAuthentication> context;
+   private RestContext<RackspaceAuthClient, RackspaceAuthAsyncClient> context;
+   private String identity;
+   private String credential;
 
    @Test
    public void testAuthentication() throws Exception {
-      RackspaceAuthentication authentication = context.getAsyncApi();
-      AuthenticationResponse response = authentication.authenticate(account,
-            key).get(10, TimeUnit.SECONDS);
+      RackspaceAuthClient authentication = context.getApi();
+      AuthenticationResponse response = authentication.authenticate(identity, credential);
       assertNotNull(response);
       assertNotNull(response.getStorageUrl());
       assertNotNull(response.getCDNManagementUrl());
@@ -118,31 +70,24 @@ public class RackspaceAuthenticationLiveTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testBadAuthentication() throws Exception {
-      RackspaceAuthentication authentication = context.getAsyncApi();
+      RackspaceAuthAsyncClient authentication = context.getAsyncApi();
       authentication.authenticate("foo", "bar").get(10, TimeUnit.SECONDS);
    }
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<RackspaceAuthentication, RackspaceAuthentication>(
-            "rackspace", RackspaceAuthentication.class,
-            RackspaceAuthentication.class, new RackspacePropertiesBuilder(
-                  account, key).build()) {
-         @Override
-         protected void addClientModule(List<Module> modules) {
-            modules.add(new RestRackspaceAuthenticationClientModule());
-            modules.add(new RackspaceAuthenticationRestModule());
-         }
 
-         @Override
-         protected void addContextModule(String providerName,
-               List<Module> modules) {
-            modules.add(new RackspaceAuthenticationContextModule());
+      identity = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      credential = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-         }
-      }.withModules(
-            new Log4JLoggingModule(),
-            new ExecutorServiceModule(sameThreadExecutor(),
-                  sameThreadExecutor())).buildContext();
+      ContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> contextSpec = contextSpec("test",
+               "https://api.mosso.com", "1", null, null, RackspaceAuthClient.class,
+               RackspaceAuthAsyncClient.class);
+
+      context = createContextBuilder(
+               contextSpec,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(
+                        sameThreadExecutor(), sameThreadExecutor()))).buildContext();
+
    }
 }

@@ -19,8 +19,11 @@
 package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.rest.RestContext;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Represents a cloud that has key-value storage functionality. This object is scoped to a service
@@ -29,6 +32,7 @@ import org.jclouds.rest.RestContext;
  * @author Adrian Cole
  * 
  */
+@ImplementedBy(BlobStoreContextImpl.class)
 public interface BlobStoreContext {
 
    /**

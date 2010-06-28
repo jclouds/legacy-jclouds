@@ -32,8 +32,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.util.BlobStoreUtils;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
+import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.util.Utils;
 
@@ -46,12 +46,12 @@ import com.google.common.base.Supplier;
 public abstract class BaseBlobStore implements BlobStore {
 
    protected final BlobStoreContext context;
-   protected final BlobStoreUtils blobUtils;
+   protected final BlobUtils blobUtils;
    protected final Location defaultLocation;
    protected final Set<? extends Location> locations;
 
    @Inject
-   protected BaseBlobStore(BlobStoreContext context, BlobStoreUtils blobUtils,
+   protected BaseBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             Location defaultLocation, Set<? extends Location> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
@@ -65,7 +65,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * invokes {@link BlobStoreUtilsImpl#newBlob }
+    * invokes {@link BlobUtilsImpl#newBlob }
     */
    @Override
    public Blob newBlob(String name) {
@@ -85,7 +85,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes {@link BlobStoreUtilsImpl#directoryExists}
+    * This implementation invokes {@link BlobUtilsImpl#directoryExists}
     * 
     * @param container
     *           container name
@@ -98,7 +98,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes {@link BlobStoreUtilsImpl#createDirectory}
+    * This implementation invokes {@link BlobUtilsImpl#createDirectory}
     * 
     * @param container
     *           container name
@@ -123,7 +123,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes {@link BlobStoreUtilsImpl#countBlobs}
+    * This implementation invokes {@link BlobUtilsImpl#countBlobs}
     * 
     * @param container
     *           container name
@@ -146,7 +146,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes {@link BlobStoreUtilsImpl#clearContainer}
+    * This implementation invokes {@link BlobUtilsImpl#clearContainer}
     * 
     * @param container
     *           container name
@@ -157,7 +157,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * This implementation invokes {@link BlobStoreUtilsImpl#deleteDirectory}.
+    * This implementation invokes {@link BlobUtilsImpl#deleteDirectory}.
     * 
     * @param container
     *           container name

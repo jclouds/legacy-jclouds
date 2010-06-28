@@ -90,7 +90,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "name");
-      map.put("template", "http://catalogItem/3");
+      map.put("template", "https://vcloud/catalogItem/3");
       binder.bindToRequest(request, map);
    }
 

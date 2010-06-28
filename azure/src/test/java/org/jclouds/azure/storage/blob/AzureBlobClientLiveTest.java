@@ -25,6 +25,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
@@ -38,6 +39,7 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
@@ -50,6 +52,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 import com.google.inject.internal.Iterables;
 
 /**
@@ -66,11 +70,11 @@ public class AzureBlobClientLiveTest {
    private EncryptionService encryptionService = new JCEEncryptionService();
 
    @BeforeTest
-   public void setupClient() {
+   public void setupClient() throws IOException {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      client = (AzureBlobClient) AzureBlobContextFactory.createContext(account, key,
-               new Log4JLoggingModule()).getProviderSpecificContext().getApi();
+      client = (AzureBlobClient) new BlobStoreContextFactory().createContext("azureblob", account,
+               key, ImmutableSet.<Module> of(new Log4JLoggingModule())).getProviderSpecificContext().getApi();
    }
 
    @Test
@@ -92,8 +96,8 @@ public class AzureBlobClientLiveTest {
       while (!created) {
          privateContainer = containerPrefix + new SecureRandom().nextInt();
          try {
-            created = client.createContainer(privateContainer, withMetadata(ImmutableMultimap
-                     .of("foo", "bar")));
+            created = client.createContainer(privateContainer, withMetadata(ImmutableMultimap.of(
+                     "foo", "bar")));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 409)
@@ -166,8 +170,8 @@ public class AzureBlobClientLiveTest {
    @Test
    public void testListContainersWithOptions() throws Exception {
 
-      BoundedSet<ContainerProperties> response = client.listContainers(ListOptions.Builder
-               .prefix(privateContainer).maxResults(1).includeMetadata());
+      BoundedSet<ContainerProperties> response = client.listContainers(ListOptions.Builder.prefix(
+               privateContainer).maxResults(1).includeMetadata());
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -198,8 +202,7 @@ public class AzureBlobClientLiveTest {
       assertEquals(Iterables.getOnlyElement(response).getName(), privateContainer);
       assertEquals(Iterables.getOnlyElement(response).getMetadata(), ImmutableMap.of("foo", "bar"));
 
-      response = client.listContainers(ListOptions.Builder.prefix(publicContainer)
-               .maxResults(1));
+      response = client.listContainers(ListOptions.Builder.prefix(publicContainer).maxResults(1));
       assertEquals(response.size(), 1);
       assertEquals(Iterables.getOnlyElement(response).getName(), publicContainer);
 
@@ -240,8 +243,8 @@ public class AzureBlobClientLiveTest {
       assert client.getBlobProperties(privateContainer, "non-existent-object") == null;
 
       // Test HEAD of object
-      BlobProperties metadata = client.getBlobProperties(privateContainer, object
-               .getProperties().getName());
+      BlobProperties metadata = client.getBlobProperties(privateContainer, object.getProperties()
+               .getName());
       // TODO assertEquals(metadata.getName(), object.getProperties().getName());
       // we can't check this while hacking around lack of content-md5, as GET of the first byte will
       // show incorrect length 1, the returned size, as opposed to the real length. This is an ok

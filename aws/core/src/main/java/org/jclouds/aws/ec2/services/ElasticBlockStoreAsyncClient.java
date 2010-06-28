@@ -28,6 +28,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindVolumeIdsToIndexedFormParams;
@@ -36,7 +37,6 @@ import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.functions.AvailabilityZoneToEndpoint;
-import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
 import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
@@ -48,6 +48,7 @@ import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.SnapshotHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -65,7 +66,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-11-30")
+@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface ElasticBlockStoreAsyncClient {
 
@@ -193,7 +194,7 @@ public interface ElasticBlockStoreAsyncClient {
             @FormParam("SnapshotId") String snapshotId);
 
    /**
-    * @see ElasticBlockStoreClient#removeCreateVolumePermissionsFromSnapshotInRegion 
+    * @see ElasticBlockStoreClient#removeCreateVolumePermissionsFromSnapshotInRegion
     */
    @POST
    @Path("/")

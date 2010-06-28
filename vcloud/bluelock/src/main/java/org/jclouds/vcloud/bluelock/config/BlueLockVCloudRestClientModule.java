@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.bluelock.config;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.net.URI;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class BlueLockVCloudRestClientModule extends VCloudRestClientModule {
    }
 
    @Override
-   protected URI provideCatalog(Organization org, @Named(PROPERTY_VCLOUD_USER) final String user) {
+   protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) final String user) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
       return Iterables.getOnlyElement(
                Iterables.filter(org.getCatalogs().values(), new Predicate<NamedResource>() {

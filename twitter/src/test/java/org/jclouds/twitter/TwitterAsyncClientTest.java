@@ -18,29 +18,20 @@
  */
 package org.jclouds.twitter;
 
+import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URI;
 
-import javax.inject.Singleton;
-
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -79,30 +70,9 @@ public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
    }
 
    @Override
-   protected Module createModule() {
-      return new AbstractModule() {
-         @Override
-         protected void configure() {
-            Names
-                     .bindProperties(this.binder(), new TwitterPropertiesBuilder("foo", "bar")
-                              .build());
-            bind(URI.class).annotatedWith(Twitter.class).toInstance(
-                     URI.create("http://twitter.com"));
-            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-               public Logger getLogger(String category) {
-                  return Logger.NULL;
-               }
-            });
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
-                  throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar", encryptionService);
-         }
-
-      };
+   public ContextSpec<TwitterClient, TwitterAsyncClient> createContextSpec() {
+      return contextSpec("test", "http://twitter.com", "1", "identity", "credential",
+               TwitterClient.class, TwitterAsyncClient.class);
    }
+
 }

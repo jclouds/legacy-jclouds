@@ -22,6 +22,10 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
+import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
+import static org.jclouds.blobstore.util.BlobStoreUtils.parseContainerFromPath;
+import static org.jclouds.blobstore.util.BlobStoreUtils.parsePrefixFromPath;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -29,10 +33,12 @@ import java.net.URI;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.util.internal.BlobStoreUtilsImpl;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code BlobStoreUtils}
@@ -41,6 +47,18 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "blobstore.BlobStoreUtilsTest")
 public class BlobStoreUtilsTest {
+
+   @Test
+   public void testSupportedBlobStoreProviders() {
+      Iterable<String> providers = BlobStoreUtils.getSupportedProviders();
+      assert Iterables.contains(providers, "transient") : providers;
+   }
+   
+   @Test
+   public void testSupportedProviders() {
+      Iterable<String> providers = Utils.getSupportedProviders();
+      assert Iterables.contains(providers, "transient") : providers;
+   }
 
    public void testCreateParentIfNeededAsyncNoPath() {
       AsyncBlobStore asyncBlobStore = createMock(AsyncBlobStore.class);
@@ -55,7 +73,7 @@ public class BlobStoreUtilsTest {
       replay(blob);
       replay(md);
 
-      BlobStoreUtilsImpl.createParentIfNeededAsync(asyncBlobStore, container, blob);
+      createParentIfNeededAsync(asyncBlobStore, container, blob);
 
       verify(asyncBlobStore);
       verify(blob);
@@ -76,7 +94,7 @@ public class BlobStoreUtilsTest {
       replay(blob);
       replay(md);
 
-      BlobStoreUtilsImpl.createParentIfNeededAsync(asyncBlobStore, container, blob);
+      createParentIfNeededAsync(asyncBlobStore, container, blob);
 
       verify(asyncBlobStore);
       verify(blob);
@@ -97,7 +115,7 @@ public class BlobStoreUtilsTest {
       replay(blob);
       replay(md);
 
-      BlobStoreUtilsImpl.createParentIfNeededAsync(asyncBlobStore, container, blob);
+      createParentIfNeededAsync(asyncBlobStore, container, blob);
 
       verify(asyncBlobStore);
       verify(blob);
@@ -117,7 +135,7 @@ public class BlobStoreUtilsTest {
       replay(request);
       replay(from);
 
-      assertEquals(BlobStoreUtilsImpl.getKeyFor(request, from), "five");
+      assertEquals(getKeyFor(request, from), "five");
    }
 
    public void testGetKeyForAtmos() {
@@ -135,24 +153,24 @@ public class BlobStoreUtilsTest {
       replay(request);
       replay(from);
 
-      assertEquals(BlobStoreUtilsImpl.getKeyFor(request, from), "four");
+      assertEquals(getKeyFor(request, from), "four");
    }
 
    public void testGetContainer() {
-      String container = BlobStoreUtilsImpl.parseContainerFromPath("foo");
+      String container = parseContainerFromPath("foo");
       assertEquals(container, "foo");
-      container = BlobStoreUtilsImpl.parseContainerFromPath("foo/");
+      container = parseContainerFromPath("foo/");
       assertEquals(container, "foo");
-      container = BlobStoreUtilsImpl.parseContainerFromPath("foo/bar");
+      container = parseContainerFromPath("foo/bar");
       assertEquals(container, "foo");
    }
 
    public void testGetPrefix() {
-      String prefix = BlobStoreUtilsImpl.parsePrefixFromPath("foo");
+      String prefix = parsePrefixFromPath("foo");
       assertEquals(prefix, null);
-      prefix = BlobStoreUtilsImpl.parsePrefixFromPath("foo/");
+      prefix = parsePrefixFromPath("foo/");
       assertEquals(prefix, null);
-      prefix = BlobStoreUtilsImpl.parsePrefixFromPath("foo/bar");
+      prefix = parsePrefixFromPath("foo/bar");
       assertEquals(prefix, "bar");
    }
 

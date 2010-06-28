@@ -18,14 +18,10 @@
  */
 package org.jclouds.mezeo.pcs2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.mezeo.pcs2.config.PCSContextModule;
 import org.jclouds.mezeo.pcs2.config.PCSRestClientModule;
-import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
@@ -36,20 +32,11 @@ import com.google.inject.Module;
  */
 public class PCSContextBuilder extends RestContextBuilder<PCSClient, PCSAsyncClient> {
 
-   public PCSContextBuilder(String providerName, Properties props) {
-      super(providerName, PCSClient.class, PCSAsyncClient.class, props);
-      checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_USER));
-      checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_PASSWORD));
-      checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_ENDPOINT));
+   public PCSContextBuilder(Properties props) {
+      super(PCSClient.class, PCSAsyncClient.class, props);
    }
 
    protected void addClientModule(List<Module> modules) {
       modules.add(new PCSRestClientModule());
    }
-
-   @Override
-   protected void addContextModule(String providerName, List<Module> modules) {
-      modules.add(new PCSContextModule(providerName));
-   }
-
 }

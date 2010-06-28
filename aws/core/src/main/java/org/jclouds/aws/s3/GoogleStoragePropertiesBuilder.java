@@ -1,10 +1,10 @@
 package org.jclouds.aws.s3;
 
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_AUTH_TAG;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_DEFAULT_REGIONS;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_HEADER_TAG;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_REGIONS;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SERVICE_EXPR;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
@@ -22,19 +22,17 @@ public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-goog-meta-");
       properties.setProperty(PROPERTY_S3_AUTH_TAG, "GOOG1");
       properties.setProperty(PROPERTY_S3_HEADER_TAG, "goog");
-      properties.setProperty(PROPERTY_S3_SERVICE_EXPR,
-            "\\.commondatastorage\\.googleapis\\.com");
+      properties.setProperty(PROPERTY_S3_SERVICE_EXPR, "\\.commondatastorage\\.googleapis\\.com");
       return properties;
    }
 
    @Override
    protected Properties addEndpoints(Properties properties) {
-      properties.setProperty(PROPERTY_S3_REGIONS, "GoogleStorage");
-      properties.setProperty(PROPERTY_S3_DEFAULT_REGIONS, "GoogleStorage");
-      properties.setProperty(PROPERTY_S3_ENDPOINT,
-            "https://commondatastorage.googleapis.com");
-      properties.setProperty(PROPERTY_S3_ENDPOINT + ".GoogleStorage",
-            "https://commondatastorage.googleapis.com");
+      properties.setProperty(PROPERTY_REGIONS, "GoogleStorage");
+      properties.setProperty(PROPERTY_DEFAULT_REGIONS, "GoogleStorage");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://commondatastorage.googleapis.com");
+      properties.setProperty(PROPERTY_ENDPOINT + ".GoogleStorage",
+               "https://commondatastorage.googleapis.com");
       return properties;
    }
 
@@ -42,7 +40,4 @@ public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
       super(properties);
    }
 
-   public GoogleStoragePropertiesBuilder(String id, String secret) {
-      super(id, secret);
-   }
 }

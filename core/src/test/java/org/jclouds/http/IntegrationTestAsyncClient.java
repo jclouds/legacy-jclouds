@@ -35,7 +35,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
@@ -44,7 +43,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -55,7 +53,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@Endpoint(Localhost.class)
 public interface IntegrationTestAsyncClient {
 
    @HEAD

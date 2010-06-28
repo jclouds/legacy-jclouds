@@ -24,6 +24,7 @@
 package org.jclouds.chef.filters;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.security.PrivateKey;
 import java.util.Collections;
@@ -36,7 +37,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
@@ -80,9 +80,9 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SignedHeaderAuth(SignatureWire signatureWire,
-            @Named(ChefConstants.PROPERTY_CHEF_IDENTITY) String userId, PrivateKey privateKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
+   public SignedHeaderAuth(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String userId,
+            PrivateKey privateKey, @TimeStamp Provider<String> timeStampProvider,
+            EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.userId = userId;
       this.privateKey = privateKey;

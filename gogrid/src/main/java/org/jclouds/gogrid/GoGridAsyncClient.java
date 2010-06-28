@@ -34,6 +34,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Oleksiy Yarmula
  */
 public interface GoGridAsyncClient {
+   public static final String VERSION = "1.4";
 
    /**
     * @see GoGridClient#getServerServices()

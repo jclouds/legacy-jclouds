@@ -23,14 +23,10 @@
  */
 package org.jclouds.gogrid;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
-import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_ENDPOINT;
-import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_PASSWORD;
-import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_SESSIONINTERVAL;
-import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_USER;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
@@ -40,14 +36,14 @@ import org.jclouds.PropertiesBuilder;
  * 
  * @author Adrian Cole
  * @author Oleksiy Yarmula
- *
+ * 
  */
 public class GoGridPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_GOGRID_ENDPOINT, "https://api.gogrid.com/api");
-      properties.setProperty(PROPERTY_GOGRID_SESSIONINTERVAL, 60 + "");
+      properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.gogrid.com/api");
       properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "SANFRANCISCO");
       return properties;
    }
@@ -56,20 +52,4 @@ public class GoGridPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   public GoGridPropertiesBuilder(String id, String secret) {
-      super();
-      withCredentials(id, secret);
-   }
-
-   public GoGridPropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_GOGRID_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_GOGRID_PASSWORD, checkNotNull(secret, "password"));
-      return this;
-   }
-
-   public GoGridPropertiesBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_GOGRID_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
-   }
 }
