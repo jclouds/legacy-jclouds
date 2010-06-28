@@ -79,9 +79,9 @@ public class CreateImageOptions extends BaseEC2RequestOptions {
       /**
        * @see CreateImageOptions#withDescription(String )
        */
-      public static CreateImageOptions withDescription(String accountId) {
+      public static CreateImageOptions withDescription(String identityId) {
          CreateImageOptions options = new CreateImageOptions();
-         return options.withDescription(accountId);
+         return options.withDescription(identityId);
       }
 
       /**

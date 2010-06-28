@@ -127,7 +127,7 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>jclouds.test.principal.azureblob</name>
+                                            <name>jclouds.test.identity.azureblob</name>
                                             <value>${jclouds.azure.storage.account}</value>
                                         </property>
                                         <property>
@@ -135,7 +135,7 @@
                                             <value>${jclouds.azure.storage.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.principal.cloudfiles</name>
+                                            <name>jclouds.test.identity.cloudfiles</name>
                                             <value>${jclouds.rackspace.user}</value>
                                         </property>
                                         <property>
@@ -143,7 +143,7 @@
                                             <value>${jclouds.rackspace.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.principal.s3</name>
+                                            <name>jclouds.test.identity.s3</name>
                                             <value>${jclouds.aws.accesskeyid}</value>
                                         </property>
                                         <property>

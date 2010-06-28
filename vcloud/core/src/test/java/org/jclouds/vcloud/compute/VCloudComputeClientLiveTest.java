@@ -141,14 +141,14 @@ public class VCloudComputeClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint");
 
       Properties props = new Properties();
       props.setProperty("vcloud.endpoint", endpoint);
-      Injector injector = new RestContextFactory().createContextBuilder("vcloud", account, key,
+      Injector injector = new RestContextFactory().createContextBuilder("vcloud", identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
 
       computeClient = injector.getInstance(VCloudComputeClient.class);

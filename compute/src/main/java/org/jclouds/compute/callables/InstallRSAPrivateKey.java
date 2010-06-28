@@ -50,7 +50,7 @@ public class InstallRSAPrivateKey implements SshCallable<ExecResponse> {
    public ExecResponse call() throws Exception {
       ssh.exec("mkdir .ssh");
       ssh.put(".ssh/id_rsa", new ByteArrayInputStream(privateKey.getBytes()));
-      logger.debug(">> installing rsa key for %s@%s", node.getCredentials().account, Iterables.get(
+      logger.debug(">> installing rsa key for %s@%s", node.getCredentials().identity, Iterables.get(
                node.getPublicAddresses(), 0));
       return ssh.exec("chmod 600 .ssh/id_rsa");
    }

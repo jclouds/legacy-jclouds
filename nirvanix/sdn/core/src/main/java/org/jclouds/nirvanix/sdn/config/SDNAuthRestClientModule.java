@@ -53,10 +53,10 @@ public class SDNAuthRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(SDNConstants.PROPERTY_SDN_APPKEY)
-   public String credentials1(@Named(Constants.PROPERTY_IDENTITY) String account) {
-      List<String> parts = Lists.newArrayList(Splitter.on('/').split(account));
+   public String credentials1(@Named(Constants.PROPERTY_IDENTITY) String identity) {
+      List<String> parts = Lists.newArrayList(Splitter.on('/').split(identity));
       if (parts.size() != 3) {
-         throw new IllegalArgumentException("account syntax is appkey/appname/username");
+         throw new IllegalArgumentException("identity syntax is appkey/appname/username");
       }
       return parts.get(0);
    }
@@ -64,10 +64,10 @@ public class SDNAuthRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(SDNConstants.PROPERTY_SDN_APPNAME)
-   public String credentials2(@Named(Constants.PROPERTY_IDENTITY) String account) {
-      List<String> parts = Lists.newArrayList(Splitter.on('/').split(account));
+   public String credentials2(@Named(Constants.PROPERTY_IDENTITY) String identity) {
+      List<String> parts = Lists.newArrayList(Splitter.on('/').split(identity));
       if (parts.size() != 3) {
-         throw new IllegalArgumentException("account syntax is appkey/appname/username");
+         throw new IllegalArgumentException("identity syntax is appkey/appname/username");
       }
       return parts.get(1);
    }
@@ -75,10 +75,10 @@ public class SDNAuthRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(SDNConstants.PROPERTY_SDN_USERNAME)
-   public String credentials3(@Named(Constants.PROPERTY_IDENTITY) String account) {
-      List<String> parts = Lists.newArrayList(Splitter.on('/').split(account));
+   public String credentials3(@Named(Constants.PROPERTY_IDENTITY) String identity) {
+      List<String> parts = Lists.newArrayList(Splitter.on('/').split(identity));
       if (parts.size() != 3) {
-         throw new IllegalArgumentException("account syntax is appkey/appname/username");
+         throw new IllegalArgumentException("identity syntax is appkey/appname/username");
       }
       return parts.get(2);
    }

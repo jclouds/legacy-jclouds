@@ -70,8 +70,8 @@ public class SDNAuthenticationLiveTest {
    void setupFactory() {
 
       String endpoint = "http://services.nirvanix.com";
-      identity = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      credential = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       ContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint,
                "1", identity, credential, SDNAuthClient.class, SDNAuthAsyncClient.class);

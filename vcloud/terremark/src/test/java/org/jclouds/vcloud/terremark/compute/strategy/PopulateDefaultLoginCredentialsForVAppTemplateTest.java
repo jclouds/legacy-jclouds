@@ -48,8 +48,8 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
       Credentials creds = converter.execute(template);
-      assertEquals(creds.account, "vcloud");
-      assertEquals(creds.key, "$Ep455l0ud!2");
+      assertEquals(creds.identity, "vcloud");
+      assertEquals(creds.credential, "$Ep455l0ud!2");
       verify(template);
    }
 
@@ -62,8 +62,8 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
       Credentials creds = converter.execute(template);
-      assertEquals(creds.account, "vpncubed");
-      assertEquals(creds.key, "vpncubed");
+      assertEquals(creds.identity, "vpncubed");
+      assertEquals(creds.credential, "vpncubed");
       verify(template);
    }
    
@@ -76,8 +76,8 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
       Credentials creds = converter.execute(template);
-      assertEquals(creds.account, "Administrator");
-      assertEquals(creds.key, null);
+      assertEquals(creds.identity, "Administrator");
+      assertEquals(creds.credential, null);
       verify(template);
    }
 }

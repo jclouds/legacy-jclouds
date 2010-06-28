@@ -37,8 +37,8 @@ public class AtmosStorageTestInitializer extends TransientBlobStoreTestInitializ
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String account, String key) throws IOException {
-      return new BlobStoreContextFactory().createContext("atmosonline", account, key, ImmutableSet
+            String identity, String credential) throws IOException {
+      return new BlobStoreContextFactory().createContext("atmosonline", identity, credential, ImmutableSet
                .of(configurationModule, new Log4JLoggingModule()), new Properties());
    }
 

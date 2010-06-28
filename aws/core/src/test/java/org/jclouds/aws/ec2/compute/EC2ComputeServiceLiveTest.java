@@ -97,7 +97,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
                options);
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
-         assert first.getCredentials().account != null : first;
+         assert first.getCredentials().identity != null : first;
 
          startedId = Iterables.getOnlyElement(nodes).getProviderId();
 
@@ -116,7 +116,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // try to run a script with the original keyPair
          runScriptWithCreds(tag, first.getImage().getOsFamily(),
-               new Credentials(first.getCredentials().account, result
+               new Credentials(first.getCredentials().identity, result
                      .getKeyMaterial()));
 
       } finally {
@@ -234,7 +234,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
-         assert first.getCredentials().account != null : first;
+         assert first.getCredentials().identity != null : first;
 
          startedId = Iterables.getOnlyElement(nodes).getProviderId();
          nodeId = Iterables.getOnlyElement(nodes).getId();

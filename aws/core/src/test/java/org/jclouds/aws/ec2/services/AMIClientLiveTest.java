@@ -61,7 +61,7 @@ import com.google.inject.internal.Lists;
 public class AMIClientLiveTest {
 
    private AMIClient client;
-   private String user;
+   private String identity;
    private String imageId = "ami-cdf819a4";
    private static final String DEFAULT_MANIFEST = "adrianimages/image.manifest.xml";
    private static final String DEFAULT_SNAPSHOT = "TODO";
@@ -71,11 +71,11 @@ public class AMIClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       context = new RestContextFactory().createContext(
-               "ec2", user, password, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+               "ec2", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
       client = context.getApi().getAMIServices();
    }
 

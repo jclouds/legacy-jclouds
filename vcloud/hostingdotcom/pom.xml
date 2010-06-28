@@ -32,8 +32,8 @@
     <name>jclouds hostingdotcom Components Core</name>
     <description>jclouds core components to access hostingdotcom</description>
     <properties>
-        <jclouds.test.user>${jclouds.hostingdotcom.user}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.hostingdotcom.password}</jclouds.test.key>
+        <jclouds.test.identity>${jclouds.hostingdotcom.user}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.hostingdotcom.password}</jclouds.test.credential>
     </properties>
 
     <scm>

@@ -271,7 +271,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
                .describeImagesInRegion(from.getRegion(),
                         DescribeImagesOptions.Builder.imageIds(from.getImageId())));
       return checkNotNull(credentialProvider.execute(image), "login from image: "
-               + from.getImageId()).account;
+               + from.getImageId()).identity;
    }
 
 }

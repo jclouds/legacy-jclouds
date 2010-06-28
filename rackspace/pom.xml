@@ -31,8 +31,8 @@
     <artifactId>jclouds-rackspace</artifactId>
     <name>jclouds rackspace components</name>
     <properties>
-        <jclouds.test.user>${jclouds.rackspace.user}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.rackspace.key}</jclouds.test.key>
+        <jclouds.test.identity>${jclouds.rackspace.user}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.rackspace.key}</jclouds.test.credential>
         <jclouds.test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesTestInitializer</jclouds.test.initializer>
     </properties>
     <dependencies>

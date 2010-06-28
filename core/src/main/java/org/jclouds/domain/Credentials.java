@@ -33,35 +33,35 @@ import com.google.common.collect.Lists;
  */
 public class Credentials {
 
-   public final String account;
-   public final String key;
+   public final String identity;
+   public final String credential;
 
-   public Credentials(String account, String key) {
-      this.account = account;
-      this.key = key;
+   public Credentials(String identity, String credential) {
+      this.identity = identity;
+      this.credential = credential;
    }
 
    public static Credentials parse(URI uri) {
       checkNotNull(uri, "uri");
       List<String> userInfo = Lists.newArrayList(Splitter.on(':').split(
                checkNotNull(uri.getUserInfo(), "no userInfo in " + uri)));
-      String account = checkNotNull(userInfo.get(0), "no username in " + uri.getUserInfo());
-      if (HttpUtils.isUrlEncoded(account)) {
-         account = HttpUtils.urlDecode(account);
+      String identity = checkNotNull(userInfo.get(0), "no username in " + uri.getUserInfo());
+      if (HttpUtils.isUrlEncoded(identity)) {
+         identity = HttpUtils.urlDecode(identity);
       }
-      String key = userInfo.size() > 1 ? userInfo.get(1) : null;
-      if (key != null && HttpUtils.isUrlEncoded(key)) {
-         key = HttpUtils.urlDecode(key);
+      String credential = userInfo.size() > 1 ? userInfo.get(1) : null;
+      if (credential != null && HttpUtils.isUrlEncoded(credential)) {
+         credential = HttpUtils.urlDecode(credential);
       }
-      return new Credentials(account, key);
+      return new Credentials(identity, credential);
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
-      result = prime * result + ((key == null) ? 0 : key.hashCode());
+      result = prime * result + ((identity == null) ? 0 : identity.hashCode());
+      result = prime * result + ((credential == null) ? 0 : credential.hashCode());
       return result;
    }
 
@@ -74,15 +74,15 @@ public class Credentials {
       if (getClass() != obj.getClass())
          return false;
       Credentials other = (Credentials) obj;
-      if (account == null) {
-         if (other.account != null)
+      if (identity == null) {
+         if (other.identity != null)
             return false;
-      } else if (!account.equals(other.account))
+      } else if (!identity.equals(other.identity))
          return false;
-      if (key == null) {
-         if (other.key != null)
+      if (credential == null) {
+         if (other.credential != null)
             return false;
-      } else if (!key.equals(other.key))
+      } else if (!credential.equals(other.credential))
          return false;
 
       return true;

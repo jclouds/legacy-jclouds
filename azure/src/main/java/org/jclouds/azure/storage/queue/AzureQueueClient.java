@@ -38,7 +38,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Azure Queue via their REST API.
  * <p/>
  * The Queue service stores messages that may be read by any client who has access to the storage
- * account.
+ * identity.
  * <p/>
  * A queue can contain an unlimited number of messages, each of which can be up to 8 KB in size.
  * Messages are generally added to the end of the queue and retrieved from the front of the queue,
@@ -59,7 +59,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface AzureQueueClient {
 
    /**
-    * The List Queues operation returns a list of the queues under the specified account.
+    * The List Queues operation returns a list of the queues under the specified identity.
     * <p />
     * The 2009-07-17 version of the List Queues operation times out after 30 seconds.
     * 
@@ -70,7 +70,7 @@ public interface AzureQueueClient {
    BoundedSet<QueueMetadata> listQueues(ListOptions... listOptions);
 
    /**
-    * The Create Queue operation creates a new queue under the specified account.
+    * The Create Queue operation creates a new queue under the specified identity.
     * <p/>
     * You can specify user-defined metadata as name-value pairs on the queue at the time that it is
     * created.

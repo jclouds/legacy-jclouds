@@ -38,9 +38,9 @@ public class S3TestInitializer extends TransientBlobStoreTestInitializer {
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String account, String key) throws IOException {
+            String identity, String key) throws IOException {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-      return new BlobStoreContextFactory().createContext("s3", account, key, ImmutableSet.of(
+      return new BlobStoreContextFactory().createContext("s3", identity, key, ImmutableSet.of(
                configurationModule, new Log4JLoggingModule()), new Properties());
    }
 

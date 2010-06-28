@@ -63,8 +63,8 @@
         <jclouds.chef.identity>chef-validator</jclouds.chef.identity>
         <jclouds.chef.rsa-key>/etc/chef/validation.pem</jclouds.chef.rsa-key>
         <jclouds.chef.endpoint>http://localhost:4000</jclouds.chef.endpoint>
-        <jclouds.test.user>${jclouds.chef.identity}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.chef.rsa-key}</jclouds.test.key>
+        <jclouds.test.identity>${jclouds.chef.identity}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.chef.rsa-key}</jclouds.test.credential>
         <jclouds.test.endpoint>${jclouds.chef.endpoint}</jclouds.test.endpoint>
     </properties>
 

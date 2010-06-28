@@ -55,10 +55,10 @@ public interface CloudFilesClient {
    CFObject newCFObject();
 
    /**
-    * HEAD operations against an account are performed to retrieve the number of Containers and the
-    * total bytes stored in Cloud Files for the account.
+    * HEAD operations against an identity are performed to retrieve the number of Containers and the
+    * total bytes stored in Cloud Files for the identity.
     * <p/>
-    * Determine the number of Containers within the account and the total bytes stored. Since the
+    * Determine the number of Containers within the identity and the total bytes stored. Since the
     * storage system is designed to store large amounts of data, care should be taken when
     * representing the total bytes response as an integer; when possible, convert it to a 64-bit
     * unsigned integer if your platform supports that primitive flavor.
@@ -66,7 +66,7 @@ public interface CloudFilesClient {
    AccountMetadata getAccountStatistics();
 
    /**
-    * GET operations against the X-Storage-Url for an account are performed to retrieve a list of
+    * GET operations against the X-Storage-Url for an identity are performed to retrieve a list of
     * existing storage
     * <p/>
     * Containers ordered by name. The following list describes the optional query parameters that

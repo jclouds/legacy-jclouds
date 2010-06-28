@@ -412,10 +412,10 @@ public class BaseComputeService implements ComputeService {
                // don't override
                checkNotNull(node.getCredentials(),
                         "If the default credentials need to be used, they can't be null");
-               checkNotNull(node.getCredentials().account,
+               checkNotNull(node.getCredentials().identity,
                         "Account name for ssh authentication must be "
                                  + "specified. Try passing RunScriptOptions with new credentials");
-               checkNotNull(node.getCredentials().key,
+               checkNotNull(node.getCredentials().credential,
                         "Key or password for ssh authentication must be "
                                  + "specified. Try passing RunScriptOptions with new credentials");
             }

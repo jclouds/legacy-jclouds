@@ -39,13 +39,13 @@ import com.google.common.io.Closeables;
 
 /**
  * 
- * Usage is: java GetPath blobstore://account:key@service/container/path destinationPath
+ * Usage is: java GetPath blobstore://identity:key@service/container/path destinationPath
  * 
  * @author Adrian Cole
  */
 public class GetPath {
 
-   public static String INVALID_SYNTAX = "Invalid parameters. Syntax is: blobstore://account:key@service/container/path destinationPath";
+   public static String INVALID_SYNTAX = "Invalid parameters. Syntax is: blobstore://identity:key@service/container/path destinationPath";
 
    public static void main(String... args) throws IOException {
       if (args.length < 2)
@@ -67,7 +67,7 @@ public class GetPath {
       Credentials creds = Credentials.parse(uri);
 
       BlobStoreContext context = new BlobStoreContextFactory().createContext(provider,
-               creds.account, creds.key);
+               creds.identity, creds.credential);
 
       String path = uri.getPath();
       if (path.startsWith("/"))

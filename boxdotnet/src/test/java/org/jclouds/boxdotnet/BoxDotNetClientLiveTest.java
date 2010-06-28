@@ -46,11 +46,11 @@ public class BoxDotNetClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       context = createContext(contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0",
-               user, password, BoxDotNetClient.class, BoxDotNetAsyncClient.class));
+               identity, credential, BoxDotNetClient.class, BoxDotNetAsyncClient.class));
 
       connection = context.getApi();
    }

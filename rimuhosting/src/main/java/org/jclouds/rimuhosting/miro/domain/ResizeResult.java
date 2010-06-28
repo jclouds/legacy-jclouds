@@ -44,7 +44,7 @@ public class ResizeResult {
     * <p/>
     * You will need to check these messages in some cases.&nbsp; e.g.
     * if you are decreasing pricing and you are paying via a paypal
-    * subscription.&nbsp; Since you would be overpaying your account,
+    * subscription.&nbsp; Since you would be overpaying your identity,
     * unless you followed the directions to modify your paypal
     * subscription.
     */

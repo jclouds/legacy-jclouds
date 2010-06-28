@@ -186,11 +186,11 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>jclouds.test.user</name>
+                                            <name>jclouds.test.identity</name>
                                             <value>${jclouds.aws.accesskeyid}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.key</name>
+                                            <name>jclouds.test.credential</name>
                                             <value>${jclouds.aws.secretaccesskey}</value>
                                         </property>
                                         <property>

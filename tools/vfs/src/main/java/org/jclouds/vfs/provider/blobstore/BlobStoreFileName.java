@@ -33,9 +33,9 @@ public class BlobStoreFileName extends GenericFileName {
    private final String container;
    private String uriWithoutAuth;
 
-   protected BlobStoreFileName(final String service, final String account, final String key,
+   protected BlobStoreFileName(final String service, final String identity, final String key,
             final String path, final FileType type, final String container) {
-      super("blobstore", service, DEFAULT_PORT, DEFAULT_PORT, account, key, path, type);
+      super("blobstore", service, DEFAULT_PORT, DEFAULT_PORT, identity, key, path, type);
       this.container = container;
    }
 

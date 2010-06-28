@@ -77,8 +77,8 @@ public class VCloudLoginLiveTest {
                "jclouds.test.endpoint")
                + "/v0.8/login";
 
-      String identity = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String credential = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> contextSpec = contextSpec("test",
                endpoint, "1", identity, credential, VCloudLoginClient.class,

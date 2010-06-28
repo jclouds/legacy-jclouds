@@ -83,7 +83,7 @@ public class IBMDeveloperCloudClientLiveTest {
    private ImmutableMap<String, String> keyPair;
    private Key key;
    private Volume volume;
-   private String user;
+   private String identity;
    private Instance instance2;
    private Instance instance;
    private RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> context;
@@ -94,13 +94,13 @@ public class IBMDeveloperCloudClientLiveTest {
    public void setupClient() {
 
       String endpoint = System.getProperty("jclouds.test.endpoint");
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       Properties props = new Properties();
       if (endpoint != null)
          props.setProperty("ibmdev.endpoint", endpoint);
-      context = new RestContextFactory().createContext("ibmdev", user, password, ImmutableSet
+      context = new RestContextFactory().createContext("ibmdev", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();
@@ -376,7 +376,7 @@ public class IBMDeveloperCloudClientLiveTest {
       assertEquals(instance.getKeyName(), key.getName());
       assertNotNull(instance.getLaunchTime());
       assertNotNull(instance.getExpirationTime());
-      assertEquals(instance.getOwner(), user);
+      assertEquals(instance.getOwner(), identity);
       assertEquals(instance.getProductCodes(), ImmutableSet.<String> of());
       assertEquals(instance.getRequestName(), name);
       assertNotNull(instance.getRequestId());

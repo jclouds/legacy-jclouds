@@ -38,7 +38,7 @@ import org.jclouds.concurrent.Timeout;
 public interface SecurityGroupClient {
 
    /**
-    * Creates a new security group. Group names must be unique per account.
+    * Creates a new security group. Group names must be unique per identity.
     * 
     * @param region
     *           Security groups are not copied across Regions. Instances within the Region cannot
@@ -112,7 +112,7 @@ public interface SecurityGroupClient {
     *           communicate with instances outside the Region using group-based firewall rules.
     *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
-    *           Name of the group to modify. The name must be valid and belong to the account
+    *           Name of the group to modify. The name must be valid and belong to the identity
     * @param sourceSecurityGroup
     *           group to associate with this group.
     * 
@@ -143,7 +143,7 @@ public interface SecurityGroupClient {
     *           communicate with instances outside the Region using group-based firewall rules.
     *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
-    *           Name of the group to modify. The name must be valid and belong to the account
+    *           Name of the group to modify. The name must be valid and belong to the identity
     * @param ipProtocol
     *           IP protocol.
     * @param fromPort
@@ -176,7 +176,7 @@ public interface SecurityGroupClient {
     *           communicate with instances outside the Region using group-based firewall rules.
     *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
-    *           Name of the group to modify. The name must be valid and belong to the account
+    *           Name of the group to modify. The name must be valid and belong to the identity
     * @param sourceSecurityGroup
     *           group to associate with this group.
     * 
@@ -208,7 +208,7 @@ public interface SecurityGroupClient {
     *           communicate with instances outside the Region using group-based firewall rules.
     *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
-    *           Name of the group to modify. The name must be valid and belong to the account
+    *           Name of the group to modify. The name must be valid and belong to the identity
     * @param ipProtocol
     *           IP protocol.
     * @param fromPort

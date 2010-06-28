@@ -82,6 +82,6 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations
                .get(image.getLocation()), null, ImmutableMap.<String, String> of(), tag, image,
                state, ipSet, ImmutableList.<String> of(), ImmutableMap.<String, String> of(),
-               new Credentials(image.getDefaultCredentials().account, key));
+               new Credentials(image.getDefaultCredentials().identity, key));
    }
 }

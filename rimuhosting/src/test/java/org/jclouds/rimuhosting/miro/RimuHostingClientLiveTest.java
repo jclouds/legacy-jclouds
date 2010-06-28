@@ -53,8 +53,8 @@ public class RimuHostingClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      this.context = new RestContextFactory().createContext("rimuhosting", password, password,
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      this.context = new RestContextFactory().createContext("rimuhosting", credential, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule()));
       this.connection = context.getApi();
 

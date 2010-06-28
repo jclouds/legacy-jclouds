@@ -28,12 +28,12 @@ public enum ContainerVisibilities {
 
    /**
     * Container namespace is shared by the general public and therefore has highest likelihood of
-    * collision. Containers created in public namespace are not deletable by other accounts.
+    * collision. Containers created in public namespace are not deletable by other identitys.
     */
    PUBLIC,
    /**
-    * Container namespace is shared within an account and therefore all containers are deletable by
-    * the account.
+    * Container namespace is shared within an identity and therefore all containers are deletable by
+    * the identity.
     */
    ACCOUNT
 }

@@ -50,7 +50,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", sequential = true, testName = "azurequeue.AzureQueueClientLiveTest")
 public class AzureQueueClientLiveTest {
-   String account;
+   String identity;
 
    protected AzureQueueClient connection;
 
@@ -58,10 +58,10 @@ public class AzureQueueClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
-      connection = (AzureQueueClient) new RestContextFactory().createContext("azurequeue", account,
-               key, ImmutableSet.<Module> of(new Log4JLoggingModule())).getApi();
+      identity = System.getProperty("jclouds.test.identity");
+      String credential = System.getProperty("jclouds.test.credential");
+      connection = (AzureQueueClient) new RestContextFactory().createContext("azurequeue", identity,
+               credential, ImmutableSet.<Module> of(new Log4JLoggingModule())).getApi();
    }
 
    @Test

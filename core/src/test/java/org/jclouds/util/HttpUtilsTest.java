@@ -60,9 +60,9 @@ public class HttpUtilsTest extends PerformanceTest {
 
    public void testAzure() {
       URI creds = HttpUtils
-               .createUri("compute://account:Base64==@azureblob/container-hyphen/prefix");
+               .createUri("compute://identity:Base64==@azureblob/container-hyphen/prefix");
       assertEquals(creds, URI
-               .create("compute://account:Base64==@azureblob/container-hyphen/prefix"));
+               .create("compute://identity:Base64==@azureblob/container-hyphen/prefix"));
    }
 
    public void testHosting() {
@@ -90,8 +90,8 @@ public class HttpUtilsTest extends PerformanceTest {
    }
 
    public void testCloudFiles() {
-      URI creds = HttpUtils.createUri("compute://account:h3c@cloudfiles/container-hyphen/prefix");
-      assertEquals(creds, URI.create("compute://account:h3c@cloudfiles/container-hyphen/prefix"));
+      URI creds = HttpUtils.createUri("compute://identity:h3c@cloudfiles/container-hyphen/prefix");
+      assertEquals(creds, URI.create("compute://identity:h3c@cloudfiles/container-hyphen/prefix"));
    }
 
    public void testS3() {

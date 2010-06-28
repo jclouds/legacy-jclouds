@@ -58,7 +58,7 @@ public interface BlobStore {
    Set<? extends Location> listAssignableLocations();
 
    /**
-    * Lists all root-level resources available to the account.
+    * Lists all root-level resources available to the identity.
     */
    PageSet<? extends StorageMetadata> list();
 
@@ -72,7 +72,7 @@ public interface BlobStore {
     * <p/>
     * 
     * A container is a namespace for your objects. Depending on the service, the scope can be
-    * global, account, or sub-account scoped. For example, in Amazon S3, containers are called
+    * global, identity, or sub-identity scoped. For example, in Amazon S3, containers are called
     * buckets, and they must be uniquely named such that no-one else in the world conflicts. In
     * other blobstores, the naming convention of the container is less strict. All blobstores allow
     * you to list your containers and also the contents within them. These contents can either be

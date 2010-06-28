@@ -93,8 +93,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
-   protected String user;
-   protected String password;
+   protected String identity;
+   protected String credential;
    protected Template template;
    protected Map<String, String> keyPair;
 
@@ -133,10 +133,10 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void setupCredentials() {
-      user = checkNotNull(System.getProperty("jclouds.test.user"),
-            "jclouds.test.user");
-      password = checkNotNull(System.getProperty("jclouds.test.key"),
-            "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+            "jclouds.test.identity");
+      credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+            "jclouds.test.credential");
    }
 
    protected Injector createSshClientInjector() {
@@ -147,7 +147,7 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       context = new ComputeServiceContextFactory()
-            .createContext(service, user, password, ImmutableSet.of(
+            .createContext(service, identity, credential, ImmutableSet.of(
                   new Log4JLoggingModule(), getSshModule()));
       client = context.getComputeService();
    }
@@ -198,13 +198,13 @@ public abstract class BaseComputeServiceLiveTest {
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1,
                options);
          Credentials good = nodes.iterator().next().getCredentials();
-         assert good.account != null;
-         assert good.key != null;
+         assert good.identity != null;
+         assert good.credential != null;
 
          Image image = Iterables.get(nodes, 0).getImage();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(
-                  tag, image.getOsFamily(), new Credentials(good.account,
+                  tag, image.getOsFamily(), new Credentials(good.identity,
                         "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
@@ -297,7 +297,7 @@ public abstract class BaseComputeServiceLiveTest {
       } catch (SshException e) {
          if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
             // System.err.printf("bad credentials: %s:%s for %s%n",
-            // creds.account, creds.key, client
+            // creds.identity, creds.key, client
             // .listNodesDetailsMatching(tag));
          }
          throw e;
@@ -314,9 +314,9 @@ public abstract class BaseComputeServiceLiveTest {
          assert node.getPublicAddresses().size() >= 1
                || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
          assertNotNull(node.getCredentials());
-         if (node.getCredentials().account != null) {
-            assertNotNull(node.getCredentials().account);
-            assertNotNull(node.getCredentials().key);
+         if (node.getCredentials().identity != null) {
+            assertNotNull(node.getCredentials().identity);
+            assertNotNull(node.getCredentials().credential);
             sshPing(node);
          }
       }
@@ -536,7 +536,7 @@ public abstract class BaseComputeServiceLiveTest {
       socketTester.apply(socket); // TODO add transitionTo option that accepts
       // a socket conection
       // state.
-      SshClient ssh = sshFactory.create(socket, node.getCredentials().account,
+      SshClient ssh = sshFactory.create(socket, node.getCredentials().identity,
             keyPair.get("private").getBytes());
       try {
          ssh.connect();

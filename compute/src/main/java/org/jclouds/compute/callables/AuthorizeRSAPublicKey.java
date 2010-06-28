@@ -50,7 +50,7 @@ public class AuthorizeRSAPublicKey implements SshCallable<ExecResponse> {
    public ExecResponse call() throws Exception {
       ssh.exec("mkdir .ssh");
       ssh.put(".ssh/id_rsa.pub", new ByteArrayInputStream(publicKey.getBytes()));
-      logger.debug(">> authorizing rsa public key for %s@%s", node.getCredentials().account,
+      logger.debug(">> authorizing rsa public key for %s@%s", node.getCredentials().identity,
                Iterables.get(node.getPublicAddresses(), 0));
       ExecResponse returnVal = ssh.exec("cat .ssh/id_rsa.pub >> .ssh/authorized_keys");
       returnVal = ssh.exec("chmod 600 .ssh/authorized_keys");

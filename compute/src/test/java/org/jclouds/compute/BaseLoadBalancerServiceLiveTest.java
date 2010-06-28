@@ -69,8 +69,8 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    protected ComputeServiceContext context;
    protected ComputeService client;
    protected LoadBalancerService lbClient;
-   protected String user;
-   protected String password;
+   protected String identity;
+   protected String credential;
    protected Template template;
    protected Map<String, String> keyPair;
    protected Set<String> loadbalancers;
@@ -80,8 +80,8 @@ public abstract class BaseLoadBalancerServiceLiveTest {
             IOException, RunNodesException {
       if (tag == null)
          tag = checkNotNull(service, "service") + "lb";
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       initializeContextAndClient();
 
@@ -99,7 +99,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    private void initializeContextAndClient() throws IOException {
       if (context != null)
          context.close();
-      context = new ComputeServiceContextFactory().createContext(service, user, password,
+      context = new ComputeServiceContextFactory().createContext(service, identity, credential,
                ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
       client = context.getComputeService();
       lbClient = context.getLoadBalancerService();

@@ -37,7 +37,7 @@ import org.jclouds.concurrent.Timeout;
 public interface ElasticIPAddressClient {
 
    /**
-    * Acquires an elastic IP address for use with your account.
+    * Acquires an elastic IP address for use with your identity.
     * 
     * @param region
     *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
@@ -88,12 +88,12 @@ public interface ElasticIPAddressClient {
    void disassociateAddressInRegion(@Nullable String region, String publicIp);
 
    /**
-    * Releases an elastic IP address associated with your account.
+    * Releases an elastic IP address associated with your identity.
     * 
     * @param region
     *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     * @param publicIp
-    *           The IP address that you are releasing from your account.
+    *           The IP address that you are releasing from your identity.
     * 
     * @see #allocateAddress
     * @see #describeAddresses
@@ -104,7 +104,7 @@ public interface ElasticIPAddressClient {
    void releaseAddressInRegion(@Nullable String region, String publicIp);
 
    /**
-    * Lists elastic IP addresses assigned to your account or provides information about a specific
+    * Lists elastic IP addresses assigned to your identity or provides information about a specific
     * address.
     * 
     * @param region

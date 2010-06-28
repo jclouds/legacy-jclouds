@@ -58,8 +58,8 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);
       Image image = template.getImage();
-      assert image.getDefaultCredentials().account != null : image;
-      assert image.getDefaultCredentials().key != null : image;
+      assert image.getDefaultCredentials().identity != null : image;
+      assert image.getDefaultCredentials().credential != null : image;
       return template;
    }
 

@@ -62,8 +62,8 @@
     <properties>
         <jclouds.opscodeplatform.org>MYORG</jclouds.opscodeplatform.org>
         <jclouds.opscodeplatform.rsa-key>/etc/chef/validation.pem</jclouds.opscodeplatform.rsa-key>
-        <jclouds.test.user>${jclouds.opscodeplatform.org}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.opscodeplatform.rsa-key}</jclouds.test.key>
+        <jclouds.test.identity>${jclouds.opscodeplatform.org}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.opscodeplatform.rsa-key}</jclouds.test.credential>
     </properties>
     <dependencies>
         <dependency>

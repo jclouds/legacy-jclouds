@@ -55,7 +55,7 @@ public class NewServerData implements PostData{
     * on your last order that had a credit card.&nbsp; Or use a wire
     * transfer method if you are using that on other orders.&nbsp; See the
     * billing methods resource for how to find what billing methods/ids you
-    * have setup on your account.
+    * have setup on your identity.
     */
    @SerializedName("billing_oid")
    private Long billingId;
@@ -100,7 +100,7 @@ public class NewServerData implements PostData{
    /**
     * To whom will the order belong? Leave this blank and we will assign it
     * to you.&nbsp; If you set it and you do not have permissions on that
-    * user's account you will get an error.
+    * user's identity you will get an error.
     */
    @SerializedName("user_oid")
    private Long userId;

@@ -46,7 +46,7 @@ public class UserIdGroupPair implements Comparable<UserIdGroupPair> {
 
 
    /**
-    * AWS User ID of an account. Cannot be used when specifying a CIDR IP address.
+    * AWS User ID of an identity. Cannot be used when specifying a CIDR IP address.
     */
    public String getUserId() {
       return userId;

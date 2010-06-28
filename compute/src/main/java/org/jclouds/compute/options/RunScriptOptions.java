@@ -80,8 +80,8 @@ public class RunScriptOptions {
 
    public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
       checkNotNull(overridingCredentials, "overridingCredentials");
-      checkNotNull(overridingCredentials.account, "overridingCredentials.account");
-      checkNotNull(overridingCredentials.key, "overridingCredentials.key");
+      checkNotNull(overridingCredentials.identity, "overridingCredentials.identity");
+      checkNotNull(overridingCredentials.credential, "overridingCredentials.key");
       this.overridingCredentials = overridingCredentials;
       return this;
    }

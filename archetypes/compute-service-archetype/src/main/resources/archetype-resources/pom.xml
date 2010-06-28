@@ -62,8 +62,8 @@
     </repositories>
     
     <properties>
-        <jclouds.test.user>${providerUser}</jclouds.test.user>
-        <jclouds.test.key>${providerPassword}</jclouds.test.key>
+        <jclouds.test.identity>${providerUser}</jclouds.test.identity>
+        <jclouds.test.credential>${providerPassword}</jclouds.test.credential>
         <jclouds.test.endpoint>${providerEndpoint}</jclouds.test.endpoint>        
     </properties>
     <dependencies>

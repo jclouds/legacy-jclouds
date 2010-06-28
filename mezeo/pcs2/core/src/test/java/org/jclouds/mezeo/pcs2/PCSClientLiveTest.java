@@ -65,7 +65,7 @@ public class PCSClientLiveTest {
 
    private PCSClient connection;
 
-   private String user;
+   private String identity;
    Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
 
       @Override
@@ -79,14 +79,14 @@ public class PCSClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint");
 
       Properties props = new Properties();
       props.setProperty("pcs.endpoint", endpoint);
-      context = new RestContextFactory().createContext("pcs", user, password, ImmutableSet
+      context = new RestContextFactory().createContext("pcs", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();
@@ -163,7 +163,7 @@ public class PCSClientLiveTest {
       assertNotNull(response.getMetadata());
       assertNotNull(response.getModified());
       assertEquals(response.getName(), name);
-      assertEquals(response.getOwner(), user);
+      assertEquals(response.getOwner(), identity);
       assertEquals(response.getParent(), parent);
       assertNotNull(response.getTags());
       assertNotNull(response.getType());

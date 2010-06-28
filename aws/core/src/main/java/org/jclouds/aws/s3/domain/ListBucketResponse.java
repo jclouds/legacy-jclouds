@@ -32,7 +32,7 @@ import java.util.Set;
  * Amazon.com, only one person or organization can own a bucket within Amazon S3. Once you create a
  * uniquely named bucket in Amazon S3, you can organize and name the objects within the bucket in
  * any way you like and the bucket will remain yours for as long as you like and as long as you have
- * the Amazon S3 account.
+ * the Amazon S3 identity.
  * <p/>
  * The similarities between buckets and domain names is not a coincidence there is a direct mapping
  * between Amazon S3 buckets and subdomains of s3.amazonaws.com. Objects stored in Amazon S3 are

@@ -63,8 +63,8 @@ public class OpscodePlatformClientLiveTest {
 
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      orgname = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String keyfile = System.getProperty("jclouds.test.key");
+      orgname = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String keyfile = System.getProperty("jclouds.test.credential");
       if (keyfile == null || keyfile.equals(""))
          keyfile = "/etc/chef/validation.pem";
       validatorConnection = createConnection(orgname + "-validator", Files.toString(new File(

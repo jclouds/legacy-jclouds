@@ -42,10 +42,10 @@ public class HostingDotComVCloudClientLiveTest extends VCloudClientLiveTest {
    @BeforeGroups(groups = { "live" })
    @Override
    public void setupClient() {
-      account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = new RestContextFactory().createContext("hostingdotcom", account, key, ImmutableSet
+      context = new RestContextFactory().createContext("hostingdotcom", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), new Properties());
       connection = context.getApi();
    }

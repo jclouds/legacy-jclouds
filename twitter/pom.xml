@@ -39,8 +39,8 @@
         <url>http://jclouds.googlecode.com/svn/trunk/twitter</url>
     </scm>
     <properties>
-        <jclouds.test.user>${jclouds.twitter.user}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.twitter.password}</jclouds.test.key>
+        <jclouds.test.identity>${jclouds.twitter.user}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.twitter.password}</jclouds.test.credential>
     </properties>
     <dependencies>
         <dependency>

@@ -217,10 +217,10 @@ public class ComputeTask extends Task {
                   ipOrEmptyString(createdNode.getPublicAddresses()));
       if (nodeElement.getPasswordproperty() != null && !isKeyAuth(createdNode))
          getProject().setProperty(nodeElement.getPasswordproperty(),
-                  createdNode.getCredentials().key);
+                  createdNode.getCredentials().credential);
       if (nodeElement.getUsernameproperty() != null)
          getProject().setProperty(nodeElement.getUsernameproperty(),
-                  createdNode.getCredentials().account);
+                  createdNode.getCredentials().identity);
    }
 
    private void reboot(ComputeService computeService) {

@@ -87,11 +87,11 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
    protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
 
-      String account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
+      String identity = System.getProperty("jclouds.test.identity");
+      String credential = System.getProperty("jclouds.test.credential");
 
-      if (account != null) {
-         credentials = new AWSCredentials(account, key);
+      if (identity != null) {
+         credentials = new AWSCredentials(identity, credential);
          service = new JCloudsS3Service(credentials);
       } else {
          assert false : "credentials not present";
@@ -200,7 +200,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
             TimeoutException, S3ServiceException {
       String bucketName = getContainerName();
       try {
-         // Ensure there is at least 1 bucket in S3 account to list and compare.
+         // Ensure there is at least 1 bucket in S3 identity to list and compare.
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
          SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = getApi()

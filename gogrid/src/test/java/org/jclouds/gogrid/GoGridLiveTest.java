@@ -94,10 +94,10 @@ public class GoGridLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = new RestContextFactory().createContext("gogrid", user, password, ImmutableSet
+      context = new RestContextFactory().createContext("gogrid", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()));
 
       client = context.getApi();
@@ -360,7 +360,7 @@ public class GoGridLiveTest {
       socketOpen.apply(socket);
 
       SshClient sshClient = new JschSshClient(new BackoffLimitedRetryHandler(), socket, 60000,
-               instanceCredentials.account, instanceCredentials.key, null);
+               instanceCredentials.identity, instanceCredentials.credential, null);
       sshClient.connect();
       String output = sshClient.exec("df").getOutput();
       assertTrue(output.contains("Filesystem"),

@@ -50,12 +50,12 @@ public class GoogleAppEngineLiveTest {
             throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      props = new S3PropertiesBuilder(props).credentials(user, password).build();
+      props = new S3PropertiesBuilder(props).credentials(identity, credential).build();
 
-      props = new EC2PropertiesBuilder(props).credentials(user, password).build();
+      props = new EC2PropertiesBuilder(props).credentials(identity, credential).build();
 
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);

@@ -38,22 +38,22 @@ import com.google.common.base.Splitter;
 public class BlobStoreContextFactoryTest {
 
    public void test() throws IOException {
-      URI blobStore = URI.create("service://account:key@container/path");
+      URI blobStore = URI.create("service://identity:key@container/path");
       assertEquals(blobStore.getScheme(), "service");
-      Iterator<String> accountKey = Splitter.on(":").split(
+      Iterator<String> identityKey = Splitter.on(":").split(
                checkNotNull(blobStore.getUserInfo(), "userInfo")).iterator();
-      assertEquals(accountKey.next(), "account");
-      assertEquals(accountKey.next(), "key");
+      assertEquals(identityKey.next(), "identity");
+      assertEquals(identityKey.next(), "key");
       assertEquals(blobStore.getHost(), "container");
       assertEquals(blobStore.getPath(), "/path");
    }
 
    public void testNoPassword() throws IOException {
-      URI blobStore = URI.create("service://account@container/path");
+      URI blobStore = URI.create("service://identity@container/path");
       assertEquals(blobStore.getScheme(), "service");
-      Iterator<String> accountKey = Splitter.on(":").split(
+      Iterator<String> identityKey = Splitter.on(":").split(
                checkNotNull(blobStore.getUserInfo(), "userInfo")).iterator();
-      assertEquals(accountKey.next(), "account");
+      assertEquals(identityKey.next(), "identity");
       assertEquals(blobStore.getHost(), "container");
       assertEquals(blobStore.getPath(), "/path");
    }

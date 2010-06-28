@@ -71,10 +71,10 @@ public class AzureBlobClientLiveTest {
 
    @BeforeTest
    public void setupClient() throws IOException {
-      account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
-      client = (AzureBlobClient) new BlobStoreContextFactory().createContext("azureblob", account,
-               key, ImmutableSet.<Module> of(new Log4JLoggingModule())).getProviderSpecificContext().getApi();
+      identity = System.getProperty("jclouds.test.identity");
+      String credential = System.getProperty("jclouds.test.credential");
+      client = (AzureBlobClient) new BlobStoreContextFactory().createContext("azureblob", identity,
+               credential, ImmutableSet.<Module> of(new Log4JLoggingModule())).getProviderSpecificContext().getApi();
    }
 
    @Test
@@ -88,7 +88,7 @@ public class AzureBlobClientLiveTest {
 
    String privateContainer;
    String publicContainer;
-   String account;
+   String identity;
 
    @Test(timeOut = 5 * 60 * 1000)
    public void testCreateContainer() throws Exception {
@@ -111,7 +111,7 @@ public class AzureBlobClientLiveTest {
       assertTrue(containerCount >= 1);
       ListBlobsResponse list = client.listBlobs(privateContainer);
       assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/%s",
-               account, privateContainer)));
+               identity, privateContainer)));
       // TODO ... check to see the container actually exists
    }
 
@@ -130,7 +130,7 @@ public class AzureBlobClientLiveTest {
          }
       }
       // TODO
-      // URL url = new URL(String.format("http://%s.blob.core.windows.net/%s", account,
+      // URL url = new URL(String.format("http://%s.blob.core.windows.net/%s", identity,
       // publicContainer));
       // Utils.toStringAndClose(url.openStream());
    }
@@ -164,7 +164,7 @@ public class AzureBlobClientLiveTest {
       }
       ListBlobsResponse list = client.listBlobs();
       assertEquals(list.getUrl(), URI.create(String.format(
-               "https://%s.blob.core.windows.net/%%24root", account)));
+               "https://%s.blob.core.windows.net/%%24root", identity)));
    }
 
    @Test

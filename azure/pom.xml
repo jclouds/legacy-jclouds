@@ -34,8 +34,8 @@
     <description>jclouds core components to access azure services</description>
 
    <properties>
-        <jclouds.test.user>${jclouds.azure.storage.account}</jclouds.test.user>
-        <jclouds.test.key>${jclouds.azure.storage.key}</jclouds.test.key>
+        <jclouds.test.identity>${jclouds.azure.storage.account}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.azure.storage.key}</jclouds.test.credential>
         <jclouds.test.initializer>org.jclouds.azure.storage.blob.blobstore.integration.AzureBlobTestInitializer</jclouds.test.initializer>
     </properties>
 

@@ -49,10 +49,10 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
    @BeforeGroups(groups = { "live" })
    @Override
    public void setupClient() {
-      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new RestContextFactory().createContextBuilder("hostingdotcom", account,
-               key, ImmutableSet.<Module> of(new Log4JLoggingModule()), new Properties())
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      Injector injector = new RestContextFactory().createContextBuilder("hostingdotcom", identity,
+               credential, ImmutableSet.<Module> of(new Log4JLoggingModule()), new Properties())
                .buildInjector();
 
       computeClient = injector.getInstance(HostingDotComVCloudComputeClient.class);

@@ -134,7 +134,7 @@ public class Snapshot implements Comparable<Snapshot> {
    }
 
    /**
-    * The AWS account alias (e.g., "amazon", "redhat", "self", etc.) or AWS account ID that owns the
+    * The AWS identity alias (e.g., "amazon", "redhat", "self", etc.) or AWS identity ID that owns the
     * AMI.
     */
    public String getOwnerAlias() {

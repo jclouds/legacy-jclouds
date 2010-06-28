@@ -46,10 +46,10 @@ public class ${providerName}ClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      connection = ${providerName}ContextFactory.createContext(user, password, new Log4JLoggingModule())
+      connection = ${providerName}ContextFactory.createContext(identity, credential, new Log4JLoggingModule())
                .getApi();
    }
 

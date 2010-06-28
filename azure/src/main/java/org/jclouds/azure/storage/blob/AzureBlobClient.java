@@ -50,7 +50,7 @@ public interface AzureBlobClient {
    public org.jclouds.azure.storage.blob.domain.AzureBlob newBlob();
 
    /**
-    * The List Containers operation returns a list of the containers under the specified account.
+    * The List Containers operation returns a list of the containers under the specified identity.
     * <p />
     * The 2009-07-17 version of the List Containers operation times out after 30 seconds.
     * 
@@ -61,7 +61,7 @@ public interface AzureBlobClient {
    BoundedSet<ContainerProperties> listContainers(ListOptions... listOptions);
 
    /**
-    * The Create Container operation creates a new container under the specified account. If the
+    * The Create Container operation creates a new container under the specified identity. If the
     * container with the same name already exists, the operation fails.
     * <p/>
     * The container resource includes metadata and properties for that container. It does not
@@ -117,7 +117,7 @@ public interface AzureBlobClient {
    /**
     * The root container is a default container that may be inferred from a URL requesting a blob
     * resource. The root container makes it possible to reference a blob from the top level of the
-    * storage account hierarchy, without referencing the container name.
+    * storage identity hierarchy, without referencing the container name.
     * <p/>
     * The container resource includes metadata and properties for that container. It does not
     * include a list of the blobs contained by the container.

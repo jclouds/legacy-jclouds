@@ -65,15 +65,15 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(service, user, password).getProviderSpecificContext();
+               .createContext(service, identity, credential).getProviderSpecificContext();
    }
 
    @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);
       Image image = template.getImage();
-      assert image.getDefaultCredentials().account != null : image;
-      assert image.getDefaultCredentials().key != null : image;
+      assert image.getDefaultCredentials().identity != null : image;
+      assert image.getDefaultCredentials().credential != null : image;
       return template;
    }
 
@@ -83,9 +83,9 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
          assert image.getProviderId() != null : image;
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
-         assert image.getDefaultCredentials().account != null : image;
+         assert image.getDefaultCredentials().identity != null : image;
          if (image.getOsFamily() != OsFamily.WINDOWS)
-            assert image.getDefaultCredentials().key != null : image;
+            assert image.getDefaultCredentials().credential != null : image;
       }
    }
 

@@ -37,13 +37,13 @@ public class AzureBlobTestInitializer extends TransientBlobStoreTestInitializer 
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String account, String key) throws IOException {
+            String identity, String key) throws IOException {
       Properties properties = new Properties();
       // properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, Integer.toString(0));
       // properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, Integer.toString(0));
       // properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(0));
       // properties.setProperty(PROPERTY_IO_WORKER_THREADS, Integer.toString(20));
-      return (BlobStoreContext) new BlobStoreContextFactory().createContext("azureblob", account,
+      return (BlobStoreContext) new BlobStoreContextFactory().createContext("azureblob", identity,
                key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()), properties);
    }
 

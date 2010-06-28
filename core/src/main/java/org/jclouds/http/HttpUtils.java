@@ -281,9 +281,9 @@ public class HttpUtils {
          if (matcher.find()) {
             String scheme = matcher.group(1);
             String rest = matcher.group(4);
-            String account = matcher.group(2);
+            String identity = matcher.group(2);
             String key = matcher.group(3);
-            return URI.create(String.format("%s://%s:%s@%s", scheme, urlEncode(account),
+            return URI.create(String.format("%s://%s:%s@%s", scheme, urlEncode(identity),
                      urlEncode(key), rest));
          } else {
             throw new IllegalArgumentException("bad syntax");

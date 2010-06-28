@@ -55,7 +55,7 @@ import com.google.common.collect.Lists;
  * @author Gary D. Gregory
  */
 public class BlobStoreShell {
-   public static String INVALID_SYNTAX = "Invalid parameters. Syntax is: blobstore://account:key@service/container";
+   public static String INVALID_SYNTAX = "Invalid parameters. Syntax is: blobstore://identity:key@service/container";
 
    private final DefaultFileSystemManager remoteMgr;
    private FileObject remoteCwd;

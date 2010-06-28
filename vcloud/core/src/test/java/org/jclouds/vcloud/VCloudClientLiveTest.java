@@ -50,7 +50,7 @@ import com.google.inject.Module;
 public class VCloudClientLiveTest {
 
    protected VCloudClient connection;
-   protected String account;
+   protected String identity;
    protected RestContext<VCloudClient, VCloudAsyncClient> context;
 
    @Test
@@ -58,7 +58,7 @@ public class VCloudClientLiveTest {
       Organization response = connection.getDefaultOrganization();
       assertNotNull(response);
       assertNotNull(response.getId());
-      assertNotNull(account);
+      assertNotNull(identity);
       assert response.getCatalogs().size() >= 1;
       assert response.getTasksLists().size() >= 1;
       assert response.getVDCs().size() >= 1;
@@ -164,12 +164,12 @@ public class VCloudClientLiveTest {
    public void setupClient() {
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
                "jclouds.test.endpoint");
-      account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       Properties props = new Properties();
       props.setProperty("vcloud.endpoint", endpoint);
-      context = new RestContextFactory().createContext("vcloud", account, key, ImmutableSet
+      context = new RestContextFactory().createContext("vcloud", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();

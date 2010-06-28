@@ -201,7 +201,7 @@ public class ComputeUtils {
             Iterable<? extends SshCallable<?>> parallel, @Nullable SshCallable<?> last) {
       checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
       checkNodeHasPublicIps(node);
-      checkNotNull(node.getCredentials().key, "credentials.key for node " + node.getId());
+      checkNotNull(node.getCredentials().credential, "credentials.key for node " + node.getId());
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
          ssh.connect();
@@ -232,9 +232,9 @@ public class ComputeUtils {
    public SshClient createSshClientOncePortIsListeningOnNode(NodeMetadata node) {
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
-      SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().account,
-               node.getCredentials().key.getBytes()) : sshFactory.create(socket, node
-               .getCredentials().account, node.getCredentials().key);
+      SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().identity,
+               node.getCredentials().credential.getBytes()) : sshFactory.create(socket, node
+               .getCredentials().identity, node.getCredentials().credential);
       return ssh;
    }
 

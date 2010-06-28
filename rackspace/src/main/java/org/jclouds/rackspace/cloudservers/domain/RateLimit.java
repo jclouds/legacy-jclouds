@@ -32,7 +32,7 @@ import javax.ws.rs.HttpMethod;
  * Rate limits are applied in order relative to the verb, going from least to most specific. For
  * example, although the threshold for POST to /servers is 25 per day, one cannot POST to /servers
  * more than 10 times within a single minute because the rate limits for any POST is 10/min. In the
- * event you exceed the thresholds established for your account, a 413 Rate Control HTTP response
+ * event you exceed the thresholds established for your identity, a 413 Rate Control HTTP response
  * will be returned with a Reply-After header to notify the client when theyagain.
  * 
  * @author Adrian Cole

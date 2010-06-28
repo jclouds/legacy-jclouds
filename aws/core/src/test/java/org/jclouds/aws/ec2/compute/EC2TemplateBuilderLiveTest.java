@@ -51,8 +51,8 @@ public class EC2TemplateBuilderLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      user = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      password = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
    }
 
    @Test

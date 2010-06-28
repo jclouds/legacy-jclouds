@@ -77,8 +77,8 @@ public class RackspaceAuthenticationLiveTest {
    @BeforeClass
    void setupFactory() {
 
-      identity = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      credential = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       ContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> contextSpec = contextSpec("test",
                "https://api.mosso.com", "1", null, null, RackspaceAuthClient.class,

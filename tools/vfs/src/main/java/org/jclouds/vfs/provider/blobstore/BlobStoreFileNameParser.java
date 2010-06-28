@@ -73,7 +73,7 @@ public class BlobStoreFileNameParser extends URLFileNameParser {
       FileType fileType = UriParser.normalisePath(name);
       String path = name.toString();
 
-      return new BlobStoreFileName(auth.hostName, creds.account, creds.key, path, fileType,
+      return new BlobStoreFileName(auth.hostName, creds.identity, creds.credential, path, fileType,
                container);
    }
 

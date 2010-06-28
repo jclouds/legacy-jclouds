@@ -76,10 +76,10 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
    NodeMetadata installCredentialsFromCache(NodeMetadata node) {
       OrgAndName orgAndName = getOrgAndNameFromNode(node);
       if (credentialsMap.containsKey(orgAndName)) {
-         String account = getLoginAccountForNode(node);
-         if (account != null) {
+         String identity = getLoginAccountForNode(node);
+         if (identity != null) {
             String privateKey = credentialsMap.get(orgAndName).getPrivateKey();
-            Credentials creds = new Credentials(account, privateKey);
+            Credentials creds = new Credentials(identity, privateKey);
             node = installNewCredentials(node, creds);
          }
       }
@@ -93,12 +93,12 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
    }
 
    String getLoginAccountForNode(NodeMetadata node) {
-      String account = null;
+      String identity = null;
       if (node.getCredentials() != null)
-         account = node.getCredentials().account;
+         identity = node.getCredentials().identity;
       else if (node.getImage() != null && node.getImage().getDefaultCredentials() != null)
-         account = node.getImage().getDefaultCredentials().account;
-      return account;
+         identity = node.getImage().getDefaultCredentials().identity;
+      return identity;
    }
 
    NodeMetadata installDefaultCredentialsFromImage(NodeMetadata node) {

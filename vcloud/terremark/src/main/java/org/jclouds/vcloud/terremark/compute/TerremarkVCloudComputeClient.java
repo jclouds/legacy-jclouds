@@ -77,8 +77,8 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
             .getVAppTemplate(templateId));
       Map<String, String> toReturn = super.parseResponse(templateId,
             vAppResponse);
-      toReturn.put("username", credentials.account);
-      toReturn.put("password", credentials.key);
+      toReturn.put("username", credentials.identity);
+      toReturn.put("password", credentials.credential);
       return toReturn;
    }
 

@@ -62,7 +62,7 @@ public class BlobStoreProviderTestCase extends AbstractProviderTestConfig {
     * Returns the base folder for tests.
     */
    public FileObject getBaseTestFolder(final FileSystemManager manager) throws Exception {
-      String uri = System.getProperty(TEST_URI, "blobstore://account:key@stub/stub");
+      String uri = System.getProperty(TEST_URI, "blobstore://identity:key@stub/stub");
       return setUpTests(manager, uri);
    }
 

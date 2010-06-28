@@ -53,7 +53,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to Azure Queue via their REST API.
  * <p/>
  * The Queue service stores messages that may be read by any client who has access to the storage
- * account.
+ * identity.
  * <p/>
  * A queue can contain an unlimited number of messages, each of which can be up to 8 KB in size.
  * Messages are generally added to the end of the queue and retrieved from the front of the queue,

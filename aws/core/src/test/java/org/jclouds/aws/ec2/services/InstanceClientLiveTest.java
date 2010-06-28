@@ -49,14 +49,14 @@ public class InstanceClientLiveTest {
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";
 
    private InstanceClient client;
-   private String user;
+   private String identity;
    private RestContext<EC2Client, EC2AsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      context = new RestContextFactory().createContext("ec2", user, password, ImmutableSet
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      context = new RestContextFactory().createContext("ec2", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()));
       client = context.getApi().getInstanceServices();
 

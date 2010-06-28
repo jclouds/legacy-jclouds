@@ -120,9 +120,9 @@ public class EBSBootEC2ClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new RestContextFactory().createContextBuilder("ec2", user, password,
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      Injector injector = new RestContextFactory().createContextBuilder("ec2", identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -560,7 +560,7 @@ public class EBSBootEC2ClientLiveTest {
                .getId());
       assert runningTester.apply(instance);
 
-      // search my account for the instance I just created
+      // search my identity for the instance I just created
       Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
                instance.getRegion(), instance.getId()); // last
       // parameter

@@ -255,8 +255,8 @@ public class StubComputeServiceIntegrationTest extends
 
    @Override
    protected void setupCredentials() {
-      user = "stub";
-      password = "stub";
+      identity = "stub";
+      credential = "stub";
    }
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
@@ -279,7 +279,7 @@ public class StubComputeServiceIntegrationTest extends
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>> stubContext = new ComputeServiceContextFactory()
-            .createContext(service, user, password)
+            .createContext(service, identity, credential)
             .getProviderSpecificContext();
    }
 

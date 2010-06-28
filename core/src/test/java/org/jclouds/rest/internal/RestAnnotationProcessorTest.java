@@ -945,10 +945,10 @@ public class RestAnnotationProcessorTest {
    }
 
    @SkipEncoding('/')
-   @Path("/v1/{account}")
+   @Path("/v1/{identity}")
    public interface TestConstantPathParam {
-      @Named("testaccount")
-      @PathParam("account")
+      @Named("testidentity")
+      @PathParam("identity")
       void setUsername();
 
       @GET

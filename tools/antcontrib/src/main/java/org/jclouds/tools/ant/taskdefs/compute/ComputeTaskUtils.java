@@ -83,7 +83,7 @@ public class ComputeTaskUtils {
             String provider = from.getHost();
             Credentials creds = Credentials.parse(from);
             return new ComputeServiceContextFactory(props).createContext(provider,
-                     creds.account, creds.key, ImmutableSet.of((Module) new AntLoggingModule(
+                     creds.identity, creds.credential, ImmutableSet.of((Module) new AntLoggingModule(
                               projectProvider.get(), ComputeServiceConstants.COMPUTE_LOGGER),
                               new JschSshClientModule()), props);
 

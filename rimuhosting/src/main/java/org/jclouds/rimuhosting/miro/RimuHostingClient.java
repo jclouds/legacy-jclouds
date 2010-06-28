@@ -45,7 +45,7 @@ public interface RimuHostingClient {
    SortedSet<Image> getImageList();
 
    /**
-    * Returns a list of servers that belong to this account. 
+    * Returns a list of servers that belong to this identity. 
     * 
     * @return An empty set if there are no servers.
     * @see Server

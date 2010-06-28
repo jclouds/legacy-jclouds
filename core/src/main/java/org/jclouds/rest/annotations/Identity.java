@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Designates that this Resource qualifies an object to an account on a provider.
+ * Designates that this Resource qualifies an object to an identity on a provider.
  * 
  * @author Adrian Cole
  */

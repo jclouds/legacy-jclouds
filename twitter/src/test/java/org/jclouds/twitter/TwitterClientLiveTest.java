@@ -45,10 +45,10 @@ public class TwitterClientLiveTest {
 
    @BeforeGroups(groups = "live")
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = createContext(contextSpec("twitter", "http://twitter.com", "1", user, password,
+      context = createContext(contextSpec("twitter", "http://twitter.com", "1", identity, credential,
                TwitterClient.class, TwitterAsyncClient.class));
 
       connection = context.getApi();

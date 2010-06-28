@@ -78,8 +78,8 @@ public class ${providerName}ContextModule extends AbstractModule {
    @Provides
    @Singleton
    RestContext<${providerName}Client, ${providerName}AsyncClient> provideContext(Closer closer, ${providerName}AsyncClient asyncApi,
-            ${providerName}Client syncApi, @${providerName} URI endPoint, @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER) String account) {
-      return new RestContextImpl<${providerName}Client, ${providerName}AsyncClient>(closer, asyncApi, syncApi, endPoint, account);
+            ${providerName}Client syncApi, @${providerName} URI endPoint, @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER) String identity) {
+      return new RestContextImpl<${providerName}Client, ${providerName}AsyncClient>(closer, asyncApi, syncApi, endPoint, identity);
    }
 
 }

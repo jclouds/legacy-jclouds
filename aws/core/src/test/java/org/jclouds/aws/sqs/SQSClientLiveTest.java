@@ -61,10 +61,10 @@ public class SQSClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = new RestContextFactory().createContext("sqs", user, password, ImmutableSet
+      context = new RestContextFactory().createContext("sqs", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()));
       this.client = context.getApi();
    }

@@ -116,10 +116,10 @@ public class AtmosStorageClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      String uid = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
       BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(
-               "atmosonline", uid, key, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+               "atmosonline", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
       RestContext<AtmosStorageClient, AtmosStorageAsyncClient> context = blobStoreContext
                .getProviderSpecificContext();
       connection = context.getApi();
@@ -138,7 +138,7 @@ public class AtmosStorageClientLiveTest {
 
    String privateDirectory;
    String publicDirectory;
-   String account;
+   String identity;
 
    @Test(timeOut = 5 * 60 * 1000)
    public void testCreateDirectory() throws Exception {

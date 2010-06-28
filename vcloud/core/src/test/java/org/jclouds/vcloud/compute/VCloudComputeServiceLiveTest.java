@@ -39,7 +39,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(service, user, password)
+            .createContext(service, identity, credential)
             .getProviderSpecificContext();
    }
 

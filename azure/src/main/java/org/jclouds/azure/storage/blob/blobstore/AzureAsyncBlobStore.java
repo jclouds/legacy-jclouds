@@ -211,7 +211,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     * 
     * @param container
     *           bucket name
-    * @param key
+    * @param credential
     *           object key
     */
    @Override

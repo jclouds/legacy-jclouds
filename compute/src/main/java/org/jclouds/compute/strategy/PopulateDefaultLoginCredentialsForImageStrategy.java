@@ -38,7 +38,7 @@ public interface PopulateDefaultLoginCredentialsForImageStrategy {
      *                  responsibility of an implementation to apply
      *                  the cloud-specific logic.
      * @return credentials object. Note: the key
-     *                  may not be set, but the account must be set
+     *                  may not be set, but the identity must be set
      */
     Credentials execute(Object resourceToAuthenticate);
 

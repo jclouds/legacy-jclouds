@@ -95,12 +95,12 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException,
  TimeoutException,
             IOException {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"),
-            "jclouds.test.user");
-      String password = checkNotNull(System.getProperty("jclouds.test.key"),
-            "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+            "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+            "jclouds.test.credential");
       Injector injector =  new RestContextFactory().createContextBuilder(
-                        "ec2", user, password, ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
+                        "ec2", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(
@@ -427,7 +427,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private RunningInstance getInstance(String instanceId) {
-      // search my account for the instance I just created
+      // search my identity for the instance I just created
       Set<Reservation> reservations = client.getInstanceServices()
             .describeInstancesInRegion(null, instanceId); // last parameter
       // (ids) narrows the

@@ -36,7 +36,7 @@ public class ListCdnContainerOptions extends BaseHttpRequestOptions {
    }
 
    /**
-    * Indicates where to begin listing the account's containers. The list will only include 
+    * Indicates where to begin listing the identity's containers. The list will only include 
     * containers whose names occur lexicographically after the marker. This is convenient for 
     * pagination: To get the next page of results use the last container name of the current 
     * page as the marker.

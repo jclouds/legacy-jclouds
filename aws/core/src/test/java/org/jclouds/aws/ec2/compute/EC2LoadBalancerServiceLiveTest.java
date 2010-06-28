@@ -63,7 +63,7 @@ public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
 
    @BeforeGroups(groups = { "live" })
    public void setupELBClient()  {
-      elbContext = new RestContextFactory().createContext("elb", user, password,
+      elbContext = new RestContextFactory().createContext("elb", identity, credential,
                ImmutableSet.of(new Log4JLoggingModule()));
    }
 

@@ -58,7 +58,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
             HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
    private final SignatureWire signatureWire;
-   private final String account;
+   private final String identity;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
@@ -68,12 +68,12 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    @Inject
    public SharedKeyLiteAuthentication(SignatureWire signatureWire,
-            @Named(Constants.PROPERTY_IDENTITY) String account,
+            @Named(Constants.PROPERTY_IDENTITY) String identity,
             @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey,
             @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.encryptionService = encryptionService;
       this.signatureWire = signatureWire;
-      this.account = account;
+      this.identity = identity;
       this.key = encryptionService.fromBase64String(encodedKey);
       this.timeStampProvider = timeStampProvider;
    }
@@ -104,7 +104,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
-               Collections.singletonList("SharedKeyLite " + account + ":" + signature));
+               Collections.singletonList("SharedKeyLite " + identity + ":" + signature));
    }
 
    public String signString(String toSign) {
@@ -149,8 +149,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    void appendCanonicalizedResource(HttpRequest request, StringBuilder toSign) {
 
       // 1. Beginning with an empty string (""), append a forward slash (/), followed by the name of
-      // the account that owns the resource being accessed.
-      toSign.append("/").append(account);
+      // the identity that owns the resource being accessed.
+      toSign.append("/").append(identity);
       appendUriPath(request, toSign);
    }
 

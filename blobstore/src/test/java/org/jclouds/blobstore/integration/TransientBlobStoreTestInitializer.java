@@ -34,7 +34,7 @@ public class TransientBlobStoreTestInitializer extends BaseTestInitializer {
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String account, String key) throws IOException {
+            String identity, String key) throws IOException {
       return createStubContext();
    }
 

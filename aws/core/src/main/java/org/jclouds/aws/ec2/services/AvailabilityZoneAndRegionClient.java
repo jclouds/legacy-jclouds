@@ -40,7 +40,7 @@ import org.jclouds.concurrent.Timeout;
 public interface AvailabilityZoneAndRegionClient {
 
    /**
-    * Displays Availability Zones that are currently available to the account and their states.
+    * Displays Availability Zones that are currently available to the identity and their states.
     * 
     * @see InstanceClient#runInstances
     * @see #describeRegions
@@ -52,7 +52,7 @@ public interface AvailabilityZoneAndRegionClient {
             DescribeAvailabilityZonesOptions... options);
 
    /**
-    * Describes Regions that are currently available to the account.
+    * Describes Regions that are currently available to the identity.
     * 
     * @see InstanceClient#runInstances
     * @see #describeAvailabilityZones

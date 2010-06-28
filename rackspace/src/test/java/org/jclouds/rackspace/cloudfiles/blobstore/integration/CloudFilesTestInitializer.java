@@ -37,8 +37,8 @@ public class CloudFilesTestInitializer extends TransientBlobStoreTestInitializer
 
    @Override
    protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String account, String key) throws IOException {
-      return (BlobStoreContext) new BlobStoreContextFactory().createContext("cloudfiles", account,
+            String identity, String key) throws IOException {
+      return (BlobStoreContext) new BlobStoreContextFactory().createContext("cloudfiles", identity,
                key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
                new Properties());
    }

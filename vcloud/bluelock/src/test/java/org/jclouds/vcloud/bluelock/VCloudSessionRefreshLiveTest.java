@@ -29,7 +29,7 @@ public class VCloudSessionRefreshLiveTest {
 
    private final static int timeOut = 40;
    protected VCloudClient connection;
-   protected String account;
+   protected String identity;
    protected ComputeServiceContext context;
 
    @Test
@@ -41,13 +41,13 @@ public class VCloudSessionRefreshLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       Properties props = new Properties();
       props.setProperty(PROPERTY_SESSION_INTERVAL, 40 + "");
 
-      context = new ComputeServiceContextFactory().createContext("bluelock", account, key,
+      context = new ComputeServiceContextFactory().createContext("bluelock", identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
 
       connection = VCloudClient.class.cast(context.getProviderSpecificContext().getApi());

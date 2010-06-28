@@ -33,7 +33,7 @@ import com.google.common.collect.Sets;
 /**
  * Parses the following XML document:
  * <p/>
- * EnumerationResults AccountName="http://myaccount.queue.core.windows.net"
+ * EnumerationResults AccountName="http://myidentity.queue.core.windows.net"
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd179352.aspx" />
  * @author Adrian Cole

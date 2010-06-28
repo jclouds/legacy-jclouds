@@ -78,8 +78,8 @@ public class ChefClientLiveTest {
       String validatorKey = System.getProperty("jclouds.test.validator.key");
       if (validatorKey == null || validatorKey.equals(""))
          validatorKey = System.getProperty("user.home") + "/.chef/validation.pem";
-      user = checkNotNull(System.getProperty("jclouds.test.user"));
-      String keyfile = System.getProperty("jclouds.test.key");
+      user = checkNotNull(System.getProperty("jclouds.test.identity"));
+      String keyfile = System.getProperty("jclouds.test.credential");
       if (keyfile == null || keyfile.equals(""))
          keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
       validatorConnection = createConnection(validator, Files.toString(new File(validatorKey),

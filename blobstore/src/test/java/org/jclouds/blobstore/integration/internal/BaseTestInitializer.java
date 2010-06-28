@@ -31,18 +31,18 @@ public abstract class BaseTestInitializer {
             throws Exception {
       String endpoint = System.getProperty("jclouds.test.endpoint");
       String app = System.getProperty("jclouds.test.app");
-      String account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
+      String identity = System.getProperty("jclouds.test.identity");
+      String credential = System.getProperty("jclouds.test.credential");
       if (endpoint != null)
          testContext.setAttribute("jclouds.test.endpoint", endpoint);
       if (app != null)
          testContext.setAttribute("jclouds.test.app", app);
-      if (account != null)
-         testContext.setAttribute("jclouds.test.user", account);
-      if (key != null)
-         testContext.setAttribute("jclouds.test.key", key);
-      if (account != null) {
-         return createLiveContext(configurationModule, endpoint, app, account, key);
+      if (identity != null)
+         testContext.setAttribute("jclouds.test.identity", identity);
+      if (credential != null)
+         testContext.setAttribute("jclouds.test.credential", credential);
+      if (identity != null) {
+         return createLiveContext(configurationModule, endpoint, app, identity, credential);
       } else {
          return createStubContext();
       }
@@ -51,5 +51,5 @@ public abstract class BaseTestInitializer {
    protected abstract BlobStoreContext createStubContext() throws IOException;
 
    protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url,
-            String app, String account, String key) throws IOException;
+            String app, String identity, String key) throws IOException;
 }

@@ -478,8 +478,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    @BeforeGroups(groups = { "live" })
    @Override
    public void setupClient() {
-      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-      String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       String endpoint = System.getProperty("jclouds.test.endpoint");
       Properties props = new Properties();
@@ -488,8 +488,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       Injector injector = new RestContextFactory()
                .createContextBuilder(
                         "terremark",
-                        account,
-                        key,
+                        identity,
+                        credential,
                         ImmutableSet.<Module> of(new Log4JLoggingModule(),
                                  new JschSshClientModule()), props).buildInjector();
 

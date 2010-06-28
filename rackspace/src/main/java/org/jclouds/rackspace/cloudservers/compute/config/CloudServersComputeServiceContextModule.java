@@ -127,8 +127,8 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
-   String provideNamingConvention(@Named(Constants.PROPERTY_IDENTITY) String account) {
-      return account + "-%s-%s";
+   String provideNamingConvention(@Named(Constants.PROPERTY_IDENTITY) String identity) {
+      return identity + "-%s-%s";
    }
 
    @Singleton

@@ -60,8 +60,8 @@
     </repositories>
     
     <properties>
-        <jclouds.test.user>apiKey</jclouds.test.user>
-        <jclouds.test.key>authToken</jclouds.test.key>
+        <jclouds.test.identity>apiKey</jclouds.test.identity>
+        <jclouds.test.credential>authToken</jclouds.test.credential>
     </properties>
     <dependencies>
         <dependency>

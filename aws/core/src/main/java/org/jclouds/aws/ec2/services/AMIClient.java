@@ -125,7 +125,7 @@ public interface AMIClient {
     *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param imageId
     *           Unique ID of the AMI which was assigned during registration. To register an AMI, use
-    *           RegisterImage. To view the AMI IDs of AMIs that belong to your account. use
+    *           RegisterImage. To view the AMI IDs of AMIs that belong to your identity. use
     *           DescribeImages.
     * 
     * @see #describeImages

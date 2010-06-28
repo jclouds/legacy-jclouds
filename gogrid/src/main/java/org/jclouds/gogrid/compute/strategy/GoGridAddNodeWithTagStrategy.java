@@ -84,7 +84,7 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
                      IpType.PUBLIC));
          if (availableIps.size() == 0)
             throw new RuntimeException(
-                  "No public IPs available on this account.");
+                  "No public IPs available on this identity.");
          int ipIndex = new SecureRandom().nextInt(availableIps.size());
          Ip availableIp = Iterables.get(availableIps, ipIndex);
          try {

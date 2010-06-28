@@ -58,7 +58,7 @@ public interface CloudServersClient {
     * 
     * List all servers (IDs and names only)
     * 
-    * This operation provides a list of servers associated with your account. Servers that have been
+    * This operation provides a list of servers associated with your identity. Servers that have been
     * deleted are not included in this list.
     * <p/>
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()

@@ -63,9 +63,9 @@ public class CreateSnapshotOptions extends BaseEC2RequestOptions {
       /**
        * @see CreateSnapshotOptions#withDescription(String )
        */
-      public static CreateSnapshotOptions withDescription(String accountId) {
+      public static CreateSnapshotOptions withDescription(String identityId) {
          CreateSnapshotOptions options = new CreateSnapshotOptions();
-         return options.withDescription(accountId);
+         return options.withDescription(identityId);
       }
 
    }

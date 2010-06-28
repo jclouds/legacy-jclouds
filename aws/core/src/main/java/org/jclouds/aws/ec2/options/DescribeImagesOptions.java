@@ -49,8 +49,8 @@ public class DescribeImagesOptions extends BaseEC2RequestOptions {
     * AMIs for which the specified user has explicit launch permissions.
     * 
     */
-   public DescribeImagesOptions executableBy(String accountId) {
-      formParameters.put("ExecutableBy", checkNotNull(accountId, "accountId"));
+   public DescribeImagesOptions executableBy(String identityId) {
+      formParameters.put("ExecutableBy", checkNotNull(identityId, "identityId"));
       return this;
    }
 
@@ -87,9 +87,9 @@ public class DescribeImagesOptions extends BaseEC2RequestOptions {
       /**
        * @see DescribeImagesOptions#executableBy(String )
        */
-      public static DescribeImagesOptions executableBy(String accountId) {
+      public static DescribeImagesOptions executableBy(String identityId) {
          DescribeImagesOptions options = new DescribeImagesOptions();
-         return options.executableBy(accountId);
+         return options.executableBy(identityId);
       }
 
       /**
