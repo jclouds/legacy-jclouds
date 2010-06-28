@@ -72,7 +72,9 @@ import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.Provider;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -99,6 +101,9 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<GoGridClient, GoGridAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<RestContext<GoGridClient, GoGridAsyncClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<GoGridClient, GoGridAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(GoGridAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(GoGridListNodesStrategy.class);

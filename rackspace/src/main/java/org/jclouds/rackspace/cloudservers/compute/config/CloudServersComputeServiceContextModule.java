@@ -74,6 +74,8 @@ import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.config.RackspaceLocationsModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -106,6 +108,9 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
                .to(
                         new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<RestContext<CloudServersClient, CloudServersAsyncClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(CloudServersAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(CloudServersListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(CloudServersGetNodeMetadataStrategy.class);

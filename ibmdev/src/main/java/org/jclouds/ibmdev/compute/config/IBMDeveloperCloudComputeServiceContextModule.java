@@ -68,6 +68,8 @@ import org.jclouds.ibmdev.compute.functions.InstanceToNodeMetadata;
 import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -96,6 +98,11 @@ public class IBMDeveloperCloudComputeServiceContextModule extends AbstractModule
       })
                .to(
                         new TypeLiteral<ComputeServiceContextImpl<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>>() {
+                        }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>>() {
+      })
+               .to(
+                        new TypeLiteral<RestContextImpl<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(IBMDeveloperCloudAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(IBMDeveloperCloudListNodesStrategy.class);

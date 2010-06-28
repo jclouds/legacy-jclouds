@@ -42,6 +42,8 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
@@ -95,6 +97,9 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<RestContext<VCloudClient, VCloudAsyncClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(RunNodesAndAddToSetStrategy.class).to(
                EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);

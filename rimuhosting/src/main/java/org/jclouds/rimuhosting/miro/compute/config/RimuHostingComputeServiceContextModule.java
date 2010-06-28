@@ -66,7 +66,9 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.Provider;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
@@ -106,6 +108,9 @@ public class RimuHostingComputeServiceContextModule extends AbstractModule {
                .to(
                         new TypeLiteral<ComputeServiceContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
                         }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<RestContext<RimuHostingClient, RimuHostingAsyncClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Server, Iterable<String>>>() {
       }).to(ServerToPublicAddresses.class);
       bind(AddNodeWithTagStrategy.class).to(RimuHostingAddNodeWithTagStrategy.class);
