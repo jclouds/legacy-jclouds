@@ -49,7 +49,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "cloudservers";
+      provider = "cloudservers";
    }
 
    @Test
@@ -69,7 +69,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<CloudServersClient, CloudServersAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(service, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override

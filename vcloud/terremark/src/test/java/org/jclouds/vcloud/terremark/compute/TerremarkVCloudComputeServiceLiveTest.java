@@ -49,7 +49,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
       String endpoint = System.getProperty("jclouds.test.endpoint");
       if (endpoint != null && !"".equals(endpoint))
          System.setProperty("terremark.endpoint", endpoint);
-      service = "terremark";
+      provider = "terremark";
       tag = "trmk";
    }
 
@@ -65,7 +65,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(service, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override

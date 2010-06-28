@@ -44,7 +44,7 @@ public class ${providerName}ComputeServiceLiveTest extends BaseComputeServiceLiv
        @BeforeClass
        @Override
        public void setServiceDefaults() {
-          service = "${lcaseProviderName}";
+          provider = "${lcaseProviderName}";
        }
 
        @Test
@@ -64,7 +64,7 @@ public class ${providerName}ComputeServiceLiveTest extends BaseComputeServiceLiv
        public void testAssignability() throws Exception {
           @SuppressWarnings("unused")
           RestContext<${providerName}Client, ${providerName}AsyncClient> tmContext = new ComputeServiceContextFactory()
-                   .createContext(service, user, password).getProviderSpecificContext();
+                   .createContext(provider, user, password).getProviderSpecificContext();
        }
 
     }

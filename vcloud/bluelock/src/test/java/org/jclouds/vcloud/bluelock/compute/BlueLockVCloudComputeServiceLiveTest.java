@@ -42,7 +42,7 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "bluelock";
+      provider = "bluelock";
    }
 
    @Test

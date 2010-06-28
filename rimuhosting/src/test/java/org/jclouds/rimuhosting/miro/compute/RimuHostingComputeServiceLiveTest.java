@@ -36,7 +36,7 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "rimuhosting";
+      provider = "rimuhosting";
       tag = "rimuhosting.jclouds";
    }
 

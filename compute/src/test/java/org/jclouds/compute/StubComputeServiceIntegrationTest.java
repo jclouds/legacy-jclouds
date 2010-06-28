@@ -75,7 +75,7 @@ public class StubComputeServiceIntegrationTest extends
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "stub";
+      provider = "stub";
    }
 
    @Override
@@ -279,7 +279,7 @@ public class StubComputeServiceIntegrationTest extends
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>> stubContext = new ComputeServiceContextFactory()
-            .createContext(service, identity, credential)
+            .createContext(provider, identity, credential)
             .getProviderSpecificContext();
    }
 

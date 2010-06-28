@@ -61,7 +61,7 @@ public class HostingDotComVCloudComputeClientLiveTest extends VCloudComputeClien
       }));
       expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
-      service = "vcloudtest";
+      provider = "vcloudtest";
       templateId = "3";
    }
 

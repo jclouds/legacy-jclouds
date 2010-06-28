@@ -39,7 +39,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "gogrid";
+      provider = "gogrid";
    }
 
    @Test
@@ -59,6 +59,6 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<GoGridClient, GoGridAsyncClient> goGridContext = new ComputeServiceContextFactory()
-               .createContext(service, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 }

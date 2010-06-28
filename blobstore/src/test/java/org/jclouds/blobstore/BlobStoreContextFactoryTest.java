@@ -38,8 +38,8 @@ import com.google.common.base.Splitter;
 public class BlobStoreContextFactoryTest {
 
    public void test() throws IOException {
-      URI blobStore = URI.create("service://identity:key@container/path");
-      assertEquals(blobStore.getScheme(), "service");
+      URI blobStore = URI.create("provider://identity:key@container/path");
+      assertEquals(blobStore.getScheme(), "provider");
       Iterator<String> identityKey = Splitter.on(":").split(
                checkNotNull(blobStore.getUserInfo(), "userInfo")).iterator();
       assertEquals(identityKey.next(), "identity");
@@ -49,8 +49,8 @@ public class BlobStoreContextFactoryTest {
    }
 
    public void testNoPassword() throws IOException {
-      URI blobStore = URI.create("service://identity@container/path");
-      assertEquals(blobStore.getScheme(), "service");
+      URI blobStore = URI.create("provider://identity@container/path");
+      assertEquals(blobStore.getScheme(), "provider");
       Iterator<String> identityKey = Splitter.on(":").split(
                checkNotNull(blobStore.getUserInfo(), "userInfo")).iterator();
       assertEquals(identityKey.next(), "identity");

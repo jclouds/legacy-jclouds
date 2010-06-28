@@ -28,7 +28,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void setServiceDefaults() {
       System.setProperty("vcloud.endpoint", checkNotNull(System
             .getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint"));
-      service = "vcloud";
+      provider = "vcloud";
    }
 
    @Override
@@ -39,7 +39,7 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(service, identity, credential)
+            .createContext(provider, identity, credential)
             .getProviderSpecificContext();
    }
 

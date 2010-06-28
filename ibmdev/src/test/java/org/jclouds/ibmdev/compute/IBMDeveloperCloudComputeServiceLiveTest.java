@@ -43,7 +43,7 @@ public class IBMDeveloperCloudComputeServiceLiveTest extends BaseComputeServiceL
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "ibmdev";
+      provider = "ibmdev";
    }
 
    @Test
@@ -72,7 +72,7 @@ public class IBMDeveloperCloudComputeServiceLiveTest extends BaseComputeServiceL
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(service, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
 }

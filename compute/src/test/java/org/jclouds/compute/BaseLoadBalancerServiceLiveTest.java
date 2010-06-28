@@ -60,7 +60,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    @BeforeClass
    abstract public void setServiceDefaults();
 
-   protected String service;
+   protected String provider;
    protected SshClient.Factory sshFactory;
    protected String tag;
 
@@ -79,7 +79,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException, RunNodesException {
       if (tag == null)
-         tag = checkNotNull(service, "service") + "lb";
+         tag = checkNotNull(provider, "provider") + "lb";
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
@@ -99,7 +99,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    private void initializeContextAndClient() throws IOException {
       if (context != null)
          context.close();
-      context = new ComputeServiceContextFactory().createContext(service, identity, credential,
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
                ImmutableSet.of(new Log4JLoggingModule(), getSshModule()));
       client = context.getComputeService();
       lbClient = context.getLoadBalancerService();

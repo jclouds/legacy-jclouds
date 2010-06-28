@@ -305,7 +305,7 @@ public class BaseBlobStoreIntegrationTest {
 
    /**
     * requestor will create a container using the name returned from this. This method will take
-    * care not to exceed the maximum containers permitted by a service by deleting an existing
+    * care not to exceed the maximum containers permitted by a provider by deleting an existing
     * container first.
     * 
     * @throws InterruptedException

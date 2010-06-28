@@ -85,7 +85,7 @@ public abstract class BaseComputeServiceLiveTest {
    @BeforeClass
    abstract public void setServiceDefaults();
 
-   protected String service;
+   protected String provider;
    protected SshClient.Factory sshFactory;
    protected String tag;
 
@@ -102,7 +102,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException,
          TimeoutException, IOException {
       if (tag == null)
-         tag = checkNotNull(service, "service");
+         tag = checkNotNull(provider, "provider");
       setupCredentials();
       setupKeyPair();
       initializeContextAndClient();
@@ -147,7 +147,7 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       context = new ComputeServiceContextFactory()
-            .createContext(service, identity, credential, ImmutableSet.of(
+            .createContext(provider, identity, credential, ImmutableSet.of(
                   new Log4JLoggingModule(), getSshModule()));
       client = context.getComputeService();
    }
@@ -168,7 +168,7 @@ public abstract class BaseComputeServiceLiveTest {
    // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
-      new ComputeServiceContextFactory().createContext(service, "MOMMA", "MIA",
+      new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
             ImmutableSet.<Module> of(new Log4JLoggingModule())).close();
    }
 

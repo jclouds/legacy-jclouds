@@ -30,7 +30,7 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "eucalyptus";
+      provider = "eucalyptus";
       // security groups must be <30 characters
       tag = "euc";
    }

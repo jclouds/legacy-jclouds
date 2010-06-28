@@ -38,7 +38,7 @@ public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServ
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      service = "hostingdotcom";
+      provider = "hostingdotcom";
    }
 
    @Test

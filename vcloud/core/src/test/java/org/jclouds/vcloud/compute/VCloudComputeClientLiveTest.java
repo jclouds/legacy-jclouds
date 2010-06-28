@@ -57,7 +57,7 @@ import com.google.inject.internal.ImmutableMap;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.VCloudClientLiveTest")
 public class VCloudComputeClientLiveTest {
-   protected String service;
+   protected String provider;
    protected VCloudComputeClient computeClient;
    protected VCloudClient client;
 
@@ -157,7 +157,7 @@ public class VCloudComputeClientLiveTest {
       }));
       expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
-      service = "vcloudtest";
+      provider = "vcloudtest";
       templateId = "3";
    }
 
