@@ -39,7 +39,7 @@ public class Attribute {
 
    private String required;
    private boolean calculated;
-   private Set<String> choice;
+   private List<String> choice = Lists.newArrayList();
    @SerializedName("default")
    private String defaultValue;
    private String type;
@@ -72,7 +72,7 @@ public class Attribute {
       return calculated;
    }
 
-   public Set<String> getChoice() {
+   public List<String> getChoice() {
       return choice;
    }
 
@@ -170,5 +170,5 @@ public class Attribute {
             + ", displayName=" + displayName + ", recipes=" + recipes
             + ", required=" + required + ", type=" + type + "]";
    }
-   
+
 }

@@ -41,15 +41,14 @@
  */
 package org.jclouds.chef;
 
-import java.io.File;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.chef.domain.Cookbook;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.ResourceNotFoundException;
 
 /**
  * Provides synchronous access to Chef.
@@ -76,7 +75,8 @@ public interface ChefClient {
    Set<String> listCookbooks();
 
    /**
-    * Creates (uploads) a cookbook with the name present from the tar/gz file.
+    * Creates or updates (uploads) a cookbook with the name present from the
+    * tar/gz file.
     * 
     * @param cookbookName
     *           matches the root directory path of the archive
@@ -91,39 +91,7 @@ public interface ChefClient {
     *            "409 Conflict" if the cookbook already exists
     */
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   void createCookbook(String cookbookName, File tgzArchive);
-
-   /**
-    * like {@link #createCookbook(String, File)}, except that a byte stream is
-    * allowed.
-    */
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   void createCookbook(String cookbookName, byte[] tgzArchive);
-
-   /**
-    * Overrides (uploads) a cookbook with the content in the tar/gz file.
-    * 
-    * @param cookbookName
-    *           matches the root directory path of the archive
-    * @param tgzArchive
-    *           tar gz archive, with a base path of {@code cookbookName}
-    *           <p/>
-    *           "401 Unauthorized" if the caller is not a recognized user.
-    *           <p/>
-    *           "403 Forbidden" if you do not have permission to update
-    *           cookbooks.
-    * @throws ResourceNotFoundException
-    *            if the cookbook does not exist
-    */
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   void updateCookbook(String cookbookName, File tgzArchive);
-
-   /**
-    * like {@link #updateCookbook(String, File)}, except that a byte stream is
-    * allowed.
-    */
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   void updateCookbook(String cookbookName, byte[] tgzArchive);
+   void updateCookbook(String cookbookName, String version, Cookbook cookbook);
 
    /**
     * deletes an existing cookbook.
@@ -136,7 +104,20 @@ public interface ChefClient {
     *            "403 Forbidden" if you do not have Delete rights on the
     *            cookbook.
     */
-   String deleteCookbook(String cookbookName);
+   String deleteCookbook(String cookbookName, String version);
+
+   /**
+    * 
+    * @return the versions of a cookbook or null, if not found
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if the caller is not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if the caller is not authorized to view the
+    *            cookbook.
+    */
+   Set<String> getVersionsOfCookbook(String cookbookName);
 
    /**
     * Returns a description of the cookbook, with links to all of its component
@@ -151,7 +132,7 @@ public interface ChefClient {
     *            "403 Forbidden" if the caller is not authorized to view the
     *            cookbook.
     */
-   String getCookbook(String cookbookName);
+   Cookbook getCookbook(String cookbookName, String version);
 
    /**
     * creates a new client

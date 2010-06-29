@@ -18,6 +18,8 @@
  */
 package org.jclouds.chef.domain;
 
+import java.net.URI;
+
 /**
  * Cookbook object.
  * 
@@ -26,12 +28,15 @@ package org.jclouds.chef.domain;
 public class Resource {
 
    private String name;
+   private URI url;
    private String checksum;
    private String path;
    private String specificity;
 
-   public Resource(String name, String checksum, String path, String specificity) {
+   public Resource(String name, URI url, String checksum, String path,
+         String specificity) {
       this.name = name;
+      this.url = url;
       this.checksum = checksum;
       this.path = path;
       this.specificity = specificity;
@@ -44,6 +49,9 @@ public class Resource {
       return name;
    }
 
+   public URI getUrl() {
+      return url;
+   }
    public String getChecksum() {
       return checksum;
    }
@@ -65,6 +73,7 @@ public class Resource {
       result = prime * result + ((path == null) ? 0 : path.hashCode());
       result = prime * result
             + ((specificity == null) ? 0 : specificity.hashCode());
+      result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
    }
 
@@ -97,14 +106,18 @@ public class Resource {
             return false;
       } else if (!specificity.equals(other.specificity))
          return false;
+      if (url == null) {
+         if (other.url != null)
+            return false;
+      } else if (!url.equals(other.url))
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
       return "Resource [checksum=" + checksum + ", name=" + name + ", path="
-            + path + ", specificity=" + specificity + "]";
+            + path + ", specificity=" + specificity + ", url=" + url + "]";
    }
-   
 
 }

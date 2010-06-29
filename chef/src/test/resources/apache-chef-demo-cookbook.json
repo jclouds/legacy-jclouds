@@ -1,0 +1,37 @@
+{
+    "definitions": [],
+    "name": "apache-chef-demo-0.0.0",
+    "attributes": [],
+    "files": [],
+    "json_class": "Chef::CookbookVersion",
+    "providers": [],
+    "metadata": {
+        "dependencies": {}, "name": "apache-chef-demo",
+        "maintainer_email": "youremail@example.com",
+        "attributes": {}, "license": "Apache v2.0",
+        "maintainer": "Your Name",
+        "suggestions": {}, "platforms": {}, "long_description": "",
+        "recommendations": {}, "version": "0.0.0",
+        "groupings": {}, "recipes": {}, "conflicting": {}, "description": "A fabulous new cookbook",
+        "replacing": {}, "providing": {}
+    }, "libraries": [],
+    "resources": [],
+    "templates": [],
+    "cookbook_name": "apache-chef-demo",
+    "version": "0.0.0",
+    "recipes": [],
+    "root_files": [{
+        "name": "README",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-486ca3ac66264fea926aa0b4ff74341c/checksum-11637f98942eafbf49c71b7f2f048b78?AWSAccessKeyId=AKIAJOZTD2N26S7W6APA&Expires=1277766181&Signature=zgpNl6wSxjTNovqZu2nJq0JztU8%3D",
+        "checksum": "11637f98942eafbf49c71b7f2f048b78",
+        "path": "README",
+        "specificity": "default"
+    }, {
+        "name": "Rakefile",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-486ca3ac66264fea926aa0b4ff74341c/checksum-ebcf925a1651b4e04b9cd8aac2bc54eb?AWSAccessKeyId=AKIAJOZTD2N26S7W6APA&Expires=1277766181&Signature=EFzzDSKKytTl7b%2FxrCeNLh05zj4%3D",
+        "checksum": "ebcf925a1651b4e04b9cd8aac2bc54eb",
+        "path": "Rakefile",
+        "specificity": "default"
+    }],
+    "chef_type": "cookbook_version"
+}
