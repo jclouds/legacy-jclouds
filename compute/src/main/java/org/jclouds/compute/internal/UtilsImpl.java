@@ -20,7 +20,6 @@ package org.jclouds.compute.internal;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -31,8 +30,9 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
-import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
+
+import com.google.inject.Inject;
 
 /**
  * 
@@ -40,18 +40,17 @@ import org.jclouds.ssh.SshClient.Factory;
  */
 @Singleton
 public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Utils {
-
-   private final Factory sshFactory;
+   @Inject(optional = true)
+   private Factory sshFactory;
 
    @Inject
    UtilsImpl(HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
             EncryptionService encryption, DateService date,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads,
-            LoggerFactory loggerFactory, SshClient.Factory sshFactory) {
+            LoggerFactory loggerFactory) {
       super(simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads,
                loggerFactory);
-      this.sshFactory = sshFactory;
    }
 
    @Override
