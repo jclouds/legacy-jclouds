@@ -28,6 +28,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
+import org.jclouds.compute.Utils;
 import org.jclouds.rest.RestContext;
 
 /**
@@ -38,11 +39,13 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    private final ComputeService computeService;
    private final LoadBalancerService loadBalancerService;
    private final RestContext<S, A> providerSpecificContext;
+   private final Utils utils;
 
    @SuppressWarnings("unchecked")
    @Inject
-   public ComputeServiceContextImpl(ComputeService computeService,
+   public ComputeServiceContextImpl(ComputeService computeService, Utils utils,
             @Nullable LoadBalancerService loadBalancerService, RestContext providerSpecificContext) {
+      this.utils = utils;
       this.providerSpecificContext = providerSpecificContext;
       this.computeService = checkNotNull(computeService, "computeService");
       this.loadBalancerService = loadBalancerService;
@@ -66,5 +69,15 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    @Override
    public LoadBalancerService getLoadBalancerService() {
       return loadBalancerService;
+   }
+
+   @Override
+   public Utils getUtils() {
+      return utils();
+   }
+
+   @Override
+   public Utils utils() {
+      return utils;
    }
 }

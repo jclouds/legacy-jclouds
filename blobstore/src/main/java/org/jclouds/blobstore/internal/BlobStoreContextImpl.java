@@ -31,6 +31,7 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.Utils;
 
 /**
  * @author Adrian Cole
@@ -43,19 +44,23 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    private final BlobStore blobStore;
    private final RestContext<S, A> providerSpecificContext;
    private final ConsistencyModel consistencyModel;
+   private final Utils utils;
 
    @SuppressWarnings("unchecked")
    @Inject
-   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, ConsistencyModel consistencyModel,
-            InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore,
-            BlobStore blobStore, RestContext providerSpecificContext) {
-      // unravel guice and avoid passing in a million type args
-      this.providerSpecificContext = checkNotNull(providerSpecificContext, "providerSpecificContext");
+   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, Utils utils,
+            ConsistencyModel consistencyModel, InputStreamMap.Factory inputStreamMapFactory,
+            AsyncBlobStore ablobStore, BlobStore blobStore, RestContext providerSpecificContext) {
+      // unravel guice and avoid passing in a million type args by not injecting generic types for
+      // rest context
+      this.providerSpecificContext = checkNotNull(providerSpecificContext,
+               "providerSpecificContext");
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");
       this.ablobStore = checkNotNull(ablobStore, "ablobStore");
       this.blobStore = checkNotNull(blobStore, "blobStore");
+      this.utils = utils;
    }
 
    @Override
@@ -102,5 +107,15 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    @Override
    public void close() {
       providerSpecificContext.close();
+   }
+
+   @Override
+   public Utils getUtils() {
+      return utils();
+   }
+
+   @Override
+   public Utils utils() {
+      return utils;
    }
 }

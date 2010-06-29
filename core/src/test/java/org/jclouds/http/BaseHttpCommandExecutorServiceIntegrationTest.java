@@ -109,7 +109,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends
    public void testGetBigFile() throws MalformedURLException,
          ExecutionException, InterruptedException, TimeoutException {
       assertEquals(encryptionService.toBase64String(encryptionService
-            .md5(context.http().get(
+            .md5(context.utils().http().get(
                   URI.create(String.format("http://localhost:%d/%s", testPort,
                         "101constitutions"))))), md5);
    }

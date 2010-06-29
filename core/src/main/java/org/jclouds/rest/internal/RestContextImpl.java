@@ -26,12 +26,11 @@ import javax.inject.Inject;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.HttpAsyncClient;
-import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.annotations.Provider;
+import org.jclouds.rest.Utils;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -51,18 +50,15 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final Closer closer;
    private final URI endpoint;
    private final String identity;
-   private final HttpClient simpleClient;
-   private final HttpAsyncClient simpleAsyncClient;
    private final String provider;
    private final String apiVersion;
+   private final Utils utils;
 
    @Inject
-   RestContextImpl(Closer closer, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-            Injector injector, TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi,
-            @Provider URI endpoint, @Provider String provider, @Identity String identity,
-            @ApiVersion String apiVersion) {
-      this.simpleClient = simpleClient;
-      this.simpleAsyncClient = simpleAsyncClient;
+   RestContextImpl(Closer closer, Utils utils, Injector injector, TypeLiteral<S> syncApi,
+            TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
+            @Identity String identity, @ApiVersion String apiVersion) {
+      this.utils = utils;
       this.asyncApi = injector.getInstance(Key.get(asyncApi));
       this.syncApi = injector.getInstance(Key.get(syncApi));
       this.closer = closer;
@@ -107,13 +103,13 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    }
 
    @Override
-   public HttpAsyncClient asyncHttp() {
-      return this.simpleAsyncClient;
+   public Utils getUtils() {
+      return utils();
    }
 
    @Override
-   public HttpClient http() {
-      return this.simpleClient;
+   public Utils utils() {
+      return utils;
    }
 
    @Override

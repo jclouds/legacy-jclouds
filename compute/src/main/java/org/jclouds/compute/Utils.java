@@ -18,37 +18,18 @@
  */
 package org.jclouds.compute;
 
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.rest.RestContext;
+import org.jclouds.compute.internal.UtilsImpl;
+import org.jclouds.ssh.SshClient;
 
 import com.google.inject.ImplementedBy;
 
 /**
- * Represents a cloud that has compute functionality.
- * 
  * 
  * @author Adrian Cole
- * 
  */
-@ImplementedBy(ComputeServiceContextImpl.class)
-public interface ComputeServiceContext {
+@ImplementedBy(UtilsImpl.class)
+public interface Utils extends org.jclouds.rest.Utils {
+   SshClient.Factory getSshClientFactory();
 
-   ComputeService getComputeService();
-
-   /**
-    * 
-    * @return null, if the cloud does not support load balancer services
-    */
-   LoadBalancerService getLoadBalancerService();
-
-   <S, A> RestContext<S, A> getProviderSpecificContext();
-
-   Utils getUtils();
-
-   /**
-    * @see #getUtils
-    */
-   Utils utils();
-
-   void close();
+   SshClient.Factory sshFactory();
 }

@@ -22,6 +22,7 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.Utils;
 
 import com.google.inject.ImplementedBy;
 
@@ -104,6 +105,13 @@ public interface BlobStoreContext {
     *         context.
     */
    <S, A> RestContext<S, A> getProviderSpecificContext();
+
+   Utils getUtils();
+
+   /**
+    * @see #getUtils
+    */
+   Utils utils();
 
    /**
     * closes threads and resources related to this connection.

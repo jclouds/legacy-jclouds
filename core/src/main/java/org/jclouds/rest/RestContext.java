@@ -53,10 +53,6 @@ public interface RestContext<S, A> {
     */
    S getApi();
 
-   HttpAsyncClient asyncHttp();
-
-   HttpClient http();
-
    URI getEndpoint();
 
    String getIdentity();
@@ -64,6 +60,13 @@ public interface RestContext<S, A> {
    String getProvider();
 
    String getApiVersion();
+
+   Utils getUtils();
+
+   /**
+    * @see #getUtils
+    */
+   Utils utils();
 
    /**
     * Closes all connections to Cloud Files.
