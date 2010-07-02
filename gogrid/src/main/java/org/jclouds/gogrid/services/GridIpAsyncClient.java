@@ -21,6 +21,7 @@ package org.jclouds.gogrid.services;
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_STATE_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_TYPE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOOKUP_LIST_KEY;
 
 import java.util.Set;
 
@@ -29,8 +30,10 @@ import javax.ws.rs.Path;
 
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.domain.Ip;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseIpListFromJsonResponse;
+import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -82,4 +85,13 @@ public interface GridIpAsyncClient {
    @QueryParams(keys = IP_STATE_KEY, values = "Assigned")
    ListenableFuture<Set<Ip>> getAssignedIpList();
 
+   /**
+    * 
+    * @see org.jclouds.gogrid.services.GridIpClient#getDatacenters
+    */
+   @GET
+   @ResponseParser(ParseOptionsFromJsonResponse.class)
+   @Path("/common/lookup/list")
+   @QueryParams(keys = LOOKUP_LIST_KEY, values = "ip.datacenter")
+   ListenableFuture<Set<Option>> getDatacenters();
 }

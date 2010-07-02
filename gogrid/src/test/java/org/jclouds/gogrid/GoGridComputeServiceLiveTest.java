@@ -47,7 +47,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
-      assertEquals(defaultTemplate.getLocation().getId(), "SANFRANCISCO");
+      assertEquals(defaultTemplate.getLocation().getId(), "1");
       assertEquals(defaultTemplate.getSize().getCores(), 0.5d);
    }
 

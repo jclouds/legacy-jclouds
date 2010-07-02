@@ -65,6 +65,7 @@ import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.compute.functions.ServerToNodeMetadata;
 import org.jclouds.gogrid.compute.strategy.GoGridAddNodeWithTagStrategy;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
@@ -81,6 +82,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -110,6 +112,19 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       bind(GetNodeMetadataStrategy.class).to(GoGridGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(GoGridRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(GoGridDestroyNodeStrategy.class);
+   }
+
+   @Provides
+   @Singleton
+   protected Map<String, ? extends Location> provideLocationMap(Set<? extends Location> locations) {
+      return Maps.uniqueIndex(locations, new Function<Location, String>() {
+
+         @Override
+         public String apply(Location from) {
+            return from.getId();
+         }
+
+      });
    }
 
    @Provides
@@ -276,13 +291,13 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Set<? extends Location> getDefaultLocations(@Provider String providerName, GoGridClient sync,
+   Set<? extends Location> getAssignableLocations(@Provider String providerName, GoGridClient sync,
             LogHolder holder, Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
       Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      locations.add(new LocationImpl(LocationScope.ZONE, "SANFRANCISCO", "San Francisco, CA",
-               parent));
+      for (Option dc : sync.getServerServices().getDatacenters())
+         locations.add(new LocationImpl(LocationScope.ZONE, dc.getId() + "", dc.getDescription(), parent));
       holder.logger.debug("<< locations(%d)", locations.size());
       return locations;
    }

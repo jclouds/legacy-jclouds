@@ -28,111 +28,167 @@ import com.google.gson.annotations.SerializedName;
  */
 public class LoadBalancer implements Comparable<LoadBalancer> {
 
-    private long id;
-    private String name;
-    private String description;
-    @SerializedName("virtualip")
-    private IpPortPair virtualIp;
-    @SerializedName("realiplist")
-    private Set<IpPortPair> realIpList;
-    private LoadBalancerType type;
-    private LoadBalancerPersistenceType persistence;
-    private LoadBalancerOs os;
-    private LoadBalancerState state;
+   private long id;
+   private String name;
+   private String description;
+   @SerializedName("virtualip")
+   private IpPortPair virtualIp;
+   @SerializedName("realiplist")
+   private Set<IpPortPair> realIpList;
+   private LoadBalancerType type;
+   private LoadBalancerPersistenceType persistence;
+   private LoadBalancerOs os;
+   private LoadBalancerState state;
+   private Option datacenter;
 
-    /**
-     * A no-args constructor is required for deserialization
-     */
-    public LoadBalancer() {
-    }
+   /**
+    * A no-args constructor is required for deserialization
+    */
+   public LoadBalancer() {
+   }
 
-    public LoadBalancer(long id, String name, String description,
-                        IpPortPair virtualIp, Set<IpPortPair> realIpList, LoadBalancerType type,
-                        LoadBalancerPersistenceType persistence, LoadBalancerOs os,
-                        LoadBalancerState state) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.virtualIp = virtualIp;
-        this.realIpList = realIpList;
-        this.type = type;
-        this.persistence = persistence;
-        this.os = os;
-        this.state = state;
-    }
+   public LoadBalancer(long id, String name, String description, IpPortPair virtualIp,
+            Set<IpPortPair> realIpList, LoadBalancerType type,
+            LoadBalancerPersistenceType persistence, LoadBalancerOs os, LoadBalancerState state,
+            Option datacenter) {
+      this.id = id;
+      this.name = name;
+      this.description = description;
+      this.virtualIp = virtualIp;
+      this.realIpList = realIpList;
+      this.type = type;
+      this.persistence = persistence;
+      this.os = os;
+      this.state = state;
+      this.datacenter = datacenter;
+   }
 
-    public long getId() {
-        return id;
-    }
+   public long getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public Option getDatacenter() {
+      return datacenter;
+   }
 
-    public String getDescription() {
-        return description;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public IpPortPair getVirtualIp() {
-        return virtualIp;
-    }
+   public String getDescription() {
+      return description;
+   }
 
-    public Set<IpPortPair> getRealIpList() {
-        return realIpList;
-    }
+   public IpPortPair getVirtualIp() {
+      return virtualIp;
+   }
 
-    public LoadBalancerType getType() {
-        return type;
-    }
+   public Set<IpPortPair> getRealIpList() {
+      return realIpList;
+   }
 
-    public LoadBalancerPersistenceType getPersistence() {
-        return persistence;
-    }
+   public LoadBalancerType getType() {
+      return type;
+   }
 
-    public LoadBalancerOs getOs() {
-        return os;
-    }
+   public LoadBalancerPersistenceType getPersistence() {
+      return persistence;
+   }
 
-    public LoadBalancerState getState() {
-        return state;
-    }
+   public LoadBalancerOs getOs() {
+      return os;
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   public LoadBalancerState getState() {
+      return state;
+   }
 
-        LoadBalancer that = (LoadBalancer) o;
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      LoadBalancer other = (LoadBalancer) obj;
+      if (datacenter == null) {
+         if (other.datacenter != null)
+            return false;
+      } else if (!datacenter.equals(other.datacenter))
+         return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
+         return false;
+      if (id != other.id)
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (os == null) {
+         if (other.os != null)
+            return false;
+      } else if (!os.equals(other.os))
+         return false;
+      if (persistence == null) {
+         if (other.persistence != null)
+            return false;
+      } else if (!persistence.equals(other.persistence))
+         return false;
+      if (realIpList == null) {
+         if (other.realIpList != null)
+            return false;
+      } else if (!realIpList.equals(other.realIpList))
+         return false;
+      if (state == null) {
+         if (other.state != null)
+            return false;
+      } else if (!state.equals(other.state))
+         return false;
+      if (type == null) {
+         if (other.type != null)
+            return false;
+      } else if (!type.equals(other.type))
+         return false;
+      if (virtualIp == null) {
+         if (other.virtualIp != null)
+            return false;
+      } else if (!virtualIp.equals(other.virtualIp))
+         return false;
+      return true;
+   }
 
-        if (id != that.id) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (os != null ? !os.equals(that.os) : that.os != null) return false;
-        if (persistence != null ? !persistence.equals(that.persistence) : that.persistence != null) return false;
-        if (realIpList != null ? !realIpList.equals(that.realIpList) : that.realIpList != null) return false;
-        if (state != null ? !state.equals(that.state) : that.state != null) return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        if (virtualIp != null ? !virtualIp.equals(that.virtualIp) : that.virtualIp != null) return false;
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((os == null) ? 0 : os.hashCode());
+      result = prime * result + ((persistence == null) ? 0 : persistence.hashCode());
+      result = prime * result + ((realIpList == null) ? 0 : realIpList.hashCode());
+      result = prime * result + ((state == null) ? 0 : state.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + ((virtualIp == null) ? 0 : virtualIp.hashCode());
+      return result;
+   }
 
-        return true;
-    }
+   @Override
+   public int compareTo(LoadBalancer o) {
+      return Longs.compare(id, o.getId());
+   }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (virtualIp != null ? virtualIp.hashCode() : 0);
-        result = 31 * result + (realIpList != null ? realIpList.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (persistence != null ? persistence.hashCode() : 0);
-        result = 31 * result + (os != null ? os.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public int compareTo(LoadBalancer o) {
-        return Longs.compare(id, o.getId());
-    }
+   @Override
+   public String toString() {
+      return "LoadBalancer [datacenter=" + datacenter + ", description=" + description + ", id="
+               + id + ", name=" + name + ", os=" + os + ", persistence=" + persistence
+               + ", realIpList=" + realIpList + ", state=" + state + ", type=" + type
+               + ", virtualIp=" + virtualIp + "]";
+   }
 }

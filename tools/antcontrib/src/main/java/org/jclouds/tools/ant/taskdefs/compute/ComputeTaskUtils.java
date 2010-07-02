@@ -77,7 +77,7 @@ public class ComputeTaskUtils {
          @SuppressWarnings("unchecked")
          @Override
          public ComputeServiceContext apply(URI from) {
-            Properties props = getPropertiesFromResource("compute.properties");
+            Properties props = getPropertiesFromResource("/rest.properties");
             props.putAll(projectProvider.get().getProperties());
             // adding the properties to the factory will allow us to pass alternate endpoints
             String provider = from.getHost();

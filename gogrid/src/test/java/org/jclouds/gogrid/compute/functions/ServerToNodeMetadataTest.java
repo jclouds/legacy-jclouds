@@ -24,6 +24,7 @@ import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.services.GridServerClient;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -40,6 +41,7 @@ public class ServerToNodeMetadataTest {
       expect(caller.getServerServices()).andReturn(client).atLeastOnce();
       Map<String, NodeState> serverStateToNodeState = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+      Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
 
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Server server = createMock(Server.class);
@@ -49,7 +51,8 @@ public class ServerToNodeMetadataTest {
       expect(server.getState()).andReturn(new Option("NODE_RUNNING")).atLeastOnce();
 
       expect(serverStateToNodeState.get("NODE_RUNNING")).andReturn(NodeState.RUNNING);
-      Location location = new LocationImpl(LocationScope.ZONE, "sanfran", "description", null);
+      LocationImpl location = new LocationImpl(LocationScope.ZONE, "1", "US-West-1", null);
+      Map<String, ? extends Location> locations = ImmutableMap.<String, Location> of("1", location);
 
       Map<String, Credentials> credentialsMap = createMock(Map.class);
       expect(client.getServerCredentialsList()).andReturn(credentialsMap);
@@ -59,6 +62,7 @@ public class ServerToNodeMetadataTest {
 
       ServerImage image = createMock(ServerImage.class);
       expect(server.getImage()).andReturn(image).atLeastOnce();
+      expect(server.getDatacenter()).andReturn(dc).atLeastOnce();
       expect(image.getId()).andReturn(2000l).atLeastOnce();
       expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
@@ -72,7 +76,7 @@ public class ServerToNodeMetadataTest {
       replay(credentialsMap);
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller,
-               images, location);
+               images, locations);
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);

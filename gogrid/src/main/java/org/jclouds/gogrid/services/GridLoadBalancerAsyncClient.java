@@ -20,6 +20,7 @@ package org.jclouds.gogrid.services;
 
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOOKUP_LIST_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.NAME_KEY;
 
 import java.util.List;
@@ -36,9 +37,11 @@ import org.jclouds.gogrid.binders.BindRealIpPortPairsToQueryParams;
 import org.jclouds.gogrid.binders.BindVirtualIpPortPairToQueryParams;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.LoadBalancer;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseLoadBalancerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseLoadBalancerListFromJsonResponse;
+import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.QueryParams;
@@ -124,4 +127,13 @@ public interface GridLoadBalancerAsyncClient {
    @ResponseParser(ParseLoadBalancerFromJsonResponse.class)
    @Path("/grid/loadbalancer/delete")
    ListenableFuture<LoadBalancer> deleteByName(@QueryParam(NAME_KEY) String name);
+   
+   /**
+    * @see GridLoadBalancerClient#getDatacenters
+    */
+   @GET
+   @ResponseParser(ParseOptionsFromJsonResponse.class)
+   @Path("/common/lookup/list")
+   @QueryParams(keys = LOOKUP_LIST_KEY, values = "loadbalancer.datacenter")
+   ListenableFuture<Set<Option>> getDatacenters();
 }

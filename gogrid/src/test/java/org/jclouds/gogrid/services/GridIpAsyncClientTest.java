@@ -43,7 +43,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
                new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC));
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/ip/list?v=1.4&ip.state=Unassigned&"
+               "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
                         + "ip.type=Public HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -56,7 +56,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/ip/list?v=1.4&ip.state=Unassigned&"
+               "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
                         + "ip.type=Public&sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                         + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
@@ -69,7 +69,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       GeneratedHttpRequest<GridIpAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/ip/list?v=1.4&ip.state=Assigned HTTP/1.1");
+               "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -81,7 +81,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/ip/list?v=1.4&ip.state=Assigned&"
+               "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);

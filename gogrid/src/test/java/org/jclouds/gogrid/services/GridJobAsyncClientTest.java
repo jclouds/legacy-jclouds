@@ -47,7 +47,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
                                  ObjectType.VIRTUAL_SERVER).onlyForState(JobState.PROCESSING));
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/job/list?v=1.4&startdate=1267385381770&"
+               "GET https://api.gogrid.com/api/grid/job/list?v=1.5&startdate=1267385381770&"
                         + "enddate=1267385382770&job.objecttype=VirtualServer&"
                         + "job.state=Processing HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
@@ -61,7 +61,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/job/list?v=1.4&startdate=1267385381770&"
+               "GET https://api.gogrid.com/api/grid/job/list?v=1.5&startdate=1267385381770&"
                         + "enddate=1267385382770&job.objecttype=VirtualServer&"
                         + "job.state=Processing&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
@@ -75,7 +75,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       GeneratedHttpRequest<GridJobAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/job/list?v=1.4 HTTP/1.1");
+               "GET https://api.gogrid.com/api/grid/job/list?v=1.5 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
    }
@@ -86,7 +86,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       GeneratedHttpRequest<GridJobAsyncClient> httpRequest = processor.createRequest(method,
                "MyServer");
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/list?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/list?v=1.5&"
                + "object=MyServer HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -98,7 +98,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/list?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/list?v=1.5&"
                + "object=MyServer&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -110,7 +110,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       GeneratedHttpRequest<GridJobAsyncClient> httpRequest = processor.createRequest(method, 123L,
                456L);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/get?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/get?v=1.5&"
                + "id=123&id=456 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -122,7 +122,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/get?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/get?v=1.5&"
                + "id=123&id=456&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);

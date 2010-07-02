@@ -73,4 +73,9 @@ public class IpPortPair implements Comparable<IpPortPair> {
         if(ip != null && o.getIp() != null) return Longs.compare(ip.getId(), o.getIp().getId());
         return Ints.compare(port, o.getPort());
     }
+
+   @Override
+   public String toString() {
+      return "IpPortPair [ip=" + ip + ", port=" + port + "]";
+   }
 }

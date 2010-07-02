@@ -149,4 +149,13 @@ public interface GridServerClient {
     * @return supported ram sizes
     */
    Set<Option> getRamSizes();
+
+   /**
+    * Retrieves the list of supported Datacenters to launch servers into. The objects will have
+    * datacenter ID, name and description. In most cases, id or name will be used for
+    * {@link #addServer}.
+    * 
+    * @return supported datacenters
+    */
+   Set<Option> getDatacenters();
 }

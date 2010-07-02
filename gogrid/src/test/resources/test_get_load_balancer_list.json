@@ -1,10 +1,21 @@
 {
     "list": [
         {
+            "datacenter": {
+                "description": "US West 1 Datacenter",
+                "id": 1,
+                "name": "US-West-1",
+                "object": "option"
+            },
             "object": "loadbalancer",
             "virtualip": {
                 "object": "ipportpair",
-                "ip": {
+                "ip": {"datacenter": {
+                "description": "US West 1 Datacenter",
+                "id": 1,
+                "name": "US-West-1",
+                "object": "option"
+            },
                     "object": "ip",
                     "public": true,
                     "subnet": "204.51.240.176/255.255.255.240",
@@ -41,6 +52,12 @@
             "realiplist": [
                 {
                     "ip": {
+                                "datacenter": {
+                "description": "US West 1 Datacenter",
+                "id": 1,
+                "name": "US-West-1",
+                "object": "option"
+            },
                         "object": "ip",
                         "public": true,
                         "subnet": "204.51.240.176/255.255.255.240",
@@ -57,6 +74,12 @@
                 },
                 {
                     "ip": {
+                                "datacenter": {
+                "description": "US West 1 Datacenter",
+                "id": 1,
+                "name": "US-West-1",
+                "object": "option"
+            },
                         "object": "ip",
                         "public": true,
                         "subnet": "204.51.240.176/255.255.255.240",

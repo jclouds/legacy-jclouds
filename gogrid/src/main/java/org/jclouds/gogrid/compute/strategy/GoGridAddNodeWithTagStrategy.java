@@ -57,17 +57,16 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
    @Inject
    protected GoGridAddNodeWithTagStrategy(GoGridClient client,
-         Function<Server, NodeMetadata> serverToNodeMetadata,
-         Function<Size, String> sizeToRam, Timeouts timeouts) {
+            Function<Server, NodeMetadata> serverToNodeMetadata, Function<Size, String> sizeToRam,
+            Timeouts timeouts) {
       this.client = client;
       this.serverToNodeMetadata = serverToNodeMetadata;
       this.sizeToRam = sizeToRam;
-      this.serverLatestJobCompleted = new RetryablePredicate<Server>(
-            new ServerLatestJobCompleted(client.getJobServices()),
-            timeouts.nodeRunning * 9l / 10l);
+      this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(
+               client.getJobServices()), timeouts.nodeRunning * 9l / 10l);
       this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(
-            new ServerLatestJobCompleted(client.getJobServices()),
-            timeouts.nodeRunning * 1l / 10l);
+               new ServerLatestJobCompleted(client.getJobServices()),
+               timeouts.nodeRunning * 1l / 10l);
    }
 
    @Override
@@ -80,11 +79,10 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
          // collision avoidance for
          // simplicity
          Set<Ip> availableIps = client.getIpServices().getIpList(
-               new GetIpListOptions().onlyUnassigned().onlyWithType(
-                     IpType.PUBLIC));
+                  new GetIpListOptions().onlyUnassigned().onlyWithType(IpType.PUBLIC).inDatacenter(
+                           template.getLocation().getId()));
          if (availableIps.size() == 0)
-            throw new RuntimeException(
-                  "No public IPs available on this identity.");
+            throw new RuntimeException("No public IPs available on this identity.");
          int ipIndex = new SecureRandom().nextInt(availableIps.size());
          Ip availableIp = Iterables.get(availableIps, ipIndex);
          try {
@@ -98,11 +96,10 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       }
       if (template.getOptions().shouldBlockUntilRunning()) {
          serverLatestJobCompleted.apply(addedServer);
-         client.getServerServices().power(addedServer.getName(),
-               PowerCommand.START);
+         client.getServerServices().power(addedServer.getName(), PowerCommand.START);
          serverLatestJobCompletedShort.apply(addedServer);
-         addedServer = Iterables.getOnlyElement(client.getServerServices()
-               .getServersByName(addedServer.getName()));
+         addedServer = Iterables.getOnlyElement(client.getServerServices().getServersByName(
+                  addedServer.getName()));
       }
       return serverToNodeMetadata.apply(addedServer);
    }
@@ -110,8 +107,8 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    private Server addServer(String name, Template template, Ip availableIp) {
       Server addedServer;
       addedServer = client.getServerServices().addServer(name,
-            checkNotNull(template.getImage().getProviderId()),
-            sizeToRam.apply(template.getSize()), availableIp.getIp());
+               checkNotNull(template.getImage().getProviderId()),
+               sizeToRam.apply(template.getSize()), availableIp.getIp());
       return addedServer;
    }
 }

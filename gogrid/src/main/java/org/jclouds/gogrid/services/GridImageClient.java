@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.options.GetImageListOptions;
 
@@ -65,4 +66,12 @@ public interface GridImageClient {
     */
    ServerImage editImageFriendlyName(String idOrName, String newFriendlyName);
 
+   /**
+    * Retrieves the list of supported Datacenters to save images in. The objects will have
+    * datacenter ID, name and description. In most cases, id or name will be used for
+    * {@link #getImageList}.
+    * 
+    * @return supported datacenters
+    */
+   Set<Option> getDatacenters();
 }

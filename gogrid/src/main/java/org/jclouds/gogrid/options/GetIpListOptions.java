@@ -18,51 +18,67 @@
  */
 package org.jclouds.gogrid.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.DATACENTER_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_STATE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IP_TYPE_KEY;
+
 import org.jclouds.gogrid.domain.IpState;
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
 
 /**
  * @author Oleksiy Yarmula
  */
 public class GetIpListOptions extends BaseHttpRequestOptions {
 
-    public static final GetIpListOptions NONE = new GetIpListOptions();
+   public static final GetIpListOptions NONE = new GetIpListOptions();
 
-    public GetIpListOptions onlyAssigned() {
-        checkState(!queryParameters.containsKey(IP_STATE_KEY), "Can't have multiple values for whether IP is assigned");
-        queryParameters.put(IP_STATE_KEY, IpState.ASSIGNED.toString());
-        return this;
-    }
+   public GetIpListOptions onlyAssigned() {
+      checkState(!queryParameters.containsKey(IP_STATE_KEY),
+               "Can't have multiple values for whether IP is assigned");
+      queryParameters.put(IP_STATE_KEY, IpState.ASSIGNED.toString());
+      return this;
+   }
 
-    public GetIpListOptions onlyUnassigned() {
-        checkState(!queryParameters.containsKey(IP_STATE_KEY), "Can't have multiple values for whether IP is assigned");
-        queryParameters.put(IP_STATE_KEY, IpState.UNASSIGNED.toString());
-        return this;
-    }
+   public GetIpListOptions onlyUnassigned() {
+      checkState(!queryParameters.containsKey(IP_STATE_KEY),
+               "Can't have multiple values for whether IP is assigned");
+      queryParameters.put(IP_STATE_KEY, IpState.UNASSIGNED.toString());
+      return this;
+   }
 
-    public GetIpListOptions onlyWithType(IpType type) {
-        checkState(!queryParameters.containsKey(IP_TYPE_KEY), "Can't have multiple values for ip type limit");
-        queryParameters.put(IP_TYPE_KEY, type.toString());
-        return this;
-    }
+   public GetIpListOptions onlyWithType(IpType type) {
+      checkState(!queryParameters.containsKey(IP_TYPE_KEY),
+               "Can't have multiple values for ip type limit");
+      queryParameters.put(IP_TYPE_KEY, type.toString());
+      return this;
+   }
 
-    public static class Builder {
+   public GetIpListOptions inDatacenter(String datacenterId) {
+      checkState(!queryParameters.containsKey(DATACENTER_KEY), "Can't have duplicate datacenter id");
+      queryParameters.put(DATACENTER_KEY, datacenterId);
+      return this;
+   }
 
-        public GetIpListOptions create() {
-            return new GetIpListOptions();
-        }
+   public static class Builder {
 
-        public GetIpListOptions limitToType(IpType type) {
-            return new GetIpListOptions().onlyWithType(type);
-        }
+      public GetIpListOptions inDatacenter(String datacenterId) {
+         return new GetIpListOptions().inDatacenter(checkNotNull(datacenterId));
+      }
 
-        public GetIpListOptions unassignedPublicIps() {
-            return new GetIpListOptions().onlyWithType(IpType.PUBLIC).onlyUnassigned();
-        }
-    }
+      public GetIpListOptions create() {
+         return new GetIpListOptions();
+      }
+
+      public GetIpListOptions limitToType(IpType type) {
+         return new GetIpListOptions().onlyWithType(type);
+      }
+
+      public GetIpListOptions unassignedPublicIps() {
+         return new GetIpListOptions().onlyWithType(IpType.PUBLIC).onlyUnassigned();
+      }
+   }
 
 }

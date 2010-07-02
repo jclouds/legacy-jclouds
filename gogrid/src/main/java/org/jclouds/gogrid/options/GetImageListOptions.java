@@ -18,60 +18,79 @@
  */
 package org.jclouds.gogrid.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.DATACENTER_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_STATE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_TYPE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.IS_PUBLIC_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.MAX_NUMBER_KEY;
+
 import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.gogrid.reference.GoGridQueryParams.*;
 
 /**
  * @author Oleksiy Yarmula
  */
 public class GetImageListOptions extends BaseHttpRequestOptions {
 
-    public GetImageListOptions setType(ServerImageType imageType) {
-        checkState(!queryParameters.containsKey(IMAGE_TYPE_KEY), "Can't have duplicate image type restrictions");
-        queryParameters.put(IMAGE_TYPE_KEY, imageType.toString());
-        return this;
-    }
+   public GetImageListOptions setType(ServerImageType imageType) {
+      checkState(!queryParameters.containsKey(IMAGE_TYPE_KEY),
+               "Can't have duplicate image type restrictions");
+      queryParameters.put(IMAGE_TYPE_KEY, imageType.toString());
+      return this;
+   }
 
-    public GetImageListOptions setState(ServerImageState imageState) {
-        checkState(!queryParameters.containsKey(IMAGE_STATE_KEY), "Can't have duplicate image state restrictions");
-        queryParameters.put(IMAGE_STATE_KEY, imageState.toString());
-        return this;
-    }
+   public GetImageListOptions setState(ServerImageState imageState) {
+      checkState(!queryParameters.containsKey(IMAGE_STATE_KEY),
+               "Can't have duplicate image state restrictions");
+      queryParameters.put(IMAGE_STATE_KEY, imageState.toString());
+      return this;
+   }
 
-    public GetImageListOptions onlyPublic() {
-        checkState(!queryParameters.containsKey(IS_PUBLIC_KEY), "Can't have duplicate image visibility restrictions");
-        queryParameters.put(IS_PUBLIC_KEY, "true");
-        return this;
-    }
+   public GetImageListOptions onlyPublic() {
+      checkState(!queryParameters.containsKey(IS_PUBLIC_KEY),
+               "Can't have duplicate image visibility restrictions");
+      queryParameters.put(IS_PUBLIC_KEY, "true");
+      return this;
+   }
 
-    public GetImageListOptions onlyPrivate() {
-        checkState(!queryParameters.containsKey(IS_PUBLIC_KEY), "Can't have duplicate image visibility restrictions");
-        queryParameters.put(IS_PUBLIC_KEY, "false");
-        return this;
-    }
+   public GetImageListOptions onlyPrivate() {
+      checkState(!queryParameters.containsKey(IS_PUBLIC_KEY),
+               "Can't have duplicate image visibility restrictions");
+      queryParameters.put(IS_PUBLIC_KEY, "false");
+      return this;
+   }
 
-    public GetImageListOptions maxItemsNumber(Integer maxNumber) {
-        checkState(!queryParameters.containsKey(MAX_NUMBER_KEY), "Can't have duplicate parameter of max returned items");
-        queryParameters.put(MAX_NUMBER_KEY, maxNumber.toString());
-        return this;
-    }
+   public GetImageListOptions inDatacenter(String datacenterId) {
+      checkState(!queryParameters.containsKey(DATACENTER_KEY), "Can't have duplicate datacenter id");
+      queryParameters.put(DATACENTER_KEY, datacenterId);
+      return this;
+   }
 
-    public static class Builder {
-        public GetImageListOptions publicWebServers() {
-            return new GetImageListOptions().setState(ServerImageState.AVAILABLE).
-                        setType(ServerImageType.WEB_APPLICATION_SERVER).
-                        onlyPublic();
-        }
+   public GetImageListOptions maxItemsNumber(Integer maxNumber) {
+      checkState(!queryParameters.containsKey(MAX_NUMBER_KEY),
+               "Can't have duplicate parameter of max returned items");
+      queryParameters.put(MAX_NUMBER_KEY, maxNumber.toString());
+      return this;
+   }
 
-        public GetImageListOptions publicDatabaseServers() {
-            return new GetImageListOptions().setState(ServerImageState.AVAILABLE).
-                        setType(ServerImageType.DATABASE_SERVER).
-                        onlyPublic();
-        }
-    }
+   public static class Builder {
+      public GetImageListOptions inDatacenter(String datacenterId) {
+         GetImageListOptions getImageListOptions = new GetImageListOptions();
+         return getImageListOptions.inDatacenter(checkNotNull(datacenterId));
+      }
+
+      public GetImageListOptions publicWebServers() {
+         return new GetImageListOptions().setState(ServerImageState.AVAILABLE).setType(
+                  ServerImageType.WEB_APPLICATION_SERVER).onlyPublic();
+      }
+
+      public GetImageListOptions publicDatabaseServers() {
+         return new GetImageListOptions().setState(ServerImageState.AVAILABLE).setType(
+                  ServerImageType.DATABASE_SERVER).onlyPublic();
+      }
+   }
 
 }

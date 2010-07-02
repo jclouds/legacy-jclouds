@@ -38,6 +38,7 @@ public class Ip implements Comparable<Ip> {
    @SerializedName("public")
    private boolean isPublic;
    private IpState state;
+   private Option datacenter;
 
    /**
     * A no-args constructor is required for deserialization
@@ -55,16 +56,21 @@ public class Ip implements Comparable<Ip> {
       this.ip = ip;
    }
 
-   public Ip(long id, String ip, String subnet, boolean isPublic, IpState state) {
+   public Ip(long id, String ip, String subnet, boolean isPublic, IpState state, Option datacenter) {
       this.id = id;
       this.ip = ip;
       this.subnet = subnet;
       this.isPublic = isPublic;
       this.state = state;
+      this.datacenter = datacenter;
    }
 
    public long getId() {
       return id;
+   }
+
+   public Option getDatacenter() {
+      return datacenter;
    }
 
    public String getIp() {
@@ -84,42 +90,58 @@ public class Ip implements Comparable<Ip> {
    }
 
    @Override
-   public boolean equals(Object o) {
-      if (this == o)
+   public boolean equals(Object obj) {
+      if (this == obj)
          return true;
-      if (o == null || getClass() != o.getClass())
+      if (obj == null)
          return false;
-
-      Ip ip1 = (Ip) o;
-
-      if (id != ip1.id)
+      if (getClass() != obj.getClass())
          return false;
-      if (isPublic != ip1.isPublic)
+      Ip other = (Ip) obj;
+      if (datacenter == null) {
+         if (other.datacenter != null)
+            return false;
+      } else if (!datacenter.equals(other.datacenter))
          return false;
-      if (!ip.equals(ip1.ip))
+      if (id != other.id)
          return false;
-      if (state != null ? !state.equals(ip1.state) : ip1.state != null)
+      if (ip == null) {
+         if (other.ip != null)
+            return false;
+      } else if (!ip.equals(other.ip))
          return false;
-      if (subnet != null ? !subnet.equals(ip1.subnet) : ip1.subnet != null)
+      if (isPublic != other.isPublic)
          return false;
-
+      if (state == null) {
+         if (other.state != null)
+            return false;
+      } else if (!state.equals(other.state))
+         return false;
+      if (subnet == null) {
+         if (other.subnet != null)
+            return false;
+      } else if (!subnet.equals(other.subnet))
+         return false;
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + ip.hashCode();
-      result = 31 * result + (subnet != null ? subnet.hashCode() : 0);
-      result = 31 * result + (isPublic ? 1 : 0);
-      result = 31 * result + (state != null ? state.hashCode() : 0);
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
+      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+      result = prime * result + (isPublic ? 1231 : 1237);
+      result = prime * result + ((state == null) ? 0 : state.hashCode());
+      result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
       return result;
    }
 
    @Override
    public String toString() {
-      return "Ip{" + "id=" + id + ", ip='" + ip + '\'' + ", subnet='" + subnet + '\''
-               + ", isPublic=" + isPublic + ", state=" + state + '}';
+      return "Ip [datacenter=" + datacenter + ", id=" + id + ", ip=" + ip + ", isPublic="
+               + isPublic + ", state=" + state + ", subnet=" + subnet + "]";
    }
 
    @Override

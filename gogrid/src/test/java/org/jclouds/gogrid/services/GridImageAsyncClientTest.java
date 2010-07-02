@@ -46,7 +46,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
                new GetImageListOptions().onlyPublic().setState(ServerImageState.AVAILABLE).setType(
                         ServerImageType.WEB_APPLICATION_SERVER));
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/list?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/list?v=1.5&"
                + "isPublic=true&image.state=Available&" + "image.type=Web%20Server HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -59,7 +59,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/list?"
-               + "v=1.4&isPublic=true&image.state=Available&" + "image.type=Web%20Server&"
+               + "v=1.5&isPublic=true&image.state=Available&" + "image.type=Web%20Server&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -71,7 +71,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       GeneratedHttpRequest<GridImageAsyncClient> httpRequest = processor.createRequest(method,
                "name1", "name2");
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.5&"
                + "name=name1&name=name2 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -83,7 +83,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.5&"
                + "name=name1&name=name2&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
@@ -97,7 +97,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       GeneratedHttpRequest<GridImageAsyncClient> httpRequest = processor.createRequest(method,
                "imageName", "newDesc");
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&description=newDesc HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -109,7 +109,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&description=newDesc&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
@@ -123,7 +123,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       GeneratedHttpRequest<GridImageAsyncClient> httpRequest = processor.createRequest(method,
                "imageName", "newFriendlyName");
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&friendlyName=newFriendlyName HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -135,7 +135,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.4&"
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&friendlyName=newFriendlyName&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");

@@ -18,12 +18,13 @@
  */
 package org.jclouds.gogrid.services;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.gogrid.domain.Ip;
-import org.jclouds.gogrid.options.GetIpListOptions;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.gogrid.domain.Ip;
+import org.jclouds.gogrid.domain.Option;
+import org.jclouds.gogrid.options.GetIpListOptions;
 
 /**
  * @author Oleksiy Yarmula
@@ -31,35 +32,46 @@ import java.util.concurrent.TimeUnit;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridIpClient {
 
-    /**
-     * Returns all IPs in the system
-     * that match the options
-     * @param options options to narrow the search down
-     * @return IPs found by the search
-     */
-    Set<Ip> getIpList(GetIpListOptions... options);
+   /**
+    * Returns all IPs in the system that match the options
+    * 
+    * @param options
+    *           options to narrow the search down
+    * @return IPs found by the search
+    */
+   Set<Ip> getIpList(GetIpListOptions... options);
 
-    /**
-     * Returns the list of unassigned IPs.
-     *
-     * NOTE: this returns both public and private IPs!
-     *
-     * @return unassigned IPs
-     */
-    Set<Ip> getUnassignedIpList();
+   /**
+    * Returns the list of unassigned IPs.
+    * 
+    * NOTE: this returns both public and private IPs!
+    * 
+    * @return unassigned IPs
+    */
+   Set<Ip> getUnassignedIpList();
 
-    /**
-     * Returns the list of unassigned public IPs.
-     * @return unassigned public IPs
-     */
-    Set<Ip> getUnassignedPublicIpList();
+   /**
+    * Returns the list of unassigned public IPs.
+    * 
+    * @return unassigned public IPs
+    */
+   Set<Ip> getUnassignedPublicIpList();
 
-    /**
-     * Returns the list of assigned IPs
-     *
-     * NOTE: this returns both public and private IPs!
-     *
-     * @return assigned IPs
-     */
-    Set<Ip> getAssignedIpList();
+   /**
+    * Returns the list of assigned IPs
+    * 
+    * NOTE: this returns both public and private IPs!
+    * 
+    * @return assigned IPs
+    */
+   Set<Ip> getAssignedIpList();
+
+   /**
+    * Retrieves the list of supported Datacenters to retrieve ips from. The objects will have
+    * datacenter ID, name and description. In most cases, id or name will be used for
+    * {@link #addServer}.
+    * 
+    * @return supported datacenters
+    */
+   Set<Option> getDatacenters();
 }

@@ -50,7 +50,7 @@ public class GridLoadBalancerAsyncClientTest extends
                .createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.4 HTTP/1.1");
+               "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.5 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -63,7 +63,7 @@ public class GridLoadBalancerAsyncClientTest extends
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.4&"
+               "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.5&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -80,7 +80,7 @@ public class GridLoadBalancerAsyncClientTest extends
                         LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SSL_STICKY));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "add?v=1.4&name=BalanceIt&loadbalancer.type=Least%20Connect&"
+               + "add?v=1.5&name=BalanceIt&loadbalancer.type=Least%20Connect&"
                + "loadbalancer.persistence=SSL%20Sticky&realiplist.0.ip=127.0.0.1&"
                + "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&"
                + "virtualip.ip=127.0.0.1&virtualip.port=80 HTTP/1.1");
@@ -95,7 +95,7 @@ public class GridLoadBalancerAsyncClientTest extends
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "add?v=1.4&name=BalanceIt&loadbalancer.type=Least%20Connect&"
+               + "add?v=1.5&name=BalanceIt&loadbalancer.type=Least%20Connect&"
                + "loadbalancer.persistence=SSL%20Sticky&realiplist.0.ip=127.0.0.1&"
                + "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&"
                + "virtualip.ip=127.0.0.1&virtualip.port=80&"
@@ -114,7 +114,7 @@ public class GridLoadBalancerAsyncClientTest extends
 
       assertRequestLineEquals(
                httpRequest,
-               "GET https://api.gogrid.com/api/grid/loadbalancer/edit?v=1.4&id=1&realiplist.0.ip=127.0.0.1&realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090 HTTP/1.1");
+               "GET https://api.gogrid.com/api/grid/loadbalancer/edit?v=1.5&id=1&realiplist.0.ip=127.0.0.1&realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -127,7 +127,7 @@ public class GridLoadBalancerAsyncClientTest extends
 
       assertRequestLineEquals(
                httpRequest,
-               "GET https://api.gogrid.com/api/grid/loadbalancer/edit?v=1.4&id=1&realiplist.0.ip=127.0.0.1&realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
+               "GET https://api.gogrid.com/api/grid/loadbalancer/edit?v=1.5&id=1&realiplist.0.ip=127.0.0.1&realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
    }
@@ -141,7 +141,7 @@ public class GridLoadBalancerAsyncClientTest extends
                         new IpPortPair(new Ip("127.0.0.1"), 9090)));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "edit?v=1.4&name=BalanceIt&realiplist.0.ip=127.0.0.1&"
+               + "edit?v=1.5&name=BalanceIt&realiplist.0.ip=127.0.0.1&"
                + "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -155,7 +155,7 @@ public class GridLoadBalancerAsyncClientTest extends
 
       assertRequestLineEquals(
                httpRequest,
-               "GET https://api.gogrid.com/api/grid/loadbalancer/edit?v=1.4&name=BalanceIt&realiplist.0.ip=127.0.0.1&realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
+               "GET https://api.gogrid.com/api/grid/loadbalancer/edit?v=1.5&name=BalanceIt&realiplist.0.ip=127.0.0.1&realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
    }
@@ -168,7 +168,7 @@ public class GridLoadBalancerAsyncClientTest extends
                method, "My Load Balancer", "My Load Balancer 2");
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "get?v=1.4&name=My%20Load%20Balancer&name=My%20Load%20Balancer%202 HTTP/1.1");
+               + "get?v=1.5&name=My%20Load%20Balancer&name=My%20Load%20Balancer%202 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -181,7 +181,7 @@ public class GridLoadBalancerAsyncClientTest extends
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "get?v=1.4&name=My%20Load%20Balancer&name=My%20Load%20Balancer%202&"
+               + "get?v=1.5&name=My%20Load%20Balancer&name=My%20Load%20Balancer%202&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
@@ -194,7 +194,7 @@ public class GridLoadBalancerAsyncClientTest extends
                method, 55L);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "delete?v=1.4&id=55 HTTP/1.1");
+               + "delete?v=1.5&id=55 HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);
 
@@ -206,7 +206,7 @@ public class GridLoadBalancerAsyncClientTest extends
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-               + "delete?v=1.4&id=55&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
+               + "delete?v=1.5&id=55&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                + "HTTP/1.1");
       assertHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null);

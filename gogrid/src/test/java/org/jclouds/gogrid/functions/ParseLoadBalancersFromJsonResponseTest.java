@@ -37,6 +37,7 @@ import org.jclouds.gogrid.domain.LoadBalancerOs;
 import org.jclouds.gogrid.domain.LoadBalancerPersistenceType;
 import org.jclouds.gogrid.domain.LoadBalancerState;
 import org.jclouds.gogrid.domain.LoadBalancerType;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
@@ -62,15 +63,16 @@ public class ParseLoadBalancersFromJsonResponseTest {
       ParseLoadBalancerListFromJsonResponse parser = new ParseLoadBalancerListFromJsonResponse(i
                .getInstance(Gson.class));
       SortedSet<LoadBalancer> response = parser.apply(is);
+      Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
 
       LoadBalancer loadBalancer = new LoadBalancer(6372L, "Balancer", null, new IpPortPair(
                new Ip(1313082L, "204.51.240.181", "204.51.240.176/255.255.255.240", true,
-                        IpState.ASSIGNED), 80), ImmutableSortedSet.of(new IpPortPair(
+                        IpState.ASSIGNED, dc), 80), ImmutableSortedSet.of(new IpPortPair(
                new Ip(1313086L, "204.51.240.185", "204.51.240.176/255.255.255.240", true,
-                        IpState.ASSIGNED), 80), new IpPortPair(new Ip(1313089L, "204.51.240.188",
-               "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED), 80)),
+                        IpState.ASSIGNED, dc), 80), new IpPortPair(new Ip(1313089L, "204.51.240.188",
+               "204.51.240.176/255.255.255.240", true, IpState.ASSIGNED, dc), 80)),
                LoadBalancerType.ROUND_ROBIN, LoadBalancerPersistenceType.NONE, LoadBalancerOs.F5,
-               LoadBalancerState.ON);
+               LoadBalancerState.ON, dc);
       assertEquals(Iterables.getOnlyElement(response), loadBalancer);
    }
 

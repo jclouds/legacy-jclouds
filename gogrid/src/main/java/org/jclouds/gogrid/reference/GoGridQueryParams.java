@@ -33,6 +33,8 @@ public interface GoGridQueryParams {
    public static final String SERVER_ID_OR_NAME_KEY = "server";
    public static final String SERVER_TYPE_KEY = "server.type";
 
+   public static final String DATACENTER_KEY = "datacenter";
+
    public static final String IS_SANDBOX_KEY = "isSandbox";
    public static final String IMAGE_KEY = "image";
    public static final String IP_KEY = "ip";

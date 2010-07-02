@@ -1,6 +1,12 @@
 {
     "list": [
         {
+            "datacenter": {
+                "description": "US West 1 Datacenter",
+                "id": 1,
+                "name": "US-West-1",
+                "object": "option"
+            },
             "object": "server",
             "isSandbox": false,
             "type": {
@@ -78,6 +84,12 @@
             },
             "name": "PowerServer",
             "ip": {
+             "datacenter": {
+                "description": "US West 1 Datacenter",
+                "id": 1,
+                "name": "US-West-1",
+                "object": "option"
+                },
                 "object": "ip",
                 "public": true,
                 "subnet": "204.51.240.176/255.255.255.240",

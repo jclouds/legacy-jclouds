@@ -4,6 +4,7 @@ import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_DESCRIPTION_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_FRIENDLY_NAME_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.LOOKUP_LIST_KEY;
 
 import java.util.Set;
 
@@ -14,10 +15,12 @@ import javax.ws.rs.QueryParam;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseImageFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseImageListFromJsonResponse;
+import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.QueryParams;
@@ -77,4 +80,12 @@ public interface GridImageAsyncClient {
    ListenableFuture<ServerImage> editImageFriendlyName(@QueryParam(IMAGE_KEY) String idOrName,
             @QueryParam(IMAGE_FRIENDLY_NAME_KEY) String newFriendlyName);
 
+   /**
+    * @see GridImageClient#getDatacenters
+    */
+   @GET
+   @ResponseParser(ParseOptionsFromJsonResponse.class)
+   @Path("/common/lookup/list")
+   @QueryParams(keys = LOOKUP_LIST_KEY, values = "datacenter")
+   ListenableFuture<Set<Option>> getDatacenters();
 }

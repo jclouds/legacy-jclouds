@@ -58,33 +58,32 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    protected Logger logger = Logger.NULL;
    private final Map<String, NodeState> serverStateToNodeState;
    private final GoGridClient client;
-   private final Location location;
    private final Set<? extends Image> images;
+   private final Map<String, ? extends Location> locations;
 
    private static class FindImageForServer implements Predicate<Image> {
-      private final Location location;
       private final Server instance;
 
-      private FindImageForServer(Location location, Server instance) {
-         this.location = location;
+      @Inject
+      private FindImageForServer(Server instance) {
          this.instance = instance;
       }
 
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImage().getId() + "")
-                  && (input.getLocation() == null || input.getLocation().equals(location) || input
-                           .getLocation().equals(location.getParent()));
+                  && (input.getLocation() == null || input.getLocation().getId().equals(
+                           instance.getDatacenter().getId() + ""));
       }
    }
 
    @Inject
    ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState, GoGridClient client,
-            Set<? extends Image> images, Location location) {
+            Set<? extends Image> images, Map<String, ? extends Location> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
-      this.location = checkNotNull(location, "location");
+      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
@@ -96,14 +95,13 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Credentials creds = client.getServerServices().getServerCredentialsList().get(from.getName());
       Image image = null;
       try {
-         image = Iterables.find(images, new FindImageForServer(location, from));
+         image = Iterables.find(images, new FindImageForServer(from));
       } catch (NoSuchElementException e) {
-         logger
-                  .warn("could not find a matching image for server %s in location %s", from,
-                           location);
+         logger.warn("could not find a matching image for server %s", from);
       }
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location,
-               null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList
-                        .<String> of(), ImmutableMap.<String, String> of(), creds);
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations
+               .get(from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(),
+               tag, image, state, ipSet, ImmutableList.<String> of(), ImmutableMap
+                        .<String, String> of(), creds);
    }
 }

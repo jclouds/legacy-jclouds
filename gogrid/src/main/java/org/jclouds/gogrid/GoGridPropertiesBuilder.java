@@ -44,7 +44,7 @@ public class GoGridPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.gogrid.com/api");
-      properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "SANFRANCISCO");
+      properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "1");
       return properties;
    }
 

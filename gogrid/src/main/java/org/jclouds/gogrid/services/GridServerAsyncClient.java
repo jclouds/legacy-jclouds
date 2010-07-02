@@ -152,4 +152,15 @@ public interface GridServerAsyncClient {
    @Path("/common/lookup/list")
    @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.ram")
    ListenableFuture<Set<Option>> getRamSizes();
+
+   /**
+    * @see GridServerClient#getDatacenters
+    */
+   @GET
+   @ResponseParser(ParseOptionsFromJsonResponse.class)
+   @Path("/common/lookup/list")
+   @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.datacenter")
+   ListenableFuture<Set<Option>> getDatacenters();
 }
+
+

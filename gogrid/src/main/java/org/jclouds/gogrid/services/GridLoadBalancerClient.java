@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.LoadBalancer;
+import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 
 /**
@@ -126,4 +127,14 @@ public interface GridLoadBalancerClient {
     * @return load balancer before the command is executed
     */
    LoadBalancer deleteByName(String name);
+
+   /**
+    * Retrieves the list of supported Datacenters to launch servers into. The objects will have
+    * datacenter ID, name and description. In most cases, id or name will be used for
+    * {@link #addLoadBalancer}.
+    * 
+    * @return supported datacenters
+    */
+   Set<Option> getDatacenters();
+
 }
