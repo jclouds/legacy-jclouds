@@ -19,6 +19,7 @@
 package org.jclouds.compute;
 
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+import static org.jclouds.util.Utils.propagateAuthorizationOrOriginalException;
 
 import java.util.Properties;
 
@@ -63,22 +64,31 @@ public class ComputeServiceContextFactory {
       this.contextFactory = restContextFactory;
    }
 
+   public static <S, A> ComputeServiceContext buildContextUnwrappingExceptions(
+            ComputeServiceContextBuilder<S, A> builder) {
+      try {
+         return builder.buildComputeServiceContext();
+      } catch (Exception e) {
+         return propagateAuthorizationOrOriginalException(e);
+      }
+   }
+
    /**
     * @see RestContextFactory#createContextBuilder(String, String, String)
     */
    public ComputeServiceContext createContext(String provider, String identity, String credential) {
-      return ComputeServiceContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, identity, credential))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(contextFactory.createContextBuilder(provider, identity, credential));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(String, Properties)
     */
    public ComputeServiceContext createContext(String provider, Properties overrides) {
-      return ComputeServiceContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, overrides))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(contextFactory.createContextBuilder(provider, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
@@ -86,9 +96,10 @@ public class ComputeServiceContextFactory {
     */
    public ComputeServiceContext createContext(String provider, Iterable<? extends Module> modules,
             Properties overrides) {
-      return ComputeServiceContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, modules, overrides))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(contextFactory.createContextBuilder(provider, modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
+
    }
 
    /**
@@ -96,27 +107,30 @@ public class ComputeServiceContextFactory {
     */
    public ComputeServiceContext createContext(String provider, @Nullable String identity,
             @Nullable String credential, Iterable<? extends Module> modules) {
-      return ComputeServiceContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, identity, credential, modules))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(contextFactory.createContextBuilder(provider, identity, credential, modules));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(String, String,String, Iterable, Properties)
     */
-   public ComputeServiceContext createContext(String providerName, @Nullable String identity,
+   public ComputeServiceContext createContext(String provider, @Nullable String identity,
             @Nullable String credential, Iterable<? extends Module> modules, Properties overrides) {
-      return ComputeServiceContextBuilder.class.cast(
-               contextFactory.createContextBuilder(providerName, identity, credential, modules,
-                        overrides)).buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(contextFactory.createContextBuilder(provider, identity, credential, modules,
+                        overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(ContextSpec)
     */
    public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec) {
-      return ComputeServiceContextBuilder.class.cast(createContextBuilder(contextSpec))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(createContextBuilder(contextSpec));
+      return buildContextUnwrappingExceptions(builder);
+
    }
 
    /**
@@ -124,8 +138,9 @@ public class ComputeServiceContextFactory {
     */
    public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec,
             Iterable<? extends Module> modules) {
-      return ComputeServiceContextBuilder.class.cast(createContextBuilder(contextSpec, modules))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(createContextBuilder(contextSpec, modules));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
@@ -133,8 +148,9 @@ public class ComputeServiceContextFactory {
     */
    public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec,
             Properties overrides) {
-      return ComputeServiceContextBuilder.class.cast(createContextBuilder(contextSpec, overrides))
-               .buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(createContextBuilder(contextSpec, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
@@ -142,7 +158,8 @@ public class ComputeServiceContextFactory {
     */
    public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec,
             Iterable<? extends Module> modules, Properties overrides) {
-      return ComputeServiceContextBuilder.class.cast(
-               createContextBuilder(contextSpec, modules, overrides)).buildComputeServiceContext();
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
+               .cast(createContextBuilder(contextSpec, modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 }

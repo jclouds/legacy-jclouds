@@ -19,6 +19,7 @@
 package org.jclouds.blobstore;
 
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+import static org.jclouds.util.Utils.propagateAuthorizationOrOriginalException;
 
 import java.util.Properties;
 
@@ -63,21 +64,31 @@ public class BlobStoreContextFactory {
       this.contextFactory = restContextFactory;
    }
 
+   public static <S, A> BlobStoreContext buildContextUnwrappingExceptions(
+            BlobStoreContextBuilder<S, A> builder) {
+      try {
+         return builder.buildBlobStoreContext();
+      } catch (Exception e) {
+         return propagateAuthorizationOrOriginalException(e);
+      }
+   }
+
    /**
     * @see RestContextFactory#createContextBuilder(String, String, String)
     */
    public BlobStoreContext createContext(String provider, String identity, String credential) {
-      return BlobStoreContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, identity, credential))
-               .buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(contextFactory
+               .createContextBuilder(provider, identity, credential));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(String, Properties)
     */
    public BlobStoreContext createContext(String provider, Properties overrides) {
-      return BlobStoreContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, overrides)).buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(contextFactory
+               .createContextBuilder(provider, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
@@ -85,9 +96,10 @@ public class BlobStoreContextFactory {
     */
    public BlobStoreContext createContext(String provider, Iterable<? extends Module> modules,
             Properties overrides) {
-      return BlobStoreContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, modules, overrides))
-               .buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(contextFactory
+               .createContextBuilder(provider, modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
+
    }
 
    /**
@@ -95,27 +107,29 @@ public class BlobStoreContextFactory {
     */
    public BlobStoreContext createContext(String provider, @Nullable String identity,
             @Nullable String credential, Iterable<? extends Module> modules) {
-      return BlobStoreContextBuilder.class.cast(
-               contextFactory.createContextBuilder(provider, identity, credential, modules))
-               .buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(contextFactory
+               .createContextBuilder(provider, identity, credential, modules));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(String, String,String, Iterable, Properties)
     */
-   public BlobStoreContext createContext(String providerName, @Nullable String identity,
+   public BlobStoreContext createContext(String provider, @Nullable String identity,
             @Nullable String credential, Iterable<? extends Module> modules, Properties overrides) {
-      return BlobStoreContextBuilder.class.cast(
-               contextFactory.createContextBuilder(providerName, identity, credential, modules,
-                        overrides)).buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(contextFactory
+               .createContextBuilder(provider, identity, credential, modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(ContextSpec)
     */
    public <S, A> BlobStoreContext createContext(ContextSpec<S, A> contextSpec) {
-      return BlobStoreContextBuilder.class.cast(createContextBuilder(contextSpec))
-               .buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class
+               .cast(createContextBuilder(contextSpec));
+      return buildContextUnwrappingExceptions(builder);
+
    }
 
    /**
@@ -123,16 +137,18 @@ public class BlobStoreContextFactory {
     */
    public <S, A> BlobStoreContext createContext(ContextSpec<S, A> contextSpec,
             Iterable<? extends Module> modules) {
-      return BlobStoreContextBuilder.class.cast(createContextBuilder(contextSpec, modules))
-               .buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class
+               .cast(createContextBuilder(contextSpec, modules));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
     * @see RestContextFactory#createContextBuilder(ContextSpec, Properties)
     */
    public <S, A> BlobStoreContext createContext(ContextSpec<S, A> contextSpec, Properties overrides) {
-      return BlobStoreContextBuilder.class.cast(createContextBuilder(contextSpec, overrides))
-               .buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class
+               .cast(createContextBuilder(contextSpec, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
    /**
@@ -140,7 +156,8 @@ public class BlobStoreContextFactory {
     */
    public <S, A> BlobStoreContext createContext(ContextSpec<S, A> contextSpec,
             Iterable<? extends Module> modules, Properties overrides) {
-      return BlobStoreContextBuilder.class.cast(
-               createContextBuilder(contextSpec, modules, overrides)).buildBlobStoreContext();
+      BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class
+               .cast(createContextBuilder(contextSpec, modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 }

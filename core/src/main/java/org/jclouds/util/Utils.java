@@ -20,6 +20,14 @@ package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.base.Throwables.getCausalChain;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.util.Patterns.CHAR_TO_PATTERN;
 import static org.jclouds.util.Patterns.TOKEN_TO_PATTERN;
 
@@ -44,17 +52,16 @@ import javax.annotation.Resource;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
@@ -68,6 +75,15 @@ import com.google.inject.spi.Message;
  * @author Adrian Cole
  */
 public class Utils {
+
+   public static <T> T propagateAuthorizationOrOriginalException(Exception e) {
+      AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
+      if (aex != null)
+         throw aex;
+      Throwables.propagate(e);
+      assert false : "exception should have propogated " + e;
+      return null;
+   }
 
    /**
     * Like Ordering, but handle the case where there are multiple valid maximums
@@ -100,28 +116,31 @@ public class Utils {
    }
 
    public static Object propagateOrNull(Exception from) {
-      Throwables.propagate(from);
+      propagate(from);
       assert false : "exception should have propogated";
       return null;
    }
 
    @SuppressWarnings("unchecked")
    public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
+      if (from instanceof ProvisionException)
+         return getFirstThrowableOfType(ProvisionException.class.cast(from), clazz);
       try {
-         return (T) Iterables.find(Throwables.getCausalChain(from), Predicates.instanceOf(clazz));
+         return (T) find(getCausalChain(from), instanceOf(clazz));
       } catch (NoSuchElementException e) {
          return null;
       }
    }
 
-   public static Throwable firstRootCauseOrOriginalException(ProvisionException e) {
+   public static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e,
+            Class<T> clazz) {
       for (Message message : e.getErrorMessages()) {
-         Throwable cause = Throwables.getRootCause(message.getCause());
+         T cause = getFirstThrowableOfType(message.getCause(), clazz);
          if (cause instanceof ProvisionException)
-            return firstRootCauseOrOriginalException(ProvisionException.class.cast(cause));
+            return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
          return cause;
       }
-      return e;
+      return null;
    }
 
    public static String replaceTokens(String value, Iterable<Entry<String, String>> tokenValues) {
@@ -319,7 +338,7 @@ public class Utils {
    @SuppressWarnings("unchecked")
    public static Iterable<String> getSupportedProvidersOfTypeInProperties(
             final Class<? extends RestContextBuilder> type, final Properties properties) {
-      return Iterables.filter(Iterables.transform(Iterables.filter(properties.entrySet(),
+      return filter(transform(filter(properties.entrySet(),
                new Predicate<Map.Entry<Object, Object>>() {
 
                   @Override
@@ -334,19 +353,19 @@ public class Utils {
          public String apply(Entry<Object, Object> from) {
             String keyString = from.getKey().toString();
             try {
-               String provider = Iterables.get(Splitter.on('.').split(keyString), 0);
+               String provider = get(Splitter.on('.').split(keyString), 0);
                Class<RestContextBuilder<Object, Object>> clazz = resolveContextBuilderClass(
                         provider, properties);
                if (type.isAssignableFrom(clazz))
                   return provider;
             } catch (ClassNotFoundException e) {
             } catch (Exception e) {
-               Throwables.propagate(e);
+               propagate(e);
             }
             return null;
          }
 
-      }), Predicates.notNull());
+      }), notNull());
    }
 
    @SuppressWarnings("unchecked")

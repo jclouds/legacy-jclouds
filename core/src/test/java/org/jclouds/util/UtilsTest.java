@@ -45,7 +45,7 @@ public class UtilsTest {
       AuthorizationException aex = createMock(AuthorizationException.class);
       Message message = new Message(ImmutableList.of(), "test", aex);
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
-      assertEquals(Utils.firstRootCauseOrOriginalException(pex), aex);
+      assertEquals(Utils.getFirstThrowableOfType(pex, AuthorizationException.class), aex);
    }
 
    public void testGetFirstThrowableOfTypeOuter() {

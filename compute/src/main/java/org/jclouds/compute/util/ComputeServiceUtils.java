@@ -18,13 +18,11 @@
  */
 package org.jclouds.compute.util;
 
-
 import java.util.Formatter;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.Architecture;
@@ -145,7 +143,8 @@ public class ComputeServiceUtils {
 
    public static boolean isKeyAuth(NodeMetadata createdNode) {
       return createdNode.getCredentials().credential != null
-               && createdNode.getCredentials().credential.startsWith("-----BEGIN RSA PRIVATE KEY-----");
+               && createdNode.getCredentials().credential
+                        .startsWith("-----BEGIN RSA PRIVATE KEY-----");
    }
 
    /**

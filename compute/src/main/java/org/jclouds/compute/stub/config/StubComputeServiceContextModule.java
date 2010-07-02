@@ -398,7 +398,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
    @Singleton
    Location getLocation(@org.jclouds.rest.annotations.Provider String providerName) {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      return new LocationImpl(LocationScope.ZONE, "memory", "memory", provider);
+      return new LocationImpl(LocationScope.ZONE, providerName, providerName, provider);
    }
 
    @Provides
