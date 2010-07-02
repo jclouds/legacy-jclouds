@@ -79,7 +79,7 @@ public interface GridServerClient {
     *           to get the servers
     * @return server(s) matching the ids
     */
-   Set<Server> getServersById(Long... ids);
+   Set<Server> getServersById(long... ids);
 
    /**
     * Returns a map of running servers' names to the log in credentials.
@@ -124,7 +124,7 @@ public interface GridServerClient {
     *           id of the server to delete
     * @return server before the command is executed
     */
-   Server deleteById(Long id);
+   Server deleteById(long id);
 
    /**
     * Deletes the server by name;

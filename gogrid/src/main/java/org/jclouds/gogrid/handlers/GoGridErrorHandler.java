@@ -34,7 +34,9 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 
+import com.google.common.collect.Iterables;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
@@ -52,10 +54,17 @@ public class GoGridErrorHandler implements HttpErrorHandler {
 
    @Override
    public void handleError(HttpCommand command, HttpResponse response) {
-      Exception exception;
+      Exception exception = new HttpResponseException(command, response);
       Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response.getContent());
       switch (response.getStatusCode()) {
+         case 400:
+            if (Iterables.get(errors, 0).getMessage().indexOf("No object found") != -1) {
+               exception = new ResourceNotFoundException(Iterables.get(errors, 0).getMessage(),
+                        exception);
+               break;
+            }
          case 403:
+
             exception = new AuthorizationException(command.getRequest(), errors != null ? errors
                      .toString() : response.getStatusLine());
             break;

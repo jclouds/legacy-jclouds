@@ -52,17 +52,20 @@ public class BindIdsToQueryParams implements Binder {
    public void bindToRequest(HttpRequest request, Object input) {
       checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest<?>,
                "this binder is only valid for GeneratedHttpRequests!");
-      checkArgument(checkNotNull(input, "input is null") instanceof Long[],
-               "this binder is only valid for Long[] arguments");
-
-      Long[] names = (Long[]) input;
       GeneratedHttpRequest<?> generatedRequest = (GeneratedHttpRequest<?>) request;
+      
+      if (checkNotNull(input, "input is null") instanceof Long[]){
+         Long[] names = (Long[]) input;
+         for (long id : names) 
+            generatedRequest.addQueryParam(ID_KEY, id + "");
+      } else if (input instanceof long[]) {
+         long[] names = (long[]) input;
 
-      for (Long id : names) {
-         generatedRequest.addQueryParam(ID_KEY, checkNotNull(id.toString(),
-         /* or throw */"id must have a non-null value"));
+         for (long id : names) 
+            generatedRequest.addQueryParam(ID_KEY, id + "");
+      } else {
+         throw new IllegalArgumentException("this binder is only valid for Long[] arguments: "+input.getClass());
       }
-
+     
    }
-
 }

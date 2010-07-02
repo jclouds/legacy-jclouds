@@ -48,8 +48,10 @@ import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
+import org.jclouds.gogrid.functions.ReturnEmptySetOnNotFound;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -129,7 +131,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFound.class);
 
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -143,7 +145,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testGetServersById() throws NoSuchMethodException, IOException {
-      Method method = GridServerAsyncClient.class.getMethod("getServersById", Long[].class);
+      Method method = GridServerAsyncClient.class.getMethod("getServersById", long[].class);
       GeneratedHttpRequest<GridServerAsyncClient> httpRequest = processor.createRequest(method,
                123L);
 
@@ -154,7 +156,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFound.class);
 
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -261,7 +263,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);

@@ -23,6 +23,8 @@
  */
 package org.jclouds.gogrid.mock;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 
@@ -31,54 +33,54 @@ import org.jclouds.http.HttpRequest;
  */
 public class HttpCommandMock implements HttpCommand {
 
-    @Override
-    public int incrementRedirectCount() {
-        return 0;
-    }
+   @Override
+   public int incrementRedirectCount() {
+      return 0;
+   }
 
-    @Override
-    public int getRedirectCount() {
-        return 0;
-    }
+   @Override
+   public int getRedirectCount() {
+      return 0;
+   }
 
-    @Override
-    public boolean isReplayable() {
-        return false;
-    }
+   @Override
+   public boolean isReplayable() {
+      return false;
+   }
 
-    @Override
-    public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
-    }
+   @Override
+   public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
+   }
 
-    @Override
-    public void changeToGETRequest() {
-    }
+   @Override
+   public void changeToGETRequest() {
+   }
 
-    @Override
-    public void changePathTo(String newPath) {
-    }
+   @Override
+   public void changePathTo(String newPath) {
+   }
 
-    @Override
-    public int incrementFailureCount() {
-        return 0;
-    }
+   @Override
+   public int incrementFailureCount() {
+      return 0;
+   }
 
-    @Override
-    public int getFailureCount() {
-        return 0;
-    }
+   @Override
+   public int getFailureCount() {
+      return 0;
+   }
 
-    @Override
-    public HttpRequest getRequest() {
-        return null;
-    }
+   @Override
+   public HttpRequest getRequest() {
+      return new HttpRequest("GET", URI.create("http://localhost"));
+   }
 
-    @Override
-    public void setException(Exception exception) {
-    }
+   @Override
+   public void setException(Exception exception) {
+   }
 
-    @Override
-    public Exception getException() {
-        return null;
-    }
+   @Override
+   public Exception getException() {
+      return null;
+   }
 }

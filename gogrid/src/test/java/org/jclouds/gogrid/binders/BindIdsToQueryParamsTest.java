@@ -18,11 +18,11 @@
  */
 package org.jclouds.gogrid.binders;
 
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.testng.annotations.Test;
-
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
+
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.testng.annotations.Test;
 
 /**
  * Tests that id bindings are proper for request
@@ -31,18 +31,33 @@ import static org.easymock.classextension.EasyMock.replay;
  */
 public class BindIdsToQueryParamsTest {
 
-    @Test
-    public void testBinding() {
-        GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-        Long[] input = {123L, 456L};
+   @Test
+   public void testBinding() {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      Long[] input = { 123L, 456L };
 
-        BindIdsToQueryParams binder = new BindIdsToQueryParams();
+      BindIdsToQueryParams binder = new BindIdsToQueryParams();
 
-        request.addQueryParam("id", "123");
-        request.addQueryParam("id", "456");
-        replay(request);
+      request.addQueryParam("id", "123");
+      request.addQueryParam("id", "456");
+      replay(request);
 
-        binder.bindToRequest(request, input);
+      binder.bindToRequest(request, input);
 
-    }
+   }
+
+   @Test
+   public void testBinding2() {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      long[] input = { 123L, 456L };
+
+      BindIdsToQueryParams binder = new BindIdsToQueryParams();
+
+      request.addQueryParam("id", "123");
+      request.addQueryParam("id", "456");
+      replay(request);
+
+      binder.bindToRequest(request, input);
+
+   }
 }

@@ -94,8 +94,10 @@ public class GoGridLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+               "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+               "jclouds.test.credential");
 
       context = new RestContextFactory().createContext("gogrid", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()));
@@ -217,13 +219,13 @@ public class GoGridLiveTest {
 
       assert latestJob.equals(latestJobFetched) : "Job and its reprentation found by ID don't match";
 
-      List<Long> idsOfAllJobs = new ArrayList<Long>();
+      long[] idsOfAllJobs = new long[jobs.size()];
+      int i = 0;
       for (Job job : jobs) {
-         idsOfAllJobs.add(job.getId());
+         idsOfAllJobs[i++] = job.getId();
       }
 
-      Set<Job> jobsFetched = client.getJobServices().getJobsById(
-               idsOfAllJobs.toArray(new Long[jobs.size()]));
+      Set<Job> jobsFetched = client.getJobServices().getJobsById(idsOfAllJobs);
       assert jobsFetched.size() == jobs.size() : format(
                "Number of jobs fetched by ids doesn't match the number of jobs "
                         + "requested. Requested/expected: %d. Found: %d.", jobs.size(), jobsFetched

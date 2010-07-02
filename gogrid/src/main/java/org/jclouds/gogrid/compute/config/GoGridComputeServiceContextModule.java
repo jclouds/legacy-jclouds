@@ -24,6 +24,7 @@ import static org.jclouds.compute.predicates.ImagePredicates.architectureIn;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -144,7 +145,7 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
    public static class GoGridRebootNodeStrategy implements RebootNodeStrategy {
       private final GoGridClient client;
       private final RetryablePredicate<Server> serverLatestJobCompleted;
-      private RetryablePredicate<Server> serverLatestJobCompletedShort;
+      private final RetryablePredicate<Server> serverLatestJobCompletedShort;
       private final GetNodeMetadataStrategy getNode;
 
       @Inject
@@ -211,9 +212,13 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
 
       @Override
       public NodeMetadata execute(String id) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(checkNotNull(id, "id"))));
-         return server == null ? null : serverToNodeMetadata.apply(server);
+         try {
+            Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
+                     new Long(checkNotNull(id, "id"))));
+            return server == null ? null : serverToNodeMetadata.apply(server);
+         } catch (NoSuchElementException e) {
+            return null;
+         }
       }
    }
 
@@ -230,9 +235,7 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
 
       @Override
       public NodeMetadata execute(String id) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(id)));
-         client.getServerServices().deleteById(server.getId());
+         client.getServerServices().deleteById(new Long(id));
          return getNode.execute(id);
       }
 
@@ -297,7 +300,8 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       holder.logger.debug(">> providing locations");
       Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (Option dc : sync.getServerServices().getDatacenters())
-         locations.add(new LocationImpl(LocationScope.ZONE, dc.getId() + "", dc.getDescription(), parent));
+         locations.add(new LocationImpl(LocationScope.ZONE, dc.getId() + "", dc.getDescription(),
+                  parent));
       holder.logger.debug("<< locations(%d)", locations.size());
       return locations;
    }

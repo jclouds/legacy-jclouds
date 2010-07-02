@@ -52,12 +52,15 @@ import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponse;
+import org.jclouds.gogrid.functions.ReturnEmptySetOnNotFound;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -87,6 +90,7 @@ public interface GridServerAsyncClient {
     */
    @GET
    @ResponseParser(ParseServerListFromJsonResponse.class)
+   @ExceptionParser(ReturnEmptySetOnNotFound.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersByName(
             @BinderParam(BindNamesToQueryParams.class) String... names);
@@ -96,9 +100,10 @@ public interface GridServerAsyncClient {
     */
    @GET
    @ResponseParser(ParseServerListFromJsonResponse.class)
+   @ExceptionParser(ReturnEmptySetOnNotFound.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersById(
-            @BinderParam(BindIdsToQueryParams.class) Long... ids);
+            @BinderParam(BindIdsToQueryParams.class) long... ids);
 
    /**
     * @see GridServerClient#getServerCredentialsList
@@ -134,7 +139,8 @@ public interface GridServerAsyncClient {
    @GET
    @ResponseParser(ParseServerFromJsonResponse.class)
    @Path("/grid/server/delete")
-   ListenableFuture<Server> deleteById(@QueryParam(ID_KEY) Long id);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Server> deleteById(@QueryParam(ID_KEY) long id);
 
    /**
     * @see GridServerClient#deleteByName(String)
@@ -142,6 +148,7 @@ public interface GridServerAsyncClient {
    @GET
    @ResponseParser(ParseServerFromJsonResponse.class)
    @Path("/grid/server/delete")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Server> deleteByName(@QueryParam(NAME_KEY) String name);
 
    /**
@@ -162,5 +169,3 @@ public interface GridServerAsyncClient {
    @QueryParams(keys = LOOKUP_LIST_KEY, values = "server.datacenter")
    ListenableFuture<Set<Option>> getDatacenters();
 }
-
-

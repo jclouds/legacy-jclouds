@@ -64,11 +64,11 @@ public interface GridJobAsyncClient {
             @BinderParam(BindObjectNameToGetJobsRequestQueryParams.class) String objectName);
 
    /**
-    * @see GridJobClient#getJobsById(Long...)
+    * @see GridJobClient#getJobsById
     */
    @GET
    @ResponseParser(ParseJobListFromJsonResponse.class)
    @Path("/grid/job/get")
-   ListenableFuture<Set<Job>> getJobsById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
+   ListenableFuture<Set<Job>> getJobsById(@BinderParam(BindIdsToQueryParams.class) long... ids);
 
 }

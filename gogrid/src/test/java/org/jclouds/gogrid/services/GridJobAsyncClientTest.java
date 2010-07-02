@@ -106,7 +106,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
 
    @Test
    public void testGetJobsById() throws NoSuchMethodException, IOException {
-      Method method = GridJobAsyncClient.class.getMethod("getJobsById", Long[].class);
+      Method method = GridJobAsyncClient.class.getMethod("getJobsById", long[].class);
       GeneratedHttpRequest<GridJobAsyncClient> httpRequest = processor.createRequest(method, 123L,
                456L);
 
