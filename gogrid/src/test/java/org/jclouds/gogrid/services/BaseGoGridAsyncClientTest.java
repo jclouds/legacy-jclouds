@@ -25,12 +25,12 @@ import java.util.Properties;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
@@ -41,9 +41,9 @@ import com.google.inject.Module;
  */
 public abstract class BaseGoGridAsyncClientTest<T> extends RestClientTest<T> {
    @Override
-   protected void checkFilters(GeneratedHttpRequest<T> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
    }
 
    @RequiresHttp

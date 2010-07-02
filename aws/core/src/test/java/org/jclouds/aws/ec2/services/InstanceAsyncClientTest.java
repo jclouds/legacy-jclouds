@@ -38,9 +38,9 @@ import org.jclouds.aws.ec2.xml.InstanceTypeHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.StringValueHandler;
 import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -56,83 +56,79 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
                String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               (String) null);
+      HttpRequest request = processor.createRequest(method, (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeInstances");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeInstances");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeInstancesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeInstancesArgs() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
                String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "2");
+      HttpRequest request = processor.createRequest(method, null, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstances&InstanceId.1=1&InstanceId.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeInstancesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testTerminateInstances() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("terminateInstancesInRegion",
                String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "2");
+      HttpRequest request = processor.createRequest(method, null, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 44\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=TerminateInstances&InstanceId.1=1&InstanceId.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceStateChangeHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testRunInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class,
                String.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               null, "ami-voo", 1, 1);
+      HttpRequest request = processor.createRequest(method, null, null, "ami-voo", 1, 1);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 76\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RunInstancesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException,
@@ -140,210 +136,201 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class,
                String.class, String.class, int.class, int.class, Array.newInstance(
                         RunInstancesOptions.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, "ami-voo", 1, 5,
-               new RunInstancesOptions().withKernelId("kernelId").enableMonitoring()
-                        .withSecurityGroups("group1", "group2"));
+      HttpRequest request = processor.createRequest(method, Region.EU_WEST_1,
+               AvailabilityZone.EU_WEST_1A, "ami-voo", 1, 5, new RunInstancesOptions()
+                        .withKernelId("kernelId").enableMonitoring().withSecurityGroups("group1",
+                                 "group2"));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 164\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.eu-west-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=eu-west-1a");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RunInstancesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testStopInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("stopInstancesInRegion", String.class,
                boolean.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               true, "1", "2");
+      HttpRequest request = processor.createRequest(method, null, true, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=StopInstances&Force=true&InstanceId.1=1&InstanceId.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceStateChangeHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testRebootInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("rebootInstancesInRegion", String.class,
                Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "2");
+      HttpRequest request = processor.createRequest(method, null, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=RebootInstances&InstanceId.1=1&InstanceId.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testStartInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("startInstancesInRegion", String.class,
                Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "2");
+      HttpRequest request = processor.createRequest(method, null, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 40\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=StartInstances&InstanceId.1=1&InstanceId.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceStateChangeHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetUserDataForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getUserDataForInstanceInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 83\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=userData&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, UnencodeStringValueHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetRootDeviceNameForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getRootDeviceNameForInstanceInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=rootDeviceName&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, StringValueHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("getRamdiskForInstanceInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 82\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=ramdisk&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, StringValueHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetDisableApiTerminationForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
                "isApiTerminationDisabledForInstanceInRegion", String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 96\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=disableApiTermination&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, BooleanValueHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("getKernelForInstanceInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 81\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=kernel&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, StringValueHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetInstanceTypeForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("getInstanceTypeForInstanceInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=instanceType&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceTypeHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetInstanceInitiatedShutdownBehaviorForInstanceInRegion()
@@ -351,109 +338,104 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       Method method = InstanceAsyncClient.class.getMethod(
                "getInstanceInitiatedShutdownBehaviorForInstanceInRegion", String.class,
                String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 108\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceInitiatedShutdownBehaviorHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetBlockDeviceMappingForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod(
                "getBlockDeviceMappingForInstanceInRegion", String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1");
+      HttpRequest request = processor.createRequest(method, null, "1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 93\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstanceAttribute&Attribute=blockDeviceMapping&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, BlockDeviceMappingHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetUserDataForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setUserDataForInstanceInRegion",
                String.class, String.class, Array.newInstance(byte.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "test".getBytes());
+      HttpRequest request = processor.createRequest(method, null, "1", "test".getBytes());
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 100\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1");
-      filter.filter(httpMethod);// ensure encoding worked properly
+      filter.filter(request);// ensure encoding worked properly
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Action=ModifyInstanceAttribute&Attribute=userData&InstanceId=1&Signature=ch%2BpeYTRad241GAhjH9Wo2vKWlkgfNa3txM0lhPCBSM%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Value=dGVzdA%3D%3D&Version=2009-11-30&AWSAccessKeyId=identity");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("setRamdiskForInstanceInRegion",
                String.class, String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "test");
+      HttpRequest request = processor.createRequest(method, null, "1", "test");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 91\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=ramdisk&Value=test&InstanceId=1");
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("setKernelForInstanceInRegion",
                String.class, String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", "test");
+      HttpRequest request = processor.createRequest(method, null, "1", "test");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 90\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=kernel&Value=test&InstanceId=1");
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetApiTerminationDisabledForInstanceInRegion() throws SecurityException,
@@ -461,44 +443,42 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       Method method = InstanceAsyncClient.class.getMethod(
                "setApiTerminationDisabledForInstanceInRegion", String.class, String.class,
                boolean.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", true);
+      HttpRequest request = processor.createRequest(method, null, "1", true);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 105\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=disableApiTermination&Value=true&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetInstanceTypeForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion",
                String.class, String.class, String.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", InstanceType.C1_MEDIUM);
+      HttpRequest request = processor.createRequest(method, null, "1", InstanceType.C1_MEDIUM);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 101\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=instanceType&Value=c1.medium&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetInstanceInitiatedShutdownBehaviorForInstanceInRegion()
@@ -506,22 +486,22 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       Method method = InstanceAsyncClient.class.getMethod(
                "setInstanceInitiatedShutdownBehaviorForInstanceInRegion", String.class,
                String.class, InstanceInitiatedShutdownBehavior.class);
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", InstanceInitiatedShutdownBehavior.TERMINATE);
+      HttpRequest request = processor.createRequest(method, null, "1",
+               InstanceInitiatedShutdownBehavior.TERMINATE);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 122\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&Value=terminate&InstanceId=1");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetBlockDeviceMappingForInstanceInRegion() throws SecurityException,
@@ -533,25 +513,24 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
       blockDeviceMapping.addEbsBlockDevice("/dev/sda1", new RunningInstance.EbsBlockDevice(
                "vol-test1", true));
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, null,
-               "1", blockDeviceMapping);
+      HttpRequest request = processor.createRequest(method, null, "1", blockDeviceMapping);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 62\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true");
-      filter.filter(httpMethod);// ensure encoding worked properly
+      filter.filter(request);// ensure encoding worked properly
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&InstanceId=1&Signature=QOd9dFUmgBAsz3b5rWOE2wWgoB85vmhsVM9yNO2s7cE%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-11-30&AWSAccessKeyId=identity");
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override

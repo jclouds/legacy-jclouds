@@ -30,7 +30,6 @@ import org.jclouds.nirvanix.sdn.SDNAuthenticationLiveTest.SDNAuthClient;
 import org.jclouds.nirvanix.sdn.functions.ParseSessionTokenFromJsonResponse;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -47,20 +46,19 @@ public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
       Method method = SDNAuthAsyncClient.class.getMethod("authenticate", String.class,
                String.class, String.class);
-      HttpRequest httpMethod = processor.createRequest(method,
-               new Object[] { "apple", "foo", "bar" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Authentication/Login.ashx");
-      assertEquals(httpMethod.getEndpoint().getQuery(),
+      HttpRequest request = processor.createRequest(method, new Object[] { "apple", "foo", "bar" });
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/ws/Authentication/Login.ashx");
+      assertEquals(request.getEndpoint().getQuery(),
                "output=json&appKey=apple&password=bar&username=foo");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
       assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
                ParseSessionTokenFromJsonResponse.class);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<SDNAuthAsyncClient> httpMethod) {
+   protected void checkFilters(HttpRequest request) {
 
    }
 

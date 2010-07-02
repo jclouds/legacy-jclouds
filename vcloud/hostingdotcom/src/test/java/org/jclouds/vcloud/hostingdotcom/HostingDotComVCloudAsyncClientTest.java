@@ -29,13 +29,13 @@ import java.util.Properties;
 
 import javax.inject.Named;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -62,26 +62,25 @@ public class HostingDotComVCloudAsyncClientTest extends
          RestClientTest<HostingDotComVCloudAsyncClient> {
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Method method = HostingDotComVCloudAsyncClient.class.getMethod("getDefaultCatalog");
-      GeneratedHttpRequest<HostingDotComVCloudAsyncClient> httpMethod = processor
-               .createRequest(method);
+      HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "GET https://catalog HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://catalog HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Accept: application/vnd.vmware.vcloud.catalog+xml\nContent-Type: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertPayloadEquals(httpMethod, null);
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<HostingDotComVCloudAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), SetVCloudTokenCookie.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), SetVCloudTokenCookie.class);
    }
 
    @Override
@@ -89,6 +88,7 @@ public class HostingDotComVCloudAsyncClientTest extends
       return new TypeLiteral<RestAnnotationProcessor<HostingDotComVCloudAsyncClient>>() {
       };
    }
+
    @Override
    protected Module createModule() {
       return new HostingDotComVCloudRestClientModuleExtension();

@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -44,6 +45,7 @@ public class HttpRequest extends HttpMessage {
    private String method;
    private URI endpoint;
    private Payload payload;
+   private char[] skips;
 
    /**
     * 
@@ -53,10 +55,15 @@ public class HttpRequest extends HttpMessage {
     *           If the request is HEAD, this may change to GET due to redirects
     */
    public HttpRequest(String method, URI endpoint) {
+      this(method, endpoint, new char[] {});
+   }
+
+   public HttpRequest(String method, URI endpoint, char[] skips) {
       this.setMethod(checkNotNull(method, "method"));
       this.setEndpoint(checkNotNull(endpoint, "endpoint"));
       checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s",
                endpoint));
+      this.skips = skips;
    }
 
    /**
@@ -132,6 +139,17 @@ public class HttpRequest extends HttpMessage {
       }
    }
 
+   /**
+    * characters to skip encoding on.
+    */
+   public char[] getSkips() {
+      return skips;
+   }
+
+   public void setSkips(char[] skips) {
+      this.skips = skips;
+   }
+
    public URI getEndpoint() {
       return endpoint;
    }
@@ -167,11 +185,12 @@ public class HttpRequest extends HttpMessage {
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
       result = prime * result + ((method == null) ? 0 : method.hashCode());
       result = prime * result + ((payload == null) ? 0 : payload.hashCode());
       result = prime * result + ((requestFilters == null) ? 0 : requestFilters.hashCode());
+      result = prime * result + Arrays.hashCode(skips);
       return result;
    }
 
@@ -179,7 +198,7 @@ public class HttpRequest extends HttpMessage {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -204,12 +223,14 @@ public class HttpRequest extends HttpMessage {
             return false;
       } else if (!requestFilters.equals(other.requestFilters))
          return false;
+      if (!Arrays.equals(skips, other.skips))
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers
-               + "]";
+      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers + "]";
    }
+
 }

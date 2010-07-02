@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Properties;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
@@ -663,9 +664,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest) {
-      assertEquals(httpRequest.getFilters().size(), 1);
-      assertEquals(httpRequest.getFilters().get(0).getClass(), BasicAuthentication.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override

@@ -20,16 +20,8 @@ package org.jclouds.rest.internal;
 
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Map.Entry;
-
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-
-import com.google.inject.internal.Nullable;
 
 /**
  * Represents a request generated from annotations
@@ -40,15 +32,15 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    private final Class<T> declaring;
    private final Method javaMethod;
    private final Object[] args;
-   private final RestAnnotationProcessor<T> processor;
-   private final Provider<UriBuilder> uriBuilderProvider;
 
-   GeneratedHttpRequest(Provider<UriBuilder> uriBuilderProvider, String method, URI endpoint,
-            RestAnnotationProcessor<T> processor, Class<T> declaring, Method javaMethod,
+   GeneratedHttpRequest(String method, URI endpoint, Class<T> declaring, Method javaMethod,
             Object... args) {
-      super(method, endpoint);
-      this.uriBuilderProvider = uriBuilderProvider;
-      this.processor = processor;
+      this(method, endpoint, new char[] {}, declaring, javaMethod, args);
+   }
+
+   GeneratedHttpRequest(String method, URI endpoint, char[] skips, Class<T> declaring,
+            Method javaMethod, Object... args) {
+      super(method, endpoint, skips);
       this.declaring = declaring;
       this.javaMethod = javaMethod;
       this.args = args;
@@ -66,73 +58,4 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
       return args;
    }
 
-   public RestAnnotationProcessor<T> getProcessor() {
-      return processor;
-   }
-
-   public void replaceMatrixParam(String name, Object... values) {
-      UriBuilder builder = uriBuilderProvider.get().uri(getEndpoint());
-      builder.replaceMatrixParam(name, values);
-      replacePath(builder.build().getPath());
-   }
-
-   public void addQueryParam(String name, String... values) {
-      setEndpoint(processor.addQueryParam(getEndpoint(), name, values));
-   }
-
-   public void replaceQuery(String query, @Nullable Comparator<Entry<String, String>> sorter) {
-      setEndpoint(processor.replaceQuery(getEndpoint(), query, sorter));
-   }
-
-   public void replacePath(String path) {
-      UriBuilder builder = uriBuilderProvider.get().uri(getEndpoint());
-      builder.replacePath(path);
-      setEndpoint(builder.build());
-   }
-
-   public void addFormParam(String name, String... values) {
-      this
-               .setPayload(processor.addFormParam(getPayload().getRawContent().toString(), name,
-                        values));
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + Arrays.hashCode(args);
-      result = prime * result + ((declaring == null) ? 0 : declaring.hashCode());
-      result = prime * result + ((javaMethod == null) ? 0 : javaMethod.hashCode());
-      result = prime * result + ((processor == null) ? 0 : processor.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      GeneratedHttpRequest<?> other = (GeneratedHttpRequest<?>) obj;
-      if (!Arrays.equals(args, other.args))
-         return false;
-      if (declaring == null) {
-         if (other.declaring != null)
-            return false;
-      } else if (!declaring.equals(other.declaring))
-         return false;
-      if (javaMethod == null) {
-         if (other.javaMethod != null)
-            return false;
-      } else if (!javaMethod.equals(other.javaMethod))
-         return false;
-      if (processor == null) {
-         if (other.processor != null)
-            return false;
-      } else if (!processor.equals(other.processor))
-         return false;
-      return true;
-   }
 }

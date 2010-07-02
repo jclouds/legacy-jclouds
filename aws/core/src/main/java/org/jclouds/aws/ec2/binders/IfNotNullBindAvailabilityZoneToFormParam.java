@@ -19,13 +19,12 @@
 package org.jclouds.aws.ec2.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.addFormParamTo;
 
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Binds the AvailabilityZone to a form parameter if set.
@@ -34,16 +33,10 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  */
 @Singleton
 public class IfNotNullBindAvailabilityZoneToFormParam implements Binder {
-
-   @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
       if (input != null) {
-         checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
-                  "this binder is only valid for GeneratedHttpRequests!");
-         checkArgument(input instanceof String,
-                  "this binder is only valid for AvailabilityZone!");
-         ((GeneratedHttpRequest<?>) request).addFormParam("Placement.AvailabilityZone",
-                  (String) input);
+         checkArgument(input instanceof String, "this binder is only valid for AvailabilityZone!");
+         addFormParamTo(request, "Placement.AvailabilityZone", (String) input);
       }
    }
 

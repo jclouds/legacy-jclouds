@@ -98,14 +98,18 @@ public class BackoffLimitedRetryHandlerTest {
       }
 
    };
+   private HttpUtils utils;
 
    @BeforeTest
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
+      BackoffLimitedRetryHandler backoff = new BackoffLimitedRetryHandler();
+      utils = new HttpUtils(0, 500, 1, 1);
+      RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
-               execService, new DelegatingRetryHandler(uriBuilderProvider),
+               execService, new DelegatingRetryHandler(backoff, retry),
                new BackoffLimitedRetryHandler(), new DelegatingErrorHandler(), new HttpWire(),
-               new HttpUtils(0, 500, 1, 1), null);
+               utils, null);
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService);
    }
 
@@ -161,8 +165,8 @@ public class BackoffLimitedRetryHandlerTest {
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Method method = IntegrationTestAsyncClient.class.getMethod("download", String.class);
 
-      return new TransformingHttpCommandImpl<String>(uriBuilderProvider, executorService, processor
-               .createRequest(method, "1"), new ReturnStringIf200());
+      return new TransformingHttpCommandImpl<String>(executorService, processor.createRequest(
+               method, "1"), new ReturnStringIf200());
    }
 
    @Test

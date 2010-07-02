@@ -18,10 +18,15 @@
  */
 package org.jclouds.gogrid.binders;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import java.net.URI;
+
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 /**
@@ -32,32 +37,39 @@ import org.testng.annotations.Test;
 public class BindIdsToQueryParamsTest {
 
    @Test
-   public void testBinding() {
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      Long[] input = { 123L, 456L };
+   public void testWithWrapper() throws SecurityException, NoSuchMethodException {
 
-      BindIdsToQueryParams binder = new BindIdsToQueryParams();
+      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
 
-      request.addQueryParam("id", "123");
-      request.addQueryParam("id", "456");
-      replay(request);
+      BindIdsToQueryParams binder = new BindIdsToQueryParams(new Provider<UriBuilder>() {
 
-      binder.bindToRequest(request, input);
+         @Override
+         public UriBuilder get() {
+            return new UriBuilderImpl();
+         }
 
+      });
+
+      binder.bindToRequest(request, new Long[] { 123L, 456L });
+
+      assertEquals(request.getRequestLine(), "GET http://momma/?id=123&id=456 HTTP/1.1");
    }
 
    @Test
-   public void testBinding2() {
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      long[] input = { 123L, 456L };
+   public void testWithPrimitive() {
+      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
 
-      BindIdsToQueryParams binder = new BindIdsToQueryParams();
+      BindIdsToQueryParams binder = new BindIdsToQueryParams(new Provider<UriBuilder>() {
 
-      request.addQueryParam("id", "123");
-      request.addQueryParam("id", "456");
-      replay(request);
+         @Override
+         public UriBuilder get() {
+            return new UriBuilderImpl();
+         }
 
-      binder.bindToRequest(request, input);
+      });
 
+      binder.bindToRequest(request, new long[] { 123L, 456L });
+
+      assertEquals(request.getRequestLine(), "GET http://momma/?id=123&id=456 HTTP/1.1");
    }
 }

@@ -28,17 +28,16 @@ import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.xml.RegisterInstancesWithLoadBalancerResponseHandler;
-import org.jclouds.aws.elb.ELBAsyncClient;
 import org.jclouds.aws.elb.config.ELBRestClientModule;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -55,28 +54,26 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
 
    public void testRegisterInstancesWithLoadBalancer() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = ELBAsyncClient.class.getMethod(
-               "registerInstancesWithLoadBalancerInRegion", String.class, String.class,
-               String[].class);
+      Method method = ELBAsyncClient.class.getMethod("registerInstancesWithLoadBalancerInRegion",
+               String.class, String.class, String[].class);
 
-      GeneratedHttpRequest<ELBAsyncClient> httpMethod = processor.createRequest(
-               method, null, "ReferenceAP1", "i-6055fa09");
+      HttpRequest request = processor.createRequest(method, null, "ReferenceAP1", "i-6055fa09");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "POST https://elasticloadbalancing.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-25&Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method,
                RegisterInstancesWithLoadBalancerResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override
@@ -84,7 +81,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       return new TypeLiteral<RestAnnotationProcessor<ELBAsyncClient>>() {
       };
    }
-   
+
    @RequiresHttp
    @ConfiguresRestClient
    private static final class TestELBRestClientModule extends ELBRestClientModule {
@@ -99,6 +96,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
          return "2009-11-08T15:54:08.897Z";
       }
    }
+
    @Override
    protected Module createModule() {
       return new TestELBRestClientModule();
@@ -111,9 +109,9 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<ELBAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), FormSigner.class);
    }
 
 }

@@ -44,6 +44,7 @@ import org.jclouds.chef.functions.ParseUserFromJson;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
@@ -278,9 +279,9 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest) {
-      assertEquals(httpRequest.getFilters().size(), 1);
-      assertEquals(httpRequest.getFilters().get(0).getClass(), SignedHeaderAuth.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), SignedHeaderAuth.class);
    }
 
    @Override

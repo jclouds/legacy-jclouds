@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.aws.ec2.services.BaseEC2AsyncClientTest;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -61,7 +61,7 @@ public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<EC2AsyncClient> httpMethod) {
+   protected void checkFilters(HttpRequest request) {
 
    }
 

@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import com.google.inject.name.Names;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.testng.annotations.Test;
@@ -40,6 +39,7 @@ import com.google.common.collect.Multimaps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindNodeConfigurationToXmlPayload}
@@ -100,8 +100,7 @@ public class BindNodeConfigurationToXmlPayloadTest {
                .getInstance(BindNodeConfigurationToXmlPayload.class);
       Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
                .<String, String> create());
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { config }).atLeastOnce();
+      HttpRequest request = createMock(HttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();

@@ -21,10 +21,14 @@ package org.jclouds.gogrid.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.OBJECT_KEY;
+import static org.jclouds.http.HttpUtils.addQueryParamTo;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
@@ -33,6 +37,12 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * @author Oleksiy Yarmula
  */
 public class BindObjectNameToGetJobsRequestQueryParams implements Binder {
+   private final Provider<UriBuilder> builder;
+
+   @Inject
+   BindObjectNameToGetJobsRequestQueryParams(Provider<UriBuilder> builder) {
+      this.builder = builder;
+   }
 
    /**
     * Maps the object's name to the input of <a
@@ -40,15 +50,11 @@ public class BindObjectNameToGetJobsRequestQueryParams implements Binder {
     */
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest<?>,
-               "this binder is only valid for GeneratedHttpRequests!");
       checkArgument(checkNotNull(input, "input is null") instanceof String,
                "this binder is only valid for String arguments");
 
       String serverName = (String) input;
-      GeneratedHttpRequest<?> generatedRequest = (GeneratedHttpRequest<?>) request;
-
-      generatedRequest.addQueryParam(OBJECT_KEY, serverName);
+      addQueryParamTo(request, OBJECT_KEY, serverName, builder.get());
    }
 
 }

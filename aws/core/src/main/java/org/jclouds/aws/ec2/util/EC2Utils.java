@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.addFormParamTo;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -33,6 +34,7 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
@@ -53,13 +55,14 @@ public class EC2Utils {
       }
    }
 
-   public static void indexStringArrayToFormValuesWithPrefix(GeneratedHttpRequest<?> request,
-            String prefix, Object input) {
+   public static void indexStringArrayToFormValuesWithPrefix(HttpRequest request, String prefix,
+            Object input) {
       checkArgument(checkNotNull(input, "input") instanceof String[],
                "this binder is only valid for String[] : " + input.getClass());
       String[] values = (String[]) input;
       for (int i = 0; i < values.length; i++) {
-         request.addFormParam(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase()
+         addFormParamTo(request, prefix + "." + (i + 1), checkNotNull(values[i], prefix
+                  .toLowerCase()
                   + "s[" + i + "]"));
       }
    }
@@ -75,14 +78,14 @@ public class EC2Utils {
       return parts;
    }
 
-   public static void indexIterableToFormValuesWithPrefix(GeneratedHttpRequest<?> request,
-            String prefix, Object input) {
+   public static void indexIterableToFormValuesWithPrefix(HttpRequest request, String prefix,
+            Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Iterable<?>,
                "this binder is only valid for Iterable<?>: " + input.getClass());
       Iterable<?> values = (Iterable<?>) input;
       int i = 0;
       for (Object o : values) {
-         request.addFormParam(prefix + "." + (i++ + 1), checkNotNull(o.toString(), prefix
+         addFormParamTo(request, prefix + "." + (i++ + 1), checkNotNull(o.toString(), prefix
                   .toLowerCase()
                   + "s[" + i + "]"));
       }
@@ -116,13 +119,13 @@ public class EC2Utils {
       return null;
    }
 
-   public static void indexStringArrayToFormValuesWithStringFormat(GeneratedHttpRequest<?> request,
+   public static void indexStringArrayToFormValuesWithStringFormat(HttpRequest request,
             String format, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof String[],
                "this binder is only valid for String[] : " + input.getClass());
       String[] values = (String[]) input;
       for (int i = 0; i < values.length; i++) {
-         request.addFormParam(String.format(format, (i + 1)), checkNotNull(values[i], format
+         addFormParamTo(request, String.format(format, (i + 1)), checkNotNull(values[i], format
                   .toLowerCase()
                   + "s[" + i + "]"));
       }

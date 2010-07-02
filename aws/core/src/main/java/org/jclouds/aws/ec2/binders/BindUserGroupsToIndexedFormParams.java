@@ -20,13 +20,12 @@ package org.jclouds.aws.ec2.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.aws.ec2.util.EC2Utils.indexIterableToFormValuesWithPrefix;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.collect.Iterables;
 
@@ -38,15 +37,11 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class BindUserGroupsToIndexedFormParams implements Binder {
 
-   @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
       checkArgument(checkNotNull(input, "input") instanceof Iterable<?>,
                "this binder is only valid for Iterable<?>: " + input.getClass());
       checkValidUserGroup(input);
-      EC2Utils.indexIterableToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "UserGroup",
-               input);
+      indexIterableToFormValuesWithPrefix(request, "UserGroup", input);
    }
 
    private void checkValidUserGroup(Object input) {

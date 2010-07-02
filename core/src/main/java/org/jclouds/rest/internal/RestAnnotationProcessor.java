@@ -20,6 +20,8 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.makeQueryLine;
+import static org.jclouds.http.HttpUtils.parseQueryToMap;
 import static org.jclouds.util.Utils.replaceTokens;
 
 import java.io.InputStream;
@@ -32,11 +34,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
@@ -224,9 +224,9 @@ public class RestAnnotationProcessor<T> {
    @Inject
    private InputParamValidator inputParamValidator;
 
+   @SuppressWarnings("unchecked")
    @VisibleForTesting
-   public Function<HttpResponse, ?> createResponseParser(Method method,
-            GeneratedHttpRequest<T> request) {
+   public Function<HttpResponse, ?> createResponseParser(Method method, HttpRequest request) {
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getSaxResponseParserClassOrNull(method);
       if (handler != null) {
@@ -235,7 +235,7 @@ public class RestAnnotationProcessor<T> {
          transformer = injector.getInstance(getParserOrThrowException(method));
       }
       if (transformer instanceof InvocationContext) {
-         ((InvocationContext) transformer).setContext(request);
+         ((InvocationContext) transformer).setContext((GeneratedHttpRequest<T>) request);
       }
       return transformer;
    }
@@ -421,8 +421,8 @@ public class RestAnnotationProcessor<T> {
          throw new IllegalStateException(e);
       }
 
-      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(uriBuilderProvider, httpMethod,
-               endpoint, this, declaring, method, args);
+      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endpoint, skips,
+               declaring, method, args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
 
@@ -486,83 +486,6 @@ public class RestAnnotationProcessor<T> {
       UriBuilder builder = uriBuilderProvider.get().uri(in);
       builder.replaceQuery(makeQueryLine(parseQueryToMap(newQuery), sorter, skips));
       return builder.build();
-   }
-
-   public URI addQueryParam(URI in, String key, String[] values) {
-      return addQueryParam(uriBuilderProvider, in, key, values, skips);
-   }
-
-   public static URI addQueryParam(Provider<UriBuilder> uriBuilderProvider, URI in, String key,
-            String[] values, char... skips) {
-      UriBuilder builder = uriBuilderProvider.get().uri(in);
-      Multimap<String, String> map = parseQueryToMap(in.getQuery());
-      map.putAll(key, Arrays.asList(values));
-      builder.replaceQuery(makeQueryLine(map, null, skips));
-      return builder.build();
-   }
-
-   public String addFormParam(String in, String key, String[] values) {
-      return addFormParam(in, key, values, skips);
-   }
-
-   public static String addFormParam(String in, String key, String[] values, char... skips) {
-      Multimap<String, String> map = parseQueryToMap(in);
-      map.putAll(key, Arrays.asList(values));
-      return makeQueryLine(map, null, skips);
-   }
-
-   public static Multimap<String, String> parseQueryToMap(String in) {
-      Multimap<String, String> map = LinkedListMultimap.create();
-      if (in == null) {
-      } else if (in.indexOf('&') == -1) {
-         if (in.contains("="))
-            parseKeyValueFromStringToMap(in, map);
-         else
-            map.put(in, null);
-      } else {
-         String[] parts = HttpUtils.urlDecode(in).split("&");
-         for (String part : parts) {
-            parseKeyValueFromStringToMap(part, map);
-         }
-      }
-      return map;
-   }
-
-   public static void parseKeyValueFromStringToMap(String stringToParse,
-            Multimap<String, String> map) {
-      // note that '=' can be a valid part of the value
-      int indexOfFirstEquals = stringToParse.indexOf('=');
-      String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(0,
-               indexOfFirstEquals);
-      String value = indexOfFirstEquals == -1 ? null : stringToParse
-               .substring(indexOfFirstEquals + 1);
-      map.put(key, value);
-   }
-
-   public static SortedSet<Entry<String, String>> sortEntries(
-            Collection<Map.Entry<String, String>> in, Comparator<Map.Entry<String, String>> sorter) {
-      SortedSet<Entry<String, String>> entries = Sets.newTreeSet(sorter);
-      entries.addAll(in);
-      return entries;
-   }
-
-   public static String makeQueryLine(Multimap<String, String> params,
-            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-
-      Iterator<Map.Entry<String, String>> pairs = ((sorter == null) ? params.entries()
-               : sortEntries(params.entries(), sorter)).iterator();
-      StringBuilder formBuilder = new StringBuilder();
-      while (pairs.hasNext()) {
-         Map.Entry<String, String> pair = pairs.next();
-         formBuilder.append(HttpUtils.urlEncode(pair.getKey(), skips));
-         if (pair.getValue() != null && !pair.getValue().equals("")) {
-            formBuilder.append("=");
-            formBuilder.append(HttpUtils.urlEncode(pair.getValue(), skips));
-         }
-         if (pairs.hasNext())
-            formBuilder.append("&");
-      }
-      return formBuilder.toString();
    }
 
    private void addMatrixParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues,
@@ -819,13 +742,13 @@ public class RestAnnotationProcessor<T> {
    }
 
    public String getHttpMethodOrConstantOrThrowException(Method method) {
-      Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
-      if (httpMethods == null || httpMethods.size() != 1) {
+      Set<String> requests = IsHttpMethod.getHttpMethods(method);
+      if (requests == null || requests.size() != 1) {
          throw new IllegalStateException(
                   "You must use at least one, but no more than one http method or pathparam annotation on: "
                            + method.toString());
       }
-      return httpMethods.iterator().next();
+      return requests.iterator().next();
    }
 
    public void addHostHeaderIfAnnotatedWithVirtualHost(Multimap<String, String> headers,

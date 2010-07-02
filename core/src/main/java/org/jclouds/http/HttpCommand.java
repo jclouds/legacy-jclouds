@@ -46,23 +46,6 @@ public interface HttpCommand {
    boolean isReplayable();
 
    /**
-    * change the destination of the current http command. typically used in handling redirects.
-    * 
-    * @param string
-    */
-   void changeSchemeHostAndPortTo(String scheme, String host, int port);
-
-   /**
-    * change method from GET to HEAD. typically used in handling redirects.
-    */
-   void changeToGETRequest();
-
-   /**
-    * change the path of the service. typically used in handling redirects.
-    */
-   void changePathTo(String newPath);
-
-   /**
     * increment the current failure count.
     * 
     * @see #getFailureCount

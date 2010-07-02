@@ -24,9 +24,9 @@ import java.lang.reflect.Method;
 
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -45,99 +45,94 @@ public class ElasticIPAddressAsyncClientTest extends
             IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("disassociateAddressInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, "127.0.0.1");
+      HttpRequest request = processor.createRequest(method, null, "127.0.0.1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DisassociateAddress&PublicIp=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("associateAddressInRegion",
                String.class, String.class, String.class);
-      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, "127.0.0.1", "me");
+      HttpRequest request = processor.createRequest(method, null, "127.0.0.1", "me");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("releaseAddressInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, "127.0.0.1");
+      HttpRequest request = processor.createRequest(method, null, "127.0.0.1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeAddresses() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("describeAddressesInRegion",
                String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, null, "127.0.0.1");
+      HttpRequest request = processor.createRequest(method, null, "127.0.0.1");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeAddresses&PublicIp.1=127.0.0.1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeAddressesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testAllocateAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("allocateAddressInRegion",
                String.class);
-      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, (String) null);
+      HttpRequest request = processor.createRequest(method, (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=AllocateAddress");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=AllocateAddress");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AllocateAddressResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override

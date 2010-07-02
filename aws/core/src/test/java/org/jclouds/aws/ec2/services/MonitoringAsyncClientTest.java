@@ -23,8 +23,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -42,41 +42,39 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
             IOException {
       Method method = MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion",
                String.class, String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<MonitoringAsyncClient> httpMethod = processor.createRequest(method,
-               null, "instance1", "instance2");
+      HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 67\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, MonitoringStateHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testMonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion",
                String.class, String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<MonitoringAsyncClient> httpMethod = processor.createRequest(method,
-               null, "instance1", "instance2");
+      HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 65\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, MonitoringStateHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override

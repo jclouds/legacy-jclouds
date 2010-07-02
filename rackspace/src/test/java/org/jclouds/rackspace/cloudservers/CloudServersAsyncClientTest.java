@@ -38,6 +38,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -70,7 +71,6 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -94,48 +94,46 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie", 2, 1 });
-      assertEquals("{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}", httpMethod
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie", 2, 1 });
+      assertEquals("{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}", request
                .getPayload().getRawContent());
-      validateCreateServer(method, httpMethod, null);
+      validateCreateServer(method, request, null);
    }
 
    public void testCreateServerWithIpGroup() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie", 2, 1, withSharedIpGroup(2) });
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
+               withSharedIpGroup(2) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2}}",
-               httpMethod.getPayload().getRawContent());
-      validateCreateServer(method, httpMethod, null);
+               request.getPayload().getRawContent());
+      validateCreateServer(method, request, null);
    }
 
    public void testCreateServerWithFile() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie", 2, 1,
-                        new CreateServerOptions[] { withFile("/etc/jclouds", "foo".getBytes()) } });
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
+               new CreateServerOptions[] { withFile("/etc/jclouds", "foo".getBytes()) } });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
-               httpMethod.getPayload().getRawContent());
-      validateCreateServer(method, httpMethod, null);
+               request.getPayload().getRawContent());
+      validateCreateServer(method, request, null);
    }
 
    public void testCreateServerWithMetadata() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie", 2, 1, withMetadata(ImmutableMap.of("foo", "bar")) });
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
+               withMetadata(ImmutableMap.of("foo", "bar")) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"metadata\":{\"foo\":\"bar\"}}}",
-               httpMethod.getPayload().getRawContent());
-      validateCreateServer(method, httpMethod, null);
+               request.getPayload().getRawContent());
+      validateCreateServer(method, request, null);
    }
 
    public void testCreateServerWithIpGroupAndSharedIp() throws SecurityException,
@@ -143,27 +141,26 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie", 2, 1, withSharedIpGroup(2).withSharedIp("127.0.0.1") });
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
+               withSharedIpGroup(2).withSharedIp("127.0.0.1") });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-               httpMethod.getPayload().getRawContent());
-      validateCreateServer(method, httpMethod, null);
+               request.getPayload().getRawContent());
+      validateCreateServer(method, request, null);
    }
 
-   private void validateCreateServer(Method method,
-            GeneratedHttpRequest<CloudServersAsyncClient> httpMethod, Object[] args) {
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+   private void validateCreateServer(Method method, HttpRequest request, Object[] args) {
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseServerFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -175,16 +172,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testDeleteImage() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("deleteImage", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images/2");
+      assertEquals(request.getMethod(), HttpMethod.DELETE);
+      assertEquals(request.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOnNotFoundOr404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -192,14 +188,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listServers",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] {});
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseServerListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -212,15 +207,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listServers",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { changesSince(now)
+               .maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseServerListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -231,14 +226,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listServers",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails() });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseServerListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -248,14 +242,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testGetServer() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("getServer", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseServerFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -266,14 +259,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] {});
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/flavors");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -284,15 +276,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { changesSince(now)
+               .maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/flavors");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -303,14 +295,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails() });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/flavors/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -321,15 +312,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails()
+               .changesSince(now).maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/flavors/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -339,14 +330,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testGetFlavor() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("getFlavor", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/2");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/flavors/2");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseFlavorFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -357,14 +347,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class
                .getMethod("listImages", listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] {});
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -375,14 +364,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class
                .getMethod("listImages", listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails() });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -393,15 +381,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class
                .getMethod("listImages", listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { changesSince(now)
+               .maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -412,15 +400,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class
                .getMethod("listImages", listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails()
+               .changesSince(now).maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -430,14 +418,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testGetImage() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("getImage", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images/2");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseImageFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -447,16 +434,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testDeleteServer() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("deleteServer", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2");
+      assertEquals(request.getMethod(), HttpMethod.DELETE);
+      assertEquals(request.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOnNotFoundOr404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -465,22 +451,22 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("shareIp", String.class, int.class,
                int.class, boolean.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
+      HttpRequest request = processor.createRequest(method,
                new Object[] { "127.0.0.1", 2, 3, false });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
+      assertEquals(request.getMethod(), HttpMethod.PUT);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
@@ -489,23 +475,23 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("shareIp", String.class, int.class,
                int.class, boolean.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
+      HttpRequest request = processor.createRequest(method,
                new Object[] { "127.0.0.1", 2, 3, true });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
+      assertEquals(request.getMethod(), HttpMethod.PUT);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":true}}", httpMethod
+      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":true}}", request
                .getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
@@ -513,16 +499,16 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             UnknownHostException {
       Method method = CloudServersAsyncClient.class.getMethod("unshareIp", String.class, int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
+      HttpRequest request = processor.createRequest(method,
                new Object[] { "127.0.0.1", 2, 3, false });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
-      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
+      assertEquals(request.getMethod(), HttpMethod.DELETE);
+      assertEquals(request.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
@@ -530,40 +516,38 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("replaceBackupSchedule", int.class,
                BackupSchedule.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2,
-                        new BackupSchedule(WeeklyBackup.MONDAY, DailyBackup.H_0800_1000, true) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2,
+               new BackupSchedule(WeeklyBackup.MONDAY, DailyBackup.H_0800_1000, true) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/backup_schedule");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(httpMethod.getPayload().getRawContent(),
+      assertEquals(request.getPayload().getRawContent(),
                "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}");
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
    public void testDeleteBackupSchedule() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("deleteBackupSchedule", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
-      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/backup_schedule");
+      assertEquals(request.getMethod(), HttpMethod.DELETE);
+      assertEquals(request.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOnNotFoundOr404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -571,22 +555,21 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("changeAdminPass", int.class,
                String.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2, "foo" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2, "foo" });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2");
+      assertEquals(request.getMethod(), HttpMethod.PUT);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
@@ -594,22 +577,21 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("renameServer", int.class,
                String.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2, "foo" });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2, "foo" });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2");
+      assertEquals(request.getMethod(), HttpMethod.PUT);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"server\":{\"name\":\"foo\"}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"server\":{\"name\":\"foo\"}}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
@@ -617,14 +599,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] {});
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] {});
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -635,15 +616,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { changesSince(now)
+               .maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -654,14 +635,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails() });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails() });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -673,15 +653,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getTime() / 1000 + "&limit=1&offset=2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { withDetails()
+               .changesSince(now).maxResults(1).startAt(2) });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups/detail");
+      assertEquals(request.getEndpoint().getQuery(), "format=json&changes-since=" + now.getTime()
+               / 1000 + "&limit=1&offset=2");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -691,14 +671,13 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testGetSharedIpGroup() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("getSharedIpGroup", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/2");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups/2");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -712,37 +691,35 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("createSharedIpGroup", String.class,
                createSharedIpGroupOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie" });
-      assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", httpMethod.getPayload()
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie" });
+      assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", request.getPayload()
                .getRawContent());
-      validateCreateSharedIpGroup(method, httpMethod);
+      validateCreateSharedIpGroup(method, request);
    }
 
    public void testCreateSharedIpGroupWithIpGroup() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("createSharedIpGroup", String.class,
                createSharedIpGroupOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
+      HttpRequest request = processor.createRequest(method,
                new Object[] { "ralphie", withServer(2) });
-      assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\",\"server\":2}}", httpMethod
-               .getPayload().getRawContent());
-      validateCreateSharedIpGroup(method, httpMethod);
+      assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\",\"server\":2}}", request.getPayload()
+               .getRawContent());
+      validateCreateSharedIpGroup(method, request);
    }
 
-   private void validateCreateSharedIpGroup(Method method,
-            GeneratedHttpRequest<CloudServersAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+   private void validateCreateSharedIpGroup(Method method, HttpRequest request) {
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
@@ -754,72 +731,67 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    public void testDeleteSharedIpGroup() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("deleteSharedIpGroup", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/2");
-      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/shared_ip_groups/2");
+      assertEquals(request.getMethod(), HttpMethod.DELETE);
+      assertEquals(request.getHeaders().size(), 0);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnFalseOnNotFoundOr404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testListAddresses() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("getAddresses", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/ips");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseAddressesFromJsonResponse.class);
    }
 
    public void testListPublicAddresses() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("listPublicAddresses", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/ips/public");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseInetAddressListFromJsonResponse.class);
    }
 
    public void testListPrivateAddresses() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("listPrivateAddresses", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/private");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/ips/private");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseInetAddressListFromJsonResponse.class);
    }
 
    public void testListBackupSchedule() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("getBackupSchedule", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/backup_schedule");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseBackupScheduleFromJsonResponse.class);
    }
 
@@ -827,21 +799,20 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("createImageFromServer",
                String.class, int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { "ralphie", 2 });
-      assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", httpMethod.getPayload()
+      HttpRequest request = processor.createRequest(method, new Object[] { "ralphie", 2 });
+      assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", request.getPayload()
                .getRawContent());
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/images");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/images");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                ParseImageFromJsonResponse.class);
       assertNotNull(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method));
@@ -855,38 +826,35 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("rebuildServer", int.class,
                rebuildServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 3 });
-      assertEquals("{\"rebuild\":{}}", httpMethod.getPayload().getRawContent());
-      validateRebuildServer(method, httpMethod);
+      HttpRequest request = processor.createRequest(method, new Object[] { 3 });
+      assertEquals("{\"rebuild\":{}}", request.getPayload().getRawContent());
+      validateRebuildServer(method, request);
    }
 
    public void testRebuildServerWithImage() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("rebuildServer", int.class,
                rebuildServerOptionsVarargsClass);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 3, withImage(2) });
-      assertEquals("{\"rebuild\":{\"imageId\":2}}", httpMethod.getPayload().getRawContent());
-      validateRebuildServer(method, httpMethod);
+      HttpRequest request = processor.createRequest(method, new Object[] { 3, withImage(2) });
+      assertEquals("{\"rebuild\":{\"imageId\":2}}", request.getPayload().getRawContent());
+      validateRebuildServer(method, request);
    }
 
-   private void validateRebuildServer(Method method,
-            GeneratedHttpRequest<CloudServersAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/3/action");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+   private void validateRebuildServer(Method method, HttpRequest request) {
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/3/action");
+      assertEquals(request.getEndpoint().getQuery(), "format=json");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
       assertNotNull(processor.getMapPayloadBinderOrNull(method, new Object[] { "",
                new RebuildServerOptions[] { withImage(2) } }));
@@ -896,87 +864,83 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("rebootServer", int.class,
                RebootType.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2, RebootType.HARD });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2, RebootType.HARD });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
    public void testResize() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("resizeServer", int.class, int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2, 3 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2, 3 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"resize\":{\"flavorId\":3}}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"resize\":{\"flavorId\":3}}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
    public void testConfirmResize() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("confirmResizeServer", int.class);
 
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"confirmResize\":null}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"confirmResize\":null}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
    public void testRevertResize() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("revertResizeServer", int.class);
-      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
-               new Object[] { 2 });
-      assertEquals(httpMethod.getEndpoint().getHost(), "serverManagementUrl");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+      HttpRequest request = processor.createRequest(method, new Object[] { 2 });
+      assertEquals(request.getEndpoint().getHost(), "serverManagementUrl");
+      assertEquals(request.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(request.getMethod(), HttpMethod.POST);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(request.getPayload().getRawContent().toString().getBytes().length
                         + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"revertResize\":null}", httpMethod.getPayload().getRawContent());
+      assertEquals("{\"revertResize\":null}", request.getPayload().getRawContent());
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+      assertEquals(processor.createResponseParser(method, request).getClass(),
                CloseContentAndReturn.class);
    }
 
@@ -987,10 +951,10 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<CloudServersAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 2);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), AuthenticateRequest.class);
-      assertEquals(httpMethod.getFilters().get(1).getClass(), AddTimestampQuery.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 2);
+      assertEquals(request.getFilters().get(0).getClass(), AuthenticateRequest.class);
+      assertEquals(request.getFilters().get(1).getClass(), AddTimestampQuery.class);
 
    }
 

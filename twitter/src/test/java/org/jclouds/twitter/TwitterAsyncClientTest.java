@@ -24,10 +24,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
 import org.testng.annotations.Test;
@@ -44,23 +44,23 @@ public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
 
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TwitterAsyncClient.class.getMethod("getMyMentions");
-      GeneratedHttpRequest<TwitterAsyncClient> httpMethod = processor.createRequest(method);
+      HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
-      assertHeadersEqual(httpMethod, "");
-      assertPayloadEquals(httpMethod, null);
+      assertRequestLineEquals(request, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
+      assertResponseParserClassEquals(method, request, ParseStatusesFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<TwitterAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override

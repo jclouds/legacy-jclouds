@@ -18,18 +18,12 @@
  */
 package org.jclouds.http;
 
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -46,9 +40,8 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    private final TransformingHttpCommandExecutorService executorService;
    private final Function<HttpResponse, T> transformer;
-   private final Provider<UriBuilder> uriBuilderProvider;
 
-   private GeneratedHttpRequest<?> request;
+   private HttpRequest request;
    private volatile int failureCount;
 
    @Resource
@@ -58,10 +51,8 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    protected volatile Exception exception;
 
    @Inject
-   public TransformingHttpCommandImpl(Provider<UriBuilder> uriBuilderProvider,
-            TransformingHttpCommandExecutorService executorService,
-            GeneratedHttpRequest<?> request, Function<HttpResponse, T> transformer) {
-      this.uriBuilderProvider = uriBuilderProvider;
+   public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService,
+            HttpRequest request, Function<HttpResponse, T> transformer) {
       this.request = request;
       this.executorService = executorService;
       this.transformer = transformer;
@@ -80,30 +71,6 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    public int incrementFailureCount() {
       return ++failureCount;
-   }
-
-   /**
-    * {@inheritDoc}
-    * <p />
-    * This also removes the Host header in order to avoid ssl problems.
-    */
-   @Override
-   public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
-      UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
-      builder.scheme(scheme);
-      builder.host(host);
-      builder.port(port);
-      request.setEndpoint(builder.build());
-      request.getHeaders().replaceValues(HttpHeaders.HOST, Collections.singletonList(host));
-   }
-
-   /**
-    * in some scenarios, HEAD commands cannot be redirected. This method changes the request to GET
-    * in such a case.
-    * 
-    */
-   public void changeToGETRequest() {
-      request.setMethod(HttpMethod.GET);
    }
 
    public void setException(Exception exception) {
@@ -128,11 +95,6 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    public HttpRequest getRequest() {
       return request;
-   }
-
-   @Override
-   public void changePathTo(String newPath) {
-      request.replacePath(newPath);
    }
 
    @Override

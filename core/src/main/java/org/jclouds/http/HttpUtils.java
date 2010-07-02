@@ -19,6 +19,8 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.io.ByteStreams.toByteArray;
+import static java.util.Collections.singletonList;
 import static org.jclouds.util.Patterns.CHAR_TO_ENCODED_PATTERN;
 import static org.jclouds.util.Patterns.PATTERN_THAT_BREAKS_URI;
 import static org.jclouds.util.Patterns.PLUS_PATTERN;
@@ -35,11 +37,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
+import javax.inject.Singleton;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
@@ -48,17 +60,20 @@ import org.jclouds.util.Utils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class HttpUtils {
    @Inject(optional = true)
    @Named(Constants.PROPERTY_RELAX_HOSTNAME)
@@ -201,7 +216,7 @@ public class HttpUtils {
    public static void consumeContent(HttpResponse response) {
       if (response.getContent() != null) {
          try {
-            ByteStreams.toByteArray(response.getContent());
+            toByteArray(response.getContent());
          } catch (IOException e) {
             Throwables.propagate(e);
          } finally {
@@ -216,7 +231,7 @@ public class HttpUtils {
    public static byte[] closeClientButKeepContentStream(HttpResponse response) {
       if (response.getContent() != null) {
          try {
-            byte[] data = ByteStreams.toByteArray(response.getContent());
+            byte[] data = toByteArray(response.getContent());
             response.setContent(new ByteArrayInputStream(data));
             return data;
          } catch (IOException e) {
@@ -250,14 +265,14 @@ public class HttpUtils {
    /**
     * Used to extract the URI and authentication data from a String. Note that the java URI class
     * breaks, if there are special characters like '/' present. Otherwise, we wouldn't need this
-    * class, and we could simply use URI.create("uri").getUserData();  Also, URI breaks if there 
-    * are curly braces.
+    * class, and we could simply use URI.create("uri").getUserData(); Also, URI breaks if there are
+    * curly braces.
     * 
     */
    public static URI createUri(String uriPath) {
       List<String> onQuery = Lists.newArrayList(Splitter.on('?').split(uriPath));
-      if (onQuery.size() == 2){
-         onQuery.add(urlEncode(onQuery.remove(1), '=','&'));
+      if (onQuery.size() == 2) {
+         onQuery.add(urlEncode(onQuery.remove(1), '=', '&'));
          uriPath = Joiner.on('?').join(onQuery);
       }
       if (uriPath.indexOf('@') != 1) {
@@ -274,7 +289,7 @@ public class HttpUtils {
          parts.add(urlEncode(path, ':'));
          uriPath = Joiner.on('/').join(parts);
       }
-      
+
       if (PATTERN_THAT_BREAKS_URI.matcher(uriPath).matches()) {
          // Compile and use regular expression
          Matcher matcher = URI_PATTERN.matcher(uriPath);
@@ -341,4 +356,132 @@ public class HttpUtils {
       return buffer.toString();
    }
 
+   /**
+    * change the destination of the current http command. typically used in handling redirects.
+    * 
+    * @param string
+    */
+   public static void changeSchemeHostAndPortTo(HttpRequest request, String scheme, String host,
+            int port, UriBuilder builder) {
+      builder.uri(request.getEndpoint());
+      builder.scheme(scheme);
+      builder.host(host);
+      builder.port(port);
+      request.setEndpoint(builder.build());
+      request.getHeaders().replaceValues(HttpHeaders.HOST, singletonList(host));
+   }
+
+   /**
+    * change the path of the service. typically used in handling redirects.
+    */
+   public static void changePathTo(HttpRequest request, String newPath, UriBuilder builder) {
+      builder.uri(request.getEndpoint());
+      builder.replacePath(newPath);
+      request.setEndpoint(builder.build());
+   }
+
+   /**
+    * change method from GET to HEAD. typically used in handling redirects.
+    */
+   public static void changeToGETRequest(HttpRequest request) {
+      request.setMethod(HttpMethod.GET);
+   }
+
+   public static void addQueryParamTo(HttpRequest request, String key, Object value,
+            UriBuilder builder) {
+      addQueryParamTo(request, key, ImmutableSet.<Object> of(value), builder, request.getSkips());
+   }
+
+   public static void addQueryParamTo(HttpRequest request, String key, Iterable<?> values,
+            UriBuilder builder) {
+      addQueryParamTo(request, key, values, builder, request.getSkips());
+   }
+
+   public static void addQueryParamTo(HttpRequest request, String key, Iterable<?> values,
+            UriBuilder builder, char... skips) {
+      builder.uri(request.getEndpoint());
+      Multimap<String, String> map = parseQueryToMap(request.getEndpoint().getQuery());
+      for (Object o : values)
+         map.put(key, o.toString());
+      builder.replaceQuery(makeQueryLine(map, null, skips));
+      request.setEndpoint(builder.build());
+   }
+
+   public static void replaceMatrixParam(HttpRequest request, String name, Object value,
+            UriBuilder builder) {
+      replaceMatrixParam(request, name, new Object[] { value }, builder);
+   }
+
+   public static void replaceMatrixParam(HttpRequest request, String name, Object[] values,
+            UriBuilder builder) {
+      builder.uri(request.getEndpoint());
+      builder.replaceMatrixParam(name, values);
+      request.setEndpoint(builder.build());
+   }
+
+   public static void addFormParamTo(HttpRequest request, String key, String value) {
+      addFormParamTo(request, key, ImmutableSet.<Object> of(value));
+
+   }
+
+   public static void addFormParamTo(HttpRequest request, String key, Iterable<?> values) {
+      Multimap<String, String> map = parseQueryToMap(request.getPayload().toString());
+      for (Object o : values)
+         map.put(key, o.toString());
+      request.setPayload(makeQueryLine(map, null));
+   }
+
+   public static Multimap<String, String> parseQueryToMap(String in) {
+      Multimap<String, String> map = LinkedListMultimap.create();
+      if (in == null) {
+      } else if (in.indexOf('&') == -1) {
+         if (in.contains("="))
+            parseKeyValueFromStringToMap(in, map);
+         else
+            map.put(in, null);
+      } else {
+         String[] parts = HttpUtils.urlDecode(in).split("&");
+         for (String part : parts) {
+            parseKeyValueFromStringToMap(part, map);
+         }
+      }
+      return map;
+   }
+
+   public static void parseKeyValueFromStringToMap(String stringToParse,
+            Multimap<String, String> map) {
+      // note that '=' can be a valid part of the value
+      int indexOfFirstEquals = stringToParse.indexOf('=');
+      String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(0,
+               indexOfFirstEquals);
+      String value = indexOfFirstEquals == -1 ? null : stringToParse
+               .substring(indexOfFirstEquals + 1);
+      map.put(key, value);
+   }
+
+   public static SortedSet<Entry<String, String>> sortEntries(
+            Collection<Map.Entry<String, String>> in, Comparator<Map.Entry<String, String>> sorter) {
+      SortedSet<Entry<String, String>> entries = Sets.newTreeSet(sorter);
+      entries.addAll(in);
+      return entries;
+   }
+
+   public static String makeQueryLine(Multimap<String, String> params,
+            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
+
+      Iterator<Map.Entry<String, String>> pairs = ((sorter == null) ? params.entries()
+               : sortEntries(params.entries(), sorter)).iterator();
+      StringBuilder formBuilder = new StringBuilder();
+      while (pairs.hasNext()) {
+         Map.Entry<String, String> pair = pairs.next();
+         formBuilder.append(HttpUtils.urlEncode(pair.getKey(), skips));
+         if (pair.getValue() != null && !pair.getValue().equals("")) {
+            formBuilder.append("=");
+            formBuilder.append(HttpUtils.urlEncode(pair.getValue(), skips));
+         }
+         if (pairs.hasNext())
+            formBuilder.append("&");
+      }
+      return formBuilder.toString();
+   }
 }

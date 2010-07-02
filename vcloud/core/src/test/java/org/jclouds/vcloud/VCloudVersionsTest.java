@@ -24,10 +24,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.VCloudVersionsLiveTest.VCloudVersionsClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
@@ -46,22 +46,22 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions");
-      GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod = processor.createRequest(method);
+      HttpRequest request = processor.createRequest(method);
 
-      assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
-      assertHeadersEqual(httpMethod, "");
-      assertPayloadEquals(httpMethod, null);
+      assertEquals(request.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SupportedVersionsHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 0);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 0);
    }
 
    @Override

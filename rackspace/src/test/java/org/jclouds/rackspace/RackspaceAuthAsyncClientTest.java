@@ -32,7 +32,6 @@ import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -49,14 +48,14 @@ public class RackspaceAuthAsyncClientTest extends RestClientTest<RackspaceAuthAs
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
       Method method = RackspaceAuthAsyncClient.class.getMethod("authenticate", String.class,
                String.class);
-      HttpRequest httpMethod = processor.createRequest(method, "foo", "bar");
-      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/auth");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(RackspaceHeaders.AUTH_USER), Collections
+      HttpRequest request = processor.createRequest(method, "foo", "bar");
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/auth");
+      assertEquals(request.getMethod(), HttpMethod.GET);
+      assertEquals(request.getHeaders().size(), 2);
+      assertEquals(request.getHeaders().get(RackspaceHeaders.AUTH_USER), Collections
                .singletonList("foo"));
-      assertEquals(httpMethod.getHeaders().get(RackspaceHeaders.AUTH_KEY), Collections
+      assertEquals(request.getHeaders().get(RackspaceHeaders.AUTH_KEY), Collections
                .singletonList("bar"));
       assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
                ParseAuthenticationResponseFromHeaders.class);
@@ -70,7 +69,7 @@ public class RackspaceAuthAsyncClientTest extends RestClientTest<RackspaceAuthAs
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<RackspaceAuthAsyncClient> httpMethod) {
+   protected void checkFilters(HttpRequest request) {
    }
 
    @Override

@@ -23,20 +23,34 @@
  */
 package org.jclouds.gogrid.binders;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
+import static org.jclouds.http.HttpUtils.addQueryParamTo;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Longs;
 
 /**
  * Binds IDs to corresponding query parameters
  * 
  * @author Oleksiy Yarmula
  */
+@Singleton
 public class BindIdsToQueryParams implements Binder {
+   private final Provider<UriBuilder> builder;
+
+   @Inject
+   BindIdsToQueryParams(Provider<UriBuilder> builder) {
+      this.builder = builder;
+   }
 
    /**
     * Binds the ids to query parameters. The pattern, as specified by GoGrid's specification, is:
@@ -50,22 +64,17 @@ public class BindIdsToQueryParams implements Binder {
     */
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest<?>,
-               "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest<?> generatedRequest = (GeneratedHttpRequest<?>) request;
-      
-      if (checkNotNull(input, "input is null") instanceof Long[]){
+
+      if (checkNotNull(input, "input is null") instanceof Long[]) {
          Long[] names = (Long[]) input;
-         for (long id : names) 
-            generatedRequest.addQueryParam(ID_KEY, id + "");
+         addQueryParamTo(request, ID_KEY, ImmutableList.copyOf(names), builder.get());
       } else if (input instanceof long[]) {
          long[] names = (long[]) input;
-
-         for (long id : names) 
-            generatedRequest.addQueryParam(ID_KEY, id + "");
+         addQueryParamTo(request, ID_KEY, Longs.asList(names), builder.get());
       } else {
-         throw new IllegalArgumentException("this binder is only valid for Long[] arguments: "+input.getClass());
+         throw new IllegalArgumentException("this binder is only valid for Long[] arguments: "
+                  + input.getClass());
       }
-     
+
    }
 }

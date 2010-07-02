@@ -49,18 +49,6 @@ public class HttpCommandMock implements HttpCommand {
    }
 
    @Override
-   public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
-   }
-
-   @Override
-   public void changeToGETRequest() {
-   }
-
-   @Override
-   public void changePathTo(String newPath) {
-   }
-
-   @Override
    public int incrementFailureCount() {
       return 0;
    }

@@ -23,11 +23,12 @@
  */
 package org.jclouds.gogrid.filters;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.http.HttpUtils.logRequest;
+import static org.jclouds.http.HttpUtils.makeQueryLine;
+import static org.jclouds.http.HttpUtils.parseQueryToMap;
 
 import java.net.URI;
 
@@ -40,10 +41,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -72,25 +70,23 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    public void filter(HttpRequest request) {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest<?>,
-               "this decorator is only valid for GeneratedHttpRequests!");
 
       String toSign = createStringToSign();
       String signatureMd5 = getMd5For(toSign);
 
       String query = request.getEndpoint().getQuery();
-      Multimap<String, String> decodedParams = RestAnnotationProcessor.parseQueryToMap(query);
+      Multimap<String, String> decodedParams = parseQueryToMap(query);
 
       decodedParams.replaceValues("sig", ImmutableSet.of(signatureMd5));
       decodedParams.replaceValues("api_key", ImmutableSet.of(apiKey));
 
-      String updatedQuery = RestAnnotationProcessor.makeQueryLine(decodedParams, null);
+      String updatedQuery = makeQueryLine(decodedParams, null);
       String requestBasePart = request.getEndpoint().toASCIIString();
       String updatedEndpoint = requestBasePart.substring(0, requestBasePart.indexOf("?") + 1)
                + updatedQuery;
       request.setEndpoint(URI.create(updatedEndpoint));
 
-      HttpUtils.logRequest(signatureLog, request, "<<");
+      logRequest(signatureLog, request, "<<");
    }
 
    private String createStringToSign() {

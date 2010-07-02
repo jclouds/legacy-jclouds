@@ -34,6 +34,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.FutureExceptionParser;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.internal.ClassMethodArgs;
@@ -107,11 +108,11 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       if (exceptionParser instanceof InvocationContext) {
          ((InvocationContext) exceptionParser).setContext(null);
       }
-      GeneratedHttpRequest<T> request;
+      HttpRequest request;
       try {
          request = annotationProcessor.createRequest(method, args);
          if (exceptionParser instanceof InvocationContext) {
-            ((InvocationContext) exceptionParser).setContext(request);
+            ((InvocationContext) exceptionParser).setContext((GeneratedHttpRequest<T>) request);
          }
       } catch (RuntimeException e) {
          if (exceptionParser != null) {
@@ -143,7 +144,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    }
 
    public static interface Factory {
-      public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
+      public TransformingHttpCommand<?> create(HttpRequest request,
                Function<HttpResponse, ?> transformer);
    }
 

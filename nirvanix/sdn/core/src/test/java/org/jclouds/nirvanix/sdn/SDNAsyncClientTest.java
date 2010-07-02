@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
@@ -41,7 +42,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -60,20 +60,19 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testGetStorageNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getStorageNode", String.class, long.class);
-      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
-               "adriansmovies", 734859264);
+      HttpRequest request = processor.createRequest(method, "adriansmovies", 734859264);
 
       assertRequestLineEquals(
-               httpMethod,
+               request,
                "GET http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx?output=json&destFolderPath=adriansmovies&sizeBytes=734859264 HTTP/1.1");
-      assertHeadersEqual(httpMethod, "");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseUploadInfoFromJsonResponse.class);
+      assertResponseParserClassEquals(method, request, ParseUploadInfoFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
 
    }
 
@@ -81,13 +80,13 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       Method method = SDNAsyncClient.class.getMethod("upload", URI.class, String.class,
                String.class, Blob.class);
       Blob blob = BindBlobToMultipartFormTest.TEST_BLOB;
-      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method, URI
-               .create("http://uploader"), "token", "adriansmovies", blob);
+      HttpRequest request = processor.createRequest(method, URI.create("http://uploader"), "token",
+               "adriansmovies", blob);
 
       assertRequestLineEquals(
-               httpMethod,
+               request,
                "POST http://uploader/Upload.ashx?output=json&destFolderPath=adriansmovies&uploadToken=token HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertHeadersEqual(request,
                "Content-Length: 113\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       StringBuffer expects = new StringBuffer();
       expects.append("----JCLOUDS--\r\n");
@@ -96,74 +95,72 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       expects.append("hello\r\n");
       expects.append("----JCLOUDS----\r\n");
 
-      assertPayloadEquals(httpMethod, expects.toString());
+      assertPayloadEquals(request, expects.toString());
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testSetMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("setMetadata", String.class, Map.class);
-      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
-               "adriansmovies/sushi.avi", ImmutableMap.of("Chef", "Kawasaki"));
+      HttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi", ImmutableMap
+               .of("Chef", "Kawasaki"));
 
       assertRequestLineEquals(
-               httpMethod,
+               request,
                "GET http://services.nirvanix.com/ws/Metadata/SetMetadata.ashx?output=json&path=adriansmovies/sushi.avi&metadata=chef:Kawasaki HTTP/1.1");
-      assertHeadersEqual(httpMethod, "");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getMetadata", String.class);
-      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
-               "adriansmovies/sushi.avi");
+      HttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi");
 
       assertRequestLineEquals(
-               httpMethod,
+               request,
                "GET http://services.nirvanix.com/ws/Metadata/GetMetadata.ashx?output=json&path=adriansmovies/sushi.avi HTTP/1.1");
-      assertHeadersEqual(httpMethod, "");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseMetadataFromJsonResponse.class);
+      assertResponseParserClassEquals(method, request, ParseMetadataFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getFile", String.class);
-      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
-               "adriansmovies/sushi.avi");
+      HttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "GET http://services.nirvanix.com/adriansmovies/sushi.avi?output=json HTTP/1.1");
-      assertHeadersEqual(httpMethod, "");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, request, ReturnStringIf200.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), InsertUserContextIntoPath.class);
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), InsertUserContextIntoPath.class);
 
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<SDNAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
    }
 
    @Override

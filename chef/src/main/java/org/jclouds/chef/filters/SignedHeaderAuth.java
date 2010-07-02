@@ -121,10 +121,10 @@ public class SignedHeaderAuth implements HttpRequestFilter {
       }
    }
 
-   public String createStringToSign(String httpMethod, String hashedPath, String contentHash,
+   public String createStringToSign(String request, String hashedPath, String contentHash,
             String timestamp) {
 
-      return new StringBuilder().append("Method:").append(httpMethod).append("\n").append(
+      return new StringBuilder().append("Method:").append(request).append("\n").append(
                "Hashed Path:").append(hashedPath).append("\n").append("X-Ops-Content-Hash:")
                .append(contentHash).append("\n").append("X-Ops-Timestamp:").append(timestamp)
                .append("\n").append("X-Ops-UserId:").append(userId).toString();

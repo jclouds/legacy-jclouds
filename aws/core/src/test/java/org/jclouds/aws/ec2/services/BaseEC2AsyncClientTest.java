@@ -34,12 +34,12 @@ import org.jclouds.aws.ec2.config.EC2RestClientModule;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableMap;
@@ -80,9 +80,9 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    protected FormSigner filter;
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<T> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), FormSigner.class);
    }
 
    public BaseEC2AsyncClientTest() {

@@ -18,8 +18,7 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,13 +26,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Adds the Session Token to the request. This will update the Session Token before 20 minutes is
@@ -46,6 +45,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 public class AddSessionTokenToRequest implements HttpRequestFilter {
 
    private final Provider<String> authTokenProvider;
+   private final Provider<UriBuilder> builder;
 
    public final long BILLION = 1000000000;
    public final long MINUTES = 60 * BILLION;
@@ -80,17 +80,15 @@ public class AddSessionTokenToRequest implements HttpRequestFilter {
    }
 
    @Inject
-   public AddSessionTokenToRequest(@SessionToken Provider<String> authTokenProvider) {
+   public AddSessionTokenToRequest(@SessionToken Provider<String> authTokenProvider,
+            Provider<UriBuilder> builder) {
+      this.builder = builder;
       this.authTokenProvider = authTokenProvider;
       authToken = new AtomicReference<String>();
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest<?>,
-               "this decorator is only valid for GeneratedHttpRequests!");
-      ((GeneratedHttpRequest<?>) request).addQueryParam(SDNQueryParams.SESSIONTOKEN,
-               getSessionToken());
-
+      addQueryParamTo(request, SDNQueryParams.SESSIONTOKEN, getSessionToken(), builder.get());
    }
 
 }

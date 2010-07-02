@@ -20,31 +20,38 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.replaceMatrixParam;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Binds the map to matrix parameters.
  * 
  * @author Adrian Cole
- * @since 4.0
  */
 public class BindMapToMatrixParams implements Binder {
+   private final Provider<UriBuilder> builder;
+
+   @Inject
+   BindMapToMatrixParams(Provider<UriBuilder> builder) {
+      this.builder = builder;
+   }
 
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
       checkArgument(checkNotNull(input, "input") instanceof Map,
                "this binder is only valid for Maps!");
       Map<String, String> map = (Map<String, String>) input;
       for (Entry<String, String> entry : map.entrySet()) {
-         ((GeneratedHttpRequest) request).replaceMatrixParam(entry.getKey(), entry.getValue());
+         replaceMatrixParam(request, entry.getKey(), entry.getValue(), builder.get());
       }
    }
 

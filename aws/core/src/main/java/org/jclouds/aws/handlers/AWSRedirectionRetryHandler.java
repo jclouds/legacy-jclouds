@@ -18,8 +18,13 @@
  */
 package org.jclouds.aws.handlers;
 
+import static org.jclouds.http.HttpUtils.changeSchemeHostAndPortTo;
+import static org.jclouds.http.HttpUtils.changeToGETRequest;
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
@@ -29,7 +34,6 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 
@@ -38,6 +42,7 @@ import org.jclouds.http.handlers.RedirectionRetryHandler;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    private final AWSUtils utils;
 
@@ -52,9 +57,9 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
                && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
-         byte[] content = HttpUtils.closeClientButKeepContentStream(response);
+         byte[] content = closeClientButKeepContentStream(response);
          if (command.getRequest().getMethod() == HttpMethod.HEAD) {
-            command.changeToGETRequest();
+            changeToGETRequest(command.getRequest());
             return true;
          } else {
             command.incrementRedirectCount();
@@ -68,8 +73,9 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
                      // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
                      return backoffHandler.shouldRetryRequest(command, response);
                   } else {
-                     command.changeSchemeHostAndPortTo(command.getRequest().getEndpoint()
-                              .getScheme(), host, command.getRequest().getEndpoint().getPort());
+                     changeSchemeHostAndPortTo(command.getRequest(), command.getRequest()
+                              .getEndpoint().getScheme(), host, command.getRequest().getEndpoint()
+                              .getPort(), uriBuilderProvider.get());
                   }
                   return true;
                } else {

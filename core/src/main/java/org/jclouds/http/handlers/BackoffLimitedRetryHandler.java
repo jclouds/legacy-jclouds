@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
@@ -75,6 +76,7 @@ import com.google.inject.Inject;
  * 
  * @author James Murty
  */
+@Singleton
 public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOExceptionRetryHandler {
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)

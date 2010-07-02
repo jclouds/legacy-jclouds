@@ -29,13 +29,13 @@ import java.lang.reflect.Method;
 
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
@@ -66,7 +66,7 @@ public abstract class RestClientTest<T> {
 
    protected Injector injector;
 
-   protected abstract void checkFilters(GeneratedHttpRequest<T> httpMethod);
+   protected abstract void checkFilters(HttpRequest request);
 
    protected abstract TypeLiteral<RestAnnotationProcessor<T>> createTypeLiteral();
 
@@ -101,22 +101,21 @@ public abstract class RestClientTest<T> {
       }
    }
 
-   protected void assertPayloadEquals(GeneratedHttpRequest<T> httpMethod, String toMatch)
-            throws IOException {
-      if (httpMethod.getPayload() == null) {
+   protected void assertPayloadEquals(HttpRequest request, String toMatch) throws IOException {
+      if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String payload = Utils.toStringAndClose(httpMethod.getPayload().getInput());
+         String payload = Utils.toStringAndClose(request.getPayload().getInput());
          assertEquals(payload, toMatch);
       }
    }
 
-   protected void assertHeadersEqual(GeneratedHttpRequest<T> httpMethod, String toMatch) {
-      assertEquals(HttpUtils.sortAndConcatHeadersIntoString(httpMethod.getHeaders()), toMatch);
+   protected void assertHeadersEqual(HttpRequest request, String toMatch) {
+      assertEquals(HttpUtils.sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
    }
 
-   protected void assertRequestLineEquals(GeneratedHttpRequest<T> httpMethod, String toMatch) {
-      assertEquals(httpMethod.getRequestLine(), toMatch);
+   protected void assertRequestLineEquals(HttpRequest request, String toMatch) {
+      assertEquals(request.getRequestLine(), toMatch);
    }
 
    protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
@@ -133,8 +132,8 @@ public abstract class RestClientTest<T> {
    }
 
    protected void assertResponseParserClassEquals(Method method,
-            GeneratedHttpRequest<T> httpMethod, @Nullable Class<?> parserClass) {
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), parserClass);
+            HttpRequest request, @Nullable Class<?> parserClass) {
+      assertEquals(processor.createResponseParser(method, request).getClass(), parserClass);
    }
 
 }

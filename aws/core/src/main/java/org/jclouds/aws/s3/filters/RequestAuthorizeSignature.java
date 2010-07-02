@@ -19,6 +19,7 @@
 package org.jclouds.aws.s3.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.logRequest;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
 import java.util.Collection;
@@ -40,7 +41,6 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
@@ -99,11 +99,11 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       replaceDateHeader(request);
       String toSign = createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
-      HttpUtils.logRequest(signatureLog, request, "<<");
+      logRequest(signatureLog, request, "<<");
    }
 
    public String createStringToSign(HttpRequest request) {
-      HttpUtils.logRequest(signatureLog, request, ">>");
+      logRequest(signatureLog, request, ">>");
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
       appendMethod(request, buffer);

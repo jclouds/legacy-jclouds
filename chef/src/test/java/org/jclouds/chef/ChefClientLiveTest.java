@@ -32,14 +32,17 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.chef.domain.Cookbook;
+import org.jclouds.chef.domain.Resource;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.util.Utils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Module;
@@ -52,8 +55,6 @@ import com.google.inject.Module;
 @Test(groups = "live", testName = "chef.ChefClientLiveTest")
 public class ChefClientLiveTest {
 
-   private static final String COOKBOOK_NAME = "brew";
-   private static final String COOKBOOK_URI = "https://s3.amazonaws.com/opscode-community/cookbook_versions/tarballs/195/original/runit.tar.gz";
    private RestContext<ChefClient, ChefAsyncClient> validatorConnection;
    private RestContext<ChefClient, ChefAsyncClient> clientConnection;
    private RestContext<ChefClient, ChefAsyncClient> adminConnection;
@@ -62,48 +63,40 @@ public class ChefClientLiveTest {
    private String endpoint;
    private String validator;
    private String user;
-   private byte[] cookbookContent;
-   private File cookbookFile;
 
-   public static final String PREFIX = System.getProperty("user.name")
-         + "-jcloudstest";
+   public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
 
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-            "jclouds.test.endpoint");
+      endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
       validator = System.getProperty("jclouds.test.validator");
       if (validator == null || validator.equals(""))
          validator = "chef-validator";
       String validatorKey = System.getProperty("jclouds.test.validator.key");
       if (validatorKey == null || validatorKey.equals(""))
-         validatorKey = System.getProperty("user.home")
-               + "/.chef/validation.pem";
-      user = checkNotNull(System.getProperty("jclouds.test.identity"),
-            "jclouds.test.identity");
+         validatorKey = System.getProperty("user.home") + "/.chef/validation.pem";
+      user = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String keyfile = System.getProperty("jclouds.test.credential");
       if (keyfile == null || keyfile.equals(""))
          keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
-      validatorConnection = createConnection(validator, Files.toString(
-            new File(validatorKey), Charsets.UTF_8));
-      adminConnection = createConnection(user, Files.toString(
-            new File(keyfile), Charsets.UTF_8));
+      validatorConnection = createConnection(validator, Files.toString(new File(validatorKey),
+               Charsets.UTF_8));
+      adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
    }
 
-   private RestContext<ChefClient, ChefAsyncClient> createConnection(
-         String identity, String key) throws IOException {
+   private RestContext<ChefClient, ChefAsyncClient> createConnection(String identity, String key)
+            throws IOException {
       Properties props = new Properties();
       props.setProperty("chef.endpoint", endpoint);
-      return new RestContextFactory().createContext("chef", identity, key,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+      return new RestContextFactory().createContext("chef", identity, key, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), props);
    }
 
    @Test
    public void testListClients() throws Exception {
       Set<String> clients = validatorConnection.getApi().listClients();
       assertNotNull(clients);
-      assert clients.contains(validator) : "validator: " + validator
-            + " not in: " + clients;
+      assert clients.contains(validator) : "validator: " + validator + " not in: " + clients;
    }
 
    @Test(dependsOnMethods = "testListClients")
@@ -133,22 +126,30 @@ public class ChefClientLiveTest {
    @Test
    public void testListCookbooks() throws Exception {
       for (String cookbook : adminConnection.getApi().listCookbooks())
-         for (String version : adminConnection.getApi().getVersionsOfCookbook(
-               cookbook)) {
+         for (String version : adminConnection.getApi().getVersionsOfCookbook(cookbook)) {
             System.err.printf("%s/%s:%n", cookbook, version);
-            System.err.printf("%s%n", adminConnection.getApi().getCookbook(
-                  cookbook, version));
+            Cookbook cookbookO = adminConnection.getApi().getCookbook(cookbook, version);
+            for (Resource resource : ImmutableList.<Resource> builder().addAll(
+                     cookbookO.getDefinitions()).addAll(cookbookO.getFiles()).addAll(
+                     cookbookO.getLibraries()).addAll(cookbookO.getProviders()).addAll(
+                     cookbookO.getRecipes()).addAll(cookbookO.getResources()).addAll(
+                     cookbookO.getRootFiles()).addAll(cookbookO.getTemplates()).build()) {
+               try {
+                  Utils.toStringAndClose(adminConnection.utils().http().get(resource.getUrl()));
+               } catch (NullPointerException e) {
+                  assert false : "resource not found: " + resource;
+               }
+               System.err.printf("resource %s ok%n", resource.getName());
+            }
          }
    }
 
    @Test(dependsOnMethods = "testListCookbooks")
    public void testUpdateCookbook() throws Exception {
       for (String cookbook : adminConnection.getApi().listCookbooks())
-         for (String version : adminConnection.getApi().getVersionsOfCookbook(
-               cookbook)) {
+         for (String version : adminConnection.getApi().getVersionsOfCookbook(cookbook)) {
             System.err.printf("%s/%s:%n", cookbook, version);
-            Cookbook cook = adminConnection.getApi().getCookbook(cookbook,
-                  version);
+            Cookbook cook = adminConnection.getApi().getCookbook(cookbook, version);
             adminConnection.getApi().updateCookbook(cookbook, version, cook);
          }
 
@@ -157,14 +158,12 @@ public class ChefClientLiveTest {
    @Test(dependsOnMethods = "testUpdateCookbook")
    public void testCreateCookbook() throws Exception {
       for (String cookbook : adminConnection.getApi().listCookbooks())
-         for (String version : adminConnection.getApi().getVersionsOfCookbook(
-               cookbook)) {
+         for (String version : adminConnection.getApi().getVersionsOfCookbook(cookbook)) {
             System.err.printf("%s/%s:%n", cookbook, version);
-            Cookbook cook = adminConnection.getApi().getCookbook(cookbook,
-                  version);
+            Cookbook cook = adminConnection.getApi().getCookbook(cookbook, version);
             adminConnection.getApi().deleteCookbook(cookbook, version);
             assert adminConnection.getApi().getCookbook(cookbook, version) == null : cookbook
-                  + version;
+                     + version;
 
             adminConnection.getApi().updateCookbook(cookbook, version, cook);
          }

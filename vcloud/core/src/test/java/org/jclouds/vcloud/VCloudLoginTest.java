@@ -27,11 +27,11 @@ import java.net.URI;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.annotations.Provider;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.VCloudLoginLiveTest.VCloudLoginClient;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
@@ -54,24 +54,24 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudLoginAsyncClient.class.getMethod("login");
-      GeneratedHttpRequest<VCloudLoginAsyncClient> httpMethod = processor.createRequest(method);
+      HttpRequest request = processor.createRequest(method);
 
-      assertEquals(httpMethod.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+      assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
+      assertHeadersEqual(request, HttpHeaders.ACCEPT
                + ": application/vnd.vmware.vcloud.organizationList+xml\n");
-      assertPayloadEquals(httpMethod, null);
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseLoginResponseFromHeaders.class);
+      assertResponseParserClassEquals(method, request, ParseLoginResponseFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<VCloudLoginAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override

@@ -18,12 +18,16 @@
  */
 package org.jclouds.rackspace.filters;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -47,12 +51,23 @@ public class AddTimestampQueryTest {
          }
 
       };
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      request.addQueryParam("now", date.getTime() + "");
-      replay(request);
 
-      AddTimestampQuery filter = new AddTimestampQuery(dateSupplier);
+      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
+
+      AddTimestampQuery filter = new AddTimestampQuery(dateSupplier, new Provider<UriBuilder>() {
+
+         @Override
+         public UriBuilder get() {
+            return new UriBuilderImpl();
+         }
+
+      });
+
       filter.filter(request);
+
+      assertEquals(request.getRequestLine(), String.format("GET http://momma/?now=%s HTTP/1.1",
+               date.getTime()));
+
    }
 
 }

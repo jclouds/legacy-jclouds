@@ -40,6 +40,7 @@ import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
@@ -50,7 +51,6 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -72,190 +72,182 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
    public void testListDirectories() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectories", Array.newInstance(
                ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method);
+      HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": text/xml\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod,
+      assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testListDirectory() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectory", String.class, Array
                .newInstance(ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "directory");
+      HttpRequest request = processor.createRequest(method, "directory");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": text/xml\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod,
+      assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ThrowContainerNotFoundOn404.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testListDirectoriesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectories", Array.newInstance(
                ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               new ListOptions().limit(1).token("asda"));
+      HttpRequest request = processor.createRequest(method, new ListOptions().limit(1)
+               .token("asda"));
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+      assertHeadersEqual(request, HttpHeaders.ACCEPT
                + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
-      assertPayloadEquals(httpMethod, null);
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod,
+      assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testListDirectoryOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectory", String.class, Array
                .newInstance(ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "directory", new ListOptions().limit(1).token("asda"));
+      HttpRequest request = processor.createRequest(method, "directory", new ListOptions().limit(1)
+               .token("asda"));
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+      assertHeadersEqual(request, HttpHeaders.ACCEPT
                + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
-      assertPayloadEquals(httpMethod, null);
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod,
+      assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ThrowContainerNotFoundOn404.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testCreateDirectory() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("createDirectory", String.class);
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "dir");
+      HttpRequest request = processor.createRequest(method, "dir");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "POST https://accesspoint.atmosonline.com/rest/namespace/dir/ HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod,
-               ParseURIFromListOrLocationHeaderIf20x.class);
+      assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEndpointIfAlreadyExists.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testCreateFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("createFile", String.class,
                AtmosObject.class);
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "dir", blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
+      HttpRequest request = processor.createRequest(method, "dir", blobToObject
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+      assertHeadersEqual(request, HttpHeaders.ACCEPT
                + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
-      assertPayloadEquals(httpMethod, "hello");
+      assertPayloadEquals(request, "hello");
 
-      assertResponseParserClassEquals(method, httpMethod,
-               ParseURIFromListOrLocationHeaderIf20x.class);
+      assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testUpdateFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("updateFile", String.class,
                AtmosObject.class);
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "dir", blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
+      HttpRequest request = processor.createRequest(method, "dir", blobToObject
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+      assertHeadersEqual(request, HttpHeaders.ACCEPT
                + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
-      assertPayloadEquals(httpMethod, "hello");
+      assertPayloadEquals(request, "hello");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testReadFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("readFile", String.class, Array
                .newInstance(GetOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "dir/file");
+      HttpRequest request = processor.createRequest(method, "dir/file");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod,
-               ParseObjectFromHeadersAndHttpContent.class);
+      assertResponseParserClassEquals(method, request, ParseObjectFromHeadersAndHttpContent.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testGetSystemMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("getSystemMetadata", String.class);
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "dir/file");
+      HttpRequest request = processor.createRequest(method, "dir/file");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "HEAD https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSystemMetadataFromHeaders.class);
+      assertResponseParserClassEquals(method, request, ParseSystemMetadataFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDeletePath() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("deletePath", String.class);
-      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
-               "dir/file");
+      HttpRequest request = processor.createRequest(method, "dir/file");
 
-      assertRequestLineEquals(httpMethod,
+      assertRequestLineEquals(request,
                "DELETE https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(httpMethod, null);
+      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null);
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testNewObject() throws SecurityException, NoSuchMethodException, IOException {
@@ -264,9 +256,9 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), SignRequest.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), SignRequest.class);
    }
 
    @Override

@@ -26,9 +26,9 @@ import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -46,79 +46,78 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
             IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("deleteSecurityGroupInRegion",
                String.class, String.class);
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "name");
+      HttpRequest request = processor.createRequest(method, null, "name");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 60\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
-               "Version=2009-11-30&Action=DeleteSecurityGroup&GroupName=name");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DeleteSecurityGroup&GroupName=name");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnGroupNotFound.class);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("createSecurityGroupInRegion",
                String.class, String.class, String.class);
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "name", "description");
+      HttpRequest request = processor.createRequest(method, null, "name", "description");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=CreateSecurityGroup&GroupDescription=description&GroupName=name");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeSecurityGroups() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegion",
                String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               (String) null);
+      HttpRequest request = processor.createRequest(method, (String) null);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeSecurityGroups");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeSecurityGroups");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeSecurityGroupsArgs() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegion",
                String.class, Array.newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "1", "2");
+      HttpRequest request = processor.createRequest(method, null, "1", "2");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testAuthorizeSecurityGroupIngressGroup() throws SecurityException,
@@ -126,21 +125,22 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       Method method = SecurityGroupAsyncClient.class.getMethod(
                "authorizeSecurityGroupIngressInRegion", String.class, String.class,
                UserIdGroupPair.class);
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
+      HttpRequest request = processor.createRequest(method, null, "group", new UserIdGroupPair(
+               "sourceUser", "sourceGroup"));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testAuthorizeSecurityGroupIngressCidr() throws SecurityException,
@@ -148,21 +148,22 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       Method method = SecurityGroupAsyncClient.class.getMethod(
                "authorizeSecurityGroupIngressInRegion", String.class, String.class,
                IpProtocol.class, int.class, int.class, String.class);
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
+      HttpRequest request = processor.createRequest(method, null, "group", IpProtocol.TCP, 6000,
+               7000, "0.0.0.0/0");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 131\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testRevokeSecurityGroupIngressGroup() throws SecurityException,
@@ -170,21 +171,22 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       Method method = SecurityGroupAsyncClient.class.getMethod(
                "revokeSecurityGroupIngressInRegion", String.class, String.class,
                UserIdGroupPair.class);
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
+      HttpRequest request = processor.createRequest(method, null, "group", new UserIdGroupPair(
+               "sourceUser", "sourceGroup"));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 68\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testRevokeSecurityGroupIngressCidr() throws SecurityException,
@@ -192,21 +194,22 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       Method method = SecurityGroupAsyncClient.class.getMethod(
                "revokeSecurityGroupIngressInRegion", String.class, String.class, IpProtocol.class,
                int.class, int.class, String.class);
-      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
-               null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
+      HttpRequest request = processor.createRequest(method, null, "group", IpProtocol.TCP, 6000,
+               7000, "0.0.0.0/0");
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               request,
                "Content-Length: 128\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               httpMethod,
+               request,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000");
 
-      assertResponseParserClassEquals(method, httpMethod, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override

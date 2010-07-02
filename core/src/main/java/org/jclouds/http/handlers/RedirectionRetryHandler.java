@@ -18,6 +18,9 @@
  */
 package org.jclouds.http.handlers;
 
+import static org.jclouds.http.HttpUtils.changePathTo;
+import static org.jclouds.http.HttpUtils.changeSchemeHostAndPortTo;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -25,6 +28,7 @@ import java.net.URI;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
@@ -44,6 +48,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class RedirectionRetryHandler implements HttpRetryHandler {
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_REDIRECTS)
@@ -53,10 +58,10 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    protected final BackoffLimitedRetryHandler backoffHandler;
-   private final Provider<UriBuilder> uriBuilderProvider;
+   protected final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   public RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
+   protected RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
             BackoffLimitedRetryHandler backoffHandler) {
       this.backoffHandler = backoffHandler;
       this.uriBuilderProvider = uriBuilderProvider;
@@ -72,13 +77,14 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
                   && redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
                   && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {
             if (!redirectionUrl.getPath().equals(command.getRequest().getEndpoint().getPath())) {
-               command.changePathTo(redirectionUrl.getPath());
+               changePathTo(command.getRequest(), redirectionUrl.getPath(), uriBuilderProvider
+                        .get());
             } else {
                return backoffHandler.shouldRetryRequest(command, response);
             }
          } else {
-            command.changeSchemeHostAndPortTo(redirectionUrl.getScheme(), redirectionUrl.getHost(),
-                     redirectionUrl.getPort());
+            changeSchemeHostAndPortTo(command.getRequest(), redirectionUrl.getScheme(),
+                     redirectionUrl.getHost(), redirectionUrl.getPort(), uriBuilderProvider.get());
          }
          return true;
       } else {

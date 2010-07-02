@@ -27,6 +27,9 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.SIGNATURE_METHOD;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.SIGNATURE_VERSION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.TIMESTAMP;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
+import static org.jclouds.http.HttpUtils.logRequest;
+import static org.jclouds.http.HttpUtils.makeQueryLine;
+import static org.jclouds.http.HttpUtils.parseQueryToMap;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,12 +49,9 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -92,12 +92,11 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       this.encryptionService = encryptionService;
    }
 
-   public void filter(HttpRequest in) throws HttpException {
-      GeneratedHttpRequest<?> request = (GeneratedHttpRequest<?>) in;
+   public void filter(HttpRequest request) throws HttpException {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST),
                "request is not ready to sign; host not present");
-      Multimap<String, String> decodedParams = RestAnnotationProcessor.parseQueryToMap(request
-               .getPayload().getRawContent().toString());
+      Multimap<String, String> decodedParams = parseQueryToMap(request.getPayload().getRawContent()
+               .toString());
       request.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
       addSigningParams(decodedParams);
       validateParams(decodedParams);
@@ -105,7 +104,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
       setPayload(request, decodedParams);
-      HttpUtils.logRequest(signatureLog, request, "<<");
+      logRequest(signatureLog, request, "<<");
    }
 
    String[] sortForSigning(String queryLine) {
@@ -123,19 +122,16 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       return parts;
    }
 
-   void setPayload(GeneratedHttpRequest<?> request, Multimap<String, String> decodedParams) {
-      request.setPayload(RestAnnotationProcessor.makeQueryLine(decodedParams,
-               new Comparator<Map.Entry<String, String>>() {
-                  public int compare(Entry<String, String> o1, Entry<String, String> o2) {
-                     if (o1.getKey().startsWith("Action")
-                              || o2.getKey().startsWith("AWSAccessKeyId"))
-                        return -1;
-                     if (o1.getKey().startsWith("AWSAccessKeyId")
-                              || o2.getKey().startsWith("Action"))
-                        return 1;
-                     return o1.getKey().compareTo(o2.getKey());
-                  }
-               }));
+   void setPayload(HttpRequest request, Multimap<String, String> decodedParams) {
+      request.setPayload(makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
+         public int compare(Entry<String, String> o1, Entry<String, String> o2) {
+            if (o1.getKey().startsWith("Action") || o2.getKey().startsWith("AWSAccessKeyId"))
+               return -1;
+            if (o1.getKey().startsWith("AWSAccessKeyId") || o2.getKey().startsWith("Action"))
+               return 1;
+            return o1.getKey().compareTo(o2.getKey());
+         }
+      }));
    }
 
    @VisibleForTesting
@@ -166,7 +162,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    public String createStringToSign(HttpRequest request, Multimap<String, String> decodedParams) {
-      HttpUtils.logRequest(signatureLog, request, ">>");
+      logRequest(signatureLog, request, ">>");
       StringBuilder stringToSign = new StringBuilder();
       // StringToSign = HTTPVerb + "\n" +
       stringToSign.append(request.getMethod()).append("\n");
@@ -184,14 +180,13 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    String buildCanonicalizedString(Multimap<String, String> decodedParams) {
-      return RestAnnotationProcessor.makeQueryLine(decodedParams,
-               new Comparator<Map.Entry<String, String>>() {
-                  public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-                     if (o1.getKey().startsWith("AWSAccessKeyId"))
-                        return -1;
-                     return o1.getKey().compareTo(o2.getKey());
-                  }
-               });
+      return makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
+         public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+            if (o1.getKey().startsWith("AWSAccessKeyId"))
+               return -1;
+            return o1.getKey().compareTo(o2.getKey());
+         }
+      });
    }
 
    @VisibleForTesting
@@ -204,8 +199,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      return createStringToSign(input, RestAnnotationProcessor.parseQueryToMap(input.getPayload()
-               .getRawContent().toString()));
+      return createStringToSign(input, parseQueryToMap(input.getPayload().getRawContent()
+               .toString()));
    }
 
 }

@@ -18,18 +18,18 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.changePathTo;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Adds the Session Token to the request. This will update the Session Token before 20 minutes is
@@ -43,18 +43,18 @@ public class InsertUserContextIntoPath implements HttpRequestFilter {
 
    private final AddSessionTokenToRequest sessionManager;
    private final String pathPrefix;
+   private final Provider<UriBuilder> builder;
 
    @Inject
    public InsertUserContextIntoPath(AddSessionTokenToRequest sessionManager,
             @Named(SDNConstants.PROPERTY_SDN_APPNAME) String appname,
-            @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username) {
+            @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username, Provider<UriBuilder> builder) {
+      this.builder = builder;
       this.sessionManager = sessionManager;
       this.pathPrefix = String.format("/%s/%s/", appname, username);
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest<?>,
-               "this decorator is only valid for GeneratedHttpRequests!");
       String sessionToken = sessionManager.getSessionToken();
       int prefixIndex = request.getEndpoint().getPath().indexOf(pathPrefix);
       String path;
@@ -63,8 +63,7 @@ public class InsertUserContextIntoPath implements HttpRequestFilter {
       } else { // replace token
          path = "/" + sessionToken + request.getEndpoint().getPath().substring(prefixIndex);
       }
-      ((GeneratedHttpRequest<?>) request).replacePath(path);
-
+      changePathTo(request, path, builder.get());
    }
 
 }

@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient.Response;
@@ -32,7 +33,6 @@ import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -48,14 +48,14 @@ public class PCSCloudTest extends RestClientTest<PCSCloudAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
       Method method = PCSCloudAsyncClient.class.getMethod("authenticate");
-      GeneratedHttpRequest<PCSCloudAsyncClient> httpMethod = processor.createRequest(method);
-      assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/ HTTP/1.1");
-      assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
+      HttpRequest request = processor.createRequest(method);
+      assertEquals(request.getRequestLine(), "GET http://localhost:8080/ HTTP/1.1");
+      assertEquals(request.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method, request).getClass(), ParseSax.class);
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method),
                CloudXlinkHandler.class);
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
       assertEquals(processor
                .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                MapHttp4xxCodesToExceptions.class);
@@ -74,7 +74,7 @@ public class PCSCloudTest extends RestClientTest<PCSCloudAsyncClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<PCSCloudAsyncClient> httpMethod) {
+   protected void checkFilters(HttpRequest request) {
 
    }
 

@@ -111,8 +111,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             ConcurrentMap<String, Location> containerToLocation,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory,
-            BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            BlobUtils blobUtils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
             Location defaultLocation, Set<Location> locations) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
@@ -446,12 +445,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             return false;
          }
 
-         public void changeSchemeHostAndPortTo(String scheme, String host, int port) {
-         }
-
-         public void changeToGETRequest() {
-         }
-
          public Exception getException() {
             return null;
          }
@@ -472,9 +465,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
          }
 
-         @Override
-         public void changePathTo(String newPath) {
-         }
       }, response);
    }
 

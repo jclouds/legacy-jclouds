@@ -22,11 +22,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.VIRTUAL_IP_KEY;
+import static org.jclouds.http.HttpUtils.addQueryParamTo;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Binds a virtual IP to the request.
@@ -36,22 +40,26 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * @author Oleksiy Yarmula
  */
 public class BindVirtualIpPortPairToQueryParams implements Binder {
+   private final Provider<UriBuilder> builder;
+
+   @Inject
+   BindVirtualIpPortPairToQueryParams(Provider<UriBuilder> builder) {
+      this.builder = builder;
+   }
 
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "request is null") instanceof GeneratedHttpRequest<?>,
-               "this binder is only valid for GeneratedHttpRequests!");
       checkArgument(checkNotNull(input, "input is null") instanceof IpPortPair,
                "this binder is only valid for a IpPortPair argument");
 
       IpPortPair ipPortPair = (IpPortPair) input;
-      GeneratedHttpRequest<?> generatedRequest = (GeneratedHttpRequest<?>) request;
 
       checkNotNull(ipPortPair.getIp(), "There must be an IP address defined");
       checkNotNull(ipPortPair.getIp().getIp(), "There must be an IP address defined in Ip object");
       checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-      generatedRequest.addQueryParam(VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp());
-      generatedRequest.addQueryParam(VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()));
+      addQueryParamTo(request, VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp(), builder.get());
+      addQueryParamTo(request, VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()),
+               builder.get());
    }
 }

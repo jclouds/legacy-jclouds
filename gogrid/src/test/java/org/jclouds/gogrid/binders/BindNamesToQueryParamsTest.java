@@ -18,32 +18,42 @@
  */
 package org.jclouds.gogrid.binders;
 
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-
 /**
- * Tests that name bindings are proper for request 
- *
+ * Tests that name bindings are proper for request
+ * 
  * @author Oleksiy Yarmula
  */
 public class BindNamesToQueryParamsTest {
 
-    @Test
-    public void testBinding() {
-        GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-        String[] input = {"hello", "world"};
+   @Test
+   public void testBinding() {
+      String[] input = { "hello", "world" };
 
-        BindNamesToQueryParams binder = new BindNamesToQueryParams();
+      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"));
 
-        request.addQueryParam("name", "hello");
-        request.addQueryParam("name", "world");
-        replay(request);
+      BindNamesToQueryParams binder = new BindNamesToQueryParams(new Provider<UriBuilder>() {
 
-        binder.bindToRequest(request, input);
+         @Override
+         public UriBuilder get() {
+            return new UriBuilderImpl();
+         }
 
-    }
+      });
+
+      binder.bindToRequest(request, input);
+
+      assertEquals(request.getRequestLine(), "GET http://momma/?name=hello&name=world HTTP/1.1");
+   }
 
 }

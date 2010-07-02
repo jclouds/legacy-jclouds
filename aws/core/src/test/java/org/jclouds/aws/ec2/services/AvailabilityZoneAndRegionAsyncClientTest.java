@@ -31,8 +31,8 @@ import org.jclouds.aws.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.aws.ec2.options.DescribeRegionsOptions;
 import org.jclouds.aws.ec2.xml.DescribeAvailabilityZonesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeRegionsResponseHandler;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -52,20 +52,19 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       Method method = AvailabilityZoneAndRegionAsyncClient.class.getMethod(
                "describeAvailabilityZonesInRegion", String.class, Array.newInstance(
                         DescribeAvailabilityZonesOptions.class, 0).getClass());
-      GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
-               .createRequest(method, Region.US_WEST_1);
+      HttpRequest request = processor.createRequest(method, Region.US_WEST_1);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-west-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-west-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 51\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-west-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeAvailabilityZones");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeAvailabilityZones");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeAvailabilityZonesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeAvailabilityZonesOptions() throws SecurityException,
@@ -73,62 +72,60 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       Method method = AvailabilityZoneAndRegionAsyncClient.class.getMethod(
                "describeAvailabilityZonesInRegion", String.class, Array.newInstance(
                         DescribeAvailabilityZonesOptions.class, 0).getClass());
-      GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
-               .createRequest(method, Region.US_EAST_1, availabilityZones(
-                        AvailabilityZone.US_EAST_1A, AvailabilityZone.US_EAST_1B));
+      HttpRequest request = processor.createRequest(method, Region.US_EAST_1, availabilityZones(
+               AvailabilityZone.US_EAST_1A, AvailabilityZone.US_EAST_1B));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 95\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeAvailabilityZones&ZoneName.1=us-east-1a&ZoneName.2=us-east-1b");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeAvailabilityZonesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeRegions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", Array
                .newInstance(DescribeRegionsOptions.class, 0).getClass());
-      GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
-               .createRequest(method);
+      HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeRegions");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeRegions");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeRegionsResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    public void testDescribeRegionsOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", Array
                .newInstance(DescribeRegionsOptions.class, 0).getClass());
-      GeneratedHttpRequest<AvailabilityZoneAndRegionAsyncClient> httpMethod = processor
-               .createRequest(method, regions(Region.US_EAST_1, Region.US_WEST_1));
+      HttpRequest request = processor.createRequest(method, regions(Region.US_EAST_1,
+               Region.US_WEST_1));
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
-               httpMethod,
+               request,
                "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
+      assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeRegions&RegionName.1=us-east-1&RegionName.2=us-west-1");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeRegionsResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
-      checkFilters(httpMethod);
+      checkFilters(request);
    }
 
    @Override

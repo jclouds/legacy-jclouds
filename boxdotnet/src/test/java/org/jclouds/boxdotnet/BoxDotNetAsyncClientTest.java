@@ -29,6 +29,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
@@ -51,7 +52,6 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "boxdotnet.BoxDotNetAsyncClientTest")
 public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClient> {
 
-
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BoxDotNetAsyncClient.class.getMethod("list");
       GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method);
@@ -66,7 +66,8 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
-      assertHeadersEqual(httpRequest, "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
+      assertHeadersEqual(httpRequest,
+               "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -98,8 +99,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
    public void testDelete() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BoxDotNetAsyncClient.class.getMethod("delete", long.class);
-      GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(
-               method, 1);
+      GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
@@ -113,10 +113,11 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       checkFilters(httpRequest);
 
    }
+
    @Override
-   protected void checkFilters(GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest) {
-      assertEquals(httpRequest.getFilters().size(), 1);
-      assertEquals(httpRequest.getFilters().get(0).getClass(), BasicAuthentication.class);
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override
@@ -127,7 +128,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
    @Override
    public ContextSpec<BoxDotNetClient, BoxDotNetAsyncClient> createContextSpec() {
-      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity", "credential",
-               BoxDotNetClient.class, BoxDotNetAsyncClient.class);
+      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity",
+               "credential", BoxDotNetClient.class, BoxDotNetAsyncClient.class);
    }
 }

@@ -22,11 +22,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
@@ -37,7 +37,6 @@ import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Function;
@@ -109,14 +108,11 @@ public class RestModule extends AbstractModule {
    private static class Factory implements AsyncRestClientProxy.Factory {
       @Inject
       private TransformingHttpCommandExecutorService executorService;
-      @Inject
-      private Provider<UriBuilder> uriBuilderProvider;
 
       @SuppressWarnings("unchecked")
-      public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
+      public TransformingHttpCommand<?> create(HttpRequest request,
                Function<HttpResponse, ?> transformer) {
-         return new TransformingHttpCommandImpl(uriBuilderProvider, executorService, request,
-                  transformer);
+         return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 
    }

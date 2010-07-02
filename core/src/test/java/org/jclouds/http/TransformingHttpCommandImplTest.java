@@ -18,53 +18,13 @@
  */
 package org.jclouds.http;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-import java.util.Collections;
-
-import javax.inject.Provider;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class TransformingHttpCommandImplTest {
-   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
-
-      @Override
-      public UriBuilder get() {
-         return new UriBuilderImpl();
-      }
-
-   };
-
-   @SuppressWarnings("unchecked")
-   @Test
-   public void testChangeSchemeHostAndPortTo() {
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      TransformingHttpCommandImpl<?> command = new TransformingHttpCommandImpl(uriBuilderProvider,
-               null, request, null);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/mypath"));
-      request.setEndpoint(URI.create("https://remotehost:443/mypath"));
-      Multimap<String, String> headers = HashMultimap.create();
-      expect(request.getHeaders()).andReturn(headers);
-      replay(request);
-      command.changeSchemeHostAndPortTo("https", "remotehost", 443);
-      assertEquals(headers.get(HttpHeaders.HOST), Collections.singletonList("remotehost"));
-   }
 
    @Test
    public void testTransformingHttpCommandImpl() {
