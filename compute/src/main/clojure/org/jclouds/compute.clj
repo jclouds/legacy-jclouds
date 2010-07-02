@@ -348,7 +348,7 @@ See http://code.google.com/p/jclouds for details."
      (apply hash-map
             (concat
              (make-option-map option-fn-0arg
-                              [:smallest :fastest :biggest])
+                              [:smallest :fastest :biggest :any])
              (make-option-map option-option-fn-0arg
                               [:destroy-on-error]))))
 
