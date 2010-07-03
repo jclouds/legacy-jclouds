@@ -23,12 +23,14 @@ import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.xml.ErrorHandler;
-import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.rest.RequestSigner;
 
 /**
@@ -36,30 +38,32 @@ import org.jclouds.rest.RequestSigner;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class AWSUtils {
+   private final RequestSigner signer;
+   private final ParseSax.Factory factory;
+   private final Provider<ErrorHandler> errorHandlerProvider;
 
    @Inject
-   RequestSigner signer;
+   AWSUtils(RequestSigner signer, Factory factory, Provider<ErrorHandler> errorHandlerProvider) {
+      this.signer = signer;
+      this.factory = factory;
+      this.errorHandlerProvider = errorHandlerProvider;
+   }
 
-   @Inject
-   ParseSax.Factory factory;
-
-   @Inject
-   Provider<ErrorHandler> errorHandlerProvider;
-
-   public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
+   public AWSError parseAWSErrorFromContent(HttpRequest request, HttpResponse response,
             InputStream content) {
       AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).parse(content);
       if ("SignatureDoesNotMatch".equals(error.getCode())) {
-         error.setStringSigned(signer.createStringToSign(command.getRequest()));
+         error.setStringSigned(signer.createStringToSign(request));
          error.setSignature(signer.sign(error.getStringSigned()));
       }
       return error;
    }
 
-   public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
+   public AWSError parseAWSErrorFromContent(HttpRequest request, HttpResponse response,
             String content) {
-      return parseAWSErrorFromContent(command, response, new ByteArrayInputStream(content
+      return parseAWSErrorFromContent(request, response, new ByteArrayInputStream(content
                .getBytes()));
    }
 }

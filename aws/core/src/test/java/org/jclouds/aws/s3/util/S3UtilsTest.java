@@ -18,7 +18,9 @@
  */
 package org.jclouds.aws.s3.util;
 
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
@@ -46,7 +49,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit" }, testName = "s3.S3UtilsTest")
+@Test(sequential = true, groups = { "unit" }, testName = "s3.S3UtilsTest")
 public class S3UtilsTest {
    S3Utils utils = null;
    private HttpResponse response;
@@ -65,7 +68,8 @@ public class S3UtilsTest {
       response.getHeaders().put(S3Headers.REQUEST_ID, "requestid");
       response.getHeaders().put(S3Headers.REQUEST_TOKEN, "requesttoken");
       command = createMock(HttpCommand.class);
-
+      expect(command.getRequest()).andReturn(createMock(HttpRequest.class)).atLeastOnce();
+      replay(command);
    }
 
    @AfterTest

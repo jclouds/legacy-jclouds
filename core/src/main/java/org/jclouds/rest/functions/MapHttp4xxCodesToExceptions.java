@@ -20,6 +20,8 @@ package org.jclouds.rest.functions;
 
 import static org.jclouds.util.Utils.propagateOrNull;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -30,6 +32,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> {
 
    public Object apply(Exception from) {
@@ -42,6 +45,8 @@ public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> 
                throw new AuthorizationException(from);
             case 404:
                throw new ResourceNotFoundException(from);
+            case 409:
+               throw new IllegalStateException(from);
          }
       }
       return propagateOrNull(from);

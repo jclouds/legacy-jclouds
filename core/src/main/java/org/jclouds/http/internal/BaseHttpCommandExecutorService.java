@@ -19,6 +19,8 @@
 package org.jclouds.http.internal;
 
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
+import static org.jclouds.http.HttpUtils.logRequest;
+import static org.jclouds.http.HttpUtils.logResponse;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -35,7 +37,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
@@ -102,7 +103,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   request.setPayload(Payloads.newPayload(wire.output(request.getPayload()
                            .getRawContent())));
                nativeRequest = convert(request);
-               HttpUtils.logRequest(headerLog, request, ">>");
+               logRequest(headerLog, request, ">>");
                try {
                   response = invoke(nativeRequest);
                } catch (IOException e) {
@@ -117,7 +118,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                }
                logger.debug("Receiving response %s: %s", request.hashCode(), response
                         .getStatusLine());
-               HttpUtils.logResponse(headerLog, response, "<<");
+               logResponse(headerLog, response, "<<");
                if (response.getContent() != null && wire.enabled())
                   response.setContent(wire.input(response.getContent()));
                int statusCode = response.getStatusCode();

@@ -57,20 +57,15 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
 
    @Override
    public NodeMetadata execute(String id) {
-      try {
-         NodeMetadata node = checkNotNull(getNodeMetadata.execute(checkNotNull(id, "node.id")),
-                  "node: " + id);
-         if (node.getTag() != null) {
-            node = installCredentialsFromCache(node);
-         }
-         if (node.getCredentials() == null)
-            node = installDefaultCredentialsFromImage(node);
-         return node;
-      } catch (NullPointerException e) {
-         if (logger.isTraceEnabled())
-            logger.warn(e, "node %s not found during execution", id);
+      NodeMetadata node = getNodeMetadata.execute(checkNotNull(id, "node.id"));
+      if (node == null)
          return null;
+      if (node.getTag() != null) {
+         node = installCredentialsFromCache(node);
       }
+      if (node.getCredentials() == null)
+         node = installDefaultCredentialsFromImage(node);
+      return node;
    }
 
    NodeMetadata installCredentialsFromCache(NodeMetadata node) {

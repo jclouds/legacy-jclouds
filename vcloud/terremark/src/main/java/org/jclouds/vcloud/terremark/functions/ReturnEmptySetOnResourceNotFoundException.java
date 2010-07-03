@@ -24,24 +24,23 @@ import java.util.SortedSet;
 
 import javax.inject.Singleton;
 
-import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.terremark.domain.Node;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * There's a bug where calling get after delete throws an unauthorized exception.
- * <p/>
- * https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60/p/264/876.aspx#876
+ * 
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnEmptySetOnUnauthorized implements Function<Exception, SortedSet<Node>> {
+public class ReturnEmptySetOnResourceNotFoundException implements
+         Function<Exception, SortedSet<Node>> {
    @SuppressWarnings("unchecked")
    public SortedSet<Node> apply(Exception from) {
-      if (from instanceof AuthorizationException) {
+      if (from instanceof ResourceNotFoundException) {
          return ImmutableSortedSet.<Node> of();
       }
       return SortedSet.class.cast(propagateOrNull(from));

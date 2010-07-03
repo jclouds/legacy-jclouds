@@ -64,8 +64,8 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
          } else {
             command.incrementRedirectCount();
             try {
-               AWSError error = utils.parseAWSErrorFromContent(command, response, new String(
-                        content));
+               AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response,
+                        new String(content));
                String host = error.getDetails().get("Endpoint");
                if (host != null) {
                   if (host.equals(command.getRequest().getEndpoint().getHost())) {

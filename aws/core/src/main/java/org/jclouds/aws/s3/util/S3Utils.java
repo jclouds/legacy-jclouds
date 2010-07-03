@@ -50,7 +50,7 @@ public class S3Utils {
 
    public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
             InputStream content) throws HttpException {
-      AWSError error = util.parseAWSErrorFromContent(command, response, content);
+      AWSError error = util.parseAWSErrorFromContent(command.getRequest(), response, content);
       if (error.getRequestId() == null)
          error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
       error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));

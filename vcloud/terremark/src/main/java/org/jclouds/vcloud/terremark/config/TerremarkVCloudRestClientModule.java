@@ -24,7 +24,11 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudAsyncClient;
@@ -35,6 +39,7 @@ import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
 import org.jclouds.vcloud.terremark.endpoints.KeysList;
+import org.jclouds.vcloud.terremark.handlers.ParseTerremarkVCloudErrorFromHttpResponse;
 
 import com.google.inject.Provides;
 
@@ -97,4 +102,15 @@ public class TerremarkVCloudRestClientModule
       return Utils.toStringAndClose(getClass().getResourceAsStream(
             "/terremark/CreateKey.xml"));
    }
+
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               ParseTerremarkVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               ParseTerremarkVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ParseTerremarkVCloudErrorFromHttpResponse.class);
+   }
+
 }

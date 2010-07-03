@@ -1,22 +1,4 @@
-/**
- *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
-package org.jclouds.vcloud.handlers;
+package org.jclouds.vcloud.terremark.handlers;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -43,7 +25,7 @@ import com.google.common.io.Closeables;
  * 
  */
 @Singleton
-public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
+public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
    public static final Pattern RESOURCE_PATTERN = Pattern.compile(".*/v[^/]+/([^/]+)/([0-9]+)");
@@ -57,6 +39,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
             case 401:
                exception = new AuthorizationException(command.getRequest(), content);
                break;
+            case 403: // TODO temporary as terremark mistakenly uses this for vApp not found.
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {
                   String path = command.getRequest().getEndpoint().getPath();
@@ -69,6 +52,10 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
                   }
                   exception = new ResourceNotFoundException(message);
                }
+               break;
+            case 500:
+               if (response.getMessage().indexOf("because there is a pending task running") != -1)
+                  exception = new IllegalStateException(response.getMessage(), exception);
                break;
             default:
                exception = new HttpResponseException(command, response, content);

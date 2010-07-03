@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
 import java.util.Properties;
 
@@ -38,6 +39,8 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
       properties.setProperty(PROPERTY_ENDPOINT, "https://services.vcloudexpress.terremark.com/api");
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "15");
+      // with ssh key injection comes another reboot.  allowing more time
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 360l * 1000l + "");
       return properties;
    }
 
