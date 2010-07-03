@@ -85,18 +85,8 @@
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
-            <artifactId>guava-io</artifactId>
-            <version>r03</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava-concurrent</artifactId>
-            <version>r03</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava-collections</artifactId>
-            <version>r03</version>
+            <artifactId>guava</artifactId>
+            <version>r05</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
