@@ -95,7 +95,8 @@ public class IBMDeveloperCloudClientLiveTest {
 
       String endpoint = System.getProperty("jclouds.test.endpoint");
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+               "jclouds.test.credential");
 
       Properties props = new Properties();
       if (endpoint != null)
@@ -318,6 +319,12 @@ public class IBMDeveloperCloudClientLiveTest {
 
    @Test(dependsOnMethods = { "testAddPublicKey" })
    public void testCreateInstance() throws Exception {
+
+      killInstance(TAG);
+
+      System.err.println(connection.getManifest(connection.getImage(IMAGE_ID).getManifest()));
+      System.err.println(connection.getManifest(connection.getImage(IMAGE_ID).getDocumentation()));
+
       instance = connection.createInstanceInLocation(location.getId(), TAG, IMAGE_ID, SIZE,
                authorizePublicKey(key.getName()).configurationData(
                         ImmutableMap.of("insight_admin_password", "myPassword1",
@@ -328,6 +335,22 @@ public class IBMDeveloperCloudClientLiveTest {
       blockUntilRunning(instance);
       assertRunning(instance, TAG);
 
+   }
+
+   private void killInstance(final String nameToKill) {
+      Set<? extends Instance> instances = connection.listInstances();
+      try {
+         instance = Iterables.find(instances, new Predicate<Instance>() {
+
+            @Override
+            public boolean apply(Instance input) {
+               return input.getName().equals(nameToKill);
+            }
+
+         });
+         connection.deleteInstance(instance.getId());
+      } catch (NoSuchElementException ex) {
+      }
    }
 
    private void assertRunning(Instance instance, String name) throws AssertionError {
@@ -403,6 +426,8 @@ public class IBMDeveloperCloudClientLiveTest {
    @Test(dependsOnMethods = { "testAddPublicKey", "testAllocateIpAddress", "testCreateVolume" })
    public void testCreateInstanceWithVolume() throws Exception {
       String name = TAG + "1";
+      killInstance(name);
+
       instance2 = connection.createInstanceInLocation(location.getId(), name, IMAGE_ID, SIZE,
                attachIp(ip.getId()).authorizePublicKey(key.getName()).mountVolume(volume.getId(),
                         "/mnt").configurationData(

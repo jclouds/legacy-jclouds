@@ -41,6 +41,7 @@
  */
 package org.jclouds.ibmdev;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -418,4 +419,7 @@ public interface IBMDeveloperCloudClient {
     *            code 412 address is in an invalid state to perform this operation
     */
    void releaseAddress(String id);
+
+   String getManifest(URI manifest);
+
 }
