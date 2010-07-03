@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public enum TaskStatus {
-   SUCCESS, FAILED, RUNNING, QUEUED, ERROR, CANCELLED, 
+   SUCCESS, FAILED, RUNNING, QUEUED, ERROR, CANCELLED,
    /**
     * invalid status, temporarily in.
     */
@@ -39,6 +39,10 @@ public enum TaskStatus {
    }
 
    public static TaskStatus fromValue(String status) {
+      if ("CANCELED".equals(status.toUpperCase())) {
+         // TODO: ecloud hack
+         status = "CANCELLED";
+      }
       return valueOf(checkNotNull(status, "status").toUpperCase());
    }
 

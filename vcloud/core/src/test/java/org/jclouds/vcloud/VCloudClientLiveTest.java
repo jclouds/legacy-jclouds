@@ -58,7 +58,6 @@ public class VCloudClientLiveTest {
       Organization response = connection.getDefaultOrganization();
       assertNotNull(response);
       assertNotNull(response.getId());
-      assertNotNull(identity);
       assert response.getCatalogs().size() >= 1;
       assert response.getTasksLists().size() >= 1;
       assert response.getVDCs().size() >= 1;

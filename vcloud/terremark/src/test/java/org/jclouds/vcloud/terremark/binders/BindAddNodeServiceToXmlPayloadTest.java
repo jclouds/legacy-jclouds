@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.binders;
 
+import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindAddNodeServiceToXmlPayload}
@@ -50,6 +52,8 @@ public class BindAddNodeServiceToXmlPayloadTest {
 
       @Override
       protected void configure() {
+         bindConstant().annotatedWith(Names.named(PROPERTY_TERREMARK_EXTENSION_NS)).to(
+                  "urn:tmrk:vCloudExpressExtensions-1.6");
       }
 
       @SuppressWarnings("unused")

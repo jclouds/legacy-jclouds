@@ -18,24 +18,16 @@
  */
 package org.jclouds.vcloud.terremark.config;
 
-import java.io.IOException;
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.terremark.TerremarkAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
-import org.jclouds.vcloud.terremark.endpoints.KeysList;
+import org.jclouds.vcloud.terremark.TerremarkECloudAsyncClient;
+import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 
 import com.google.inject.Provides;
 
@@ -46,49 +38,35 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class TerremarkVCloudRestClientModule extends
-         TerremarkRestClientModule<TerremarkVCloudClient, TerremarkVCloudAsyncClient> {
+public class TerremarkECloudRestClientModule extends
+         TerremarkRestClientModule<TerremarkECloudClient, TerremarkECloudAsyncClient> {
 
-   public TerremarkVCloudRestClientModule() {
-      super(TerremarkVCloudClient.class, TerremarkVCloudAsyncClient.class);
+   public TerremarkECloudRestClientModule() {
+      super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class);
    }
 
    @Provides
    @Singleton
-   protected VCloudAsyncClient provideVCloudAsyncClient(TerremarkVCloudAsyncClient in) {
+   protected VCloudAsyncClient provideVCloudAsyncClient(TerremarkECloudAsyncClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected VCloudClient provideVCloudClient(TerremarkVCloudClient in) {
+   protected VCloudClient provideVCloudClient(TerremarkECloudClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected TerremarkAsyncClient provideTerremarkAsyncClient(TerremarkVCloudAsyncClient in) {
+   protected TerremarkAsyncClient provideTerremarkAsyncClient(TerremarkECloudAsyncClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected TerremarkClient provideTerremarkClient(TerremarkVCloudClient in) {
+   protected TerremarkClient provideTerremarkClient(TerremarkECloudClient in) {
       return in;
-   }
-
-   @Provides
-   @KeysList
-   @Singleton
-   protected URI provideDefaultKeysList(Organization org) {
-      return TerremarkOrganization.class.cast(org).getKeysList().getLocation();
-   }
-
-   @Singleton
-   @Provides
-   @Named("CreateKey")
-   String provideCreateKey() throws IOException {
-      return Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/CreateKey.xml"));
    }
 
 }

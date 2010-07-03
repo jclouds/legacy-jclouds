@@ -18,36 +18,19 @@
  */
 package org.jclouds.vcloud.terremark;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.terremark.domain.KeyPair;
 
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href="http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID=" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-public interface TerremarkVCloudClient extends TerremarkClient {
+public interface TerremarkECloudClient extends TerremarkClient {
 
-   /**
-    * This call returns the keys previously created for your organization.
-    */
-   Set<KeyPair> listKeyPairs();
-
-   Set<KeyPair> listKeyPairsInOrg(String orgId);
-
-   KeyPair generateKeyPairInOrg(String orgId, String name, boolean makeDefault);
-
-   KeyPair getKeyPair(int keyPairId);
-
-   // TODO
-   // KeyPair configureKeyPair(int keyPairId, KeyPairConfiguration
-   // keyPairConfiguration);
-
-   void deleteKeyPair(int keyPairId);
+   //TODO
 }

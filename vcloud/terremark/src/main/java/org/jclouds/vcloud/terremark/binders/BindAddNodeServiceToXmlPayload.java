@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.Utils.replaceTokens;
+import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Map;
 
@@ -48,6 +49,9 @@ public class BindAddNodeServiceToXmlPayload implements MapBinder {
    private String xmlTemplate;
    @Inject
    private BindToStringPayload stringBinder;
+   @Inject
+   @Named(PROPERTY_TERREMARK_EXTENSION_NS)
+   private String ns;
 
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
       String ipAddress = checkNotNull(postParams.get("ipAddress"),
@@ -58,7 +62,7 @@ public class BindAddNodeServiceToXmlPayload implements MapBinder {
       String description = postParams.get("description");
 
       String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name, "ipAddress",
-               ipAddress, "port", port, "enabled", enabled));
+               ipAddress, "port", port, "enabled", enabled, "ns", ns));
       payload = Utils.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"),
                description == null ? "" : String.format("\n    <Description>%s</Description>",
                         description));

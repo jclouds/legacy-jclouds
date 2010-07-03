@@ -18,12 +18,16 @@ public class ProvidersInPropertiesTest {
    public void testSupportedProviders() {
       Iterable<String> providers = Utils.getSupportedProviders();
       assert Iterables.contains(providers, "terremark") : providers;
+      assert Iterables.contains(providers, "ecloud") : providers;
+
    }
 
    @Test
    public void testSupportedComputeServiceProviders() {
       Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
       assert Iterables.contains(providers, "terremark") : providers;
+      assert Iterables.contains(providers, "ecloud") : providers;
+
    }
 
 }

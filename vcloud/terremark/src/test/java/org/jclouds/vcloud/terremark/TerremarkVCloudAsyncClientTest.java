@@ -64,6 +64,7 @@ import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
+import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -171,6 +172,23 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
       assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   public void testActivatePublicIpInVDC() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("activatePublicIpInVDC",
+               String.class);
+      HttpRequest request = processor.createRequest(method, "1");
+
+      assertRequestLineEquals(request, "POST https://vcloud/extensions/1/publicIps HTTP/1.1");
+      assertHeadersEqual(request, "");
+      assertPayloadEquals(request, null);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, PublicIpAddressesHandler.class);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -382,10 +400,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       assertRequestLineEquals(request, "PUT https://vcloud/extensions/nodeService/12 HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Accept: application/vnd.tmrk.vCloud.nodeService+xml\nContent-Length: 155\nContent-Type: application/vnd.tmrk.vCloud.nodeService+xml\n");
+               "Accept: application/vnd.tmrk.vCloud.nodeService+xml\nContent-Length: 202\nContent-Type: application/vnd.tmrk.vCloud.nodeService+xml\n");
       assertPayloadEquals(
                request,
-               "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>eggs</Description></NodeService>");
+               "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>eggs</Description></NodeService>");
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
       assertExceptionParserClassEquals(method, null);

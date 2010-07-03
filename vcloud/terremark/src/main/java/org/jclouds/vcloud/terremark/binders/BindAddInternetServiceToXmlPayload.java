@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.Utils.replaceTokens;
+import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Map;
 
@@ -42,12 +43,14 @@ import com.google.common.collect.ImmutableMap;
  */
 @Singleton
 public class BindAddInternetServiceToXmlPayload implements MapBinder {
-
    @Inject
    @Named("CreateInternetService")
    private String xmlTemplate;
    @Inject
    private BindToStringPayload stringBinder;
+   @Inject
+   @Named(PROPERTY_TERREMARK_EXTENSION_NS)
+   private String ns;
 
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
 
@@ -57,7 +60,7 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
       String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present");
       String description = postParams.get("description");
       String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name, "protocol",
-               protocol, "port", port, "enabled", enabled));
+               protocol, "port", port, "enabled", enabled, "ns", ns));
       payload = Utils.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"),
                description == null ? "" : String.format("\n    <Description>%s</Description>",
                         description));

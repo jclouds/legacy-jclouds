@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.Utils.replaceTokens;
+import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Map;
 
@@ -41,20 +42,25 @@ import com.google.common.collect.ImmutableMap;
 @Singleton
 public class BindCreateKeyToXmlPayload implements MapBinder {
 
+   private final String xmlTemplate;
+   private final BindToStringPayload stringBinder;
+   private final String ns;
+
    @Inject
-   @Named("CreateKey")
-   private String xmlTemplate;
-   @Inject
-   private BindToStringPayload stringBinder;
+   BindCreateKeyToXmlPayload(@Named(PROPERTY_TERREMARK_EXTENSION_NS) String ns,
+            @Named("CreateKey") String xmlTemplate, BindToStringPayload stringBinder) {
+      this.ns = ns;
+      this.xmlTemplate = xmlTemplate;
+      this.stringBinder = stringBinder;
+   }
 
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
-      String name = checkNotNull(postParams.get("name"),
-            "name parameter not present");
+      String name = checkNotNull(postParams.get("name"), "name parameter not present");
       String isDefault = checkNotNull(postParams.get("isDefault"),
-            "isDefault parameter not present");
+               "isDefault parameter not present");
 
-      String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name,
-            "isDefault", isDefault));
+      String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name, "isDefault",
+               isDefault, "ns", ns));
       stringBinder.bindToRequest(request, payload);
    }
 

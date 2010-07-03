@@ -20,9 +20,12 @@ package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Properties;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +44,13 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 @Singleton
 public class BindNodeConfigurationToXmlPayload extends BindToStringPayload {
+
+   private final String ns;
+
+   @Inject
+   BindNodeConfigurationToXmlPayload(@Named(PROPERTY_TERREMARK_EXTENSION_NS) String ns) {
+      this.ns = ns;
+   }
 
    @Override
    public void bindToRequest(HttpRequest request, Object input) {
@@ -63,9 +73,9 @@ public class BindNodeConfigurationToXmlPayload extends BindToStringPayload {
 
    protected String generateXml(NodeConfiguration nodeConfiguration)
             throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
-      XMLBuilder rootBuilder = XMLBuilder.create("NodeService").a("xmlns",
-               "urn:tmrk:vCloudExpressExtensions-1.6").a("xmlns:i",
-               "http://www.w3.org/2001/XMLSchema-instance");
+      XMLBuilder rootBuilder = XMLBuilder.create("NodeService").a("xmlns", ns).a("xmlns:xsi",
+               "http://www.w3.org/2001/XMLSchema-instance").a("xmlns:xsd",
+               "http://www.w3.org/2001/XMLSchema");
       if (nodeConfiguration.getDescription() != null)
          rootBuilder.e("Description").t(nodeConfiguration.getDescription());
       if (nodeConfiguration.getName() != null)

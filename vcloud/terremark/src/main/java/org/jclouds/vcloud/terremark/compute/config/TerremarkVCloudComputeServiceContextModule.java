@@ -55,7 +55,7 @@ import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.TerremarkClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.compute.config.providers.QueryCatalogForVAppTemplatesAndConvertToImagesProvider;
@@ -96,13 +96,13 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    @Singleton
    public static class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-      protected final TerremarkVCloudClient client;
+      protected final TerremarkClient client;
       protected final TerremarkVCloudComputeClient computeClient;
       protected final GetNodeMetadataStrategy getNode;
       protected final TemplateToInstantiateOptions getOptions;
 
       @Inject
-      protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudClient client,
+      protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkClient client,
                TerremarkVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode,
                TemplateToInstantiateOptions getOptions) {
          this.client = client;
