@@ -181,19 +181,43 @@ public class RestContextFactory {
                NO_PROPERTIES);
    }
 
+   /**
+    * @see RestContextFactory#createContextBuilder(String, Properties, Iterable<? extends Module>, Properties)
+    */
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider, Properties overrides) {
-      return createContextBuilder(provider, null, null, ImmutableSet.<Module> of(), overrides);
+      return createContextBuilder(provider, overrides.getProperty("jclouds.identity"), overrides
+               .getProperty("jclouds.credential"), ImmutableSet.<Module> of(), overrides);
    }
 
+   /**
+    * 
+    * Identity will be found by searching {@code jclouds.identity} failing that {@code
+    * provider.identity} where provider corresponds to the parameter. Same pattern is used for
+    * credential ({@code jclouds.credential} failing that {@code provider.credential}).
+    * 
+    * @param <S>
+    *           Type of the provider specific client
+    * @param <A>
+    *           Type of the provide specific async client (same as above, yet all methods return
+    *           {@code Future} results)
+    * @param provider
+    *           name of the provider (ex. s3, bluelock, etc.)
+    * @param wiring
+    *           defines how objects are bound to interfaces, pass in here to override this, or
+    *           specify service implementations.
+    * @param overrides
+    *           properties to pass to the context.
+    */
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider,
-            Iterable<? extends Module> modules, Properties overrides) {
-      return createContextBuilder(provider, null, null, modules, overrides);
+            Iterable<? extends Module> wiring, Properties overrides) {
+      return createContextBuilder(provider, overrides.getProperty("jclouds.identity"), overrides
+               .getProperty("jclouds.credential"), wiring, overrides);
    }
 
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider,
             @Nullable String identity, @Nullable String credential,
-            Iterable<? extends Module> modules) {
-      return createContextBuilder(provider, identity, credential, modules, new Properties());
+            Iterable<? extends Module> wiring) {
+      return createContextBuilder(provider, identity, credential, wiring, new Properties());
    }
 
    /**
@@ -204,7 +228,7 @@ public class RestContextFactory {
     *           nullable, if credentials are present in the overrides
     * @param credential
     *           nullable, if credentials are present in the overrides
-    * @param modules
+    * @param wiring
     *           Configuration you'd like to pass to the context. Ex. ImmutableSet.<Module>of(new
     *           ExecutorServiceModule(myexecutor))
     * @param overrides
@@ -213,11 +237,11 @@ public class RestContextFactory {
     */
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String providerName,
             @Nullable String identity, @Nullable String credential,
-            Iterable<? extends Module> modules, Properties _overrides) {
-      checkNotNull(modules, "modules");
+            Iterable<? extends Module> wiring, Properties _overrides) {
+      checkNotNull(wiring, "wiring");
       ContextSpec<S, A> contextSpec = createContextSpec(providerName, identity, credential,
                _overrides);
-      return createContextBuilder(contextSpec, modules, _overrides);
+      return createContextBuilder(contextSpec, wiring, _overrides);
    }
 
    @SuppressWarnings("unchecked")
@@ -267,12 +291,12 @@ public class RestContextFactory {
    }
 
    public static <S, A> RestContextBuilder<S, A> createContextBuilder(
-            ContextSpec<S, A> contextSpec, Iterable<? extends Module> modules) {
-      return createContextBuilder(contextSpec, modules, new Properties());
+            ContextSpec<S, A> contextSpec, Iterable<? extends Module> wiring) {
+      return createContextBuilder(contextSpec, wiring, new Properties());
    }
 
    public static <S, A> RestContextBuilder<S, A> createContextBuilder(
-            ContextSpec<S, A> contextSpec, Iterable<? extends Module> modules, Properties overrides) {
+            ContextSpec<S, A> contextSpec, Iterable<? extends Module> wiring, Properties overrides) {
       try {
          PropertiesBuilder builder = contextSpec.propertiesBuilderClass.getConstructor(
                   Properties.class).newInstance(overrides);
@@ -289,7 +313,7 @@ public class RestContextFactory {
                   contextSpec.contextBuilderClass, contextSpec.sync, contextSpec.async, builder
                            .build());
 
-         contextBuilder.withModules(toArray(modules, Module.class));
+         contextBuilder.withModules(toArray(wiring, Module.class));
 
          return contextBuilder;
       } catch (Exception e) {
@@ -326,8 +350,8 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, Iterable)
     */
    public <S, A> RestContext<S, A> createContext(String provider,
-            Iterable<? extends Module> modules, Properties overrides) {
-      RestContextBuilder<S, A> builder = createContextBuilder(provider, modules, overrides);
+            Iterable<? extends Module> wiring, Properties overrides) {
+      RestContextBuilder<S, A> builder = createContextBuilder(provider, wiring, overrides);
       return buildContextUnwrappingExceptions(builder);
    }
 
@@ -335,9 +359,9 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, String,String, Iterable)
     */
    public <S, A> RestContext<S, A> createContext(String provider, @Nullable String identity,
-            @Nullable String credential, Iterable<? extends Module> modules) {
+            @Nullable String credential, Iterable<? extends Module> wiring) {
       RestContextBuilder<S, A> builder = createContextBuilder(provider, identity, credential,
-               modules);
+               wiring);
       return buildContextUnwrappingExceptions(builder);
    }
 
@@ -345,9 +369,9 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(String, String,String, Iterable, Properties)
     */
    public <S, A> RestContext<S, A> createContext(String provider, @Nullable String identity,
-            @Nullable String credential, Iterable<? extends Module> modules, Properties overrides) {
+            @Nullable String credential, Iterable<? extends Module> wiring, Properties overrides) {
       RestContextBuilder<S, A> builder = createContextBuilder(provider, identity, credential,
-               modules, overrides);
+               wiring, overrides);
       return buildContextUnwrappingExceptions(builder);
    }
 
@@ -355,8 +379,8 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(ContextSpec, Iterable, Properties)
     */
    public static <S, A> RestContext<S, A> createContext(ContextSpec<S, A> contextSpec,
-            Iterable<? extends Module> modules, Properties overrides) {
-      RestContextBuilder<S, A> builder = createContextBuilder(contextSpec, modules, overrides);
+            Iterable<? extends Module> wiring, Properties overrides) {
+      RestContextBuilder<S, A> builder = createContextBuilder(contextSpec, wiring, overrides);
       return buildContextUnwrappingExceptions(builder);
    }
 
@@ -372,8 +396,8 @@ public class RestContextFactory {
     * @see RestContextFactory#createContextBuilder(ContextSpec, Iterable)
     */
    public static <S, A> RestContext<S, A> createContext(ContextSpec<S, A> contextSpec,
-            Iterable<? extends Module> modules) {
-      RestContextBuilder<S, A> builder = createContextBuilder(contextSpec, modules);
+            Iterable<? extends Module> wiring) {
+      RestContextBuilder<S, A> builder = createContextBuilder(contextSpec, wiring);
       return buildContextUnwrappingExceptions(builder);
    }
 

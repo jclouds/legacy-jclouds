@@ -25,8 +25,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.jclouds.aws.ec2.EC2PropertiesBuilder;
-import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
@@ -50,12 +48,17 @@ public class GoogleAppEngineLiveTest {
             throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+               "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+               "jclouds.test.credential");
 
-      props = new S3PropertiesBuilder(props).credentials(identity, credential).build();
-
-      props = new EC2PropertiesBuilder(props).credentials(identity, credential).build();
+      /**
+       * Since both s3 and ec2 use the same credentials, we can take a shortcut and specify both
+       * here:
+       */
+      props.setProperty("jclouds.identity", identity);
+      props.setProperty("jclouds.credential", credential);
 
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
