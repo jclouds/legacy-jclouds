@@ -80,4 +80,18 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    public Utils utils() {
       return utils;
    }
+
+   public int hashCode() {
+      return providerSpecificContext.hashCode();
+   }
+
+   @Override
+   public String toString() {
+      return providerSpecificContext.toString();
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      return providerSpecificContext.equals(obj);
+   }
 }

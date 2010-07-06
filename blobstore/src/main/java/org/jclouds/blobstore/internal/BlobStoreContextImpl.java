@@ -118,4 +118,19 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    public Utils utils() {
       return utils;
    }
+
+   @Override
+   public int hashCode() {
+      return providerSpecificContext.hashCode();
+   }
+
+   @Override
+   public String toString() {
+      return providerSpecificContext.toString();
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      return providerSpecificContext.equals(obj);
+   }
 }
