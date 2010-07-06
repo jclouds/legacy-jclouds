@@ -47,9 +47,8 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
       properties.setProperty(PROPERTY_S3_AUTH_TAG, "AWS");
-      properties.setProperty(PROPERTY_S3_HEADER_TAG, "aws");
+      properties.setProperty(PROPERTY_S3_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_S3_SERVICE_EXPR, "\\.s3[^.]*\\.amazonaws\\.com");
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       addEndpoints(properties);
@@ -86,5 +85,18 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    protected S3PropertiesBuilder withMetaPrefix(String prefix) {
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, prefix);
       return this;
+   }
+
+   protected void setMetaPrefix() {
+      if (properties.getProperty(PROPERTY_USER_METADATA_PREFIX) == null) {
+         properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-%s-meta-",
+                  properties.getProperty(PROPERTY_S3_HEADER_TAG)));
+      }
+   }
+
+   @Override
+   public Properties build() {
+      setMetaPrefix();
+      return super.build();
    }
 }

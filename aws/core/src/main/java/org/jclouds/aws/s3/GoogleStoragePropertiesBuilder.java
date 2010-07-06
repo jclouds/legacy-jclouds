@@ -6,7 +6,6 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_AUTH_TAG;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_HEADER_TAG;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SERVICE_EXPR;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.util.Properties;
 
@@ -19,7 +18,6 @@ public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-goog-meta-");
       properties.setProperty(PROPERTY_S3_AUTH_TAG, "GOOG1");
       properties.setProperty(PROPERTY_S3_HEADER_TAG, "goog");
       properties.setProperty(PROPERTY_S3_SERVICE_EXPR, "\\.commondatastorage\\.googleapis\\.com");
