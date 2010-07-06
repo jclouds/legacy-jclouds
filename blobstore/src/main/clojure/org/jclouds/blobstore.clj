@@ -58,7 +58,7 @@ See http://code.google.com/p/jclouds for details."
 Options for communication style
      :sync and :async.
 Options can also be specified for extension modules
-     :log4j :enterprise :httpnio :apachehc :bouncycastle :joda :gae"
+     :log4j :enterprise :ning :apachehc :bouncycastle :joda :gae"
   [#^String service #^String account #^String key & options]
   (let [context
         (.createContext

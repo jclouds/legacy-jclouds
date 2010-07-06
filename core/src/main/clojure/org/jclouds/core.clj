@@ -33,6 +33,7 @@
       :ssh 'org.jclouds.ssh.jsch.config.JschSshClientModule
       :enterprise 'org.jclouds.enterprise.config.EnterpriseConfigurationModule
       :apachehc 'org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule
+      :ning 'org.jclouds.http.ning.config.NingHttpCommandExecutorServiceModule
       :bouncycastle 'org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule
       :joda 'org.jclouds.date.joda.config.JodaDateServiceModule
       :gae 'org.jclouds.gae.config.GoogleAppEngineConfigurationModule})
@@ -46,6 +47,7 @@
 Ensure the module is on the classpath.  You are maybe missing a dependency on
   org.jclouds/jclouds-jsch
   org.jclouds/jclouds-log4j
+  org.jclouds/jclouds-ning
   or org.jclouds/jclouds-enterprise."))))))
 
 (defn modules
