@@ -25,7 +25,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import java.util.concurrent.ConcurrentMap;
 
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.testng.annotations.Test;
@@ -122,7 +122,7 @@ public class DeleteKeyPairTest {
    @SuppressWarnings("unchecked")
    private DeleteKeyPair setupStrategy() {
       ConcurrentMap<OrgAndName, KeyPair> credentialsMap = createMock(ConcurrentMap.class);
-      TerremarkVCloudClient terremarkClient = createMock(TerremarkVCloudClient.class);
+      TerremarkVCloudExpressClient terremarkClient = createMock(TerremarkVCloudExpressClient.class);
 
       return new DeleteKeyPair(terremarkClient, credentialsMap);
    }

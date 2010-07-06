@@ -1,0 +1,5 @@
+service=trmk-ecloud
+driver=terremark
+account=user@youregistered.com
+key=password
+nodetag=name_of_your_vapp

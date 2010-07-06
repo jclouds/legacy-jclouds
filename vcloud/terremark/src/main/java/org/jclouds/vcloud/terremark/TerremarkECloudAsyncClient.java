@@ -18,6 +18,9 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICESLIST_XML;
+import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICE_XML;
+
 import java.util.SortedSet;
 
 import javax.ws.rs.Consumes;
@@ -51,16 +54,16 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
-public interface TerremarkECloudAsyncClient extends TerremarkAsyncClient {
+public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
 
    /**
-    * @see TerremarkVCloudClient#addInternetService
+    * @see TerremarkVCloudExpressClient#addInternetService
     */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/extensions/vdc/{vDCId}/internetServices")
-   @Produces("application/vnd.tmrk.ecloud.internetService+xml")
-   @Consumes("application/vnd.tmrk.ecloud.internetService+xml")
+   @Produces(INTERNETSERVICE_XML)
+   @Consumes(INTERNETSERVICE_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    @Override
@@ -70,25 +73,25 @@ public interface TerremarkECloudAsyncClient extends TerremarkAsyncClient {
             AddInternetServiceOptions... options);
 
    /**
-    * @see TerremarkVCloudClient#getAllInternetServices
+    * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/extensions/vdc/{vDCId}/internetServices")
-   @Consumes("application/vnd.tmrk.ecloud.internetServicesList+xml")
+   @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @Override
    ListenableFuture<? extends SortedSet<InternetService>> getAllInternetServicesInVDC(
             @PathParam("vDCId") String vDCId);
 
    /**
-    * @see TerremarkVCloudClient#addInternetServiceToExistingIp
+    * @see TerremarkVCloudExpressClient#addInternetServiceToExistingIp
     */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/extensions/publicIp/{ipId}/internetServices")
-   @Produces("application/vnd.tmrk.ecloud.internetService+xml")
-   @Consumes("application/vnd.tmrk.ecloud.internetService+xml")
+   @Produces(INTERNETSERVICE_XML)
+   @Consumes(INTERNETSERVICE_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    @Override
@@ -98,24 +101,24 @@ public interface TerremarkECloudAsyncClient extends TerremarkAsyncClient {
             AddInternetServiceOptions... options);
 
    /**
-    * @see TerremarkVCloudClient#getInternetServicesOnPublicIP
+    * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP
     */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/extensions/publicIp/{ipId}/internetServices")
-   @Consumes("application/vnd.tmrk.ecloud.internetServicesList+xml")
+   @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @Override
    ListenableFuture<? extends SortedSet<InternetService>> getInternetServicesOnPublicIp(
             @PathParam("ipId") int ipId);
 
    /**
-    * @see TerremarkVCloudClient#getInternetService
+    * @see TerremarkVCloudExpressClient#getInternetService
     */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/extensions/internetService/{internetServiceId}")
-   @Consumes("application/vnd.tmrk.ecloud.internetServicesList+xml")
+   @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Override

@@ -43,7 +43,7 @@ import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
@@ -59,12 +59,12 @@ import com.google.inject.internal.ImmutableSet;
 @Singleton
 public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
 
-   private final TerremarkVCloudClient client;
+   private final TerremarkVCloudExpressClient client;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    private Provider<String> passwordGenerator;
 
    @Inject
-   protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
+   protected TerremarkVCloudComputeClient(TerremarkVCloudExpressClient client,
             PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
             @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<String> successTester,
             Map<VAppStatus, NodeState> vAppStatusToNodeState) {

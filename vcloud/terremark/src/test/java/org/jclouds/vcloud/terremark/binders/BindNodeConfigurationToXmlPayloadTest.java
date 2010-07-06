@@ -29,7 +29,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.testng.annotations.Test;
 
@@ -53,8 +53,8 @@ public class BindNodeConfigurationToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(),
-                  "properties"));
+         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudExpressPropertiesBuilder(
+                  props).build(), "properties"));
       }
    });
 

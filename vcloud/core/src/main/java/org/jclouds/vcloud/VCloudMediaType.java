@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
  * 
  * @see MediaType
  */
-public class VCloudMediaType {
+public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.organizationList+xml"
     */

@@ -35,7 +35,7 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
@@ -56,7 +56,7 @@ public class TerremarkVCloudComputeClientTest {
       String description = new String(ByteStreams.toByteArray(is));
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
-      TerremarkVCloudClient client = createMock(TerremarkVCloudClient.class);
+      TerremarkVCloudExpressClient client = createMock(TerremarkVCloudExpressClient.class);
       expect(client.getVAppTemplate("templateId")).andReturn(template);
       VApp vApp = createMock(VApp.class);
 

@@ -34,13 +34,13 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
-import org.jclouds.vcloud.terremark.TerremarkAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.handlers.ParseTerremarkVCloudErrorFromHttpResponse;
 
 import com.google.inject.Provides;
 
-public abstract class TerremarkRestClientModule<S extends TerremarkClient, A extends TerremarkAsyncClient>
+public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
          extends BaseVCloudRestClientModule<S, A> {
 
    public TerremarkRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {

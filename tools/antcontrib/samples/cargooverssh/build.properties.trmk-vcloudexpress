@@ -1,4 +1,4 @@
-service=terremark
+service=trmk-vcloudexpress
 driver=terremark
 account=user@youregistered.com
 key=password

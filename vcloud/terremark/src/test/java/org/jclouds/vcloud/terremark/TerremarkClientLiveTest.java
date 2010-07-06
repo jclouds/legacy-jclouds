@@ -79,11 +79,11 @@ import com.google.inject.Module;
 
 public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
-   protected String provider = "terremark";
+   protected String provider = "trmk-vcloudexpress";
    protected String expectedOs = "Ubuntu Linux (32-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (32-bit)";
 
-   protected TerremarkClient tmClient;
+   protected TerremarkVCloudClient tmClient;
    protected Factory sshFactory;
    private String publicIp;
    private InternetService is;
@@ -467,7 +467,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
                         ImmutableSet.<Module> of(new Log4JLoggingModule(),
                                  new JschSshClientModule()), props).buildInjector();
 
-      connection = tmClient = injector.getInstance(TerremarkClient.class);
+      connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 130,

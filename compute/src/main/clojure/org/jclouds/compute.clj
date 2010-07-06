@@ -20,8 +20,8 @@
   "A clojure binding to the jclouds ComputeService.
 
 Current supported services are:
-   [ec2, rimuhosting, cloudservers, terremark, vcloud, bluelock, ibmdev, 
-    eucalyptus, hostingdotcom]
+   [ec2, rimuhosting, cloudservers, trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, 
+    ibmdev, eucalyptus, hostingdotcom]
 
 Here's an example of getting some compute configuration from rackspace:
 

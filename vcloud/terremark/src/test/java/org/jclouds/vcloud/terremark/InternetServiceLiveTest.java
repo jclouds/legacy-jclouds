@@ -48,11 +48,11 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.TerremarkVCloudClientLiveTest")
 public class InternetServiceLiveTest {
-   TerremarkVCloudClient tmClient;
+   TerremarkVCloudExpressClient tmClient;
 
    private SortedSet<InternetService> services = Sets.newTreeSet();
 
-   private RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> context;
+   private RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> context;
 
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
@@ -97,7 +97,7 @@ public class InternetServiceLiveTest {
       Properties props = new Properties();
       if (endpoint != null && !"".equals(endpoint))
          props.setProperty("terremark.endpoint", endpoint);
-      context = new RestContextFactory().createContext("terremark", identity, credential, ImmutableSet
+      context = new RestContextFactory().createContext("trmk-vcloudexpress", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), props);
 
       tmClient = context.getApi();

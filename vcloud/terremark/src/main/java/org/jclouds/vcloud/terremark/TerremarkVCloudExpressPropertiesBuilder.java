@@ -18,46 +18,31 @@
  */
 package org.jclouds.vcloud.terremark;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
-import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_VERSION;
 
 import java.util.Properties;
-
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
 
 /**
  * Builds properties used in Terremark VCloud Clients
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
+public class TerremarkVCloudExpressPropertiesBuilder extends TerremarkVCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty("jclouds.dns_name_length_min", "1");
-      properties.setProperty("jclouds.dns_name_length_max", "15");
-      // with ssh key injection comes another reboot. allowing more time
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 360l * 1000l + "");
+      properties.setProperty(PROPERTY_API_VERSION, "0.8a-ext1.6");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "vCloudExpressExtensions");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "1.6");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://services.vcloudexpress.terremark.com/api");
       return properties;
    }
 
-   public TerremarkVCloudPropertiesBuilder(Properties properties) {
+   public TerremarkVCloudExpressPropertiesBuilder(Properties properties) {
       super(properties);
    }
 
-   @Override
-   public Properties build() {
-      setExtensions();
-      return super.build();
-   }
-
-   void setExtensions() {
-      if (properties.getProperty(PROPERTY_TERREMARK_EXTENSION_NS) == null) {
-         properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NS, String.format("urn:tmrk:%s-%s",
-                  properties.getProperty(PROPERTY_TERREMARK_EXTENSION_NAME), properties
-                           .getProperty(PROPERTY_TERREMARK_EXTENSION_VERSION)));
-      }
-   }
 }

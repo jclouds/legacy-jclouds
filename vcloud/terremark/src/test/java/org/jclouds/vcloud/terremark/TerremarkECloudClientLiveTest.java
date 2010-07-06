@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    @BeforeClass
    void setProvider() {
-      this.provider = "ecloud";
+      this.provider = "trmk-ecloud";
       this.itemName = "Ubuntu 8.04 LTS (x86)";
    }
 

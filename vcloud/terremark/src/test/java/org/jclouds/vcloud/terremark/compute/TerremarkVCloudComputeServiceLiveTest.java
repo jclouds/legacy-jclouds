@@ -30,8 +30,8 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
-import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,7 +49,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
       String endpoint = System.getProperty("jclouds.test.endpoint");
       if (endpoint != null && !"".equals(endpoint))
          System.setProperty("terremark.endpoint", endpoint);
-      provider = "terremark";
+      provider = "trmk-vcloudexpress";
       tag = "trmk";
    }
 
@@ -64,7 +64,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
+      RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = new ComputeServiceContextFactory()
                .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
