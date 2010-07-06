@@ -40,9 +40,12 @@ public class User implements Comparable<User> {
    private int friendsCount;
    @SerializedName("geo_enabled")
    private boolean geoEnabled;
+   @SerializedName("contributors_enabled")
+   private boolean contributorsEnabled;
    private long id;
    private String location;
    private String name;
+   private String lang;
    private boolean notifications;
    @SerializedName("profile_background_color")
    private String profileBackgroundColor;
@@ -50,6 +53,8 @@ public class User implements Comparable<User> {
    private URI profileBackgroundImageUrl;
    @SerializedName("profile_background_tile")
    private boolean profileBackgroundTile;
+   @SerializedName("profile_use_background_image")
+   private boolean profileUseBackgroundImage;
    @SerializedName("profile_image_url")
    private URI profileImageUrl;
    @SerializedName("profile_link_color")
@@ -77,9 +82,15 @@ public class User implements Comparable<User> {
 
    }
 
+   public User(long id, String screenName) {
+      this.id = id;
+      this.screenName = screenName;
+   }
+
    public User(Date createdAt, String description, int favouritesCount, int followersCount,
-            boolean following, int friendsCount, boolean geoEnabled, long id, String location,
-            String name, boolean notifications, String profileBackgroundColor,
+            boolean following, int friendsCount, boolean geoEnabled, boolean contributorsEnabled,
+            long id, String location, String name, String lang, boolean notifications,
+            String profileBackgroundColor, boolean profileUseBackgroundImage,
             URI profileBackgroundImageUrl, boolean profileBackgroundTile, URI profileImageUrl,
             String profileLinkColor, String profileSidebarBorderColor,
             String profileSidebarFillColor, String profileTextColor, boolean isProtected,
@@ -91,12 +102,15 @@ public class User implements Comparable<User> {
       this.followersCount = followersCount;
       this.following = following;
       this.friendsCount = friendsCount;
-      this.setGeoEnabled(geoEnabled);
+      this.geoEnabled = geoEnabled;
       this.id = id;
       this.location = location;
       this.name = name;
+      this.lang = lang;
       this.notifications = notifications;
+      this.contributorsEnabled = contributorsEnabled;
       this.profileBackgroundColor = profileBackgroundColor;
+      this.profileUseBackgroundImage = profileUseBackgroundImage;
       this.profileBackgroundImageUrl = profileBackgroundImageUrl;
       this.profileBackgroundTile = profileBackgroundTile;
       this.profileImageUrl = profileImageUrl;
@@ -113,12 +127,119 @@ public class User implements Comparable<User> {
       this.verified = verified;
    }
 
+   public Date getCreatedAt() {
+      return createdAt;
+   }
+
+   public String getDescription() {
+      return description;
+   }
+
+   public int getFavouritesCount() {
+      return favouritesCount;
+   }
+
+   public int getFollowersCount() {
+      return followersCount;
+   }
+
+   public boolean isFollowing() {
+      return following;
+   }
+
+   public int getFriendsCount() {
+      return friendsCount;
+   }
+
+   public boolean isGeoEnabled() {
+      return geoEnabled;
+   }
+
+   public long getId() {
+      return id;
+   }
+
+   public String getLocation() {
+      return location;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public boolean isNotifications() {
+      return notifications;
+   }
+
+   public String getProfileBackgroundColor() {
+      return profileBackgroundColor;
+   }
+
+   public URI getProfileBackgroundImageUrl() {
+      return profileBackgroundImageUrl;
+   }
+
+   public boolean isProfileBackgroundTile() {
+      return profileBackgroundTile;
+   }
+
+   public boolean isProfileUseBackgroundImage() {
+      return profileUseBackgroundImage;
+   }
+
+   public URI getProfileImageUrl() {
+      return profileImageUrl;
+   }
+
+   public String getProfileLinkColor() {
+      return profileLinkColor;
+   }
+
+   public String getProfileSidebarBorderColor() {
+      return profileSidebarBorderColor;
+   }
+
+   public String getProfileSidebarFillColor() {
+      return profileSidebarFillColor;
+   }
+
+   public String getProfileTextColor() {
+      return profileTextColor;
+   }
+
+   public boolean isProtected() {
+      return isProtected;
+   }
+
+   public String getScreenName() {
+      return screenName;
+   }
+
+   public int getStatusesCount() {
+      return statusesCount;
+   }
+
+   public String getTimeZone() {
+      return timeZone;
+   }
+
+   public URI getUrl() {
+      return url;
+   }
+
+   public int getUtcOffset() {
+      return utcOffset;
+   }
+
+   public boolean isVerified() {
+      return verified;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((screenName == null) ? 0 : screenName.hashCode());
       return result;
    }
@@ -134,11 +255,6 @@ public class User implements Comparable<User> {
       User other = (User) obj;
       if (id != other.id)
          return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
       if (screenName == null) {
          if (other.screenName != null)
             return false;
@@ -147,204 +263,23 @@ public class User implements Comparable<User> {
       return true;
    }
 
-   public long getId() {
-      return id;
-   }
-
-   public void setId(long id) {
-      this.id = id;
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
-   public String getScreenName() {
-      return screenName;
-   }
-
-   public void setScreenName(String screenName) {
-      this.screenName = screenName;
-   }
-
-   public String getLocation() {
-      return location;
-   }
-
-   public void setLocation(String location) {
-      this.location = location;
-   }
-
-   public String getDescription() {
-      return description;
-   }
-
-   public void setDescription(String description) {
-      this.description = description;
-   }
-
-   public URI getProfileImageUrl() {
-      return profileImageUrl;
-   }
-
-   public void setProfileImageUrl(URI profileImageUrl) {
-      this.profileImageUrl = profileImageUrl;
-   }
-
-   public URI getUrl() {
-      return url;
-   }
-
-   public void setUrl(URI url) {
-      this.url = url;
-   }
-
-   public boolean isProtected() {
-      return isProtected;
-   }
-
-   public void setProtected(boolean isProtected) {
-      this.isProtected = isProtected;
-   }
-
-   public int getFollowersCount() {
-      return followersCount;
-   }
-
-   public void setFollowersCount(int followersCount) {
-      this.followersCount = followersCount;
-   }
-
-   public String getProfileBackgroundColor() {
-      return profileBackgroundColor;
-   }
-
-   public void setProfileBackgroundColor(String profileBackgroundColor) {
-      this.profileBackgroundColor = profileBackgroundColor;
-   }
-
-   public String getProfileTextColor() {
-      return profileTextColor;
-   }
-
-   public void setProfileTextColor(String profileTextColor) {
-      this.profileTextColor = profileTextColor;
-   }
-
-   public String getProfileLinkColor() {
-      return profileLinkColor;
-   }
-
-   public void setProfileLinkColor(String profileLinkColor) {
-      this.profileLinkColor = profileLinkColor;
-   }
-
-   public String getProfileSidebarFillColor() {
-      return profileSidebarFillColor;
-   }
-
-   public void setProfileSidebarFillColor(String profileSidebarFillColor) {
-      this.profileSidebarFillColor = profileSidebarFillColor;
-   }
-
-   public String getProfileSidebarBorderColor() {
-      return profileSidebarBorderColor;
-   }
-
-   public void setProfileSidebarBorderColor(String profileSidebarBorderColor) {
-      this.profileSidebarBorderColor = profileSidebarBorderColor;
-   }
-
-   public int getFriendsCount() {
-      return friendsCount;
-   }
-
-   public void setFriendsCount(int friendsCount) {
-      this.friendsCount = friendsCount;
-   }
-
-   public Date getCreatedAt() {
-      return createdAt;
-   }
-
-   public void setCreatedAt(Date createdAt) {
-      this.createdAt = createdAt;
-   }
-
-   public int getFavouritesCount() {
-      return favouritesCount;
-   }
-
-   public void setFavouritesCount(int favouritesCount) {
-      this.favouritesCount = favouritesCount;
-   }
-
-   public int getUtcOffset() {
-      return utcOffset;
-   }
-
-   public void setUtcOffset(int utcOffset) {
-      this.utcOffset = utcOffset;
-   }
-
-   public String getTimeZone() {
-      return timeZone;
-   }
-
-   public void setTimeZone(String timeZone) {
-      this.timeZone = timeZone;
-   }
-
-   public URI getProfileBackgroundImageUrl() {
-      return profileBackgroundImageUrl;
-   }
-
-   public void setProfileBackgroundImageUrl(URI profileBackgroundImageUrl) {
-      this.profileBackgroundImageUrl = profileBackgroundImageUrl;
-   }
-
-   public boolean isProfileBackgroundTile() {
-      return profileBackgroundTile;
-   }
-
-   public void setProfileBackgroundTile(boolean profileBackgroundTile) {
-      this.profileBackgroundTile = profileBackgroundTile;
-   }
-
-   public int getStatusesCount() {
-      return statusesCount;
-   }
-
-   public void setStatusesCount(int statusesCount) {
-      this.statusesCount = statusesCount;
-   }
-
-   public boolean isNotifications() {
-      return notifications;
-   }
-
-   public void setNotifications(boolean notifications) {
-      this.notifications = notifications;
-   }
-
-   public boolean isFollowing() {
-      return following;
-   }
-
-   public void setFollowing(boolean following) {
-      this.following = following;
-   }
-
-   public boolean isVerified() {
-      return verified;
-   }
-
-   public void setVerified(boolean verified) {
-      this.verified = verified;
+   @Override
+   public String toString() {
+      return "User [createdAt=" + createdAt + ", description=" + description + ", favouritesCount="
+               + favouritesCount + ", followersCount=" + followersCount + ", following="
+               + following + ", friendsCount=" + friendsCount + ", geoEnabled=" + geoEnabled
+               + ", id=" + id + ", isProtected=" + isProtected + ", location=" + location
+               + ", name=" + name + ", notifications=" + notifications
+               + ", profileBackgroundColor=" + profileBackgroundColor
+               + ", profileBackgroundImageUrl=" + profileBackgroundImageUrl
+               + ", profileBackgroundTile=" + profileBackgroundTile + ", profileImageUrl="
+               + profileImageUrl + ", profileLinkColor=" + profileLinkColor
+               + ", profileSidebarBorderColor=" + profileSidebarBorderColor
+               + ", profileSidebarFillColor=" + profileSidebarFillColor + ", profileTextColor="
+               + profileTextColor + ", profileUseBackgroundImage=" + profileUseBackgroundImage
+               + ", screenName=" + screenName + ", statusesCount=" + statusesCount + ", timeZone="
+               + timeZone + ", url=" + url + ", utcOffset=" + utcOffset + ", verified=" + verified
+               + "]";
    }
 
    public int compareTo(User o) {
@@ -353,11 +288,11 @@ public class User implements Comparable<User> {
       return (this == o) ? 0 : screenName.compareTo(o.screenName);
    }
 
-   public void setGeoEnabled(boolean geoEnabled) {
-      this.geoEnabled = geoEnabled;
+   public boolean isContributorsEnabled() {
+      return contributorsEnabled;
    }
 
-   public boolean isGeoEnabled() {
-      return geoEnabled;
+   public String getLang() {
+      return lang;
    }
 }

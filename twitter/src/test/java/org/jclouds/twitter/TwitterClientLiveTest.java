@@ -26,11 +26,15 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.twitter.domain.Status;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code TwitterClient}
@@ -45,11 +49,14 @@ public class TwitterClientLiveTest {
 
    @BeforeGroups(groups = "live")
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+               "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+               "jclouds.test.credential");
 
-      context = createContext(contextSpec("twitter", "http://twitter.com", "1", identity, credential,
-               TwitterClient.class, TwitterAsyncClient.class));
+      context = createContext(contextSpec("twitter", "http://twitter.com", "1", identity,
+               credential, TwitterClient.class, TwitterAsyncClient.class), ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
 
       connection = context.getApi();
    }

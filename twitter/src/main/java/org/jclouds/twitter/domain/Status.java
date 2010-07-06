@@ -31,12 +31,12 @@ public class Status implements Comparable<Status> {
    @SerializedName("created_at")
    private Date createdAt;
    private boolean favorited;
-   private String geo;
+   private Location geo;
    private long id;
    @SerializedName("in_reply_to_screen_name")
    private String inReplyToScreenName;
    @SerializedName("in_reply_to_status_id")
-   private Integer inReplyToStatusId;
+   private Long inReplyToStatusId;
    @SerializedName("in_reply_to_user_id")
    private Integer inReplyToUserId;
    private String source;
@@ -47,8 +47,14 @@ public class Status implements Comparable<Status> {
    public Status() {
    }
 
-   public Status(Date createdAt, boolean favorited, String geo, long id,
-            String inReplyToScreenName, Integer inReplyToStatusId, Integer inReplyToUserId,
+   public Status(long id, User user, String text) {
+      this.id = id;
+      this.user = user;
+      this.text = text;
+   }
+
+   public Status(Date createdAt, boolean favorited, Location geo, long id,
+            String inReplyToScreenName, Long inReplyToStatusId, Integer inReplyToUserId,
             String source, String text, boolean truncated, User user) {
       this.createdAt = createdAt;
       this.favorited = favorited;
@@ -63,13 +69,15 @@ public class Status implements Comparable<Status> {
       this.user = user;
    }
 
+   public int compareTo(Status o) {
+      return (int) ((this == o) ? 0 : id + "".compareTo(o.id + ""));
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
       result = prime * result + (int) (id ^ (id >>> 32));
-      result = prime * result + ((text == null) ? 0 : text.hashCode());
       result = prime * result + ((user == null) ? 0 : user.hashCode());
       return result;
    }
@@ -83,17 +91,7 @@ public class Status implements Comparable<Status> {
       if (getClass() != obj.getClass())
          return false;
       Status other = (Status) obj;
-      if (createdAt == null) {
-         if (other.createdAt != null)
-            return false;
-      } else if (!createdAt.equals(other.createdAt))
-         return false;
       if (id != other.id)
-         return false;
-      if (text == null) {
-         if (other.text != null)
-            return false;
-      } else if (!text.equals(other.text))
          return false;
       if (user == null) {
          if (other.user != null)
@@ -103,95 +101,57 @@ public class Status implements Comparable<Status> {
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "Status [createdAt=" + createdAt + ", favorited=" + favorited + ", geo=" + geo
+               + ", id=" + id + ", inReplyToScreenName=" + inReplyToScreenName
+               + ", inReplyToStatusId=" + inReplyToStatusId + ", inReplyToUserId="
+               + inReplyToUserId + ", source=" + source + ", text=" + text + ", truncated="
+               + truncated + ", user=" + user + "]";
+   }
+
    public Date getCreatedAt() {
       return createdAt;
-   }
-
-   public void setCreatedAt(Date createdAt) {
-      this.createdAt = createdAt;
-   }
-
-   public long getId() {
-      return id;
-   }
-
-   public void setId(long id) {
-      this.id = id;
-   }
-
-   public String getText() {
-      return text;
-   }
-
-   public void setText(String text) {
-      this.text = text;
-   }
-
-   public String getSource() {
-      return source;
-   }
-
-   public void setSource(String source) {
-      this.source = source;
-   }
-
-   public boolean isTruncated() {
-      return truncated;
-   }
-
-   public void setTruncated(boolean truncated) {
-      this.truncated = truncated;
-   }
-
-   public Integer getInReplyToStatusId() {
-      return inReplyToStatusId;
-   }
-
-   public void setInReplyToStatusId(Integer inReplyToStatusId) {
-      this.inReplyToStatusId = inReplyToStatusId;
-   }
-
-   public Integer getInReplyToUserId() {
-      return inReplyToUserId;
-   }
-
-   public void setInReplyToUserId(Integer inReplyToUserId) {
-      this.inReplyToUserId = inReplyToUserId;
    }
 
    public boolean isFavorited() {
       return favorited;
    }
 
-   public void setFavorited(boolean favorited) {
-      this.favorited = favorited;
+   public Location getGeo() {
+      return geo;
+   }
+
+   public long getId() {
+      return id;
    }
 
    public String getInReplyToScreenName() {
       return inReplyToScreenName;
    }
 
-   public void setInReplyToScreenName(String inReplyToScreenName) {
-      this.inReplyToScreenName = inReplyToScreenName;
+   public Long getInReplyToStatusId() {
+      return inReplyToStatusId;
+   }
+
+   public Integer getInReplyToUserId() {
+      return inReplyToUserId;
+   }
+
+   public String getSource() {
+      return source;
+   }
+
+   public String getText() {
+      return text;
+   }
+
+   public boolean isTruncated() {
+      return truncated;
    }
 
    public User getUser() {
       return user;
    }
 
-   public void setUser(User user) {
-      this.user = user;
-   }
-
-   public int compareTo(Status o) {
-      return (int) ((this == o) ? 0 : id + "".compareTo(o.id + ""));
-   }
-
-   public void setGeo(String geo) {
-      this.geo = geo;
-   }
-
-   public String getGeo() {
-      return geo;
-   }
 }

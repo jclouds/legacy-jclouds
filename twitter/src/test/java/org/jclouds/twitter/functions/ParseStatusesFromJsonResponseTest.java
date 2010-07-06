@@ -28,6 +28,7 @@ import java.util.SortedSet;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.twitter.domain.Location;
 import org.jclouds.twitter.domain.Status;
 import org.jclouds.twitter.domain.User;
 import org.testng.annotations.Test;
@@ -60,79 +61,41 @@ public class ParseStatusesFromJsonResponseTest {
       SortedSet<Status> expects = ImmutableSortedSet
                .of(
 
-                        new Status(
-                                 dateService.cDateParse("Sat Oct 31 01:45:14 +0000 2009"),
+               new Status(
+                        dateService.cDateParse("Tue Jun 29 20:41:15 +0000 2010"),
+                        false,
+                        new Location("Point", new double[] { 153.08691298, -26.38658779 }),
+                        15138751340l,
+                        "adrianfcole",
+                        15112459535l,
+                        21744326,
+                        null,
+                        "@adrianfcole hehe, yes. Still going :) hope you're keeping well!",
+                        false,
+                        new User(
+                                 dateService.cDateParse("Sat Jul 26 08:08:17 +0000 2008"),
+                                 "London-based South African software geek & amateur photog. Since Nov 2009, travelling the world with @sunflowerkate on an extended honeymoon",
+                                 21,
+                                 315,
+                                 true,
+                                 405,
+                                 true,
                                  false,
-                                 null,
-                                 5303839785l,
-                                 null,
-                                 null,
-                                 null,
-                                 "<a href=\"http://www.tweetdeck.com/\" rel=\"nofollow\">TweetDeck</a>",
-                                 "RT @jclouds: come find out about #cloud storage and how to access it from #java in palo alto this Tuesday: http://is.gd/4IFA9",
+                                 15608907,
+                                 "Travelling around the world",
+                                 "Andrew Newdigate",
+                                 "en",
                                  false,
-                                 new User(
-                                          dateService.cDateParse("Sat Apr 26 06:13:08 +0000 2008"),
-                                          "Jack of All Trades: Dad to anZel and Arden, VMware, vCloud, Security, Compliance, Former Developer",
-                                          0,
-                                          474,
-                                          false,
-                                          199,
-                                          false,
-                                          14540593,
-                                          "Bay Area, CA",
-                                          "Jian Zhen",
-                                          false,
-                                          "C6E2EE",
-                                          URI
-                                                   .create("http://s.twimg.com/a/1256778767/images/themes/theme2/bg.gif"),
-                                          false,
-                                          URI
-                                                   .create("http://a3.twimg.com/profile_images/64445411/30b8b19_bigger_normal.jpg"),
-                                          "1F98C7", "C6E2EE", "DAECF4", "663B12", false, "zhenjl",
-                                          1981, "Pacific Time (US & Canada)", URI
-                                                   .create("http://zhen.org"), -28800, false)),
-
-                        new Status(
-                                 dateService.cDateParse("Sat Oct 31 09:35:27 +0000 2009"),
+                                 "FFF04D",
+                                 true,
+                                 URI
+                                          .create("http://a1.twimg.com/profile_background_images/62032362/_MG_8095_6_7HDR_tonemapped.jpg"),
                                  false,
-                                 null,
-                                 5310690603l,
-                                 null,
-                                 null,
-                                 null,
-                                 "<a href=\"http://www.tweetdeck.com/\" rel=\"nofollow\">TweetDeck</a>",
-                                 "RT @jclouds: live multi #cloud demo of jclouds connecting to 3 storage clouds from google appengine http://is.gd/4IXMh",
-                                 false,
-                                 new User(
-                                          dateService.cDateParse("Tue Apr 28 15:29:42 +0000 2009"),
-                                          "Some random guy who seems to care about cloud collisions at siliconANGLE.com",
-                                          245,
-                                          572,
-                                          false,
-                                          325,
-                                          false,
-                                          36093693,
-                                          "San Francisco ",
-                                          "James Watters",
-                                          false,
-                                          "C6E2EE",
-                                          URI
-                                                   .create("http://a1.twimg.com/profile_background_images/24067016/17361976.jpg"),
-                                          true,
-                                          URI
-                                                   .create("http://a3.twimg.com/profile_images/445071063/tiktaalik-transitional-fossil_normal.png"),
-                                          "1F98C7",
-                                          "C6E2EE",
-                                          "DAECF4",
-                                          "663B12",
-                                          false,
-                                          "wattersjames",
-                                          1964,
-                                          "Pacific Time (US & Canada)",
-                                          URI
-                                                   .create("http://siliconangle.net/ver2/author/jwatters/"),
-                                          -28800, false))
+                                 URI
+                                          .create("http://a1.twimg.com/profile_images/593267212/many_moon_honeymoon_normal.jpg"),
+                                 "0099CC", "fff8ad", "f6ffd1", "333333", false, "suprememoocow",
+                                 987, "Kuala Lumpur", URI.create("http://newdigate.me"), -28800,
+                                 false))
 
                );
 
