@@ -383,7 +383,8 @@ public class Utils {
          return (Class<RestContextBuilder<S, A>>) (contextBuilderClassName != null ? Class
                   .forName(contextBuilderClassName) : RestContextBuilder.class);
       } else {
-         checkArgument(contextBuilderClassName != null, "please configure contextbuilder class");
+         checkArgument(contextBuilderClassName != null,
+                  "please configure contextbuilder class for " + provider);
          return (Class<RestContextBuilder<S, A>>) Class.forName(contextBuilderClassName);
       }
    }

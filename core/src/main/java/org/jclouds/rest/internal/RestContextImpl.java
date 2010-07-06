@@ -121,4 +121,54 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    public String getProvider() {
       return provider;
    }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((apiVersion == null) ? 0 : apiVersion.hashCode());
+      result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
+      result = prime * result + ((identity == null) ? 0 : identity.hashCode());
+      result = prime * result + ((provider == null) ? 0 : provider.hashCode());
+      return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      RestContextImpl other = (RestContextImpl) obj;
+      if (apiVersion == null) {
+         if (other.apiVersion != null)
+            return false;
+      } else if (!apiVersion.equals(other.apiVersion))
+         return false;
+      if (endpoint == null) {
+         if (other.endpoint != null)
+            return false;
+      } else if (!endpoint.equals(other.endpoint))
+         return false;
+      if (identity == null) {
+         if (other.identity != null)
+            return false;
+      } else if (!identity.equals(other.identity))
+         return false;
+      if (provider == null) {
+         if (other.provider != null)
+            return false;
+      } else if (!provider.equals(other.provider))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "RestContextImpl [provider=" + provider + ", endpoint=" + endpoint + ", apiVersion="
+               + apiVersion + ", identity=" + identity + "]";
+   }
 }

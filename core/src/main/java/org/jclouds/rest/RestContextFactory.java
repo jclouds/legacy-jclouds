@@ -18,6 +18,7 @@
  */
 package org.jclouds.rest;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.toArray;
 import static org.jclouds.util.Utils.initContextBuilder;
@@ -97,6 +98,12 @@ public class RestContextFactory {
          this.credential = credential;
          this.sync = sync;
          this.async = async;
+         checkArgument(RestContextBuilder.class.isAssignableFrom(contextBuilderClass),
+                  contextBuilderClass.getName() + " is not a subclass of "
+                           + RestContextBuilder.class.getName());
+         checkArgument(PropertiesBuilder.class.isAssignableFrom(propertiesBuilderClass),
+                  propertiesBuilderClass.getName() + " is not a subclass of "
+                           + PropertiesBuilder.class.getName());
          this.propertiesBuilderClass = propertiesBuilderClass;
          this.contextBuilderClass = contextBuilderClass;
       }
@@ -182,7 +189,8 @@ public class RestContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(String, Properties, Iterable<? extends Module>, Properties)
+    * @see RestContextFactory#createContextBuilder(String, Properties, Iterable<? extends Module>,
+    *      Properties)
     */
    public <S, A> RestContextBuilder<S, A> createContextBuilder(String provider, Properties overrides) {
       return createContextBuilder(provider, overrides.getProperty("jclouds.identity"), overrides
@@ -242,6 +250,32 @@ public class RestContextFactory {
       ContextSpec<S, A> contextSpec = createContextSpec(providerName, identity, credential,
                _overrides);
       return createContextBuilder(contextSpec, wiring, _overrides);
+   }
+
+   public static Properties toProperties(ContextSpec<?, ?> contextSpec) {
+      checkNotNull(contextSpec, "contextSpec");
+
+      Properties props = new Properties();
+
+      props.setProperty(contextSpec.provider + ".endpoint", contextSpec.endpoint);
+      props.setProperty(contextSpec.provider + ".apiversion", contextSpec.apiVersion);
+      props.setProperty(contextSpec.provider + ".identity", contextSpec.identity);
+      if (contextSpec.credential != null)
+         props.setProperty(contextSpec.provider + ".credential", contextSpec.credential);
+      if (contextSpec.sync != null) {
+         props.setProperty(contextSpec.provider + ".sync", contextSpec.sync.getName());
+         props.setProperty(contextSpec.provider + ".async", checkNotNull(contextSpec.async,
+                  "contextSpec.async").getName());
+      } else {
+
+         props.setProperty(contextSpec.provider + ".contextbuilder", checkNotNull(
+                  contextSpec.contextBuilderClass, "contextSpec.contextBuilderClass").getName());
+
+         props.setProperty(contextSpec.provider + ".propertiesbuilder", checkNotNull(
+                  contextSpec.propertiesBuilderClass, "contextSpec.propertiesBuilderClass")
+                  .getName());
+      }
+      return props;
    }
 
    @SuppressWarnings("unchecked")
