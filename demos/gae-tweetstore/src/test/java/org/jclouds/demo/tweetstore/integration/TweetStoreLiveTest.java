@@ -20,22 +20,39 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
+import static org.jclouds.rest.RestContextFactory.contextSpec;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
+import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
+import org.jclouds.twitter.TwitterAsyncClient;
+import org.jclouds.twitter.TwitterClient;
+import org.jclouds.twitter.domain.Status;
 import org.jclouds.util.Utils;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.google.inject.Module;
 
 /**
  * Starts up the Google App Engine for Java Development environment and deploys an application which
@@ -48,67 +65,48 @@ public class TweetStoreLiveTest {
 
    GoogleDevServer server;
    private URL url;
-   private Iterable<BlobStoreContext> contexts;
+   private Map<String, BlobStoreContext> contexts;
    private String container;
 
+   private static final Iterable<String> blobstores = ImmutableSet.of("cloudfiles",
+            "googlestorage", "s3", "azureblob");
+   private static final Properties props = new Properties();
+
    @BeforeTest
-   @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
-   public void startDevAppServer(final String warfile, final String address, final String port)
-            throws Exception {
-      url = new URL(String.format("http://%s:%s", address, port));
-      Properties props = new Properties();
-      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System
-               .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
-
-      // WATCH THIS.. when adding a new context, you must update the string
-      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, "cloudfiles,s3,azureblob");
-
-      // props = new TwitterPropertiesBuilder(props).withCredentials(
-      // checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
-      // System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
-      // TODO FIX
-      //
-      // props = new S3PropertiesBuilder(props)
-      // .withCredentials(
-      // checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
-      // PROPERTY_AWS_ACCESSKEYID),
-      // System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
-      // PROPERTY_AWS_SECRETACCESSKEY)).build();
-      //
-      // props = new CloudFilesPropertiesBuilder(props).withCredentials(
-      // checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
-      // System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY)).build();
-      //
-      // props = new AzureBlobPropertiesBuilder(props).withCredentials(
-      // checkNotNull(System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT),
-      // PROPERTY_AZURESTORAGE_ACCOUNT),
-      // System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
-
-      server = new GoogleDevServer();
-      server.writePropertiesAndStartServer(address, port, warfile, props);
-   }
-
-   @BeforeClass
    void clearAndCreateContainers() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
-      // BlobStoreContextFactory factory = new BlobStoreContextFactory();
-      // TODO FIX
-      // BlobStoreContext s3Context = factory.createContext("s3", checkNotNull(System
-      // .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
-      // .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
-      //
-      // BlobStoreContext cfContext = factory.createContext("cloudfiles", checkNotNull(System
-      // .getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System.getProperty(
-      // PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
-      //
-      // BlobStoreContext azContext = factory.createContext("azureblob", checkNotNull(System
-      // .getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT), System
-      // .getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
-      //
-      // this.contexts = ImmutableList.of(s3Context, cfContext, azContext);
+
+      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System
+               .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
+
+      props.setProperty(GuiceServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(
+               blobstores));
+
+      // put all identity/credential pairs into the client
+      addCredentialsForBlobStores(props);
+
+      // example of an ad-hoc client configuration
+      addConfigurationForTwitter(props);
+
+      final BlobStoreContextFactory factory = new BlobStoreContextFactory();
+      // for testing, capture logs.
+      final Set<Module> wiring = ImmutableSet.<Module> of(new Log4JLoggingModule());
+      this.contexts = Maps.newConcurrentMap();
+
+      for (String provider : blobstores) {
+         contexts.put(provider, factory.createContext(provider, wiring, props));
+      }
+
+      RestContext<TwitterClient, TwitterAsyncClient> twitterContext = new RestContextFactory()
+               .createContext("twitter", wiring, props);
+      StoreTweetsController controller = new StoreTweetsController(contexts, container,
+               twitterContext.getApi());
+
+      SortedSet<Status> statuses = twitterContext.getApi().getMyMentions();
+
       boolean deleted = false;
-      for (BlobStoreContext context : contexts) {
+      for (BlobStoreContext context : contexts.values()) {
          if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context
                      .getProviderSpecificContext().getEndpoint());
@@ -120,14 +118,50 @@ public class TweetStoreLiveTest {
          System.err.println("sleeping 60 seconds to allow containers to clear");
          Thread.sleep(60000);
       }
-      for (BlobStoreContext context : contexts) {
+      for (BlobStoreContext context : contexts.values()) {
          System.err.printf("creating container %s at %s%n", container, context
                   .getProviderSpecificContext().getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
+
       if (deleted) {
          System.err.println("sleeping 5 seconds to allow containers to create");
-         Thread.sleep(30000);
+         Thread.sleep(5000);
+      }
+
+      for (Entry<String, BlobStoreContext> entry : contexts.entrySet()) {
+         System.err.printf("filling container %s at %s%n", container, entry.getKey());
+         controller.addMyTweets(entry.getKey(), statuses);
+      }
+   }
+
+   @BeforeTest(dependsOnMethods = "clearAndCreateContainers")
+   @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
+   public void startDevAppServer(final String warfile, final String address, final String port)
+            throws Exception {
+      url = new URL(String.format("http://%s:%s", address, port));
+
+      server = new GoogleDevServer();
+      server.writePropertiesAndStartServer(address, port, warfile, props);
+   }
+
+   private void addConfigurationForTwitter(Properties props) {
+      String twitterIdentity = checkNotNull(System.getProperty("twitter.identity"),
+               "twitter.identity");
+      String twitterCredential = checkNotNull(System.getProperty("twitter.credential"),
+               "twitter.credential");
+
+      props.putAll(RestContextFactory.toProperties(contextSpec("twitter", "http://twitter.com",
+               "1", twitterIdentity, twitterCredential, TwitterClient.class,
+               TwitterAsyncClient.class)));
+   }
+
+   private void addCredentialsForBlobStores(Properties props) {
+      for (String provider : blobstores) {
+         props.setProperty(provider + ".identity", checkNotNull(System.getProperty(provider
+                  + ".identity"), provider + ".identity"));
+         props.setProperty(provider + ".credential", checkNotNull(System.getProperty(provider
+                  + ".credential"), provider + ".credential"));
       }
    }
 
@@ -147,8 +181,7 @@ public class TweetStoreLiveTest {
    public void testPrimeContainers() throws IOException, InterruptedException {
       URL gurl = new URL(url, "/store/do");
 
-      // WATCH THIS, you need to add a context each time
-      for (String context : new String[] { "cloudfiles", "s3", "azureblob" }) {
+      for (String context : blobstores) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
@@ -161,7 +194,7 @@ public class TweetStoreLiveTest {
 
       System.err.println("sleeping 20 seconds to allow for eventual consistency delay");
       Thread.sleep(20000);
-      for (BlobStoreContext context : contexts) {
+      for (BlobStoreContext context : contexts.values()) {
          assert context.createInputStreamMap(container).size() > 0 : context
                   .getProviderSpecificContext().getEndpoint();
       }

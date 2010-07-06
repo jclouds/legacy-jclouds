@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+    <!--
 
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+        Copyright (C) 2009 Cloud Conscious, LLC.
+        <info@cloudconscious.com>
 
-    ====================================================================
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+        ====================================================================
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-    ====================================================================
-
--->
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+        applicable law or agreed to in writing, software distributed
+        under the License is distributed on an "AS IS" BASIS, WITHOUT
+        WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions
+        and limitations under the License.
+        ====================================================================
+    -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>    
+        <groupId>org.jclouds</groupId>
         <artifactId>jclouds-demos-project</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -66,17 +65,24 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-twitter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-aws</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-atmos</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -232,44 +238,44 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>jclouds.twitter.user</name>
+                                            <name>twitter.identity</name>
                                             <value>${jclouds.twitter.user}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.twitter.password</name>
+                                            <name>twitter.credential</name>
                                             <value>${jclouds.twitter.password}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.azure.storage.account</name>
+                                            <name>azureblob.identity</name>
                                             <value>${jclouds.azure.storage.account}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.azure.storage.key</name>
+                                            <name>azureblob.credential</name>
                                             <value>${jclouds.azure.storage.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.rackspace.user</name>
+                                            <name>cloudfiles.identity</name>
                                             <value>${jclouds.rackspace.user}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.rackspace.key</name>
+                                            <name>cloudfiles.credential</name>
                                             <value>${jclouds.rackspace.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.emcsaas.uid</name>
-                                            <value>${jclouds.emcsaas.uid}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.emcsaas.key</name>
-                                            <value>${jclouds.emcsaas.key}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.aws.accesskeyid</name>
+                                            <name>s3.identity</name>
                                             <value>${jclouds.aws.accesskeyid}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.aws.secretaccesskey</name>
+                                            <name>s3.credential</name>
                                             <value>${jclouds.aws.secretaccesskey}</value>
+                                        </property>
+                                        <property>
+                                            <name>googlestorage.identity</name>
+                                            <value>${jclouds.googlestorage.accesskeyid}</value>
+                                        </property>
+                                        <property>
+                                            <name>googlestorage.credential</name>
+                                            <value>${jclouds.googlestorage.secretaccesskey}</value>
                                         </property>
                                         <property>
                                             <name>appengine.home</name>

@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.TransientBlobStoreContextBuilder;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class KeyToStoredTweetStatusTest {
 
    BlobMap createMap() throws InterruptedException, ExecutionException {
-      BlobStoreContext context = new TransientBlobStoreContextBuilder().buildBlobStoreContext();
+      BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummy", "dummy");
       context.getBlobStore().createContainerInLocation(null, "test1");
       return context.createBlobMap("test1");
    }

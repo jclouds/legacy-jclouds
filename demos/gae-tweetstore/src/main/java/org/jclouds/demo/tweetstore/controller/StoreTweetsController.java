@@ -39,6 +39,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.domain.Status;
 
@@ -82,8 +83,8 @@ public class StoreTweetsController extends HttpServlet {
 
    @Inject
    @VisibleForTesting
-   StoreTweetsController(Map<String, BlobStoreContext> contexts,
-            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) final String container,
+   public StoreTweetsController(Map<String, BlobStoreContext> contexts,
+            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container,
             TwitterClient client) {
       this.container = container;
       this.contexts = contexts;
@@ -91,16 +92,20 @@ public class StoreTweetsController extends HttpServlet {
    }
 
    @VisibleForTesting
-   void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
+   public void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
       BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for "
                + contextName + " in " + contexts.keySet());
       BlobMap map = context.createBlobMap(container);
       for (Status status : allAboutMe) {
+         Blob blob = null;
          try {
-            map.put(status.getId() + "", new StatusToBlob(map).apply(status));
+            blob = new StatusToBlob(map).apply(status);
+            map.put(status.getId() + "", blob);
+         } catch (AuthorizationException e) {
+            throw e;
          } catch (Exception e) {
-            logger.error(e, "Error storing tweet %s on map %s/%s", status.getId(), context,
-                     container);
+            logger.error(e, "Error storing tweet %s (blob[%s]) on map %s/%s", status.getId(), blob,
+                     context, container);
          }
       }
    }

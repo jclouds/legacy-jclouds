@@ -66,6 +66,18 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>test</scope>
+        </dependency>        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-twitter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -242,43 +254,43 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>jclouds.twitter.user</name>
+                                            <name>twitter.identity</name>
                                             <value>${jclouds.twitter.user}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.twitter.password</name>
+                                            <name>twitter.credential</name>
                                             <value>${jclouds.twitter.password}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.azure.storage.account</name>
+                                            <name>azureblob.identity</name>
                                             <value>${jclouds.azure.storage.account}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.azure.storage.key</name>
+                                            <name>azureblob.credential</name>
                                             <value>${jclouds.azure.storage.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.rackspace.user</name>
+                                            <name>cloudfiles.identity</name>
                                             <value>${jclouds.rackspace.user}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.rackspace.key</name>
+                                            <name>cloudfiles.credential</name>
                                             <value>${jclouds.rackspace.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.emcsaas.uid</name>
-                                            <value>${jclouds.emcsaas.uid}</value>
+                                            <name>googlestorage.identity</name>
+                                            <value>${jclouds.googlestorage.accesskeyid}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.emcsaas.key</name>
-                                            <value>${jclouds.emcsaas.key}</value>
+                                            <name>googlestorage.credential</name>
+                                            <value>${jclouds.googlestorage.secretaccesskey}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.aws.accesskeyid</name>
+                                            <name>s3.identity</name>
                                             <value>${jclouds.aws.accesskeyid}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.aws.secretaccesskey</name>
+                                            <name>s3.credential</name>
                                             <value>${jclouds.aws.secretaccesskey}</value>
                                         </property>
                                         <property>

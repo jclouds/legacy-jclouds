@@ -35,6 +35,7 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.twitter.TwitterClient;
 
 import com.google.appengine.api.labs.taskqueue.Queue;
@@ -67,19 +68,24 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-      BlobStoreContextFactory blobStoreContextFactory = null;
-      blobStoreContextFactory = new BlobStoreContextFactory();
+      BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
 
       Properties props = loadJCloudsProperties(servletContextEvent);
 
       Module googleModule = new GoogleAppEngineConfigurationModule();
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
-//      // shared across all blobstores and used to retrieve tweets
-//      twitterClient = TwitterContextFactory.createContext(props, googleModule).getApi();
-//
-//      // common namespace for storing tweets
-//      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-//               PROPERTY_TWEETSTORE_CONTAINER);
+      // shared across all blobstores and used to retrieve tweets
+      try {
+         twitterClient = (TwitterClient) new RestContextFactory().createContext("twitter", modules,
+                  props).getApi();
+
+      } catch (IllegalArgumentException e) {
+         throw new IllegalArgumentException("properties for twitter not configured properly in "
+                  + props.toString(), e);
+      }
+      // common namespace for storing tweets
+      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
+               PROPERTY_TWEETSTORE_CONTAINER);
 
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();

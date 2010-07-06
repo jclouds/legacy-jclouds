@@ -39,6 +39,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.domain.Status;
 
@@ -53,78 +54,81 @@ import com.google.common.base.Function;
 @Singleton
 public class StoreTweetsController extends HttpServlet {
 
-    private static final class StatusToBlob implements Function<Status, Blob> {
-        private final BlobMap map;
+   private static final class StatusToBlob implements Function<Status, Blob> {
+      private final BlobMap map;
 
-        private StatusToBlob(BlobMap map) {
-            this.map = map;
-        }
+      private StatusToBlob(BlobMap map) {
+         this.map = map;
+      }
 
-        public Blob apply(Status from) {
-            Blob to = map.newBlob(from.getId() + "");
-            to.getMetadata().setContentType(MediaType.TEXT_PLAIN);
-            to.getMetadata().setName(from.getId() + "");
-            to.setPayload(from.getText());
-            to.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME,
-                    from.getUser().getScreenName());
-            return to;
-        }
-    }
+      public Blob apply(Status from) {
+         Blob to = map.newBlob(from.getId() + "");
+         to.getMetadata().setContentType(MediaType.TEXT_PLAIN);
+         to.setPayload(from.getText());
+         to.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME,
+                  from.getUser().getScreenName());
+         return to;
+      }
+   }
 
-    /** The serialVersionUID */
-    private static final long serialVersionUID = 7215420527854203714L;
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7215420527854203714L;
 
-    private final Map<String, BlobStoreContext> contexts;
-    private final TwitterClient client;
-    private final String container;
+   private final Map<String, BlobStoreContext> contexts;
+   private final TwitterClient client;
+   private final String container;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject
-    public StoreTweetsController(
-            Map<String, BlobStoreContext> contexts,
-            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) final String container,
+   @Inject
+   @VisibleForTesting
+   public StoreTweetsController(Map<String, BlobStoreContext> contexts,
+            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container,
             TwitterClient client) {
-        this.container = container;
-        this.contexts = contexts;
-        this.client = client;
-    }
+      this.container = container;
+      this.contexts = contexts;
+      this.client = client;
+   }
 
-    @VisibleForTesting
-    void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
-        BlobStoreContext context = checkNotNull(contexts.get(contextName), 
-                "no context for " + contextName + " in " + contexts.keySet());
-        BlobMap map = context.createBlobMap(container);
-        for (Status status : allAboutMe) {
-            try {
-                map.put(status.getId() + "", new StatusToBlob(map).apply(status));
-            } catch (Exception e) {
-                logger.error(e, "Error storing tweet %s on map %s/%s", status.getId(), 
-                             context, container);
-            }
-        }
-    }
+   @VisibleForTesting
+   public void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
+      BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for "
+               + contextName + " in " + contexts.keySet());
+      BlobMap map = context.createBlobMap(container);
+      for (Status status : allAboutMe) {
+         Blob blob = null;
+         try {
+            blob = new StatusToBlob(map).apply(status);
+            map.put(status.getId() + "", blob);
+         } catch (AuthorizationException e) {
+            throw e;
+         } catch (Exception e) {
+            logger.error(e, "Error storing tweet %s (blob[%s]) on map %s/%s", status.getId(), blob,
+                     context, container);
+         }
+      }
+   }
 
-    @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
-        if (request.getHeader("X-AppEngine-QueueName") != null
-                && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
-            try {
-                String contextName = 
-                    checkNotNull(request.getHeader("context"), "missing header context");
-                logger.info("retrieving tweets");
-                addMyTweets(contextName, client.getMyMentions());
-                logger.debug("done storing tweets");
-                response.setContentType(MediaType.TEXT_PLAIN);
-                response.getWriter().println("Done!");
-            } catch (Exception e) {
-                logger.error(e, "Error storing tweets");
-                throw new ServletException(e);
-            }
-        } else {
-            response.sendError(401);
-        }
-    }
+   @Override
+   protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+      if (request.getHeader("X-AppEngine-QueueName") != null
+               && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
+         try {
+            String contextName = checkNotNull(request.getHeader("context"),
+                     "missing header context");
+            logger.info("retrieving tweets");
+            addMyTweets(contextName, client.getMyMentions());
+            logger.debug("done storing tweets");
+            response.setContentType(MediaType.TEXT_PLAIN);
+            response.getWriter().println("Done!");
+         } catch (Exception e) {
+            logger.error(e, "Error storing tweets");
+            throw new ServletException(e);
+         }
+      } else {
+         response.sendError(401);
+      }
+   }
 }

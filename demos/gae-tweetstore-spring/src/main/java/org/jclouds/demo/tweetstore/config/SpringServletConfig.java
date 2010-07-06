@@ -40,6 +40,7 @@ import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.twitter.TwitterClient;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
@@ -77,18 +78,26 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
 
    @PostConstruct
    public void initialize() throws IOException {
+      BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
+
       Properties props = loadJCloudsProperties();
       logger.trace("About to initialize members.");
 
       Module googleModule = new GoogleAppEngineConfigurationModule();
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
-//TODO      twitterClient = TwitterContextFactory.createContext(props, googleModule).getApi();
+      try {
+         twitterClient = (TwitterClient) new RestContextFactory().createContext("twitter", modules,
+                  props).getApi();
 
+      } catch (IllegalArgumentException e) {
+         throw new IllegalArgumentException("properties for twitter not configured properly in "
+                  + props.toString(), e);
+      }
       // common namespace for storing tweets
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
                PROPERTY_TWEETSTORE_CONTAINER);
-      BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
+
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : Splitter.on(',').split(

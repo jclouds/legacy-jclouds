@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.TransientBlobStoreContextBuilder;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
@@ -46,7 +46,8 @@ public class ServiceToStoredTweetStatusesTest {
             ExecutionException {
       Map<String, BlobStoreContext> services = Maps.newHashMap();
       for (String name : new String[] { "1", "2" }) {
-         BlobStoreContext context = new TransientBlobStoreContextBuilder().buildBlobStoreContext();
+         BlobStoreContext context = new BlobStoreContextFactory().createContext("transient",
+                  "dummy", "dummy");
          context.getAsyncBlobStore().createContainerInLocation(null, container).get();
          Blob blob = context.getAsyncBlobStore().newBlob("1");
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");

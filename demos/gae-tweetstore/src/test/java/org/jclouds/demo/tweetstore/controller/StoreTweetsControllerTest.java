@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.TransientBlobStoreContextBuilder;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.twitter.TwitterClient;
@@ -56,8 +56,8 @@ public class StoreTweetsControllerTest {
 
    Map<String, BlobStoreContext> createBlobStores() throws InterruptedException, ExecutionException {
       Map<String, BlobStoreContext> contexts = ImmutableMap.<String, BlobStoreContext> of("test1",
-               new TransientBlobStoreContextBuilder().buildBlobStoreContext(), "test2",
-               new TransientBlobStoreContextBuilder().buildBlobStoreContext());
+               new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"), "test2",
+               new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"));
       for (BlobStoreContext blobstore : contexts.values()) {
          blobstore.getAsyncBlobStore().createContainerInLocation(null, "favo").get();
       }
@@ -70,19 +70,11 @@ public class StoreTweetsControllerTest {
                createTwitterClient());
 
       SortedSet<Status> allAboutMe = Sets.newTreeSet();
-      User frank = new User();
-      frank.setScreenName("frank");
-      Status frankStatus = new Status();
-      frankStatus.setId(1);
-      frankStatus.setUser(frank);
-      frankStatus.setText("I love beans!");
+      User frank = new User(1l, "frank");
+      Status frankStatus = new Status(1l, frank, "I love beans!");
 
-      User jimmy = new User();
-      jimmy.setScreenName("jimmy");
-      Status jimmyStatus = new Status();
-      jimmyStatus.setId(2);
-      jimmyStatus.setUser(jimmy);
-      jimmyStatus.setText("cloud is king");
+      User jimmy = new User(2l, "jimmy");
+      Status jimmyStatus = new Status(2l, jimmy, "cloud is king");
 
       allAboutMe.add(frankStatus);
       allAboutMe.add(jimmyStatus);
