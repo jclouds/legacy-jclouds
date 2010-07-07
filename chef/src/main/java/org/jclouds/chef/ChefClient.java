@@ -61,7 +61,7 @@ import org.jclouds.rest.AuthorizationException;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
-   UploadSite getUploadSiteForChecksums(Set<byte[]> md5s);
+   UploadSite getUploadSiteForHexEncodedChecksums(Set<String> hexEncodedmd5s);
 
    Sandbox closeSandbox(String id, boolean isCompleted);
 

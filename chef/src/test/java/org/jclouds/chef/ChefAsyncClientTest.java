@@ -40,7 +40,6 @@ import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.chef.functions.ParseSandboxFromJson;
 import org.jclouds.chef.functions.ParseUploadSiteFromJson;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.CloseContentAndReturn;
@@ -90,15 +89,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testGetUploadSiteForChecksums() throws SecurityException, NoSuchMethodException,
-            IOException {
-      EncryptionService encservice = injector.getInstance(EncryptionService.class);
+   public void testGetUploadSiteForHexEncodedChecksums() throws SecurityException,
+            NoSuchMethodException, IOException {
 
-      Method method = ChefAsyncClient.class.getMethod("getUploadSiteForChecksums", Set.class);
+      Method method = ChefAsyncClient.class.getMethod("getUploadSiteForHexEncodedChecksums",
+               Set.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
-               ImmutableSet.of(encservice.fromHex("0189e76ccc476701d6b374e5a1a27347"), encservice
-                        .fromHex("0c5ecd7788cf4f6c7de2a57193897a6c"), encservice
-                        .fromHex("1dda05ed139664f1f89b9dec482b77c0")));
+               ImmutableSet.of("0189e76ccc476701d6b374e5a1a27347",
+                        "0c5ecd7788cf4f6c7de2a57193897a6c", "1dda05ed139664f1f89b9dec482b77c0"));
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
       assertHeadersEqual(
                httpRequest,
@@ -153,17 +151,16 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("updateCookbook", String.class, String.class,
                CookbookVersion.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
-               "cookbook", "1.0.1", new CookbookVersion());
+               "cookbook", "1.0.1", new CookbookVersion("cookbook", "1.0.1"));
 
       assertRequestLineEquals(httpRequest,
                "PUT http://localhost:4000/cookbooks/cookbook/1.0.1 HTTP/1.1");
       assertHeadersEqual(
                httpRequest,
-               "Accept: application/json\nContent-Length: 202\nContent-Type: application/json\nX-Chef-Version: 0.9.6\n");
+               "Accept: application/json\nContent-Length: 446\nContent-Type: application/json\nX-Chef-Version: 0.9.6\n");
       assertPayloadEquals(
                httpRequest,
-               "{\"definitions\":[],\"attributes\":[],\"files\":[],\"providers\":[],\"resources\":[],\"templates\":[],\"libraries\":[],\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}");
-
+               "{\"name\":\"cookbook-1.0.1\",\"definitions\":[],\"attributes\":[],\"files\":[],\"metadata\":{\"suggestions\":{},\"dependencies\":{},\"conflicting\":{},\"providing\":{},\"platforms\":{},\"recipes\":{},\"replacing\":{},\"groupings\":{},\"attributes\":{},\"recommendations\":{}},\"providers\":[],\"cookbook_name\":\"cookbook\",\"resources\":[],\"templates\":[],\"libraries\":[],\"version\":\"1.0.1\",\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}");
       assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);

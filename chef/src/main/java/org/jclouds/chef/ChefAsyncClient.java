@@ -38,7 +38,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.chef.binders.BindClientnameToJsonPayload;
 import org.jclouds.chef.binders.BindGenerateKeyForClientToJsonPayload;
 import org.jclouds.chef.binders.BindIsCompletedToJsonPayload;
-import org.jclouds.chef.binders.BindMD5sToJsonPayload;
+import org.jclouds.chef.binders.BindHexEncodedMD5sToJsonPayload;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.chef.domain.UploadSite;
@@ -81,8 +81,8 @@ public interface ChefAsyncClient {
    @POST
    @Path("sandboxes")
    @ResponseParser(ParseUploadSiteFromJson.class)
-   ListenableFuture<UploadSite> getUploadSiteForChecksums(
-            @BinderParam(BindMD5sToJsonPayload.class) Set<byte[]> md5s);
+   ListenableFuture<UploadSite> getUploadSiteForHexEncodedChecksums(
+            @BinderParam(BindHexEncodedMD5sToJsonPayload.class) Set<String> hexEncodedmd5s);
 
    /**
     * @see ChefClient#closeSandbox

@@ -35,7 +35,7 @@ public class CookbookVersion {
    private Set<Resource> definitions = Sets.newLinkedHashSet();
    private Set<Resource> attributes = Sets.newLinkedHashSet();
    private Set<Resource> files = Sets.newLinkedHashSet();
-   private Metadata metadata;
+   private Metadata metadata = new Metadata();
    private Set<Resource> providers = Sets.newLinkedHashSet();
    @SerializedName("cookbook_name")
    private String cookbookName;

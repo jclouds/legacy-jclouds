@@ -116,31 +116,9 @@ public class ChefClientLiveTest {
       clientConnection.getApi().clientExists(PREFIX);
    }
 
-   @Test(dependsOnMethods = "testCreateClient")
-   public void testCreateNewCookbook() throws Exception {
-      Payload pom = Payloads.newFilePayload(new File(System.getProperty("user.dir"), "pom.xml"));
-      byte[] md5 = adminConnection.utils().encryption().md5(pom.getInput());
-      UploadSite site = adminConnection.getApi().getUploadSiteForChecksums(ImmutableSet.of(md5));
-
-      String md5Hex = adminConnection.utils().encryption().hex(md5);
-      try {
-         assert site.getChecksums().containsKey(md5Hex) : md5Hex + " not in " + site.getChecksums();
-         ChecksumStatus status = site.getChecksums().get(md5Hex);
-         if (status.needsUpload()) {
-            adminConnection.utils().http().put(status.getUrl(), pom,
-                     new PutContentOptions(adminConnection.utils().encryption().base64(md5)));
-         }
-         adminConnection.getApi().closeSandbox(site.getSandboxId(), true);
-      } catch (RuntimeException e) {
-         adminConnection.getApi().closeSandbox(site.getSandboxId(), false);
-      }
-
-      CookbookVersion cookbook = new CookbookVersion("test", "0.0.0");
-      cookbook.getRootFiles().add(new Resource("pom.xml", md5Hex, "pom.xml"));
-      adminConnection.getApi().updateCookbook("test", "0.0.0", cookbook);
-
-   }
-
+   // TODO when uploading files, there are a few headers that are needed or else request signing
+   // fails
+   // make this a method on ChefClient to avoid exposing these details to the api users
    static class PutContentOptions extends BaseHttpRequestOptions {
 
       public PutContentOptions(String md5Base64) {
@@ -151,6 +129,45 @@ public class ChefClientLiveTest {
          this.headers.replaceValues("Content-MD5", ImmutableSet.of(md5Base64));
       }
 
+   }
+
+   // TODO: clean up this api so that it is simpler
+   public void testCreateNewCookbook() throws Exception {
+      // define the file you want in the cookbook
+      Payload pom = Payloads.newFilePayload(new File(System.getProperty("user.dir"), "pom.xml"));
+
+      // get an md5 so that you can see if the server already has it or not
+      byte[] md5 = adminConnection.utils().encryption().md5(pom.getInput());
+      String md5Hex = adminConnection.utils().encryption().hex(md5);
+
+      // request an upload site for this file
+      // TODO: this json ball is not named, and is different than SandBox, using UploadSite for now
+      UploadSite site = adminConnection.getApi().getUploadSiteForHexEncodedChecksums(ImmutableSet.of(md5Hex));
+
+      try {
+         assert site.getChecksums().containsKey(md5Hex) : md5Hex + " not in " + site.getChecksums();
+
+         ChecksumStatus status = site.getChecksums().get(md5Hex);
+         if (status.needsUpload()) {
+            // upload the file, adding a few other headers it was signed with
+            // note that we need to convert the md5 to base64
+            adminConnection.utils().http().put(status.getUrl(), pom,
+                     new PutContentOptions(adminConnection.utils().encryption().base64(md5)));
+         }
+
+         // if we were able to get here, close the sandbox
+         adminConnection.getApi().closeSandbox(site.getSandboxId(), true);
+
+      } catch (RuntimeException e) {
+         adminConnection.getApi().closeSandbox(site.getSandboxId(), false);
+      }
+
+      // create a new cookbook
+      CookbookVersion cookbook = new CookbookVersion("test3", "0.0.0");
+      cookbook.getRootFiles().add(new Resource("pom.xml", md5Hex, "pom.xml"));
+
+      // upload the cookbook to the remote server
+      adminConnection.getApi().updateCookbook("test3", "0.0.0", cookbook);
    }
 
    @Test(dependsOnMethods = "testCreateClient")
