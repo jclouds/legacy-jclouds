@@ -36,7 +36,7 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.util.concurrent.NamingThreadFactory;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -117,7 +117,8 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @VisibleForTesting
    static ExecutorService newCachedThreadPoolNamed(String name) {
-      return Executors.newCachedThreadPool(new NamingThreadFactory(name));
+      return Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat(name)
+               .setThreadFactory(Executors.defaultThreadFactory()).build());
    }
 
    @VisibleForTesting
@@ -128,7 +129,8 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @VisibleForTesting
    static ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
-      return newScalingThreadPool(1, maxCount, 60L * 1000, new NamingThreadFactory(name));
+      return newScalingThreadPool(1, maxCount, 60L * 1000, new ThreadFactoryBuilder()
+               .setNameFormat(name).setThreadFactory(Executors.defaultThreadFactory()).build());
    }
 
 }
