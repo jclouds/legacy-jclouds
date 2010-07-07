@@ -50,8 +50,7 @@ public class ParseOrganizationFromJsonTest {
 
    public void test() {
 
-      Organization org = new Organization();
-      org.setName("opscode");
+      Organization org = new Organization("opscode");
       org.setFullName("Opscode, Inc.");
       org.setOrgType("Business");
       org.setClientname("opscode-validator");

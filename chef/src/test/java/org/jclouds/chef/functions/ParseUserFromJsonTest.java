@@ -32,8 +32,7 @@ public class ParseUserFromJsonTest {
 
    public void test() {
 
-      User user = new User();
-      user.setUsername("bobo");
+      User user = new User("bobo");
       user.setFirstName("Bobo");
       user.setMiddleName("Tiberion");
       user.setLastName("Clown");

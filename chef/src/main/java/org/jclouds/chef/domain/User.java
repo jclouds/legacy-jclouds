@@ -42,7 +42,8 @@ public class User implements Comparable<User> {
       this.username = username;
    }
 
-   public User() {
+   // hidden but needs to be here for json deserialization to work
+   User() {
       super();
    }
 
@@ -111,14 +112,11 @@ public class User implements Comparable<User> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((displayName == null) ? 0 : displayName.hashCode());
+      result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
       result = prime * result + ((email == null) ? 0 : email.hashCode());
-      result = prime * result
-            + ((firstName == null) ? 0 : firstName.hashCode());
+      result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
       result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-      result = prime * result
-            + ((middleName == null) ? 0 : middleName.hashCode());
+      result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
       result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + ((username == null) ? 0 : username.hashCode());
       return result;
@@ -173,10 +171,9 @@ public class User implements Comparable<User> {
 
    @Override
    public String toString() {
-      return "User [displayName=" + displayName + ", email=" + email
-            + ", firstName=" + firstName + ", lastName=" + lastName
-            + ", middleName=" + middleName + ", password=" + password
-            + ", username=" + username + "]";
+      return "User [displayName=" + displayName + ", email=" + email + ", firstName=" + firstName
+               + ", lastName=" + lastName + ", middleName=" + middleName + ", password=" + password
+               + ", username=" + username + "]";
    }
 
 }

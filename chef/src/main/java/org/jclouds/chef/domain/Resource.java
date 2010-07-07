@@ -45,7 +45,8 @@ public class Resource {
       this.specificity = specificity;
    }
 
-   public Resource() {
+   // hidden but needs to be here for json deserialization to work
+   Resource() {
    }
 
    public String getName() {

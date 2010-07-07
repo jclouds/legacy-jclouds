@@ -34,11 +34,12 @@ public class Organization implements Comparable<Organization> {
    private String clientname;
 
    public Organization(String name) {
-      super();
+      this();
       this.name = name;
    }
 
-   public Organization() {
+   // hidden but needs to be here for json deserialization to work
+   Organization() {
       super();
    }
 

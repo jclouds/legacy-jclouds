@@ -47,7 +47,6 @@ public class CookbookVersion {
    @SerializedName("root_files")
    private Set<Resource> rootFiles = Sets.newLinkedHashSet();
 
-   
    // internal
    @SuppressWarnings("unused")
    @SerializedName("json_class")
@@ -55,7 +54,7 @@ public class CookbookVersion {
    @SerializedName("chef_type")
    @SuppressWarnings("unused")
    private String _chefType = "cookbook_version";
-   
+
    public CookbookVersion(String cookbookName, String version) {
       this.cookbookName = cookbookName;
       this.version = version;
@@ -81,7 +80,8 @@ public class CookbookVersion {
       Iterables.addAll(this.rootFiles, rootFiles);
    }
 
-   public CookbookVersion() {
+   // hidden but needs to be here for json deserialization to work
+   CookbookVersion() {
 
    }
 
