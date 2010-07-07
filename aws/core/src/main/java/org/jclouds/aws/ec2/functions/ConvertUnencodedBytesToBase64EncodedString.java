@@ -47,6 +47,6 @@ public class ConvertUnencodedBytesToBase64EncodedString implements Function<Obje
       byte[] unencodedData = (byte[]) from;
       checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
                "userData cannot be larger than 16kb");
-      return encryptionService.toBase64String(unencodedData);
+      return encryptionService.base64(unencodedData);
    }
 }

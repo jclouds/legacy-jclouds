@@ -134,7 +134,8 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    @VisibleForTesting
    String hashPath(String path) {
       try {
-         return encryptionService.sha1Base64(Utils.toInputStream(canonicalPath(path)));
+         return encryptionService.base64(encryptionService.sha1(Utils
+                  .toInputStream(canonicalPath(path))));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for path: " + path, e);
@@ -159,7 +160,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
       checkArgument(payload != null, "payload was null");
       checkArgument(payload.isRepeatable(), "payload must be repeatable: " + payload);
       try {
-         return encryptionService.sha1Base64(payload.getInput());
+         return encryptionService.base64(encryptionService.sha1(payload.getInput()));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for payload: " + payload, e);
@@ -187,8 +188,8 @@ public class SignedHeaderAuth implements HttpRequestFilter {
 
    public String sign(String toSign) {
       try {
-         byte[] encrypted = encryptionService.rsaPrivateEncrypt(toSign, privateKey);
-         return encryptionService.toBase64String(encrypted);
+         byte[] encrypted = encryptionService.rsaSign(toSign, privateKey);
+         return encryptionService.base64(encrypted);
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

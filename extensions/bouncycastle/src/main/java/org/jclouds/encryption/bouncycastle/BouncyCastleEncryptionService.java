@@ -22,15 +22,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.inject.Singleton;
 
 import org.bouncycastle.crypto.Digest;
@@ -44,6 +38,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.encryption.internal.BaseEncryptionService;
 import org.jclouds.util.Utils;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
 /**
@@ -52,15 +47,15 @@ import com.google.common.io.Closeables;
  */
 @Singleton
 public class BouncyCastleEncryptionService extends BaseEncryptionService {
-   public String hmacSha256Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      Digest digest = new SHA256Digest();
-      return hmacBase64(toEncode, key, digest);
+
+   @Override
+   public byte[] hmacSha256(String toEncode, byte[] key) {
+      return hmac(toEncode, key, new SHA256Digest());
    }
 
-   private String hmacBase64(String toEncode, byte[] key, Digest digest) {
-      byte[] resBuf = hmac(toEncode, key, digest);
-      return toBase64String(resBuf);
+   @Override
+   public byte[] hmacSha1(String toEncode, byte[] key) {
+      return hmac(toEncode, key, new SHA1Digest());
    }
 
    public byte[] hmac(String toEncode, byte[] key, Digest digest) {
@@ -74,20 +69,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       return resBuf;
    }
 
-   public String hmacSha1Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      Digest digest = new SHA1Digest();
-      return hmacBase64(toEncode, key, digest);
-   }
-
-   public byte[] md5(byte[] plainBytes) {
-      MD5Digest eTag = new MD5Digest();
-      byte[] resBuf = new byte[eTag.getDigestSize()];
-      eTag.update(plainBytes, 0, plainBytes.length);
-      eTag.doFinal(resBuf, 0);
-      return resBuf;
-   }
-
+   @Override
    public byte[] md5(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
@@ -109,11 +91,13 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       return resBuf;
    }
 
-   public String toBase64String(byte[] resBuf) {
+   @Override
+   public String base64(byte[] resBuf) {
       return new String(Base64.encode(resBuf));
    }
 
-   public MD5InputStreamResult generateMD5Result(InputStream toEncode) {
+   @Override
+   public MD5InputStreamResult md5Result(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       byte[] buffer = new byte[1024];
@@ -139,7 +123,8 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       return new MD5InputStreamResult(out.toByteArray(), resBuf, length);
    }
 
-   public byte[] fromBase64String(String encoded) {
+   @Override
+   public byte[] fromBase64(String encoded) {
       return Base64.decode(encoded);
    }
 
@@ -148,7 +133,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       return new BouncyCastleMD5OutputStream(out);
    }
 
-   public static class BouncyCastleMD5OutputStream extends MD5OutputStream {
+   private static class BouncyCastleMD5OutputStream extends MD5OutputStream {
       public BouncyCastleMD5OutputStream(OutputStream out) {
          super(new DigestOutputStream(out, new MD5Digest()));
       }
@@ -163,9 +148,16 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
    }
 
    @Override
-   public String sha1Base64(InputStream plainBytes) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      Digest digest = new SHA1Digest();
+   public byte[] sha256(InputStream plainBytes) {
+      return sha(plainBytes, new SHA256Digest());
+   }
+
+   @Override
+   public byte[] sha1(InputStream plainBytes) {
+      return sha(plainBytes, new SHA1Digest());
+   }
+
+   private byte[] sha(InputStream plainBytes, Digest digest) {
       byte[] resBuf = new byte[digest.getDigestSize()];
       byte[] buffer = new byte[1024];
       long length = 0;
@@ -184,16 +176,20 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
          Closeables.closeQuietly(plainBytes);
       }
       digest.doFinal(resBuf, 0);
-      return toBase64String(resBuf);
+      return resBuf;
    }
 
    @Override
-   public byte[] rsaPrivateEncrypt(String toSign, Key key) throws NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            BadPaddingException {
+   public byte[] rsaSign(String toSign, Key key) {
       // TODO convert this to BC code
-      Cipher cipher = Cipher.getInstance("RSA");
-      cipher.init(Cipher.ENCRYPT_MODE, key);
-      return cipher.doFinal(toSign.getBytes());
+      try {
+         Cipher cipher = Cipher.getInstance("RSA");
+         cipher.init(Cipher.ENCRYPT_MODE, key);
+         return cipher.doFinal(toSign.getBytes());
+      } catch (Exception e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
+
 }

@@ -72,8 +72,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    }
 
    public ListBucketResponse getResult() {
-      return new ListBucketResponseImpl(bucketName, contents, prefix, marker, nextMarker, maxResults,
-               delimiter, isTruncated, commonPrefixes);
+      return new ListBucketResponseImpl(bucketName, contents, prefix, marker, nextMarker,
+               maxResults, delimiter, isTruncated, commonPrefixes);
    }
 
    private boolean inCommonPrefixes;
@@ -102,7 +102,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
          currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("ETag")) {
          currentETag = currentText.toString().trim();
-         currentMD5 = encryptionService.fromHexString(Utils.replaceAll(currentETag,'"', ""));
+         currentMD5 = encryptionService.fromHex(Utils.replaceAll(currentETag, '"', ""));
       } else if (qName.equals("Size")) {
          currentSize = new Long(currentText.toString().trim());
       } else if (qName.equals("Owner")) {

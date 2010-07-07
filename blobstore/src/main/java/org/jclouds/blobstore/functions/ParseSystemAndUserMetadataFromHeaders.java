@@ -114,7 +114,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    protected void addContentMD5To(HttpResponse from, MutableBlobMetadata metadata) {
       String contentMD5 = from.getFirstHeaderOrNull("Content-MD5");
       if (contentMD5 != null) {
-         metadata.setContentMD5(encryptionService.fromBase64String(contentMD5));
+         metadata.setContentMD5(encryptionService.fromBase64(contentMD5));
       }
    }
 

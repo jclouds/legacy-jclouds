@@ -77,7 +77,7 @@ public class SignRequest implements HttpRequestFilter {
             @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.uid = uid;
-      this.key = encryptionService.fromBase64String(encodedKey);
+      this.key = encryptionService.fromBase64(encodedKey);
       this.timeStampProvider = timeStampProvider;
       this.encryptionService = encryptionService;
    }
@@ -119,7 +119,7 @@ public class SignRequest implements HttpRequestFilter {
    public String signString(String toSign) {
       String signature;
       try {
-         signature = encryptionService.hmacSha1Base64(toSign, key);
+         signature = encryptionService.base64(encryptionService.hmacSha1(toSign, key));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

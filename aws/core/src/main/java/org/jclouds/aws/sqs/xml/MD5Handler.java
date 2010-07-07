@@ -48,7 +48,7 @@ public class MD5Handler extends ParseSax.HandlerWithResult<byte[]> {
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("MD5OfMessageBody")) {
          String md5Hex = currentText.toString().trim();
-         this.md5 = encryptionService.fromHexString(md5Hex);
+         this.md5 = encryptionService.fromHex(md5Hex);
       }
       currentText = new StringBuilder();
    }

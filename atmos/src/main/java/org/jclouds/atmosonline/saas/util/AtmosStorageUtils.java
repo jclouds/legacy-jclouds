@@ -73,7 +73,7 @@ public class AtmosStorageUtils {
       deleteAndEnsureGone(sync, path);
       if (blob.getMetadata().getContentMD5() != null)
          blob.getMetadata().getUserMetadata().put("content-md5",
-                  encryptionService.toHexString(blob.getMetadata().getContentMD5()));
+                  encryptionService.hex(blob.getMetadata().getContentMD5()));
       sync.createFile(container, blob2Object.apply(blob));
       return path;
    }

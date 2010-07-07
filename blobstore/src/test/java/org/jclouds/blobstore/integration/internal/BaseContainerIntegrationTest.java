@@ -18,9 +18,12 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static com.google.common.base.Throwables.propagateIfPossible;
+import static com.google.common.collect.Iterables.get;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
+import static org.jclouds.util.Utils.toInputStream;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -36,9 +39,6 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -80,7 +80,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      object.getMetadata().setContentMD5(new JCEEncryptionService().md5(TEST_STRING.getBytes()));
+      object.getMetadata()
+               .setContentMD5(new JCEEncryptionService().md5(toInputStream(TEST_STRING)));
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
@@ -89,13 +90,13 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
                   maxResults(1).withDetails());
 
-         BlobMetadata metadata = BlobMetadata.class.cast(Iterables.get(container, 0));
+         BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
 
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
          assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-         assertEquals(metadata.getContentMD5(), new JCEEncryptionService().md5(TEST_STRING
-                  .getBytes()));
+         assertEquals(metadata.getContentMD5(), new JCEEncryptionService()
+                  .md5(toInputStream(TEST_STRING)));
       } finally {
          returnContainer(containerName);
       }
@@ -304,7 +305,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
                assert !context.getBlobStore().containerExists(containerName) : "container "
                         + containerName + " still exists";
             } catch (Exception e) {
-               Throwables.propagateIfPossible(e);
+               propagateIfPossible(e);
             }
          }
       });

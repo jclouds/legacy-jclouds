@@ -42,6 +42,7 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -95,7 +96,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    private String getMd5For(String stringToHash) {
       try {
-         return encryptionService.md5Hex(stringToHash.getBytes());
+         return encryptionService.hex(encryptionService.md5(Utils.toInputStream(stringToHash)));
       } catch (Exception e) {
          throw new RuntimeException(e);
       }

@@ -60,7 +60,7 @@ public class ParseObjectInfoFromHeaders implements
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
          String hashString = Utils.replaceAll(eTagHeader, '"', "");
-         to.setHash(encryptionService.fromHexString(hashString));
+         to.setHash(encryptionService.fromHex(hashString));
       }
       return to;
    }

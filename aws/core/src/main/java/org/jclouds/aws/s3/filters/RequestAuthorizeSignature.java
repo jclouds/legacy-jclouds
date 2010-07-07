@@ -128,7 +128,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    public String sign(String toSign) {
       String signature;
       try {
-         signature = encryptionService.hmacSha1Base64(toSign, secretKey.getBytes());
+         signature = encryptionService.base64(encryptionService.hmacSha1(toSign, secretKey
+                  .getBytes()));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

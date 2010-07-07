@@ -54,9 +54,8 @@ public class BasicAuthentication implements HttpRequestFilter {
             @Named(PROPERTY_CREDENTIAL) String password, EncryptionService encryptionService)
             throws UnsupportedEncodingException {
       this.credentialList = ImmutableSet.of("Basic "
-               + encryptionService.toBase64String(String.format("%s:%s",
-                        checkNotNull(user, "user"), checkNotNull(password, "password")).getBytes(
-                        "UTF-8")));
+               + encryptionService.base64(String.format("%s:%s", checkNotNull(user, "user"),
+                        checkNotNull(password, "password")).getBytes("UTF-8")));
    }
 
    public void filter(HttpRequest request) throws HttpException {

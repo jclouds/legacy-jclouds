@@ -20,6 +20,7 @@ package org.jclouds.encryption;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -84,7 +85,7 @@ public class EncryptionServiceTest extends PerformanceTest {
    @Test(dataProvider = "hmacsha1")
    public void testHmacSha1Base64(byte[] key, String message, String base64Digest)
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException {
-      String b64 = encryptionService.hmacSha1Base64(message, key);
+      String b64 = encryptionService.base64(encryptionService.hmacSha1(message, key));
       assertEquals(b64, base64Digest);
    }
 
@@ -126,14 +127,15 @@ public class EncryptionServiceTest extends PerformanceTest {
    @Test(dataProvider = "eTag")
    public void testMD5Digest(String message, String hexMD5Digest) throws NoSuchProviderException,
             NoSuchAlgorithmException, InvalidKeyException, IOException {
-      String b64 = encryptionService.md5Hex(message.getBytes());
+      String b64 = encryptionService.hex(encryptionService.md5(new ByteArrayInputStream(message
+               .getBytes())));
       assertEquals(hexMD5Digest, b64);
 
       MD5OutputStream outputStream = encryptionService.md5OutputStream(new ByteArrayOutputStream());
       ByteStreams.copy(ByteStreams.newInputStreamSupplier(message.getBytes()).getInput(),
                outputStream);
 
-      assertEquals(encryptionService.fromHexString(hexMD5Digest), outputStream.getMD5());
+      assertEquals(encryptionService.fromHex(hexMD5Digest), outputStream.getMD5());
 
    }
 
@@ -141,14 +143,14 @@ public class EncryptionServiceTest extends PerformanceTest {
    String hex = "0001020408102040";
 
    public void testHexStringEncode() throws UnsupportedEncodingException {
-      assertEquals(encryptionService.toHexString(bytes), hex);
+      assertEquals(encryptionService.hex(bytes), hex);
    }
 
    public void testHexStringDecode() throws UnsupportedEncodingException {
-      assertEquals(encryptionService.fromHexString(hex), bytes);
+      assertEquals(encryptionService.fromHex(hex), bytes);
    }
 
    public void testHexStringDecodeOx() throws UnsupportedEncodingException {
-      assertEquals(encryptionService.fromHexString("0x" + hex), bytes);
+      assertEquals(encryptionService.fromHex("0x" + hex), bytes);
    }
 }

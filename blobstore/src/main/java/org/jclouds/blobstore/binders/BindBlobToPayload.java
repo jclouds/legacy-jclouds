@@ -53,7 +53,7 @@ public class BindBlobToPayload implements Binder {
 
       if (object.getMetadata().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",
-                  encryptionService.toBase64String(object.getMetadata().getContentMD5()));
+                  encryptionService.base64(object.getMetadata().getContentMD5()));
       }
    }
 }

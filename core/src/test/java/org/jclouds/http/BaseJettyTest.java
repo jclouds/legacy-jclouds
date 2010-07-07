@@ -85,8 +85,8 @@ public abstract class BaseJettyTest {
 
       encryptionService = Guice.createInjector().getInstance(EncryptionService.class);
 
-      md5 = encryptionService.md5Base64(ByteStreams.toByteArray(oneHundredOneConstitutions
-               .getInput()));
+      md5 = encryptionService
+               .base64(encryptionService.md5(oneHundredOneConstitutions.getInput()));
 
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request,

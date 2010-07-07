@@ -28,6 +28,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Set;
 
@@ -36,7 +37,6 @@ import org.jclouds.chef.domain.Resource;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.util.Utils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -135,7 +135,13 @@ public class ChefClientLiveTest {
                      cookbookO.getRecipes()).addAll(cookbookO.getResources()).addAll(
                      cookbookO.getRootFiles()).addAll(cookbookO.getTemplates()).build()) {
                try {
-                  Utils.toStringAndClose(adminConnection.utils().http().get(resource.getUrl()));
+
+                  InputStream stream = adminConnection.utils().http().get(resource.getUrl());
+                  byte[] md5 = adminConnection.utils().encryption().sha256(stream);
+                  String md5Hex = adminConnection.utils().encryption().hex(md5);
+                  assert md5Hex.equals(resource.getChecksum()) : String.format(
+                           "hex for %s was: %s should be %s ", resource, md5Hex, resource
+                                    .getChecksum());
                } catch (NullPointerException e) {
                   assert false : "resource not found: " + resource;
                }

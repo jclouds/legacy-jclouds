@@ -54,7 +54,7 @@ public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
       try {
          Matcher matcher = pattern.matcher(Utils.toStringAndClose(response.getContent()));
          if (matcher.find()) {
-            value = encryptionService.fromHexString(matcher.group(1));
+            value = encryptionService.fromHex(matcher.group(1));
          }
       } catch (IOException e) {
          Throwables.propagate(e);

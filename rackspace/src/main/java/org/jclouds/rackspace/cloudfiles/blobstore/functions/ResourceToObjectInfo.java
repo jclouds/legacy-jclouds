@@ -56,7 +56,7 @@ public class ResourceToObjectInfo implements
          to.setContentType("application/directory");
       }
       if (from.getETag() != null && to.getHash() == null)
-         to.setHash(encryptionService.fromHexString(from.getETag()));
+         to.setHash(encryptionService.fromHex(from.getETag()));
       to.setName(from.getName());
       to.setLastModified(from.getLastModified());
       if (from.getSize() != null)

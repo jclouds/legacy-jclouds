@@ -83,7 +83,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @Override
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       encryptionService = Guice.createInjector().getInstance(EncryptionService.class);
-      MD5InputStreamResult result = encryptionService.generateMD5Result(getTestDataSupplier()
+      MD5InputStreamResult result = encryptionService.md5Result(getTestDataSupplier()
                .getInput());
       oneHundredOneConstitutions = result.data;
       oneHundredOneConstitutionsMD5 = result.md5;
@@ -440,7 +440,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      object.getMetadata().setContentMD5(new JCEEncryptionService().md5(TEST_STRING.getBytes()));
+      object.getMetadata().setContentMD5(
+               new JCEEncryptionService().md5(Utils.toInputStream(TEST_STRING)));
       String containerName = getContainerName();
       try {
          assertNull(context.getBlobStore().blobMetadata(containerName, "powderpuff"));
@@ -469,7 +470,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
       assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-      assertEquals(metadata.getContentMD5(), new JCEEncryptionService().md5(TEST_STRING.getBytes()));
+      assertEquals(metadata.getContentMD5(), new JCEEncryptionService().md5(Utils
+               .toInputStream(TEST_STRING)));
    }
 
 }

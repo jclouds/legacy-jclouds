@@ -65,7 +65,7 @@ public class WireLiveTest {
          ByteStreams.copy(in, out);
          byte[] compare = encryptionService.md5(new ByteArrayInputStream(out.toByteArray()));
          Thread.sleep(100);
-         assertEquals(encryptionService.toHexString(compare), checkNotNull(sysHttpStreamMd5,
+         assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5,
                   sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
          return null;
@@ -145,7 +145,7 @@ public class WireLiveTest {
       InputStream in = wire.input(connection.getInputStream());
       byte[] compare = encryptionService.md5(in);
       Thread.sleep(100);
-      assertEquals(encryptionService.toHexString(compare), checkNotNull(sysHttpStreamMd5,
+      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5,
                sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
@@ -168,7 +168,7 @@ public class WireLiveTest {
       InputStream in = wire.input(connection.getInputStream());
       byte[] compare = encryptionService.md5(in);
       Thread.sleep(100);
-      assertEquals(encryptionService.toHexString(compare), checkNotNull(sysHttpStreamMd5,
+      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5,
                sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }

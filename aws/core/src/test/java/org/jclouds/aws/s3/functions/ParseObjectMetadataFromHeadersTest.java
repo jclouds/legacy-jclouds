@@ -104,7 +104,7 @@ public class ParseObjectMetadataFromHeadersTest {
       expects.setCacheControl("cacheControl");
       expects.setContentDisposition("contentDisposition");
       expects.setContentEncoding("encoding");
-      expects.setContentMD5(encryptionService.fromHexString("abc"));
+      expects.setContentMD5(encryptionService.fromHex("abc"));
       expects.setContentType("type");
       expects.setETag("\"abc\"");
       expects.setKey("key");

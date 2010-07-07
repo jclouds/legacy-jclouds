@@ -82,7 +82,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
       }
 
       public byte[] getHash() {
-         return encryptionService.fromHexString(hash);
+         return encryptionService.fromHex(hash);
       }
 
       public Date getLastModified() {

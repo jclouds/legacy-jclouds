@@ -27,15 +27,12 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.Mac;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
 /**
@@ -44,14 +41,14 @@ import com.google.common.io.Closeables;
  */
 public class JCEEncryptionService extends BaseEncryptionService {
 
-   public String hmacSha256Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      return hmacBase64(toEncode, key, "HmacSHA256");
+   @Override
+   public byte[] hmacSha256(String toEncode, byte[] key) {
+      return hmac(toEncode, key, "HmacSHA256");
    }
 
-   private String hmacBase64(String toEncode, byte[] key, String algorithm) {
-      byte[] resBuf = hmac(toEncode, key, algorithm);
-      return toBase64String(resBuf);
+   @Override
+   public byte[] hmacSha1(String toEncode, byte[] key) {
+      return hmac(toEncode, key, "HmacSHA1");
    }
 
    public byte[] hmac(String toEncode, byte[] key, String algorithm) {
@@ -71,17 +68,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return mac.doFinal(toEncode.getBytes());
    }
 
-   public String hmacSha1Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      return hmacBase64(toEncode, key, "HmacSHA1");
-   }
-
-   public byte[] md5(byte[] plainBytes) {
-      MessageDigest eTag = getDigest();
-      eTag.update(plainBytes, 0, plainBytes.length);
-      return eTag.digest();
-   }
-
+   @Override
    public byte[] md5(InputStream toEncode) {
       MessageDigest eTag = getDigest();
       byte[] buffer = new byte[1024];
@@ -101,11 +88,18 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return eTag.digest();
    }
 
-   public String toBase64String(byte[] resBuf) {
+   @Override
+   public String base64(byte[] resBuf) {
       return Base64.encodeBytes(resBuf, Base64.DONT_BREAK_LINES);
    }
 
-   public MD5InputStreamResult generateMD5Result(InputStream toEncode) {
+   @Override
+   public byte[] fromBase64(String encoded) {
+      return Base64.decode(encoded);
+   }
+
+   @Override
+   public MD5InputStreamResult md5Result(InputStream toEncode) {
       MessageDigest eTag = getDigest();
       byte[] buffer = new byte[1024];
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -129,7 +123,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return new MD5InputStreamResult(out.toByteArray(), eTag.digest(), length);
    }
 
-   public static MessageDigest getDigest() {
+   private static MessageDigest getDigest() {
       MessageDigest eTag;
       try {
          eTag = MessageDigest.getInstance("MD5");
@@ -139,16 +133,12 @@ public class JCEEncryptionService extends BaseEncryptionService {
       return eTag;
    }
 
-   public byte[] fromBase64String(String encoded) {
-      return Base64.decode(encoded);
-   }
-
    @Override
    public MD5OutputStream md5OutputStream(OutputStream out) {
       return new JCEMD5OutputStream(out);
    }
 
-   public static class JCEMD5OutputStream extends MD5OutputStream {
+   private static class JCEMD5OutputStream extends MD5OutputStream {
       public JCEMD5OutputStream(OutputStream out) {
          super(new DigestOutputStream(out, getDigest()));
       }
@@ -161,9 +151,23 @@ public class JCEEncryptionService extends BaseEncryptionService {
    }
 
    @Override
-   public String sha1Base64(InputStream plainBytes) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+   public byte[] sha1(InputStream plainBytes) {
+      return digest(plainBytes, "SHA1");
+   }
+
+   @Override
+   public byte[] sha256(InputStream plainBytes) {
+      return digest(plainBytes, "SHA256");
+   }
+
+   private byte[] digest(InputStream plainBytes, String algorithm) {
+      MessageDigest digest;
+      try {
+         digest = MessageDigest.getInstance(algorithm);
+      } catch (NoSuchAlgorithmException e1) {
+         Throwables.propagate(e1);
+         return null;
+      }
       byte[] buffer = new byte[1024];
       long length = 0;
       int numRead = -1;
@@ -172,7 +176,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
             numRead = plainBytes.read(buffer);
             if (numRead > 0) {
                length += numRead;
-               sha1.update(buffer, 0, numRead);
+               digest.update(buffer, 0, numRead);
             }
          } while (numRead != -1);
       } catch (IOException e) {
@@ -181,15 +185,20 @@ public class JCEEncryptionService extends BaseEncryptionService {
          Closeables.closeQuietly(plainBytes);
       }
 
-      return toBase64String(sha1.digest());
+      return digest.digest();
    }
 
    @Override
-   public byte[] rsaPrivateEncrypt(String toSign, Key key) throws NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            BadPaddingException {
-      Cipher cipher = Cipher.getInstance("RSA");
-      cipher.init(Cipher.ENCRYPT_MODE, key);
-      return cipher.doFinal(toSign.getBytes());
+   public byte[] rsaSign(String toSign, Key key) {
+      Cipher cipher;
+      try {
+         cipher = Cipher.getInstance("RSA");
+         cipher.init(Cipher.ENCRYPT_MODE, key);
+         return cipher.doFinal(toSign.getBytes());
+      } catch (Exception e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
+
 }

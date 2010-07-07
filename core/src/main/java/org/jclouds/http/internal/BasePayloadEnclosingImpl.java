@@ -31,7 +31,6 @@ import org.jclouds.encryption.EncryptionService.MD5InputStreamResult;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.Payloads;
-import org.jclouds.http.payloads.InputStreamPayload;
 
 import com.google.common.io.Closeables;
 
@@ -55,14 +54,13 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    @Override
    public void generateMD5() {
       checkState(payload != null, "payload");
-      if (payload instanceof InputStreamPayload) {
-         MD5InputStreamResult result = encryptionService
-                  .generateMD5Result(((InputStreamPayload) payload).getInput());
+      if (!payload.isRepeatable()) {
+         MD5InputStreamResult result = encryptionService.md5Result(payload.getInput());
          setContentMD5(result.md5);
          setContentLength(result.length);
          setPayload(result.data);
       } else {
-         setContentMD5(encryptionService.md5(payload.getRawContent()));
+         setContentMD5(encryptionService.md5(payload.getInput()));
       }
    }
 

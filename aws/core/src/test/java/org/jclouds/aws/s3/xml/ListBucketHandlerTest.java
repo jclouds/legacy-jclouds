@@ -65,54 +65,54 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
                         (ObjectMetadata) new BucketListObjectMetadata("apps/0", dateService
                                  .iso8601DateParse("2009-05-07T18:27:08.000Z"),
                                  "\"c82e6a0025c31c5de5947fda62ac51ab\"", encryptionService
-                                          .fromHexString("c82e6a0025c31c5de5947fda62ac51ab"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("c82e6a0025c31c5de5947fda62ac51ab"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/1", dateService
                                  .iso8601DateParse("2009-05-07T18:27:09.000Z"),
                                  "\"944fab2c5a9a6bacf07db5e688310d7a\"", encryptionService
-                                          .fromHexString("944fab2c5a9a6bacf07db5e688310d7a"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("944fab2c5a9a6bacf07db5e688310d7a"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/2", dateService
                                  .iso8601DateParse("2009-05-07T18:27:09.000Z"),
                                  "\"a227b8888045c8fd159fb495214000f0\"", encryptionService
-                                          .fromHexString("a227b8888045c8fd159fb495214000f0"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("a227b8888045c8fd159fb495214000f0"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/3", dateService
                                  .iso8601DateParse("2009-05-07T18:27:09.000Z"),
                                  "\"c9caa76c3dec53e2a192608ce73eef03\"", encryptionService
-                                          .fromHexString("c9caa76c3dec53e2a192608ce73eef03"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("c9caa76c3dec53e2a192608ce73eef03"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/4", dateService
                                  .iso8601DateParse("2009-05-07T18:27:09.000Z"),
                                  "\"1ce5d0dcc6154a647ea90c7bdf82a224\"", encryptionService
-                                          .fromHexString("1ce5d0dcc6154a647ea90c7bdf82a224"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("1ce5d0dcc6154a647ea90c7bdf82a224"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/5", dateService
                                  .iso8601DateParse("2009-05-07T18:27:09.000Z"),
                                  "\"79433524d87462ee05708a8ef894ed55\"", encryptionService
-                                          .fromHexString("79433524d87462ee05708a8ef894ed55"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("79433524d87462ee05708a8ef894ed55"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/6", dateService
                                  .iso8601DateParse("2009-05-07T18:27:10.000Z"),
                                  "\"dd00a060b28ddca8bc5a21a49e306f67\"", encryptionService
-                                          .fromHexString("dd00a060b28ddca8bc5a21a49e306f67"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("dd00a060b28ddca8bc5a21a49e306f67"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/7", dateService
                                  .iso8601DateParse("2009-05-07T18:27:10.000Z"),
                                  "\"8cd06eca6e819a927b07a285d750b100\"", encryptionService
-                                          .fromHexString("8cd06eca6e819a927b07a285d750b100"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("8cd06eca6e819a927b07a285d750b100"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/8", dateService
                                  .iso8601DateParse("2009-05-07T18:27:10.000Z"),
                                  "\"174495094d0633b92cbe46603eee6bad\"", encryptionService
-                                          .fromHexString("174495094d0633b92cbe46603eee6bad"), 8,
-                                 owner, StorageClass.STANDARD),
+                                          .fromHex("174495094d0633b92cbe46603eee6bad"), 8, owner,
+                                 StorageClass.STANDARD),
                         (ObjectMetadata) new BucketListObjectMetadata("apps/9", dateService
                                  .iso8601DateParse("2009-05-07T18:27:10.000Z"),
                                  "\"cd8a19b26fea8a827276df0ad11c580d\"", encryptionService
-                                          .fromHexString("cd8a19b26fea8a827276df0ad11c580d"), 8,
-                                 owner, StorageClass.STANDARD)), "apps/", null, null, 1000, null,
-               false, new TreeSet<String>());
+                                          .fromHex("cd8a19b26fea8a827276df0ad11c580d"), 8, owner,
+                                 StorageClass.STANDARD)), "apps/", null, null, 1000, null, false,
+               new TreeSet<String>());
 
       ListBucketResponse result = (ListBucketResponse) factory.create(
                injector.getInstance(ListBucketHandler.class)).parse(is);

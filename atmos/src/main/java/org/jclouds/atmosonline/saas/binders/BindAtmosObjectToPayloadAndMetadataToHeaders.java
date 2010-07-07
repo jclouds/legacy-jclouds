@@ -53,7 +53,7 @@ public class BindAtmosObjectToPayloadAndMetadataToHeaders implements Binder {
 
       if (object.getContentMetadata().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",
-                  encryptionService.toBase64String(object.getContentMetadata().getContentMD5()));
+                  encryptionService.base64(object.getContentMetadata().getContentMD5()));
       }
       metaBinder.bindToRequest(request, object.getUserMetadata());
    }

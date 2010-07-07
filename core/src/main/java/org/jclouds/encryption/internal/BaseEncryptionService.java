@@ -18,21 +18,9 @@
  */
 package org.jclouds.encryption.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 import org.jclouds.encryption.EncryptionService;
-
-import com.google.common.base.Throwables;
 
 /**
  * 
@@ -44,7 +32,8 @@ public abstract class BaseEncryptionService implements EncryptionService {
             (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b',
             (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
 
-   public String toHexString(byte[] raw) {
+   @Override
+   public String hex(byte[] raw) {
       byte[] hex = new byte[2 * raw.length];
       int index = 0;
 
@@ -60,7 +49,8 @@ public abstract class BaseEncryptionService implements EncryptionService {
       }
    }
 
-   public byte[] fromHexString(String hex) {
+   @Override
+   public byte[] fromHex(String hex) {
       if (hex.startsWith("0x"))
          hex = hex.substring(2);
       byte[] bytes = new byte[hex.length() / 2];
@@ -68,44 +58,6 @@ public abstract class BaseEncryptionService implements EncryptionService {
          bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
       }
       return bytes;
-   }
-
-   public String md5Hex(byte[] toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
-            InvalidKeyException, UnsupportedEncodingException {
-      byte[] resBuf = md5(toEncode);
-      return toHexString(resBuf);
-   }
-
-   public String md5Base64(byte[] toEncode) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException {
-      byte[] resBuf = md5(toEncode);
-      return toBase64String(resBuf);
-   }
-
-   /**
-    * @throws IOException
-    */
-   public byte[] md5(Object data) {
-      checkNotNull(data, "data must be set before calling generateETag()");
-      byte[] md5 = null;
-      if (data == null) {
-      } else if (data instanceof byte[]) {
-         md5 = md5((byte[]) data);
-      } else if (data instanceof String) {
-         md5 = md5(((String) data).getBytes());
-      } else if (data instanceof File) {
-         try {
-            md5 = md5(new FileInputStream((File) data));
-         } catch (FileNotFoundException e) {
-            Throwables.propagate(e);
-         }
-      } else if (data instanceof InputStream) {
-         md5 = md5(((InputStream) data));
-      } else {
-         throw new UnsupportedOperationException("Content not supported " + data.getClass());
-      }
-      return md5;
-
    }
 
 }

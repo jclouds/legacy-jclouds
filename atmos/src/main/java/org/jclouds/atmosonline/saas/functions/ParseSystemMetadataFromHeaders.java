@@ -60,7 +60,7 @@ public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, Sy
          metaMap.put(entrySplit[0], entrySplit[1]);
       }
       assert metaMap.size() >= 12 : String.format("Should be 12 entries in %s", metaMap);
-      byte[] md5 = metaMap.containsKey("content-md5") ? encryptionService.fromHexString(metaMap
+      byte[] md5 = metaMap.containsKey("content-md5") ? encryptionService.fromHex(metaMap
                .get("content-md5")) : null;
       return new SystemMetadata(md5, dateService.iso8601SecondsDateParse(checkNotNull(metaMap
                .get("atime"), "atime")), dateService.iso8601SecondsDateParse(checkNotNull(metaMap

@@ -35,6 +35,7 @@ import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -61,8 +62,10 @@ public class SQSClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+               "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+               "jclouds.test.credential");
 
       context = new RestContextFactory().createContext("sqs", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()));
@@ -126,7 +129,7 @@ public class SQSClientLiveTest {
    @Test(dependsOnMethods = "testCreateQueue")
    void testSendMessage() throws InterruptedException {
       String message = "hardyharhar";
-      byte[] md5 = encryptionService.md5(message.getBytes());
+      byte[] md5 = encryptionService.md5(Utils.toInputStream(message));
       for (Queue queue : queues) {
          assertEquals(client.sendMessage(queue, message), md5);
       }

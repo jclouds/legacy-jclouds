@@ -74,7 +74,8 @@ public class AzureBlobClientLiveTest {
       identity = System.getProperty("jclouds.test.identity");
       String credential = System.getProperty("jclouds.test.credential");
       client = (AzureBlobClient) new BlobStoreContextFactory().createContext("azureblob", identity,
-               credential, ImmutableSet.<Module> of(new Log4JLoggingModule())).getProviderSpecificContext().getApi();
+               credential, ImmutableSet.<Module> of(new Log4JLoggingModule()))
+               .getProviderSpecificContext().getApi();
    }
 
    @Test
@@ -236,8 +237,8 @@ public class AzureBlobClientLiveTest {
       object.getProperties().getMetadata().put("mykey", "metadata-value");
       byte[] md5 = object.getProperties().getContentMD5();
       String newEtag = client.putBlob(privateContainer, object);
-      assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(object
-               .getProperties().getContentMD5()));
+      assertEquals(encryptionService.hex(md5), encryptionService.hex(object.getProperties()
+               .getContentMD5()));
 
       // Test HEAD of missing object
       assert client.getBlobProperties(privateContainer, "non-existent-object") == null;
@@ -254,8 +255,8 @@ public class AzureBlobClientLiveTest {
       // assertEquals(metadata.getSize(), data.length());
       assertEquals(metadata.getContentType(), "text/plain");
       // Azure doesn't return the Content-MD5 on head request...
-      assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(object
-               .getProperties().getContentMD5()));
+      assertEquals(encryptionService.hex(md5), encryptionService.hex(object.getProperties()
+               .getContentMD5()));
       assertEquals(metadata.getETag(), newEtag);
       assertEquals(metadata.getMetadata().entrySet().size(), 1);
       assertEquals(metadata.getMetadata().get("mykey"), "metadata-value");
@@ -276,8 +277,8 @@ public class AzureBlobClientLiveTest {
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getContentLength(), new Long(data.length()));
       assertEquals(getBlob.getProperties().getContentType(), "text/plain");
-      assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob
-               .getProperties().getContentMD5()));
+      assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob.getProperties()
+               .getContentMD5()));
       assertEquals(newEtag, getBlob.getProperties().getETag());
       // wait until we can update metadata
       // assertEquals(getBlob.getProperties().getMetadata().entries().size(), 2);
@@ -318,8 +319,8 @@ public class AzureBlobClientLiveTest {
       object.setPayload(bais);
       object.setContentLength(new Long(data.getBytes().length));
       newEtag = client.putBlob(privateContainer, object);
-      assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob
-               .getProperties().getContentMD5()));
+      assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob.getProperties()
+               .getContentMD5()));
 
       // Test GET with options
       // Non-matching ETag

@@ -54,7 +54,7 @@ public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMet
       if (from.getContentType() != null)
          to.setContentType(from.getContentType());
       if (from.getHash() != null)
-         to.setETag(encryptionService.toHexString(from.getHash()));
+         to.setETag(encryptionService.hex(from.getHash()));
       to.setName(from.getName());
       if (from.getBytes() != null)
          to.setSize(from.getBytes());

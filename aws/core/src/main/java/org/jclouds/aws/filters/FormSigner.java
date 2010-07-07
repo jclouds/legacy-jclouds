@@ -151,7 +151,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = encryptionService.hmacSha256Base64(stringToSign, secretKey.getBytes());
+         signature = encryptionService.base64(encryptionService.hmacSha256(stringToSign,
+                  secretKey.getBytes()));
          if (signatureWire.enabled())
             signatureWire.input(Utils.toInputStream(signature));
       } catch (Exception e) {

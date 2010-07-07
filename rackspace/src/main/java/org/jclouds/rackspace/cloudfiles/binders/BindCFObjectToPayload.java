@@ -58,7 +58,7 @@ public class BindCFObjectToPayload extends BindBlobToPayloadAndUserMetadataToHea
       super.bindToRequest(request, object2Blob.apply(object));
       if (object.getInfo().getHash() != null) {
          request.getHeaders().put(HttpHeaders.ETAG,
-                  encryptionService.toHexString(object.getInfo().getHash()));
+                  encryptionService.hex(object.getInfo().getHash()));
          request.getHeaders().removeAll("Content-MD5");
       }
 

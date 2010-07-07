@@ -59,7 +59,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       String key = "hello";
 
       URL url = new URL(httpStreamUrl);
-      byte[] md5 = new JCEEncryptionService().fromHexString(httpStreamETag);
+      byte[] md5 = new JCEEncryptionService().fromHex(httpStreamETag);
 
       URLConnection connection = url.openConnection();
       int length = connection.getContentLength();

@@ -24,15 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.FilterOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
 
@@ -44,35 +36,27 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(JCEEncryptionService.class)
 public interface EncryptionService {
+   String base64(byte[] toEncode);
 
-   String toHexString(byte[] raw);
+   byte[] fromBase64(String encoded);
 
-   byte[] fromHexString(String hex);
+   String hex(byte[] toEncode);
 
-   String hmacSha256Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException;
+   byte[] fromHex(String encoded);
 
-   String sha1Base64(InputStream toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
-            InvalidKeyException;
+   byte[] rsaSign(String toSign, Key privateKey);
 
-   String hmacSha1Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidKeyException;
+   byte[] hmacSha256(String toEncode, byte[] key);
 
-   String md5Hex(byte[] toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
-            InvalidKeyException, UnsupportedEncodingException;
+   byte[] hmacSha1(String toEncode, byte[] key);
 
-   String md5Base64(byte[] toEncode) throws NoSuchAlgorithmException, NoSuchProviderException,
-            InvalidKeyException;
+   byte[] sha1(InputStream toEncode);
 
-   byte[] md5(byte[] plainBytes);
+   byte[] sha256(InputStream toEncode);
 
    byte[] md5(InputStream toEncode);
 
-   String toBase64String(byte[] resBuf);
-
-   byte[] md5(Object data);
-
-   MD5InputStreamResult generateMD5Result(InputStream toEncode);
+   MD5InputStreamResult md5Result(InputStream toEncode);
 
    MD5OutputStream md5OutputStream(OutputStream out);
 
@@ -89,19 +73,13 @@ public interface EncryptionService {
       public final byte[] md5;
       public final long length;
 
-      public MD5InputStreamResult(byte[] data, byte[] eTag, long length) {
+      public MD5InputStreamResult(byte[] data, byte[] md5, long length) {
          this.data = checkNotNull(data, "data");
-         this.md5 = checkNotNull(eTag, "eTag");
+         this.md5 = checkNotNull(md5, "md5");
          checkArgument(length >= 0, "length cannot me negative");
          this.length = length;
       }
 
    }
-
-   byte[] fromBase64String(String encoded);
-
-   byte[] rsaPrivateEncrypt(String toSign, Key privateKey) throws NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            BadPaddingException;
 
 }

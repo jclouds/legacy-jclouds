@@ -55,7 +55,7 @@ public class ParseSystemMetadataFromHeadersTest {
                                  + "gid=rootr, objectid=4980cdb2b010109b04a44f7bb83f5f04ad354c638ae5, "
                                  + "objname=e913e09366364e9ba384b8fead643d43, size=4096, nlink=1, policyname=default");
       SystemMetadata expected = new SystemMetadata(encryptionService
-               .fromHexString("1f3870be274f6c49b3e31a0c6728957f"),
+               .fromHex("1f3870be274f6c49b3e31a0c6728957f"),
 
       dateService.iso8601SecondsDateParse("2009-10-12T16:09:42Z"), dateService
                .iso8601SecondsDateParse("2009-10-19T04:37:00Z"), "rootr", dateService

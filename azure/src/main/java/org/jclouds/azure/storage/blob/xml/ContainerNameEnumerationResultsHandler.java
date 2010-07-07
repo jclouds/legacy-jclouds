@@ -166,7 +166,7 @@ public class ContainerNameEnumerationResultsHandler extends
          currentSize = Long.parseLong(currentText.toString().trim());
       } else if (qName.equals("Content-MD5")) {
          if (!currentText.toString().trim().equals(""))
-            currentContentMD5 = encryptionService.fromBase64String(currentText.toString().trim());
+            currentContentMD5 = encryptionService.fromBase64(currentText.toString().trim());
       } else if (qName.equals("Content-Type")) {
          currentContentType = currentText.toString().trim();
       } else if (qName.equals("Content-Encoding")) {

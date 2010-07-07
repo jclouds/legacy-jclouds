@@ -64,7 +64,7 @@ public class ParseObjectMetadataFromHeaders implements
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
-      to.setContentMD5(encryptionService.fromHexString(Utils.replaceAll(to.getETag(), '"', "")));
+      to.setContentMD5(encryptionService.fromHex(Utils.replaceAll(to.getETag(), '"', "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));
       to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));

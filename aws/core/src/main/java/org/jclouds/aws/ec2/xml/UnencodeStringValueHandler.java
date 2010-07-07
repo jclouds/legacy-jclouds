@@ -37,7 +37,7 @@ public class UnencodeStringValueHandler extends StringValueHandler {
 
    @Override
    public String getResult() {
-      return super.getResult() == null ? null : new String(encryptionService.fromBase64String(super
+      return super.getResult() == null ? null : new String(encryptionService.fromBase64(super
                .getResult()), Charsets.UTF_8);
    }
 }

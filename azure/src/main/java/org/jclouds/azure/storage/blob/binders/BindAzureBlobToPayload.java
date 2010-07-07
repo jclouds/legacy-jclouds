@@ -78,7 +78,7 @@ public class BindAzureBlobToPayload implements Binder {
 
       if (object.getProperties().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",
-                  encryptionService.toBase64String(object.getProperties().getContentMD5()));
+                  encryptionService.base64(object.getProperties().getContentMD5()));
       }
       if (object.getProperties().getContentLanguage() != null) {
          request.getHeaders().put(HttpHeaders.CONTENT_LANGUAGE,
