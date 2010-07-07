@@ -137,7 +137,7 @@ public class ChefClientLiveTest {
                try {
 
                   InputStream stream = adminConnection.utils().http().get(resource.getUrl());
-                  byte[] md5 = adminConnection.utils().encryption().sha256(stream);
+                  byte[] md5 = adminConnection.utils().encryption().md5(stream);
                   String md5Hex = adminConnection.utils().encryption().hex(md5);
                   assert md5Hex.equals(resource.getChecksum()) : String.format(
                            "hex for %s was: %s should be %s ", resource, md5Hex, resource
