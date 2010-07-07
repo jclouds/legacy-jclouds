@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.Payload;
+import org.jclouds.http.options.HttpRequestOptions;
 
 /**
  * Simple client
@@ -35,7 +36,11 @@ public interface HttpClient {
 
    void put(URI location, Payload payload);
 
+   void put(URI location, Payload payload, HttpRequestOptions options);
+
    void post(URI location, Payload payload);
+
+   void post(URI location, Payload payload, HttpRequestOptions options);
 
    boolean exists(URI location);
 
@@ -43,6 +48,8 @@ public interface HttpClient {
     * @return null if the resource didn't exist.
     */
    InputStream get(URI location);
+
+   InputStream get(URI location, HttpRequestOptions options);
 
    /**
     * @return false if the resource didn't exist.

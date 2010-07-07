@@ -442,14 +442,14 @@ public class RestAnnotationProcessor<T> {
 
          request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.calculateSize() + "");
       } else if (formParams.size() > 0) {
-         if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
+         if (headers.get(HttpHeaders.CONTENT_TYPE).size() == 0)
             headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
          request.setPayload(makeQueryLine(formParams, null, skips));
       } else if (payload != null) {
          request.setPayload(payload);
-         if (headers.get(HttpHeaders.CONTENT_LENGTH) != null)
+         if (headers.get(HttpHeaders.CONTENT_LENGTH).size() == 0)
             headers.put(HttpHeaders.CONTENT_LENGTH, payload.calculateSize() + "");
-         if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
+         if (headers.get(HttpHeaders.CONTENT_TYPE).size() == 0)
             headers.put(HttpHeaders.CONTENT_TYPE, "application/unknown");
       }
       request.getHeaders().putAll(headers);
