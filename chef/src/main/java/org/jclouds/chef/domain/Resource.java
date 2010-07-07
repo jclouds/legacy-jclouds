@@ -33,8 +33,11 @@ public class Resource {
    private String path;
    private String specificity;
 
-   public Resource(String name, URI url, String checksum, String path,
-         String specificity) {
+   public Resource(String name, String checksum, String path) {
+      this(name, null, checksum, path, "default");
+   }
+
+   public Resource(String name, URI url, String checksum, String path, String specificity) {
       this.name = name;
       this.url = url;
       this.checksum = checksum;
@@ -52,6 +55,7 @@ public class Resource {
    public URI getUrl() {
       return url;
    }
+
    public String getChecksum() {
       return checksum;
    }
@@ -71,8 +75,7 @@ public class Resource {
       result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((path == null) ? 0 : path.hashCode());
-      result = prime * result
-            + ((specificity == null) ? 0 : specificity.hashCode());
+      result = prime * result + ((specificity == null) ? 0 : specificity.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
    }
@@ -116,8 +119,8 @@ public class Resource {
 
    @Override
    public String toString() {
-      return "Resource [checksum=" + checksum + ", name=" + name + ", path="
-            + path + ", specificity=" + specificity + ", url=" + url + "]";
+      return "Resource [checksum=" + checksum + ", name=" + name + ", path=" + path
+               + ", specificity=" + specificity + ", url=" + url + "]";
    }
 
 }

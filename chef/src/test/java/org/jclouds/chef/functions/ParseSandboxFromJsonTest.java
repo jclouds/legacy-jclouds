@@ -3,16 +3,18 @@ package org.jclouds.chef.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.jclouds.chef.domain.Sandbox;
-import org.jclouds.chef.domain.Sandbox.ChecksumStatus;
+import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -25,30 +27,28 @@ import com.google.inject.Injector;
 public class ParseSandboxFromJsonTest {
 
    private ParseSandboxFromJson handler;
+   private DateService dateService;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         }
+
+      });
       handler = injector.getInstance(ParseSandboxFromJson.class);
+      dateService = injector.getInstance(DateService.class);
    }
 
    public void test() {
-      assertEquals(
-            handler.apply(new HttpResponse(ParseSandboxFromJsonTest.class
-                  .getResourceAsStream("/sandbox.json"))),
-            new Sandbox(
-                  URI
-                        .create("https://api.opscode.com/organizations/jclouds/sandboxes/d454f71e2a5f400c808d0c5d04c2c88c"),
-                  ImmutableMap
-                        .<String, ChecksumStatus> of(
-                              "0c5ecd7788cf4f6c7de2a57193897a6c",
-                              new ChecksumStatus(
-                                    URI
-                                          .create("https://s3.amazonaws.com/opscode-platform-production-data/organization-486ca3ac66264fea926aa0b4ff74341c/sandbox-d454f71e2a5f400c808d0c5d04c2c88c/checksum-0c5ecd7788cf4f6c7de2a57193897a6c?AWSAccessKeyId=AKIAJOZTD2N26S7W6APA&Expires=1277344702&Signature=FtKyqvYEjhhEKmRY%2B0M8aGPMM7g%3D"),
-                                    true), "0189e76ccc476701d6b374e5a1a27347",
-                              new ChecksumStatus(),
-                              "1dda05ed139664f1f89b9dec482b77c0",
-                              new ChecksumStatus()),
-                  "d454f71e2a5f400c808d0c5d04c2c88c"));
+      assertEquals(handler.apply(new HttpResponse(ParseSandboxFromJsonTest.class
+               .getResourceAsStream("/sandbox.json"))), new Sandbox(
+               "1-8c27b0ea4c2b7aaedbb44cfbdfcc11b2", false, dateService
+                        .iso8601SecondsDateParse("2010-07-07T03:36:00+00:00"), ImmutableSet
+                        .<String> of(), "f9d6d9b72bae465890aae87969f98a9c",
+               "f9d6d9b72bae465890aae87969f98a9c"));
    }
 }

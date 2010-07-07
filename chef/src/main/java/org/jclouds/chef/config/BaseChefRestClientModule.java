@@ -66,6 +66,8 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -124,6 +126,12 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ChefErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ChefErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ChefErrorHandler.class);
+   }
+
+   @Override
+   protected void configure() {
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      super.configure();
    }
 
 }

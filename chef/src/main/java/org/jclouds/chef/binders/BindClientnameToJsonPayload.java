@@ -23,6 +23,7 @@
  */
 package org.jclouds.chef.binders;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -36,6 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindClientnameToJsonPayload extends BindToStringPayload {
 
    @Override

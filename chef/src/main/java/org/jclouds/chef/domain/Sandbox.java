@@ -18,53 +18,86 @@
  */
 package org.jclouds.chef.domain;
 
-import java.net.URI;
-import java.util.Map;
+import java.util.Date;
+import java.util.Set;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Cookbook object.
+ * Sandbox object.
  * 
  * @author Adrian Cole
  */
 public class Sandbox {
-   private URI uri;
-   private Map<String, ChecksumStatus> checksums = Maps.newLinkedHashMap();
-   @SerializedName("sandbox_id")
-   private String id;
 
-   public Sandbox(URI uri, Map<String, ChecksumStatus> checksums, String id) {
-      this.uri = uri;
-      this.checksums.putAll(checksums);
-      this.id = id;
+   @SerializedName("_rev")
+   private String rev;
+   @SerializedName("is_completed")
+   private boolean isCompleted;
+   @SerializedName("create_time")
+   private Date createTime;
+   private Set<String> checksums = Sets.newLinkedHashSet();
+   private String name;
+   private String guid;
+
+   // internal
+   @SuppressWarnings("unused")
+   @SerializedName("json_class")
+   private String _jsonClass = "Chef::Sandbox";
+   @SerializedName("chef_type")
+   @SuppressWarnings("unused")
+   private String _chefType = "sandbox";
+
+   public Sandbox(String rev, boolean isCompleted, Date createTime, Iterable<String> checksums,
+            String name, String guid) {
+      this.rev = rev;
+      this.isCompleted = isCompleted;
+      this.createTime = createTime;
+      Iterables.addAll(this.checksums, checksums);
+      this.name = name;
+      this.guid = guid;
    }
 
    public Sandbox() {
 
    }
 
-   public URI getUri() {
-      return uri;
+   public String getRev() {
+      return rev;
    }
 
-   public Map<String, ChecksumStatus> getChecksums() {
+   public boolean isCompleted() {
+      return isCompleted;
+   }
+
+   public Date getCreateTime() {
+      return createTime;
+   }
+
+   public Set<String> getChecksums() {
       return checksums;
    }
 
-   public String getId() {
-      return id;
+   public String getName() {
+      return name;
+   }
+
+   public String getGuid() {
+      return guid;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((checksums == null) ? 0 : checksums.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+      result = prime * result + ((checksums == null) ? 0 : checksums.hashCode());
+      result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
+      result = prime * result + ((guid == null) ? 0 : guid.hashCode());
+      result = prime * result + (isCompleted ? 1231 : 1237);
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((rev == null) ? 0 : rev.hashCode());
       return result;
    }
 
@@ -82,80 +115,34 @@ public class Sandbox {
             return false;
       } else if (!checksums.equals(other.checksums))
          return false;
-      if (id == null) {
-         if (other.id != null)
+      if (createTime == null) {
+         if (other.createTime != null)
             return false;
-      } else if (!id.equals(other.id))
+      } else if (!createTime.equals(other.createTime))
          return false;
-      if (uri == null) {
-         if (other.uri != null)
+      if (guid == null) {
+         if (other.guid != null)
             return false;
-      } else if (!uri.equals(other.uri))
+      } else if (!guid.equals(other.guid))
+         return false;
+      if (isCompleted != other.isCompleted)
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (rev == null) {
+         if (other.rev != null)
+            return false;
+      } else if (!rev.equals(other.rev))
          return false;
       return true;
    }
 
-   public static class ChecksumStatus {
-      private URI url;
-      @SerializedName("needs_upload")
-      private boolean needsUpload;
-
-      public ChecksumStatus(URI url, boolean needsUpload) {
-         this.url = url;
-         this.needsUpload = needsUpload;
-      }
-
-      public ChecksumStatus() {
-
-      }
-
-      public URI getUrl() {
-         return url;
-      }
-
-      public boolean needsUpload() {
-         return needsUpload;
-      }
-
-      @Override
-      public String toString() {
-         return "ChecksumStatus [needsUpload=" + needsUpload + ", url=" + url
-               + "]";
-      }
-
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + (needsUpload ? 1231 : 1237);
-         result = prime * result + ((url == null) ? 0 : url.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         ChecksumStatus other = (ChecksumStatus) obj;
-         if (needsUpload != other.needsUpload)
-            return false;
-         if (url == null) {
-            if (other.url != null)
-               return false;
-         } else if (!url.equals(other.url))
-            return false;
-         return true;
-      }
-   }
-
    @Override
    public String toString() {
-      return "Sandbox [checksums=" + checksums + ", id=" + id + ", uri=" + uri
-            + "]";
+      return "Sandbox [checksums=" + checksums + ", createTime=" + createTime + ", guid=" + guid
+               + ", isCompleted=" + isCompleted + ", name=" + name + ", rev=" + rev + "]";
    }
-
 }

@@ -32,8 +32,15 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.chef.domain.Cookbook;
+import javax.ws.rs.core.HttpHeaders;
+
+import org.jclouds.chef.domain.ChecksumStatus;
+import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Resource;
+import org.jclouds.chef.domain.UploadSite;
+import org.jclouds.http.Payload;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -110,6 +117,43 @@ public class ChefClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateClient")
+   public void testCreateNewCookbook() throws Exception {
+      Payload pom = Payloads.newFilePayload(new File(System.getProperty("user.dir"), "pom.xml"));
+      byte[] md5 = adminConnection.utils().encryption().md5(pom.getInput());
+      UploadSite site = adminConnection.getApi().getUploadSiteForChecksums(ImmutableSet.of(md5));
+
+      String md5Hex = adminConnection.utils().encryption().hex(md5);
+      try {
+         assert site.getChecksums().containsKey(md5Hex) : md5Hex + " not in " + site.getChecksums();
+         ChecksumStatus status = site.getChecksums().get(md5Hex);
+         if (status.needsUpload()) {
+            adminConnection.utils().http().put(status.getUrl(), pom,
+                     new PutContentOptions(adminConnection.utils().encryption().base64(md5)));
+         }
+         adminConnection.getApi().closeSandbox(site.getSandboxId(), true);
+      } catch (RuntimeException e) {
+         adminConnection.getApi().closeSandbox(site.getSandboxId(), false);
+      }
+
+      CookbookVersion cookbook = new CookbookVersion("test", "0.0.0");
+      cookbook.getRootFiles().add(new Resource("pom.xml", md5Hex, "pom.xml"));
+      adminConnection.getApi().updateCookbook("test", "0.0.0", cookbook);
+
+   }
+
+   static class PutContentOptions extends BaseHttpRequestOptions {
+
+      public PutContentOptions(String md5Base64) {
+         super();
+         this.headers.replaceValues(HttpHeaders.ACCEPT, ImmutableSet.of("application/json"));
+         this.headers.replaceValues(HttpHeaders.CONTENT_TYPE, ImmutableSet
+                  .of("application/x-binary"));
+         this.headers.replaceValues("Content-MD5", ImmutableSet.of(md5Base64));
+      }
+
+   }
+
+   @Test(dependsOnMethods = "testCreateClient")
    public void testGenerateKeyForClient() throws Exception {
       clientKey = validatorConnection.getApi().generateKeyForClient(PREFIX);
       assertNotNull(clientKey);
@@ -123,19 +167,18 @@ public class ChefClientLiveTest {
       assertNotNull(validatorConnection.getApi().clientExists(PREFIX));
    }
 
-   @Test
+   @Test(dependsOnMethods = "testCreateNewCookbook")
    public void testListCookbooks() throws Exception {
       for (String cookbook : adminConnection.getApi().listCookbooks())
          for (String version : adminConnection.getApi().getVersionsOfCookbook(cookbook)) {
             System.err.printf("%s/%s:%n", cookbook, version);
-            Cookbook cookbookO = adminConnection.getApi().getCookbook(cookbook, version);
+            CookbookVersion cookbookO = adminConnection.getApi().getCookbook(cookbook, version);
             for (Resource resource : ImmutableList.<Resource> builder().addAll(
                      cookbookO.getDefinitions()).addAll(cookbookO.getFiles()).addAll(
                      cookbookO.getLibraries()).addAll(cookbookO.getProviders()).addAll(
                      cookbookO.getRecipes()).addAll(cookbookO.getResources()).addAll(
                      cookbookO.getRootFiles()).addAll(cookbookO.getTemplates()).build()) {
                try {
-
                   InputStream stream = adminConnection.utils().http().get(resource.getUrl());
                   byte[] md5 = adminConnection.utils().encryption().md5(stream);
                   String md5Hex = adminConnection.utils().encryption().hex(md5);
@@ -155,10 +198,9 @@ public class ChefClientLiveTest {
       for (String cookbook : adminConnection.getApi().listCookbooks())
          for (String version : adminConnection.getApi().getVersionsOfCookbook(cookbook)) {
             System.err.printf("%s/%s:%n", cookbook, version);
-            Cookbook cook = adminConnection.getApi().getCookbook(cookbook, version);
+            CookbookVersion cook = adminConnection.getApi().getCookbook(cookbook, version);
             adminConnection.getApi().updateCookbook(cookbook, version, cook);
          }
-
    }
 
    @Test(dependsOnMethods = "testUpdateCookbook")
@@ -166,7 +208,7 @@ public class ChefClientLiveTest {
       for (String cookbook : adminConnection.getApi().listCookbooks())
          for (String version : adminConnection.getApi().getVersionsOfCookbook(cookbook)) {
             System.err.printf("%s/%s:%n", cookbook, version);
-            Cookbook cook = adminConnection.getApi().getCookbook(cookbook, version);
+            CookbookVersion cook = adminConnection.getApi().getCookbook(cookbook, version);
             adminConnection.getApi().deleteCookbook(cookbook, version);
             assert adminConnection.getApi().getCookbook(cookbook, version) == null : cookbook
                      + version;

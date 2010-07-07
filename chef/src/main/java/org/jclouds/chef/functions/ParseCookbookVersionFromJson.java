@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.chef.domain.Sandbox;
+import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
@@ -41,16 +41,17 @@ import com.google.gson.Gson;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseSandboxFromJson extends ParseJson<Sandbox> {
+public class ParseCookbookVersionFromJson extends ParseJson<CookbookVersion> {
    @Inject
-   public ParseSandboxFromJson(Gson gson) {
+   public ParseCookbookVersionFromJson(Gson gson) {
       super(gson);
    }
 
    @Override
-   protected Sandbox apply(InputStream stream) {
+   protected CookbookVersion apply(InputStream stream) {
       try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), Sandbox.class);
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+               CookbookVersion.class);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

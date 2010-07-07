@@ -23,11 +23,6 @@
  */
 package org.jclouds.chef.binders;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Set;
-
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -39,29 +34,17 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * 
- * 
  * @author Adrian Cole
+ * 
  */
 @Singleton
-public class BindChecksumsToJsonPayload extends BindToStringPayload {
+public class BindIsCompletedToJsonPayload extends BindToStringPayload {
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof Set,
-            "this binder is only valid for Set!");
-
-      Set<String> sums = (Set<String>) input;
-
-      StringBuilder builder = new StringBuilder();
-      builder.append("{\"checksums\":{");
-
-      for (String sum : sums)
-         builder.append(String.format("\"%s\":null,", sum));
-      builder.deleteCharAt(builder.length() - 1);
-      builder.append("}}");
+   @Override
+   public void bindToRequest(HttpRequest request, Object value) {
       request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-            ImmutableSet.of(MediaType.APPLICATION_JSON));
-      super.bindToRequest(request, builder.toString());
+               ImmutableSet.of(MediaType.APPLICATION_JSON));
+      super.bindToRequest(request, String.format("{\"is_completed\":\"%s\"}", value));
    }
 
 }

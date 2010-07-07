@@ -23,10 +23,17 @@
  */
 package org.jclouds.chef.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
 
@@ -34,18 +41,35 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * 
- * @author Adrian Cole
  * 
+ * @author Adrian Cole
  */
 @Singleton
-public class BindGenerateKeyForClientToJsonPayload extends BindToStringPayload {
+public class BindMD5sToJsonPayload extends BindToStringPayload {
+   private final EncryptionService encryptionService;
 
-   @Override
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Inject
+   BindMD5sToJsonPayload(EncryptionService encryptionService) {
+      this.encryptionService = encryptionService;
+   }
+
+   @SuppressWarnings("unchecked")
+   public void bindToRequest(HttpRequest request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Set,
+               "this binder is only valid for Set!");
+
+      Set<byte[]> md5s = (Set<byte[]>) input;
+
+      StringBuilder builder = new StringBuilder();
+      builder.append("{\"checksums\":{");
+
+      for (byte[] md5 : md5s)
+         builder.append(String.format("\"%s\":null,", encryptionService.hex(md5)));
+      builder.deleteCharAt(builder.length() - 1);
+      builder.append("}}");
       request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
                ImmutableSet.of(MediaType.APPLICATION_JSON));
-      super.bindToRequest(request, String.format("{\"clientname\":\"%s\", \"private_key\": true}",
-               payload));
+      super.bindToRequest(request, builder.toString());
    }
 
 }

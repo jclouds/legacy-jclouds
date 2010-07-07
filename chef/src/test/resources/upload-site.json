@@ -1,0 +1,13 @@
+{
+    "uri": "https://api.opscode.com/organizations/jclouds/sandboxes/d454f71e2a5f400c808d0c5d04c2c88c",
+    "checksums": {
+        "0c5ecd7788cf4f6c7de2a57193897a6c": {
+            "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-486ca3ac66264fea926aa0b4ff74341c/sandbox-d454f71e2a5f400c808d0c5d04c2c88c/checksum-0c5ecd7788cf4f6c7de2a57193897a6c?AWSAccessKeyId=AKIAJOZTD2N26S7W6APA&Expires=1277344702&Signature=FtKyqvYEjhhEKmRY%2B0M8aGPMM7g%3D",
+            "needs_upload": true
+        }, "0189e76ccc476701d6b374e5a1a27347": {
+            "needs_upload": false
+        }, "1dda05ed139664f1f89b9dec482b77c0": {
+            "needs_upload": false
+        }
+    }, "sandbox_id": "d454f71e2a5f400c808d0c5d04c2c88c"
+}

@@ -29,12 +29,10 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class Cookbook {
+public class CookbookVersion {
 
    private String name;
    private Set<Resource> definitions = Sets.newLinkedHashSet();
-   @SerializedName("json_class")
-   private String jsonClass;
    private Set<Resource> attributes = Sets.newLinkedHashSet();
    private Set<Resource> files = Sets.newLinkedHashSet();
    private Metadata metadata;
@@ -48,17 +46,28 @@ public class Cookbook {
    private Set<Resource> recipes = Sets.newLinkedHashSet();
    @SerializedName("root_files")
    private Set<Resource> rootFiles = Sets.newLinkedHashSet();
-   @SerializedName("chef_type")
-   private String chefType;
 
-   public Cookbook(String name, Set<Resource> definitions, String jsonClass,
-         Set<Resource> attributes, Set<Resource> files, Metadata metadata,
-         Set<Resource> providers, String cookbookName, Set<Resource> resources,
-         Set<Resource> templates, Set<Resource> libraries, String version,
-         Set<Resource> recipes, Set<Resource> rootFiles, String chefType) {
+   
+   // internal
+   @SuppressWarnings("unused")
+   @SerializedName("json_class")
+   private String _jsonClass = "Chef::CookbookVersion";
+   @SerializedName("chef_type")
+   @SuppressWarnings("unused")
+   private String _chefType = "cookbook_version";
+   
+   public CookbookVersion(String cookbookName, String version) {
+      this.cookbookName = cookbookName;
+      this.version = version;
+      this.name = cookbookName + "-" + version;
+   }
+
+   public CookbookVersion(String name, Set<Resource> definitions, Set<Resource> attributes,
+            Set<Resource> files, Metadata metadata, Set<Resource> providers, String cookbookName,
+            Set<Resource> resources, Set<Resource> templates, Set<Resource> libraries,
+            String version, Set<Resource> recipes, Set<Resource> rootFiles) {
       this.name = name;
       Iterables.addAll(this.definitions, definitions);
-      this.jsonClass = jsonClass;
       Iterables.addAll(this.attributes, attributes);
       Iterables.addAll(this.files, files);
       this.metadata = metadata;
@@ -70,10 +79,9 @@ public class Cookbook {
       this.version = version;
       Iterables.addAll(this.recipes, recipes);
       Iterables.addAll(this.rootFiles, rootFiles);
-      this.chefType = chefType;
    }
 
-   public Cookbook() {
+   public CookbookVersion() {
 
    }
 
@@ -83,10 +91,6 @@ public class Cookbook {
 
    public Set<Resource> getDefinitions() {
       return definitions;
-   }
-
-   public String getJsonClass() {
-      return jsonClass;
    }
 
    public Set<Resource> getAttributes() {
@@ -133,37 +137,22 @@ public class Cookbook {
       return rootFiles;
    }
 
-   public String getChefType() {
-      return chefType;
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((attributes == null) ? 0 : attributes.hashCode());
-      result = prime * result + ((chefType == null) ? 0 : chefType.hashCode());
-      result = prime * result
-            + ((cookbookName == null) ? 0 : cookbookName.hashCode());
-      result = prime * result
-            + ((definitions == null) ? 0 : definitions.hashCode());
+      result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+      result = prime * result + ((cookbookName == null) ? 0 : cookbookName.hashCode());
+      result = prime * result + ((definitions == null) ? 0 : definitions.hashCode());
       result = prime * result + ((files == null) ? 0 : files.hashCode());
-      result = prime * result
-            + ((jsonClass == null) ? 0 : jsonClass.hashCode());
-      result = prime * result
-            + ((libraries == null) ? 0 : libraries.hashCode());
+      result = prime * result + ((libraries == null) ? 0 : libraries.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result
-            + ((providers == null) ? 0 : providers.hashCode());
+      result = prime * result + ((providers == null) ? 0 : providers.hashCode());
       result = prime * result + ((recipes == null) ? 0 : recipes.hashCode());
-      result = prime * result
-            + ((resources == null) ? 0 : resources.hashCode());
-      result = prime * result
-            + ((rootFiles == null) ? 0 : rootFiles.hashCode());
-      result = prime * result
-            + ((templates == null) ? 0 : templates.hashCode());
+      result = prime * result + ((resources == null) ? 0 : resources.hashCode());
+      result = prime * result + ((rootFiles == null) ? 0 : rootFiles.hashCode());
+      result = prime * result + ((templates == null) ? 0 : templates.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
    }
@@ -176,16 +165,11 @@ public class Cookbook {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Cookbook other = (Cookbook) obj;
+      CookbookVersion other = (CookbookVersion) obj;
       if (attributes == null) {
          if (other.attributes != null)
             return false;
       } else if (!attributes.equals(other.attributes))
-         return false;
-      if (chefType == null) {
-         if (other.chefType != null)
-            return false;
-      } else if (!chefType.equals(other.chefType))
          return false;
       if (cookbookName == null) {
          if (other.cookbookName != null)
@@ -201,11 +185,6 @@ public class Cookbook {
          if (other.files != null)
             return false;
       } else if (!files.equals(other.files))
-         return false;
-      if (jsonClass == null) {
-         if (other.jsonClass != null)
-            return false;
-      } else if (!jsonClass.equals(other.jsonClass))
          return false;
       if (libraries == null) {
          if (other.libraries != null)
@@ -257,13 +236,11 @@ public class Cookbook {
 
    @Override
    public String toString() {
-      return "Cookbook [attributes=" + attributes + ", chefType=" + chefType
-            + ", cookbookName=" + cookbookName + ", definitions=" + definitions
-            + ", files=" + files + ", jsonClass=" + jsonClass + ", libraries="
-            + libraries + ", metadata=" + metadata + ", name=" + name
-            + ", providers=" + providers + ", recipes=" + recipes
-            + ", resources=" + resources + ", rootFiles=" + rootFiles
-            + ", templates=" + templates + ", version=" + version + "]";
+      return "Cookbook [attributes=" + attributes + ", cookbookName=" + cookbookName
+               + ", definitions=" + definitions + ", files=" + files + ", libraries=" + libraries
+               + ", metadata=" + metadata + ", name=" + name + ", providers=" + providers
+               + ", recipes=" + recipes + ", resources=" + resources + ", rootFiles=" + rootFiles
+               + ", templates=" + templates + ", version=" + version + "]";
    }
 
 }

@@ -30,6 +30,7 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
@@ -41,14 +42,15 @@ import com.google.inject.Injector;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "chef.BindChecksumsToJsonPayloadTest")
-public class BindChecksumsToJsonPayloadTest {
+@Test(groups = "unit", testName = "chef.BindMD5sToJsonPayloadTest")
+public class BindMD5sToJsonPayloadTest {
 
    Injector injector = Guice.createInjector(new ParserModule());
+   EncryptionService encservice = injector.getInstance(EncryptionService.class);
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeIterable() {
-      BindChecksumsToJsonPayload binder = new BindChecksumsToJsonPayload();
+      BindMD5sToJsonPayload binder = new BindMD5sToJsonPayload(encservice);
       injector.injectMembers(binder);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI
             .create("http://localhost"));
@@ -57,19 +59,19 @@ public class BindChecksumsToJsonPayloadTest {
 
    @Test
    public void testCorrect() {
-      BindChecksumsToJsonPayload binder = new BindChecksumsToJsonPayload();
+      BindMD5sToJsonPayload binder = new BindMD5sToJsonPayload(encservice);
       injector.injectMembers(binder);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI
             .create("http://localhost"));
-      binder.bindToRequest(request, ImmutableSet.of("abddef", "12345"));
+      binder.bindToRequest(request, ImmutableSet.of(encservice.fromHex("abddef"), encservice.fromHex("1234")));
       assertEquals(request.getPayload().getRawContent(),
-            "{\"checksums\":{\"abddef\":null,\"12345\":null}}");
+            "{\"checksums\":{\"abddef\":null,\"1234\":null}}");
    }
 
    @Test(expectedExceptions = { NullPointerException.class,
          IllegalStateException.class })
    public void testNullIsBad() {
-      BindChecksumsToJsonPayload binder = new BindChecksumsToJsonPayload();
+      BindMD5sToJsonPayload binder = new BindMD5sToJsonPayload(encservice);
       injector.injectMembers(binder);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI
             .create("http://localhost"));

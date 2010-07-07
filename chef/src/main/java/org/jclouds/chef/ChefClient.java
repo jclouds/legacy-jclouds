@@ -44,8 +44,9 @@ package org.jclouds.chef;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.chef.domain.Cookbook;
+import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Sandbox;
+import org.jclouds.chef.domain.UploadSite;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
@@ -60,7 +61,9 @@ import org.jclouds.rest.AuthorizationException;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
-   Sandbox getUploadUrisForContent(Set<String> checksums);
+   UploadSite getUploadSiteForChecksums(Set<byte[]> md5s);
+
+   Sandbox closeSandbox(String id, boolean isCompleted);
 
    /**
     * 
@@ -69,14 +72,12 @@ public interface ChefClient {
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if you do not have permission to see the
-    *            cookbook list.
+    *            "403 Forbidden" if you do not have permission to see the cookbook list.
     */
    Set<String> listCookbooks();
 
    /**
-    * Creates or updates (uploads) a cookbook with the name present from the
-    * tar/gz file.
+    * Creates or updates (uploads) a cookbook with the name present from the tar/gz file.
     * 
     * @param cookbookName
     *           matches the root directory path of the archive
@@ -85,13 +86,12 @@ public interface ChefClient {
     *           <p/>
     *           "401 Unauthorized" if the caller is not a recognized user.
     *           <p/>
-    *           "403 Forbidden" if you do not have permission to create
-    *           cookbooks.
+    *           "403 Forbidden" if you do not have permission to create cookbooks.
     * @throws HttpResponseException
     *            "409 Conflict" if the cookbook already exists
     */
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   void updateCookbook(String cookbookName, String version, Cookbook cookbook);
+   void updateCookbook(String cookbookName, String version, CookbookVersion cookbook);
 
    /**
     * deletes an existing cookbook.
@@ -101,8 +101,7 @@ public interface ChefClient {
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if you do not have Delete rights on the
-    *            cookbook.
+    *            "403 Forbidden" if you do not have Delete rights on the cookbook.
     */
    String deleteCookbook(String cookbookName, String version);
 
@@ -114,14 +113,13 @@ public interface ChefClient {
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to view the
-    *            cookbook.
+    *            "403 Forbidden" if the caller is not authorized to view the cookbook.
     */
    Set<String> getVersionsOfCookbook(String cookbookName);
 
    /**
-    * Returns a description of the cookbook, with links to all of its component
-    * parts, and the metadata.
+    * Returns a description of the cookbook, with links to all of its component parts, and the
+    * metadata.
     * 
     * @return the cookbook or null, if not found
     * 
@@ -129,22 +127,20 @@ public interface ChefClient {
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to view the
-    *            cookbook.
+    *            "403 Forbidden" if the caller is not authorized to view the cookbook.
     */
-   Cookbook getCookbook(String cookbookName, String version);
+   CookbookVersion getCookbook(String cookbookName, String version);
 
    /**
     * creates a new client
     * 
-    * @return the private key of the client. You can then use this client name
-    *         and private key to access the Opscode API.
+    * @return the private key of the client. You can then use this client name and private key to
+    *         access the Opscode API.
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a
-    *            client.
+    *            "403 Forbidden" if the caller is not authorized to create a client.
     * @throws HttpResponseException
     *            "409 Conflict" if the client already exists
     */
@@ -152,8 +148,7 @@ public interface ChefClient {
    String createClient(String name);
 
    /**
-    * generate a new key-pair for this client, and return the new private key in
-    * the response body.
+    * generate a new key-pair for this client, and return the new private key in the response body.
     * 
     * @return the new private key
     * 
@@ -161,8 +156,7 @@ public interface ChefClient {
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to modify the
-    *            client.
+    *            "403 Forbidden" if the caller is not authorized to modify the client.
     */
    @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    String generateKeyForClient(String name);
