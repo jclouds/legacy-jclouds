@@ -80,7 +80,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 73\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -100,7 +100,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 44\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 74\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=TerminateInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -144,7 +144,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 164\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.eu-west-1.amazonaws.com\n");
+               "Content-Length: 202\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.eu-west-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
                "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&SecurityGroup.1=group1&SecurityGroup.2=group2&Placement.AvailabilityZone=eu-west-1a");
@@ -164,7 +164,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 80\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=StopInstances&Force=true&InstanceId.1=1&InstanceId.2=2");
 
@@ -183,7 +183,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=RebootInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -202,7 +202,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 40\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 70\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=StartInstances&InstanceId.1=1&InstanceId.2=2");
 
@@ -392,7 +392,6 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertPayloadEquals(
                request,
                "Action=ModifyInstanceAttribute&Attribute=userData&InstanceId=1&Signature=ch%2BpeYTRad241GAhjH9Wo2vKWlkgfNa3txM0lhPCBSM%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Value=dGVzdA%3D%3D&Version=2009-11-30&AWSAccessKeyId=identity");
-
       assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -518,7 +517,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 62\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 202\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
                "Version=2009-11-30&Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true");

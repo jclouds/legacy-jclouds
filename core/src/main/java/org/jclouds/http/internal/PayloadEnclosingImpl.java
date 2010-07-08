@@ -20,32 +20,33 @@ package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.http.Payloads.newPayload;
 
 import java.io.File;
 import java.io.InputStream;
 
-import javax.inject.Inject;
+import javax.annotation.Nullable;
 
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.EncryptionService.MD5InputStreamResult;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
-import org.jclouds.http.Payloads;
-
-import com.google.common.io.Closeables;
 
 /**
  * 
  * @author Adrian Cole
  */
-public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
+public class PayloadEnclosingImpl implements PayloadEnclosing {
    private final EncryptionService encryptionService;
    protected Payload payload;
-   protected Long contentLength;
 
-   @Inject
-   public BasePayloadEnclosingImpl(EncryptionService encryptionService) {
+   public PayloadEnclosingImpl(EncryptionService encryptionService, @Nullable Payload payload) {
       this.encryptionService = encryptionService;
+      this.payload = payload;
+   }
+
+   public PayloadEnclosingImpl(EncryptionService encryptionService) {
+      this(encryptionService, null);
    }
 
    /**
@@ -54,24 +55,9 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    @Override
    public void generateMD5() {
       checkState(payload != null, "payload");
-      if (!payload.isRepeatable()) {
-         MD5InputStreamResult result = encryptionService.md5Result(payload.getInput());
-         setContentMD5(result.md5);
-         setContentLength(result.length);
-         setPayload(result.data);
-      } else {
-         setContentMD5(encryptionService.md5(payload.getInput()));
-      }
-   }
-
-   protected abstract void setContentMD5(byte[] md5);
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public InputStream getContent() {
-      return payload != null ? payload.getInput() : null;
+      Payload newPayload = encryptionService.generateMD5BufferingIfNotRepeatable(payload);
+      if (newPayload != payload)
+         setPayload(newPayload);
    }
 
    /**
@@ -89,7 +75,6 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    public void setPayload(Payload data) {
       closeContentIfPresent();
       this.payload = checkNotNull(data, "data");
-      setLength();
    }
 
    /**
@@ -97,7 +82,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(InputStream data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+      setPayload(newPayload(checkNotNull(data, "data")));
    }
 
    /**
@@ -105,7 +90,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(byte[] data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+      setPayload(newPayload(checkNotNull(data, "data")));
    }
 
    /**
@@ -113,7 +98,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(String data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+      setPayload(newPayload(checkNotNull(data, "data")));
    }
 
    /**
@@ -121,34 +106,12 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(File data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
-   }
-
-   private void setLength() {
-      Long size = payload.calculateSize();
-      if (size != null)
-         this.setContentLength(size);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long getContentLength() {
-      return contentLength;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLength(long contentLength) {
-      this.contentLength = contentLength;
+      setPayload(newPayload(checkNotNull(data, "data")));
    }
 
    private void closeContentIfPresent() {
-      if (getContent() != null) {
-         Closeables.closeQuietly(getContent());
+      if (payload != null && payload.getInput() != null) {
+         closeQuietly(payload.getInput());
       }
    }
 
@@ -156,8 +119,6 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + ((encryptionService == null) ? 0 : encryptionService.hashCode());
       result = prime * result + ((payload == null) ? 0 : payload.hashCode());
       return result;
    }
@@ -170,17 +131,7 @@ public abstract class BasePayloadEnclosingImpl implements PayloadEnclosing {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      BasePayloadEnclosingImpl other = (BasePayloadEnclosingImpl) obj;
-      if (contentLength == null) {
-         if (other.contentLength != null)
-            return false;
-      } else if (!contentLength.equals(other.contentLength))
-         return false;
-      if (encryptionService == null) {
-         if (other.encryptionService != null)
-            return false;
-      } else if (!encryptionService.equals(other.encryptionService))
-         return false;
+      PayloadEnclosingImpl other = (PayloadEnclosingImpl) obj;
       if (payload == null) {
          if (other.payload != null)
             return false;

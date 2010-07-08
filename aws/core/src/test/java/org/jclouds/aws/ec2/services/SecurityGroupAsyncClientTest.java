@@ -109,7 +109,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 76\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2");
 
@@ -131,7 +131,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 145\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
                "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
@@ -177,7 +177,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 68\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 142\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
                "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");

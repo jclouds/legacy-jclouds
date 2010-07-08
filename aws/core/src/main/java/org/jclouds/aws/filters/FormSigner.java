@@ -56,6 +56,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -132,6 +133,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
             return o1.getKey().compareTo(o2.getKey());
          }
       }));
+      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
+               ImmutableSet.of(request.getPayload().getContentLength().toString()));
    }
 
    @VisibleForTesting
@@ -151,8 +154,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = encryptionService.base64(encryptionService.hmacSha256(stringToSign,
-                  secretKey.getBytes()));
+         signature = encryptionService.base64(encryptionService.hmacSha256(stringToSign, secretKey
+                  .getBytes()));
          if (signatureWire.enabled())
             signatureWire.input(Utils.toInputStream(signature));
       } catch (Exception e) {

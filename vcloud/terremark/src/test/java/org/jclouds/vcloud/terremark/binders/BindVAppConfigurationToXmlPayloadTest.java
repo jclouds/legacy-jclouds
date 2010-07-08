@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceAllocation;
@@ -40,15 +39,13 @@ import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindVAppConfigurationToXmlPayload}
@@ -81,16 +78,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
       String expected = Utils.toStringAndClose(
                getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace("eduardo",
                "roberto");
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
 
       VAppConfiguration config = new VAppConfiguration().changeNameTo("roberto");
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] { vApp, config }).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -118,16 +111,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
       String expected = Utils.toStringAndClose(
                getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace("eduardo",
                "MyAppServer6");
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
 
       VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] { vApp, config }).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -151,16 +140,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
                                  null, null, 209152, null)));
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/configureVApp4.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
 
       VAppConfiguration config = new VAppConfiguration().changeProcessorCountTo(4);
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] { vApp, config }).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -186,16 +171,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
       String expected = Utils.toStringAndClose(
                getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace("eduardo",
                "MyAppServer6").replace("1024", "1536");
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
 
       VAppConfiguration config = new VAppConfiguration().changeMemoryTo(1536);
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] { vApp, config }).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 

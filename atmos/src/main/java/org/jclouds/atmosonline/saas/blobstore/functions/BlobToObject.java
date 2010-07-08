@@ -44,8 +44,6 @@ public class BlobToObject implements Function<Blob, AtmosObject> {
       if (from == null)
          return null;
       AtmosObject object = blobMd2Object.apply(from.getMetadata());
-      if (from.getContentLength() != null)
-         object.setContentLength(from.getContentLength());
       object.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
       object.setAllHeaders(from.getAllHeaders());
       return object;

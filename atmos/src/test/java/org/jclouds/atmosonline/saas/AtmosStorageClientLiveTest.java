@@ -116,10 +116,13 @@ public class AtmosStorageClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
+               "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
+               "jclouds.test.credential");
       BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(
-               "atmosonline", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+               "atmosonline", identity, credential, ImmutableSet
+                        .<Module> of(new Log4JLoggingModule()));
       RestContext<AtmosStorageClient, AtmosStorageAsyncClient> context = blobStoreContext
                .getProviderSpecificContext();
       connection = context.getApi();
@@ -222,7 +225,7 @@ public class AtmosStorageClientLiveTest {
       AtmosObject object = connection.newObject();
       object.getContentMetadata().setName(name);
       object.setPayload(Payloads.newPayload(data));
-      object.getContentMetadata().setContentLength(16);
+      object.getContentMetadata().setContentLength(16l);
       object.generateMD5();
       object.getContentMetadata().setContentType("text/plain");
       object.getUserMetadata().getMetadata().put("Metadata", metadataValue);
@@ -269,7 +272,7 @@ public class AtmosStorageClientLiveTest {
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       AtmosObject getBlob = connection.headFile(path);
-      assertEquals(Utils.toStringAndClose(getBlob.getContent()), "");
+      assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), "");
       verifyMetadata(metadataValue, getBlob);
    }
 
@@ -277,7 +280,7 @@ public class AtmosStorageClientLiveTest {
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       AtmosObject getBlob = connection.readFile(path);
-      assertEquals(Utils.toStringAndClose(getBlob.getContent()), compare);
+      assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), compare);
       verifyMetadata(metadataValue, getBlob);
    }
 

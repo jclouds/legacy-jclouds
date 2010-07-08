@@ -22,72 +22,55 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
 @Singleton
 public class BindAzureBlobToPayload implements Binder {
 
-   private final String metadataPrefix;
-   private final EncryptionService encryptionService;
+   private final AzureBlobToBlob azureBlob2Blob;
+   private final BindUserMetadataToHeadersWithPrefix blobBinder;
 
    @Inject
-   public BindAzureBlobToPayload(
-            @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String prefix,
-            EncryptionService encryptionService) {
-      this.metadataPrefix = prefix;
-      this.encryptionService = encryptionService;
+   public BindAzureBlobToPayload(AzureBlobToBlob azureBlob2Blob,
+            BindUserMetadataToHeadersWithPrefix blobBinder) {
+      this.azureBlob2Blob = azureBlob2Blob;
+      this.blobBinder = blobBinder;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
-      AzureBlob object = (AzureBlob) payload;
-      checkArgument(object.getProperties().getContentLength() >= 0, "size must be set");
-      request.getHeaders().put("x-ms-blob-type", object.getProperties().getType().toString());
+      AzureBlob blob = (AzureBlob) payload;
+      checkArgument(blob.getPayload().getContentLength() >= 0, "size must be set");
+      request.getHeaders().put("x-ms-blob-type", blob.getProperties().getType().toString());
 
-      switch (object.getProperties().getType()) {
+      switch (blob.getProperties().getType()) {
          case PAGE_BLOB:
             request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "0");
-            request.getHeaders().put("x-ms-blob-content-length", object.getContentLength() + "");
+            request.getHeaders().put("x-ms-blob-content-length",
+                     blob.getPayload().getContentLength().toString());
             break;
          case BLOCK_BLOB:
-            checkArgument(
-                     checkNotNull(object.getContentLength(), "object.getContentLength()") <= 64 * 1024 * 1024,
+            checkArgument(checkNotNull(blob.getPayload().getContentLength(),
+                     "blob.getContentLength()") <= 64l * 1024 * 1024,
                      "maximum size for put Blob is 64MB");
-            request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
             break;
       }
+      blobBinder.bindToRequest(request, azureBlob2Blob.apply(blob));
 
-      for (String key : object.getProperties().getMetadata().keySet()) {
-         request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
-                  object.getProperties().getMetadata().get(key));
-      }
-
-      request.setPayload(checkNotNull(object.getContent(), "object.getContent()"));
-
-      // in azure content-type is optional
-      if (object.getProperties().getContentType() != null)
-         request.getHeaders()
-                  .put(HttpHeaders.CONTENT_TYPE, object.getProperties().getContentType());
-
-      if (object.getProperties().getContentMD5() != null) {
-         request.getHeaders().put("Content-MD5",
-                  encryptionService.base64(object.getProperties().getContentMD5()));
-      }
-      if (object.getProperties().getContentLanguage() != null) {
+      if (blob.getProperties().getContentLanguage() != null) {
          request.getHeaders().put(HttpHeaders.CONTENT_LANGUAGE,
-                  object.getProperties().getContentLanguage());
+                  blob.getProperties().getContentLanguage());
       }
 
-      if (object.getProperties().getContentEncoding() != null) {
+      if (blob.getProperties().getContentEncoding() != null) {
          request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-                  object.getProperties().getContentEncoding());
+                  blob.getProperties().getContentEncoding());
       }
 
    }

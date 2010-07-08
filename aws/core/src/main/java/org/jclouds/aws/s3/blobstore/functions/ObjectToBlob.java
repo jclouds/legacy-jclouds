@@ -47,8 +47,6 @@ public class ObjectToBlob implements Function<S3Object, Blob> {
       if (from == null)
          return null;
       Blob blob = blobFactory.create(object2BlobMd.apply(from.getMetadata()));
-      if (from.getContentLength() != null)
-         blob.setContentLength(from.getContentLength());
       blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
       blob.setAllHeaders(from.getAllHeaders());
       return blob;

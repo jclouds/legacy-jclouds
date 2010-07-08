@@ -28,9 +28,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.HttpHeaders;
-
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.HttpRequest;
@@ -180,7 +177,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
                blobToPCSFile.apply(BindBlobToMultipartFormTest.TEST_BLOB) });
 
       assertRequestLineEquals(request, "PUT http://localhost/mycontainer/content HTTP/1.1");
-      assertHeadersEqual(request, "Content-Length: 5\n");
+      assertHeadersEqual(request, "Content-Length: 5\nContent-Type: text/plain\n");
       assertPayloadEquals(request, "hello");
 
       assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
@@ -223,25 +220,21 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
                ReturnVoidOnNotFoundOr404.class);
    }
 
-   public void testPutMetadata() throws SecurityException, NoSuchMethodException {
+   public void testPutMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("putMetadataItem", URI.class, String.class,
                String.class);
-      HttpRequest request = processor.createRequest(method, new Object[] {
-               URI.create("http://localhost/contents/file"), "pow", "bar" });
-      assertEquals(request.getRequestLine(),
+      HttpRequest httpRequest = processor.createRequest(method, URI
+               .create("http://localhost/contents/file"), "pow", "bar");
+
+      assertRequestLineEquals(httpRequest,
                "PUT http://localhost/contents/file/metadata/pow HTTP/1.1");
-      assertEquals(request.getMethod(), HttpMethod.PUT);
-      assertEquals(request.getHeaders().size(), 2);
-      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(request.getPayload().toString().getBytes().length + ""));
-      assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
-               .singletonList("application/unknown"));
-      assertEquals("bar", request.getPayload().getRawContent());
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
-      assertEquals(processor.createResponseParser(method, request).getClass(),
-               CloseContentAndReturn.class);
+      assertHeadersEqual(httpRequest, "Content-Length: 3\nContent-Type: application/unknown\n");
+      assertPayloadEquals(httpRequest, "bar");
+
+      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
    }
 
    public void testAddEntryToMap() throws SecurityException, NoSuchMethodException {

@@ -42,7 +42,7 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
    private String key;
    private Date lastModified;
    private String eTag;
-   private long size;
+   private Long size;
    private CanonicalUser owner;
    private StorageClass storageClass;
    private String contentType;
@@ -223,7 +223,7 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
    /**
     *{@inheritDoc}
     */
-   public void setSize(long size) {
+   public void setSize(Long size) {
       this.size = size;
    }
 
@@ -254,7 +254,7 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
       result = prime * result + ((key == null) ? 0 : key.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + (int) (size ^ (size >>> 32));
+      result = prime * result + ((size == null) ? 0 : size.hashCode());
       result = prime * result + ((storageClass == null) ? 0 : storageClass.hashCode());
       result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
@@ -311,7 +311,10 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
             return false;
       } else if (!owner.equals(other.owner))
          return false;
-      if (size != other.size)
+      if (size == null) {
+         if (other.size != null)
+            return false;
+      } else if (!size.equals(other.size))
          return false;
       if (storageClass == null) {
          if (other.storageClass != null)

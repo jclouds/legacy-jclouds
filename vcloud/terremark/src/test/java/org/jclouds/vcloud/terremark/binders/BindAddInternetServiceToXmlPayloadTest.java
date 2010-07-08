@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
@@ -80,8 +79,6 @@ public class BindAddInternetServiceToXmlPayloadTest {
       map.put("enabled", "true");
       map.put("description", "name TCP 22");
       binder.bindToRequest(request, map);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/unknown");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "341");
       assertEquals(request.getPayload().getRawContent(), expected);
 
    }

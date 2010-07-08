@@ -30,10 +30,11 @@ import java.io.OutputStream;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.http.MultipartForm.Part;
-import org.jclouds.http.MultipartForm.Part.PartOptions;
 import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.http.payloads.MultipartForm;
+import org.jclouds.http.payloads.Part;
 import org.jclouds.http.payloads.StringPayload;
+import org.jclouds.http.payloads.Part.PartOptions;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -57,7 +58,7 @@ public class MultipartFormTest {
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"));
 
       assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
-      assertEquals(multipartForm.calculateSize(), new Long(199));
+      assertEquals(multipartForm.getContentLength(), new Long(199));
    }
 
    public static class MockFilePayload extends FilePayload {
@@ -71,6 +72,7 @@ public class MultipartFormTest {
 
       private static File createMockFile(String content) {
          File file = createMock(File.class);
+         expect(file.length()).andReturn((long)content.length());
          expect(file.exists()).andReturn(true);
          expect(file.getName()).andReturn("testfile.txt");
          replay(file);
@@ -78,8 +80,8 @@ public class MultipartFormTest {
       }
 
       @Override
-      public Long calculateSize() {
-         return realPayload.calculateSize();
+      public Long getContentLength() {
+         return realPayload.getContentLength();
       }
 
       @Override
@@ -132,7 +134,7 @@ public class MultipartFormTest {
       // test repeatable
       assert multipartForm.isRepeatable();
       assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
-      assertEquals(multipartForm.calculateSize(), new Long(352));
+      assertEquals(multipartForm.getContentLength(), new Long(352));
    }
 
 }

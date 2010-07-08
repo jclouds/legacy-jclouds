@@ -43,8 +43,6 @@ public class PCSFileToBlob implements Function<PCSFile, Blob> {
 
    public Blob apply(PCSFile from) {
       Blob blob = blobFactory.create(info2BlobMd.apply(from.getMetadata()));
-      if (from.getContentLength() != null)
-         blob.setContentLength(from.getContentLength());
       blob.setPayload(from.getPayload());
       blob.setAllHeaders(from.getAllHeaders());
       return blob;

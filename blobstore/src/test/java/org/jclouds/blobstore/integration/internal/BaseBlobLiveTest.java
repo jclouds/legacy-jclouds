@@ -62,14 +62,13 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       byte[] md5 = new JCEEncryptionService().fromHex(httpStreamETag);
 
       URLConnection connection = url.openConnection();
-      int length = connection.getContentLength();
+      long length = connection.getContentLength();
       InputStream input = connection.getInputStream();
 
       Blob object = context.getBlobStore().newBlob(key);
       object.setPayload(input);
-      object.setContentLength(length);
-      object.getMetadata().setContentMD5(md5);
-      object.getMetadata().setSize(new Long(length));
+      object.getPayload().setContentLength(length);
+      object.getPayload().setContentMD5(md5);
       String bucketName = getContainerName();
       try {
          context.getBlobStore().putBlob(bucketName, object);

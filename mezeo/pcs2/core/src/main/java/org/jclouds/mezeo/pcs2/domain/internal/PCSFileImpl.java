@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
-import org.jclouds.http.internal.BasePayloadEnclosingImpl;
+import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.mezeo.pcs2.domain.MutableFileInfo;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 
@@ -34,7 +34,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class PCSFileImpl extends BasePayloadEnclosingImpl implements PCSFile, Comparable<PCSFile> {
+public class PCSFileImpl extends PayloadEnclosingImpl implements PCSFile, Comparable<PCSFile> {
 
    private final MutableFileInfo metadata;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
@@ -43,16 +43,6 @@ public class PCSFileImpl extends BasePayloadEnclosingImpl implements PCSFile, Co
    public PCSFileImpl(MutableFileInfo metadata) {
       super(null);// no MD5 support
       this.metadata = metadata;
-   }
-
-   @Override
-   public void generateMD5() {
-      throw new UnsupportedOperationException("Mezeo PCS2 does not support MD5");
-   }
-
-   @Override
-   protected void setContentMD5(byte[] md5) {
-      // noOp;
    }
 
    /**

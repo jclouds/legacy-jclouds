@@ -32,14 +32,13 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
-import static com.google.common.io.Closeables.closeQuietly;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static org.jclouds.http.Payloads.newByteArrayPayload;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
@@ -85,12 +84,15 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.Payload;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.http.payloads.DelegatingPayload;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimaps;
+import com.google.common.io.Closeables;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.Nullable;
 
@@ -461,38 +463,47 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       if (container == null) {
          new RuntimeException("containerName not found: " + containerName);
       }
-      Payload payload = object.getPayload();
-      if (!payload.isRepeatable()) {
-         try {
-            payload = newByteArrayPayload(toByteArray(payload.getInput()));
-         } catch (IOException e) {
-            propagate(e);
-         } finally {
-            closeQuietly(payload.getInput());
-         }
-      }
-      object.getMetadata().setSize(payload.calculateSize());
-      MutableBlobMetadata newMd = copy(object.getMetadata());
-      newMd.setLastModified(new Date());
-      byte[] md5 = encryptionService.md5(payload.getInput());
-      String eTag = encryptionService.hex(md5);
-      newMd.setETag(eTag);
-      newMd.setContentMD5(md5);
-      newMd.setContentType(object.getMetadata().getContentType());
 
-      Blob blob = blobFactory.create(newMd);
+      ByteArrayPayload payload = (object.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class
+               .cast(object.getPayload())
+               : null;
+      if (payload == null)
+         payload = (object.getPayload() instanceof DelegatingPayload) ? (DelegatingPayload.class
+                  .cast(object.getPayload()).getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class
+                  .cast(DelegatingPayload.class.cast(object.getPayload()).getDelegate())
+                  : null
+                  : null;
+      if (payload == null || !(payload instanceof ByteArrayPayload)) {
+         InputStream input = object.getPayload().getInput();
+         try {
+            String oldContentType = object.getPayload().getContentType();
+            payload = encryptionService.generatePayloadWithMD5For(input);
+            payload.setContentType(oldContentType);
+         } finally {
+            Closeables.closeQuietly(input);
+         }
+      } else {
+         if (payload.getContentMD5() == null)
+            payload = (ByteArrayPayload) encryptionService
+                     .generateMD5BufferingIfNotRepeatable(payload);
+      }
+
+      Blob blob = blobFactory.create(copy(object.getMetadata()));
       blob.setPayload(payload);
+      blob.getMetadata().setLastModified(new Date());
+      String eTag = encryptionService.hex(payload.getContentMD5());
+      blob.getMetadata().setETag(eTag);
       container.put(blob.getMetadata().getName(), blob);
 
       // Set HTTP headers to match metadata
       blob.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,
-               dateService.rfc822DateFormat(newMd.getLastModified()));
+               dateService.rfc822DateFormat(blob.getMetadata().getLastModified()));
       blob.getAllHeaders().put(HttpHeaders.ETAG, eTag);
-      blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, newMd.getContentType());
-      blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, newMd.getSize() + "");
-      for (Entry<String, String> userMD : newMd.getUserMetadata().entrySet()) {
-         blob.getAllHeaders().put(userMD.getKey(), userMD.getValue());
-      }
+      blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, blob.getMetadata().getContentType());
+      blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, blob.getMetadata().getSize() + "");
+      blob.getAllHeaders().put("Content-MD5", encryptionService.base64(payload.getContentMD5()));
+      blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
+
       return immediateFuture(eTag);
    }
 
@@ -580,7 +591,6 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
          }
          returnVal.setPayload(out.toByteArray());
-         returnVal.setContentLength(out.size());
          returnVal.getMetadata().setSize(new Long(data.length));
       }
       checkNotNull(returnVal.getPayload(), "payload " + returnVal);

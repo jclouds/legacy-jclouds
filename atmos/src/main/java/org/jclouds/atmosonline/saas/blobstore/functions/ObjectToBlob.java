@@ -47,10 +47,10 @@ public class ObjectToBlob implements Function<AtmosObject, Blob> {
       if (from == null)
          return null;
       Blob blob = blobFactory.create(object2BlobMd.apply(from));
-      if (from.getContentMetadata().getContentLength() != null)
-         blob.setContentLength(from.getContentMetadata().getContentLength());
-      blob.getMetadata().setContentMD5(from.getSystemMetadata().getContentMD5());
       blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
+      if (from.getContentMetadata().getContentLength() != null)
+         blob.getMetadata().setSize(from.getContentMetadata().getContentLength());
+      blob.getMetadata().setContentMD5(from.getSystemMetadata().getContentMD5());
       blob.setAllHeaders(from.getAllHeaders());
       return blob;
    }

@@ -23,8 +23,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.http.Payloads;
 
 import com.google.inject.Inject;
 
@@ -50,8 +52,9 @@ public class MarkerFileMkdirStrategy implements MkdirStrategy {
 
    public void execute(String containerName, String directory) {
       Blob blob = connection.newBlob(directory + directorySuffix);
-      blob.setPayload("");
-      blob.getMetadata().setContentType("application/directory");
+      blob.setPayload(Payloads.newByteArrayPayload(new byte[] {}));
+      blob.getPayload().setContentType("application/directory");
+      blob.getMetadata().setType(StorageType.RELATIVE_PATH);
       connection.putBlob(containerName, blob);
    }
 }

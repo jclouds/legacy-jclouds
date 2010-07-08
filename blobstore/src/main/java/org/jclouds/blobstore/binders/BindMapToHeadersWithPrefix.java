@@ -25,10 +25,16 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
 public class BindMapToHeadersWithPrefix implements Binder {
    private final String metadataPrefix;
 

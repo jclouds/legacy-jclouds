@@ -19,8 +19,14 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
+import static com.google.common.io.Closeables.closeQuietly;
 import static java.util.Collections.singletonList;
+import static javax.ws.rs.core.HttpHeaders.HOST;
+import static org.jclouds.http.Payloads.newUrlEncodedFormPayload;
 import static org.jclouds.util.Patterns.CHAR_TO_ENCODED_PATTERN;
 import static org.jclouds.util.Patterns.PATTERN_THAT_BREAKS_URI;
 import static org.jclouds.util.Patterns.PLUS_PATTERN;
@@ -28,6 +34,7 @@ import static org.jclouds.util.Patterns.STAR_PATTERN;
 import static org.jclouds.util.Patterns.URI_PATTERN;
 import static org.jclouds.util.Patterns.URL_ENCODED_PATTERN;
 import static org.jclouds.util.Patterns._7E_PATTERN;
+import static org.jclouds.util.Utils.replaceAll;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -50,24 +57,18 @@ import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -186,11 +187,11 @@ public class HttpUtils {
          return in;
       try {
          String returnVal = URLEncoder.encode(in, "UTF-8");
-         returnVal = Utils.replaceAll(returnVal, '+', PLUS_PATTERN, "%20");
-         returnVal = Utils.replaceAll(returnVal, '*', STAR_PATTERN, "%2A");
-         returnVal = Utils.replaceAll(returnVal, _7E_PATTERN, "~");
+         returnVal = replaceAll(returnVal, '+', PLUS_PATTERN, "%20");
+         returnVal = replaceAll(returnVal, '*', STAR_PATTERN, "%2A");
+         returnVal = replaceAll(returnVal, _7E_PATTERN, "~");
          for (char c : skipEncode) {
-            returnVal = Utils.replaceAll(returnVal, CHAR_TO_ENCODED_PATTERN.get(c), c + "");
+            returnVal = replaceAll(returnVal, CHAR_TO_ENCODED_PATTERN.get(c), c + "");
          }
          return returnVal;
       } catch (UnsupportedEncodingException e) {
@@ -218,9 +219,9 @@ public class HttpUtils {
          try {
             toByteArray(response.getContent());
          } catch (IOException e) {
-            Throwables.propagate(e);
+            propagate(e);
          } finally {
-            Closeables.closeQuietly(response.getContent());
+            closeQuietly(response.getContent());
          }
       }
    }
@@ -235,9 +236,9 @@ public class HttpUtils {
             response.setContent(new ByteArrayInputStream(data));
             return data;
          } catch (IOException e) {
-            Throwables.propagate(e);
+            propagate(e);
          } finally {
-            Closeables.closeQuietly(response.getContent());
+            closeQuietly(response.getContent());
          }
       }
       return null;
@@ -270,21 +271,21 @@ public class HttpUtils {
     * 
     */
    public static URI createUri(String uriPath) {
-      List<String> onQuery = Lists.newArrayList(Splitter.on('?').split(uriPath));
+      List<String> onQuery = newArrayList(Splitter.on('?').split(uriPath));
       if (onQuery.size() == 2) {
          onQuery.add(urlEncode(onQuery.remove(1), '=', '&'));
          uriPath = Joiner.on('?').join(onQuery);
       }
       if (uriPath.indexOf('@') != 1) {
-         List<String> parts = Lists.newArrayList(Splitter.on('@').split(uriPath));
+         List<String> parts = newArrayList(Splitter.on('@').split(uriPath));
          String path = parts.remove(parts.size() - 1);
          if (parts.size() > 1) {
-            parts = Lists.newArrayList(urlEncode(Joiner.on('@').join(parts), '/', ':'));
+            parts = newArrayList(urlEncode(Joiner.on('@').join(parts), '/', ':'));
          }
          parts.add(urlEncode(path, '/', ':'));
          uriPath = Joiner.on('@').join(parts);
       } else {
-         List<String> parts = Lists.newArrayList(Splitter.on('/').split(uriPath));
+         List<String> parts = newArrayList(Splitter.on('/').split(uriPath));
          String path = parts.remove(parts.size() - 1);
          parts.add(urlEncode(path, ':'));
          uriPath = Joiner.on('/').join(parts);
@@ -341,7 +342,7 @@ public class HttpUtils {
          } while (numRead != -1);
       } finally {
          output.close();
-         Closeables.closeQuietly(input);
+         closeQuietly(input);
       }
    }
 
@@ -368,7 +369,7 @@ public class HttpUtils {
       builder.host(host);
       builder.port(port);
       request.setEndpoint(builder.build());
-      request.getHeaders().replaceValues(HttpHeaders.HOST, singletonList(host));
+      request.getHeaders().replaceValues(HOST, singletonList(host));
    }
 
    /**
@@ -425,10 +426,11 @@ public class HttpUtils {
    }
 
    public static void addFormParamTo(HttpRequest request, String key, Iterable<?> values) {
-      Multimap<String, String> map = parseQueryToMap(request.getPayload().toString());
+      Multimap<String, String> map;
+      map = parseQueryToMap(request.getPayload().getRawContent().toString());
       for (Object o : values)
          map.put(key, o.toString());
-      request.setPayload(makeQueryLine(map, null));
+      request.setPayload(newUrlEncodedFormPayload(map));
    }
 
    public static Multimap<String, String> parseQueryToMap(String in) {
@@ -440,7 +442,7 @@ public class HttpUtils {
          else
             map.put(in, null);
       } else {
-         String[] parts = HttpUtils.urlDecode(in).split("&");
+         String[] parts = urlDecode(in).split("&");
          for (String part : parts) {
             parseKeyValueFromStringToMap(part, map);
          }
@@ -461,23 +463,22 @@ public class HttpUtils {
 
    public static SortedSet<Entry<String, String>> sortEntries(
             Collection<Map.Entry<String, String>> in, Comparator<Map.Entry<String, String>> sorter) {
-      SortedSet<Entry<String, String>> entries = Sets.newTreeSet(sorter);
+      SortedSet<Entry<String, String>> entries = newTreeSet(sorter);
       entries.addAll(in);
       return entries;
    }
 
    public static String makeQueryLine(Multimap<String, String> params,
             @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-
       Iterator<Map.Entry<String, String>> pairs = ((sorter == null) ? params.entries()
                : sortEntries(params.entries(), sorter)).iterator();
       StringBuilder formBuilder = new StringBuilder();
       while (pairs.hasNext()) {
          Map.Entry<String, String> pair = pairs.next();
-         formBuilder.append(HttpUtils.urlEncode(pair.getKey(), skips));
+         formBuilder.append(urlEncode(pair.getKey(), skips));
          if (pair.getValue() != null && !pair.getValue().equals("")) {
             formBuilder.append("=");
-            formBuilder.append(HttpUtils.urlEncode(pair.getValue(), skips));
+            formBuilder.append(urlEncode(pair.getValue(), skips));
          }
          if (pairs.hasNext())
             formBuilder.append("&");

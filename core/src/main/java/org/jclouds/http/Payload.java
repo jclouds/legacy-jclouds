@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.annotation.Nullable;
+
 import com.google.common.io.InputSupplier;
 
 /**
@@ -51,9 +53,29 @@ public interface Payload extends InputSupplier<InputStream> {
     */
    void writeTo(OutputStream outstream) throws IOException;
 
+   void setContentLength(@Nullable Long contentLength);
+
    /**
-    * Attempts to determine the size of the payload
+    * Returns the total size of the payload, or the chunk that's available.
+    * <p/>
+    * Chunking is only used when {@link org.jclouds.http.GetOptions} is called with options like
+    * tail, range, or startAt.
+    * 
+    * @return the length in bytes that can be be obtained from {@link #getInput()}
+    * @see javax.ws.rs.core.HttpHeaders#CONTENT_LENGTH
+    * @see org.jclouds.http.options.GetOptions
     */
-   Long calculateSize();
+   @Nullable
+   Long getContentLength();
+
+   void setContentMD5(@Nullable byte[] md5);
+
+   @Nullable
+   byte[] getContentMD5();
+
+   void setContentType(@Nullable String md5);
+
+   @Nullable
+   String getContentType();
 
 }

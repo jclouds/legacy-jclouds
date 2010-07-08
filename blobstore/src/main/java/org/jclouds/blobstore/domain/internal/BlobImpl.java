@@ -26,7 +26,10 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.internal.BasePayloadEnclosingImpl;
+import org.jclouds.http.Payload;
+import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.http.internal.PayloadEnclosingImpl;
+import org.jclouds.http.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -39,22 +42,17 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class BlobImpl extends BasePayloadEnclosingImpl implements Blob, Comparable<Blob> {
-   private final MutableBlobMetadata metadata;
+public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<Blob> {
+
+   private final MutableBlobMetadata _metadata;
+   private final SetPayloadPropertiesMutableBlobMetadata metadata;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
    public BlobImpl(EncryptionService encryptionService, MutableBlobMetadata metadata) {
       super(encryptionService);
-      this.metadata = metadata;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected void setContentMD5(byte[] md5) {
-      getMetadata().setContentMD5(checkNotNull(md5, "md5"));
+      this.metadata = linkMetadataToThis(metadata);
+      this._metadata = this.metadata.getDelegate();
    }
 
    /**
@@ -91,25 +89,130 @@ public class BlobImpl extends BasePayloadEnclosingImpl implements Blob, Comparab
       return (this == o) ? 0 : getMetadata().getName().compareTo(o.getMetadata().getName());
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public int hashCode() {
-      return metadata.hashCode();
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((_metadata == null) ? 0 : _metadata.hashCode());
+      return result;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public boolean equals(Object obj) {
-      return metadata.equals(obj);
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BlobImpl other = (BlobImpl) obj;
+      if (_metadata == null) {
+         if (other._metadata != null)
+            return false;
+      } else if (!_metadata.equals(other._metadata))
+         return false;
+      return true;
    }
 
    @Override
    public String toString() {
-      return "[metadata=" + metadata + "]";
+      return "[metadata=" + _metadata + "]";
    }
 
+   @Override
+   public void setPayload(Payload data) {
+      linkPayloadToMetadata(data);
+   }
+
+   /**
+    * link the new payload to the metadata object so that when content-related metadata is updated
+    * on the payload, it is also copied the metadata object.
+    */
+   void linkPayloadToMetadata(Payload data) {
+      if (data instanceof DelegatingPayload)
+         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
+                  .getDelegate(), _metadata));
+      else
+         super.setPayload(new SetMetadataPropertiesPayload(data, _metadata));
+   }
+
+   static class SetMetadataPropertiesPayload extends DelegatingPayload {
+
+      private transient final MutableBlobMetadata metadata;
+
+      public SetMetadataPropertiesPayload(Payload delegate, MutableBlobMetadata metadata) {
+         super(delegate);
+         this.metadata = metadata;
+         if (metadata.getSize() != null)
+            setContentLength(metadata.getSize());
+         setContentMD5(metadata.getContentMD5());
+         setContentType(metadata.getContentType());
+      }
+
+      @Override
+      public void setContentLength(Long contentLength) {
+         super.setContentLength(contentLength);
+         metadata.setSize(contentLength);
+      }
+
+      @Override
+      public void setContentMD5(byte[] md5) {
+         super.setContentMD5(md5);
+         metadata.setContentMD5(md5);
+      }
+
+      @Override
+      public void setContentType(String md5) {
+         super.setContentType(md5);
+         metadata.setContentType(md5);
+      }
+
+   }
+
+   /**
+    * link the metadata object to this so that when content-related metadata is updated, it is also
+    * copied the currentpayload object.
+    */
+   SetPayloadPropertiesMutableBlobMetadata linkMetadataToThis(MutableBlobMetadata metadata) {
+      return metadata instanceof DelegatingMutableBlobMetadata ? new SetPayloadPropertiesMutableBlobMetadata(
+               DelegatingMutableBlobMetadata.class.cast(metadata).getDelegate(), this)
+               : new SetPayloadPropertiesMutableBlobMetadata(metadata, this);
+   }
+
+   static class SetPayloadPropertiesMutableBlobMetadata extends DelegatingMutableBlobMetadata {
+      /** The serialVersionUID */
+      private static final long serialVersionUID = -5072270546219814521L;
+      private transient final PayloadEnclosing blob;
+
+      public SetPayloadPropertiesMutableBlobMetadata(MutableBlobMetadata delegate,
+               PayloadEnclosing blob) {
+         super(delegate);
+         this.blob = blob;
+      }
+
+      @Override
+      public void setContentMD5(byte[] md5) {
+         super.setContentMD5(md5);
+         if (canSetPayload())
+            blob.getPayload().setContentMD5(md5);
+      }
+
+      @Override
+      public void setContentType(String type) {
+         super.setContentType(type);
+         if (canSetPayload())
+            blob.getPayload().setContentType(type);
+      }
+
+      @Override
+      public void setSize(Long size) {
+         super.setSize(size);
+         if (canSetPayload())
+            blob.getPayload().setContentLength(size);
+      }
+
+      private boolean canSetPayload() {
+         return blob != null && blob.getPayload() != null;
+      }
+   }
 }

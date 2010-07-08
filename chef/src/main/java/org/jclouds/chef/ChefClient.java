@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Sandbox;
-import org.jclouds.chef.domain.UploadSite;
+import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
@@ -61,9 +61,9 @@ import org.jclouds.rest.AuthorizationException;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
-   UploadSite getUploadSiteForHexEncodedChecksums(Set<String> hexEncodedmd5s);
+   UploadSandbox getUploadSandboxForChecksums(Set<String> hexEncodedmd5s);
 
-   Sandbox closeSandbox(String id, boolean isCompleted);
+   Sandbox commitSandbox(String id, boolean isCompleted);
 
    /**
     * 

@@ -41,7 +41,7 @@ import org.jclouds.chef.binders.BindIsCompletedToJsonPayload;
 import org.jclouds.chef.binders.BindHexEncodedMD5sToJsonPayload;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Sandbox;
-import org.jclouds.chef.domain.UploadSite;
+import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.functions.ParseCookbookVersionFromJson;
 import org.jclouds.chef.functions.ParseKeyFromJson;
@@ -76,21 +76,25 @@ public interface ChefAsyncClient {
    public static final String VERSION = "0.9.6";
 
    /**
-    * @see ChefClient#getUploadUrisForChecksums
+    * @see ChefClient#getUploadSandboxForChecksums
     */
    @POST
    @Path("sandboxes")
    @ResponseParser(ParseUploadSiteFromJson.class)
-   ListenableFuture<UploadSite> getUploadSiteForHexEncodedChecksums(
+   ListenableFuture<UploadSandbox> getUploadSandboxForChecksums(
             @BinderParam(BindHexEncodedMD5sToJsonPayload.class) Set<String> hexEncodedmd5s);
 
+   @PUT
+   ListenableFuture<Void> uploadContent(
+            @BinderParam(BindHexEncodedMD5sToJsonPayload.class) Set<String> hexEncodedmd5s);
+   
    /**
-    * @see ChefClient#closeSandbox
+    * @see ChefClient#commitSandbox
     */
    @PUT
    @Path("sandboxes/{id}")
    @ResponseParser(ParseSandboxFromJson.class)
-   ListenableFuture<Sandbox> closeSandbox(@PathParam("id") String id,
+   ListenableFuture<Sandbox> commitSandbox(@PathParam("id") String id,
             @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
 
    /**

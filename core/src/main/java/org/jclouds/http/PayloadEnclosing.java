@@ -48,25 +48,6 @@ public interface PayloadEnclosing {
    Payload getPayload();
 
    /**
-    * @return InputStream, if downloading, or whatever was set during {@link #setPayload(Payload)}
-    */
-   InputStream getContent();
-
-   void setContentLength(long contentLength);
-
-   /**
-    * Returns the total size of the downloaded object, or the chunk that's available.
-    * <p/>
-    * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
-    * range, or startAt.
-    * 
-    * @return the length in bytes that can be be obtained from {@link #getContent()}
-    * @see javax.ws.rs.core.HttpHeaders#CONTENT_LENGTH
-    * @see org.jclouds.http.options.GetOptions
-    */
-   Long getContentLength();
-
-   /**
     * generate an MD5 Hash for the current data.
     * <p/>
     * <h2>Note</h2>

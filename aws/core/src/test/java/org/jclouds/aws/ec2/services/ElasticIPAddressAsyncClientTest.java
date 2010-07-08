@@ -106,7 +106,7 @@ public class ElasticIPAddressAsyncClientTest extends
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeAddresses&PublicIp.1=127.0.0.1");
 

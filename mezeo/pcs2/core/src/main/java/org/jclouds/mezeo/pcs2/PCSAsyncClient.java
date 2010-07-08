@@ -32,7 +32,6 @@ import javax.ws.rs.PathParam;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlPayload;
-import org.jclouds.mezeo.pcs2.binders.BindDataToPayload;
 import org.jclouds.mezeo.pcs2.binders.BindFileInfoToXmlPayload;
 import org.jclouds.mezeo.pcs2.binders.BindPCSFileToMultipartForm;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
@@ -134,8 +133,8 @@ public interface PCSAsyncClient {
     */
    @PUT
    @Path("/content")
-   ListenableFuture<Void> uploadBlock(@EndpointParam URI file,
-            @BinderParam(BindDataToPayload.class) PCSFile object, PutBlockOptions... options);
+   ListenableFuture<Void> uploadBlock(@EndpointParam URI file, PCSFile object,
+            PutBlockOptions... options);
 
    /**
     * @see PCSAsyncClient#deleteFile

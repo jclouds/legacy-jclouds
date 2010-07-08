@@ -18,29 +18,17 @@
  */
 package org.jclouds.http.payloads;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import org.jclouds.http.Payload;
 import org.jclouds.util.Utils;
-
-import com.google.common.io.ByteStreams;
 
 /**
  * @author Adrian Cole
  */
-public class StringPayload implements Payload {
-   private final String content;
+public class StringPayload extends BasePayload<String> {
 
    public StringPayload(String content) {
-      this.content = checkNotNull(content, "content");
-   }
-
-   public String getRawContent() {
-      return content;
+      super(content, null, new Long(content.length()), null);
    }
 
    /**
@@ -59,24 +47,4 @@ public class StringPayload implements Payload {
       return true;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void writeTo(OutputStream outstream) throws IOException {
-      ByteStreams.copy(Utils.toInputStream(content), outstream);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long calculateSize() {
-      return new Long(content.length());
-   }
-
-   @Override
-   public String toString() {
-      return content;
-   }
 }

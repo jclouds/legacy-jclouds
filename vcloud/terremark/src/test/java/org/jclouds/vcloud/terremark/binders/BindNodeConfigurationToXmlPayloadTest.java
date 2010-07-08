@@ -33,9 +33,6 @@ import org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -98,12 +95,8 @@ public class BindNodeConfigurationToXmlPayloadTest {
    private void assertConfigMakesPayload(NodeConfiguration config, String expectedPayload) {
       BindNodeConfigurationToXmlPayload binder = injector
                .getInstance(BindNodeConfigurationToXmlPayload.class);
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
       HttpRequest request = createMock(HttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expectedPayload);
       replay(request);
       binder.bindToRequest(request, config);

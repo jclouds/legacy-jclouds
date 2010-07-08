@@ -108,8 +108,8 @@ public class Util {
 
    public static S3Object convertObject(org.jclouds.aws.s3.domain.S3Object jcObject) {
       S3Object jsObject = convertObjectHead(jcObject.getMetadata());
-      if (jcObject.getContent() != null) {
-         jsObject.setDataInputStream(jcObject.getContent());
+      if (jcObject.getPayload().getInput() != null) {
+         jsObject.setDataInputStream(jcObject.getPayload().getInput());
       }
       return jsObject;
    }
@@ -125,12 +125,18 @@ public class Util {
    @SuppressWarnings("unchecked")
    public static org.jclouds.aws.s3.domain.S3Object convertObject(S3Object jsObject,
             org.jclouds.aws.s3.domain.S3Object jcObject) throws S3ServiceException {
+      if (jsObject.getDataInputStream() != null) {
+         jcObject.setPayload(jsObject.getDataInputStream());
+      } else {
+         jcObject.setPayload(""); // Must explicitly set data for empty jClouds objects.
+      }
+      jcObject.getPayload().setContentLength(jsObject.getContentLength());
+
       jcObject.getMetadata().setKey(jsObject.getKey());
       jcObject.getMetadata().setCacheControl((String) jsObject.getMetadata("Cache-Control"));
       jcObject.getMetadata().setContentDisposition(jsObject.getContentDisposition());
       jcObject.getMetadata().setContentEncoding(jsObject.getContentEncoding());
       jcObject.getMetadata().setLastModified(jsObject.getLastModifiedDate());
-      jcObject.setContentLength(jsObject.getContentLength());
       if (jsObject.getStorageClass() != null)
          jcObject.getMetadata().setStorageClass(StorageClass.valueOf(jsObject.getStorageClass()));
 
@@ -140,12 +146,6 @@ public class Util {
 
       if (jsObject.getOwner() != null) {
          jcObject.getMetadata().setOwner(new CanonicalUser(jsObject.getOwner().getId()));
-      }
-
-      if (jsObject.getDataInputStream() != null) {
-         jcObject.setPayload(jsObject.getDataInputStream());
-      } else {
-         jcObject.setPayload(""); // Must explicitly set data for empty jClouds objects.
       }
 
       if (jsObject.getContentType() != null) {

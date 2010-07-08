@@ -111,8 +111,8 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          addBlobToContainer(containerName, sourceKey);
          validateContent(containerName, sourceKey);
 
-         getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, overrideAcl(CannedAccessPolicy.PUBLIC_READ));
+         getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey,
+                  overrideAcl(CannedAccessPolicy.PUBLIC_READ));
 
          validateContent(destinationContainer, destinationKey);
 
@@ -246,8 +246,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = getApi().getObjectACL(containerName,
-                           publicReadObjectKey);
+                  AccessControlList acl = getApi().getObjectACL(containerName, publicReadObjectKey);
 
                   assertEquals(acl.getGrants().size(), 2);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 1);
@@ -280,7 +279,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       assertConsistencyAwareContainerSize(sourceContainer, 1);
       S3Object newObject = getApi().getObject(sourceContainer, key);
       assert newObject != null;
-      assertEquals(Utils.toStringAndClose(newObject.getContent()), TEST_STRING);
+      assertEquals(Utils.toStringAndClose(newObject.getPayload().getInput()), TEST_STRING);
       return newObject;
    }
 
@@ -332,8 +331,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          addToContainerAndValidate(containerName, sourceKey);
 
-         getApi()
-                  .copyObject(containerName, sourceKey, destinationContainer, destinationKey);
+         getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey);
 
          validateContent(destinationContainer, destinationKey);
       } finally {
@@ -387,8 +385,8 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          addToContainerAndValidate(containerName, sourceKey + "un");
          Date after = new Date(System.currentTimeMillis() + 1000);
 
-         getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
-                  destinationKey, ifSourceUnmodifiedSince(after));
+         getApi().copyObject(containerName, sourceKey + "un", destinationContainer, destinationKey,
+                  ifSourceUnmodifiedSince(after));
          validateContent(destinationContainer, destinationKey);
 
          try {
@@ -410,13 +408,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
-         getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, ifSourceETagMatches(goodETag));
+         getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey,
+                  ifSourceETagMatches(goodETag));
          validateContent(destinationContainer, destinationKey);
 
          try {
-            getApi().copyObject(containerName, sourceKey, destinationContainer,
-                     destinationKey, ifSourceETagMatches("setsds"));
+            getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey,
+                     ifSourceETagMatches("setsds"));
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
@@ -433,13 +431,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
-         getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, ifSourceETagDoesntMatch("asfasdf"));
+         getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey,
+                  ifSourceETagDoesntMatch("asfasdf"));
          validateContent(destinationContainer, destinationKey);
 
          try {
-            getApi().copyObject(containerName, sourceKey, destinationContainer,
-                     destinationKey, ifSourceETagDoesntMatch(goodETag));
+            getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey,
+                     ifSourceETagDoesntMatch(goodETag));
          } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
@@ -459,13 +457,12 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          Map<String, String> metadata = Maps.newHashMap();
          metadata.put("adrian", "cole");
 
-         getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, overrideMetadataWith(metadata));
+         getApi().copyObject(containerName, sourceKey, destinationContainer, destinationKey,
+                  overrideMetadataWith(metadata));
 
          validateContent(destinationContainer, destinationKey);
 
-         ObjectMetadata objectMeta = getApi().headObject(destinationContainer,
-                  destinationKey);
+         ObjectMetadata objectMeta = getApi().headObject(destinationContainer, destinationKey);
 
          assertEquals(objectMeta.getUserMetadata(), metadata);
       } finally {

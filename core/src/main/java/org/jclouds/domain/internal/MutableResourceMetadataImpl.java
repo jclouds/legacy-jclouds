@@ -189,33 +189,33 @@ public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableRe
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof MutableResourceMetadata<?>))
          return false;
-      MutableResourceMetadataImpl<?> other = (MutableResourceMetadataImpl<?>) obj;
+      MutableResourceMetadata<?> other = (MutableResourceMetadata<?>) obj;
       if (id == null) {
-         if (other.id != null)
+         if (other.getProviderId() != null)
             return false;
-      } else if (!id.equals(other.id))
+      } else if (!id.equals(other.getProviderId()))
          return false;
       if (location == null) {
-         if (other.location != null)
+         if (other.getLocation() != null)
             return false;
-      } else if (!location.equals(other.location))
+      } else if (!location.equals(other.getLocation()))
          return false;
       if (name == null) {
-         if (other.name != null)
+         if (other.getName() != null)
             return false;
-      } else if (!name.equals(other.name))
+      } else if (!name.equals(other.getName()))
          return false;
       if (type == null) {
-         if (other.type != null)
+         if (other.getType() != null)
             return false;
-      } else if (!type.equals(other.type))
+      } else if (!type.equals(other.getType()))
          return false;
       if (uri == null) {
-         if (other.uri != null)
+         if (other.getUri() != null)
             return false;
-      } else if (!uri.equals(other.uri))
+      } else if (!uri.equals(other.getUri()))
          return false;
       return true;
    }

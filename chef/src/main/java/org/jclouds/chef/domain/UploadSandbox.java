@@ -28,19 +28,19 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class UploadSite {
+public class UploadSandbox {
    private URI uri;
    private Map<String, ChecksumStatus> checksums = Maps.newLinkedHashMap();
    @SerializedName("sandbox_id")
    private String sandboxId;
 
-   public UploadSite(URI uri, Map<String, ChecksumStatus> checksums, String sandboxId) {
+   public UploadSandbox(URI uri, Map<String, ChecksumStatus> checksums, String sandboxId) {
       this.uri = uri;
       this.checksums.putAll(checksums);
       this.sandboxId = sandboxId;
    }
 
-   public UploadSite() {
+   public UploadSandbox() {
 
    }
 
@@ -75,7 +75,7 @@ public class UploadSite {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      UploadSite other = (UploadSite) obj;
+      UploadSandbox other = (UploadSandbox) obj;
       if (checksums == null) {
          if (other.checksums != null)
             return false;

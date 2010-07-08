@@ -48,7 +48,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    private URI url;
    private Date lastModified;
    private String eTag;
-   private long size;
+   private Long size;
    private String contentType;
    private byte[] contentMD5;
    private String contentEncoding;
@@ -198,7 +198,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    /**
     *{@inheritDoc}
     */
-   public void setContentLength(long size) {
+   public void setContentLength(Long size) {
       this.size = size;
    }
 

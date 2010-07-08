@@ -18,20 +18,19 @@
  */
 package org.jclouds.blobstore.binders;
 
+import static org.jclouds.http.payloads.MultipartForm.BOUNDARY;
+import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -42,8 +41,6 @@ import org.testng.annotations.Test;
 @Test(testName = "blobstore.BindBlobToMultipartFormTest")
 public class BindBlobToMultipartFormTest {
    private static Factory blobProvider;
-
-   public static String BOUNDRY = BindBlobToMultipartForm.BOUNDARY;
    public static final String EXPECTS;
    public static final Blob TEST_BLOB;
 
@@ -51,8 +48,8 @@ public class BindBlobToMultipartFormTest {
       blobProvider = new RestContextFactory().createContextBuilder("transient", "identity",
                "credential").buildInjector().getInstance(Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
-      addData(BOUNDRY, "hello", builder);
-      builder.append("--").append(BOUNDRY).append("--").append("\r\n");
+      addData(BOUNDARY, "hello", builder);
+      builder.append("--").append(BOUNDARY).append("--").append("\r\n");
       EXPECTS = builder.toString();
       TEST_BLOB = blobProvider.create(null);
       TEST_BLOB.getMetadata().setName("hello");
@@ -69,12 +66,11 @@ public class BindBlobToMultipartFormTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, TEST_BLOB);
 
-      assertEquals(Utils.toStringAndClose((InputStream) request.getPayload().getRawContent()),
-               EXPECTS);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 113 + "");
+      assertEquals(toStringAndClose(request.getPayload().getInput()), EXPECTS);
+      assertEquals(request.getPayload().getContentLength(), new Long(113));
 
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-               "multipart/form-data; boundary=" + BOUNDRY);
+      assertEquals(request.getPayload().getContentType(), "multipart/form-data; boundary="
+               + BOUNDARY);
    }
 
    private static void addData(String boundary, String data, StringBuilder builder) {

@@ -18,15 +18,14 @@
  */
 package org.jclouds.encryption;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.FilterOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.http.Payload;
+import org.jclouds.http.payloads.ByteArrayPayload;
 
 import com.google.inject.ImplementedBy;
 
@@ -56,7 +55,9 @@ public interface EncryptionService {
 
    byte[] md5(InputStream toEncode);
 
-   MD5InputStreamResult md5Result(InputStream toEncode);
+   Payload generateMD5BufferingIfNotRepeatable(Payload in);
+
+   ByteArrayPayload generatePayloadWithMD5For(InputStream toEncode);
 
    MD5OutputStream md5OutputStream(OutputStream out);
 
@@ -66,20 +67,6 @@ public interface EncryptionService {
       }
 
       public abstract byte[] getMD5();
-   }
-
-   public static class MD5InputStreamResult {
-      public final byte[] data;
-      public final byte[] md5;
-      public final long length;
-
-      public MD5InputStreamResult(byte[] data, byte[] md5, long length) {
-         this.data = checkNotNull(data, "data");
-         this.md5 = checkNotNull(md5, "md5");
-         checkArgument(length >= 0, "length cannot me negative");
-         this.length = length;
-      }
-
    }
 
 }

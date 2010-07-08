@@ -22,23 +22,23 @@ import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_M
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.Binder;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BindBlobToPayloadAndUserMetadataToHeadersWithPrefix extends BindBlobToPayload {
+@Singleton
+public class BindUserMetadataToHeadersWithPrefix implements Binder {
    private final String metadataPrefix;
 
    @Inject
-   public BindBlobToPayloadAndUserMetadataToHeadersWithPrefix(
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            EncryptionService encryptionService) {
-      super(encryptionService);
+   public BindUserMetadataToHeadersWithPrefix(
+            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.metadataPrefix = metadataPrefix;
    }
 
@@ -49,6 +49,5 @@ public class BindBlobToPayloadAndUserMetadataToHeadersWithPrefix extends BindBlo
          request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
                   object.getMetadata().getUserMetadata().get(key));
       }
-      super.bindToRequest(request, payload);
    }
 }

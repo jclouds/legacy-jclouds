@@ -243,8 +243,8 @@ public class BaseBlobStoreIntegrationTest {
 
    protected String addBlobToContainer(String sourceContainer, String key) {
       Blob sourceObject = context.getBlobStore().newBlob(key);
-      sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setPayload(TEST_STRING);
+      sourceObject.getMetadata().setContentType("text/xml");
       return addBlobToContainer(sourceContainer, sourceObject);
    }
 

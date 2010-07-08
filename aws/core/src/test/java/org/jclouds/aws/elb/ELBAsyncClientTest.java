@@ -63,7 +63,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
                "POST https://elasticloadbalancing.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: elasticloadbalancing.us-east-1.amazonaws.com\n");
+               "Content-Length: 130\nContent-Type: application/x-www-form-urlencoded\nHost: elasticloadbalancing.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
                "Version=2009-11-25&Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09");

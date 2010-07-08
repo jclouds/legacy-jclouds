@@ -231,7 +231,6 @@ public class AzureBlobClientLiveTest {
       AzureBlob object = client.newBlob();
       object.getProperties().setName("object");
       object.setPayload(data);
-      object.setContentLength(data.length());
       object.generateMD5();
       object.getProperties().setContentType("text/plain");
       object.getProperties().getMetadata().put("mykey", "metadata-value");
@@ -273,9 +272,9 @@ public class AzureBlobClientLiveTest {
 
       // Test GET of object (including updated metadata)
       AzureBlob getBlob = client.getBlob(privateContainer, object.getProperties().getName());
-      assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);
+      assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data);
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
-      assertEquals(getBlob.getContentLength(), new Long(data.length()));
+      assertEquals(getBlob.getPayload().getContentLength(), new Long(data.length()));
       assertEquals(getBlob.getProperties().getContentType(), "text/plain");
       assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob.getProperties()
                .getContentMD5()));
@@ -317,7 +316,7 @@ public class AzureBlobClientLiveTest {
       object = client.newBlob();
       object.getProperties().setName("chunked-object");
       object.setPayload(bais);
-      object.setContentLength(new Long(data.getBytes().length));
+      object.getPayload().setContentLength(new Long(data.getBytes().length));
       newEtag = client.putBlob(privateContainer, object);
       assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob.getProperties()
                .getContentMD5()));

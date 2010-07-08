@@ -106,7 +106,7 @@ public interface MutableObjectMetadata extends ObjectMetadata {
 
    void setETag(String eTag);
 
-   void setSize(long size);
+   void setSize(Long size);
 
    void setUserMetadata(Map<String, String> userMetadata);
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.chef.domain.ChecksumStatus;
-import org.jclouds.chef.domain.UploadSite;
+import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.BeforeTest;
@@ -36,7 +36,7 @@ public class ParseUploadSiteFromJsonTest {
       assertEquals(
                handler.apply(new HttpResponse(ParseUploadSiteFromJsonTest.class
                         .getResourceAsStream("/upload-site.json"))),
-               new UploadSite(
+               new UploadSandbox(
                         URI
                                  .create("https://api.opscode.com/organizations/jclouds/sandboxes/d454f71e2a5f400c808d0c5d04c2c88c"),
                         ImmutableMap

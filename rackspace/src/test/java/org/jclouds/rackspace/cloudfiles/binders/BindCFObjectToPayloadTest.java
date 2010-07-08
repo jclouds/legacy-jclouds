@@ -18,88 +18,147 @@
  */
 package org.jclouds.rackspace.cloudfiles.binders;
 
-import static org.testng.Assert.assertEquals;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Properties;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
+import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
-import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
-import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
+import org.jclouds.http.Payload;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
-import org.jclouds.util.Utils;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.testng.annotations.Test;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
+import com.google.common.collect.Multimap;
 
 /**
- * Tests parsing of a request
+ * Tests behavior of {@code BindCFObjectToPayload}
  * 
  * @author Adrian Cole
  */
-@Test(testName = "cloudfiles.BindCFObjectToPayloadTest")
+@Test(groups = "unit", testName = "cloudfiles.BindCFObjectToPayloadTest")
 public class BindCFObjectToPayloadTest {
-   private Factory blobProvider;
-   private Provider<BindCFObjectToPayload> binderProvider;
-   private BlobToObject blob2Object;
+   @Test
+   public void testPassWithMinimumDetailsAndPayload5GB() {
 
-   public BindCFObjectToPayloadTest() {
-      Injector injector = new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(
-               new Properties()).provider("cloudfiles").credentials("id", "secret").build())
-               .buildInjector();
+      BindUserMetadataToHeadersWithPrefix mdBinder = createMock(BindUserMetadataToHeadersWithPrefix.class);
+      ObjectToBlob object2Blob = createMock(ObjectToBlob.class);
+      HttpRequest request = createMock(HttpRequest.class);
+      CFObject object = createMock(CFObject.class);
+      Payload payload = createMock(Payload.class);
+      Blob blob = createMock(Blob.class);
+      MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
 
-      blobProvider = injector.getInstance(Blob.Factory.class);
-      binderProvider = injector.getInstance(Key
-               .get(new TypeLiteral<Provider<BindCFObjectToPayload>>() {
-               }));
-      blob2Object = injector.getInstance(BlobToObject.class);
+      expect(object.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getContentLength()).andReturn(5368709120l).atLeastOnce();
+      expect(object2Blob.apply(object)).andReturn(blob);
+      mdBinder.bindToRequest(request, blob);
+
+      replay(payload);
+      replay(mdBinder);
+      replay(object2Blob);
+      replay(request);
+      replay(object);
+      replay(blob);
+      replay(md);
+
+      BindCFObjectToPayload binder = new BindCFObjectToPayload(object2Blob, mdBinder);
+
+      binder.bindToRequest(request, object);
+
+      verify(payload);
+      verify(mdBinder);
+      verify(object2Blob);
+      verify(request);
+      verify(object);
+      verify(blob);
+      verify(md);
+
    }
 
-   public CFObject testBlob() {
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testChunkedBind() {
 
-      Blob TEST_BLOB = blobProvider.create(null);
-      TEST_BLOB.getMetadata().setName("hello");
-      TEST_BLOB.setPayload("hello");
-      TEST_BLOB.getMetadata().setContentType(MediaType.TEXT_PLAIN);
-      return blob2Object.apply(TEST_BLOB);
+      BindUserMetadataToHeadersWithPrefix mdBinder = createMock(BindUserMetadataToHeadersWithPrefix.class);
+      ObjectToBlob object2Blob = createMock(ObjectToBlob.class);
+      HttpRequest request = createMock(HttpRequest.class);
+      CFObject object = createMock(CFObject.class);
+      Payload payload = createMock(Payload.class);
+      Blob blob = createMock(Blob.class);
+      MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
+      Multimap<String, String> headers = createMock(Multimap.class);
+
+      expect(object.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getContentLength()).andReturn(null).atLeastOnce();
+      expect(object2Blob.apply(object)).andReturn(blob);
+      mdBinder.bindToRequest(request, blob);
+      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
+      expect(headers.put("Transfer-Encoding", "chunked")).andReturn(true);
+
+      replay(headers);
+      replay(payload);
+      replay(mdBinder);
+      replay(object2Blob);
+      replay(request);
+      replay(object);
+      replay(blob);
+      replay(md);
+
+      BindCFObjectToPayload binder = new BindCFObjectToPayload(object2Blob, mdBinder);
+
+      binder.bindToRequest(request, object);
+
+      verify(headers);
+      verify(payload);
+      verify(mdBinder);
+      verify(object2Blob);
+      verify(request);
+      verify(object);
+      verify(blob);
+      verify(md);
+
    }
 
-   public void testNormal() throws IOException {
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testOver5GBIsBad() {
 
-      BindCFObjectToPayload binder = binderProvider.get();
+      BindUserMetadataToHeadersWithPrefix mdBinder = createMock(BindUserMetadataToHeadersWithPrefix.class);
+      ObjectToBlob object2Blob = createMock(ObjectToBlob.class);
+      HttpRequest request = createMock(HttpRequest.class);
+      CFObject object = createMock(CFObject.class);
+      Payload payload = createMock(Payload.class);
+      Blob blob = createMock(Blob.class);
+      MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
-      binder.bindToRequest(request, testBlob());
+      expect(object.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getContentLength()).andReturn(5368709121l).atLeastOnce();
+      expect(object2Blob.apply(object)).andReturn(blob);
+      mdBinder.bindToRequest(request, blob);
+      expect(object.getInfo()).andReturn(md).atLeastOnce();
 
-      assertEquals(Utils.toStringAndClose(request.getPayload().getInput()), "hello");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 5 + "");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), MediaType.TEXT_PLAIN);
-   }
+      replay(payload);
+      replay(mdBinder);
+      replay(object2Blob);
+      replay(request);
+      replay(object);
+      replay(blob);
+      replay(md);
 
-   public void testMD5InHex() throws IOException {
+      BindCFObjectToPayload bindCFObjectToPayload = new BindCFObjectToPayload(object2Blob, mdBinder);
 
-      BindCFObjectToPayload binder = binderProvider.get();
+      bindCFObjectToPayload.bindToRequest(request, object);
 
-      CFObject blob = testBlob();
-      blob.generateMD5();
-      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
-      binder.bindToRequest(request, blob);
+      verify(payload);
+      verify(mdBinder);
+      verify(object2Blob);
+      verify(request);
+      verify(object);
+      verify(blob);
+      verify(md);
 
-      assertEquals(Utils.toStringAndClose(request.getPayload().getInput()), "hello");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 5 + "");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.ETAG),
-               "5d41402abc4b2a76b9719d911017c592");
-      assertEquals(request.getFirstHeaderOrNull("Content-MD5"), null);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), MediaType.TEXT_PLAIN);
    }
 }

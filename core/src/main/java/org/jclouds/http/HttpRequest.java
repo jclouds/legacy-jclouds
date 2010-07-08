@@ -20,6 +20,8 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.Closeables.closeQuietly;
+import static com.google.inject.internal.Lists.newArrayList;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,11 +29,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.core.HttpHeaders;
-
 import com.google.common.collect.Multimap;
-import com.google.common.io.Closeables;
-import com.google.inject.internal.Lists;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -41,7 +39,7 @@ import com.google.inject.internal.Nullable;
  */
 public class HttpRequest extends HttpMessage {
 
-   private List<HttpRequestFilter> requestFilters = Lists.newArrayList();
+   private List<HttpRequestFilter> requestFilters = newArrayList();
    private String method;
    private URI endpoint;
    private Payload payload;
@@ -113,7 +111,6 @@ public class HttpRequest extends HttpMessage {
    public void setPayload(Payload data) {
       closeContentIfPresent();
       this.payload = checkNotNull(data, "data");
-      setLength();
    }
 
    public void setPayload(InputStream data) {
@@ -130,13 +127,6 @@ public class HttpRequest extends HttpMessage {
 
    public void setPayload(File data) {
       setPayload(Payloads.newPayload(checkNotNull(data, "data")));
-   }
-
-   private void setLength() {
-      Long size = getPayload().calculateSize();
-      if (size != null && this.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH) == null) {
-         getHeaders().put(HttpHeaders.CONTENT_LENGTH, size.toString());
-      }
    }
 
    /**
@@ -178,7 +168,7 @@ public class HttpRequest extends HttpMessage {
 
    private void closeContentIfPresent() {
       if (getPayload() != null && getPayload().getInput() != null) {
-         Closeables.closeQuietly(getPayload().getInput());
+         closeQuietly(getPayload().getInput());
       }
    }
 

@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.chef.domain.UploadSite;
+import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
@@ -41,17 +41,17 @@ import com.google.gson.Gson;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseUploadSiteFromJson extends ParseJson<UploadSite> {
+public class ParseUploadSiteFromJson extends ParseJson<UploadSandbox> {
    @Inject
    public ParseUploadSiteFromJson(Gson gson) {
       super(gson);
    }
 
    @Override
-   protected UploadSite apply(InputStream stream) {
+   protected UploadSandbox apply(InputStream stream) {
       try {
          return gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               UploadSite.class);
+               UploadSandbox.class);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

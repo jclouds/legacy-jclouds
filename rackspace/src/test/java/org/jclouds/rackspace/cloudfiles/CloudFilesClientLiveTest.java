@@ -304,8 +304,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          CFObject object = newCFObject(data, key);
          byte[] md5 = object.getInfo().getHash();
          String newEtag = getApi().putObject(containerName, object);
-         assertEquals(encryptionService.hex(md5), encryptionService.hex(object
-                  .getInfo().getHash()));
+         assertEquals(encryptionService.hex(md5), encryptionService.hex(object.getInfo().getHash()));
 
          // Test HEAD of missing object
          assert getApi().getObjectInfo(containerName, "non-existent-object") == null;
@@ -316,8 +315,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // TODO assertEquals(metadata.getName(), object.getMetadata().getName());
          assertEquals(metadata.getBytes(), new Long(data.length()));
          assertEquals(metadata.getContentType(), "text/plain");
-         assertEquals(encryptionService.hex(md5), encryptionService.hex(object
-                  .getInfo().getHash()));
+         assertEquals(encryptionService.hex(md5), encryptionService.hex(object.getInfo().getHash()));
          assertEquals(metadata.getHash(), encryptionService.fromHex(newEtag));
          assertEquals(metadata.getMetadata().entrySet().size(), 1);
          assertEquals(metadata.getMetadata().get("metadata"), "metadata-value");
@@ -332,12 +330,12 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          assert getApi().getObject(containerName, "non-existent-object") == null;
          // Test GET of object (including updated metadata)
          CFObject getBlob = getApi().getObject(containerName, object.getInfo().getName());
-         assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);
+         assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data);
          // TODO assertEquals(getBlob.getName(), object.getMetadata().getName());
-         assertEquals(getBlob.getContentLength(), new Long(data.length()));
+         assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
          assertEquals(getBlob.getInfo().getContentType(), "text/plain");
-         assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob
-                  .getInfo().getHash()));
+         assertEquals(encryptionService.hex(md5), encryptionService
+                  .hex(getBlob.getInfo().getHash()));
          assertEquals(encryptionService.fromHex(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-1"), "value-1");
@@ -359,8 +357,8 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          blob.getInfo().setName("chunked-object");
          blob.setPayload(bais);
          newEtag = getApi().putObject(containerName, blob);
-         assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob
-                  .getInfo().getHash()));
+         assertEquals(encryptionService.hex(md5), encryptionService
+                  .hex(getBlob.getInfo().getHash()));
 
          // Test GET with options
          // Non-matching ETag
@@ -377,7 +375,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          assertEquals(getBlob.getInfo().getHash(), encryptionService.fromHex(newEtag));
          getBlob = getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.startAt(8));
-         assertEquals(Utils.toStringAndClose(getBlob.getContent()), data.substring(8));
+         assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data.substring(8));
 
       } finally {
          returnContainer(containerName);

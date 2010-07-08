@@ -90,7 +90,7 @@ public class ParseObjectMetadataFromHeadersTest {
       md.setETag(etag);
       md.setName("key");
       md.setLastModified(now);
-      md.setSize(1025);
+      md.setSize(1025l);
       md.setUserMetadata(userMetadata);
       expect(parser.apply(response)).andReturn(md);
       replay(parser);
@@ -110,7 +110,7 @@ public class ParseObjectMetadataFromHeadersTest {
       expects.setKey("key");
       expects.setLastModified(now);
       expects.setOwner(null);
-      expects.setSize(1025);
+      expects.setSize(1025l);
       expects.setStorageClass(StorageClass.STANDARD);
       expects.setUserMetadata(userMetadata);
    }

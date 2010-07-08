@@ -47,8 +47,6 @@ public class AzureBlobToBlob implements Function<AzureBlob, Blob> {
       if (from == null)
          return null;
       Blob blob = blobFactory.create(blobPr2BlobMd.apply(from.getProperties()));
-      if (from.getContentLength() != null)
-         blob.setContentLength(from.getContentLength());
       blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
       blob.setAllHeaders(from.getAllHeaders());
       return blob;

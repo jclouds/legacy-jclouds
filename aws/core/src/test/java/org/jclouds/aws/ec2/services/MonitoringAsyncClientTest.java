@@ -45,11 +45,14 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
       HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      String payload = "Version=2009-11-30&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2";
       assertHeadersEqual(
                request,
-               "Content-Length: 67\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2009-11-30&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2");
+               String
+                        .format(
+                                 "Content-Length: %d\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n",
+                                 payload.getBytes().length));
+      assertPayloadEquals(request, payload);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, MonitoringStateHandler.class);
@@ -66,7 +69,7 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 65\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 88\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2");
 

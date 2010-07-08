@@ -557,12 +557,12 @@ pageTracker._trackPageview();
                                             <value>${jclouds.test.initializer}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.user</name>
-                                            <value>${jclouds.test.user}</value>
+                                            <name>jclouds.test.identity</name>
+                                            <value>${jclouds.test.identity}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.key</name>
-                                            <value>${jclouds.test.key}</value>
+                                            <name>jclouds.test.credential</name>
+                                            <value>${jclouds.test.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.test.endpoint</name>

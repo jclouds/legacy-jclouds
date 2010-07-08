@@ -20,6 +20,8 @@ package org.jclouds.blobstore.domain;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.domain.MutableResourceMetadata;
 
@@ -42,7 +44,7 @@ public interface MutableStorageMetadata extends MutableResourceMetadata<StorageT
    /**
     * @see #getSize
     */
-   void setSize(long size);
+   void setSize(@Nullable Long size);
 
    /**
     * @see #getLastModified

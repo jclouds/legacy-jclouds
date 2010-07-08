@@ -48,10 +48,10 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.EncryptionService.MD5InputStreamResult;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
@@ -77,17 +77,15 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    private byte[] oneHundredOneConstitutions;
    private EncryptionService encryptionService;
    private byte[] oneHundredOneConstitutionsMD5;
-   private long oneHundredOneConstitutionsLength;
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       encryptionService = Guice.createInjector().getInstance(EncryptionService.class);
-      MD5InputStreamResult result = encryptionService.md5Result(getTestDataSupplier()
-               .getInput());
-      oneHundredOneConstitutions = result.data;
-      oneHundredOneConstitutionsMD5 = result.md5;
-      oneHundredOneConstitutionsLength = result.length;
+      Payload result = encryptionService
+               .generatePayloadWithMD5For(getTestDataSupplier().getInput());
+      oneHundredOneConstitutions = (byte[]) result.getRawContent();
+      oneHundredOneConstitutionsMD5 = result.getContentMD5();
       super.setUpResourcesOnThisThread(testContext);
    }
 
@@ -121,7 +119,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
                @Override
                public Void apply(Blob from) {
-                  assertEquals(encryptionService.md5(from.getContent()),
+                  assertEquals(encryptionService.md5(from.getPayload().getInput()),
                            oneHundredOneConstitutionsMD5);
                   return null;
                }
@@ -142,7 +140,6 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       Blob sourceObject = context.getBlobStore().newBlob(key);
       sourceObject.getMetadata().setContentType("text/plain");
       sourceObject.getMetadata().setContentMD5(oneHundredOneConstitutionsMD5);
-      sourceObject.setContentLength(oneHundredOneConstitutionsLength);
       sourceObject.setPayload(oneHundredOneConstitutions);
       context.getBlobStore().putBlob(containerName, sourceObject);
    }

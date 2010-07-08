@@ -19,6 +19,8 @@
 package org.jclouds.blobstore.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.getSupportedProvidersOfType;
+import static org.jclouds.util.Utils.toStringAndClose;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +38,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.functions.ExceptionToValueOrPropagate;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
 
 /**
  * 
@@ -118,11 +119,12 @@ public class BlobStoreUtils {
 
    public static String getContentAsStringOrNullAndClose(Blob blob) throws IOException {
       checkNotNull(blob, "blob");
-      if (blob.getContent() == null)
+      checkNotNull(blob.getPayload(), "blob.payload");
+      if (blob.getPayload().getInput() == null)
          return null;
-      Object o = blob.getContent();
+      Object o = blob.getPayload().getInput();
       if (o instanceof InputStream) {
-         return Utils.toStringAndClose((InputStream) o);
+         return toStringAndClose((InputStream) o);
       } else {
          throw new IllegalArgumentException("Object type not supported: " + o.getClass().getName());
       }
@@ -137,6 +139,6 @@ public class BlobStoreUtils {
    }
 
    public static Iterable<String> getSupportedProviders() {
-      return Utils.getSupportedProvidersOfType(BlobStoreContextBuilder.class);
+      return getSupportedProvidersOfType(BlobStoreContextBuilder.class);
    }
 }

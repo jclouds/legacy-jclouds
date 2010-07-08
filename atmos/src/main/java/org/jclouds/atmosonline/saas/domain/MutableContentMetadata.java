@@ -57,7 +57,7 @@ public class MutableContentMetadata {
    /**
     * @see #getContentLength
     */
-   public void setContentLength(long contentLength) {
+   public void setContentLength(Long contentLength) {
       this.contentLength = contentLength;
    }
 

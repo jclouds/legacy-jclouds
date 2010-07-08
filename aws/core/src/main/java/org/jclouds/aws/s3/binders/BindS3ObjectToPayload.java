@@ -22,11 +22,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.blobstore.binders.BindBlobToPayloadAndUserMetadataToHeadersWithPrefix;
+import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
@@ -34,21 +35,22 @@ import org.jclouds.rest.Binder;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class BindS3ObjectToPayload implements Binder {
-   private final BindBlobToPayloadAndUserMetadataToHeadersWithPrefix blobBinder;
+   private final BindUserMetadataToHeadersWithPrefix blobBinder;
    private final ObjectToBlob object2Blob;
 
    @Inject
    public BindS3ObjectToPayload(ObjectToBlob object2Blob,
-            BindBlobToPayloadAndUserMetadataToHeadersWithPrefix blobBinder) {
+            BindUserMetadataToHeadersWithPrefix blobBinder) {
       this.blobBinder = blobBinder;
       this.object2Blob = object2Blob;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       S3Object s3Object = (S3Object) payload;
-      checkNotNull(s3Object.getContentLength(), "contentLength");
-      checkArgument(s3Object.getContentLength() <= 5l * 1024 * 1024 * 1024,
+      checkNotNull(s3Object.getPayload().getContentLength(), "contentLength");
+      checkArgument(s3Object.getPayload().getContentLength() <= 5l * 1024 * 1024 * 1024,
                "maximum size for put object is 5GB");
       blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
 

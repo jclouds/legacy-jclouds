@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.domain;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 
 import com.google.inject.ImplementedBy;
@@ -36,8 +38,8 @@ public interface MutableBlobMetadata extends BlobMetadata, MutableStorageMetadat
     * 
     * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
     */
-   void setContentType(String type);
+   void setContentType(@Nullable String type);
 
-   void setContentMD5(byte[] md5);
+   void setContentMD5(@Nullable byte[] md5);
 
 }

@@ -176,8 +176,8 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          }
 
          // upload and verify the response
-         assertEquals(client.postWithMd5("fileso", this.encryptionService.base64(eTag.digest()),
-                  f).trim(), "created");
+         assertEquals(client.postWithMd5("fileso", this.encryptionService.base64(eTag.digest()), f)
+                  .trim(), "created");
 
       } finally {
          if (os != null)

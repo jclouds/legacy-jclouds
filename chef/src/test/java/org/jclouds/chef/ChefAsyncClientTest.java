@@ -69,9 +69,9 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "chef.ChefAsyncClientTest")
 public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
-   public void testCloseSandbox() throws SecurityException, NoSuchMethodException, IOException {
+   public void testCommitSandbox() throws SecurityException, NoSuchMethodException, IOException {
 
-      Method method = ChefAsyncClient.class.getMethod("closeSandbox", String.class, boolean.class);
+      Method method = ChefAsyncClient.class.getMethod("commitSandbox", String.class, boolean.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
                "0189e76ccc476701d6b374e5a1a27347", true);
       assertRequestLineEquals(httpRequest,
@@ -89,10 +89,10 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    }
 
-   public void testGetUploadSiteForHexEncodedChecksums() throws SecurityException,
+   public void testGetUploadSandboxForChecksums() throws SecurityException,
             NoSuchMethodException, IOException {
 
-      Method method = ChefAsyncClient.class.getMethod("getUploadSiteForHexEncodedChecksums",
+      Method method = ChefAsyncClient.class.getMethod("getUploadSandboxForChecksums",
                Set.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
                ImmutableSet.of("0189e76ccc476701d6b374e5a1a27347",

@@ -19,10 +19,10 @@
 package org.jclouds.demo.tweetstore.controller;
 
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.Map.Entry;
@@ -36,7 +36,6 @@ import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.domain.Status;
 import org.jclouds.twitter.domain.User;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -89,14 +88,14 @@ public class StoreTweetsControllerTest {
          assertEquals(frankBlob.getMetadata().getUserMetadata()
                   .get(TweetStoreConstants.SENDER_NAME), "frank");
          assertEquals(frankBlob.getMetadata().getContentType(), "text/plain");
-         assertEquals(Utils.toStringAndClose((InputStream) frankBlob.getContent()), "I love beans!");
+         assertEquals(toStringAndClose(frankBlob.getPayload().getInput()), "I love beans!");
 
          Blob jimmyBlob = map.get("2");
          assertEquals(jimmyBlob.getMetadata().getName(), "2");
          assertEquals(jimmyBlob.getMetadata().getUserMetadata()
                   .get(TweetStoreConstants.SENDER_NAME), "jimmy");
          assertEquals(jimmyBlob.getMetadata().getContentType(), "text/plain");
-         assertEquals(Utils.toStringAndClose((InputStream) jimmyBlob.getContent()), "cloud is king");
+         assertEquals(toStringAndClose(jimmyBlob.getPayload().getInput()), "cloud is king");
       }
 
    }

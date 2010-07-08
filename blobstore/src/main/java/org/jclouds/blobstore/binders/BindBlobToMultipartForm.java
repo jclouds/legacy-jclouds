@@ -18,33 +18,28 @@
  */
 package org.jclouds.blobstore.binders;
 
-import javax.ws.rs.core.HttpHeaders;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.MultipartForm;
-import org.jclouds.http.MultipartForm.Part;
-import org.jclouds.http.MultipartForm.Part.PartOptions;
+import org.jclouds.http.payloads.MultipartForm;
+import org.jclouds.http.payloads.Part;
+import org.jclouds.http.payloads.Part.PartOptions;
 import org.jclouds.rest.Binder;
 
 /**
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class BindBlobToMultipartForm implements Binder {
 
-   public static final String BOUNDARY = "--JCLOUDS--";
-
    public void bindToRequest(HttpRequest request, Object payload) {
-      Blob object = (Blob) payload;
+      Blob blob = (Blob) payload;
 
-      Part part = Part.create(object.getMetadata().getName(), object.getPayload(),
-               new PartOptions().contentType(object.getMetadata().getContentType()));
+      Part part = Part.create(blob.getMetadata().getName(), blob.getPayload(),
+               new PartOptions().contentType(blob.getMetadata().getContentType()));
 
-      MultipartForm form = new MultipartForm(BOUNDARY, part);
-      request.setPayload(form.getInput());
-      request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
-               "multipart/form-data; boundary=" + BOUNDARY);
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.calculateSize() + "");
+      request.setPayload(new MultipartForm(part));
    }
 }

@@ -20,8 +20,27 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.filterValues;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.HttpHeaders.HOST;
 import static org.jclouds.http.HttpUtils.makeQueryLine;
 import static org.jclouds.http.HttpUtils.parseQueryToMap;
+import static org.jclouds.http.HttpUtils.urlEncode;
+import static org.jclouds.http.Payloads.newPayload;
+import static org.jclouds.http.Payloads.newStringPayload;
+import static org.jclouds.http.Payloads.newUrlEncodedFormPayload;
 import static org.jclouds.util.Utils.replaceTokens;
 
 import java.io.InputStream;
@@ -29,7 +48,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,21 +69,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 import org.jboss.resteasy.util.IsHttpMethod;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
-import org.jclouds.http.MultipartForm;
 import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
-import org.jclouds.http.MultipartForm.Part;
-import org.jclouds.http.MultipartForm.Part.PartOptions;
+import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
@@ -74,6 +87,9 @@ import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.http.payloads.MultipartForm;
+import org.jclouds.http.payloads.Part;
+import org.jclouds.http.payloads.Part.PartOptions;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
@@ -104,15 +120,10 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -151,7 +162,7 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapPayloadParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
-   private final Map<MethodKey, Method> delegationMap = Maps.newHashMap();
+   private final Map<MethodKey, Method> delegationMap = newHashMap();
 
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
@@ -174,9 +185,8 @@ public class RestAnnotationProcessor<T> {
 
       public Set<Annotation> apply(final Integer index) {
          Set<Annotation> keys = new HashSet<Annotation>();
-         List<Annotation> parameterAnnotations = Lists.newArrayList(method
-                  .getParameterAnnotations()[index]);
-         Collection<Annotation> filtered = Collections2.filter(parameterAnnotations,
+         List<Annotation> parameterAnnotations = newArrayList(method.getParameterAnnotations()[index]);
+         Collection<Annotation> filtered = filter(parameterAnnotations,
                   new Predicate<Annotation>() {
                      public boolean apply(Annotation input) {
                         return input.annotationType().equals(clazz);
@@ -205,7 +215,7 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Set<Integer>> methodToIndexesOfOptions = new MapMaker()
             .makeComputingMap(new Function<Method, Set<Integer>>() {
                public Set<Integer> apply(final Method method) {
-                  Set<Integer> toReturn = Sets.newHashSet();
+                  Set<Integer> toReturn = newHashSet();
                   for (int index = 0; index < method.getParameterTypes().length; index++) {
                      Class<?> type = method.getParameterTypes()[index];
                      if (HttpRequestOptions.class.isAssignableFrom(type)
@@ -217,6 +227,7 @@ public class RestAnnotationProcessor<T> {
             });
 
    private final ParseSax.Factory parserFactory;
+   private final EncryptionService encryptionService;
    private final Provider<UriBuilder> uriBuilderProvider;
 
    private char[] skips;
@@ -253,10 +264,11 @@ public class RestAnnotationProcessor<T> {
    @SuppressWarnings("unchecked")
    @Inject
    public RestAnnotationProcessor(Injector injector, ParseSax.Factory parserFactory,
-            TypeLiteral<T> typeLiteral) {
+            EncryptionService encryptionService, TypeLiteral<T> typeLiteral) {
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
+      this.encryptionService = encryptionService;
       this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       seedCache(declaring);
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
@@ -271,8 +283,8 @@ public class RestAnnotationProcessor<T> {
    }
 
    private void seedCache(Class<?> declaring) {
-      Set<Method> methods = Sets.newHashSet(declaring.getMethods());
-      methods = Sets.difference(methods, Sets.newHashSet(Object.class.getMethods()));
+      Set<Method> methods = newHashSet(declaring.getMethods());
+      methods = difference(methods, newHashSet(Object.class.getMethods()));
       for (Method method : methods) {
          if (isHttpMethod(method)) {
             for (int index = 0; index < method.getParameterTypes().length; index++) {
@@ -405,10 +417,9 @@ public class RestAnnotationProcessor<T> {
          }
          String stringPayload = options.buildStringPayload();
          if (stringPayload != null)
-            payload = Payloads.newStringPayload(stringPayload);
+            payload = newStringPayload(stringPayload);
       }
-      if (payload == null)
-         payload = findPayloadInArgs(args);
+
       if (queryParams.size() > 0) {
          builder.replaceQuery(makeQueryLine(queryParams, null, skips));
       }
@@ -425,32 +436,21 @@ public class RestAnnotationProcessor<T> {
                declaring, method, args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
-
-      List<? extends Part> parts = getParts(method, args, Iterables.concat(tokenValues.entries(),
-               formParams.entries()));
+      
+      if (payload == null)
+         payload = findPayloadInArgs(args);
+      List<? extends Part> parts = getParts(method, args, concat(tokenValues.entries(), formParams
+               .entries()));
       if (parts.size() > 0) {
          if (formParams.size() > 0) {
-            parts = Lists.newLinkedList(Iterables.concat(Iterables
-                     .<Entry<String, String>, Part> transform(formParams.entries(), ENTRY_TO_PART),
-                     parts));
+            parts = newLinkedList(concat(transform(formParams.entries(), ENTRY_TO_PART), parts));
          }
-         MultipartForm form = new MultipartForm(BOUNDARY, parts);
-
-         request.setPayload(form);
-         request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
-                  "multipart/form-data; boundary=" + BOUNDARY);
-
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, form.calculateSize() + "");
+         payload = new MultipartForm(BOUNDARY, parts);
       } else if (formParams.size() > 0) {
-         if (headers.get(HttpHeaders.CONTENT_TYPE).size() == 0)
-            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-         request.setPayload(makeQueryLine(formParams, null, skips));
-      } else if (payload != null) {
+         payload = newUrlEncodedFormPayload(formParams, skips);
+      }
+      if (payload != null) {
          request.setPayload(payload);
-         if (headers.get(HttpHeaders.CONTENT_LENGTH).size() == 0)
-            headers.put(HttpHeaders.CONTENT_LENGTH, payload.calculateSize() + "");
-         if (headers.get(HttpHeaders.CONTENT_TYPE).size() == 0)
-            headers.put(HttpHeaders.CONTENT_TYPE, "application/unknown");
       }
       request.getHeaders().putAll(headers);
       decorateRequest(request);
@@ -755,7 +755,7 @@ public class RestAnnotationProcessor<T> {
             String host, Method method) {
       if (declaring.isAnnotationPresent(VirtualHost.class)
                || method.isAnnotationPresent(VirtualHost.class)) {
-         headers.put(HttpHeaders.HOST, host);
+         headers.put(HOST, host);
       }
    }
 
@@ -770,67 +770,83 @@ public class RestAnnotationProcessor<T> {
       // parameters.
       if (mapBinder != null) {
          mapBinder.bindToRequest(request, mapParams);
-         return;
-      }
-
-      OUTER: for (Entry<Integer, Set<Annotation>> entry : Maps.filterValues(
-               methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
-               new Predicate<Set<Annotation>>() {
-                  public boolean apply(Set<Annotation> input) {
-                     return input.size() >= 1;
+      } else {
+         OUTER: for (Entry<Integer, Set<Annotation>> entry : filterValues(
+                  methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
+                  new Predicate<Set<Annotation>>() {
+                     public boolean apply(Set<Annotation> input) {
+                        return input.size() >= 1;
+                     }
+                  }).entrySet()) {
+            boolean shouldBreak = false;
+            BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
+            Binder binder = injector.getInstance(payloadAnnotation.value());
+            if (request.getArgs().length >= entry.getKey() + 1
+                     && request.getArgs()[entry.getKey()] != null) {
+               Object input;
+               Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
+               Class<? extends Object> argType = request.getArgs()[entry.getKey()].getClass();
+               if (!argType.isArray() && request.getJavaMethod().isVarArgs()
+                        && parameterType.isArray()) {
+                  int arrayLength = request.getArgs().length
+                           - request.getJavaMethod().getParameterTypes().length + 1;
+                  if (arrayLength == 0)
+                     break OUTER;
+                  input = (Object[]) Array.newInstance(
+                           request.getArgs()[entry.getKey()].getClass(), arrayLength);
+                  System.arraycopy(request.getArgs(), entry.getKey(), input, 0, arrayLength);
+                  shouldBreak = true;
+               } else if (argType.isArray() && request.getJavaMethod().isVarArgs()
+                        && parameterType.isArray()) {
+                  input = request.getArgs()[entry.getKey()];
+               } else {
+                  input = request.getArgs()[entry.getKey()];
+                  if (input.getClass().isArray()) {
+                     Object[] payloadArray = (Object[]) input;
+                     input = payloadArray.length > 0 ? payloadArray[0] : null;
                   }
-               }).entrySet()) {
-         boolean shouldBreak = false;
-         BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
-         Binder binder = injector.getInstance(payloadAnnotation.value());
-         if (request.getArgs().length >= entry.getKey() + 1
-                  && request.getArgs()[entry.getKey()] != null) {
-            Object input;
-            Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
-            Class<? extends Object> argType = request.getArgs()[entry.getKey()].getClass();
-            if (!argType.isArray() && request.getJavaMethod().isVarArgs()
-                     && parameterType.isArray()) {
-               int arrayLength = request.getArgs().length
-                        - request.getJavaMethod().getParameterTypes().length + 1;
-               if (arrayLength == 0)
-                  break OUTER;
-               input = (Object[]) Array.newInstance(request.getArgs()[entry.getKey()].getClass(),
-                        arrayLength);
-               System.arraycopy(request.getArgs(), entry.getKey(), input, 0, arrayLength);
-               shouldBreak = true;
-            } else if (argType.isArray() && request.getJavaMethod().isVarArgs()
-                     && parameterType.isArray()) {
-               input = request.getArgs()[entry.getKey()];
-            } else {
-               input = request.getArgs()[entry.getKey()];
-               if (input.getClass().isArray()) {
-                  Object[] payloadArray = (Object[]) input;
-                  input = payloadArray.length > 0 ? payloadArray[0] : null;
                }
+               if (input != null) {
+                  binder.bindToRequest(request, input);
+               }
+               if (shouldBreak)
+                  break OUTER;
             }
-            if (input != null) {
-               binder.bindToRequest(request, input);
-            }
-            if (shouldBreak)
-               break OUTER;
          }
       }
       if (request.getMethod().equals("PUT") && request.getPayload() == null) {
-         request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-                  Collections.singletonList(0 + ""));
+         request.getHeaders().replaceValues(CONTENT_LENGTH, Collections.singletonList(0 + ""));
       }
-      if (request.getPayload() != null)
-         assert request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH) != null : "no content length";
+      if (request.getPayload() != null) {
+         if ("chunked".equalsIgnoreCase(request.getFirstHeaderOrNull("Transfer-Encoding"))) {
+            request.getHeaders().get(CONTENT_LENGTH).clear();
+         } else {
+            if (request.getHeaders().get(CONTENT_LENGTH).size() == 0
+                     && request.getPayload().getContentLength() != null)
+               request.getHeaders().put(CONTENT_LENGTH,
+                        request.getPayload().getContentLength() + "");
+            checkArgument(request.getFirstHeaderOrNull(CONTENT_LENGTH) != null,
+                     "no content length on payload!");
+         }
+         if (request.getHeaders().get("Content-MD5").size() == 0
+                  && request.getPayload().getContentMD5() != null)
+            request.getHeaders().put("Content-MD5",
+                     encryptionService.base64(request.getPayload().getContentMD5()));
+         if (request.getHeaders().get(CONTENT_TYPE).size() == 0
+                  && request.getPayload().getContentType() != null)
+            request.getHeaders().put(CONTENT_TYPE, request.getPayload().getContentType());
+
+      }
    }
 
    protected Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method,
             String description, Map<Method, Map<Integer, Set<Annotation>>> toRefine) {
-      Map<Integer, Set<Annotation>> indexToPayloadAnnotation = Maps.filterValues(toRefine
-               .get(method), new Predicate<Set<Annotation>>() {
-         public boolean apply(Set<Annotation> input) {
-            return input.size() == 1;
-         }
-      });
+      Map<Integer, Set<Annotation>> indexToPayloadAnnotation = filterValues(toRefine.get(method),
+               new Predicate<Set<Annotation>>() {
+                  public boolean apply(Set<Annotation> input) {
+                     return input.size() == 1;
+                  }
+               });
 
       if (indexToPayloadAnnotation.size() > 1) {
          throw new IllegalStateException(String.format(
@@ -888,22 +904,22 @@ public class RestAnnotationProcessor<T> {
    void addConsumesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Method method) {
       if (declaring.isAnnotationPresent(Consumes.class)) {
          Consumes header = declaring.getAnnotation(Consumes.class);
-         headers.replaceValues(HttpHeaders.ACCEPT, Arrays.asList(header.value()));
+         headers.replaceValues(ACCEPT, asList(header.value()));
       }
       if (method.isAnnotationPresent(Consumes.class)) {
          Consumes header = method.getAnnotation(Consumes.class);
-         headers.replaceValues(HttpHeaders.ACCEPT, Arrays.asList(header.value()));
+         headers.replaceValues(ACCEPT, asList(header.value()));
       }
    }
 
    void addProducesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Method method) {
       if (declaring.isAnnotationPresent(Produces.class)) {
          Produces header = declaring.getAnnotation(Produces.class);
-         headers.replaceValues(HttpHeaders.CONTENT_TYPE, Arrays.asList(header.value()));
+         headers.replaceValues(CONTENT_TYPE, asList(header.value()));
       }
       if (method.isAnnotationPresent(Produces.class)) {
          Produces header = method.getAnnotation(Produces.class);
-         headers.replaceValues(HttpHeaders.CONTENT_TYPE, Arrays.asList(header.value()));
+         headers.replaceValues(CONTENT_TYPE, asList(header.value()));
       }
    }
 
@@ -930,7 +946,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private Map<String, String> convertUnsafe(Multimap<String, String> in) {
-      Map<String, String> out = Maps.newLinkedHashMap();
+      Map<String, String> out = newLinkedHashMap();
       for (Entry<String, String> entry : in.entries()) {
          out.put(entry.getKey(), entry.getValue());
       }
@@ -939,7 +955,7 @@ public class RestAnnotationProcessor<T> {
 
    List<? extends Part> getParts(Method method, Object[] args,
             Iterable<Entry<String, String>> iterable) {
-      List<Part> parts = Lists.newLinkedList();
+      List<Part> parts = newLinkedList();
       Map<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.entrySet()) {
@@ -950,8 +966,7 @@ public class RestAnnotationProcessor<T> {
                options.contentType(param.contentType());
             if (!PartParam.NO_FILENAME.equals(param.filename()))
                options.filename(replaceTokens(param.filename(), iterable));
-            Part part = Part.create(param.name(), Payloads.newPayload(args[entry.getKey()]),
-                     options);
+            Part part = Part.create(param.name(), newPayload(args[entry.getKey()]), options);
             parts.add(part);
          }
       }
@@ -964,6 +979,8 @@ public class RestAnnotationProcessor<T> {
       for (int i = 0; i < args.length; i++)
          if (args[i] instanceof Payload)
             return Payload.class.cast(args[i]);
+         else if (args[i] instanceof PayloadEnclosing)
+            return PayloadEnclosing.class.cast(args[i]).getPayload();
       return null;
    }
 
@@ -1004,7 +1021,7 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> encodeValues(Multimap<String, String> unencoded, char... skips) {
       Multimap<String, String> encoded = LinkedHashMultimap.create();
       for (Entry<String, String> entry : unencoded.entries()) {
-         encoded.put(entry.getKey(), HttpUtils.urlEncode(entry.getValue(), skips));
+         encoded.put(entry.getKey(), urlEncode(entry.getValue(), skips));
       }
       return encoded;
    }
@@ -1112,7 +1129,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private Map<String, String> buildPostParams(Method method, Object... args) {
-      Map<String, String> postParams = Maps.newHashMap();
+      Map<String, String> postParams = newHashMap();
       Map<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations
                .get(method);
       Map<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations

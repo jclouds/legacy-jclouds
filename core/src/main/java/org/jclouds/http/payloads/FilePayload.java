@@ -23,32 +23,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.jclouds.http.Payload;
 
 import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 /**
  * @author Adrian Cole
  */
-public class FilePayload implements Payload {
-   private final File content;
-   private final InputSupplier<FileInputStream> delegate;
+public class FilePayload extends BasePayload<File> {
 
    public FilePayload(File content) {
+      super(content, null, content.length(), null);
       checkArgument(checkNotNull(content, "content").exists(), "file must exist: " + content);
-      this.delegate = Files.newInputStreamSupplier(content);
-      this.content = content;
-   }
-
-   public File getRawContent() {
-      return content;
    }
 
    /**
@@ -57,8 +44,8 @@ public class FilePayload implements Payload {
    @Override
    public InputStream getInput() {
       try {
-         return delegate.getInput();
-      } catch (IOException e) {
+         return new FileInputStream(content);
+      } catch (FileNotFoundException e) {
          Throwables.propagate(e);
          return null;
       }
@@ -72,24 +59,4 @@ public class FilePayload implements Payload {
       return true;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void writeTo(OutputStream outstream) throws IOException {
-      InputStream in = getInput();
-      try {
-         Files.copy(content, outstream);
-      } finally {
-         Closeables.closeQuietly(in);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long calculateSize() {
-      return content.length();
-   }
 }

@@ -183,7 +183,6 @@ public class PCSClientLiveTest {
       object.getMetadata().setName("object");
       object.getMetadata().setMimeType("text/plain");
       object.setPayload(data);
-      object.setContentLength(data.length());
       URI objectURI = connection.uploadFile(container, object);
       connection.putMetadataItem(objectURI, "name", "object");
 

@@ -106,6 +106,8 @@ public interface IntegrationTestAsyncClient {
       public void bindToRequest(HttpRequest request, Object payload) {
          super.bindToRequest(request, payload);
          request.setPayload(Utils.toInputStream(payload.toString()));
+         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH,
+                  payload.toString().getBytes().length + "");
       }
    }
 

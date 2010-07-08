@@ -62,23 +62,23 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
       AzureBlob object = objectProvider.create(metadataParser.apply(from));
       object.getAllHeaders().putAll(from.getHeaders());
 
-      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      String contentRange = from.getFirstHeaderOrNull("Content-Range");
-
-      if (contentLength != null) {
-         object.setContentLength(Long.parseLong(contentLength));
-      }
-
       if (from.getContent() != null) {
          object.setPayload(from.getContent());
-      } else if (object.getContentLength() != null && object.getContentLength() == 0) {
+      } else if (new Long(0).equals(object.getProperties().getContentLength())) {
          object.setPayload(new byte[0]);
       } else {
          assert false : "no content in " + from;
       }
 
+      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
+      String contentRange = from.getFirstHeaderOrNull("Content-Range");
+
+      if (contentLength != null) {
+         object.getPayload().setContentLength(Long.parseLong(contentLength));
+      }
+
       if (contentRange == null && contentLength != null) {
-         object.getProperties().setContentLength(object.getContentLength());
+         object.getProperties().setContentLength(object.getPayload().getContentLength());
       } else if (contentRange != null) {
          object.getProperties().setContentLength(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));

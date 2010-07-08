@@ -56,7 +56,7 @@ public interface MutableBlobProperties extends BlobProperties {
    /**
     * @see ListableContainerProperties#getContentLength
     */
-   void setContentLength(long size);
+   void setContentLength(Long size);
 
    /**
     * @see ListableContainerProperties#getContentMD5

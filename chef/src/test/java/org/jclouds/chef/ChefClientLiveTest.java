@@ -37,7 +37,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.chef.domain.ChecksumStatus;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Resource;
-import org.jclouds.chef.domain.UploadSite;
+import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.options.BaseHttpRequestOptions;
@@ -142,7 +142,7 @@ public class ChefClientLiveTest {
 
       // request an upload site for this file
       // TODO: this json ball is not named, and is different than SandBox, using UploadSite for now
-      UploadSite site = adminConnection.getApi().getUploadSiteForHexEncodedChecksums(ImmutableSet.of(md5Hex));
+      UploadSandbox site = adminConnection.getApi().getUploadSandboxForChecksums(ImmutableSet.of(md5Hex));
 
       try {
          assert site.getChecksums().containsKey(md5Hex) : md5Hex + " not in " + site.getChecksums();
@@ -156,10 +156,10 @@ public class ChefClientLiveTest {
          }
 
          // if we were able to get here, close the sandbox
-         adminConnection.getApi().closeSandbox(site.getSandboxId(), true);
+         adminConnection.getApi().commitSandbox(site.getSandboxId(), true);
 
       } catch (RuntimeException e) {
-         adminConnection.getApi().closeSandbox(site.getSandboxId(), false);
+         adminConnection.getApi().commitSandbox(site.getSandboxId(), false);
       }
 
       // create a new cookbook

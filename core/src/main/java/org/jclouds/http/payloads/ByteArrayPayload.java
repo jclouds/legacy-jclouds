@@ -18,31 +18,23 @@
  */
 package org.jclouds.http.payloads;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.jclouds.http.Payload;
-import org.jclouds.util.Utils;
-
-import com.google.common.io.ByteStreams;
 
 /**
  * @author Adrian Cole
  */
-public class ByteArrayPayload implements Payload {
-
-   private final byte[] content;
-
+public class ByteArrayPayload extends BasePayload<byte[]> {
    public ByteArrayPayload(byte[] content) {
-      this.content = checkNotNull(content, "content");
+      this(content, null);
    }
 
-   public byte[] getRawContent() {
-      return content;
+   public ByteArrayPayload(byte[] content, byte[] md5) {
+      super(content, null, new Long(checkNotNull(content, "content").length), md5);
+      checkArgument(content.length >= 0, "length cannot me negative");
    }
 
    /**
@@ -61,16 +53,4 @@ public class ByteArrayPayload implements Payload {
       return true;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void writeTo(OutputStream outstream) throws IOException {
-      ByteStreams.write(content, Utils.newOutputStreamSupplier(outstream));
-   }
-
-   @Override
-   public Long calculateSize() {
-      return new Long(content.length);
-   }
 }

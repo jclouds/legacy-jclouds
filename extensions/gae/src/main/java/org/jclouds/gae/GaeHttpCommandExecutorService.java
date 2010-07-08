@@ -19,6 +19,8 @@
 package org.jclouds.gae;
 
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
+import static com.google.common.io.ByteStreams.toByteArray;
+import static com.google.common.io.Closeables.closeQuietly;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,15 +39,10 @@ import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.Payload;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
-import org.jclouds.http.payloads.ByteArrayPayload;
-import org.jclouds.http.payloads.FilePayload;
-import org.jclouds.http.payloads.InputStreamPayload;
-import org.jclouds.http.payloads.StringPayload;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
@@ -54,8 +51,6 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 
 /**
  * Google App Engine version of {@link HttpCommandExecutorService}
@@ -71,35 +66,11 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
+            IOExceptionRetryHandler ioRetryHandler, DelegatingRetryHandler retryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire) {
       super(ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
-   }
-
-   /**
-    * byte [] content is replayable and the only content type supportable by GAE. As such, we
-    * convert the original request content to a byte array.
-    */
-   @VisibleForTesting
-   void changeRequestContentToBytes(HttpRequest request) throws IOException {
-      Payload content = request.getPayload();
-      if (content == null || content instanceof ByteArrayPayload) {
-         return;
-      } else if (content instanceof StringPayload) {
-         String string = ((StringPayload) content).getRawContent();
-         request.setPayload(string.getBytes());
-      } else if (content instanceof InputStreamPayload || content instanceof FilePayload) {
-         InputStream i = content.getInput();
-         try {
-            request.setPayload(ByteStreams.toByteArray(i));
-         } finally {
-            Closeables.closeQuietly(i);
-         }
-      } else {
-         throw new UnsupportedOperationException("Content not supported " + content.getClass());
-      }
-
    }
 
    @VisibleForTesting
@@ -132,10 +103,20 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
          }
       }
       gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
-
+      /**
+       * byte [] content is replayable and the only content type supportable by GAE. As such, we
+       * convert the original request content to a byte array.
+       */
       if (request.getPayload() != null) {
-         changeRequestContentToBytes(request);
-         gaeRequest.setPayload(((ByteArrayPayload) request.getPayload()).getRawContent());
+         InputStream input = request.getPayload().getInput();
+         try {
+            byte[] array = toByteArray(input);
+            if (!request.getPayload().isRepeatable())
+               request.setPayload(array);
+            gaeRequest.setPayload(array);
+         } finally {
+            closeQuietly(input);
+         }
       } else {
          gaeRequest.addHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
       }

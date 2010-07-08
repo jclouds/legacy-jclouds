@@ -16,21 +16,28 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.mezeo.pcs2.binders;
+package org.jclouds.atmosonline.saas.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import javax.ws.rs.core.HttpHeaders;
-
+import org.jclouds.atmosonline.saas.domain.AtmosObject;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.rest.Binder;
 
-public class BindDataToPayload implements Binder {
+@Singleton
+public class BindMetadataToHeaders implements Binder {
+   private final BindUserMetadataToHeaders metaBinder;
+
+   @Inject
+   protected BindMetadataToHeaders(BindUserMetadataToHeaders metaBinder,
+            EncryptionService encryptionService) {
+      this.metaBinder = metaBinder;
+   }
 
    public void bindToRequest(HttpRequest request, Object payload) {
-      PCSFile object = (PCSFile) payload;
-      request.setPayload(checkNotNull(object.getPayload().getInput(), "object.getContent()"));
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
+      AtmosObject object = (AtmosObject) payload;
+      metaBinder.bindToRequest(request, object.getUserMetadata());
    }
 }

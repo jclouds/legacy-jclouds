@@ -28,9 +28,13 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.io.ByteStreams.toByteArray;
+import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.util.Patterns.CHAR_TO_PATTERN;
 import static org.jclouds.util.Patterns.TOKEN_TO_PATTERN;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,11 +64,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import com.google.common.io.OutputSupplier;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
@@ -80,7 +80,7 @@ public class Utils {
       AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
       if (aex != null)
          throw aex;
-      Throwables.propagate(e);
+      propagate(e);
       assert false : "exception should have propogated " + e;
       return null;
    }
@@ -91,7 +91,7 @@ public class Utils {
    @SuppressWarnings("unchecked")
    public static <T, E extends T> List<E> multiMax(Comparator<T> ordering, Iterable<E> iterable) {
       Iterator<E> iterator = iterable.iterator();
-      List<E> maxes = Lists.newArrayList(iterator.next());
+      List<E> maxes = newArrayList(iterator.next());
       E maxSoFar = maxes.get(0);
       while (iterator.hasNext()) {
          E current = iterator.next();
@@ -99,7 +99,7 @@ public class Utils {
          if (comparison == 0) {
             maxes.add(current);
          } else if (comparison < 0) {
-            maxes = Lists.newArrayList(current);
+            maxes = newArrayList(current);
             maxSoFar = current;
          }
       }
@@ -203,24 +203,19 @@ public class Utils {
    public static String toStringAndClose(InputStream input) throws IOException {
       checkNotNull(input, "input");
       try {
-         return new String(ByteStreams.toByteArray(input), Charsets.UTF_8);
+         return new String(toByteArray(input), Charsets.UTF_8);
       } catch (IOException e) {
          logger.warn(e, "Failed to read from stream");
          return null;
       } catch (NullPointerException e) {
          return null;
       } finally {
-         Closeables.closeQuietly(input);
+         closeQuietly(input);
       }
    }
 
    public static InputStream toInputStream(String in) {
-      try {
-         return ByteStreams.newInputStreamSupplier(in.getBytes(Charsets.UTF_8)).getInput();
-      } catch (IOException e) {
-         logger.warn(e, "Failed to convert %s to an inputStream", in);
-         throw new RuntimeException(e);
-      }
+      return new ByteArrayInputStream(in.getBytes(Charsets.UTF_8));
    }
 
    /**

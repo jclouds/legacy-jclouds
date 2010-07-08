@@ -30,19 +30,16 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import com.google.inject.name.Names;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindCloneVAppParamsToXmlPayload}
@@ -63,15 +60,12 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
    public void testWithDescriptionDeployOn() throws IOException {
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/cloneVApp.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
+
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().withDescription(
                "The description of the new vApp");
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -88,14 +82,10 @@ public class BindCloneVAppParamsToXmlPayloadTest {
    public void testDefault() throws IOException {
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
                "/cloneVApp-default.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 

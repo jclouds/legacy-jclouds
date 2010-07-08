@@ -32,6 +32,8 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.jclouds.http.payloads.ByteArrayPayload;
+
 import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
@@ -99,7 +101,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
    }
 
    @Override
-   public MD5InputStreamResult md5Result(InputStream toEncode) {
+   public ByteArrayPayload generatePayloadWithMD5For(InputStream toEncode) {
       MessageDigest eTag = getDigest();
       byte[] buffer = new byte[1024];
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -120,7 +122,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
          Closeables.closeQuietly(out);
          Closeables.closeQuietly(toEncode);
       }
-      return new MD5InputStreamResult(out.toByteArray(), eTag.digest(), length);
+      return new ByteArrayPayload(out.toByteArray(), eTag.digest());
    }
 
    private static MessageDigest getDigest() {
@@ -200,5 +202,6 @@ public class JCEEncryptionService extends BaseEncryptionService {
          return null;
       }
    }
+
 
 }

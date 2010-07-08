@@ -145,7 +145,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
                : optionsList[0];
       keyToAcl.put(name, options.getAcl());
       return blobStore.createContainerInLocation(new LocationImpl(LocationScope.REGION, region,
-              region, null), name);
+               region, null), name);
    }
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name,
@@ -190,7 +190,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
          newMd.setLastModified(new Date());
          Blob newBlob = blobProvider.create(newMd);
-         newBlob.setPayload(sourceS3.getContent());
+         newBlob.setPayload(sourceS3.getPayload());
          dest.put(destinationObject, newBlob);
          return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(TransientAsyncBlobStore
                   .copy(newMd)));

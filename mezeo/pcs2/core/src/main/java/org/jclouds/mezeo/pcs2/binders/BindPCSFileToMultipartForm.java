@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.binders.BindBlobToMultipartForm;
 import org.jclouds.http.HttpRequest;
@@ -29,6 +30,7 @@ import org.jclouds.mezeo.pcs2.blobstore.functions.PCSFileToBlob;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.rest.Binder;
 
+@Singleton
 public class BindPCSFileToMultipartForm implements Binder {
    private final BindBlobToMultipartForm blobBinder;
    private final PCSFileToBlob file2Blob;
@@ -41,8 +43,8 @@ public class BindPCSFileToMultipartForm implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       PCSFile file = (PCSFile) payload;
-      checkNotNull(file.getContentLength(), "contentLength");
-      checkArgument(file.getContentLength() <= 5 * 1024 * 1024 * 1024,
+      checkNotNull(file.getPayload().getContentLength(), "contentLength");
+      checkArgument(file.getPayload().getContentLength() <= 2l * 1024 * 1024 * 1024,
                "maximum size for POST request is 2GB");
       blobBinder.bindToRequest(request, file2Blob.apply(file));
    }

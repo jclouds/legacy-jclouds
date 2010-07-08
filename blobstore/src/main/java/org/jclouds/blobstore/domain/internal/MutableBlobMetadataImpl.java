@@ -18,8 +18,6 @@
  */
 package org.jclouds.blobstore.domain.internal;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -35,7 +33,7 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
 
-   private String contentType = MediaType.APPLICATION_OCTET_STREAM;
+   private String contentType;
    private byte[] contentMD5;
 
    public MutableBlobMetadataImpl() {
@@ -45,7 +43,6 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
 
    public MutableBlobMetadataImpl(BlobMetadata from) {
       super(from);
-      this.setType(StorageType.BLOB);
       this.contentType = from.getContentType();
       this.contentMD5 = from.getContentMD5();
    }

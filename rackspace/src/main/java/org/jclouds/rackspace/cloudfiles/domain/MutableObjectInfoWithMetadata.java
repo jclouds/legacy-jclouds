@@ -37,7 +37,7 @@ public interface MutableObjectInfoWithMetadata extends ObjectInfo {
 
    void setHash(byte[] hash);
 
-   void setBytes(long bytes);
+   void setBytes(Long bytes);
 
    void setLastModified(Date lastModified);
 

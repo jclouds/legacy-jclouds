@@ -38,6 +38,7 @@ import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
+import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.collect.ImmutableSet;
@@ -107,6 +108,14 @@ public abstract class RestClientTest<T> {
       } else {
          String payload = Utils.toStringAndClose(request.getPayload().getInput());
          assertEquals(payload, toMatch);
+         if (request.getFirstHeaderOrNull(HttpHeaders.TRANSFER_ENCODING) == null) {
+            assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), payload
+                     .getBytes().length
+                     + "");
+         } else {
+            assertEquals(request.getFirstHeaderOrNull(HttpHeaders.TRANSFER_ENCODING), "chunked");
+            assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "0");
+         }
       }
    }
 
@@ -131,8 +140,8 @@ public abstract class RestClientTest<T> {
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), parserClass);
    }
 
-   protected void assertResponseParserClassEquals(Method method,
-            HttpRequest request, @Nullable Class<?> parserClass) {
+   protected void assertResponseParserClassEquals(Method method, HttpRequest request,
+            @Nullable Class<?> parserClass) {
       assertEquals(processor.createResponseParser(method, request).getClass(), parserClass);
    }
 

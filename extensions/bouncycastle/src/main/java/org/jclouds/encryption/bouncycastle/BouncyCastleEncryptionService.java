@@ -36,6 +36,7 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.encryption.internal.BaseEncryptionService;
+import org.jclouds.http.payloads.ByteArrayPayload;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Throwables;
@@ -97,7 +98,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
    }
 
    @Override
-   public MD5InputStreamResult md5Result(InputStream toEncode) {
+   public ByteArrayPayload generatePayloadWithMD5For(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       byte[] buffer = new byte[1024];
@@ -120,7 +121,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
          Closeables.closeQuietly(toEncode);
       }
       eTag.doFinal(resBuf, 0);
-      return new MD5InputStreamResult(out.toByteArray(), resBuf, length);
+      return new ByteArrayPayload(out.toByteArray(), resBuf);
    }
 
    @Override

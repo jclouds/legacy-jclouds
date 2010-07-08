@@ -43,11 +43,11 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.MultipartForm;
 import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
-import org.jclouds.http.MultipartForm.Part;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.http.payloads.MultipartForm;
+import org.jclouds.http.payloads.Part;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -169,7 +169,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
 
    private Payload useTheFilePartIfForm(Payload payload) {
       if (payload instanceof MultipartForm) {
-         Iterable<? extends Part> parts = MultipartForm.class.cast(payload).getParts();
+         Iterable<? extends Part> parts = MultipartForm.class.cast(payload).getRawContent();
          try {
             payload = Iterables.find(parts, new Predicate<Part>() {
 

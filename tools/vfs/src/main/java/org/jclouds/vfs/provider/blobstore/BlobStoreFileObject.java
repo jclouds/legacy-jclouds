@@ -104,7 +104,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
             blob.setPayload(file);
             blob.generateMD5();
             logger.info(String.format(">> put: %s/%s %d bytes", getContainer(),
-                     getNameTrimLeadingSlashes(), blob.getContentLength()));
+                     getNameTrimLeadingSlashes(), blob.getPayload().getContentLength()));
             String tag = context.putBlob(getContainer(), blob);
             logger.info(String.format("<< tag %s: %s/%s", tag, getContainer(),
                      getNameTrimLeadingSlashes()));
@@ -136,7 +136,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       }
       logger.info(String.format(">> get: %s/%s", getContainer(), getNameTrimLeadingSlashes()));
       Blob blob = getBlobStore().getBlob(getContainer(), getNameTrimLeadingSlashes());
-      return (InputStream) blob.getContent();
+      return blob.getPayload().getInput();
    }
 
    String getNameTrimLeadingSlashes() {

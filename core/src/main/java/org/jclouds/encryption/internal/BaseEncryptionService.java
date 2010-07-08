@@ -18,9 +18,12 @@
  */
 package org.jclouds.encryption.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.Payload;
 
 /**
  * 
@@ -60,4 +63,17 @@ public abstract class BaseEncryptionService implements EncryptionService {
       return bytes;
    }
 
+   @Override
+   public Payload generateMD5BufferingIfNotRepeatable(Payload payload) {
+      checkNotNull(payload, "payload");
+      if (!payload.isRepeatable()) {
+         String oldContentType = payload.getContentType();
+         payload = generatePayloadWithMD5For(payload.getInput());
+         payload.setContentType(oldContentType);
+      } else {
+         payload.setContentMD5(md5(payload.getInput()));
+      }
+      return payload;
+
+   }
 }

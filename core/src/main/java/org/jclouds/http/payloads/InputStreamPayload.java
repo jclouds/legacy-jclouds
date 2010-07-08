@@ -18,31 +18,15 @@
  */
 package org.jclouds.http.payloads;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.jclouds.http.Payload;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 
 /**
  * @author Adrian Cole
  */
-public class InputStreamPayload implements Payload {
-   private final InputStream content;
-   private boolean written;
+public class InputStreamPayload extends BasePayload<InputStream> {
 
    public InputStreamPayload(InputStream content) {
-      this.content = checkNotNull(content, "content");
-   }
-
-   public InputStream getRawContent() {
-      return content;
+      super(content, null, null, null);
    }
 
    /**
@@ -61,26 +45,4 @@ public class InputStreamPayload implements Payload {
       return false;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void writeTo(OutputStream outstream) throws IOException {
-      checkState(!written, "InputStreams can only be writted to an outputstream once");
-      written = true;
-      InputStream in = getInput();
-      try {
-         ByteStreams.copy(getInput(), outstream);
-      } finally {
-         Closeables.closeQuietly(in);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long calculateSize() {
-      return null;
-   }
 }

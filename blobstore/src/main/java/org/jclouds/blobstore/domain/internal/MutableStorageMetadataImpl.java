@@ -88,7 +88,7 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
     * {@inheritDoc}
     */
    @Override
-   public void setSize(long size) {
+   public void setSize(Long size) {
       this.size = size;
    }
 

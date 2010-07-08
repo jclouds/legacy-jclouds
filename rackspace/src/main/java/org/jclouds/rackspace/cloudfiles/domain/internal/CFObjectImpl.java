@@ -23,7 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.internal.BasePayloadEnclosingImpl;
+import org.jclouds.http.Payload;
+import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.http.internal.PayloadEnclosingImpl;
+import org.jclouds.http.payloads.DelegatingPayload;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 
@@ -35,25 +38,24 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
-         Comparable<CFObject> {
-   private final MutableObjectInfoWithMetadata info;
+public class CFObjectImpl extends PayloadEnclosingImpl implements CFObject, Comparable<CFObject> {
+
+   private final MutableObjectInfoWithMetadata _info;
+   private final SetPayloadPropertiesMutableObjectInfoWithMetadata info;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
    public CFObjectImpl(EncryptionService encryptionService, MutableObjectInfoWithMetadata info) {
       super(encryptionService);
-      this.info = info;
-   }
+      this.info = linkMetadataToThis(info);
+      this._info = this.info.getDelegate();
 
-   @Override
-   protected void setContentMD5(byte[] md5) {
-      getInfo().setHash(md5);
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public MutableObjectInfoWithMetadata getInfo() {
       return info;
    }
@@ -61,6 +63,7 @@ public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
    /**
     * {@inheritDoc}
     */
+   @Override
    public Multimap<String, String> getAllHeaders() {
       return allHeaders;
    }
@@ -68,6 +71,7 @@ public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setAllHeaders(Multimap<String, String> allHeaders) {
       this.allHeaders = checkNotNull(allHeaders, "allHeaders");
    }
@@ -75,6 +79,7 @@ public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
    /**
     * {@inheritDoc}
     */
+   @Override
    public int compareTo(CFObject o) {
       if (getInfo().getName() == null)
          return -1;
@@ -84,9 +89,8 @@ public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((allHeaders == null) ? 0 : allHeaders.hashCode());
-      result = prime * result + ((info == null) ? 0 : info.hashCode());
+      int result = super.hashCode();
+      result = prime * result + ((_info == null) ? 0 : _info.hashCode());
       return result;
    }
 
@@ -94,22 +98,120 @@ public class CFObjectImpl extends BasePayloadEnclosingImpl implements CFObject,
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
       CFObjectImpl other = (CFObjectImpl) obj;
-      if (allHeaders == null) {
-         if (other.allHeaders != null)
+      if (_info == null) {
+         if (other._info != null)
             return false;
-      } else if (!allHeaders.equals(other.allHeaders))
-         return false;
-      if (info == null) {
-         if (other.info != null)
-            return false;
-      } else if (!info.equals(other.info))
+      } else if (!_info.equals(other._info))
          return false;
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "[info=" + _info + "]";
+   }
+
+   @Override
+   public void setPayload(Payload data) {
+      linkPayloadToMetadata(data);
+   }
+
+   /**
+    * link the new payload to the info object so that when content-related info is updated on the
+    * payload, it is also copied the info object.
+    */
+   void linkPayloadToMetadata(Payload data) {
+      if (data instanceof DelegatingPayload)
+         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
+                  .getDelegate(), _info));
+      else
+         super.setPayload(new SetMetadataPropertiesPayload(data, _info));
+   }
+
+   static class SetMetadataPropertiesPayload extends DelegatingPayload {
+
+      private transient final MutableObjectInfoWithMetadata info;
+
+      public SetMetadataPropertiesPayload(Payload delegate, MutableObjectInfoWithMetadata info) {
+         super(delegate);
+         this.info = info;
+         if (info.getBytes() != null)
+            setContentLength(info.getBytes());
+         setContentMD5(info.getHash());
+         setContentType(info.getContentType());
+      }
+
+      @Override
+      public void setContentLength(Long contentLength) {
+         super.setContentLength(contentLength);
+         info.setBytes(contentLength);
+      }
+
+      @Override
+      public void setContentMD5(byte[] md5) {
+         super.setContentMD5(md5);
+         info.setHash(md5);
+      }
+
+      @Override
+      public void setContentType(String md5) {
+         super.setContentType(md5);
+         info.setContentType(md5);
+      }
+
+   }
+
+   /**
+    * link the info object to this so that when content-related info is updated, it is also copied
+    * the currentpayload object.
+    */
+   SetPayloadPropertiesMutableObjectInfoWithMetadata linkMetadataToThis(
+            MutableObjectInfoWithMetadata info) {
+      return info instanceof DelegatingMutableObjectInfoWithMetadata ? new SetPayloadPropertiesMutableObjectInfoWithMetadata(
+               DelegatingMutableObjectInfoWithMetadata.class.cast(info).getDelegate(), this)
+               : new SetPayloadPropertiesMutableObjectInfoWithMetadata(info, this);
+   }
+
+   static class SetPayloadPropertiesMutableObjectInfoWithMetadata extends
+            DelegatingMutableObjectInfoWithMetadata {
+      /** The serialVersionUID */
+      private static final long serialVersionUID = -5072270546219814521L;
+      private transient final PayloadEnclosing object;
+
+      public SetPayloadPropertiesMutableObjectInfoWithMetadata(
+               MutableObjectInfoWithMetadata delegate, PayloadEnclosing object) {
+         super(delegate);
+         this.object = object;
+      }
+
+      @Override
+      public void setHash(byte[] md5) {
+         super.setHash(md5);
+         if (canSetPayload())
+            object.getPayload().setContentMD5(md5);
+      }
+
+      @Override
+      public void setContentType(String type) {
+         super.setContentType(type);
+         if (canSetPayload())
+            object.getPayload().setContentType(type);
+      }
+
+      @Override
+      public void setBytes(Long size) {
+         super.setBytes(size);
+         if (canSetPayload())
+            object.getPayload().setContentLength(size);
+      }
+
+      private boolean canSetPayload() {
+         return object != null && object.getPayload() != null;
+      }
+   }
 }

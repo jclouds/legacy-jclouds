@@ -46,7 +46,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       return metadata;
    }
 
-   public void setBytes(long bytes) {
+   public void setBytes(Long bytes) {
       this.bytes = bytes;
    }
 

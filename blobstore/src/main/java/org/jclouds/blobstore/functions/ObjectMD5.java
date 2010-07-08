@@ -44,7 +44,7 @@ public class ObjectMD5 implements Function<Object, byte[]> {
       }
       if (object.getMetadata().getContentMD5() == null)
          object.generateMD5();
-      return object.getMetadata().getContentMD5();
+      return object.getPayload().getContentMD5();
    }
 
 }

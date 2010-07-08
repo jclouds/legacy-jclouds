@@ -84,7 +84,7 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(
                request,
-               "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+               "Content-Length: 66\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
                "Version=2009-11-30&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2");
 

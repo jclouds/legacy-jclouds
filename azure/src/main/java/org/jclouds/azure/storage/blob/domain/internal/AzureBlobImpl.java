@@ -25,7 +25,10 @@ import javax.inject.Inject;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.internal.BasePayloadEnclosingImpl;
+import org.jclouds.http.Payload;
+import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.http.internal.PayloadEnclosingImpl;
+import org.jclouds.http.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -35,25 +38,23 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob,
-         Comparable<AzureBlob> {
-   private final MutableBlobProperties properties;
+public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Comparable<AzureBlob> {
+
+   private final MutableBlobProperties _properties;
+   private final SetPayloadPropertiesMutableBlobProperties properties;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
    public AzureBlobImpl(EncryptionService encryptionService, MutableBlobProperties properties) {
       super(encryptionService);
-      this.properties = properties;
-   }
-
-   @Override
-   protected void setContentMD5(byte[] md5) {
-      getProperties().setContentMD5(md5);
+      this.properties = linkMetadataToThis(properties);
+      this._properties = this.properties.getDelegate();
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public MutableBlobProperties getProperties() {
       return properties;
    }
@@ -61,6 +62,7 @@ public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob
    /**
     * {@inheritDoc}
     */
+   @Override
    public Multimap<String, String> getAllHeaders() {
       return allHeaders;
    }
@@ -68,6 +70,7 @@ public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob
    /**
     * {@inheritDoc}
     */
+   @Override
    public void setAllHeaders(Multimap<String, String> allHeaders) {
       this.allHeaders = checkNotNull(allHeaders, "allHeaders");
    }
@@ -75,6 +78,7 @@ public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob
    /**
     * {@inheritDoc}
     */
+   @Override
    public int compareTo(AzureBlob o) {
       if (getProperties().getName() == null)
          return -1;
@@ -84,11 +88,8 @@ public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((allHeaders == null) ? 0 : allHeaders.hashCode());
-      result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
-      result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+      int result = super.hashCode();
+      result = prime * result + ((_properties == null) ? 0 : _properties.hashCode());
       return result;
    }
 
@@ -96,37 +97,118 @@ public class AzureBlobImpl extends BasePayloadEnclosingImpl implements AzureBlob
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
       AzureBlobImpl other = (AzureBlobImpl) obj;
-      if (allHeaders == null) {
-         if (other.allHeaders != null)
+      if (_properties == null) {
+         if (other._properties != null)
             return false;
-      } else if (!allHeaders.equals(other.allHeaders))
-         return false;
-      if (contentLength == null) {
-         if (other.contentLength != null)
-            return false;
-      } else if (!contentLength.equals(other.contentLength))
-         return false;
-      if (payload == null) {
-         if (other.payload != null)
-            return false;
-      } else if (!payload.equals(other.payload))
-         return false;
-      if (properties == null) {
-         if (other.properties != null)
-            return false;
-      } else if (!properties.equals(other.properties))
+      } else if (!_properties.equals(other._properties))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[properties=" + properties + "]";
+      return "[properties=" + _properties + "]";
    }
 
+   @Override
+   public void setPayload(Payload data) {
+      linkPayloadToMetadata(data);
+   }
+
+   /**
+    * link the new payload to the properties object so that when content-related properties is
+    * updated on the payload, it is also copied the properties object.
+    */
+   void linkPayloadToMetadata(Payload data) {
+      if (data instanceof DelegatingPayload)
+         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
+                  .getDelegate(), _properties));
+      else
+         super.setPayload(new SetMetadataPropertiesPayload(data, _properties));
+   }
+
+   static class SetMetadataPropertiesPayload extends DelegatingPayload {
+
+      private transient final MutableBlobProperties properties;
+
+      public SetMetadataPropertiesPayload(Payload delegate, MutableBlobProperties properties) {
+         super(delegate);
+         this.properties = properties;
+         if (properties.getContentLength() != null)
+            setContentLength(properties.getContentLength());
+         setContentMD5(properties.getContentMD5());
+         setContentType(properties.getContentType());
+      }
+
+      @Override
+      public void setContentLength(Long contentLength) {
+         super.setContentLength(contentLength);
+         properties.setContentLength(contentLength);
+      }
+
+      @Override
+      public void setContentMD5(byte[] md5) {
+         super.setContentMD5(md5);
+         properties.setContentMD5(md5);
+      }
+
+      @Override
+      public void setContentType(String md5) {
+         super.setContentType(md5);
+         properties.setContentType(md5);
+      }
+
+   }
+
+   /**
+    * link the properties object to this so that when content-related properties is updated, it is
+    * also copied the currentpayload object.
+    */
+   SetPayloadPropertiesMutableBlobProperties linkMetadataToThis(MutableBlobProperties properties) {
+      return properties instanceof DelegatingMutableBlobProperties ? new SetPayloadPropertiesMutableBlobProperties(
+               DelegatingMutableBlobProperties.class.cast(properties).getDelegate(), this)
+               : new SetPayloadPropertiesMutableBlobProperties(properties, this);
+   }
+
+   static class SetPayloadPropertiesMutableBlobProperties extends DelegatingMutableBlobProperties {
+      /** The serialVersionUID */
+      private static final long serialVersionUID = -5072270546219814521L;
+      private transient final PayloadEnclosing blob;
+
+      public SetPayloadPropertiesMutableBlobProperties(MutableBlobProperties delegate,
+               PayloadEnclosing blob) {
+         super(delegate);
+         this.blob = blob;
+      }
+
+      @Override
+      public void setContentMD5(byte[] md5) {
+         super.setContentMD5(md5);
+         if (canSetPayload())
+            blob.getPayload().setContentMD5(md5);
+      }
+
+      @Override
+      public void setContentType(String type) {
+         super.setContentType(type);
+         if (canSetPayload())
+            blob.getPayload().setContentType(type);
+      }
+
+      @Override
+      public void setContentLength(Long size) {
+         super.setContentLength(size);
+         if (canSetPayload())
+            blob.getPayload().setContentLength(size);
+      }
+
+      private boolean canSetPayload() {
+         return blob != null && blob.getPayload() != null;
+      }
+   }
 }

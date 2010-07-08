@@ -102,7 +102,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       expect(response.getHeaders()).andReturn(
                ImmutableMultimap.of("Content-Length", "10485760", "Content-Range",
                         "0-10485759/20232760"));
-      meta.setSize(20232760);
+      meta.setSize(20232760l);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getContent()).andReturn(test);
@@ -112,7 +112,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       replay(metadataParser);
 
       Blob object = callable.apply(response);
-      assertEquals(object.getContentLength(), new Long(10485760));
+      assertEquals(object.getPayload().getContentLength(), new Long(10485760));
       assertEquals(object.getMetadata().getSize(), new Long(20232760));
       assertEquals(object.getAllHeaders().get("Content-Range"), Collections
                .singletonList("0-10485759/20232760"));

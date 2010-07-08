@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
@@ -80,8 +79,6 @@ public class BindAddNodeServiceToXmlPayloadTest {
       map.put("enabled", "false");
       map.put("description", "Some test node");
       binder.bindToRequest(request, map);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/unknown");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "353");
       assertEquals(request.getPayload().getRawContent(), expected);
 
    }

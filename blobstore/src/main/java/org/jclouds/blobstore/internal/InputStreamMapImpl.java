@@ -18,6 +18,10 @@
  */
 package org.jclouds.blobstore.internal;
 
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.jclouds.http.Payloads.newPayload;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
@@ -35,7 +39,6 @@ import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.payloads.ByteArrayPayload;
 import org.jclouds.http.payloads.FilePayload;
 import org.jclouds.http.payloads.InputStreamPayload;
@@ -43,8 +46,6 @@ import org.jclouds.http.payloads.StringPayload;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Map representation of a live connection to a BlobStore. All put operations will result in ETag
@@ -71,7 +72,11 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    public InputStream get(Object o) {
       String realKey = prefixer.apply(o.toString());
       Blob blob = blobstore.getBlob(containerName, realKey);
-      return blob != null ? blob.getContent() : null;
+      return getInputStreamOrNull(blob);
+   }
+
+   private InputStream getInputStreamOrNull(Blob blob) {
+      return blob != null ? blob.getPayload() != null ? blob.getPayload().getInput() : null : null;
    }
 
    @Override
@@ -84,10 +89,10 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
 
    @Override
    public Collection<InputStream> values() {
-      return Lists.newArrayList(Iterables.transform(getAllBlobs.execute(containerName, options),
+      return newArrayList(transform(getAllBlobs.execute(containerName, options),
                new Function<Blob, InputStream>() {
                   public InputStream apply(Blob from) {
-                     return from.getContent();
+                     return getInputStreamOrNull(from);
                   }
                }));
    }
@@ -120,12 +125,12 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     */
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
-      putBlobsStrategy.execute(containerName, Iterables.transform(map.entrySet(),
+      putBlobsStrategy.execute(containerName, transform(map.entrySet(),
                new Function<Map.Entry<? extends String, ? extends Object>, Blob>() {
                   @Override
                   public Blob apply(Map.Entry<? extends String, ? extends Object> from) {
                      Blob blob = blobstore.newBlob(prefixer.apply(from.getKey()));
-                     blob.setPayload(Payloads.newPayload(from.getValue()));
+                     blob.setPayload(newPayload(from.getValue()));
                      blob.generateMD5();
                      return blob;
                   }

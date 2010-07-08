@@ -18,10 +18,7 @@
  */
 package org.jclouds.rest.binders;
 
-import java.util.Collections;
-
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -34,10 +31,6 @@ import org.jclouds.rest.Binder;
 @Singleton
 public class BindToStringPayload implements Binder {
    public void bindToRequest(HttpRequest request, Object payload) {
-      String stringPayload = payload.toString();
-      if (request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE) == null)
-         request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "application/unknown");
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,Collections.singletonList(stringPayload.getBytes().length + ""));
-      request.setPayload(stringPayload);
+      request.setPayload(payload.toString());
    }
 }

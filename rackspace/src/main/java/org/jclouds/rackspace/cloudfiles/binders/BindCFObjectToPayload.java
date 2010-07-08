@@ -21,47 +21,38 @@ package org.jclouds.rackspace.cloudfiles.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.HttpHeaders;
+import javax.inject.Singleton;
 
-import org.jclouds.blobstore.binders.BindBlobToPayloadAndUserMetadataToHeadersWithPrefix;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
+import org.jclouds.rest.Binder;
 
-public class BindCFObjectToPayload extends BindBlobToPayloadAndUserMetadataToHeadersWithPrefix {
+@Singleton
+public class BindCFObjectToPayload implements Binder {
+
+   private final BindUserMetadataToHeadersWithPrefix mdBinder;
    private final ObjectToBlob object2Blob;
-   private final EncryptionService encryptionService;
 
    @Inject
    public BindCFObjectToPayload(ObjectToBlob object2Blob,
-            @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String prefix,
-            EncryptionService encryptionService) {
-      super(prefix, encryptionService);
+            BindUserMetadataToHeadersWithPrefix mdBinder) {
+      this.mdBinder = mdBinder;
       this.object2Blob = object2Blob;
-      this.encryptionService = encryptionService;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       CFObject object = (CFObject) payload;
-      if (object.getContentLength() != null && object.getContentLength() >= 0) {
-         checkArgument(object.getContentLength() <= 5 * 1024 * 1024 * 1024,
+      if (object.getPayload().getContentLength() != null
+               && object.getPayload().getContentLength() >= 0) {
+         checkArgument(object.getPayload().getContentLength() <= 5l * 1024 * 1024 * 1024,
                   "maximum size for put object is 5GB");
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
          request.getHeaders().put("Transfer-Encoding", "chunked");
       }
-
-      super.bindToRequest(request, object2Blob.apply(object));
-      if (object.getInfo().getHash() != null) {
-         request.getHeaders().put(HttpHeaders.ETAG,
-                  encryptionService.hex(object.getInfo().getHash()));
-         request.getHeaders().removeAll("Content-MD5");
-      }
-
+      mdBinder.bindToRequest(request, object2Blob.apply(object));
    }
 
 }

@@ -18,14 +18,21 @@
  */
 package org.jclouds.rest.internal;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.inject.util.Types.newParameterizedType;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.reportMatcher;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
+import static org.jclouds.http.Payloads.newInputStreamPayload;
+import static org.jclouds.http.Payloads.newStringPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+import static org.jclouds.util.Utils.toInputStream;
+import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -72,15 +79,15 @@ import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
+import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.functions.CloseContentAndReturn;
@@ -88,6 +95,7 @@ import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
@@ -119,20 +127,17 @@ import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -141,7 +146,6 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.util.Types;
 
 /**
  * Tests behavior of {@code RestAnnotationProcessorTest}
@@ -481,7 +485,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("fooya".getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), "fooya");
+      assertEquals(request.getPayload().getRawContent(), "fooya");
    }
 
    public class TestCustomMethod {
@@ -581,7 +585,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), "data");
+      assertEquals(request.getPayload().getRawContent(), "data");
    }
 
    public void testCreatePostRequestNullOk() throws SecurityException, NoSuchMethodException {
@@ -607,13 +611,13 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/json"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("\"data\"".getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), "\"data\"");
+      assertEquals(request.getPayload().getRawContent(), "\"data\"");
    }
 
-   public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException {
+   public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPost.class.getMethod("postWithPath", String.class, MapBinder.class);
       HttpRequest request = factory(TestPost.class).createRequest(method,
-               new Object[] { "data", new org.jclouds.rest.MapBinder() {
+                "data", new org.jclouds.rest.MapBinder() {
                   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
                      request.setPayload(postParams.get("fooble"));
                   }
@@ -621,12 +625,10 @@ public class RestAnnotationProcessorTest {
                   public void bindToRequest(HttpRequest request, Object toBind) {
                      throw new RuntimeException("this shouldn't be used in POST");
                   }
-               } });
-      assertEquals(request.getEndpoint().getHost(), "localhost");
-      assertEquals(request.getEndpoint().getPath(), "/data");
-      assertEquals(request.getMethod(), HttpMethod.POST);
-      assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getPayload().toString(), "data");
+               } );
+      assertRequestLineEquals(request, "POST http://localhost:9999/data HTTP/1.1");
+      assertHeadersEqual(request, "Content-Length: 4\nContent-Type: application/unknown\n");
+      assertPayloadEquals(request, "data");
    }
 
    public void testCreatePostWithMethodBinder() throws SecurityException, NoSuchMethodException {
@@ -641,7 +643,7 @@ public class RestAnnotationProcessorTest {
       String expected = "{\"fooble\":\"data\"}";
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(expected.getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), expected);
+      assertEquals(request.getPayload().getRawContent(), expected);
    }
 
    static interface TestMultipartForm {
@@ -706,7 +708,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestMultipartForm.class.getMethod("withParamFilePart", String.class,
                File.class);
       File file = File.createTempFile("foo", "bar");
-      Files.append("foobledata", file, Charsets.UTF_8);
+      Files.append("foobledata", file, UTF_8);
       file.deleteOnExit();
 
       GeneratedHttpRequest<TestMultipartForm> httpRequest = factory(TestMultipartForm.class)
@@ -827,7 +829,7 @@ public class RestAnnotationProcessorTest {
       String expected = "{\"fooble\":\"data\"}";
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(expected.getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), expected);
+      assertEquals(request.getPayload().getRawContent(), expected);
    }
 
    public void testCreatePutWithMethodProduces() throws SecurityException, NoSuchMethodException {
@@ -841,7 +843,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("text/plain"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), "data");
+      assertEquals(request.getPayload().getRawContent(), "data");
    }
 
    public void testCreatePutWithMethodConsumes() throws SecurityException, NoSuchMethodException {
@@ -858,7 +860,7 @@ public class RestAnnotationProcessorTest {
       String expected = "{\"fooble\":\"data\"}";
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(expected.getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), expected);
+      assertEquals(request.getPayload().getRawContent(), expected);
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
@@ -1178,7 +1180,7 @@ public class RestAnnotationProcessorTest {
                Map.class);
       HttpRequest request = factory(TestMapMatrixParams.class).createRequest(method,
                new Object[] { "robot", "kill", ImmutableMap.of("death", "slow") });
-      assertEquals(request.getRequestLine(),
+      assertRequestLineEquals(request,
                "POST http://localhost:9999/objects/robot/action/kill;death=slow HTTP/1.1");
       assertEquals(request.getHeaders().size(), 0);
    }
@@ -1391,17 +1393,122 @@ public class RestAnnotationProcessorTest {
 
       @PUT
       ListenableFuture<Void> put(Payload payload);
+
+      @PUT
+      @Headers(keys = "Transfer-Encoding", values = "chunked")
+      ListenableFuture<Void> putXfer(Payload payload);
+
+      @PUT
+      ListenableFuture<Void> put(PayloadEnclosing payload);
    }
 
-   public void testPutPayload() throws SecurityException, NoSuchMethodException {
+   public void testPutPayloadEnclosing() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
+      HttpRequest request = factory(TestQuery.class).createRequest(
+               method,
+               new PayloadEnclosingImpl(injector.getInstance(EncryptionService.class),
+                        newStringPayload("whoops")));
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request, "Content-Length: 6\nContent-Type: application/unknown\n");
+      assertPayloadEquals(request, "whoops");
+   }
+
+   public void testPutPayloadEnclosingGenerateMD5() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
+      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(injector
+               .getInstance(EncryptionService.class), newStringPayload("whoops"));
+
+      payloadEnclosing.generateMD5();
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request,
+               "Content-Length: 6\nContent-MD5: 2M+SrvaXyLZujY8rtQVwMQ==\nContent-Type: application/unknown\n");
+
+      assertPayloadEquals(request, "whoops");
+   }
+
+   public void testPutInputStreamPayloadEnclosingGenerateMD5() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
+      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(injector
+               .getInstance(EncryptionService.class),
+               newInputStreamPayload(toInputStream("whoops")));
+
+      payloadEnclosing.generateMD5();
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request,
+               "Content-Length: 6\nContent-MD5: 2M+SrvaXyLZujY8rtQVwMQ==\nContent-Type: application/unknown\n");
+
+      assertPayloadEquals(request, "whoops");
+   }
+
+   public void testPutPayloadChunkedNoContentLength() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = TestTransformers.class.getMethod("putXfer", Payload.class);
+      HttpRequest request = factory(TestQuery.class).createRequest(method,
+               newStringPayload("whoops"));
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request, "Content-Type: application/unknown\nTransfer-Encoding: chunked\n");
+      assertPayloadEquals(request, "whoops");
+   }
+
+   public void testPutPayload() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestTransformers.class.getMethod("put", Payload.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method,
-               Payloads.newStringPayload("whoops"));
-      assertEquals(request.getRequestLine(),
-               "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
-      assertEquals(request.getHeaders(), Multimaps.forMap(ImmutableMap.of("Content-Length", "6",
-               "Content-Type", "application/unknown")));
-      assertEquals(request.getPayload().getRawContent(), "whoops");
+               newStringPayload("whoops"));
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request, "Content-Length: 6\nContent-Type: application/unknown\n");
+      assertPayloadEquals(request, "whoops");
+   }
+
+   public void testPutPayloadWithGeneratedMD5AndNoContentType() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Payload payload = newStringPayload("whoops");
+      payload = injector.getInstance(EncryptionService.class).generateMD5BufferingIfNotRepeatable(
+               payload);
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request,
+               "Content-Length: 6\nContent-MD5: 2M+SrvaXyLZujY8rtQVwMQ==\nContent-Type: application/unknown\n");
+      assertPayloadEquals(request, "whoops");
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testPutInputStreamPayloadWithNoLengthThrowsException() throws SecurityException,
+            NoSuchMethodException {
+      Payload payload = newInputStreamPayload(toInputStream("whoops"));
+      injector.getInstance(EncryptionService.class).generateMD5BufferingIfNotRepeatable(payload);
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      factory(TestQuery.class).createRequest(method, payload);
+   }
+
+   public void testPutInputStreamPayload() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Payload payload = newInputStreamPayload(toInputStream("whoops"));
+      payload.setContentLength((long) "whoops".length());
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request, "Content-Length: 6\nContent-Type: application/unknown\n");
+      assertPayloadEquals(request, "whoops");
+   }
+
+   public void testPutInputStreamPayloadWithMD5() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Payload payload = newInputStreamPayload(toInputStream("whoops"));
+      payload.setContentLength((long) "whoops".length());
+      payload.setContentMD5(injector.getInstance(EncryptionService.class).md5(
+               toInputStream("whoops")));
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertHeadersEqual(request,
+               "Content-Length: 6\nContent-MD5: 2M+SrvaXyLZujY8rtQVwMQ==\nContent-Type: application/unknown\n");
+      assertPayloadEquals(request, "whoops");
    }
 
    @SuppressWarnings("static-access")
@@ -1607,10 +1714,10 @@ public class RestAnnotationProcessorTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.PUT);
 
-      assertEquals(HttpUtils.sortAndConcatHeadersIntoString(request.getHeaders()),
+      assertEquals(sortAndConcatHeadersIntoString(request.getHeaders()),
                "Content-Length: 3\nContent-Type: application/unknown\nHost: localhost\n");
 
-      assertEquals(request.getPayload().toString(), "foo");
+      assertEquals(request.getPayload().getRawContent(), "foo");
    }
 
    @DataProvider(name = "strings")
@@ -1646,7 +1753,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
-      assertEquals(request.getPayload().toString(), "data");
+      assertEquals(request.getPayload().getRawContent(), "data");
    }
 
    public void testCreatePutHeader() throws SecurityException, NoSuchMethodException {
@@ -1662,7 +1769,7 @@ public class RestAnnotationProcessorTest {
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
       assertEquals(request.getHeaders().get("foo"), Collections.singletonList("--1--"));
-      assertEquals(request.getPayload().toString(), "data");
+      assertEquals(request.getPayload().getRawContent(), "data");
    }
 
    public class TestVirtualHostMethod {
@@ -1838,7 +1945,7 @@ public class RestAnnotationProcessorTest {
       GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>("GET", URI
                .create("http://localhost"), TestPayload.class, method, "test");
       processor.decorateRequest(request);
-      assertEquals(request.getPayload().toString(), "test");
+      assertEquals(request.getPayload().getRawContent(), "test");
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
@@ -1855,7 +1962,7 @@ public class RestAnnotationProcessorTest {
       GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>("GET", URI
                .create("http://localhost"), TestPayload.class, method, "rabble", "test");
       processor.decorateRequest(request);
-      assertEquals(request.getPayload().toString(), "test");
+      assertEquals(request.getPayload().getRawContent(), "test");
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
@@ -1901,8 +2008,8 @@ public class RestAnnotationProcessorTest {
    public void testBuildTwoForm() throws SecurityException, NoSuchMethodException,
             UnsupportedEncodingException {
       Method oneForm = TestFormReplace.class.getMethod("twoForm", String.class);
-      String form = factory(TestFormReplace.class).createRequest(oneForm, new Object[] { "robot" })
-               .getPayload().toString().toString();
+      Object form = factory(TestFormReplace.class).createRequest(oneForm, "robot").getPayload()
+               .getRawContent();
       assertEquals(form, "slash=/robot&hyphen=-robot");
    }
 
@@ -1918,8 +2025,8 @@ public class RestAnnotationProcessorTest {
    public void testBuildOneClassForm() throws SecurityException, NoSuchMethodException,
             UnsupportedEncodingException {
       Method oneForm = TestClassForm.class.getMethod("oneForm", String.class);
-      String form = factory(TestClassForm.class).createRequest(oneForm, new Object[] { "robot" })
-               .getPayload().toString().toString();
+      Object form = factory(TestClassForm.class).createRequest(oneForm, "robot").getPayload()
+               .getRawContent();
       assertEquals(form, "x-amz-copy-source=/robot");
    }
 
@@ -1927,8 +2034,8 @@ public class RestAnnotationProcessorTest {
    public void testBuildOneForm() throws SecurityException, NoSuchMethodException,
             UnsupportedEncodingException {
       Method oneForm = TestFormReplace.class.getMethod("oneForm", String.class);
-      String form = factory(TestFormReplace.class).createRequest(oneForm, new Object[] { "robot" })
-               .getPayload().toString().toString();
+      Object form = factory(TestFormReplace.class).createRequest(oneForm, "robot").getPayload()
+               .getRawContent();
       assertEquals(form, "x-amz-copy-source=/robot");
    }
 
@@ -1936,8 +2043,8 @@ public class RestAnnotationProcessorTest {
    public void testBuildTwoForms() throws SecurityException, NoSuchMethodException,
             UnsupportedEncodingException {
       Method twoForms = TestFormReplace.class.getMethod("twoForms", String.class, String.class);
-      String form = factory(TestFormReplace.class).createRequest(twoForms,
-               new Object[] { "robot", "eggs" }).getPayload().toString().toString();
+      Object form = factory(TestFormReplace.class).createRequest(twoForms, "robot", "eggs")
+               .getPayload().getRawContent();
       assertEquals(form, "x-amz-copy-source=/robot/eggs");
    }
 
@@ -1946,14 +2053,14 @@ public class RestAnnotationProcessorTest {
             UnsupportedEncodingException {
       Method twoFormsOutOfOrder = TestFormReplace.class.getMethod("twoFormsOutOfOrder",
                String.class, String.class);
-      String form = factory(TestFormReplace.class).createRequest(twoFormsOutOfOrder,
-               new Object[] { "robot", "eggs" }).getPayload().toString().toString();
+      Object form = factory(TestFormReplace.class).createRequest(twoFormsOutOfOrder, "robot",
+               "eggs").getPayload().getRawContent();
       assertEquals(form, "x-amz-copy-source=/eggs/robot");
    }
 
    @SuppressWarnings("unchecked")
    private <T> RestAnnotationProcessor<T> factory(Class<T> clazz) {
-      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(Types.newParameterizedType(
+      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(newParameterizedType(
                RestAnnotationProcessor.class, clazz))));
    }
 
@@ -1984,13 +2091,13 @@ public class RestAnnotationProcessorTest {
       if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String payload = Utils.toStringAndClose(request.getPayload().getInput());
+         String payload = toStringAndClose(request.getPayload().getInput());
          assertEquals(payload, toMatch);
       }
    }
 
    protected void assertHeadersEqual(HttpRequest request, String toMatch) {
-      assertEquals(HttpUtils.sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
+      assertEquals(sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
    }
 
    protected void assertRequestLineEquals(HttpRequest request, String toMatch) {
