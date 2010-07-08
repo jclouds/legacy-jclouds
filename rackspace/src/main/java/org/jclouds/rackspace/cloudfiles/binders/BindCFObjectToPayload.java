@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
@@ -44,6 +45,8 @@ public class BindCFObjectToPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       CFObject object = (CFObject) payload;
+      if (object.getPayload().getContentType() == null)
+         object.getPayload().setContentType(MediaType.APPLICATION_OCTET_STREAM);
       if (object.getPayload().getContentLength() != null
                && object.getPayload().getContentLength() >= 0) {
          checkArgument(object.getPayload().getContentLength() <= 5l * 1024 * 1024 * 1024,

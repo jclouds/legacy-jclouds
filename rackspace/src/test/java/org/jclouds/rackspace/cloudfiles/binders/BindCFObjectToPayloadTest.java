@@ -23,6 +23,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
@@ -53,6 +55,8 @@ public class BindCFObjectToPayloadTest {
       MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getContentType()).andReturn(null).atLeastOnce();
+      payload.setContentType(MediaType.APPLICATION_OCTET_STREAM);
       expect(payload.getContentLength()).andReturn(5368709120l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
@@ -93,6 +97,8 @@ public class BindCFObjectToPayloadTest {
       Multimap<String, String> headers = createMock(Multimap.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getContentType()).andReturn(null).atLeastOnce();
+      payload.setContentType(MediaType.APPLICATION_OCTET_STREAM);
       expect(payload.getContentLength()).andReturn(null).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
@@ -135,6 +141,8 @@ public class BindCFObjectToPayloadTest {
       MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getContentType()).andReturn(null).atLeastOnce();
+      payload.setContentType(MediaType.APPLICATION_OCTET_STREAM);
       expect(payload.getContentLength()).andReturn(5368709121l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
