@@ -19,11 +19,13 @@
 package org.jclouds.encryption.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
+import org.jclouds.http.PayloadEnclosing;
 
 /**
  * 
@@ -75,5 +77,17 @@ public abstract class BaseEncryptionService implements EncryptionService {
       }
       return payload;
 
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public <T extends PayloadEnclosing> T generateMD5BufferingIfNotRepeatable(T payloadEnclosing) {
+      checkState(payloadEnclosing != null, "payloadEnclosing");
+      Payload newPayload = generateMD5BufferingIfNotRepeatable(payloadEnclosing.getPayload());
+      if (newPayload != payloadEnclosing.getPayload())
+         payloadEnclosing.setPayload(newPayload);
+      return payloadEnclosing;
    }
 }

@@ -386,7 +386,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
       CFObject object = getApi().newCFObject();
       object.getInfo().setName(key);
       object.setPayload(data);
-      object.generateMD5();
+      context.utils().encryption().generateMD5BufferingIfNotRepeatable(object);
       object.getInfo().setContentType("text/plain");
       object.getInfo().getMetadata().put("Metadata", "metadata-value");
       return object;

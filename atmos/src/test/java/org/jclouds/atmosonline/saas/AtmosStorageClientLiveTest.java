@@ -112,6 +112,7 @@ public class AtmosStorageClientLiveTest {
 
    URI container1;
    URI container2;
+   private BlobStoreContext context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
@@ -120,15 +121,14 @@ public class AtmosStorageClientLiveTest {
                "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
                "jclouds.test.credential");
-      BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(
-               "atmosonline", identity, credential, ImmutableSet
-                        .<Module> of(new Log4JLoggingModule()));
-      RestContext<AtmosStorageClient, AtmosStorageAsyncClient> context = blobStoreContext
+      context = new BlobStoreContextFactory().createContext("atmosonline", identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+      RestContext<AtmosStorageClient, AtmosStorageAsyncClient> restContext = context
                .getProviderSpecificContext();
-      connection = context.getApi();
+      connection = restContext.getApi();
       for (DirectoryEntry entry : connection.listDirectories()) {
          if (entry.getObjectName().startsWith(containerPrefix)) {
-            blobStoreContext.getBlobStore().deleteContainer(entry.getObjectName());
+            context.getBlobStore().deleteContainer(entry.getObjectName());
          }
       }
    }
@@ -226,7 +226,7 @@ public class AtmosStorageClientLiveTest {
       object.getContentMetadata().setName(name);
       object.setPayload(Payloads.newPayload(data));
       object.getContentMetadata().setContentLength(16l);
-      object.generateMD5();
+      context.utils().encryption().generateMD5BufferingIfNotRepeatable(object);
       object.getContentMetadata().setContentType("text/plain");
       object.getUserMetadata().getMetadata().put("Metadata", metadataValue);
       replaceObject(object);

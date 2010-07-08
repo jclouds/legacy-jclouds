@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.internal.CFObjectImpl;
@@ -51,13 +50,10 @@ public class CFObjectModule extends AbstractModule {
 
    private static class CFObjectFactory implements CFObject.Factory {
       @Inject
-      EncryptionService encryptionService;
-      @Inject
       Provider<MutableObjectInfoWithMetadata> metadataProvider;
 
       public CFObject create(MutableObjectInfoWithMetadata metadata) {
-         return new CFObjectImpl(encryptionService, metadata != null ? metadata : metadataProvider
-                  .get());
+         return new CFObjectImpl(metadata != null ? metadata : metadataProvider.get());
       }
    }
 

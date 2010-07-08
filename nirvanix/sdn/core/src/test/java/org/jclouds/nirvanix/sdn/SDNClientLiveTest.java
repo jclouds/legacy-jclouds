@@ -78,7 +78,7 @@ public class SDNClientLiveTest {
       Blob blob = connection.newBlob();
       blob.getMetadata().setName("test.txt");
       blob.setPayload("value");
-      blob.generateMD5();
+      context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
 
       byte[] md5 = blob.getMetadata().getContentMD5();
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName, blob);

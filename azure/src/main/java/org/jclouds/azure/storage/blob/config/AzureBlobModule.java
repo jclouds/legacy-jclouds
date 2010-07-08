@@ -25,7 +25,6 @@ import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.AzureBlobImpl;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
-import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -51,13 +50,10 @@ public class AzureBlobModule extends AbstractModule {
 
    private static class AzureBlobFactory implements AzureBlob.Factory {
       @Inject
-      EncryptionService encryptionService;
-      @Inject
       Provider<MutableBlobProperties> metadataProvider;
 
       public AzureBlob create(MutableBlobProperties metadata) {
-         return new AzureBlobImpl(encryptionService, metadata != null ? metadata : metadataProvider
-                  .get());
+         return new AzureBlobImpl(metadata != null ? metadata : metadataProvider.get());
       }
    }
 

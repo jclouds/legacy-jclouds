@@ -47,13 +47,4 @@ public interface PayloadEnclosing {
 
    Payload getPayload();
 
-   /**
-    * generate an MD5 Hash for the current data.
-    * <p/>
-    * <h2>Note</h2>
-    * <p/>
-    * If this is an InputStream, it will be converted to a byte array first.
-    */
-   void generateMD5();
-
 }

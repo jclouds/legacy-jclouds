@@ -41,7 +41,7 @@ public class PCSFileImpl extends PayloadEnclosingImpl implements PCSFile, Compar
 
    @Inject
    public PCSFileImpl(MutableFileInfo metadata) {
-      super(null);// no MD5 support
+      super();// no MD5 support
       this.metadata = metadata;
    }
 

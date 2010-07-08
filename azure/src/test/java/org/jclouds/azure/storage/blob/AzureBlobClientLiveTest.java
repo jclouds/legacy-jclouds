@@ -39,10 +39,9 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -67,15 +66,16 @@ public class AzureBlobClientLiveTest {
    protected AzureBlobClient client;
 
    private String containerPrefix = System.getProperty("user.name") + "-azureblob";
-   private EncryptionService encryptionService = new JCEEncryptionService();
+
+   private BlobStoreContext context;
 
    @BeforeTest
    public void setupClient() throws IOException {
       identity = System.getProperty("jclouds.test.identity");
       String credential = System.getProperty("jclouds.test.credential");
-      client = (AzureBlobClient) new BlobStoreContextFactory().createContext("azureblob", identity,
-               credential, ImmutableSet.<Module> of(new Log4JLoggingModule()))
-               .getProviderSpecificContext().getApi();
+      context = new BlobStoreContextFactory().createContext("azureblob", identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+      client = (AzureBlobClient) context.getProviderSpecificContext().getApi();
    }
 
    @Test
@@ -113,7 +113,7 @@ public class AzureBlobClientLiveTest {
       ListBlobsResponse list = client.listBlobs(privateContainer);
       assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/%s",
                identity, privateContainer)));
-      // TODO ... check to see the container actually exists
+      // TODO .. check to see the container actually exists
    }
 
    @Test(timeOut = 5 * 60 * 1000)
@@ -231,12 +231,12 @@ public class AzureBlobClientLiveTest {
       AzureBlob object = client.newBlob();
       object.getProperties().setName("object");
       object.setPayload(data);
-      object.generateMD5();
+      context.utils().encryption().generateMD5BufferingIfNotRepeatable(object);
       object.getProperties().setContentType("text/plain");
       object.getProperties().getMetadata().put("mykey", "metadata-value");
       byte[] md5 = object.getProperties().getContentMD5();
       String newEtag = client.putBlob(privateContainer, object);
-      assertEquals(encryptionService.hex(md5), encryptionService.hex(object.getProperties()
+      assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(object.getProperties()
                .getContentMD5()));
 
       // Test HEAD of missing object
@@ -253,8 +253,8 @@ public class AzureBlobClientLiveTest {
       // http://code.google.com/p/jclouds/issues/detail?id=92
       // assertEquals(metadata.getSize(), data.length());
       assertEquals(metadata.getContentType(), "text/plain");
-      // Azure doesn't return the Content-MD5 on head request...
-      assertEquals(encryptionService.hex(md5), encryptionService.hex(object.getProperties()
+      // Azure doesn't return the Content-MD5 on head request..
+      assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(object.getProperties()
                .getContentMD5()));
       assertEquals(metadata.getETag(), newEtag);
       assertEquals(metadata.getMetadata().entrySet().size(), 1);
@@ -276,7 +276,7 @@ public class AzureBlobClientLiveTest {
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getPayload().getContentLength(), new Long(data.length()));
       assertEquals(getBlob.getProperties().getContentType(), "text/plain");
-      assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob.getProperties()
+      assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(getBlob.getProperties()
                .getContentMD5()));
       assertEquals(newEtag, getBlob.getProperties().getETag());
       // wait until we can update metadata
@@ -318,7 +318,7 @@ public class AzureBlobClientLiveTest {
       object.setPayload(bais);
       object.getPayload().setContentLength(new Long(data.getBytes().length));
       newEtag = client.putBlob(privateContainer, object);
-      assertEquals(encryptionService.hex(md5), encryptionService.hex(getBlob.getProperties()
+      assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(getBlob.getProperties()
                .getContentMD5()));
 
       // Test GET with options

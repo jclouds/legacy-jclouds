@@ -19,7 +19,6 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.http.Payloads.newPayload;
 
@@ -28,7 +27,6 @@ import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 
@@ -37,27 +35,14 @@ import org.jclouds.http.PayloadEnclosing;
  * @author Adrian Cole
  */
 public class PayloadEnclosingImpl implements PayloadEnclosing {
-   private final EncryptionService encryptionService;
    protected Payload payload;
 
-   public PayloadEnclosingImpl(EncryptionService encryptionService, @Nullable Payload payload) {
-      this.encryptionService = encryptionService;
+   public PayloadEnclosingImpl() {
+      this(null);
+   }
+
+   public PayloadEnclosingImpl(@Nullable Payload payload) {
       this.payload = payload;
-   }
-
-   public PayloadEnclosingImpl(EncryptionService encryptionService) {
-      this(encryptionService, null);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void generateMD5() {
-      checkState(payload != null, "payload");
-      Payload newPayload = encryptionService.generateMD5BufferingIfNotRepeatable(payload);
-      if (newPayload != payload)
-         setPayload(newPayload);
    }
 
    /**
@@ -98,6 +83,7 @@ public class PayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(String data) {
+      closeContentIfPresent();
       setPayload(newPayload(checkNotNull(data, "data")));
    }
 
@@ -140,4 +126,9 @@ public class PayloadEnclosingImpl implements PayloadEnclosing {
       return true;
    }
 
+   @Override
+   protected void finalize() throws Throwable {
+      closeContentIfPresent();
+      super.finalize();
+   }
 }

@@ -102,7 +102,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       protected void onClose() throws IOException {
          try {
             blob.setPayload(file);
-            blob.generateMD5();
+            context.getContext().utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
             logger.info(String.format(">> put: %s/%s %d bytes", getContainer(),
                      getNameTrimLeadingSlashes(), blob.getPayload().getContentLength()));
             String tag = context.putBlob(getContainer(), blob);

@@ -614,10 +614,11 @@ public class RestAnnotationProcessorTest {
       assertEquals(request.getPayload().getRawContent(), "\"data\"");
    }
 
-   public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException, IOException {
+   public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException,
+            IOException {
       Method method = TestPost.class.getMethod("postWithPath", String.class, MapBinder.class);
-      HttpRequest request = factory(TestPost.class).createRequest(method,
-                "data", new org.jclouds.rest.MapBinder() {
+      HttpRequest request = factory(TestPost.class).createRequest(method, "data",
+               new org.jclouds.rest.MapBinder() {
                   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
                      request.setPayload(postParams.get("fooble"));
                   }
@@ -625,7 +626,7 @@ public class RestAnnotationProcessorTest {
                   public void bindToRequest(HttpRequest request, Object toBind) {
                      throw new RuntimeException("this shouldn't be used in POST");
                   }
-               } );
+               });
       assertRequestLineEquals(request, "POST http://localhost:9999/data HTTP/1.1");
       assertHeadersEqual(request, "Content-Length: 4\nContent-Type: application/unknown\n");
       assertPayloadEquals(request, "data");
@@ -1405,10 +1406,8 @@ public class RestAnnotationProcessorTest {
    public void testPutPayloadEnclosing() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
-      HttpRequest request = factory(TestQuery.class).createRequest(
-               method,
-               new PayloadEnclosingImpl(injector.getInstance(EncryptionService.class),
-                        newStringPayload("whoops")));
+      HttpRequest request = factory(TestQuery.class).createRequest(method,
+               new PayloadEnclosingImpl(newStringPayload("whoops")));
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertHeadersEqual(request, "Content-Length: 6\nContent-Type: application/unknown\n");
       assertPayloadEquals(request, "whoops");
@@ -1417,10 +1416,10 @@ public class RestAnnotationProcessorTest {
    public void testPutPayloadEnclosingGenerateMD5() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
-      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(injector
-               .getInstance(EncryptionService.class), newStringPayload("whoops"));
+      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(newStringPayload("whoops"));
 
-      payloadEnclosing.generateMD5();
+      injector.getInstance(EncryptionService.class).generateMD5BufferingIfNotRepeatable(
+               payloadEnclosing);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertHeadersEqual(request,
@@ -1432,11 +1431,11 @@ public class RestAnnotationProcessorTest {
    public void testPutInputStreamPayloadEnclosingGenerateMD5() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
-      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(injector
-               .getInstance(EncryptionService.class),
+      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(
                newInputStreamPayload(toInputStream("whoops")));
 
-      payloadEnclosing.generateMD5();
+      injector.getInstance(EncryptionService.class).generateMD5BufferingIfNotRepeatable(
+               payloadEnclosing);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertHeadersEqual(request,

@@ -26,7 +26,6 @@ import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
@@ -57,10 +56,9 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
    private final SetPayloadPropertiesMutableContentMetadata contentMetadata;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
-   public AtmosObjectImpl(EncryptionService encryptionService,
-            MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
+   public AtmosObjectImpl(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
             UserMetadata userMetadata) {
-      super(encryptionService);
+      super();
       this.contentMetadata = linkMetadataToThis(contentMetadata);
       this._contentMetadata = this.contentMetadata.getDelegate();
       this.systemMetadata = systemMetadata;
@@ -68,9 +66,8 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
    }
 
    @Inject
-   public AtmosObjectImpl(EncryptionService encryptionService,
-            MutableContentMetadata contentMetadata) {
-      this(encryptionService, contentMetadata, null, new UserMetadata());
+   public AtmosObjectImpl(MutableContentMetadata contentMetadata) {
+      this(contentMetadata, null, new UserMetadata());
    }
 
    /**

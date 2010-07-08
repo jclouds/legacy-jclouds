@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
@@ -45,8 +44,8 @@ public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Co
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
-   public AzureBlobImpl(EncryptionService encryptionService, MutableBlobProperties properties) {
-      super(encryptionService);
+   public AzureBlobImpl(MutableBlobProperties properties) {
+      super();
       this.properties = linkMetadataToThis(properties);
       this._properties = this.properties.getDelegate();
    }

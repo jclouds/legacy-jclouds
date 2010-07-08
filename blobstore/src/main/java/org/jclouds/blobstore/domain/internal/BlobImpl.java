@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
@@ -49,8 +48,8 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
-   public BlobImpl(EncryptionService encryptionService, MutableBlobMetadata metadata) {
-      super(encryptionService);
+   public BlobImpl(MutableBlobMetadata metadata) {
+      super();
       this.metadata = linkMetadataToThis(metadata);
       this._metadata = this.metadata.getDelegate();
    }

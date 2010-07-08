@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
@@ -45,8 +44,8 @@ public class CFObjectImpl extends PayloadEnclosingImpl implements CFObject, Comp
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
-   public CFObjectImpl(EncryptionService encryptionService, MutableObjectInfoWithMetadata info) {
-      super(encryptionService);
+   public CFObjectImpl(MutableObjectInfoWithMetadata info) {
+      super();
       this.info = linkMetadataToThis(info);
       this._info = this.info.getDelegate();
 

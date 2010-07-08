@@ -59,15 +59,15 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          putFiveStrings(map);
          putFiveStringsUnderPath(map);
 
-         Collection<Blob> values = map.values();
+         Collection<Blob> blobs = map.values();
          assertConsistencyAwareMapSize(map, 5);
-         Set<String> valuesAsString = new HashSet<String>();
-         for (Blob object : values) {
-            valuesAsString.add(getContentAsStringOrNullAndClose(object));
+         Set<String> blobsAsString = new HashSet<String>();
+         for (Blob blob : blobs) {
+            blobsAsString.add(getContentAsStringOrNullAndClose(blob));
          }
-         valuesAsString.removeAll(fiveStrings.values());
-         assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": "
-                  + valuesAsString;
+         blobsAsString.removeAll(fiveStrings.values());
+         assert blobsAsString.size() == 0 : blobsAsString.size() + ": " + blobs + ": "
+                  + blobsAsString;
       } finally {
          returnContainer(bucketName);
       }
@@ -90,12 +90,12 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    }
 
    private void assertConsistencyAwareContentEquals(final Map<String, Blob> map, final String key,
-            final String value) throws InterruptedException {
+            final String blob) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             Blob old = map.remove(key);
             try {
-               assertEquals(getContentAsStringOrNullAndClose(old), value);
+               assertEquals(getContentAsStringOrNullAndClose(old), blob);
             } catch (IOException e) {
                throw new RuntimeException(e);
             }
@@ -116,16 +116,16 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          for (Entry<String, Blob> entry : entries) {
             assertEquals(fiveStrings.get(entry.getKey()), getContentAsStringOrNullAndClose(entry
                      .getValue()));
-            Blob value = entry.getValue();
-            value.setPayload("");
-            value.generateMD5();
-            entry.setValue(value);
+            Blob blob = entry.getValue();
+            blob.setPayload("");
+            context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+            entry.setValue(blob);
          }
          assertConsistencyAware(new Runnable() {
             public void run() {
-               for (Blob value : map.values()) {
+               for (Blob blob : map.values()) {
                   try {
-                     assertEquals(getContentAsStringOrNullAndClose(value), "");
+                     assertEquals(getContentAsStringOrNullAndClose(blob), "");
                   } catch (IOException e) {
                      Throwables.propagate(e);
                   }
@@ -144,10 +144,10 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          putStringWithMD5(map, "one", "apple");
-         Blob object = context.getBlobStore().newBlob("one");
-         object.setPayload("apple");
-         object.generateMD5();
-         assertConsistencyAwareContainsValue(map, object);
+         Blob blob = context.getBlobStore().newBlob("one");
+         blob.setPayload("apple");
+         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         assertConsistencyAwareContainsValue(map, blob);
       } finally {
          returnContainer(bucketName);
       }
@@ -172,14 +172,14 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
-         Blob object = context.getBlobStore().newBlob("one");
-         object.setPayload(Utils.toInputStream("apple"));
-         object.generateMD5();
-         Blob old = map.put(object.getMetadata().getName(), object);
+         Blob blob = context.getBlobStore().newBlob("one");
+         blob.setPayload(Utils.toInputStream("apple"));
+         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         Blob old = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         object.setPayload(Utils.toInputStream("bear"));
-         object.generateMD5();
-         Blob apple = map.put(object.getMetadata().getName(), object);
+         blob.setPayload(Utils.toInputStream("bear"));
+         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         Blob apple = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
          returnContainer(bucketName);
@@ -193,10 +193,10 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          Map<String, Blob> map = createMap(context, bucketName);
          Map<String, Blob> newMap = new HashMap<String, Blob>();
          for (String key : fiveInputs.keySet()) {
-            Blob object = context.getBlobStore().newBlob(key);
-            object.setPayload(fiveInputs.get(key));
-            object.getPayload().setContentLength((long) fiveBytes.get(key).length);
-            newMap.put(key, object);
+            Blob blob = context.getBlobStore().newBlob(key);
+            blob.setPayload(fiveInputs.get(key));
+            blob.getPayload().setContentLength((long) fiveBytes.get(key).length);
+            newMap.put(key, blob);
          }
          map.putAll(newMap);
          assertConsistencyAwareMapSize(map, 5);
@@ -222,9 +222,9 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
 
          Map<String, Blob> newMap = new HashMap<String, Blob>();
          for (String key : keySet) {
-            Blob object = context.getBlobStore().newBlob(key);
-            object.setPayload(key);
-            newMap.put(key, object);
+            Blob blob = context.getBlobStore().newBlob(key);
+            blob.setPayload(key);
+            newMap.put(key, blob);
          }
          map.putAll(newMap);
          newMap.clear();
@@ -239,19 +239,19 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    }
 
    @Override
-   protected void putStringWithMD5(Map<String, Blob> map, String key, String value) {
-      Blob object = context.getBlobStore().newBlob(key);
-      object.setPayload(value);
-      object.generateMD5();
-      map.put(key, object);
+   protected void putStringWithMD5(Map<String, Blob> map, String key, String text) {
+      Blob blob = context.getBlobStore().newBlob(key);
+      blob.setPayload(text);
+      context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+      map.put(key, blob);
    }
 
    protected void putFiveStrings(Map<String, Blob> map) {
       Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
-         Blob object = context.getBlobStore().newBlob(entry.getKey());
-         object.setPayload(entry.getValue());
-         newMap.put(entry.getKey(), object);
+         Blob blob = context.getBlobStore().newBlob(entry.getKey());
+         blob.setPayload(entry.getValue());
+         newMap.put(entry.getKey(), blob);
       }
       map.putAll(newMap);
    }
@@ -259,9 +259,9 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    protected void putFiveStringsUnderPath(Map<String, Blob> map) {
       Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStringsUnderPath.entrySet()) {
-         Blob object = context.getBlobStore().newBlob(entry.getKey());
-         object.setPayload(entry.getValue());
-         newMap.put(entry.getKey(), object);
+         Blob blob = context.getBlobStore().newBlob(entry.getKey());
+         blob.setPayload(entry.getValue());
+         newMap.put(entry.getKey(), blob);
       }
       map.putAll(newMap);
    }

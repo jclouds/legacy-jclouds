@@ -25,6 +25,7 @@ import java.security.Key;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.Payload;
+import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.payloads.ByteArrayPayload;
 
 import com.google.inject.ImplementedBy;
@@ -54,6 +55,15 @@ public interface EncryptionService {
    byte[] sha256(InputStream toEncode);
 
    byte[] md5(InputStream toEncode);
+
+   /**
+    * generate an MD5 Hash for the current data.
+    * <p/>
+    * <h2>Note</h2>
+    * <p/>
+    * If this is an InputStream, it will be converted to a byte array first.
+    */
+   <T extends PayloadEnclosing> T generateMD5BufferingIfNotRepeatable(T payloadEnclosing);
 
    Payload generateMD5BufferingIfNotRepeatable(Payload in);
 

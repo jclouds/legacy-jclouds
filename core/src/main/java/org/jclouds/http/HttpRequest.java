@@ -20,16 +20,18 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.Closeables.closeQuietly;
 import static com.google.inject.internal.Lists.newArrayList;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import org.jclouds.http.internal.PayloadEnclosingImpl;
+
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -37,13 +39,33 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public class HttpRequest extends HttpMessage {
+public class HttpRequest extends PayloadEnclosingImpl implements PayloadEnclosing {
 
    private List<HttpRequestFilter> requestFilters = newArrayList();
    private String method;
    private URI endpoint;
    private Payload payload;
    private char[] skips;
+
+   /**
+    * synchronized as there is no concurrent version. Headers may change in flight due to redirects.
+    */
+   private Multimap<String, String> headers = Multimaps.synchronizedMultimap(LinkedHashMultimap
+            .<String, String> create());
+
+   public Multimap<String, String> getHeaders() {
+      return headers;
+   }
+
+   /**
+    * try to get the value, then try as lowercase.
+    */
+   public String getFirstHeaderOrNull(String string) {
+      Collection<String> values = headers.get(string);
+      if (values.size() == 0)
+         values = headers.get(string.toLowerCase());
+      return (values.size() >= 1) ? values.iterator().next() : null;
+   }
 
    /**
     * 
@@ -104,31 +126,6 @@ public class HttpRequest extends HttpMessage {
       return method;
    }
 
-   public Payload getPayload() {
-      return payload;
-   }
-
-   public void setPayload(Payload data) {
-      closeContentIfPresent();
-      this.payload = checkNotNull(data, "data");
-   }
-
-   public void setPayload(InputStream data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
-   }
-
-   public void setPayload(byte[] data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
-   }
-
-   public void setPayload(String data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
-   }
-
-   public void setPayload(File data) {
-      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
-   }
-
    /**
     * characters to skip encoding on.
     */
@@ -158,18 +155,6 @@ public class HttpRequest extends HttpMessage {
 
    public void setEndpoint(URI endpoint) {
       this.endpoint = endpoint;
-   }
-
-   @Override
-   protected void finalize() throws Throwable {
-      closeContentIfPresent();
-      super.finalize();
-   }
-
-   private void closeContentIfPresent() {
-      if (getPayload() != null && getPayload().getInput() != null) {
-         closeQuietly(getPayload().getInput());
-      }
    }
 
    @Override

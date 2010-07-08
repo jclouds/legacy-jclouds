@@ -25,7 +25,6 @@ import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.internal.S3ObjectImpl;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
-import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -50,13 +49,10 @@ public class S3ObjectModule extends AbstractModule {
 
    private static class S3ObjectFactory implements S3Object.Factory {
       @Inject
-      EncryptionService encryptionService;
-      @Inject
       Provider<MutableObjectMetadata> metadataProvider;
 
       public S3Object create(MutableObjectMetadata metadata) {
-         return new S3ObjectImpl(encryptionService, metadata != null ? metadata : metadataProvider
-                  .get());
+         return new S3ObjectImpl(metadata != null ? metadata : metadataProvider.get());
       }
    }
 

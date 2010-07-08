@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
@@ -64,8 +63,8 @@ public class S3ObjectImpl extends PayloadEnclosingImpl implements S3Object, Comp
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
-   public S3ObjectImpl(EncryptionService encryptionService, MutableObjectMetadata metadata) {
-      super(encryptionService);
+   public S3ObjectImpl(MutableObjectMetadata metadata) {
+      super();
       this.metadata = linkMetadataToThis(metadata);
       this._metadata = this.metadata.getDelegate();
    }

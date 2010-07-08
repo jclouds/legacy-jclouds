@@ -24,7 +24,6 @@ import javax.inject.Provider;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.BlobImpl;
-import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -47,14 +46,12 @@ public class BlobStoreObjectModule extends AbstractModule {
    }
 
    private static class BlobFactory implements Blob.Factory {
-      @Inject
-      EncryptionService encryptionService;
+
       @Inject
       Provider<MutableBlobMetadata> metadataProvider;
 
       public Blob create(MutableBlobMetadata metadata) {
-         return new BlobImpl(encryptionService, metadata != null ? metadata : metadataProvider
-                  .get());
+         return new BlobImpl(metadata != null ? metadata : metadataProvider.get());
       }
    }
 

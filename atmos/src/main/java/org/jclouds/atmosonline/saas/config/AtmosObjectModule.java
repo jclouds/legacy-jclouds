@@ -27,7 +27,6 @@ import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.atmosonline.saas.domain.internal.AtmosObjectImpl;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
-import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -52,25 +51,22 @@ public class AtmosObjectModule extends AbstractModule {
    }
 
    private static class AtmosObjectFactory implements AtmosObject.Factory {
-      @Inject
-      EncryptionService encryptionService;
+
       @Inject
       Provider<MutableContentMetadata> metadataProvider;
 
       public AtmosObject create(MutableContentMetadata contentMetadata) {
-         return new AtmosObjectImpl(encryptionService, contentMetadata != null ? contentMetadata
-                  : metadataProvider.get());
+         return new AtmosObjectImpl(contentMetadata != null ? contentMetadata : metadataProvider
+                  .get());
       }
 
       public AtmosObject create(SystemMetadata systemMetadata, UserMetadata userMetadata) {
-         return new AtmosObjectImpl(encryptionService, metadataProvider.get(), systemMetadata,
-                  userMetadata);
+         return new AtmosObjectImpl(metadataProvider.get(), systemMetadata, userMetadata);
       }
 
       public AtmosObject create(MutableContentMetadata contentMetadata,
                SystemMetadata systemMetadata, UserMetadata userMetadata) {
-         return new AtmosObjectImpl(encryptionService, contentMetadata, systemMetadata,
-                  userMetadata);
+         return new AtmosObjectImpl(contentMetadata, systemMetadata, userMetadata);
       }
    }
 

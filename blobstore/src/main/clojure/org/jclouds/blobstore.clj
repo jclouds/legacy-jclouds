@@ -22,7 +22,7 @@
 Current supported services are:
    [s3, azureblob, atmos, cloudfiles, walrus, googlestorage]
 
-Here's a quick example of how to view blob resources in rackspace
+Here's a quick example of how to viewresources in rackspace
 
     (use 'org.jclouds.blobstore)
     (use 'clojure.contrib.pprint)
@@ -91,8 +91,6 @@ Options can also be specified for extension modules
    :else (apply blobstore args)))
 
 (def *blobstore*)
-
-(def *encryption-service* (JCEEncryptionService.)) ;; TODO: use guice
 
 (def *max-retries* 3)
 
@@ -222,7 +220,7 @@ Options can also be specified for extension modules
      (.putBlob blobstore container-name blob)))
 
 (defn blob-metadata
-  "Get blob metadata from given path"
+  "Get metadata from given path"
   ([container-name path]
      (blob-metadata container-name path *blobstore*))
   ([container-name path blobstore]
@@ -268,17 +266,29 @@ example:
      (.list (as-blobstore blobstore) container-name
             (.inDirectory (new ListContainerOptions) dir))))
 
+(defn md5-blob
+  "add a content md5 to a blob.  note that this implies rebuffering, if theisn't repeatable"
+    ([blob]
+     (md5-blob *blobstore*))
+    ([blob blobstore]
+      (.generateMD5BufferingIfNotRepeatable (.encryption (.utils (blobstore-context blobstore)))
+               blob)))
+(defn blob
+  "create a new blob with the specified payload"
+    ([name payload]
+     (blob name payload *blobstore*))
+    ([name payload blobstore]
+      (doto (.newBlob blobstore name)
+                 (.setPayload payload))))
+
 (defn upload-blob
-  "Create an blob representing text data:
+  "Create anrepresenting text data:
 container, name, string -> etag"
-  ([container-name name data] ;; TODO: allow payload to be a stream
+  ([container-name name data]
      (upload-blob container-name name data *blobstore*))
   ([container-name name data blobstore]
      (put-blob container-name
-               (doto (.newBlob blobstore name)
-                 (.setPayload data)
-                 (.generateMD5))
-               blobstore)))
+       (md5-blob (blob name data) blobstore) blobstore)))
 
 (defmulti #^{:arglists '[[container-name name target]
                          [container-name name target blobstore]]}

@@ -31,6 +31,7 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
+import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -83,11 +84,14 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       PutBlobsStrategy putBlobsStrategy;
       @Inject
+      EncryptionService encryptionService;
+      @Inject
       ListContainerAndRecurseThroughFolders listStrategy;
 
       public InputStreamMap create(String containerName, ListContainerOptions options) {
          return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, listStrategy,
-                  containsValueStrategy, putBlobsStrategy, containerName, options);
+                  containsValueStrategy, putBlobsStrategy, containerName, options,
+                  encryptionService);
       }
 
    }

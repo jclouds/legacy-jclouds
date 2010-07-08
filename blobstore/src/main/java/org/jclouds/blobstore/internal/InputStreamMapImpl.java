@@ -38,6 +38,7 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.payloads.ByteArrayPayload;
 import org.jclouds.http.payloads.FilePayload;
@@ -58,14 +59,16 @@ import com.google.common.base.Function;
  * @see BaseBlobMap
  */
 public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
+   protected final EncryptionService encryptionService;
 
    @Inject
    public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
             GetBlobsInListStrategy getAllBlobs, ListContainerAndRecurseThroughFolders listStrategy,
             ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            String containerName, ListContainerOptions options) {
+            String containerName, ListContainerOptions options, EncryptionService encryptionService) {
       super(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
                containerName, options);
+      this.encryptionService = encryptionService;
    }
 
    @Override
@@ -129,12 +132,20 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
                new Function<Map.Entry<? extends String, ? extends Object>, Blob>() {
                   @Override
                   public Blob apply(Map.Entry<? extends String, ? extends Object> from) {
-                     Blob blob = blobstore.newBlob(prefixer.apply(from.getKey()));
-                     blob.setPayload(newPayload(from.getValue()));
-                     blob.generateMD5();
-                     return blob;
+                     String name = from.getKey();
+                     Object value = from.getValue();
+                     return newBlobWithMD5(name, value);
                   }
+
                }));
+   }
+
+   @VisibleForTesting
+   Blob newBlobWithMD5(String name, Object value) {
+      Blob blob = blobstore.newBlob(prefixer.apply(name));
+      blob.setPayload(newPayload(value));
+      encryptionService.generateMD5BufferingIfNotRepeatable(blob);
+      return blob;
    }
 
    @Override
@@ -166,9 +177,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    @VisibleForTesting
    InputStream putInternal(String name, Payload payload) {
       InputStream returnVal = containsKey(name) ? get(name) : null;
-      Blob blob = blobstore.newBlob(prefixer.apply(name));
-      blob.setPayload(payload);
-      blob.generateMD5();
+      Blob blob = newBlobWithMD5(name, payload);
       blobstore.putBlob(containerName, blob);
       return returnVal;
    }
