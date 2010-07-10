@@ -18,6 +18,8 @@
  */
 package org.jclouds.ibmdev.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
 
 import javax.annotation.Resource;
@@ -32,9 +34,6 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
-
 /**
  * This will parse and set an appropriate exception on the command object.
  * 
@@ -47,11 +46,12 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
    protected Logger logger = Logger.NULL;
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      // it is important to always read fully and close streams
-      String message = parseMessage(response);
-      Exception exception = message != null ? new HttpResponseException(command, response, message)
-               : new HttpResponseException(command, response);
+      Exception exception = new HttpResponseException(command, response);
       try {
+         // it is important to always read fully and close streams
+         String message = parseMessage(response);
+         exception = message != null ? new HttpResponseException(command, response, message)
+                  : exception;
          message = message != null ? message : String.format("%s -> %s", command.getRequest()
                   .getRequestLine(), response.getStatusLine());
          switch (response.getStatusCode()) {
@@ -74,25 +74,16 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
                }
                break;
          }
+      } catch (IOException e) {
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         releasePayload(response);
          command.setException(exception);
       }
    }
 
-   public String parseMessage(HttpResponse response) {
-      if (response.getContent() == null)
+   public String parseMessage(HttpResponse response) throws IOException {
+      if (response.getPayload() == null)
          return null;
-      try {
-         return Utils.toStringAndClose(response.getContent());
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      } finally {
-         try {
-            response.getContent().close();
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-      }
+      return Utils.toStringAndClose(response.getPayload().getInput());
    }
 }

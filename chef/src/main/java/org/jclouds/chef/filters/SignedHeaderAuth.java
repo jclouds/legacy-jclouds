@@ -74,6 +74,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
    private final String emptyStringHash;
+   private final HttpUtils utils;
 
    @Resource
    @Named(Constants.LOGGER_SIGNATURE)
@@ -82,13 +83,14 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    @Inject
    public SignedHeaderAuth(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String userId,
             PrivateKey privateKey, @TimeStamp Provider<String> timeStampProvider,
-            EncryptionService encryptionService) {
+            EncryptionService encryptionService, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.userId = userId;
       this.privateKey = privateKey;
       this.timeStampProvider = timeStampProvider;
       this.encryptionService = encryptionService;
       this.emptyStringHash = hashBody(Payloads.newStringPayload(""));
+      this.utils = utils;
    }
 
    public void filter(HttpRequest request) throws HttpException {
@@ -104,7 +106,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
                Collections.singletonList(SIGNING_DESCRIPTION));
       calculateAndReplaceAuthorizationHeaders(request, toSign);
       request.getHeaders().replaceValues("X-Ops-Timestamp", Collections.singletonList(timestamp));
-      HttpUtils.logRequest(signatureLog, request, "<<");
+      utils.logRequest(signatureLog, request, "<<");
    }
 
    @VisibleForTesting

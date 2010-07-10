@@ -18,6 +18,10 @@
  */
 package org.jclouds.encryption.bouncycastle;
 
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.util.Utils.encodeString;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,10 +41,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.encryption.internal.BaseEncryptionService;
 import org.jclouds.http.payloads.ByteArrayPayload;
-import org.jclouds.util.Utils;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
 
 /**
  * 
@@ -62,7 +62,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
    public byte[] hmac(String toEncode, byte[] key, Digest digest) {
       HMac hmac = new HMac(digest);
       byte[] resBuf = new byte[hmac.getMacSize()];
-      byte[] plainBytes = Utils.encodeString(toEncode);
+      byte[] plainBytes = encodeString(toEncode);
       byte[] keyBytes = key;
       hmac.init(new KeyParameter(keyBytes));
       hmac.update(plainBytes, 0, plainBytes.length);
@@ -74,7 +74,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
    public byte[] md5(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[BUF_SIZE];
       int numRead = -1;
       try {
          do {
@@ -84,9 +84,9 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
             }
          } while (numRead != -1);
       } catch (IOException e) {
-         throw new RuntimeException(e);
+         propagate(e);
       } finally {
-         Closeables.closeQuietly(toEncode);
+         closeQuietly(toEncode);
       }
       eTag.doFinal(resBuf, 0);
       return resBuf;
@@ -101,7 +101,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
    public ByteArrayPayload generatePayloadWithMD5For(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[BUF_SIZE];
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       long length = 0;
       int numRead = -1;
@@ -115,10 +115,10 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
             }
          } while (numRead != -1);
       } catch (IOException e) {
-         throw new RuntimeException(e);
+         propagate(e);
       } finally {
-         Closeables.closeQuietly(out);
-         Closeables.closeQuietly(toEncode);
+         closeQuietly(out);
+         closeQuietly(toEncode);
       }
       eTag.doFinal(resBuf, 0);
       return new ByteArrayPayload(out.toByteArray(), resBuf);
@@ -160,7 +160,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
 
    private byte[] sha(InputStream plainBytes, Digest digest) {
       byte[] resBuf = new byte[digest.getDigestSize()];
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[BUF_SIZE];
       long length = 0;
       int numRead = -1;
       try {
@@ -172,9 +172,9 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
             }
          } while (numRead != -1);
       } catch (IOException e) {
-         throw new RuntimeException(e);
+         propagate(e);
       } finally {
-         Closeables.closeQuietly(plainBytes);
+         closeQuietly(plainBytes);
       }
       digest.doFinal(resBuf, 0);
       return resBuf;
@@ -188,7 +188,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
          cipher.init(Cipher.ENCRYPT_MODE, key);
          return cipher.doFinal(toSign.getBytes());
       } catch (Exception e) {
-         Throwables.propagate(e);
+         propagate(e);
          return null;
       }
    }

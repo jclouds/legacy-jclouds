@@ -12,6 +12,7 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RequestSigner;
@@ -40,7 +41,7 @@ public class ParseAWSErrorFromXmlContentTest {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
                "<Error><Code>IncorrectState</Code></Error>", IllegalStateException.class);
    }
-   
+
    @Test
    public void test400WithAuthFailureSetsAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
@@ -63,9 +64,8 @@ public class ParseAWSErrorFromXmlContentTest {
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(Utils.toInputStream(content));
-      response.setStatusCode(statusCode);
-      response.setMessage(message);
+      HttpResponse response = new HttpResponse(statusCode, message, Payloads
+               .newInputStreamPayload(Utils.toInputStream(content)));
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

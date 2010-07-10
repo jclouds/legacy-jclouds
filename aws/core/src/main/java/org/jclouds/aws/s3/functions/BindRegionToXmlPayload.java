@@ -26,6 +26,7 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
@@ -73,6 +74,6 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
                         "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
                         value);
       super.bindToRequest(request, payload);
-
+      request.getPayload().setContentType(MediaType.TEXT_XML);
    }
 }

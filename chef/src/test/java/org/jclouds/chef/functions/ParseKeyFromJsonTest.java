@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -33,15 +34,17 @@ public class ParseKeyFromJsonTest {
       assertEquals(
                handler
                         .apply(new HttpResponse(
-                                 Utils
-                                          .toInputStream("{\n\"uri\": \"https://api.opscode.com/users/bobo\", \"private_key\": \"RSA_PRIVATE_KEY\",}"))),
+                                 200,
+                                 "ok",
+                                 Payloads
+                                          .newPayload(Utils
+                                                   .toInputStream("{\n\"uri\": \"https://api.opscode.com/users/bobo\", \"private_key\": \"RSA_PRIVATE_KEY\",}")))),
                "RSA_PRIVATE_KEY");
    }
 
    public void test2() {
-      String key = handler.apply(new HttpResponse(ParseKeyFromJsonTest.class
-               .getResourceAsStream("/newclient.txt")));
+      String key = handler.apply(new HttpResponse(200, "ok", Payloads
+               .newPayload(ParseKeyFromJsonTest.class.getResourceAsStream("/newclient.txt"))));
       assert key.startsWith("-----BEGIN RSA PRIVATE KEY-----\n");
    }
-
 }

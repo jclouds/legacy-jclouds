@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payload;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -42,14 +43,21 @@ public class ReturnStringIf200Test {
             TimeoutException, IOException {
       Function<HttpResponse, String> function = new ReturnStringIf200();
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getContent()).andReturn(null);
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getInput()).andReturn(null);
+      payload.release();
+
+      replay(payload);
       replay(response);
       try {
          function.apply(response);
       } catch (Exception e) {
          assert e.getMessage().equals("no content");
       }
+      verify(payload);
       verify(response);
    }
 
@@ -58,15 +66,22 @@ public class ReturnStringIf200Test {
             TimeoutException, IOException {
       Function<HttpResponse, String> function = new ReturnStringIf200();
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       RuntimeException exception = new RuntimeException("bad");
-      expect(response.getContent()).andThrow(exception);
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getInput()).andThrow(exception);
+      payload.release();
+
+      replay(payload);
       replay(response);
       try {
          function.apply(response);
       } catch (Exception e) {
          assert e.equals(exception);
       }
+      verify(payload);
       verify(response);
    }
 
@@ -74,10 +89,19 @@ public class ReturnStringIf200Test {
    public void testResponseOk() throws Exception {
       Function<HttpResponse, String> function = new ReturnStringIf200();
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getContent()).andReturn(Utils.toInputStream("hello"));
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getInput()).andReturn(Utils.toInputStream("hello"));
+      payload.release();
+
+      replay(payload);
       replay(response);
+
       assertEquals(function.apply(response), "hello");
+
+      verify(payload);
       verify(response);
    }
 }

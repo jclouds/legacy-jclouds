@@ -27,7 +27,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.SIGNATURE_METHOD;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.SIGNATURE_VERSION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.TIMESTAMP;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
-import static org.jclouds.http.HttpUtils.logRequest;
 import static org.jclouds.http.HttpUtils.makeQueryLine;
 import static org.jclouds.http.HttpUtils.parseQueryToMap;
 
@@ -49,6 +48,7 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
@@ -56,7 +56,6 @@ import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -77,6 +76,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    private final String secretKey;
    private final Provider<String> dateService;
    private final EncryptionService encryptionService;
+   private final HttpUtils utils;
+
    @Resource
    @Named(Constants.LOGGER_SIGNATURE)
    private Logger signatureLog = Logger.NULL;
@@ -85,12 +86,14 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public FormSigner(SignatureWire signatureWire,
             @Named(Constants.PROPERTY_IDENTITY) String accessKey,
             @Named(Constants.PROPERTY_CREDENTIAL) String secretKey,
-            @TimeStamp Provider<String> dateService, EncryptionService encryptionService) {
+            @TimeStamp Provider<String> dateService, EncryptionService encryptionService,
+            HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.dateService = dateService;
       this.encryptionService = encryptionService;
+      this.utils = utils;
    }
 
    public void filter(HttpRequest request) throws HttpException {
@@ -98,14 +101,13 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
                "request is not ready to sign; host not present");
       Multimap<String, String> decodedParams = parseQueryToMap(request.getPayload().getRawContent()
                .toString());
-      request.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
       setPayload(request, decodedParams);
-      logRequest(signatureLog, request, "<<");
+      utils.logRequest(signatureLog, request, "<<");
    }
 
    String[] sortForSigning(String queryLine) {
@@ -133,8 +135,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
             return o1.getKey().compareTo(o2.getKey());
          }
       }));
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-               ImmutableSet.of(request.getPayload().getContentLength().toString()));
+      request.getPayload().setContentType("application/x-www-form-urlencoded");
    }
 
    @VisibleForTesting
@@ -166,7 +167,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    public String createStringToSign(HttpRequest request, Multimap<String, String> decodedParams) {
-      logRequest(signatureLog, request, ">>");
+      utils.logRequest(signatureLog, request, ">>");
       StringBuilder stringToSign = new StringBuilder();
       // StringToSign = HTTPVerb + "\n" +
       stringToSign.append(request.getMethod()).append("\n");

@@ -29,6 +29,9 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 
+import org.jclouds.http.Payload;
+import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.http.Payloads;
 import org.jclouds.logging.Logger;
 
 import com.google.common.io.ByteStreams;
@@ -103,6 +106,27 @@ public abstract class Wire {
 
    public InputStream input(InputStream instream) {
       return copy("<< ", checkNotNull(instream, "input"));
+   }
+
+   public void input(PayloadEnclosing request) {
+      Payload oldContent = request.getPayload();
+      Payload wiredPayload = Payloads.newPayload(input(oldContent.getInput()));
+      copyPayloadMetadata(oldContent, wiredPayload);
+      request.setPayload(wiredPayload);
+   }
+
+   public void output(PayloadEnclosing request) {
+      Payload oldContent = request.getPayload();
+      Payload wiredPayload = Payloads.newPayload(output(oldContent.getRawContent()));
+      copyPayloadMetadata(oldContent, wiredPayload);
+      request.setPayload(wiredPayload);
+   }
+
+   private void copyPayloadMetadata(Payload oldContent, Payload wiredPayload) {
+      if (oldContent.getContentLength() != null)
+         wiredPayload.setContentLength(oldContent.getContentLength());
+      wiredPayload.setContentType(oldContent.getContentType());
+      wiredPayload.setContentMD5(oldContent.getContentMD5());
    }
 
    @SuppressWarnings("unchecked")

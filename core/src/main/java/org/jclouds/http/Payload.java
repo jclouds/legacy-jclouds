@@ -78,4 +78,8 @@ public interface Payload extends InputSupplier<InputStream> {
    @Nullable
    String getContentType();
 
+   /**
+    * release resources used by this entity. This should be called when data is discarded.
+    */
+   void release();
 }

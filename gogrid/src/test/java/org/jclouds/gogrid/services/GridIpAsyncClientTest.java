@@ -45,8 +45,8 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
                         + "ip.type=Public HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseIpListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -59,8 +59,8 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
                "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
                         + "ip.type=Public&sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                         + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -70,8 +70,8 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseIpListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -83,8 +83,8 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Override

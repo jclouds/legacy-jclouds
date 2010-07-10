@@ -19,11 +19,10 @@
 package org.jclouds.rackspace.cloudfiles.functions;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
@@ -48,38 +47,13 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       this.objectProvider = objectProvider;
    }
 
-   /**
-    * First, calls {@link ParseSystemAndUserMetadataFromHeaders}.
-    * 
-    * Then, sets the object size based on the Content-Length header and adds the content to the
-    * {@link CFObject} result.
-    * 
-    * @throws org.jclouds.http.HttpException
-    */
    public CFObject apply(HttpResponse from) {
-      CFObject object = objectProvider.create(infoParser.apply(from));
+      MutableObjectInfoWithMetadata metadata = infoParser.apply(from);
+      if (metadata.getHash() != null)
+         from.getPayload().setContentMD5(metadata.getHash());
+      CFObject object = objectProvider.create(metadata);
       object.getAllHeaders().putAll(from.getHeaders());
-      if (from.getContent() != null) {
-         object.setPayload(from.getContent());
-      } else if (new Long(0).equals(object.getInfo().getBytes())) {
-         object.setPayload(new byte[0]);
-      } else {
-         assert false : "no content in " + from;
-      }
-
-      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      String contentRange = from.getFirstHeaderOrNull("Content-Range");
-
-      if (contentLength != null) {
-         object.getPayload().setContentLength(Long.parseLong(contentLength));
-      }
-
-      if (contentRange == null && contentLength != null) {
-         object.getInfo().setBytes(object.getPayload().getContentLength());
-      } else if (contentRange != null) {
-         object.getInfo().setBytes(
-                  Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
-      }
+      object.setPayload(from.getPayload());
       return object;
    }
 

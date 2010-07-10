@@ -50,8 +50,7 @@ public class ParseCookbookVersionFromJson extends ParseJson<CookbookVersion> {
    @Override
    protected CookbookVersion apply(InputStream stream) {
       try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               CookbookVersion.class);
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), CookbookVersion.class);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

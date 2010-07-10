@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
@@ -33,6 +35,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindServerNameToJsonPayload extends BindToJsonPayload {
 
    @Override
@@ -43,7 +46,7 @@ public class BindServerNameToJsonPayload extends BindToJsonPayload {
    @Override
    public void bindToRequest(HttpRequest request, Object toBind) {
       checkArgument(toBind instanceof String, "this binder is only valid for Strings!");
-      super.bindToRequest(request, ImmutableMap.of("server", ImmutableMap.of("name",
-               checkNotNull(toBind, "name"))));
+      super.bindToRequest(request, ImmutableMap.of("server", ImmutableMap.of("name", checkNotNull(
+               toBind, "name"))));
    }
 }

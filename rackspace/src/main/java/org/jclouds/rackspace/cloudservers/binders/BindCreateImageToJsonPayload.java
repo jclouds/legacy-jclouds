@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
@@ -32,6 +34,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindCreateImageToJsonPayload extends BindToJsonPayload {
 
    @SuppressWarnings("unused")

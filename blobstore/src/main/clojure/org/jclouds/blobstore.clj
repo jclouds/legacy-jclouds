@@ -73,6 +73,10 @@ Options can also be specified for extension modules
   [blobstore]
   (.getContext blobstore))
 
+(defn blob?
+  [object]
+  (instance? Blob))
+
 (defn blobstore?
   [object]
   (or (instance? BlobStore object)
@@ -265,21 +269,26 @@ example:
   ([blobstore container-name dir]
      (.list (as-blobstore blobstore) container-name
             (.inDirectory (new ListContainerOptions) dir))))
-
-(defn md5-blob
-  "add a content md5 to a blob.  note that this implies rebuffering, if theisn't repeatable"
-    ([blob]
-     (md5-blob *blobstore*))
-    ([blob blobstore]
-      (.generateMD5BufferingIfNotRepeatable (.encryption (.utils (blobstore-context blobstore)))
-               blob)))
 (defn blob
   "create a new blob with the specified payload"
-    ([name payload]
+    ([#^String name payload]
      (blob name payload *blobstore*))
-    ([name payload blobstore]
+    ([#^String name payload #^BlobStore blobstore]
       (doto (.newBlob blobstore name)
                  (.setPayload payload))))
+
+(defn md5-blob
+  "add a content md5 to a blob, or make a new blob that has an md5.
+note that this implies rebuffering, if the blob's payload isn't repeatable"
+    ([#^Blob blob]
+     (md5-blob *blobstore*))
+    ([blob-or-name blobstore-or-payload]
+      ( if (blobstore? blobstore-or-payload)
+       (.generateMD5BufferingIfNotRepeatable (.encryption (.utils (blobstore-context blobstore-or-payload)))
+               blob-or-name)
+       (md5-blob blob-or-name blobstore-or-payload *blobstore*)))
+    ([#^String name payload #^BlobStore blobstore]
+     (md5-blob (blob name payload *blobstore*) *blobstore*)))
 
 (defn upload-blob
   "Create anrepresenting text data:
@@ -288,7 +297,7 @@ container, name, string -> etag"
      (upload-blob container-name name data *blobstore*))
   ([container-name name data blobstore]
      (put-blob container-name
-       (md5-blob (blob name data) blobstore) blobstore)))
+       (md5-blob name data blobstore) blobstore)))
 
 (defmulti #^{:arglists '[[container-name name target]
                          [container-name name target blobstore]]}
@@ -308,7 +317,7 @@ container, name, string -> etag"
                        target (MessageDigest/getInstance "MD5"))]
     (.writeTo (.getPayload blob) digest-stream)
     (let [digest (.digest (.getMessageDigest digest-stream))
-          metadata-digest (.getContentMD5 (.getMetadata blob))]
+          metadata-digest (.getContentMD5 (.getPayload blob))]
       (when-not (Arrays/equals digest metadata-digest)
         (if (<= (or retries 0) *max-retries*)
           (recur container-name name target blobstore [(inc (or retries 1))])

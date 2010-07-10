@@ -18,33 +18,17 @@
  */
 package org.jclouds.aws.filters;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Date;
-
-import javax.inject.Named;
-
-import org.jclouds.Constants;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.date.DateService;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.http.functions.config.ParserModule;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.aws.ec2.services.BaseEC2AsyncClientTest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
+import com.google.inject.TypeLiteral;
 
 @Test(groups = "unit", testName = "aws.FormSignerTest")
-public class FormSignerTest {
-
-   private Injector injector;
-   private FormSigner filter;
+public class FormSignerTest extends BaseEC2AsyncClientTest<String> {
 
    @Test
    void testBuildCanonicalizedString() {
@@ -57,33 +41,9 @@ public class FormSignerTest {
                "AWSAccessKeyId=foo&Action=DescribeImages&Expires=2008-02-10T12%3A00%3A00Z&ImageId.1=ami-2bb65342&SignatureMethod=HmacSHA256&SignatureVersion=2&Version=2009-11-30");
    }
 
-   /**
-    * before class, as we need to ensure that the filter is threadsafe.
-    * 
-    */
-   @BeforeClass
-   protected void createFilter() {
-      injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
-
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IDENTITY)).to("foo");
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_CREDENTIAL)).to("bar");
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_SESSION_INTERVAL)).to(30);
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to("1");
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to("1");
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         protected String provideTimeStamp(final DateService dateService,
-                  @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
-            return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
-                     + (expiration * 1000)));
-         }
-      });
-      filter = injector.getInstance(FormSigner.class);
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<String>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<String>>() {
+      };
    }
-
 }

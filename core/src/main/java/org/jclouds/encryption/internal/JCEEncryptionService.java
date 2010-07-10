@@ -18,6 +18,9 @@
  */
 package org.jclouds.encryption.internal;
 
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.io.Closeables.closeQuietly;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +36,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.jclouds.http.payloads.ByteArrayPayload;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
 
 /**
  * 
@@ -73,7 +73,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
    @Override
    public byte[] md5(InputStream toEncode) {
       MessageDigest eTag = getDigest();
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[BUF_SIZE];
       int numRead = -1;
       try {
          do {
@@ -83,9 +83,9 @@ public class JCEEncryptionService extends BaseEncryptionService {
             }
          } while (numRead != -1);
       } catch (IOException e) {
-         throw new RuntimeException(e);
+         propagate(e);
       } finally {
-         Closeables.closeQuietly(toEncode);
+         closeQuietly(toEncode);
       }
       return eTag.digest();
    }
@@ -103,7 +103,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
    @Override
    public ByteArrayPayload generatePayloadWithMD5For(InputStream toEncode) {
       MessageDigest eTag = getDigest();
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[BUF_SIZE];
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       long length = 0;
       int numRead = -1;
@@ -117,10 +117,10 @@ public class JCEEncryptionService extends BaseEncryptionService {
             }
          } while (numRead != -1);
       } catch (IOException e) {
-         throw new RuntimeException(e);
+         propagate(e);
       } finally {
-         Closeables.closeQuietly(out);
-         Closeables.closeQuietly(toEncode);
+         closeQuietly(out);
+         closeQuietly(toEncode);
       }
       return new ByteArrayPayload(out.toByteArray(), eTag.digest());
    }
@@ -167,10 +167,10 @@ public class JCEEncryptionService extends BaseEncryptionService {
       try {
          digest = MessageDigest.getInstance(algorithm);
       } catch (NoSuchAlgorithmException e1) {
-         Throwables.propagate(e1);
+         propagate(e1);
          return null;
       }
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[BUF_SIZE];
       long length = 0;
       int numRead = -1;
       try {
@@ -182,9 +182,9 @@ public class JCEEncryptionService extends BaseEncryptionService {
             }
          } while (numRead != -1);
       } catch (IOException e) {
-         throw new RuntimeException(e);
+         propagate(e);
       } finally {
-         Closeables.closeQuietly(plainBytes);
+         closeQuietly(plainBytes);
       }
 
       return digest.digest();
@@ -198,10 +198,9 @@ public class JCEEncryptionService extends BaseEncryptionService {
          cipher.init(Cipher.ENCRYPT_MODE, key);
          return cipher.doFinal(toSign.getBytes());
       } catch (Exception e) {
-         Throwables.propagate(e);
+         propagate(e);
          return null;
       }
    }
-
 
 }

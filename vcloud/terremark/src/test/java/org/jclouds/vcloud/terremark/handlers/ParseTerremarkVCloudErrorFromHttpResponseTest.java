@@ -46,14 +46,14 @@ public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpError
                .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
                401, "", "", AuthorizationException.class);
    }
-
-   @Test
-   public void testbecause_there_is_a_pending_task_runningSetsIllegalStateException() {
-      assertCodeMakes("GET", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
-               500, "because there is a pending task running",
-               "because there is a pending task running", IllegalStateException.class);
-   }
+//
+//   @Test
+//   public void testbecause_there_is_a_pending_task_runningSetsIllegalStateException() {
+//      assertCodeMakes("GET", URI
+//               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
+//               500, "because there is a pending task running",
+//               "because there is a pending task running", IllegalStateException.class);
+//   }
 
    // case 401:
    // exception = new AuthorizationException(command.getRequest(), content);

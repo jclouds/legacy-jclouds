@@ -25,6 +25,7 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
@@ -48,38 +49,34 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    @Test
    public void testApply() {
-      HttpResponse response = new HttpResponse();
-      response.setMessage("OK");
-      response.setStatusCode(200);
-      response.setContent(getClass().getResourceAsStream("/orglist.xml"));
+      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
+               .getResourceAsStream("/orglist.xml")));
+      response.getPayload().setContentType("Content-Type: application/xml; charset=utf-8");
+      response.getPayload().setContentLength(307l);
+
       response.getHeaders().put(HttpHeaders.SET_COOKIE,
                "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/");
-      response.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "307");
-      response.getHeaders().put(HttpHeaders.CONTENT_TYPE,
-               "Content-Type: application/xml; charset=utf-8");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "9er4d061-4bff-48fa-84b1-5da7166764d2");
-      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("48",
-               "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl(
+               "48", "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
    @Test
    public void testApplyBlueLock() {
-      HttpResponse response = new HttpResponse();
-      response.setMessage("OK");
-      response.setStatusCode(200);
-      response.setContent(getClass().getResourceAsStream("/orglist.xml"));
+      HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
+               .getResourceAsStream("/orglist.xml")));
+      response.getPayload().setContentType("Content-Type: application/xml; charset=utf-8");
+      response.getPayload().setContentLength(307l);
+
       response.getHeaders().put(HttpHeaders.SET_COOKIE,
                "vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/");
-      response.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "307");
-      response.getHeaders().put(HttpHeaders.CONTENT_TYPE,
-               "Content-Type: application/xml; charset=utf-8");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "c9f232506df9b65d7b7d97b7499eddd7");
-      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("48",
-               "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl(
+               "48", "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }

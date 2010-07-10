@@ -1,5 +1,7 @@
 package org.jclouds.rackspace.cloudservers.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,8 +17,6 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
-import com.google.common.io.Closeables;
-
 /**
  * This will parse and set an appropriate exception on the command object.
  * 
@@ -31,7 +31,6 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
 
    public void handleError(HttpCommand command, HttpResponse response) {
       Exception exception = new HttpResponseException(command, response);
-
       try {
          String content = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
@@ -55,15 +54,15 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
                exception = new HttpResponseException(command, response, content);
          }
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         releasePayload(response);
          command.setException(exception);
       }
    }
 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getContent() != null) {
+      if (response.getPayload() != null) {
          try {
-            return Utils.toStringAndClose(response.getContent());
+            return Utils.toStringAndClose(response.getPayload().getInput());
          } catch (IOException e) {
             logger.warn(e, "exception reading error from response", response);
          }

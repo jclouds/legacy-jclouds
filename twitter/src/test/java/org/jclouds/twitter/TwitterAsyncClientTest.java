@@ -47,8 +47,8 @@ public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseStatusesFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);

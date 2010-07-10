@@ -33,9 +33,10 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestClientTest.MockModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -63,8 +64,7 @@ public class S3UtilsTest {
                .buildInjector();
 
       utils = injector.getInstance(S3Utils.class);
-      response = new HttpResponse();
-      response.setStatusCode(400);
+      response = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
       response.getHeaders().put(S3Headers.REQUEST_ID, "requestid");
       response.getHeaders().put(S3Headers.REQUEST_TOKEN, "requesttoken");
       command = createMock(HttpCommand.class);

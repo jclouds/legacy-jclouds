@@ -39,6 +39,7 @@ import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -53,8 +54,9 @@ public class ParseObjectMetadataFromHeadersTest {
 
    @Test
    void testNormal() throws Exception {
+      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
+      http.getPayload().setContentLength(1025l);
 
-      HttpResponse http = new HttpResponse();
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
@@ -67,7 +69,9 @@ public class ParseObjectMetadataFromHeadersTest {
    @Test
    void testAmzEtag() throws Exception {
 
-      HttpResponse http = new HttpResponse();
+      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
+      http.getPayload().setContentLength(1025l);
+
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");

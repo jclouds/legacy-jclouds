@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.s3.functions;
 
+import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -64,6 +66,7 @@ public class ParseObjectMetadataFromHeaders implements
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
+      to.setSize(attemptToParseSizeAndRangeFromHeaders(from));
       to.setContentMD5(encryptionService.fromHex(Utils.replaceAll(to.getETag(), '"', "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));

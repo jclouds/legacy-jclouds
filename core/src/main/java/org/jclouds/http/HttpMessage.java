@@ -20,17 +20,20 @@ package org.jclouds.http;
 
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
+import org.jclouds.http.internal.PayloadEnclosingImpl;
+
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 /**
- * Provides base functionality of HTTP requests and responses.
+ * Represents a request that can be executed within {@link HttpCommandExecutorService}
  * 
  * @author Adrian Cole
- * 
  */
-public class HttpMessage {
+public class HttpMessage extends PayloadEnclosingImpl {
 
    /**
     * synchronized as there is no concurrent version. Headers may change in flight due to redirects.
@@ -40,6 +43,14 @@ public class HttpMessage {
 
    public Multimap<String, String> getHeaders() {
       return headers;
+   }
+
+   public HttpMessage() {
+      this(null);
+   }
+
+   public HttpMessage(@Nullable Payload payload) {
+      super(payload);
    }
 
    /**
@@ -55,7 +66,7 @@ public class HttpMessage {
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + ((headers == null) ? 0 : headers.hashCode());
       return result;
    }
@@ -64,7 +75,7 @@ public class HttpMessage {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -75,6 +86,11 @@ public class HttpMessage {
       } else if (!headers.equals(other.headers))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[headers=" + headers + ", payload=" + payload + "]";
    }
 
 }

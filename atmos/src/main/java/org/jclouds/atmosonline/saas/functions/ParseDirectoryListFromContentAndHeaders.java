@@ -58,6 +58,6 @@ public class ParseDirectoryListFromContentAndHeaders implements
    public BoundedSet<DirectoryEntry> apply(HttpResponse from) {
       String token = from.getFirstHeaderOrNull(AtmosStorageHeaders.TOKEN);
       return new BoundedHashSet<DirectoryEntry>(factory.create(listHandlerProvider.get()).parse(
-               from.getContent()), token);
+               from.getPayload().getInput()), token);
    }
 }

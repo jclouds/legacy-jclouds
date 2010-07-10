@@ -20,7 +20,6 @@ package org.jclouds.azure.storage.filters;
 
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,14 +53,15 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Singleton
 public class SharedKeyLiteAuthentication implements HttpRequestFilter {
-   private final String[] firstHeadersToSign = new String[] { "Content-MD5",
-            HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
+   private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
 
    private final SignatureWire signatureWire;
    private final String identity;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
+   private final HttpUtils utils;
+
    @Resource
    @Named(Constants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
@@ -70,8 +70,10 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    public SharedKeyLiteAuthentication(SignatureWire signatureWire,
             @Named(Constants.PROPERTY_IDENTITY) String identity,
             @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService,
+            HttpUtils utils) {
       this.encryptionService = encryptionService;
+      this.utils = utils;
       this.signatureWire = signatureWire;
       this.identity = identity;
       this.key = encryptionService.fromBase64(encodedKey);
@@ -82,20 +84,30 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       replaceDateHeader(request);
       String toSign = createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
-      HttpUtils.logRequest(signatureLog, request, "<<");
+      utils.logRequest(signatureLog, request, "<<");
    }
 
    public String createStringToSign(HttpRequest request) {
-      HttpUtils.logRequest(signatureLog, request, ">>");
+      utils.logRequest(signatureLog, request, ">>");
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
       appendMethod(request, buffer);
+      appendPayloadMetadata(request, buffer);
       appendHttpHeaders(request, buffer);
       appendCanonicalizedHeaders(request, buffer);
       appendCanonicalizedResource(request, buffer);
       if (signatureWire.enabled())
          signatureWire.output(buffer.toString());
       return buffer.toString();
+   }
+
+   private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
+      buffer.append(
+               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
+                        .getContentMD5())).append("\n");
+      buffer.append(
+               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
+                        .getContentType())).append("\n");
    }
 
    private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
@@ -142,7 +154,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
       for (String header : firstHeadersToSign)
-         toSign.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
+         toSign.append(utils.valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
    @VisibleForTesting
@@ -181,7 +193,4 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       }
    }
 
-   private String valueOrEmpty(Collection<String> collection) {
-      return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
-   }
 }

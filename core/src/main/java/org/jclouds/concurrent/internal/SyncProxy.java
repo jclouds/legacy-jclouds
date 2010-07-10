@@ -36,6 +36,7 @@ import javax.inject.Named;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
@@ -132,20 +133,24 @@ public class SyncProxy implements InvocationHandler {
             return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(
                      timeoutMap.get(method), TimeUnit.NANOSECONDS);
          } catch (ExecutionException e) {
-            throw typedExceptionOrPropagate(method.getExceptionTypes(), e.getCause());
+            throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
          } catch (Exception e) {
-            throw typedExceptionOrPropagate(method.getExceptionTypes(), e);
+            throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
          }
       }
    }
 
-   public static Throwable typedExceptionOrPropagate(Class<?>[] exceptionTypes, Throwable throwable) {
-      for (Class<?> type : exceptionTypes) {
-         if (type.isInstance(throwable)) {
-            return throwable;
+   @SuppressWarnings("unchecked")
+   public static Exception throwTypedExceptionOrCause(Class[] exceptionTypes, Exception exception)
+            throws Exception {
+      for (Class type : exceptionTypes) {
+         Throwable throwable = Utils.getFirstThrowableOfType(exception, type);
+         if (throwable != null) {
+            Throwables.throwCause(exception, true);
          }
       }
-      return Throwables.propagate(throwable);
+      Throwables.throwCause(exception, true);
+      return exception;
    }
 
    @Override
@@ -166,6 +171,6 @@ public class SyncProxy implements InvocationHandler {
    }
 
    public String toString() {
-      return "Sync Proxy for: " + delegate.toString();
+      return "Sync Proxy for: " + delegate.getClass().getSimpleName();
    }
 }

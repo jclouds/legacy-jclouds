@@ -19,20 +19,18 @@
 package org.jclouds.mezeo.pcs2;
 
 import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient.Response;
 import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -46,19 +44,19 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "pcs2.PCSCloudTest")
 public class PCSCloudTest extends RestClientTest<PCSCloudAsyncClient> {
 
-   public void testAuthenticate() throws SecurityException, NoSuchMethodException {
+   public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSCloudAsyncClient.class.getMethod("authenticate");
       HttpRequest request = processor.createRequest(method);
-      assertEquals(request.getRequestLine(), "GET http://localhost:8080/ HTTP/1.1");
-      assertEquals(request.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, request).getClass(), ParseSax.class);
-      assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method),
-               CloudXlinkHandler.class);
-      assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+
+      assertRequestLineEquals(request, "GET http://localhost:8080/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CloudXlinkHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
    }
 
    @Override

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Key;
 import org.testng.annotations.BeforeTest;
@@ -61,8 +60,8 @@ public class ParseKeysFromJsonTest {
       Key key2 = new Key(false, ImmutableSet.<String> of(), "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+",
                "BEAR", new Date(1260428507511l));
 
-      Set<? extends Key> compare = handler.apply(new HttpResponse(ParseKeysFromJsonTest.class
-               .getResourceAsStream("/keys.json")));
+      Set<? extends Key> compare = handler.apply(ParseKeysFromJsonTest.class
+               .getResourceAsStream("/keys.json"));
       assert (compare.contains(key1));
       assert (compare.contains(key2));
    }

@@ -19,6 +19,7 @@
 package org.jclouds.encryption;
 
 import java.io.FilterOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
@@ -62,6 +63,7 @@ public interface EncryptionService {
     * <h2>Note</h2>
     * <p/>
     * If this is an InputStream, it will be converted to a byte array first.
+    * @throws IOException 
     */
    <T extends PayloadEnclosing> T generateMD5BufferingIfNotRepeatable(T payloadEnclosing);
 

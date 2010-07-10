@@ -23,8 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -44,8 +42,7 @@ public class BindNoBucketLoggingToXmlPayloadTest extends BaseHandlerTest {
                .getInstance(BindNoBucketLoggingToXmlPayload.class);
 
       binder.bindToRequest(request, null);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "70");
+      assertEquals(request.getPayload().getContentType(), "text/xml");
       assertEquals(request.getPayload().getRawContent(),
                "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
 

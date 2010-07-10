@@ -23,15 +23,24 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.UnsupportedEncodingException;
 
+import javax.annotation.Resource;
+
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.logging.Logger;
 
 /**
  * 
  * @author Adrian Cole
  */
 public abstract class BaseEncryptionService implements EncryptionService {
+   
+   @Resource
+   protected Logger logger = Logger.NULL;
+   
+   protected static final int BUF_SIZE = 0x2000; // 8
+
 
    final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
             (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b',
@@ -81,6 +90,7 @@ public abstract class BaseEncryptionService implements EncryptionService {
 
    /**
     * {@inheritDoc}
+    * @
     */
    @Override
    public <T extends PayloadEnclosing> T generateMD5BufferingIfNotRepeatable(T payloadEnclosing) {

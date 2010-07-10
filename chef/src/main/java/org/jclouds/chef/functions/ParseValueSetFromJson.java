@@ -74,8 +74,8 @@ public class ParseValueSetFromJson extends ParseJson<Set<String>> {
          Type map = new TypeToken<Map<String, Set<String>>>() {
          }.getType();
          return Iterables.get(
-               ((Map<String, Set<String>>) gson.fromJson(new InputStreamReader(
-                     stream, "UTF-8"), map)).entrySet(), 0).getValue();
+                  ((Map<String, Set<String>>) gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+                           map)).entrySet(), 0).getValue();
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

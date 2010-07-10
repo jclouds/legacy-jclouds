@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.payloads;
 
+import static com.google.common.io.Closeables.closeQuietly;
+
 import java.io.InputStream;
 
 /**
@@ -43,6 +45,14 @@ public class InputStreamPayload extends BasePayload<InputStream> {
    @Override
    public boolean isRepeatable() {
       return false;
+   }
+
+   /**
+    * if we created the stream, then it is already consumed on close.
+    */
+   @Override
+   public void release() {
+      closeQuietly(content);
    }
 
 }

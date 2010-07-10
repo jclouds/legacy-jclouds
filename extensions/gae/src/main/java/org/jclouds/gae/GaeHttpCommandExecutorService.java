@@ -18,35 +18,26 @@
  */
 package org.jclouds.gae;
 
-import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
-import static com.google.common.io.ByteStreams.toByteArray;
-import static com.google.common.io.Closeables.closeQuietly;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
 
-import com.google.appengine.api.urlfetch.FetchOptions;
-import com.google.appengine.api.urlfetch.HTTPHeader;
-import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
@@ -63,64 +54,31 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.2";
 
    private final URLFetchService urlFetchService;
+   private final ConvertToGaeRequest convertToGaeRequest;
+   private final ConvertToJcloudsResponse convertToJcloudsResponse;
 
    @Inject
-   public GaeHttpCommandExecutorService(URLFetchService urlFetchService,
+   public GaeHttpCommandExecutorService(URLFetchService urlFetchService, HttpUtils utils,
+            EncryptionService encryptionService,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
             IOExceptionRetryHandler ioRetryHandler, DelegatingRetryHandler retryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire) {
-      super(ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+            DelegatingErrorHandler errorHandler, HttpWire wire,
+            ConvertToGaeRequest convertToGaeRequest,
+            ConvertToJcloudsResponse convertToJcloudsResponse) {
+      super(utils, encryptionService, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
+      this.convertToGaeRequest = convertToGaeRequest;
+      this.convertToJcloudsResponse = convertToJcloudsResponse;
    }
 
    @VisibleForTesting
    protected HttpResponse convert(HTTPResponse gaeResponse) {
-      HttpResponse response = new HttpResponse();
-      response.setStatusCode(gaeResponse.getResponseCode());
-      for (HTTPHeader header : gaeResponse.getHeaders()) {
-         response.getHeaders().put(header.getName(), header.getValue());
-      }
-      if (gaeResponse.getContent() != null) {
-         response.setContent(new ByteArrayInputStream(gaeResponse.getContent()));
-      }
-      return response;
+      return convertToJcloudsResponse.apply(gaeResponse);
    }
 
    @VisibleForTesting
    protected HTTPRequest convert(HttpRequest request) throws IOException {
-
-      URL url = request.getEndpoint().toURL();
-
-      FetchOptions options = disallowTruncate();
-      options.doNotFollowRedirects();
-
-      HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()
-               .toString()), options);
-
-      for (String header : request.getHeaders().keySet()) {
-         for (String value : request.getHeaders().get(header)) {
-            gaeRequest.addHeader(new HTTPHeader(header, value));
-         }
-      }
-      gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
-      /**
-       * byte [] content is replayable and the only content type supportable by GAE. As such, we
-       * convert the original request content to a byte array.
-       */
-      if (request.getPayload() != null) {
-         InputStream input = request.getPayload().getInput();
-         try {
-            byte[] array = toByteArray(input);
-            if (!request.getPayload().isRepeatable())
-               request.setPayload(array);
-            gaeRequest.setPayload(array);
-         } finally {
-            closeQuietly(input);
-         }
-      } else {
-         gaeRequest.addHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
-      }
-      return gaeRequest;
+      return convertToGaeRequest.apply(request);
    }
 
    /**

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
@@ -77,8 +76,8 @@ public class ParseImageFromJsonTest {
       image
                .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
 
-      Image compare = handler.apply(new HttpResponse(ParseImageFromJsonTest.class
-               .getResourceAsStream("/image.json")));
+      Image compare = handler.apply(ParseImageFromJsonTest.class
+.getResourceAsStream("/image.json"));
       assertEquals(compare, image);
    }
 }

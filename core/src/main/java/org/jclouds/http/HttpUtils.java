@@ -18,13 +18,17 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.util.Collections.singletonList;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.HOST;
 import static org.jclouds.http.Payloads.newUrlEncodedFormPayload;
 import static org.jclouds.util.Patterns.CHAR_TO_ENCODED_PATTERN;
@@ -36,10 +40,8 @@ import static org.jclouds.util.Patterns.URL_ENCODED_PATTERN;
 import static org.jclouds.util.Patterns._7E_PATTERN;
 import static org.jclouds.util.Utils.replaceAll;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -57,12 +59,15 @@ import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedListMultimap;
@@ -76,6 +81,7 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class HttpUtils {
+
    @Inject(optional = true)
    @Named(Constants.PROPERTY_RELAX_HOSTNAME)
    private boolean relaxHostname = false;
@@ -90,6 +96,7 @@ public class HttpUtils {
    private final int globalMaxConnectionsPerHost;
    private final int connectionTimeout;
    private final int soTimeout;
+   private final EncryptionService encryptionService;
    @Inject(optional = true)
    @Named(Constants.PROPERTY_PROXY_HOST)
    private String proxyHost;
@@ -104,10 +111,12 @@ public class HttpUtils {
    private String proxyPassword;
 
    @Inject
-   public HttpUtils(@Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
+   public HttpUtils(EncryptionService encryptionService,
+            @Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
             @Named(Constants.PROPERTY_SO_TIMEOUT) int soTimeout,
             @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT) int globalMaxConnections,
             @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int globalMaxConnectionsPerHost) {
+      this.encryptionService = encryptionService;
       this.soTimeout = soTimeout;
       this.connectionTimeout = connectionTimeout;
       this.globalMaxConnections = globalMaxConnections;
@@ -211,37 +220,34 @@ public class HttpUtils {
       }
    }
 
-   /**
-    * Content stream may need to be read. However, we should always close the http stream.
-    */
-   public static void consumeContent(HttpResponse response) {
-      if (response.getContent() != null) {
+   public static byte[] toByteArrayOrNull(PayloadEnclosing response) {
+      if (response.getPayload() != null) {
+         InputStream input = response.getPayload().getInput();
          try {
-            toByteArray(response.getContent());
+            return toByteArray(input);
          } catch (IOException e) {
             propagate(e);
          } finally {
-            closeQuietly(response.getContent());
+            closeQuietly(input);
          }
       }
+      return null;
    }
 
    /**
     * Content stream may need to be read. However, we should always close the http stream.
+    * 
+    * @throws IOException
     */
-   public static byte[] closeClientButKeepContentStream(HttpResponse response) {
-      if (response.getContent() != null) {
-         try {
-            byte[] data = toByteArray(response.getContent());
-            response.setContent(new ByteArrayInputStream(data));
-            return data;
-         } catch (IOException e) {
-            propagate(e);
-         } finally {
-            closeQuietly(response.getContent());
-         }
+   public static byte[] closeClientButKeepContentStream(PayloadEnclosing response) {
+      byte[] returnVal = toByteArrayOrNull(response);
+      if (returnVal != null && !response.getPayload().isRepeatable()) {
+         Payload newPayload = Payloads.newByteArrayPayload(returnVal);
+         newPayload.setContentMD5(response.getPayload().getContentMD5());
+         newPayload.setContentType(response.getPayload().getContentType());
+         response.setPayload(newPayload);
       }
-      return null;
+      return returnVal;
    }
 
    public static URI parseEndPoint(String hostHeader) {
@@ -309,40 +315,35 @@ public class HttpUtils {
       }
    }
 
-   public static void logRequest(Logger logger, HttpRequest request, String prefix) {
+   public void logRequest(Logger logger, HttpRequest request, String prefix) {
       if (logger.isDebugEnabled()) {
          logger.debug("%s %s", prefix, request.getRequestLine().toString());
-         for (Entry<String, String> header : request.getHeaders().entries()) {
-            if (header.getKey() != null)
-               logger.debug("%s %s: %s", prefix, header.getKey(), header.getValue());
-         }
+         logMessage(logger, request, prefix);
       }
    }
 
-   public static void logResponse(Logger logger, HttpResponse response, String prefix) {
+   private void logMessage(Logger logger, HttpMessage message, String prefix) {
+      for (Entry<String, String> header : message.getHeaders().entries()) {
+         if (header.getKey() != null)
+            logger.debug("%s %s: %s", prefix, header.getKey(), header.getValue());
+      }
+      if (message.getPayload() != null) {
+         if (message.getPayload().getContentType() != null)
+            logger.debug("%s %s: %s", prefix, HttpHeaders.CONTENT_TYPE, message.getPayload()
+                     .getContentType());
+         if (message.getPayload().getContentLength() != null)
+            logger.debug("%s %s: %s", prefix, HttpHeaders.CONTENT_LENGTH, message.getPayload()
+                     .getContentLength());
+         if (message.getPayload().getContentMD5() != null)
+            logger.debug("%s %s: %s", prefix, "Content-MD5", encryptionService.base64(message
+                     .getPayload().getContentMD5()));
+      }
+   }
+
+   public void logResponse(Logger logger, HttpResponse response, String prefix) {
       if (logger.isDebugEnabled()) {
          logger.debug("%s %s", prefix, response.getStatusLine().toString());
-         for (Entry<String, String> header : response.getHeaders().entries()) {
-            logger.debug("%s %s: %s", prefix, header.getKey(), header.getValue());
-         }
-      }
-   }
-
-   public static void copy(InputStream input, OutputStream output) throws IOException {
-      byte[] buffer = new byte[1024];
-      long length = 0;
-      int numRead = -1;
-      try {
-         do {
-            numRead = input.read(buffer);
-            if (numRead > 0) {
-               length += numRead;
-               output.write(buffer, 0, numRead);
-            }
-         } while (numRead != -1);
-      } finally {
-         output.close();
-         closeQuietly(input);
+         logMessage(logger, response, prefix);
       }
    }
 
@@ -484,5 +485,81 @@ public class HttpUtils {
             formBuilder.append("&");
       }
       return formBuilder.toString();
+   }
+
+   public void setPayloadPropertiesFromHeaders(Multimap<String, String> headers, HttpMessage request) {
+      Payload payload = request.getPayload();
+      boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
+         @Override
+         public boolean apply(Entry<String, String> input) {
+            return "Transfer-Encoding".equalsIgnoreCase(input.getKey())
+                     && "chunked".equalsIgnoreCase(input.getValue());
+         }
+      });
+
+      for (Entry<String, String> header : headers.entries()) {
+         if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
+            if (payload != null)
+               payload.setContentLength(new Long(header.getValue()));
+         } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
+            if (payload != null)
+               payload.setContentMD5(encryptionService.fromBase64(header.getValue()));
+         } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
+            if (payload != null)
+               payload.setContentType(header.getValue());
+         } else {
+            request.getHeaders().put(header.getKey(), header.getValue());
+         }
+      }
+
+      String contentRange = request.getFirstHeaderOrNull("Content-Range");
+      if (contentRange != null) {
+         payload.setContentLength(Long.parseLong(contentRange.substring(0, contentRange
+                  .lastIndexOf('/'))));
+      }
+
+      checkArgument(
+               request.getPayload() == null || request.getFirstHeaderOrNull(CONTENT_TYPE) == null,
+               "configuration error please use request.getPayload().setContentType(value) as opposed to adding a content type   header: "
+                        + request);
+      checkArgument(
+               request.getPayload() == null || request.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
+               "configuration error please use request.getPayload().setContentLength(value) as opposed to adding a content length header: "
+                        + request);
+      checkArgument(request.getPayload() == null || request.getPayload().getContentLength() != null
+               || "chunked".equalsIgnoreCase(request.getFirstHeaderOrNull("Transfer-Encoding")),
+               "either chunked encoding must be set on the http request or contentlength set on the payload: "
+                        + request);
+      checkArgument(
+               request.getPayload() == null || request.getFirstHeaderOrNull("Content-MD5") == null,
+               "configuration error please use request.getPayload().setContentMD5(value) as opposed to adding a content md5 header: "
+                        + request);
+   }
+
+   public static void releasePayload(HttpResponse from) {
+      if (from.getPayload() != null)
+         from.getPayload().release();
+   }
+
+   public String valueOrEmpty(String in) {
+      return in != null ? in : "";
+   }
+
+   public String valueOrEmpty(byte[] md5) {
+      return md5 != null ? encryptionService.base64(md5) : "";
+   }
+
+   public String valueOrEmpty(Collection<String> collection) {
+      return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
+   }
+
+   public static Long attemptToParseSizeAndRangeFromHeaders(HttpResponse from) throws HttpException {
+      String contentRange = from.getFirstHeaderOrNull("Content-Range");
+      if (contentRange == null) {
+         return from.getPayload().getContentLength();
+      } else if (contentRange != null) {
+         return Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1));
+      }
+      return null;
    }
 }

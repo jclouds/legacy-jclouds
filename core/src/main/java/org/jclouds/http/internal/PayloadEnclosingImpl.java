@@ -19,7 +19,6 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.http.Payloads.newPayload;
 
 import java.io.File;
@@ -58,7 +57,8 @@ public class PayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(Payload data) {
-      closeContentIfPresent();
+      if (this.payload != null)
+         payload.release();
       this.payload = checkNotNull(data, "data");
    }
 
@@ -83,7 +83,6 @@ public class PayloadEnclosingImpl implements PayloadEnclosing {
     */
    @Override
    public void setPayload(String data) {
-      closeContentIfPresent();
       setPayload(newPayload(checkNotNull(data, "data")));
    }
 
@@ -93,12 +92,6 @@ public class PayloadEnclosingImpl implements PayloadEnclosing {
    @Override
    public void setPayload(File data) {
       setPayload(newPayload(checkNotNull(data, "data")));
-   }
-
-   private void closeContentIfPresent() {
-      if (payload != null && payload.getInput() != null) {
-         closeQuietly(payload.getInput());
-      }
    }
 
    @Override
@@ -126,9 +119,4 @@ public class PayloadEnclosingImpl implements PayloadEnclosing {
       return true;
    }
 
-   @Override
-   protected void finalize() throws Throwable {
-      closeContentIfPresent();
-      super.finalize();
-   }
 }

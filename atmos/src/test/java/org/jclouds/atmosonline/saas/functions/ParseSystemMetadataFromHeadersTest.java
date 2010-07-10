@@ -25,6 +25,7 @@ import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -45,7 +46,7 @@ public class ParseSystemMetadataFromHeadersTest {
       DateService dateService = injector.getInstance(DateService.class);
       EncryptionService encryptionService = injector.getInstance(EncryptionService.class);
 
-      HttpResponse response = new HttpResponse();
+      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       response
                .getHeaders()
                .put(

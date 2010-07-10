@@ -19,7 +19,6 @@
 package org.jclouds.http;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -29,7 +28,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
@@ -106,8 +104,7 @@ public interface IntegrationTestAsyncClient {
       public void bindToRequest(HttpRequest request, Object payload) {
          super.bindToRequest(request, payload);
          request.setPayload(Utils.toInputStream(payload.toString()));
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH,
-                  payload.toString().getBytes().length + "");
+         request.getPayload().setContentLength((long) payload.toString().getBytes().length);
       }
    }
 
@@ -121,10 +118,6 @@ public interface IntegrationTestAsyncClient {
       @Override
       public void bindToRequest(HttpRequest request, Object payload) {
          File f = (File) payload;
-         if (request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE) == null)
-            request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "application/unknown");
-         request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-                  Collections.singletonList(f.length() + ""));
          request.setPayload(f);
       }
    }

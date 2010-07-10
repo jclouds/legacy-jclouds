@@ -18,9 +18,12 @@
  */
 package org.jclouds.http.functions;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.InputStream;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
@@ -28,7 +31,6 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 
 /**
@@ -44,7 +46,8 @@ public abstract class ParseJson<T> implements Function<HttpResponse, T> {
    protected Logger logger = Logger.NULL;
    protected final Gson gson;
 
-   public ParseJson(Gson gson) {
+   @Inject
+   public ParseJson(Gson gson){
       this.gson = gson;
    }
 
@@ -52,7 +55,7 @@ public abstract class ParseJson<T> implements Function<HttpResponse, T> {
     * parses the http response body to create a new {@code <T>}.
     */
    public T apply(HttpResponse from) {
-      InputStream gson = from.getContent();
+      InputStream gson = from.getPayload().getInput();
       try {
          return apply(gson);
       } catch (Exception e) {
@@ -61,7 +64,7 @@ public abstract class ParseJson<T> implements Function<HttpResponse, T> {
          logger.error(e, message.toString());
          throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
       } finally {
-         Closeables.closeQuietly(gson);
+         releasePayload(from);
       }
 
    }

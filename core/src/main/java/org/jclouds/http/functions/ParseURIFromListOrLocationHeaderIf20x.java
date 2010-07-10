@@ -19,6 +19,7 @@
 package org.jclouds.http.functions;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.IOException;
 import java.net.URI;
@@ -58,14 +59,17 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
          throw new HttpException(String.format("Unhandled status code  - %1$s", from));
       if ("text/uri-list".equals(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE))) {
          try {
-            if (from.getContent() == null)
+            if (from.getPayload().getInput() == null)
                throw new HttpResponseException("no content", null, from);
-            String toParse = Utils.toStringAndClose(from.getContent());
+            String toParse = Utils.toStringAndClose(from.getPayload().getInput());
             return URI.create(toParse.trim());
          } catch (IOException e) {
             throw new HttpResponseException("couldn't parse uri from content", null, from, e);
+         } finally {
+            releasePayload(from);
          }
       } else {
+         releasePayload(from);
          String location = from.getFirstHeaderOrNull(HttpHeaders.LOCATION);
          if (location == null)
             location = from.getFirstHeaderOrNull("location");

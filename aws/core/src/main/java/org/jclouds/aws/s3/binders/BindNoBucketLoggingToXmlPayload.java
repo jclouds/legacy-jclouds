@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.s3.binders;
 
-import javax.ws.rs.core.HttpHeaders;
+import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
@@ -28,13 +28,13 @@ import org.jclouds.rest.Binder;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class BindNoBucketLoggingToXmlPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       String stringPayload = "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>";
-      request.getHeaders().put(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML);
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, stringPayload.getBytes().length + "");
       request.setPayload(stringPayload);
+      request.getPayload().setContentType(MediaType.TEXT_XML);
    }
 
 }

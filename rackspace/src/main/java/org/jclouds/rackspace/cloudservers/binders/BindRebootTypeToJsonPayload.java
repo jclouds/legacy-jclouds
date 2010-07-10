@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rest.binders.BindToJsonPayload;
@@ -34,6 +36,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindRebootTypeToJsonPayload extends BindToJsonPayload {
 
    @Override
@@ -44,7 +47,7 @@ public class BindRebootTypeToJsonPayload extends BindToJsonPayload {
    @Override
    public void bindToRequest(HttpRequest request, Object toBind) {
       checkArgument(toBind instanceof RebootType, "this binder is only valid for RebootTypes!");
-      super.bindToRequest(request, ImmutableMap.of("reboot", ImmutableMap.of("type",
-               checkNotNull(toBind, "type"))));
+      super.bindToRequest(request, ImmutableMap.of("reboot", ImmutableMap.of("type", checkNotNull(
+               toBind, "type"))));
    }
 }

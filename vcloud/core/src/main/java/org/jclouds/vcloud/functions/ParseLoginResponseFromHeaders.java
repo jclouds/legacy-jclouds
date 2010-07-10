@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -31,7 +32,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.vcloud.VCloudToken;
@@ -70,26 +70,27 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
 
       final Matcher matcher = pattern.matcher(cookieHeader);
       boolean matchFound = matcher.find();
+      try {
+         if (matchFound) {
+            final Map<String, NamedResource> org = factory.create(orgHandlerProvider.get()).parse(
+                     from.getPayload().getInput());
 
-      if (matchFound) {
-         final Map<String, NamedResource> org = factory.create(orgHandlerProvider.get()).parse(
-                  from.getContent());
+            return new VCloudSession() {
+               @VCloudToken
+               public String getVCloudToken() {
+                  return matcher.group(1);
+               }
 
-         return new VCloudSession() {
-            @VCloudToken
-            public String getVCloudToken() {
-               return matcher.group(1);
-            }
+               @Org
+               public Map<String, NamedResource> getOrgs() {
+                  return org;
+               }
+            };
 
-            @Org
-            public Map<String, NamedResource> getOrgs() {
-               return org;
-            }
-         };
-
-      } else {
-         HttpUtils.consumeContent(from);
-         throw new HttpResponseException("vcloud token not found in response ", null, from);
+         }
+      } finally {
+         releasePayload(from);
       }
+      throw new HttpResponseException("not found ", null, from);
    }
 }

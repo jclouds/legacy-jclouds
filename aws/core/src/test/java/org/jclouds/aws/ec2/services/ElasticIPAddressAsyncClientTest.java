@@ -25,8 +25,8 @@ import java.lang.reflect.Method;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -48,13 +48,12 @@ public class ElasticIPAddressAsyncClientTest extends
       HttpRequest request = processor.createRequest(method, null, "127.0.0.1");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DisassociateAddress&PublicIp=127.0.0.1");
+               "Version=2009-11-30&Action=DisassociateAddress&PublicIp=127.0.0.1",
+               "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -67,13 +66,12 @@ public class ElasticIPAddressAsyncClientTest extends
       HttpRequest request = processor.createRequest(method, null, "127.0.0.1", "me");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1");
+               "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1",
+               "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -86,12 +84,11 @@ public class ElasticIPAddressAsyncClientTest extends
       HttpRequest request = processor.createRequest(method, null, "127.0.0.1");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1",
+               "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -104,11 +101,10 @@ public class ElasticIPAddressAsyncClientTest extends
       HttpRequest request = processor.createRequest(method, null, "127.0.0.1");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DescribeAddresses&PublicIp.1=127.0.0.1");
+               "Version=2009-11-30&Action=DescribeAddresses&PublicIp.1=127.0.0.1",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeAddressesResponseHandler.class);
@@ -123,10 +119,9 @@ public class ElasticIPAddressAsyncClientTest extends
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=AllocateAddress");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=AllocateAddress",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AllocateAddressResponseHandler.class);

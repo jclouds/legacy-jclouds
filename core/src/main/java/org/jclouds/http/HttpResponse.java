@@ -18,7 +18,7 @@
  */
 package org.jclouds.http;
 
-import java.io.InputStream;
+import javax.annotation.Nullable;
 
 /**
  * Represents a response produced from {@link HttpCommandExecutorService}
@@ -26,44 +26,28 @@ import java.io.InputStream;
  * @author Adrian Cole
  */
 public class HttpResponse extends HttpMessage {
-   private int statusCode;
-   private String message;
-   private InputStream content;
 
-   public HttpResponse() {
-   }
+   private final int statusCode;
+   private final String message;
 
-   public HttpResponse(InputStream content) {
-      this.content = content;
+   public HttpResponse(int statusCode, String message, @Nullable Payload payload) {
+      super(payload);
+      this.statusCode = statusCode;
+      this.message = message;
    }
 
    public int getStatusCode() {
       return statusCode;
    }
 
-   public void setStatusCode(int statusCode) {
-      this.statusCode = statusCode;
-   }
-
    public String getMessage() {
       return message;
    }
 
-   public void setMessage(String message) {
-      this.message = message;
-   }
-
-   public InputStream getContent() {
-      return content;
-   }
-
-   public void setContent(InputStream content) {
-      this.content = content;
-   }
-
    @Override
    public String toString() {
-      return "[message=" + message + ", statusCode=" + statusCode + ", headers=" + headers + "]";
+      return "[message=" + message + ", statusCode=" + statusCode + ", headers=" + headers
+               + ", payload=" + payload + "]";
    }
 
    public String getStatusLine() {
@@ -74,7 +58,8 @@ public class HttpResponse extends HttpMessage {
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((content == null) ? 0 : content.hashCode());
+      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+      result = prime * result + ((headers == null) ? 0 : headers.hashCode());
       result = prime * result + ((message == null) ? 0 : message.hashCode());
       result = prime * result + statusCode;
       return result;
@@ -89,10 +74,15 @@ public class HttpResponse extends HttpMessage {
       if (getClass() != obj.getClass())
          return false;
       HttpResponse other = (HttpResponse) obj;
-      if (content == null) {
-         if (other.content != null)
+      if (payload == null) {
+         if (other.payload != null)
             return false;
-      } else if (!content.equals(other.content))
+      } else if (!payload.equals(other.payload))
+         return false;
+      if (headers == null) {
+         if (other.headers != null)
+            return false;
+      } else if (!headers.equals(other.headers))
          return false;
       if (message == null) {
          if (other.message != null)

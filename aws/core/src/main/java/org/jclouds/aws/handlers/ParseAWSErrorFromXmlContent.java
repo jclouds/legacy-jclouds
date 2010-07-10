@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
 
 import javax.annotation.Resource;
@@ -40,7 +42,6 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.Closeables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -97,15 +98,15 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                break;
          }
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         releasePayload(response);
          command.setException(exception);
       }
    }
 
    AWSError parseErrorFromContentOrNull(HttpRequest request, HttpResponse response) {
-      if (response.getContent() != null) {
+      if (response.getPayload() != null) {
          try {
-            String content = Utils.toStringAndClose(response.getContent());
+            String content = Utils.toStringAndClose(response.getPayload().getInput());
             if (content != null && content.indexOf('<') >= 0)
                return utils.parseAWSErrorFromContent(request, response, content);
          } catch (IOException e) {

@@ -65,10 +65,8 @@ public class HostingDotComVCloudAsyncClientTest extends
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://catalog HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.catalog+xml\nContent-Type: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(request, null, "application/vnd.vmware.vcloud.catalog+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);

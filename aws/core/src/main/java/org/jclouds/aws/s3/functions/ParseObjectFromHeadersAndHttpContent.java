@@ -19,10 +19,9 @@
 package org.jclouds.aws.s3.functions;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -48,38 +47,13 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       this.objectProvider = objectProvider;
    }
 
-   /**
-    * First, calls {@link ParseSystemAndUserMetadataFromHeaders}.
-    * 
-    * Then, sets the object size based on the Content-Length header and adds the content to the
-    * {@link S3Object} result.
-    * 
-    * @throws org.jclouds.http.HttpException
-    */
    public S3Object apply(HttpResponse from) {
-      S3Object object = objectProvider.create(metadataParser.apply(from));
+      MutableObjectMetadata metadata = metadataParser.apply(from);
+      if (metadata.getContentMD5() != null)
+         from.getPayload().setContentMD5(metadata.getContentMD5());
+      S3Object object = objectProvider.create(metadata);
       object.getAllHeaders().putAll(from.getHeaders());
-      if (from.getContent() != null) {
-         object.setPayload(from.getContent());
-      } else if (new Long(0).equals(object.getMetadata().getSize())) {
-         object.setPayload(new byte[0]);
-      } else {
-         assert false : "no content in " + from;
-      }
-
-      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      String contentRange = from.getFirstHeaderOrNull("Content-Range");
-
-      if (contentLength != null) {
-         object.getPayload().setContentLength(Long.parseLong(contentLength));
-      }
-
-      if (contentRange == null && contentLength != null) {
-         object.getMetadata().setSize(object.getPayload().getContentLength());
-      } else if (contentRange != null) {
-         object.getMetadata().setSize(
-                  Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
-      }
+      object.setPayload(from.getPayload());
       return object;
    }
 

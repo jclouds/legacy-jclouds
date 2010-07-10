@@ -23,7 +23,8 @@
  */
 package org.jclouds.gogrid.handlers;
 
-import java.io.InputStream;
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.util.Set;
 
 import org.jclouds.gogrid.GoGridResponseException;
@@ -33,11 +34,11 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.Payload;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.collect.Iterables;
-import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -54,32 +55,35 @@ public class GoGridErrorHandler implements HttpErrorHandler {
 
    @Override
    public void handleError(HttpCommand command, HttpResponse response) {
-      Exception exception = new HttpResponseException(command, response);
-      Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response.getContent());
-      switch (response.getStatusCode()) {
-         case 400:
-            if (Iterables.get(errors, 0).getMessage().indexOf("No object found") != -1) {
-               exception = new ResourceNotFoundException(Iterables.get(errors, 0).getMessage(),
-                        exception);
-               break;
-            }
-         case 403:
+      try {
+         Exception exception = new HttpResponseException(command, response);
+         Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response.getPayload());
+         switch (response.getStatusCode()) {
+            case 400:
+               if (Iterables.get(errors, 0).getMessage().indexOf("No object found") != -1) {
+                  exception = new ResourceNotFoundException(Iterables.get(errors, 0).getMessage(),
+                           exception);
+                  break;
+               }
+            case 403:
 
-            exception = new AuthorizationException(command.getRequest(), errors != null ? errors
-                     .toString() : response.getStatusLine());
-            break;
-         default:
-            exception = errors != null ? new GoGridResponseException(command, response, errors)
-                     : new HttpResponseException(command, response);
+               exception = new AuthorizationException(command.getRequest(), errors != null ? errors
+                        .toString() : response.getStatusLine());
+               break;
+            default:
+               exception = errors != null ? new GoGridResponseException(command, response, errors)
+                        : new HttpResponseException(command, response);
+         }
+         command.setException(exception);
+      } finally {
+         releasePayload(response);
       }
-      command.setException(exception);
-      Closeables.closeQuietly(response.getContent());
    }
 
-   Set<ErrorResponse> parseErrorsFromContentOrNull(InputStream content) {
-      if (content != null) {
+   Set<ErrorResponse> parseErrorsFromContentOrNull(Payload payload) {
+      if (payload != null) {
          try {
-            return errorParser.apply(content);
+            return errorParser.apply(payload.getInput());
          } catch (/* Parsing */Exception e) {
             return null;
          }

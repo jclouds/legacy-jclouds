@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.jclouds.chef.domain.User;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -41,6 +42,7 @@ public class ParseUserFromJsonTest {
 
       String toParse = "{\n\"username\": \"bobo\",\n\"first_name\": \"Bobo\",\n\"middle_name\": \"Tiberion\",\n\"last_name\": \"Clown\",\n\"display_name\": \"Bobo T. Clown\",\n\"email\": \"bobo@clownco.com\" \n}";
 
-      assertEquals(handler.apply(new HttpResponse(Utils.toInputStream(toParse))), user);
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+               .toInputStream(toParse)))), user);
    }
 }

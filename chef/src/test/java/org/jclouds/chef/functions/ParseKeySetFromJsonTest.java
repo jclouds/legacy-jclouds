@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -34,8 +35,11 @@ public class ParseKeySetFromJsonTest {
       assertEquals(
                handler
                         .apply(new HttpResponse(
-                                 Utils
-                                          .toInputStream("{\n\"opscode-validator\": \"https://api.opscode.com/...\", \"pimp-validator\": \"https://api.opscode.com/...\"}"))),
-               ImmutableSet.of("opscode-validator","pimp-validator"));
+                                 200,
+                                 "ok",
+                                 Payloads
+                                          .newPayload(Utils
+                                                   .toInputStream("{\n\"opscode-validator\": \"https://api.opscode.com/...\", \"pimp-validator\": \"https://api.opscode.com/...\"}")))),
+               ImmutableSet.of("opscode-validator", "pimp-validator"));
    }
 }

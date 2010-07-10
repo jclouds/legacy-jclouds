@@ -26,6 +26,7 @@ import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -77,9 +78,10 @@ public class NingHttpCommandExecutorServiceTest extends
       assertEquals(client.synch("sp ace").trim(), XML);
    }
 
-   @Override
-   public void testGetBigFile() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
-      // don't run it
+   // OOM
+   @Test(enabled=false, invocationCount = 1, timeOut = 5000)
+   public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException,
+            IOException {
+      super.testGetBigFile();
    }
 }

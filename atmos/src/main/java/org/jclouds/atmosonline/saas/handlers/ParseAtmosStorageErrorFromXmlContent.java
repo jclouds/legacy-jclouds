@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmosonline.saas.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -40,8 +42,6 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Utils;
-
-import com.google.common.io.Closeables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -105,15 +105,15 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
             }
          }
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         releasePayload(response);
          command.setException(exception);
       }
    }
 
    AtmosStorageError parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getContent() != null) {
+      if (response.getPayload() != null) {
          try {
-            String content = Utils.toStringAndClose(response.getContent());
+            String content = Utils.toStringAndClose(response.getPayload().getInput());
             if (content != null && content.indexOf('<') >= 0)
                return utils.parseAtmosStorageErrorFromContent(command, response, Utils
                         .toInputStream(content));

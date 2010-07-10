@@ -19,16 +19,15 @@
 package org.jclouds.http.apachehc;
 
 import java.io.File;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.HttpDelete;
@@ -42,8 +41,14 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payload;
+import org.jclouds.http.payloads.BasePayload;
+import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.http.payloads.DelegatingPayload;
+import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.http.payloads.StringPayload;
+
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -75,15 +80,7 @@ public class ApacheHCUtils {
       // request after this block
       if (apacheRequest instanceof HttpEntityEnclosingRequest) {
          if (payload != null) {
-            String lengthString = request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-            if (lengthString == null) {
-               throw new IllegalStateException("no Content-Length header on request: "
-                        + apacheRequest);
-            }
-            long contentLength = Long.parseLong(lengthString);
-            String contentType = request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-            addEntityForContent(HttpEntityEnclosingRequest.class.cast(apacheRequest), payload
-                     .getRawContent(), contentType, contentLength);
+            addEntityForContent(HttpEntityEnclosingRequest.class.cast(apacheRequest), payload);
          }
       } else {
          apacheRequest.addHeader(HttpHeaders.CONTENT_LENGTH, "0");
@@ -99,81 +96,71 @@ public class ApacheHCUtils {
       return apacheRequest;
    }
 
-   public static void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Object content,
-            String contentType, long length) {
-      if (content instanceof InputStream) {
-         InputStream inputStream = (InputStream) content;
-         if (length == -1)
-            throw new IllegalArgumentException(
-                     "you must specify size when content is an InputStream");
-         InputStreamEntity Entity = new InputStreamEntity(inputStream, length);
-         Entity.setContentType(contentType);
-         apacheRequest.setEntity(Entity);
-      } else if (content instanceof String) {
+   public static void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Payload payload) {
+      payload = payload instanceof DelegatingPayload ? DelegatingPayload.class.cast(payload)
+               .getDelegate() : payload;
+      if (payload instanceof StringPayload) {
          StringEntity nStringEntity = null;
          try {
-            nStringEntity = new StringEntity((String) content);
+            nStringEntity = new StringEntity((String) payload.getRawContent());
          } catch (UnsupportedEncodingException e) {
             throw new UnsupportedOperationException("Encoding not supported", e);
          }
-         nStringEntity.setContentType(contentType);
+         nStringEntity.setContentType(payload.getContentType());
          apacheRequest.setEntity(nStringEntity);
-      } else if (content instanceof File) {
-         apacheRequest.setEntity(new FileEntity((File) content, contentType));
-      } else if (content instanceof byte[]) {
-         ByteArrayEntity Entity = new ByteArrayEntity((byte[]) content);
-         Entity.setContentType(contentType);
+      } else if (payload instanceof FilePayload) {
+         apacheRequest.setEntity(new FileEntity((File) payload.getRawContent(), payload
+                  .getContentType()));
+      } else if (payload instanceof ByteArrayPayload) {
+         ByteArrayEntity Entity = new ByteArrayEntity((byte[]) payload.getRawContent());
+         Entity.setContentType(payload.getContentType());
          apacheRequest.setEntity(Entity);
       } else {
-         throw new UnsupportedOperationException("Content class not supported: "
-                  + content.getClass().getName());
+         InputStream inputStream = payload.getInput();
+         if (!new Long(1).equals(payload.getContentLength()))
+            throw new IllegalArgumentException(
+                     "you must specify size when content is an InputStream");
+         InputStreamEntity Entity = new InputStreamEntity(inputStream, payload.getContentLength());
+         Entity.setContentType(payload.getContentType());
+         apacheRequest.setEntity(Entity);
       }
       assert (apacheRequest.getEntity() != null);
    }
 
-   public static HttpResponse convertToJCloudsResponse(org.apache.http.HttpResponse apacheResponse)
-            throws IOException {
+   public static class HttpEntityPayload extends BasePayload<HttpEntity> {
 
-      HttpResponse response = new HttpResponse();
-      if (apacheResponse.getEntity() != null) {
-         // response.setContent(consumeOnClose(apacheResponse.getEntity()));
-         response.setContent(apacheResponse.getEntity().getContent());
+      HttpEntityPayload(HttpEntity content) {
+         super(content, content.getContentType().getValue(), content.getContentLength(), null);
       }
-      for (Header header : apacheResponse.getAllHeaders()) {
-         response.getHeaders().put(header.getName(), header.getValue());
-      }
-      response.setStatusCode(apacheResponse.getStatusLine().getStatusCode());
-      response.setMessage(apacheResponse.getStatusLine().getReasonPhrase());
-      return response;
-   }
-
-   public static InputStream consumeOnClose(HttpEntity httpEntity) throws IllegalStateException,
-            IOException {
-      return new ConsumeOnCloseInputStream(httpEntity);
-   }
-
-   static class ConsumeOnCloseInputStream extends FilterInputStream {
-
-      private final HttpEntity httpEntity;
-
-      protected ConsumeOnCloseInputStream(HttpEntity httpEntity) throws IllegalStateException,
-               IOException {
-         super(httpEntity.getContent());
-         this.httpEntity = httpEntity;
-      }
-
-      boolean closed;
 
       @Override
-      public void close() throws IOException {
+      public InputStream getInput() {
          try {
-            if (!closed) {
-               httpEntity.consumeContent();
-            }
-         } finally {
-            closed = true;
-            super.close();
+            return content.getContent();
+         } catch (IllegalStateException e) {
+            Throwables.propagate(e);
+         } catch (IOException e) {
+            Throwables.propagate(e);
          }
+         return null;
+      }
+
+      @Override
+      public boolean isRepeatable() {
+         return content.isRepeatable();
+      }
+
+      @Override
+      public void release() {
+         try {
+            content.consumeContent();
+         } catch (IOException e) {
+         }
+      }
+
+      @Override
+      public void writeTo(OutputStream outstream) throws IOException {
+         super.writeTo(outstream);
       }
 
    }

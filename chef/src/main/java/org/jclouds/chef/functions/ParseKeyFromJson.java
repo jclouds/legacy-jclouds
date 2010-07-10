@@ -23,17 +23,16 @@
  */
 package org.jclouds.chef.functions;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.Utils;
+import org.jclouds.http.functions.ReturnStringIf200;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 
 /**
  * 
@@ -43,21 +42,21 @@ import com.google.common.base.Throwables;
 @Singleton
 public class ParseKeyFromJson implements Function<HttpResponse, String> {
    Pattern pattern = Pattern.compile(".*private_key\": *\"([^\"]+)\".*");
+   private final ReturnStringIf200 returnStringIf200;
+
+   @Inject
+   ParseKeyFromJson(ReturnStringIf200 returnStringIf200) {
+      this.returnStringIf200 = returnStringIf200;
+   }
 
    @Override
    public String apply(HttpResponse response) {
-      try {
-         return parse(Utils.toStringAndClose(response.getContent()));
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      } finally {
-         try {
-            response.getContent().close();
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-      }
+      String content = returnStringIf200.apply(response);
+      if (content == null)
+         return null;
+      return parse(content);
    }
+
 
    public String parse(String in) {
       Matcher matcher = pattern.matcher(in);

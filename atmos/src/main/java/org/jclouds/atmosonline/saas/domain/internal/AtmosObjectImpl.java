@@ -159,22 +159,7 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
       public SetMetadataPropertiesPayload(Payload delegate, MutableContentMetadata contentMetadata) {
          super(delegate);
          this.contentMetadata = contentMetadata;
-         if (contentMetadata.getContentLength() != null)
-            setContentLength(contentMetadata.getContentLength());
-         setContentMD5(contentMetadata.getContentMD5());
          setContentType(contentMetadata.getContentType());
-      }
-
-      @Override
-      public void setContentLength(Long contentLength) {
-         super.setContentLength(contentLength);
-         contentMetadata.setContentLength(contentLength);
-      }
-
-      @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         contentMetadata.setContentMD5(md5);
       }
 
       @Override
@@ -208,24 +193,10 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
       }
 
       @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         if (canSetPayload())
-            object.getPayload().setContentMD5(md5);
-      }
-
-      @Override
       public void setContentType(String type) {
          super.setContentType(type);
          if (canSetPayload())
             object.getPayload().setContentType(type);
-      }
-
-      @Override
-      public void setContentLength(Long size) {
-         super.setContentLength(size);
-         if (canSetPayload())
-            object.getPayload().setContentLength(size);
       }
 
       private boolean canSetPayload() {

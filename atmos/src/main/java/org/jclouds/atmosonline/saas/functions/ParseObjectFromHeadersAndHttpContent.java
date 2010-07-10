@@ -18,15 +18,15 @@
  */
 package org.jclouds.atmosonline.saas.functions;
 
+import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 
 /**
@@ -61,30 +61,9 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
    public AtmosObject apply(HttpResponse from) {
       AtmosObject object = objectProvider.create(systemMetadataParser.apply(from),
                userMetadataParser.apply(from));
-      addAllHeadersTo(from, object);
-      if (from.getContent() != null) {
-         object.setPayload(from.getContent());
-      } else if (new Long(0).equals(object.getContentMetadata().getContentLength())) {
-         object.setPayload(new byte[0]);
-      } else {
-         assert false : "no content in " + from;
-      }
-
-      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      if (contentLength != null) {
-         object.getContentMetadata().setContentLength(Long.parseLong(contentLength));
-      }
-
-      String contentType = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-      if (contentType != null) {
-         object.getContentMetadata().setContentType(contentType);
-      }
+      object.getAllHeaders().putAll(from.getHeaders());
+      object.setPayload(from.getPayload());
+      object.getContentMetadata().setContentLength(attemptToParseSizeAndRangeFromHeaders(from));
       return object;
    }
-
-   @VisibleForTesting
-   void addAllHeadersTo(HttpResponse from, AtmosObject object) {
-      object.getAllHeaders().putAll(from.getHeaders());
-   }
-
 }

@@ -20,10 +20,9 @@ package org.jclouds.azure.storage.blob.functions;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
-import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -41,49 +40,21 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
          InvocationContext {
 
    private final ParseBlobPropertiesFromHeaders metadataParser;
-   private final AzureBlob.Factory objectProvider;
+   private final AzureBlob.Factory blobFactory;
 
    @Inject
    public ParseBlobFromHeadersAndHttpContent(ParseBlobPropertiesFromHeaders metadataParser,
-            AzureBlob.Factory objectProvider) {
+            AzureBlob.Factory blobFactory) {
       this.metadataParser = metadataParser;
-      this.objectProvider = objectProvider;
+      this.blobFactory = blobFactory;
    }
 
-   /**
-    * First, calls {@link ParseSystemAndUserMetadataFromHeaders}.
-    * 
-    * Then, sets the object size based on the Content-Length header and adds the content to the
-    * {@link AzureBlob} result.
-    * 
-    * @throws org.jclouds.http.HttpException
-    */
    public AzureBlob apply(HttpResponse from) {
-      AzureBlob object = objectProvider.create(metadataParser.apply(from));
-      object.getAllHeaders().putAll(from.getHeaders());
-
-      if (from.getContent() != null) {
-         object.setPayload(from.getContent());
-      } else if (new Long(0).equals(object.getProperties().getContentLength())) {
-         object.setPayload(new byte[0]);
-      } else {
-         assert false : "no content in " + from;
-      }
-
-      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      String contentRange = from.getFirstHeaderOrNull("Content-Range");
-
-      if (contentLength != null) {
-         object.getPayload().setContentLength(Long.parseLong(contentLength));
-      }
-
-      if (contentRange == null && contentLength != null) {
-         object.getProperties().setContentLength(object.getPayload().getContentLength());
-      } else if (contentRange != null) {
-         object.getProperties().setContentLength(
-                  Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
-      }
-      return object;
+      MutableBlobProperties metadata = metadataParser.apply(from);
+      AzureBlob blob = blobFactory.create(metadata);
+      blob.getAllHeaders().putAll(from.getHeaders());
+      blob.setPayload(from.getPayload());
+      return blob;
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

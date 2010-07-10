@@ -32,7 +32,6 @@ import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.HOST;
 import static org.jclouds.http.HttpUtils.makeQueryLine;
@@ -49,7 +48,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -73,15 +71,15 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 import org.jboss.resteasy.util.IsHttpMethod;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -227,7 +225,7 @@ public class RestAnnotationProcessor<T> {
             });
 
    private final ParseSax.Factory parserFactory;
-   private final EncryptionService encryptionService;
+   private final HttpUtils utils;
    private final Provider<UriBuilder> uriBuilderProvider;
 
    private char[] skips;
@@ -235,9 +233,14 @@ public class RestAnnotationProcessor<T> {
    @Inject
    private InputParamValidator inputParamValidator;
 
-   @SuppressWarnings("unchecked")
    @VisibleForTesting
-   public Function<HttpResponse, ?> createResponseParser(Method method, HttpRequest request) {
+   Function<HttpResponse, ?> createResponseParser(Method method, HttpRequest request) {
+      return createResponseParser(parserFactory, injector, method, request);
+   }
+
+   @VisibleForTesting
+   public static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory,
+            Injector injector, Method method, HttpRequest request) {
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getSaxResponseParserClassOrNull(method);
       if (handler != null) {
@@ -246,14 +249,20 @@ public class RestAnnotationProcessor<T> {
          transformer = injector.getInstance(getParserOrThrowException(method));
       }
       if (transformer instanceof InvocationContext) {
-         ((InvocationContext) transformer).setContext((GeneratedHttpRequest<T>) request);
+         ((InvocationContext) transformer).setContext((GeneratedHttpRequest<?>) request);
       }
       return transformer;
    }
 
    @VisibleForTesting
-   public Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
+   Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
             Method method) {
+      return createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector, method);
+   }
+
+   @VisibleForTesting
+   public static Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
+            Injector injector, Method method) {
       ExceptionParser annotation = method.getAnnotation(ExceptionParser.class);
       if (annotation != null) {
          return injector.getInstance(annotation.value());
@@ -264,11 +273,11 @@ public class RestAnnotationProcessor<T> {
    @SuppressWarnings("unchecked")
    @Inject
    public RestAnnotationProcessor(Injector injector, ParseSax.Factory parserFactory,
-            EncryptionService encryptionService, TypeLiteral<T> typeLiteral) {
+            HttpUtils utils, TypeLiteral<T> typeLiteral) {
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
-      this.encryptionService = encryptionService;
+      this.utils = utils;
       this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       seedCache(declaring);
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
@@ -436,7 +445,7 @@ public class RestAnnotationProcessor<T> {
                declaring, method, args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
-      
+
       if (payload == null)
          payload = findPayloadInArgs(args);
       List<? extends Part> parts = getParts(method, args, concat(tokenValues.entries(), formParams
@@ -452,8 +461,7 @@ public class RestAnnotationProcessor<T> {
       if (payload != null) {
          request.setPayload(payload);
       }
-      request.getHeaders().putAll(headers);
-      decorateRequest(request);
+      decorateRequest(request, headers);
       return request;
    }
 
@@ -668,7 +676,7 @@ public class RestAnnotationProcessor<T> {
             return ReturnStringIf200.class;
          } else if (method.getReturnType().equals(void.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
-            return CloseContentAndReturn.class;
+            return ReleasePayloadAndReturn.class;
          } else if (method.getReturnType().equals(URI.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureURILiteral)) {
             return ParseURIFromListOrLocationHeaderIf20x.class;
@@ -759,7 +767,7 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   public void decorateRequest(GeneratedHttpRequest<T> request) {
+   public void decorateRequest(GeneratedHttpRequest<T> request, Multimap<String, String> headers) {
       org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(request.getJavaMethod(),
                request.getArgs());
       Map<String, String> mapParams = buildPostParams(request.getJavaMethod(), request.getArgs());
@@ -814,29 +822,7 @@ public class RestAnnotationProcessor<T> {
             }
          }
       }
-      if (request.getMethod().equals("PUT") && request.getPayload() == null) {
-         request.getHeaders().replaceValues(CONTENT_LENGTH, Collections.singletonList(0 + ""));
-      }
-      if (request.getPayload() != null) {
-         if ("chunked".equalsIgnoreCase(request.getFirstHeaderOrNull("Transfer-Encoding"))) {
-            request.getHeaders().get(CONTENT_LENGTH).clear();
-         } else {
-            if (request.getHeaders().get(CONTENT_LENGTH).size() == 0
-                     && request.getPayload().getContentLength() != null)
-               request.getHeaders().put(CONTENT_LENGTH,
-                        request.getPayload().getContentLength() + "");
-            checkArgument(request.getFirstHeaderOrNull(CONTENT_LENGTH) != null,
-                     "no content length on payload!");
-         }
-         if (request.getHeaders().get("Content-MD5").size() == 0
-                  && request.getPayload().getContentMD5() != null)
-            request.getHeaders().put("Content-MD5",
-                     encryptionService.base64(request.getPayload().getContentMD5()));
-         if (request.getHeaders().get(CONTENT_TYPE).size() == 0
-                  && request.getPayload().getContentType() != null)
-            request.getHeaders().put(CONTENT_TYPE, request.getPayload().getContentType());
-
-      }
+      utils.setPayloadPropertiesFromHeaders(headers, request);
    }
 
    protected Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method,

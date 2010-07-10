@@ -34,6 +34,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;
@@ -58,15 +59,22 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
-      expect(response.getContent()).andReturn(null);
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getInput()).andReturn(null);
+      payload.release();
+
+      replay(payload);
       replay(response);
       try {
          function.apply(response);
       } catch (Exception e) {
          assert e.getMessage().equals("no content");
       }
+      verify(payload);
       verify(response);
    }
 
@@ -76,16 +84,23 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
       RuntimeException exception = new RuntimeException("bad");
-      expect(response.getContent()).andThrow(exception);
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getInput()).andThrow(exception);
+      payload.release();
+
+      replay(payload);
       replay(response);
       try {
          function.apply(response);
       } catch (Exception e) {
          assert e.equals(exception);
       }
+      verify(payload);
       verify(response);
    }
 
@@ -94,11 +109,19 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
-      expect(response.getContent()).andReturn(Utils.toInputStream("http://locahost")).atLeastOnce();
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      expect(payload.getInput()).andReturn(Utils.toInputStream("http://locahost")).atLeastOnce();
+      payload.release();
+
+      replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://locahost"));
+
+      verify(payload);
       verify(response);
    }
 
@@ -107,12 +130,20 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
       expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("http://locahost");
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      payload.release();
+
+      replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://locahost"));
       verify(response);
+      verify(payload);
+
    }
 
    @Test
@@ -120,13 +151,21 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
+      Payload payload = createMock(Payload.class);
+
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
       expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn(null);
       expect(response.getFirstHeaderOrNull("location")).andReturn("http://locahost");
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      payload.release();
+
+      replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://locahost"));
       verify(response);
+      verify(payload);
+
    }
 
    @Test
@@ -135,16 +174,24 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      Payload payload = createMock(Payload.class);
+
       function.setContext(request);
       expect(request.getEndpoint()).andReturn(URI.create("http://new/fd")).atLeastOnce();
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
       expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("path");
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      payload.release();
+
       replay(request);
+      replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://new/path"));
       verify(request);
       verify(response);
+      verify(payload);
+
    }
 
    @Test
@@ -153,16 +200,24 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      Payload payload = createMock(Payload.class);
+
       function.setContext(request);
       expect(request.getEndpoint()).andReturn(URI.create("http://new:8080/fd")).atLeastOnce();
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
       expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("path");
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      payload.release();
+
       replay(request);
+      replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://new:8080/path"));
       verify(request);
       verify(response);
+      verify(payload);
+
    }
 
    @Test
@@ -171,15 +226,23 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
                uriBuilderProvider);
       HttpResponse response = createMock(HttpResponse.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      Payload payload = createMock(Payload.class);
+
       function.setContext(request);
       expect(request.getEndpoint()).andReturn(URI.create("https://new/fd")).atLeastOnce();
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
       expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("path");
+      expect(response.getPayload()).andReturn(payload).atLeastOnce();
+      payload.release();
+
       replay(request);
+      replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("https://new/path"));
       verify(request);
       verify(response);
+      verify(payload);
+
    }
 }

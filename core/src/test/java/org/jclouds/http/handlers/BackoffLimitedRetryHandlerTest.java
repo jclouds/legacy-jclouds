@@ -32,11 +32,14 @@ import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.ReturnStringIf200;
@@ -104,12 +107,13 @@ public class BackoffLimitedRetryHandlerTest {
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
       BackoffLimitedRetryHandler backoff = new BackoffLimitedRetryHandler();
-      utils = new HttpUtils(0, 500, 1, 1);
+      EncryptionService encService = new JCEEncryptionService();
+      utils = new HttpUtils(encService, 0, 500, 1, 1);
       RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
-      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
+      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils,
                execService, new DelegatingRetryHandler(backoff, retry),
                new BackoffLimitedRetryHandler(), new DelegatingErrorHandler(), new HttpWire(),
-               utils, null);
+               null, encService);
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService);
    }
 
@@ -118,7 +122,8 @@ public class BackoffLimitedRetryHandlerTest {
             NoSuchMethodException {
       HttpCommand command = createCommand();
 
-      HttpResponse response = new HttpResponse();
+      HttpResponse response = new HttpResponse(400, null, null);
+
       InputStream inputStream = new InputStream() {
          boolean isOpen = true;
 
@@ -127,10 +132,12 @@ public class BackoffLimitedRetryHandlerTest {
             this.isOpen = false;
          }
 
+         int count = 1;
+
          @Override
          public int read() throws IOException {
             if (this.isOpen)
-               return 1;
+               return (count > -1) ? count-- : -1;
             else
                return -1;
          }
@@ -138,20 +145,20 @@ public class BackoffLimitedRetryHandlerTest {
          @Override
          public int available() throws IOException {
             if (this.isOpen)
-               return 1;
+               return count;
             else
                return 0;
          }
       };
-      response.setContent(inputStream);
-
-      assertEquals(response.getContent().available(), 1);
-      assertEquals(response.getContent().read(), 1);
+      response.setPayload(Payloads.newInputStreamPayload(inputStream));
+      response.getPayload().setContentLength(1l);
+      assertEquals(response.getPayload().getInput().available(), 1);
+      assertEquals(response.getPayload().getInput().read(), 1);
 
       handler.shouldRetryRequest(command, response);
 
-      assertEquals(response.getContent().available(), 0);
-      assertEquals(response.getContent().read(), -1);
+      assertEquals(response.getPayload().getInput().available(), 0);
+      assertEquals(response.getPayload().getInput().read(), -1);
    }
 
    private final RestAnnotationProcessor<IntegrationTestAsyncClient> processor = BaseJettyTest
@@ -173,7 +180,7 @@ public class BackoffLimitedRetryHandlerTest {
    void testIncrementsFailureCount() throws InterruptedException, IOException, SecurityException,
             NoSuchMethodException {
       HttpCommand command = createCommand();
-      HttpResponse response = new HttpResponse();
+      HttpResponse response = new HttpResponse(400, null, null);
 
       handler.shouldRetryRequest(command, response);
       assertEquals(command.getFailureCount(), 1);
@@ -189,7 +196,7 @@ public class BackoffLimitedRetryHandlerTest {
    void testDisallowsExcessiveRetries() throws InterruptedException, IOException,
             SecurityException, NoSuchMethodException {
       HttpCommand command = createCommand();
-      HttpResponse response = new HttpResponse();
+      HttpResponse response = new HttpResponse(400, null, null);
 
       assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 1
 

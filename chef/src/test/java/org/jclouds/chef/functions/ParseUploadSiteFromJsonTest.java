@@ -8,6 +8,7 @@ import java.net.URI;
 import org.jclouds.chef.domain.ChecksumStatus;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -34,8 +35,9 @@ public class ParseUploadSiteFromJsonTest {
 
    public void test() {
       assertEquals(
-               handler.apply(new HttpResponse(ParseUploadSiteFromJsonTest.class
-                        .getResourceAsStream("/upload-site.json"))),
+               handler.apply(new HttpResponse(200, "ok", Payloads
+                        .newPayload(ParseUploadSiteFromJsonTest.class
+                                 .getResourceAsStream("/upload-site.json")))),
                new UploadSandbox(
                         URI
                                  .create("https://api.opscode.com/organizations/jclouds/sandboxes/d454f71e2a5f400c808d0c5d04c2c88c"),

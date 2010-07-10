@@ -55,10 +55,9 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       HttpRequest request = processor.createRequest(method, Region.US_WEST_1);
 
       assertRequestLineEquals(request, "POST https://ec2.us-west-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 51\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-west-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeAvailabilityZones");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-west-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeAvailabilityZones",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeAvailabilityZonesResponseHandler.class);
@@ -76,11 +75,11 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
                AvailabilityZone.US_EAST_1A, AvailabilityZone.US_EAST_1B));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(
                request,
-               "Content-Length: 95\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DescribeAvailabilityZones&ZoneName.1=us-east-1a&ZoneName.2=us-east-1b");
+               "Version=2009-11-30&Action=DescribeAvailabilityZones&ZoneName.1=us-east-1a&ZoneName.2=us-east-1b",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeAvailabilityZonesResponseHandler.class);
@@ -95,10 +94,9 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeRegions");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeRegions",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeRegionsResponseHandler.class);
@@ -115,11 +113,11 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
                Region.US_WEST_1));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(
                request,
-               "Content-Length: 87\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DescribeRegions&RegionName.1=us-east-1&RegionName.2=us-west-1");
+               "Version=2009-11-30&Action=DescribeRegions&RegionName.1=us-east-1&RegionName.2=us-west-1",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeRegionsResponseHandler.class);

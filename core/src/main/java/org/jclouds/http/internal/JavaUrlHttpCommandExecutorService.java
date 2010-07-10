@@ -18,8 +18,13 @@
  */
 package org.jclouds.http.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.getLast;
+import static com.google.common.io.ByteStreams.toByteArray;
+import static com.google.common.io.Closeables.closeQuietly;
+
 import java.io.ByteArrayInputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +39,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
@@ -41,20 +47,20 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
+import org.jclouds.http.Payload;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
-import com.google.inject.Inject;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Basic implementation of a {@link HttpCommandExecutorService}.
@@ -69,87 +75,59 @@ public class JavaUrlHttpCommandExecutorService extends
    @Resource
    protected Logger logger = Logger.NULL;
    private final HostnameVerifier verifier;
-   private final HttpUtils utils;
 
    @Inject
-   public JavaUrlHttpCommandExecutorService(
+   public JavaUrlHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler,IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler,
-            HttpWire wire, HttpUtils utils, HostnameVerifier verifier) {
-      super(ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier,
+            EncryptionService encryptionService) {
+      super(utils, encryptionService, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler,
+               wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(utils.getMaxConnections()));
-      this.utils = utils;
       this.verifier = verifier;
    }
 
    @Override
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException,
             InterruptedException {
-      HttpResponse response = new HttpResponse();
       InputStream in = null;
       try {
          in = consumeOnClose(connection.getInputStream());
       } catch (IOException e) {
          in = bufferAndCloseStream(connection.getErrorStream());
       } catch (RuntimeException e) {
-         Closeables.closeQuietly(in);
-         Throwables.propagate(e);
+         closeQuietly(in);
+         propagate(e);
          assert false : "should have propagated exception";
       }
-      for (String header : connection.getHeaderFields().keySet()) {
-         response.getHeaders().putAll(header, connection.getHeaderFields().get(header));
-      }
+
       if (connection.getResponseCode() == 204) {
-         Closeables.closeQuietly(in);
+         closeQuietly(in);
          in = null;
-      } else if (in != null) {
-         response.setContent(in);
       }
-      response.setStatusCode(connection.getResponseCode());
-      response.setMessage(connection.getResponseMessage());
+
+      Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
+      HttpResponse response = new HttpResponse(connection.getResponseCode(), connection
+               .getResponseMessage(), payload);
+      Multimap<String, String> headers = LinkedHashMultimap.create();
+      for (String header : connection.getHeaderFields().keySet()) {
+         headers.putAll(header, connection.getHeaderFields().get(header));
+      }
+      utils.setPayloadPropertiesFromHeaders(headers, response);
+
       return response;
-   }
-
-   public InputStream consumeOnClose(InputStream in) {
-      return new ConsumeOnCloseInputStream(in);
-   }
-
-   class ConsumeOnCloseInputStream extends FilterInputStream {
-
-      protected ConsumeOnCloseInputStream(InputStream in) {
-         super(in);
-      }
-
-      boolean closed;
-
-      @Override
-      public void close() throws IOException {
-         try {
-            if (!closed) {
-               int result = 0;
-               while (result != -1) {
-                  result = read();
-               }
-            }
-         } catch (IOException e) {
-            logger.warn(e, "error reading stream");
-         } finally {
-            closed = true;
-            super.close();
-         }
-      }
-
    }
 
    private InputStream bufferAndCloseStream(InputStream inputStream) throws IOException {
       InputStream in = null;
       try {
          if (inputStream != null) {
-            in = new ByteArrayInputStream(ByteStreams.toByteArray(inputStream));
+            in = new ByteArrayInputStream(toByteArray(inputStream));
          }
       } finally {
-         Closeables.closeQuietly(inputStream);
+         closeQuietly(inputStream);
       }
       return in;
    }
@@ -157,22 +135,15 @@ public class JavaUrlHttpCommandExecutorService extends
    @Override
    protected HttpURLConnection convert(HttpRequest request) throws IOException,
             InterruptedException {
+      boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
       URL url = request.getEndpoint().toURL();
 
-      boolean chunked = false;
-      for (String header : request.getHeaders().keySet()) {
-         for (String value : request.getHeaders().get(header)) {
-            if ("Transfer-Encoding".equals(header) && "chunked".equals(value)) {
-               chunked = true;
-            }
-         }
-      }
       HttpURLConnection connection;
 
       if (utils.useSystemProxies()) {
          System.setProperty("java.net.useSystemProxies", "true");
          Iterable<Proxy> proxies = ProxySelector.getDefault().select(request.getEndpoint());
-         Proxy proxy = Iterables.getLast(proxies);
+         Proxy proxy = getLast(proxies);
          connection = (HttpURLConnection) url.openConnection(proxy);
       } else if (utils.getProxyHost() != null) {
          SocketAddress addr = new InetSocketAddress(utils.getProxyHost(), utils.getProxyPort());
@@ -210,22 +181,31 @@ public class JavaUrlHttpCommandExecutorService extends
       if (request.getPayload() != null) {
          OutputStream out = null;
          try {
+            if (request.getPayload().getContentMD5() != null)
+               connection.setRequestProperty("Content-MD5", encryptionService.base64(request
+                        .getPayload().getContentMD5()));
+            if (request.getPayload().getContentType() != null)
+               connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload()
+                        .getContentType());
             if (chunked) {
-               connection.setChunkedStreamingMode(8192);
+               connection.setChunkedStreamingMode(8196);
             } else {
-               connection.setFixedLengthStreamingMode(Integer.parseInt(request
-                        .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH)));
+               Long length = checkNotNull(request.getPayload().getContentLength(),
+                        "payload.getContentLength");
+               connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
+               connection.setFixedLengthStreamingMode(length.intValue());
             }
             out = connection.getOutputStream();
             request.getPayload().writeTo(out);
             out.flush();
          } finally {
-            Closeables.closeQuietly(out);
+            closeQuietly(out);
          }
       } else {
          connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");
       }
       return connection;
+
    }
 
    /**

@@ -64,7 +64,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>,
    }
 
    public T apply(HttpResponse from) throws HttpException {
-      return parse(from.getContent());
+      return parse(from.getPayload().getInput());
    }
 
    public T parse(InputStream from) throws HttpException {

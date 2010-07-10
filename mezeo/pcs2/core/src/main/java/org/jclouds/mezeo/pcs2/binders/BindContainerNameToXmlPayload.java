@@ -18,9 +18,7 @@
  */
 package org.jclouds.mezeo.pcs2.binders;
 
-import java.util.Collections;
-
-import javax.ws.rs.core.HttpHeaders;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -30,14 +28,11 @@ import org.jclouds.rest.Binder;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindContainerNameToXmlPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object toBind) {
       String container = String.format("<container><name>%s</name></container>", toBind);
       request.setPayload(container);
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-               Collections.singletonList(container.getBytes().length + ""));
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               Collections.singletonList("application/vnd.csp.container-info+xml"));
    }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
+import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
+
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -57,6 +59,7 @@ public class ParseObjectInfoFromHeaders implements
    public MutableObjectInfoWithMetadata apply(HttpResponse from) {
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectInfoWithMetadata to = blobToObjectInfo.apply(base);
+      to.setBytes(attemptToParseSizeAndRangeFromHeaders(from));
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
          String hashString = Utils.replaceAll(eTagHeader, '"', "");

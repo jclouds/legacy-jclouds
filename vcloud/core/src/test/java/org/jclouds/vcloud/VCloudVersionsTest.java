@@ -49,8 +49,8 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient
       HttpRequest request = processor.createRequest(method);
 
       assertEquals(request.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SupportedVersionsHandler.class);

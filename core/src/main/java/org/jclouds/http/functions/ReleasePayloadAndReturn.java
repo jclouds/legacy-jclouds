@@ -18,21 +18,27 @@
  */
 package org.jclouds.http.functions;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.io.Closeables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CloseContentAndReturn implements Function<HttpResponse, Void> {
+public class ReleasePayloadAndReturn implements Function<HttpResponse, Void> {
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    public Void apply(HttpResponse from) {
-      Closeables.closeQuietly(from.getContent());
+      releasePayload(from);
       return null;
    }
 }

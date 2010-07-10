@@ -329,4 +329,14 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "MutableObjectMetadataImpl [key=" + key + ", cacheControl=" + cacheControl
+               + ", contentDisposition=" + contentDisposition + ", contentEncoding="
+               + contentEncoding + ", contentMD5=" + Arrays.toString(contentMD5) + ", contentType="
+               + contentType + ", eTag=" + eTag + ", lastModified=" + lastModified + ", owner="
+               + owner + ", size=" + size + ", storageClass=" + storageClass + ", userMetadata="
+               + userMetadata + "]";
+   }
+
 }

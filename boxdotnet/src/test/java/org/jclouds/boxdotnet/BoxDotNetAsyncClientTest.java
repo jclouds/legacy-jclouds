@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
@@ -57,8 +57,8 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -66,9 +66,9 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
-      assertHeadersEqual(httpRequest,
+      assertNonPayloadHeadersEqual(httpRequest,
                "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
-      assertPayloadEquals(httpRequest, null);
+      assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
       assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
@@ -84,8 +84,8 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
       assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
@@ -103,10 +103,10 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 

@@ -32,7 +32,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestClientTest.MockModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

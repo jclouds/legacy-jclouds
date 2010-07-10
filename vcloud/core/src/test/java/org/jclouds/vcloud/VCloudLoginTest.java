@@ -57,9 +57,9 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
       HttpRequest request = processor.createRequest(method);
 
       assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
                + ": application/vnd.vmware.vcloud.organizationList+xml\n");
-      assertPayloadEquals(request, null);
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseLoginResponseFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);

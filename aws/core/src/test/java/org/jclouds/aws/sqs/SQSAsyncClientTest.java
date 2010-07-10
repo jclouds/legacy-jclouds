@@ -81,10 +81,9 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 36\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-02-01&Action=ListQueues");
+      assertNonPayloadHeadersEqual(request, "Host: sqs.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-02-01&Action=ListQueues",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, RegexListQueuesResponseHandler.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -101,10 +100,9 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
                .queuePrefix("prefix"));
 
       assertRequestLineEquals(request, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-02-01&Action=ListQueues&QueueNamePrefix=prefix");
+      assertNonPayloadHeadersEqual(request, "Host: sqs.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-02-01&Action=ListQueues&QueueNamePrefix=prefix",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, RegexListQueuesResponseHandler.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -120,10 +118,9 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
       HttpRequest request = processor.createRequest(method, null, "queueName");
 
       assertRequestLineEquals(request, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Content-Length: 57\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-02-01&Action=CreateQueue&QueueName=queueName");
+      assertNonPayloadHeadersEqual(request, "Host: sqs.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2009-02-01&Action=CreateQueue&QueueName=queueName",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, RegexQueueHandler.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -140,11 +137,11 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
                CreateQueueOptions.Builder.defaultVisibilityTimeout(45));
 
       assertRequestLineEquals(request, "POST https://sqs.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(
+      assertNonPayloadHeadersEqual(request, "Host: sqs.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(
                request,
-               "Content-Length: 85\nContent-Type: application/x-www-form-urlencoded\nHost: sqs.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2009-02-01&Action=CreateQueue&QueueName=queueName&DefaultVisibilityTimeout=45");
+               "Version=2009-02-01&Action=CreateQueue&QueueName=queueName&DefaultVisibilityTimeout=45",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, RegexQueueHandler.class);
       assertSaxResponseParserClassEquals(method, null);

@@ -28,6 +28,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.filters.BasicAuthentication;
@@ -94,6 +95,7 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    @Endpoint(RootContainer.class)
+   @Produces("application/vnd.csp.container-info+xml")
    ListenableFuture<URI> createContainer(
             @BinderParam(BindContainerNameToXmlPayload.class) String container);
 

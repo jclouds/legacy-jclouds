@@ -34,8 +34,8 @@ import javax.inject.Provider;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
@@ -85,11 +85,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 667\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hosting.xml")));
+               "/newvapp-hosting.xml")),
+               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -109,11 +108,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 2051\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hostingcpumemdisk.xml")));
+               "/newvapp-hostingcpumemdisk.xml")),
+               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -139,11 +137,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 390\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/cloneVApp-default.xml")));
+               "/cloneVApp-default.xml")), "application/vnd.vmware.vcloud.cloneVAppParams+xml",
+               false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -161,11 +158,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 454\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/cloneVApp.xml")));
+               "/cloneVApp.xml")), "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -189,8 +184,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, OrgHandler.class);
@@ -205,8 +200,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/org/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, OrgHandler.class);
@@ -221,8 +216,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/catalog HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);
@@ -237,8 +232,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/catalog/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);
@@ -253,8 +248,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/network/2 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NetworkHandler.class);
@@ -269,8 +264,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogItemHandler.class);
@@ -285,8 +281,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppTemplateHandler.class);
@@ -301,8 +298,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VDCHandler.class);
@@ -317,8 +314,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VDCHandler.class);
@@ -334,8 +331,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/taskslist HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TasksListHandler.class);
@@ -350,8 +347,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TasksListHandler.class);
@@ -366,8 +363,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/deploy HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -382,8 +379,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -398,8 +395,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/undeploy HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -414,10 +411,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "DELETE https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -430,8 +427,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOn HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -446,8 +443,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOff HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -462,8 +459,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/reset HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -478,8 +475,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/suspend HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -494,10 +491,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/shutdown HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -510,8 +507,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET https://vcloud.safesecureweb.com/api/v0.8/task/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -526,10 +523,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/task/1/action/cancel HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

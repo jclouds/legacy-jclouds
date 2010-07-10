@@ -105,22 +105,17 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
                method, new User("myuser"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/users HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 21\nContent-Type: application/json\n");
-      assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
       // now make sure request filters apply by replaying
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/users HTTP/1.1");
-      assertHeadersEqual(
+      assertNonPayloadHeadersEqual(
                httpRequest,
                new StringBuilder("Accept: application/json")
-                        .append("\n")
-                        .append("Content-Length: 21")
-                        .append("\n")
-                        .append("Content-Type: application/json")
                         .append("\n")
                         .append(
                                  "X-Ops-Authorization-1: kfrkDpfgNU26k70R1vl1bEWk0Q0f9Fs/3kxOX7gHd7iNoJq03u7RrcrAOSgL")
@@ -143,7 +138,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
                         .append("\n").append("X-Ops-Sign: version=1.0").append("\n").append(
                                  "X-Ops-Timestamp: timestamp").append("\n").append(
                                  "X-Ops-Userid: user").append("\n").toString());
-      assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}");
+      assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -159,9 +154,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
                method, new User("myuser"));
 
       assertRequestLineEquals(httpRequest, "PUT https://api.opscode.com/users/myuser HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 21\nContent-Type: application/json\n");
-      assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseUserFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -177,8 +171,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
                method, "myuser");
 
       assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/users/myuser HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseUserFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -194,8 +188,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
                method, "myuser");
 
       assertRequestLineEquals(httpRequest, "DELETE https://api.opscode.com/users/myuser HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseUserFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -211,9 +205,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
                method, new Organization("myorganization"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/organizations HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 25\nContent-Type: application/json\n");
-      assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -230,9 +223,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
       assertRequestLineEquals(httpRequest,
                "PUT https://api.opscode.com/organizations/myorganization HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 25\nContent-Type: application/json\n");
-      assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseOrganizationFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -249,8 +241,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
       assertRequestLineEquals(httpRequest,
                "GET https://api.opscode.com/organizations/myorganization HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseOrganizationFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -267,8 +259,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://api.opscode.com/organizations/myorganization HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseOrganizationFromJson.class);
       assertSaxResponseParserClassEquals(method, null);

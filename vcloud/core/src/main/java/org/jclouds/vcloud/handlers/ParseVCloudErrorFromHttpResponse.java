@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,8 +35,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
-
-import com.google.common.io.Closeables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -74,15 +74,15 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
                exception = new HttpResponseException(command, response, content);
          }
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         releasePayload(response);
          command.setException(exception);
       }
    }
 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getContent() != null) {
+      if (response.getPayload() != null) {
          try {
-            return Utils.toStringAndClose(response.getContent());
+            return Utils.toStringAndClose(response.getPayload().getInput());
          } catch (IOException e) {
             logger.warn(e, "exception reading error from response", response);
          }

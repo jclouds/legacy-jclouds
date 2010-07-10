@@ -36,8 +36,8 @@ import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.queue.xml.QueueMessagesListHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
@@ -63,8 +63,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(request,
                "GET https://identity.queue.core.windows.net/myqueue/messages HTTP/1.1");
-      assertHeadersEqual(request, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, QueueMessagesListHandler.class);
@@ -83,8 +83,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       assertRequestLineEquals(
                request,
                "GET https://identity.queue.core.windows.net/myqueue/messages?numofmessages=1&visibilitytimeout=30 HTTP/1.1");
-      assertHeadersEqual(request, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, QueueMessagesListHandler.class);
@@ -99,8 +99,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(request,
                "GET https://identity.queue.core.windows.net/?comp=list HTTP/1.1");
-      assertHeadersEqual(request, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccountNameEnumerationResultsHandler.class);
@@ -117,8 +117,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       assertRequestLineEquals(
                request,
                "GET https://identity.queue.core.windows.net/?comp=list&maxresults=1&marker=marker&prefix=prefix HTTP/1.1");
-      assertHeadersEqual(request, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccountNameEnumerationResultsHandler.class);
@@ -133,8 +133,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
       HttpRequest request = processor.createRequest(method, "queue");
 
       assertRequestLineEquals(request, "PUT https://identity.queue.core.windows.net/queue HTTP/1.1");
-      assertHeadersEqual(request, "Content-Length: 0\nx-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -152,9 +152,8 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
                .of("foo", "bar")));
 
       assertRequestLineEquals(request, "PUT https://identity.queue.core.windows.net/queue HTTP/1.1");
-      assertHeadersEqual(request,
-               "Content-Length: 0\nx-ms-meta-foo: bar\nx-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-meta-foo: bar\nx-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -170,10 +169,10 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(request,
                "DELETE https://identity.queue.core.windows.net/queue HTTP/1.1");
-      assertHeadersEqual(request, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -189,12 +188,12 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(request,
                "POST https://identity.queue.core.windows.net/queue/messages HTTP/1.1");
-      assertHeadersEqual(request,
-               "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request,
-               "<QueueMessage><MessageText>message</MessageText></QueueMessage>");
+               "<QueueMessage><MessageText>message</MessageText></QueueMessage>",
+               "application/unknown", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -209,12 +208,12 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(request,
                "POST https://identity.queue.core.windows.net/queue/messages?messagettl=3 HTTP/1.1");
-      assertHeadersEqual(request,
-               "Content-Length: 63\nContent-Type: application/unknown\nx-ms-version: 2009-09-19\n");
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request,
-               "<QueueMessage><MessageText>message</MessageText></QueueMessage>");
+               "<QueueMessage><MessageText>message</MessageText></QueueMessage>",
+               "application/unknown", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -228,10 +227,10 @@ public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncCli
 
       assertRequestLineEquals(request,
                "DELETE https://identity.queue.core.windows.net/queue/messages HTTP/1.1");
-      assertHeadersEqual(request, "x-ms-version: 2009-09-19\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

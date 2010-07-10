@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.domain.Instance.Software;
@@ -67,8 +66,8 @@ public class ParseInstancesFromJsonTest {
                "ABC", "MEDIUM", 6, "aadelucc@us.ibm.com", "vm723.developer.ihost.com", "2", "4",
                ImmutableSet.<String> of(), "ABC", "7431", new Date(1263064240838l));
 
-      Set<? extends Instance> compare = handler.apply(new HttpResponse(
-               ParseInstancesFromJsonTest.class.getResourceAsStream("/instances.json")));
+      Set<? extends Instance> compare = handler.apply(ParseInstancesFromJsonTest.class
+               .getResourceAsStream("/instances.json"));
       assert (compare.contains(instance1));
       assert (compare.contains(instance2));
    }

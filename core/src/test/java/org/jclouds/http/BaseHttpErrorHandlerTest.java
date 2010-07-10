@@ -27,12 +27,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import java.net.URI;
 
 import org.easymock.IArgumentMatcher;
-import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Guice;
 
@@ -71,9 +66,7 @@ public abstract class BaseHttpErrorHandlerTest {
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(Utils.toInputStream(content));
-      response.setStatusCode(statusCode);
-      response.setMessage(message);
+      HttpResponse response = new HttpResponse(statusCode, null, Payloads.newStringPayload(content));
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

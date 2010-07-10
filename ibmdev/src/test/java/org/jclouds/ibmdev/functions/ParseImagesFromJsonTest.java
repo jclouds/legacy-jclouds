@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
@@ -96,8 +95,8 @@ public class ParseImagesFromJsonTest {
       image2
                .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
 
-      Set<? extends Image> compare = handler.apply(new HttpResponse(ParseImagesFromJsonTest.class
-               .getResourceAsStream("/images.json")));
+      Set<? extends Image> compare = handler.apply(ParseImagesFromJsonTest.class
+               .getResourceAsStream("/images.json"));
       assert (compare.contains(image1));
       assert (compare.contains(image2));
    }

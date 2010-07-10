@@ -38,16 +38,17 @@ public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> 
    public Object apply(Exception from) {
       if (from instanceof HttpResponseException) {
          HttpResponseException responseException = (HttpResponseException) from;
-         switch (responseException.getResponse().getStatusCode()) {
-            case 401:
-               throw new AuthorizationException(from);
-            case 403:
-               throw new AuthorizationException(from);
-            case 404:
-               throw new ResourceNotFoundException(from);
-            case 409:
-               throw new IllegalStateException(from);
-         }
+         if (responseException.getResponse() != null)
+            switch (responseException.getResponse().getStatusCode()) {
+               case 401:
+                  throw new AuthorizationException(from);
+               case 403:
+                  throw new AuthorizationException(from);
+               case 404:
+                  throw new ResourceNotFoundException(from);
+               case 409:
+                  throw new IllegalStateException(from);
+            }
       }
       return propagateOrNull(from);
    }

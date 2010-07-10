@@ -48,8 +48,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/list?v=1.5&"
                + "isPublic=true&image.state=Available&" + "image.type=Web%20Server HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -61,8 +61,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/list?"
                + "v=1.5&isPublic=true&image.state=Available&" + "image.type=Web%20Server&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -73,8 +73,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.5&"
                + "name=name1&name=name2 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -86,8 +86,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.5&"
                + "name=name1&name=name2&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -99,8 +99,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&description=newDesc HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -112,8 +112,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&description=newDesc&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -125,8 +125,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&friendlyName=newFriendlyName HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -138,8 +138,8 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
                + "image=imageName&friendlyName=newFriendlyName&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Override

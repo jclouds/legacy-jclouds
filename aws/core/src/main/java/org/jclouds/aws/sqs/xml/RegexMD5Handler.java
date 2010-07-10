@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.sqs.xml;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,10 +25,9 @@ import javax.inject.Inject;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.Utils;
+import org.jclouds.http.functions.ReturnStringIf200;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.google.inject.Singleton;
 
 /**
@@ -41,28 +39,23 @@ import com.google.inject.Singleton;
 @Singleton
 public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
    Pattern pattern = Pattern.compile("<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>");
+   private final ReturnStringIf200 returnStringIf200;
    private final EncryptionService encryptionService;
 
    @Inject
-   RegexMD5Handler(EncryptionService encryptionService) {
+   RegexMD5Handler(EncryptionService encryptionService, ReturnStringIf200 returnStringIf200) {
       this.encryptionService = encryptionService;
+      this.returnStringIf200 = returnStringIf200;
    }
 
    @Override
    public byte[] apply(HttpResponse response) {
       byte[] value = null;
-      try {
-         Matcher matcher = pattern.matcher(Utils.toStringAndClose(response.getContent()));
+      String content = returnStringIf200.apply(response);
+      if (content != null) {
+         Matcher matcher = pattern.matcher(content);
          if (matcher.find()) {
             value = encryptionService.fromHex(matcher.group(1));
-         }
-      } catch (IOException e) {
-         Throwables.propagate(e);
-      } finally {
-         try {
-            response.getContent().close();
-         } catch (IOException e) {
-            Throwables.propagate(e);
          }
       }
       return value;

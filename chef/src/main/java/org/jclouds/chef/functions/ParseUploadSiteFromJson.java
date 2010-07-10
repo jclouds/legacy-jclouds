@@ -50,8 +50,7 @@ public class ParseUploadSiteFromJson extends ParseJson<UploadSandbox> {
    @Override
    protected UploadSandbox apply(InputStream stream) {
       try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               UploadSandbox.class);
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), UploadSandbox.class);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

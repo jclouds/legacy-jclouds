@@ -18,6 +18,8 @@
  */
 package org.jclouds.http;
 
+import javax.annotation.Nullable;
+
 /**
  * Represents an error obtained from an HttpResponse.
  * 
@@ -31,15 +33,15 @@ public class HttpResponseException extends RuntimeException {
    protected final HttpResponse response;
    private String content;
 
-   public HttpResponseException(String message, HttpCommand command, HttpResponse response,
-            Throwable cause) {
+   public HttpResponseException(String message, HttpCommand command,
+            @Nullable HttpResponse response, Throwable cause) {
       super(message, cause);
       this.command = command;
       this.response = response;
    }
 
-   public HttpResponseException(String message, HttpCommand command, HttpResponse response,
-            String content, Throwable cause) {
+   public HttpResponseException(String message, HttpCommand command,
+            @Nullable HttpResponse response, String content, Throwable cause) {
       super(message, cause);
       this.command = command;
       this.response = response;
@@ -58,14 +60,14 @@ public class HttpResponseException extends RuntimeException {
                content, cause);
    }
 
-   public HttpResponseException(String message, HttpCommand command, HttpResponse response) {
+   public HttpResponseException(String message, HttpCommand command, @Nullable HttpResponse response) {
       super(message);
       this.command = command;
       this.response = response;
    }
 
-   public HttpResponseException(String message, HttpCommand command, HttpResponse response,
-            String content) {
+   public HttpResponseException(String message, HttpCommand command,
+            @Nullable HttpResponse response, String content) {
       super(message);
       this.command = command;
       this.response = response;

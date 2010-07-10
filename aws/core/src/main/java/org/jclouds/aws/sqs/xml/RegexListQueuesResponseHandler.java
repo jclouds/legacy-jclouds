@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.sqs.xml;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -30,10 +29,9 @@ import org.jclouds.aws.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.xml.internal.BaseRegexQueueHandler;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.Utils;
+import org.jclouds.http.functions.ReturnStringIf200;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 
 /**
  * 
@@ -44,24 +42,18 @@ import com.google.common.base.Throwables;
 @Singleton
 public class RegexListQueuesResponseHandler extends BaseRegexQueueHandler implements
          Function<HttpResponse, Set<Queue>> {
+   private final ReturnStringIf200 returnStringIf200;
+
    @Inject
-   RegexListQueuesResponseHandler(@Region Map<String, URI> regionMap) {
+   RegexListQueuesResponseHandler(@Region Map<String, URI> regionMap,
+            ReturnStringIf200 returnStringIf200) {
       super(regionMap);
+      this.returnStringIf200 = returnStringIf200;
    }
 
    @Override
    public Set<Queue> apply(HttpResponse response) {
-      try {
-         return parse(Utils.toStringAndClose(response.getContent()));
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      } finally {
-         try {
-            response.getContent().close();
-         } catch (IOException e) {
-            Throwables.propagate(e);
-         }
-      }
+      return parse(returnStringIf200.apply(response));
    }
 
 }

@@ -29,13 +29,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -59,9 +56,8 @@ public class BindHexEncodedMD5sToJsonPayload extends BindToStringPayload {
          builder.append(String.format("\"%s\":null,", hexEncodedmd5));
       builder.deleteCharAt(builder.length() - 1);
       builder.append("}}");
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               ImmutableSet.of(MediaType.APPLICATION_JSON));
       super.bindToRequest(request, builder.toString());
+      request.getPayload().setContentType(MediaType.APPLICATION_JSON);
    }
 
 }

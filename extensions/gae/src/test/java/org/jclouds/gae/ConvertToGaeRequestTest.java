@@ -18,40 +18,26 @@
  */
 package org.jclouds.gae;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.Payloads;
-import org.jclouds.http.handlers.DelegatingErrorHandler;
-import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.http.internal.HttpWire;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
-import com.google.appengine.api.urlfetch.HTTPResponse;
-import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.repackaged.com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -60,68 +46,27 @@ import com.google.common.io.Files;
  * @author Adrian Cole
  */
 @Test
-public class GaeHttpCommandExecutorServiceTest {
-   GaeHttpCommandExecutorService client;
+public class ConvertToGaeRequestTest {
+   ConvertToGaeRequest req;
    URI endPoint;
 
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      client = new GaeHttpCommandExecutorService(createNiceMock(URLFetchService.class),
-               createNiceMock(ExecutorService.class),
-               createNiceMock(IOExceptionRetryHandler.class),
-               createNiceMock(DelegatingRetryHandler.class),
-               createNiceMock(DelegatingErrorHandler.class), createNiceMock(HttpWire.class));
-   }
-
-   @Test
-   void testConvertHostHeaderToEndPoint() {
-      // TODO
-   }
-
-   @Test
-   void testConvertWithHeaders() throws IOException {
-      HTTPResponse gaeResponse = createMock(HTTPResponse.class);
-      expect(gaeResponse.getResponseCode()).andReturn(200);
-      List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
-      headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
-      expect(gaeResponse.getHeaders()).andReturn(headers);
-      expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
-      replay(gaeResponse);
-      HttpResponse response = client.convert(gaeResponse);
-      assertEquals(response.getStatusCode(), 200);
-      assertEquals(response.getContent(), null);
-      assertEquals(response.getHeaders().size(), 1);
-      assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
-   }
-
-   @Test
-   void testConvertWithContent() throws IOException {
-      HTTPResponse gaeResponse = createMock(HTTPResponse.class);
-      expect(gaeResponse.getResponseCode()).andReturn(200);
-      List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
-      headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
-      expect(gaeResponse.getHeaders()).andReturn(headers);
-      expect(gaeResponse.getContent()).andReturn("hello".getBytes()).atLeastOnce();
-      replay(gaeResponse);
-      HttpResponse response = client.convert(gaeResponse);
-      assertEquals(response.getStatusCode(), 200);
-      assertEquals(Utils.toStringAndClose(response.getContent()), "hello");
-      assertEquals(response.getHeaders().size(), 1);
-      assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
+      req = new ConvertToGaeRequest(new JCEEncryptionService());
    }
 
    @Test
    void testConvertRequestGetsTargetAndUri() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      HTTPRequest gaeRequest = client.convert(request);
+      HTTPRequest gaeRequest = req.apply(request);
       assertEquals(gaeRequest.getURL().getPath(), "/foo");
    }
 
    @Test
    void testConvertRequestSetsFetchOptions() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      HTTPRequest gaeRequest = client.convert(request);
+      HTTPRequest gaeRequest = req.apply(request);
       assert gaeRequest.getFetchOptions() != null;
    }
 
@@ -129,7 +74,7 @@ public class GaeHttpCommandExecutorServiceTest {
    void testConvertRequestSetsHeaders() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       request.getHeaders().put("foo", "bar");
-      HTTPRequest gaeRequest = client.convert(request);
+      HTTPRequest gaeRequest = req.apply(request);
       assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
       assertEquals(gaeRequest.getHeaders().get(0).getValue(), "bar");
    }
@@ -137,7 +82,7 @@ public class GaeHttpCommandExecutorServiceTest {
    @Test
    void testConvertRequestNoContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      HTTPRequest gaeRequest = client.convert(request);
+      HTTPRequest gaeRequest = req.apply(request);
       assert gaeRequest.getPayload() == null;
       assertEquals(gaeRequest.getHeaders().size(), 2);// content length, user agent
       assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.USER_AGENT);
@@ -169,7 +114,7 @@ public class GaeHttpCommandExecutorServiceTest {
    void testConvertRequestBadContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       request.setPayload(Payloads.newPayload(new Date()));
-      client.convert(request);
+      req.apply(request);
    }
 
    @Test
@@ -185,7 +130,7 @@ public class GaeHttpCommandExecutorServiceTest {
 
    private void testHoot(HttpRequest request) throws IOException {
       request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "text/plain");
-      HTTPRequest gaeRequest = client.convert(request);
+      HTTPRequest gaeRequest = req.apply(request);
       try {
          assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.CONTENT_TYPE);
          assertEquals(gaeRequest.getHeaders().get(0).getValue(), "text/plain");

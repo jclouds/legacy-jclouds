@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.handlers;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -34,6 +36,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class DelegatingRetryHandler implements HttpRetryHandler {
 
    @VisibleForTesting

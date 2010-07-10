@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.jclouds.chef.domain.Organization;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -57,6 +58,7 @@ public class ParseOrganizationFromJsonTest {
 
       String toParse = "{\"name\": \"opscode\",\"full_name\": \"Opscode, Inc.\", \"org_type\": \"Business\",\"clientname\": \"opscode-validator\" }";
 
-      assertEquals(handler.apply(new HttpResponse(Utils.toInputStream(toParse))), org);
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+               .toInputStream(toParse)))), org);
    }
 }

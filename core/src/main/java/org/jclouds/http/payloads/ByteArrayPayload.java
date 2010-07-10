@@ -45,12 +45,4 @@ public class ByteArrayPayload extends BasePayload<byte[]> {
       return new ByteArrayInputStream(content);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isRepeatable() {
-      return true;
-   }
-
 }

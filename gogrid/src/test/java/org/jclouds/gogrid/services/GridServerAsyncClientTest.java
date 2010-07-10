@@ -76,8 +76,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/list?v=1.5 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -88,8 +88,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/list?"
                + "v=1.5&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -101,8 +101,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/list?v=1.5&isSandbox=true HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -114,8 +114,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/list?"
                + "v=1.5&isSandbox=true&sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -126,8 +126,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/get?v=1.5&name=server1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -139,8 +139,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/get?"
                + "v=1.5&name=server1&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
                + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -151,8 +151,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/get?v=1.5&id=123 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -163,8 +163,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/get?"
                + "v=1.5&id=123&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -176,8 +176,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/add?v=1.5&"
                + "name=serverName&server.ram=memory&image=img55&ip=127.0.0.1 " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -189,8 +189,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/add?"
                + "v=1.5&name=serverName&server.ram=memory&" + "image=img55&ip=127.0.0.1&"
                + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -204,8 +204,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(
                httpRequest,
                "GET https://api.gogrid.com/api/grid/server/add?v=1.5&name=serverName&server.ram=memory&image=img55&ip=127.0.0.1&isSandbox=true&description=fooy HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -217,8 +217,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(
                httpRequest,
                "GET https://api.gogrid.com/api/grid/server/add?v=1.5&name=serverName&server.ram=memory&image=img55&ip=127.0.0.1&isSandbox=true&description=fooy&sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -231,8 +231,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/power?v=1.5&"
                         + "server=PowerServer&power=restart " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -245,8 +245,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
                "GET https://api.gogrid.com/api/grid/server/power?v=1.5&"
                         + "server=PowerServer&power=restart&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -258,8 +258,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/delete?v=1.5&" + "name=PowerServer "
                         + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -271,8 +271,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/grid/server/delete?v=1.5&" + "name=PowerServer&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Test
@@ -283,8 +283,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/common/lookup/list?v=1.5&lookup=server.ram "
                         + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseOptionsFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -296,8 +296,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertRequestLineEquals(httpRequest,
                "GET https://api.gogrid.com/api/common/lookup/list?v=1.5&lookup=server.ram&"
                         + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
    }
 
    @Override

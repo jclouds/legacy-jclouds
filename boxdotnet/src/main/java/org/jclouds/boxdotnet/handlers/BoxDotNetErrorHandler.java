@@ -66,21 +66,22 @@ public class BoxDotNetErrorHandler implements HttpErrorHandler {
                break;
          }
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         if (response.getPayload() != null)
+            Closeables.closeQuietly(response.getPayload().getInput());
          command.setException(exception);
       }
    }
-   
+
    public String parseMessage(HttpResponse response) {
-      if (response.getContent() == null)
+      if (response.getPayload() == null)
          return null;
       try {
-         return Utils.toStringAndClose(response.getContent());
+         return Utils.toStringAndClose(response.getPayload().getInput());
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
          try {
-            response.getContent().close();
+            response.getPayload().getInput().close();
          } catch (IOException e) {
             Throwables.propagate(e);
          }

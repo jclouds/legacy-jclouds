@@ -51,12 +51,4 @@ public class FilePayload extends BasePayload<File> {
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isRepeatable() {
-      return true;
-   }
-
 }

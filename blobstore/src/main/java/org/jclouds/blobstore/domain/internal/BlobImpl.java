@@ -142,22 +142,7 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
       public SetMetadataPropertiesPayload(Payload delegate, MutableBlobMetadata metadata) {
          super(delegate);
          this.metadata = metadata;
-         if (metadata.getSize() != null)
-            setContentLength(metadata.getSize());
-         setContentMD5(metadata.getContentMD5());
          setContentType(metadata.getContentType());
-      }
-
-      @Override
-      public void setContentLength(Long contentLength) {
-         super.setContentLength(contentLength);
-         metadata.setSize(contentLength);
-      }
-
-      @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         metadata.setContentMD5(md5);
       }
 
       @Override
@@ -190,24 +175,10 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
       }
 
       @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         if (canSetPayload())
-            blob.getPayload().setContentMD5(md5);
-      }
-
-      @Override
       public void setContentType(String type) {
          super.setContentType(type);
          if (canSetPayload())
             blob.getPayload().setContentType(type);
-      }
-
-      @Override
-      public void setSize(Long size) {
-         super.setSize(size);
-         if (canSetPayload())
-            blob.getPayload().setContentLength(size);
       }
 
       private boolean canSetPayload() {

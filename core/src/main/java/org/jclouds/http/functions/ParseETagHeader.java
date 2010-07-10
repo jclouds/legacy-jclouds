@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.functions;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -25,7 +27,6 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
-import com.google.common.io.Closeables;
 
 /**
  * Parses an MD5 checksum from the header {@link HttpHeaders#ETAG}.
@@ -36,8 +37,7 @@ import com.google.common.io.Closeables;
 public class ParseETagHeader implements Function<HttpResponse, String> {
 
    public String apply(HttpResponse from) {
-      Closeables.closeQuietly(from.getContent());
-
+      releasePayload(from);
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
       if (eTag == null) {
          // TODO: Cloud Files sends incorrectly cased ETag header... Remove this when fixed.

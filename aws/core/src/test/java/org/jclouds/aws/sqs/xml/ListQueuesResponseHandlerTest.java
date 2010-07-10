@@ -37,6 +37,7 @@ import org.jclouds.PerformanceTest;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
@@ -121,7 +122,8 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
 
    public void testRegex() {
       try {
-         assertEquals(handler.apply(new HttpResponse(supplier.getInput())), expected);
+         assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(supplier
+                  .getInput()))), expected);
       } catch (IOException e) {
          Throwables.propagate(e);
       }

@@ -24,48 +24,23 @@ import static com.google.inject.internal.Lists.newArrayList;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.jclouds.http.internal.PayloadEnclosingImpl;
+import javax.annotation.Nullable;
 
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.inject.internal.Nullable;
 
 /**
  * Represents a request that can be executed within {@link HttpCommandExecutorService}
  * 
  * @author Adrian Cole
  */
-public class HttpRequest extends PayloadEnclosingImpl implements PayloadEnclosing {
+public class HttpRequest extends HttpMessage {
 
    private List<HttpRequestFilter> requestFilters = newArrayList();
    private String method;
    private URI endpoint;
-   private Payload payload;
    private char[] skips;
-
-   /**
-    * synchronized as there is no concurrent version. Headers may change in flight due to redirects.
-    */
-   private Multimap<String, String> headers = Multimaps.synchronizedMultimap(LinkedHashMultimap
-            .<String, String> create());
-
-   public Multimap<String, String> getHeaders() {
-      return headers;
-   }
-
-   /**
-    * try to get the value, then try as lowercase.
-    */
-   public String getFirstHeaderOrNull(String string) {
-      Collection<String> values = headers.get(string);
-      if (values.size() == 0)
-         values = headers.get(string.toLowerCase());
-      return (values.size() >= 1) ? values.iterator().next() : null;
-   }
 
    /**
     * 
@@ -164,6 +139,7 @@ public class HttpRequest extends PayloadEnclosingImpl implements PayloadEnclosin
       result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
       result = prime * result + ((method == null) ? 0 : method.hashCode());
       result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+      result = prime * result + ((headers == null) ? 0 : headers.hashCode());
       result = prime * result + ((requestFilters == null) ? 0 : requestFilters.hashCode());
       result = prime * result + Arrays.hashCode(skips);
       return result;
@@ -193,6 +169,11 @@ public class HttpRequest extends PayloadEnclosingImpl implements PayloadEnclosin
             return false;
       } else if (!payload.equals(other.payload))
          return false;
+      if (headers == null) {
+         if (other.headers != null)
+            return false;
+      } else if (!headers.equals(other.headers))
+         return false;
       if (requestFilters == null) {
          if (other.requestFilters != null)
             return false;
@@ -205,7 +186,8 @@ public class HttpRequest extends PayloadEnclosingImpl implements PayloadEnclosin
 
    @Override
    public String toString() {
-      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers + "]";
+      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers + ", payload="
+               + payload + "]";
    }
 
 }

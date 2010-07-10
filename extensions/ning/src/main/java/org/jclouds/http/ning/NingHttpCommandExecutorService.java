@@ -19,7 +19,11 @@
 
 package org.jclouds.http.ning;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map.Entry;
@@ -30,17 +34,24 @@ import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.Payload;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.io.Closeables;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -118,6 +129,12 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
 
    @Singleton
    public static class ConvertToNingRequest implements Function<HttpRequest, Request> {
+      private final EncryptionService encryptionService;
+
+      @Inject
+      ConvertToNingRequest(EncryptionService encryptionService) {
+         this.encryptionService = encryptionService;
+      }
 
       private static class PayloadEntityWriter implements EntityWriter {
          private final Payload payload;
@@ -157,6 +174,19 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          }
          Payload payload = request.getPayload();
          if (payload != null) {
+            boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
+
+            if (request.getPayload().getContentMD5() != null)
+               nativeRequestBuilder.addHeader("Content-MD5", encryptionService.base64(request
+                        .getPayload().getContentMD5()));
+            if (request.getPayload().getContentType() != null)
+               nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload()
+                        .getContentType());
+            if (!chunked) {
+               Long length = checkNotNull(request.getPayload().getContentLength(),
+                        "payload.getContentLength");
+               nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_LENGTH, length.toString());
+            }
             setPayload(nativeRequestBuilder, payload);
          } else {
             nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_LENGTH, "0");
@@ -179,17 +209,33 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
 
    @Singleton
    public static class ConvertToJCloudsResponse implements Function<Response, HttpResponse> {
+      private final HttpUtils utils;
+
+      @Inject
+      ConvertToJCloudsResponse(HttpUtils utils) {
+         this.utils = utils;
+      }
+
       public HttpResponse apply(Response nativeResponse) {
-         HttpResponse response = new HttpResponse();
-         response.setStatusCode(nativeResponse.getStatusCode());
-         for (Entry<String, List<String>> header : nativeResponse.getHeaders()) {
-            response.getHeaders().putAll(header.getKey(), header.getValue());
-         }
+
+         InputStream in = null;
          try {
-            response.setContent(nativeResponse.getResponseBodyAsStream());
+            in = BaseHttpCommandExecutorService.consumeOnClose(nativeResponse
+                     .getResponseBodyAsStream());
          } catch (IOException e) {
-            throw Throwables.propagate(e);
+            Closeables.closeQuietly(in);
+            propagate(e);
+            assert false : "should have propagated exception";
          }
+
+         Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
+         HttpResponse response = new HttpResponse(nativeResponse.getStatusCode(), nativeResponse
+                  .getStatusText(), payload);
+         Multimap<String, String> headers = LinkedHashMultimap.create();
+         for (Entry<String, List<String>> header : nativeResponse.getHeaders()) {
+            headers.putAll(header.getKey(), header.getValue());
+         }
+         utils.setPayloadPropertiesFromHeaders(headers, response);
          return response;
       }
    }

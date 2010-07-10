@@ -20,6 +20,7 @@ package org.jclouds.blobstore.functions;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
+import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import java.util.Map.Entry;
 
@@ -30,7 +31,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.date.DateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
@@ -47,17 +47,14 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
-   private final EncryptionService encryptionService;
    private GeneratedHttpRequest<?> request;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
-            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            EncryptionService encryptionService) {
+            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.metadataFactory = metadataFactory;
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
-      this.encryptionService = encryptionService;
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
@@ -85,8 +82,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements
 
    @VisibleForTesting
    void setContentLength(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
-      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      metadata.setSize(contentLength == null ? 0 : Long.parseLong(contentLength));
+      metadata.setSize(attemptToParseSizeAndRangeFromHeaders(from));
    }
 
    @VisibleForTesting
@@ -112,20 +108,18 @@ public class ParseSystemAndUserMetadataFromHeaders implements
 
    @VisibleForTesting
    protected void addContentMD5To(HttpResponse from, MutableBlobMetadata metadata) {
-      String contentMD5 = from.getFirstHeaderOrNull("Content-MD5");
-      if (contentMD5 != null) {
-         metadata.setContentMD5(encryptionService.fromBase64(contentMD5));
-      }
+      if (from.getPayload() != null)
+         metadata.setContentMD5(from.getPayload().getContentMD5());
    }
 
    @VisibleForTesting
    void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
             throws HttpException {
-      String contentType = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-      if (contentType == null)
+      if (from.getPayload() != null)
+         metadata.setContentType(from.getPayload().getContentType());
+      if (metadata.getContentType() == null
+               || "application/unknown".equals(metadata.getContentType()))
          throw new HttpException(HttpHeaders.CONTENT_TYPE + " not found in headers");
-      else
-         metadata.setContentType(contentType);
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

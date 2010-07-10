@@ -19,6 +19,7 @@
 package org.jclouds.rackspace.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.releasePayload;
 import static org.jclouds.rackspace.reference.RackspaceHeaders.AUTH_TOKEN;
 import static org.jclouds.rackspace.reference.RackspaceHeaders.CDN_MANAGEMENT_URL;
 import static org.jclouds.rackspace.reference.RackspaceHeaders.SERVER_MANAGEMENT_URL;
@@ -32,7 +33,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 
 import com.google.common.base.Function;
-import com.google.common.io.Closeables;
 
 /**
  * This parses {@link AuthenticationResponse} from HTTP headers.
@@ -78,8 +78,8 @@ public class ParseAuthenticationResponseFromHeaders implements
    /**
     * parses the http response headers to create a new {@link AuthenticationResponse} object.
     */
-   public AuthenticationResponse apply(final HttpResponse from) {
-      Closeables.closeQuietly(from.getContent());
+   public AuthenticationResponse apply(HttpResponse from) {
+      releasePayload(from);
       return new AuthenticationResponseImpl(checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN),
                AUTH_TOKEN), checkNotNull(from.getFirstHeaderOrNull(CDN_MANAGEMENT_URL),
                CDN_MANAGEMENT_URL), checkNotNull(from.getFirstHeaderOrNull(SERVER_MANAGEMENT_URL),

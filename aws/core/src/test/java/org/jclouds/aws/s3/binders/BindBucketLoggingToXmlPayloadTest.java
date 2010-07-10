@@ -23,8 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
-
 import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
@@ -58,8 +56,7 @@ public class BindBucketLoggingToXmlPayloadTest  extends BaseHandlerTest {
                .getInstance(BindBucketLoggingToXmlPayload.class);
 
       binder.bindToRequest(request, bucketLogging);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "433");
+      assertEquals(request.getPayload().getContentType(), "text/xml");
       assertEquals(request.getPayload().getRawContent(), expected);
 
    }

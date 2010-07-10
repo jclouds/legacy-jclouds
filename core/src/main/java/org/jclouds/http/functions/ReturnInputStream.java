@@ -35,6 +35,6 @@ import com.google.common.base.Function;
 public class ReturnInputStream implements Function<HttpResponse, InputStream> {
 
    public InputStream apply(HttpResponse from) {
-      return from.getContent();
+      return from.getPayload().getInput();
    }
 }

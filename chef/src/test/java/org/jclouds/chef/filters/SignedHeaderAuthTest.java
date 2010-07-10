@@ -41,10 +41,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMReader;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestClientTest.MockModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -215,6 +216,8 @@ public class SignedHeaderAuthTest {
                new Properties()).buildInjector();
 
       encryptionService = injector.getInstance(EncryptionService.class);
+      HttpUtils utils = injector.getInstance(HttpUtils.class);
+
       Security.addProvider(new BouncyCastleProvider());
 
       KeyPair pair = KeyPair.class.cast(new PEMReader(new StringReader(PRIVATE_KEY)).readObject());
@@ -229,7 +232,7 @@ public class SignedHeaderAuthTest {
                      return TIMESTAMP_ISO8601;
                   }
 
-               }, encryptionService);
+               }, encryptionService, utils);
    }
 
 }

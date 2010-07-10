@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -103,12 +105,27 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    @Test(invocationCount = 100, timeOut = 5000)
-   public void testGetBigFile() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
-      assertEquals(
-               encryptionService.base64(encryptionService.md5(context.utils().http().get(
-                        URI.create(String.format("http://localhost:%d/%s", testPort,
-                                 "101constitutions"))))), md5);
+   public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException,
+            IOException {
+      InputStream input = getConsitution();
+      try {
+         assertEquals(encryptionService.base64(encryptionService.md5(input)), md5);
+      } catch (RuntimeException e) {
+         Closeables.closeQuietly(input);
+         // since we are parsing client side, and not through a response handler, the user
+         // must retry directly. In this case, we are assuming lightning doesn't strike
+         // twice in the same spot.
+         if (Utils.getFirstThrowableOfType(e, IOException.class) != null) {
+            input = getConsitution();
+            assertEquals(encryptionService.base64(encryptionService.md5(input)), md5);
+         }
+      }
+   }
+
+   private InputStream getConsitution() {
+      InputStream input = context.utils().http().get(
+               URI.create(String.format("http://localhost:%d/%s", testPort, "101constitutions")));
+      return input;
    }
 
    @Test(enabled = false, invocationCount = 25, timeOut = 5000)

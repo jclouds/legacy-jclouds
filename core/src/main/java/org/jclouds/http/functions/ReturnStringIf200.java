@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.functions;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,23 +36,27 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnStringIf200 implements Function<HttpResponse,String> {
+public class ReturnStringIf200 implements Function<HttpResponse, String> {
 
    public String apply(HttpResponse from) {
-      if (from.getStatusCode() == 200) {
-         InputStream payload = from.getContent();
-         if (payload == null)
-            throw new HttpException("no content");
-         String toReturn = null;
-         try {
-            toReturn = Utils.toStringAndClose(payload);
-         } catch (IOException e) {
-            throw new HttpException(String.format("Couldn't receive response %1$s, payload: %2$s ",
-                     from, toReturn), e);
+      try {
+         if (from.getStatusCode() == 200) {
+            InputStream payload = from.getPayload().getInput();
+            if (payload == null)
+               throw new HttpException("no content");
+            String toReturn = null;
+            try {
+               toReturn = Utils.toStringAndClose(payload);
+            } catch (IOException e) {
+               throw new HttpException(String.format(
+                        "Couldn't receive response %1$s, payload: %2$s ", from, toReturn), e);
+            }
+            return toReturn;
+         } else {
+            throw new HttpException(String.format("Unhandled status code  - %1$s", from));
          }
-         return toReturn;
-      } else {
-         throw new HttpException(String.format("Unhandled status code  - %1$s", from));
+      } finally {
+         releasePayload(from);
       }
    }
 

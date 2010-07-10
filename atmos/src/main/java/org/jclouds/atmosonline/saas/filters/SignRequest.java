@@ -24,7 +24,6 @@ import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
@@ -64,6 +63,8 @@ public class SignRequest implements HttpRequestFilter {
    private final byte[] key;
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
+   private final HttpUtils utils;
+
    @Resource
    Logger logger = Logger.NULL;
 
@@ -74,19 +75,21 @@ public class SignRequest implements HttpRequestFilter {
    @Inject
    public SignRequest(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String uid,
             @Named(PROPERTY_CREDENTIAL) String encodedKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService,
+            HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.uid = uid;
       this.key = encryptionService.fromBase64(encodedKey);
       this.timeStampProvider = timeStampProvider;
       this.encryptionService = encryptionService;
+      this.utils = utils;
    }
 
    public void filter(HttpRequest request) throws HttpException {
       String toSign = replaceUIDHeader(request).removeOldSignature(request).replaceDateHeader(
                request).createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
-      HttpUtils.logRequest(signatureLog, request, "<<");
+      utils.logRequest(signatureLog, request, "<<");
    }
 
    private SignRequest removeOldSignature(HttpRequest request) {
@@ -95,10 +98,11 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    public String createStringToSign(HttpRequest request) {
-      HttpUtils.logRequest(signatureLog, request, ">>");
+      utils.logRequest(signatureLog, request, ">>");
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
       appendMethod(request, buffer);
+      appendPayloadMetadata(request, buffer);
       appendHttpHeaders(request, buffer);
       appendCanonicalizedResource(request, buffer);
       appendCanonicalizedHeaders(request, buffer);
@@ -167,12 +171,19 @@ public class SignRequest implements HttpRequestFilter {
          toSign.deleteCharAt(toSign.length() - 1);
    }
 
+   private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
+      buffer.append(
+               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
+                        .getContentType())).append("\n");
+   }
+
    @VisibleForTesting
    void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
       // Only the value is used, not the header
       // name. If a request does not include the header, this is an empty string.
-      for (String header : new String[] { HttpHeaders.CONTENT_TYPE, "Range" })
-         toSign.append(valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");
+      for (String header : new String[] { "Range" })
+         toSign.append(utils.valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append(
+                  "\n");
       // Standard HTTP header, in UTC format. Only the date value is used, not the header name.
       toSign.append(request.getHeaders().get(HttpHeaders.DATE).iterator().next()).append("\n");
    }
@@ -183,7 +194,4 @@ public class SignRequest implements HttpRequestFilter {
       toSign.append(request.getEndpoint().getRawPath().toLowerCase()).append("\n");
    }
 
-   private String valueOrEmpty(Collection<String> collection) {
-      return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
-   }
 }

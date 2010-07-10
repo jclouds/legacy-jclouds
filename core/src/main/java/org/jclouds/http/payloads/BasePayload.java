@@ -156,4 +156,26 @@ public abstract class BasePayload<V> implements Payload {
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "[content=" + (content != null) + ", contentLength=" + contentLength + ", contentMD5="
+               + (contentMD5 != null) + ", contentType=" + contentType + ", written=" + written
+               + "]";
+   }
+
+   /**
+    * By default we are repeatable.
+    */
+   @Override
+   public boolean isRepeatable() {
+      return true;
+   }
+
+   /**
+    * By default there are no resources to release.
+    */
+   @Override
+   public void release() {
+   }
+
 }

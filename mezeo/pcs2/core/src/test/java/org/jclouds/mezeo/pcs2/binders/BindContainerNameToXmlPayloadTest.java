@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
-
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
@@ -39,11 +37,11 @@ public class BindContainerNameToXmlPayloadTest {
       BindContainerNameToXmlPayload binder = new BindContainerNameToXmlPayload();
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
       binder.bindToRequest(request, "foo");
+
       assertEquals(request.getPayload().getRawContent(), "<container><name>foo</name></container>");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH),
-               "<container><name>foo</name></container>".getBytes().length + "");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-               "application/vnd.csp.container-info+xml");
+      assertEquals(request.getPayload().getContentLength(), new Long(
+               "<container><name>foo</name></container>".getBytes().length));
+      assertEquals(request.getPayload().getContentType(), "application/unknown");
 
    }
 }

@@ -33,9 +33,9 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -58,7 +58,7 @@ public class ParseBlobMetadataFromHeadersTest {
    void setUp() {
 
       parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider,
-               new SimpleDateFormatDateService(), "prefix", new JCEEncryptionService());
+               new SimpleDateFormatDateService(), "prefix");
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
@@ -69,25 +69,25 @@ public class ParseBlobMetadataFromHeadersTest {
 
    @Test
    public void testApplySetsKey() {
-      HttpResponse from = new HttpResponse();
-      from.getHeaders().put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
+      from.getPayload().setContentType(MediaType.APPLICATION_JSON);
       from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
-      from.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "100");
+      from.getPayload().setContentLength(100l);
       BlobMetadata metadata = parser.apply(from);
       assertEquals(metadata.getName(), "key");
    }
 
    @Test
    public void testSetContentLength() {
-      HttpResponse from = new HttpResponse();
-      from.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "100");
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
+      from.getPayload().setContentLength(100l);
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.setContentLength(from, metadata);
       assertEquals(metadata.getSize(), new Long(100));
    }
 
    public void testSetContentLengthNoHeader() {
-      HttpResponse from = new HttpResponse();
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.setContentLength(from, metadata);
       assertEquals(metadata.getSize(), new Long(0));
@@ -95,8 +95,8 @@ public class ParseBlobMetadataFromHeadersTest {
 
    @Test
    public void testSetContentType() {
-      HttpResponse from = new HttpResponse();
-      from.getHeaders().put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
+      from.getPayload().setContentType(MediaType.APPLICATION_JSON);
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.setContentTypeOrThrowException(from, metadata);
       assertEquals(metadata.getContentType(), MediaType.APPLICATION_JSON);
@@ -104,14 +104,14 @@ public class ParseBlobMetadataFromHeadersTest {
 
    @Test(expectedExceptions = HttpException.class)
    public void testSetContentTypeException() {
-      HttpResponse from = new HttpResponse();
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.setContentTypeOrThrowException(from, metadata);
    }
 
    @Test
    public void testSetLastModified() {
-      HttpResponse from = new HttpResponse();
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.parseLastModifiedOrThrowException(from, metadata);
@@ -121,14 +121,14 @@ public class ParseBlobMetadataFromHeadersTest {
 
    @Test(expectedExceptions = HttpException.class)
    public void testSetLastModifiedException() {
-      HttpResponse from = new HttpResponse();
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.parseLastModifiedOrThrowException(from, metadata);
    }
 
    @Test
    public void testAddETagTo() {
-      HttpResponse from = new HttpResponse();
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       from.getHeaders().put(HttpHeaders.ETAG, "0xfeb");
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.addETagTo(from, metadata);
@@ -138,7 +138,7 @@ public class ParseBlobMetadataFromHeadersTest {
    @Test
    public void testAddUserMetadataTo() {
       Multimap<String, String> allHeaders = ImmutableMultimap.of("prefix" + "key", "value");
-      HttpResponse from = new HttpResponse();
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       from.getHeaders().putAll(allHeaders);
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.addUserMetadataTo(from, metadata);

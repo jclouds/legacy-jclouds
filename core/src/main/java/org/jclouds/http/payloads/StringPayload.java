@@ -39,12 +39,4 @@ public class StringPayload extends BasePayload<String> {
       return Utils.toInputStream(content);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isRepeatable() {
-      return true;
-   }
-
 }

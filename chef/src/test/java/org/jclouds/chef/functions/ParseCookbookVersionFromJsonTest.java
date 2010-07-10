@@ -11,6 +11,7 @@ import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Metadata;
 import org.jclouds.chef.domain.Resource;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -39,34 +40,37 @@ public class ParseCookbookVersionFromJsonTest {
    }
 
    public void testBrew() throws IOException {
-      CookbookVersion cookbook = handler.apply(new HttpResponse(
-               ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/brew-cookbook.json")));
+      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
+               .newPayload(ParseCookbookVersionFromJsonTest.class
+                        .getResourceAsStream("/brew-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(Utils.toInputStream(new Gson()
-               .toJson(cookbook)))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+               .toInputStream(new Gson().toJson(cookbook))))));
    }
 
    public void testTomcat() {
-      CookbookVersion cookbook = handler
-               .apply(new HttpResponse(ParseCookbookVersionFromJsonTest.class
-                        .getResourceAsStream("/tomcat-cookbook.json")));
+      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
+               .newPayload(ParseCookbookVersionFromJsonTest.class
+                        .getResourceAsStream("/tomcat-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(Utils.toInputStream(new Gson()
-               .toJson(cookbook)))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+               .toInputStream(new Gson().toJson(cookbook))))));
    }
 
    public void testMysql() throws IOException {
-      CookbookVersion cookbook = handler.apply(new HttpResponse(
-               ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/mysql-cookbook.json")));
+      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
+               .newPayload(ParseCookbookVersionFromJsonTest.class
+                        .getResourceAsStream("/mysql-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(Utils.toInputStream(new Gson()
-               .toJson(cookbook)))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+               .toInputStream(new Gson().toJson(cookbook))))));
    }
 
    public void testApache() {
       assertEquals(
-               handler.apply(new HttpResponse(ParseCookbookVersionFromJsonTest.class
-                        .getResourceAsStream("/apache-chef-demo-cookbook.json"))),
+               handler.apply(new HttpResponse(200, "ok", Payloads
+                        .newPayload(ParseCookbookVersionFromJsonTest.class
+                                 .getResourceAsStream("/apache-chef-demo-cookbook.json")))),
                new CookbookVersion(
                         "apache-chef-demo-0.0.0",
                         ImmutableSet.<Resource> of(),

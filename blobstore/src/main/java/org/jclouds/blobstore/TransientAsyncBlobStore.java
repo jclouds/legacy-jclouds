@@ -415,8 +415,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    public static HttpResponseException returnResponseException(int code) {
       HttpResponse response = null;
-      response = new HttpResponse(); // TODO: Get real object URL?
-      response.setStatusCode(code);
+      response = new HttpResponse(code, null, null);
       return new HttpResponseException(new HttpCommand() {
 
          public int getRedirectCount() {
@@ -491,6 +490,10 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       Blob blob = blobFactory.create(copy(object.getMetadata()));
       blob.setPayload(payload);
       blob.getMetadata().setLastModified(new Date());
+      blob.getMetadata().setSize(payload.getContentLength());
+      blob.getMetadata().setContentMD5(payload.getContentMD5());
+      blob.getMetadata().setContentType(payload.getContentType());
+
       String eTag = encryptionService.hex(payload.getContentMD5());
       blob.getMetadata().setETag(eTag);
       container.put(blob.getMetadata().getName(), blob);
@@ -499,8 +502,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       blob.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,
                dateService.rfc822DateFormat(blob.getMetadata().getLastModified()));
       blob.getAllHeaders().put(HttpHeaders.ETAG, eTag);
-      blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, blob.getMetadata().getContentType());
-      blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, blob.getMetadata().getSize() + "");
+      blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, payload.getContentType());
+      blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, payload.getContentLength() + "");
       blob.getAllHeaders().put("Content-MD5", encryptionService.base64(payload.getContentMD5()));
       blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
 
@@ -543,8 +546,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       if (options.getIfModifiedSince() != null) {
          Date modifiedSince = options.getIfModifiedSince();
          if (object.getMetadata().getLastModified().before(modifiedSince)) {
-            HttpResponse response = new HttpResponse();
-            response.setStatusCode(304);
+            HttpResponse response = new HttpResponse(304, null, null);
             return immediateFailedFuture(new HttpResponseException(String.format(
                      "%1$s is before %2$s", object.getMetadata().getLastModified(), modifiedSince),
                      null, response));
@@ -554,8 +556,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       if (options.getIfUnmodifiedSince() != null) {
          Date unmodifiedSince = options.getIfUnmodifiedSince();
          if (object.getMetadata().getLastModified().after(unmodifiedSince)) {
-            HttpResponse response = new HttpResponse();
-            response.setStatusCode(412);
+            HttpResponse response = new HttpResponse(412, null, null);
             return immediateFailedFuture(new HttpResponseException(
                      String.format("%1$s is after %2$s", object.getMetadata().getLastModified(),
                               unmodifiedSince), null, response));

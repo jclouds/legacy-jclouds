@@ -20,7 +20,7 @@ package org.jclouds.aws.s3.binders;
 
 import java.util.Properties;
 
-import javax.ws.rs.core.HttpHeaders;
+import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +41,7 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  * @author James Murty
  */
+@Singleton
 public class BindACLToXMLPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
@@ -49,9 +50,8 @@ public class BindACLToXMLPayload implements Binder {
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       try {
          String stringPayload = generateBuilder(from).asString(outputProperties);
-         request.getHeaders().put(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML);
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, stringPayload.getBytes().length + "");
          request.setPayload(stringPayload);
+         request.getPayload().setContentType(MediaType.TEXT_XML);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new RuntimeException("error transforming acl: " + from, e);

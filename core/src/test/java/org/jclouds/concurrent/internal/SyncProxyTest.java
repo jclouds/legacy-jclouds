@@ -185,7 +185,7 @@ public class SyncProxyTest {
 
    @Test
    public void testToString() {
-      assertEquals(sync.toString(), "Sync Proxy for: async");
+      assertEquals(sync.toString(), "Sync Proxy for: Async");
    }
 
    @Test(expectedExceptions = RuntimeException.class)

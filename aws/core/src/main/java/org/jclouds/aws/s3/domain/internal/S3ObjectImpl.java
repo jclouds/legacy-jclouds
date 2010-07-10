@@ -157,26 +157,7 @@ public class S3ObjectImpl extends PayloadEnclosingImpl implements S3Object, Comp
       public SetMetadataPropertiesPayload(Payload delegate, MutableObjectMetadata metadata) {
          super(delegate);
          this.metadata = checkNotNull(metadata, "metadata");
-         if (metadata.getSize() != null)
-            setContentLength(metadata.getSize());
-         setContentMD5(metadata.getContentMD5());
          setContentType(metadata.getContentType());
-      }
-
-      @Override
-      public void setContentLength(Long contentLength) {
-         super.setContentLength(contentLength);
-         try {
-            metadata.setSize(contentLength);
-         } catch (NullPointerException e) {
-            e.printStackTrace();
-         }
-      }
-
-      @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         metadata.setContentMD5(md5);
       }
 
       @Override
@@ -209,24 +190,10 @@ public class S3ObjectImpl extends PayloadEnclosingImpl implements S3Object, Comp
       }
 
       @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         if (canSetPayload())
-            object.getPayload().setContentMD5(md5);
-      }
-
-      @Override
       public void setContentType(String type) {
          super.setContentType(type);
          if (canSetPayload())
             object.getPayload().setContentType(type);
-      }
-
-      @Override
-      public void setSize(Long size) {
-         super.setSize(size);
-         if (canSetPayload())
-            object.getPayload().setContentLength(size);
       }
 
       private boolean canSetPayload() {

@@ -20,9 +20,8 @@ package org.jclouds.http.handlers;
 
 import static org.jclouds.http.HttpUtils.changePathTo;
 import static org.jclouds.http.HttpUtils.changeSchemeHostAndPortTo;
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
@@ -38,9 +37,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -69,7 +65,6 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       closeClientButKeepContentStream(response);
-
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
       if (hostHeader != null && command.incrementRedirectCount() < retryCountLimit) {
          URI redirectionUrl = uriBuilderProvider.get().uri(URI.create(hostHeader)).build();
@@ -89,23 +84,6 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
          return true;
       } else {
          return false;
-      }
-   }
-
-   /**
-    * Content stream may need to be read. However, we should always close the http stream.
-    */
-   @VisibleForTesting
-   void closeClientButKeepContentStream(HttpResponse response) {
-      if (response.getContent() != null) {
-         try {
-            byte[] data = ByteStreams.toByteArray(response.getContent());
-            response.setContent(new ByteArrayInputStream(data));
-         } catch (IOException e) {
-            logger.error(e, "Error consuming input");
-         } finally {
-            Closeables.closeQuietly(response.getContent());
-         }
       }
    }
 

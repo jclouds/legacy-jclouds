@@ -27,6 +27,7 @@ import java.net.URI;
 
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -63,8 +64,8 @@ public class ParseObjectInfoFromHeadersTest {
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
       replay(request);
       parser.setContext(request);
-      HttpResponse response = new HttpResponse();
-      response.getHeaders().put("Content-Type", "text/plain");
+      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
+      response.getPayload().setContentType("text/plain");
       response.getHeaders().put("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT");
       response.getHeaders().put("Content-Length", "0");
 

@@ -18,10 +18,7 @@
  */
 package org.jclouds.rackspace.cloudservers.binders;
 
-import java.util.Collections;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -31,13 +28,10 @@ import org.jclouds.rest.Binder;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindConfirmResizeToJsonPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object toBind) {
       request.setPayload("{\"confirmResize\":null}");
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-               Collections.singletonList("{\"confirmResize\":null}".getBytes().length + ""));
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               Collections.singletonList(MediaType.APPLICATION_JSON));
    }
 }

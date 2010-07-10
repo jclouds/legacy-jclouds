@@ -20,11 +20,9 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Collections;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
@@ -51,10 +49,7 @@ public class BindToJsonPayload implements MapBinder {
       checkState(gson != null, "Program error: gson should have been injected at this point");
       String json = gson.toJson(toBind);
       request.setPayload(json);
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-               Collections.singletonList(json.getBytes().length + ""));
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               Collections.singletonList(MediaType.APPLICATION_JSON));
+      request.getPayload().setContentType(MediaType.APPLICATION_JSON);
    }
 
 }

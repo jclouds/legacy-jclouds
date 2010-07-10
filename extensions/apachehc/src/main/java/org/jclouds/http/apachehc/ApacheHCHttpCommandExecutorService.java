@@ -25,19 +25,26 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Named;
 
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.jclouds.Constants;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
+import org.jclouds.http.Payload;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
 
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 
 /**
@@ -51,23 +58,50 @@ public class ApacheHCHttpCommandExecutorService extends
    private final HttpClient client;
 
    @Inject
-   ApacheHCHttpCommandExecutorService(
+   ApacheHCHttpCommandExecutorService(HttpUtils utils, EncryptionService encryptionService,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler,
-            HttpWire wire, HttpClient client) {
-      super(ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire, HttpClient client) {
+      super(utils, encryptionService, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler,
+               wire);
       this.client = client;
    }
 
    @Override
    protected HttpUriRequest convert(HttpRequest request) throws IOException {
-      return ApacheHCUtils.convertToApacheRequest(request);
+      HttpUriRequest returnVal = ApacheHCUtils.convertToApacheRequest(request);
+      if (request.getPayload() != null && request.getPayload().getContentMD5() != null)
+         returnVal.addHeader("Content-MD5", encryptionService.base64(request.getPayload()
+                  .getContentMD5()));
+      return returnVal;
    }
 
    @Override
    protected HttpResponse invoke(HttpUriRequest nativeRequest) throws IOException {
-      org.apache.http.HttpResponse nativeResponse = executeRequest(nativeRequest);
-      return ApacheHCUtils.convertToJCloudsResponse(nativeResponse);
+      org.apache.http.HttpResponse apacheResponse = executeRequest(nativeRequest);
+
+      Payload payload = null;
+      if (apacheResponse.getEntity() != null)
+         try {
+            payload = Payloads.newInputStreamPayload(consumeOnClose(apacheResponse.getEntity()
+                     .getContent()));
+            if (apacheResponse.getEntity().getContentLength() >= 0)
+               payload.setContentLength(apacheResponse.getEntity().getContentLength());
+            if (apacheResponse.getEntity().getContentType() != null)
+               payload.setContentType(apacheResponse.getEntity().getContentType().getValue());
+         } catch (IOException e) {
+            logger.warn(e, "couldn't receive payload for request: %s", nativeRequest
+                     .getRequestLine());
+            throw e;
+         }
+      HttpResponse response = new HttpResponse(apacheResponse.getStatusLine().getStatusCode(),
+               apacheResponse.getStatusLine().getReasonPhrase(), payload);
+      Multimap<String, String> headers = LinkedHashMultimap.create();
+      for (Header header : apacheResponse.getAllHeaders()) {
+         headers.put(header.getName(), header.getValue());
+      }
+      utils.setPayloadPropertiesFromHeaders(headers, response);
+      return response;
    }
 
    private org.apache.http.HttpResponse executeRequest(HttpUriRequest nativeRequest)

@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -31,8 +32,8 @@ public class ParseValueSetFromJsonTest {
    }
 
    public void testRegex() {
-      assertEquals(handler.apply(new HttpResponse(Utils
-            .toInputStream("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))), ImmutableSet
-            .of("0.7.0", "0.7.1"));
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+               .toInputStream("{\"runit\":[\"0.7.0\",\"0.7.1\"]}")))), ImmutableSet.of("0.7.0",
+               "0.7.1"));
    }
 }

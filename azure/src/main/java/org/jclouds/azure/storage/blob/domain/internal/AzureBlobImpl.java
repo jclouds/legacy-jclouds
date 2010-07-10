@@ -138,22 +138,6 @@ public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Co
       public SetMetadataPropertiesPayload(Payload delegate, MutableBlobProperties properties) {
          super(delegate);
          this.properties = properties;
-         if (properties.getContentLength() != null)
-            setContentLength(properties.getContentLength());
-         setContentMD5(properties.getContentMD5());
-         setContentType(properties.getContentType());
-      }
-
-      @Override
-      public void setContentLength(Long contentLength) {
-         super.setContentLength(contentLength);
-         properties.setContentLength(contentLength);
-      }
-
-      @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         properties.setContentMD5(md5);
       }
 
       @Override
@@ -186,24 +170,10 @@ public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Co
       }
 
       @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         if (canSetPayload())
-            blob.getPayload().setContentMD5(md5);
-      }
-
-      @Override
       public void setContentType(String type) {
          super.setContentType(type);
          if (canSetPayload())
             blob.getPayload().setContentType(type);
-      }
-
-      @Override
-      public void setContentLength(Long size) {
-         super.setContentLength(size);
-         if (canSetPayload())
-            blob.getPayload().setContentLength(size);
       }
 
       private boolean canSetPayload() {

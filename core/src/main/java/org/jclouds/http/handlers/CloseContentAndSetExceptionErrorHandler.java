@@ -18,7 +18,11 @@
  */
 package org.jclouds.http.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
+
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
@@ -30,16 +34,19 @@ import org.jclouds.util.Utils;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class CloseContentAndSetExceptionErrorHandler implements HttpErrorHandler {
 
-   public void handleError(HttpCommand command, HttpResponse response) {
+   public void handleError(HttpCommand command, HttpResponse from) {
       String content;
       try {
-         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
+         content = from.getPayload() != null ? Utils.toStringAndClose(from.getPayload().getInput())
                   : null;
-         command.setException(new HttpResponseException(command, response, content));
+         command.setException(new HttpResponseException(command, from, content));
       } catch (IOException e) {
-         command.setException(new HttpResponseException(command, response));
+         command.setException(new HttpResponseException(command, from));
+      } finally {
+         releasePayload(from);
       }
    }
 }

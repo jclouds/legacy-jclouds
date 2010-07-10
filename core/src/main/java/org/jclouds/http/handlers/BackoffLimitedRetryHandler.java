@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.handlers;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import java.io.IOException;
 
 import javax.annotation.Resource;
@@ -33,7 +35,6 @@ import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -87,11 +88,10 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
 
    public boolean shouldRetryRequest(HttpCommand command, IOException error) {
       return ifReplayableBackoffAndReturnTrue(command);
-
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      Closeables.closeQuietly(response.getContent());
+      releasePayload(response);
       return ifReplayableBackoffAndReturnTrue(command);
    }
 

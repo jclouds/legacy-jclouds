@@ -138,4 +138,9 @@ public class DelegatingPayload implements Payload {
    public Payload getDelegate() {
       return delegate;
    }
+
+   @Override
+   public void release() {
+      delegate.release();
+   }
 }

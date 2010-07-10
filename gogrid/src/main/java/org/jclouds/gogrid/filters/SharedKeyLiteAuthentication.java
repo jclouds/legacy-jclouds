@@ -26,7 +26,6 @@ package org.jclouds.gogrid.filters;
 import static java.lang.String.format;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
-import static org.jclouds.http.HttpUtils.logRequest;
 import static org.jclouds.http.HttpUtils.makeQueryLine;
 import static org.jclouds.http.HttpUtils.parseQueryToMap;
 
@@ -41,6 +40,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -56,6 +56,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    private final String secret;
    private final Long timeStamp;
    private final EncryptionService encryptionService;
+   private final HttpUtils utils;
+
    @Resource
    @Named(Constants.LOGGER_SIGNATURE)
    Logger signatureLog = Logger.NULL;
@@ -63,11 +65,12 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    @Inject
    public SharedKeyLiteAuthentication(@Named(PROPERTY_IDENTITY) String apiKey,
             @Named(PROPERTY_CREDENTIAL) String secret, @TimeStamp Long timeStamp,
-            EncryptionService encryptionService) {
+            EncryptionService encryptionService, HttpUtils utils) {
       this.encryptionService = encryptionService;
       this.apiKey = apiKey;
       this.secret = secret;
       this.timeStamp = timeStamp;
+      this.utils = utils;
    }
 
    public void filter(HttpRequest request) {
@@ -87,7 +90,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
                + updatedQuery;
       request.setEndpoint(URI.create(updatedEndpoint));
 
-      logRequest(signatureLog, request, "<<");
+      utils.logRequest(signatureLog, request, "<<");
    }
 
    private String createStringToSign() {

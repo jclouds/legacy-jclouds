@@ -31,7 +31,7 @@ import org.jclouds.Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestClientTest.MockModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

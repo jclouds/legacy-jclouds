@@ -19,7 +19,6 @@
 package org.jclouds.aws.s3.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpUtils.logRequest;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
 import java.util.Collection;
@@ -41,6 +40,7 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
@@ -58,8 +58,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Singleton
 public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSigner {
-   private final String[] firstHeadersToSign = new String[] { "Content-MD5",
-            HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
+   private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
 
    public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging",
             "location", "requestPayment");
@@ -68,6 +67,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final String secretKey;
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
+   private final HttpUtils utils;
 
    @Resource
    @Named(Constants.LOGGER_SIGNATURE)
@@ -84,7 +84,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
             @Named(S3Constants.PROPERTY_S3_HEADER_TAG) String headerTag,
             @Named(Constants.PROPERTY_IDENTITY) String accessKey,
             @Named(Constants.PROPERTY_CREDENTIAL) String secretKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService,
+            HttpUtils utils) {
       this.srvExpr = srvExpr;
       this.headerTag = headerTag;
       this.authTag = authTag;
@@ -93,20 +94,22 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       this.secretKey = secretKey;
       this.timeStampProvider = timeStampProvider;
       this.encryptionService = encryptionService;
+      this.utils = utils;
    }
 
    public void filter(HttpRequest request) throws HttpException {
       replaceDateHeader(request);
       String toSign = createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
-      logRequest(signatureLog, request, "<<");
+      utils.logRequest(signatureLog, request, "<<");
    }
 
    public String createStringToSign(HttpRequest request) {
-      logRequest(signatureLog, request, ">>");
+      utils.logRequest(signatureLog, request, ">>");
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
       appendMethod(request, buffer);
+      appendPayloadMetadata(request, buffer);
       appendHttpHeaders(request, buffer);
       appendAmzHeaders(request, buffer);
       appendBucketName(request, buffer);
@@ -157,6 +160,15 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
             toSign.append("\n");
          }
       }
+   }
+
+   private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
+      buffer.append(
+               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
+                        .getContentMD5())).append("\n");
+      buffer.append(
+               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
+                        .getContentType())).append("\n");
    }
 
    private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {

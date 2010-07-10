@@ -18,12 +18,13 @@
  */
 package org.jclouds.http.functions;
 
+import static org.jclouds.http.HttpUtils.releasePayload;
+
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
-import com.google.common.io.Closeables;
 
 /**
  * Simply returns true when the http response code is in the range 200-299.
@@ -34,7 +35,7 @@ import com.google.common.io.Closeables;
 public class ReturnTrueIf2xx implements Function<HttpResponse, Boolean> {
 
    public Boolean apply(HttpResponse from) {
-      Closeables.closeQuietly(from.getContent());
+      releasePayload(from);
       int code = from.getStatusCode();
       if (code >= 300 || code < 200) {
          throw new IllegalStateException("incorrect code for this operation: " + from);

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Key;
 import org.testng.annotations.BeforeTest;
@@ -60,8 +59,7 @@ public class ParseKeyFromJsonTest {
       Key key = new Key(true, ImmutableSet.<String> of("1"),
                "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT", new Date(1260428507510l));
 
-      Key compare = handler.apply(new HttpResponse(ParseKeyFromJsonTest.class
-               .getResourceAsStream("/key.json")));
+      Key compare = handler.apply(ParseKeyFromJsonTest.class.getResourceAsStream("/key.json"));
       assertEquals(compare, key);
    }
 }

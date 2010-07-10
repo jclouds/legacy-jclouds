@@ -30,7 +30,7 @@ import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.CloseContentAndReturn;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
@@ -65,8 +65,8 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       assertRequestLineEquals(
                request,
                "GET http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx?output=json&destFolderPath=adriansmovies&sizeBytes=734859264 HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseUploadInfoFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -86,8 +86,8 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       assertRequestLineEquals(
                request,
                "POST http://uploader/Upload.ashx?output=json&destFolderPath=adriansmovies&uploadToken=token HTTP/1.1");
-      assertHeadersEqual(request,
-               "Content-Length: 113\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
+      assertNonPayloadHeadersEqual(request,
+               "");
       StringBuffer expects = new StringBuffer();
       expects.append("----JCLOUDS--\r\n");
       expects.append("Content-Disposition: form-data; name=\"hello\"\r\n");
@@ -95,9 +95,9 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       expects.append("hello\r\n");
       expects.append("----JCLOUDS----\r\n");
 
-      assertPayloadEquals(request, expects.toString());
+      assertPayloadEquals(request, expects.toString(), "multipart/form-data; boundary=--JCLOUDS--", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -112,10 +112,10 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       assertRequestLineEquals(
                request,
                "GET http://services.nirvanix.com/ws/Metadata/SetMetadata.ashx?output=json&path=adriansmovies/sushi.avi&metadata=chef:Kawasaki HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -129,8 +129,8 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       assertRequestLineEquals(
                request,
                "GET http://services.nirvanix.com/ws/Metadata/GetMetadata.ashx?output=json&path=adriansmovies/sushi.avi HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseMetadataFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -145,8 +145,8 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
       assertRequestLineEquals(request,
                "GET http://services.nirvanix.com/adriansmovies/sushi.avi?output=json HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnStringIf200.class);
       assertSaxResponseParserClassEquals(method, null);

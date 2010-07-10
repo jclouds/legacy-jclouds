@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
 
-import org.jclouds.http.payloads.BasePayload;
-import org.jclouds.http.payloads.Part;
-
 import com.google.common.io.InputSupplier;
 
 /**
@@ -46,7 +43,7 @@ public class MultipartForm extends BasePayload<Iterable<? extends Part>> {
 
    @SuppressWarnings("unchecked")
    public MultipartForm(String boundary, Iterable<? extends Part> content) {
-      super(content,"multipart/form-data; boundary="+boundary, 0l, null);
+      super(content, "multipart/form-data; boundary=" + boundary, 0l, null);
       String boundaryrn = boundary + rn;
       isRepeatable = true;
       InputSupplier<? extends InputStream> chain = join();
@@ -105,6 +102,12 @@ public class MultipartForm extends BasePayload<Iterable<? extends Part>> {
    @Override
    public boolean isRepeatable() {
       return isRepeatable;
+   }
+
+   @Override
+   public void release() {
+      for (Part part : content)
+         part.release();
    }
 
 }

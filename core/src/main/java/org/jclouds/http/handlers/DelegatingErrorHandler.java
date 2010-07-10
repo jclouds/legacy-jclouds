@@ -18,6 +18,8 @@
  */
 package org.jclouds.http.handlers;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -34,6 +36,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class DelegatingErrorHandler implements HttpErrorHandler {
 
    @VisibleForTesting
@@ -51,7 +54,8 @@ public class DelegatingErrorHandler implements HttpErrorHandler {
    @ServerError
    HttpErrorHandler serverErrorHandler;
 
-   public DelegatingErrorHandler() {
+   @Inject
+   DelegatingErrorHandler() {
       this.redirectionHandler = new CloseContentAndSetExceptionErrorHandler();
       this.clientErrorHandler = redirectionHandler;
       this.serverErrorHandler = redirectionHandler;

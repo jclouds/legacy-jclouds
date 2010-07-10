@@ -139,22 +139,7 @@ public class CFObjectImpl extends PayloadEnclosingImpl implements CFObject, Comp
       public SetMetadataPropertiesPayload(Payload delegate, MutableObjectInfoWithMetadata info) {
          super(delegate);
          this.info = info;
-         if (info.getBytes() != null)
-            setContentLength(info.getBytes());
-         setContentMD5(info.getHash());
          setContentType(info.getContentType());
-      }
-
-      @Override
-      public void setContentLength(Long contentLength) {
-         super.setContentLength(contentLength);
-         info.setBytes(contentLength);
-      }
-
-      @Override
-      public void setContentMD5(byte[] md5) {
-         super.setContentMD5(md5);
-         info.setHash(md5);
       }
 
       @Override
@@ -189,24 +174,10 @@ public class CFObjectImpl extends PayloadEnclosingImpl implements CFObject, Comp
       }
 
       @Override
-      public void setHash(byte[] md5) {
-         super.setHash(md5);
-         if (canSetPayload())
-            object.getPayload().setContentMD5(md5);
-      }
-
-      @Override
       public void setContentType(String type) {
          super.setContentType(type);
          if (canSetPayload())
             object.getPayload().setContentType(type);
-      }
-
-      @Override
-      public void setBytes(Long size) {
-         super.setBytes(size);
-         if (canSetPayload())
-            object.getPayload().setContentLength(size);
       }
 
       private boolean canSetPayload() {

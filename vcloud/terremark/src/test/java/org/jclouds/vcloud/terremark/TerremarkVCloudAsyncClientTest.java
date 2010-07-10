@@ -33,8 +33,8 @@ import javax.inject.Named;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
@@ -80,7 +80,8 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", sequential = true, testName = "vcloud.TerremarkVCloudAsyncClientTest")
-public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVCloudExpressAsyncClient> {
+public class TerremarkVCloudAsyncClientTest extends
+         RestClientTest<TerremarkVCloudExpressAsyncClient> {
    /**
     * ignore parameter of catalog id since this doesn't work
     */
@@ -89,8 +90,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, "1");
 
       assertRequestLineEquals(request, "GET https://catalog HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);
@@ -104,8 +105,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://vdc/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TerremarkVDCHandler.class);
@@ -119,8 +120,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, "1");
 
       assertRequestLineEquals(request, "GET https://vcloud/vdc/1 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TerremarkVDCHandler.class);
@@ -131,18 +132,17 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
-               String.class, String.class, String.class, Array.newInstance(
-                        InstantiateVAppTemplateOptions.class, 0).getClass());
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod(
+               "instantiateVAppTemplateInVDC", String.class, String.class, String.class, Array
+                        .newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "1", "name", 3 + "");
 
       assertRequestLineEquals(request,
                "POST https://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 695\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/InstantiateVAppTemplateParams-test.xml")));
+               "/terremark/InstantiateVAppTemplateParams-test.xml")),
+               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -153,9 +153,9 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testInstantiateVAppTemplateOptions() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
-               String.class, String.class, String.class, Array.newInstance(
-                        InstantiateVAppTemplateOptions.class, 0).getClass());
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod(
+               "instantiateVAppTemplateInVDC", String.class, String.class, String.class, Array
+                        .newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "1", "name", 3 + "",
                TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inRow(
                         "row").inGroup("group").withPassword("password").inNetwork(
@@ -163,11 +163,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "POST https://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 1910\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/InstantiateVAppTemplateParams-options-test.xml")));
+               "/terremark/InstantiateVAppTemplateParams-options-test.xml")),
+               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -183,8 +182,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, "1");
 
       assertRequestLineEquals(request, "POST https://vcloud/extensions/1/publicIps HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, PublicIpAddressesHandler.class);
@@ -202,11 +201,11 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "POST https://vcloud/extensions/vdc/1/internetServices HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.internetService+xml\nContent-Length: 298\nContent-Type: application/vnd.tmrk.vCloud.internetService+xml\n");
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vCloud.internetService+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateInternetService-test2.xml")));
+               "/terremark/CreateInternetService-test2.xml")),
+               "application/vnd.tmrk.vCloud.internetService+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServiceHandler.class);
@@ -225,11 +224,11 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "POST https://vcloud/extensions/vdc/1/internetServices HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.internetService+xml\nContent-Length: 336\nContent-Type: application/vnd.tmrk.vCloud.internetService+xml\n");
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vCloud.internetService+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateInternetService-options-test.xml")));
+               "/terremark/CreateInternetService-options-test.xml")),
+               "application/vnd.tmrk.vCloud.internetService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServiceHandler.class);
       assertExceptionParserClassEquals(method, null);
@@ -239,14 +238,15 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testGetAllInternetServices() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("getAllInternetServicesInVDC",
-               String.class);
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod(
+               "getAllInternetServicesInVDC", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
       assertRequestLineEquals(request,
                "GET https://vcloud/extensions/vdc/1/internetServices HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.internetServicesList+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vCloud.internetServicesList+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServicesHandler.class);
@@ -257,12 +257,14 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testGetInternetService() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("getInternetService", int.class);
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("getInternetService",
+               int.class);
       HttpRequest request = processor.createRequest(method, 12);
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/internetService/12 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.internetServicesList+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vCloud.internetServicesList+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServiceHandler.class);
@@ -273,16 +275,16 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testDeleteInternetService() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class
-               .getMethod("deleteInternetService", int.class);
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("deleteInternetService",
+               int.class);
       HttpRequest request = processor.createRequest(method, 12);
 
       assertRequestLineEquals(request,
                "DELETE https://vcloud/extensions/internetService/12 HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -291,18 +293,18 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testAddInternetServiceToExistingIp() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("addInternetServiceToExistingIp",
-               int.class, String.class, Protocol.class, int.class, Array.newInstance(
-                        AddInternetServiceOptions.class, 0).getClass());
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod(
+               "addInternetServiceToExistingIp", int.class, String.class, Protocol.class,
+               int.class, Array.newInstance(AddInternetServiceOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, 12, "name", Protocol.TCP, 22);
 
       assertRequestLineEquals(request,
                "POST https://vcloud/extensions/publicIp/12/internetServices HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.internetService+xml\nContent-Length: 298\nContent-Type: application/vnd.tmrk.vCloud.internetService+xml\n");
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vCloud.internetService+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateInternetService-test2.xml")));
+               "/terremark/CreateInternetService-test2.xml")),
+               "application/vnd.tmrk.vCloud.internetService+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServiceHandler.class);
@@ -313,19 +315,19 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    public void testAddInternetServiceToExistingIpOptions() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("addInternetServiceToExistingIp",
-               int.class, String.class, Protocol.class, int.class, Array.newInstance(
-                        AddInternetServiceOptions.class, 0).getClass());
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod(
+               "addInternetServiceToExistingIp", int.class, String.class, Protocol.class,
+               int.class, Array.newInstance(AddInternetServiceOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, 12, "name", Protocol.TCP, 22,
                disabled().withDescription("yahoo"));
 
       assertRequestLineEquals(request,
                "POST https://vcloud/extensions/publicIp/12/internetServices HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.internetService+xml\nContent-Length: 336\nContent-Type: application/vnd.tmrk.vCloud.internetService+xml\n");
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vCloud.internetService+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateInternetService-options-test.xml")));
+               "/terremark/CreateInternetService-options-test.xml")),
+               "application/vnd.tmrk.vCloud.internetService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InternetServiceHandler.class);
       assertExceptionParserClassEquals(method, null);
@@ -341,11 +343,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "POST https://vcloud/extensions/internetService/12/nodeServices HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.nodeService+xml\nContent-Length: 295\nContent-Type: application/vnd.tmrk.vCloud.nodeService+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateNodeService-test2.xml")));
+               "/terremark/CreateNodeService-test2.xml")),
+               "application/vnd.tmrk.vCloud.nodeService+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
@@ -363,12 +364,11 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "POST https://vcloud/extensions/internetService/12/nodeServices HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.nodeService+xml\nContent-Length: 333\nContent-Type: application/vnd.tmrk.vCloud.nodeService+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
 
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/CreateNodeService-options-test.xml")));
+               "/terremark/CreateNodeService-options-test.xml")),
+               "application/vnd.tmrk.vCloud.nodeService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
       assertExceptionParserClassEquals(method, null);
@@ -381,8 +381,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, 12);
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/nodeService/12 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
@@ -398,12 +398,11 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
                .changeDescriptionTo("eggs"));
 
       assertRequestLineEquals(request, "PUT https://vcloud/extensions/nodeService/12 HTTP/1.1");
-      assertHeadersEqual(
-               request,
-               "Accept: application/vnd.tmrk.vCloud.nodeService+xml\nContent-Length: 202\nContent-Type: application/vnd.tmrk.vCloud.nodeService+xml\n");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
       assertPayloadEquals(
                request,
-               "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>eggs</Description></NodeService>");
+               "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>eggs</Description></NodeService>",
+               "application/vnd.tmrk.vCloud.nodeService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
       assertExceptionParserClassEquals(method, null);
@@ -417,8 +416,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "GET https://vcloud/extensions/internetService/12/nodeServices HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodesHandler.class);
@@ -432,10 +431,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, 12);
 
       assertRequestLineEquals(request, "DELETE https://vcloud/extensions/nodeService/12 HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -450,9 +449,9 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
       assertRequestLineEquals(request,
                "GET https://vcloud/extensions/template/12/options/customization HTTP/1.1");
-      assertHeadersEqual(request,
+      assertNonPayloadHeadersEqual(request,
                "Accept: application/vnd.tmrk.vCloud.catalogItemCustomizationParameters+xml\n");
-      assertPayloadEquals(request, null);
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CustomizationParametersHandler.class);
@@ -466,8 +465,9 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://keysList HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vcloudExpress.keysList+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vcloudExpress.keysList+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, KeyPairsHandler.class);
@@ -477,12 +477,14 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
    }
 
    public void testListKeyPairsInOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("listKeyPairsInOrg", String.class);
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("listKeyPairsInOrg",
+               String.class);
       HttpRequest request = processor.createRequest(method, "org1");
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/org/org1/keys HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vcloudExpress.keysList+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request,
+               "Accept: application/vnd.tmrk.vcloudExpress.keysList+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, KeyPairsHandler.class);
@@ -496,8 +498,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, 12);
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/nodeService/12 HTTP/1.1");
-      assertHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);
@@ -535,10 +537,10 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
       HttpRequest request = processor.createRequest(method, 12);
 
       assertRequestLineEquals(request, "DELETE https://vcloud/extensions/key/12 HTTP/1.1");
-      assertHeadersEqual(request, "");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -564,8 +566,8 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
 
    @Override
    public ContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("trmk-vcloudexpress", "identity", "credential",
-               new Properties());
+      return new RestContextFactory().createContextSpec("trmk-vcloudexpress", "identity",
+               "credential", new Properties());
    }
 
    @RequiresHttp

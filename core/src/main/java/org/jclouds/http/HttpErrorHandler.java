@@ -18,7 +18,6 @@
  */
 package org.jclouds.http;
 
-import com.google.common.io.Closeables;
 
 /**
  * Responsible for setting an exception on the command relevant to the unrecoverable error in the
@@ -29,8 +28,8 @@ import com.google.common.io.Closeables;
 public interface HttpErrorHandler {
    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
       public void handleError(HttpCommand command, HttpResponse response) {
-         if (response.getContent() != null)
-            Closeables.closeQuietly(response.getContent());
+         if (response.getPayload() != null)
+            response.getPayload().release();
       }
    };
 

@@ -42,8 +42,8 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
@@ -76,8 +76,8 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
@@ -94,8 +94,8 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
@@ -114,9 +114,9 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
                + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
-      assertPayloadEquals(request, null);
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
@@ -135,9 +135,9 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
                + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
-      assertPayloadEquals(request, null);
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request,
                ParseDirectoryListFromContentAndHeaders.class);
@@ -153,8 +153,8 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "POST https://accesspoint.atmosonline.com/rest/namespace/dir/ HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -171,9 +171,9 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT
-               + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
-      assertPayloadEquals(request, "hello");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
+               + ": */*\n");
+      assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -190,11 +190,11 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT
-               + ": */*\nContent-Length: 5\nContent-Type: text/plain\n");
-      assertPayloadEquals(request, "hello");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
+               + ": */*\n");
+      assertPayloadEquals(request, "hello", "text/plain", false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
 
@@ -208,8 +208,8 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "GET https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseObjectFromHeadersAndHttpContent.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -224,8 +224,8 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "HEAD https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSystemMetadataFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -240,10 +240,10 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request,
                "DELETE https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");
-      assertHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(request, null);
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 

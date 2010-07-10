@@ -37,7 +37,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestClientTest.MockModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -108,15 +108,17 @@ public class SignRequestTest {
 
    public HttpRequest newRequest() {
       HttpRequest request = new HttpRequest("POST", URI.create("http://localhost/rest/objects"));
+      request.setPayload("");
+      request.getPayload().setContentLength(4286l);
+      request.getPayload().setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
       request.getHeaders().put(AtmosStorageHeaders.LISTABLE_META, "part4/part7/part8=quick");
       request.getHeaders().put(AtmosStorageHeaders.META, "part1=buy");
       request.getHeaders().put(HttpHeaders.ACCEPT, "*/*");
       request.getHeaders().put(AtmosStorageHeaders.USER_ACL, "john=FULL_CONTROL,mary=WRITE");
-      request.getHeaders().put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM);
       request.getHeaders().put(AtmosStorageHeaders.DATE, "Thu, 05 Jun 2008 16:38:19 GMT");
       request.getHeaders().put(AtmosStorageHeaders.GROUP_ACL, "other=NONE");
       request.getHeaders().put(HttpHeaders.HOST, "10.5.115.118");
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "4286");
       request.getHeaders().put(AtmosStorageHeaders.UID, "6039ac182f194e15b9261d73ce044939/user1");
       return request;
    }

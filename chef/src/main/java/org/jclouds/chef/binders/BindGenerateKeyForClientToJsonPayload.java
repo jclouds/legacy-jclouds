@@ -24,13 +24,10 @@
 package org.jclouds.chef.binders;
 
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -42,10 +39,9 @@ public class BindGenerateKeyForClientToJsonPayload extends BindToStringPayload {
 
    @Override
    public void bindToRequest(HttpRequest request, Object payload) {
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               ImmutableSet.of(MediaType.APPLICATION_JSON));
       super.bindToRequest(request, String.format("{\"clientname\":\"%s\", \"private_key\": true}",
                payload));
+      request.getPayload().setContentType(MediaType.APPLICATION_JSON);
    }
 
 }

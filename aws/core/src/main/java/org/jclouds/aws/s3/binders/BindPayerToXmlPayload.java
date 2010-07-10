@@ -21,9 +21,7 @@ package org.jclouds.aws.s3.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-
-import javax.ws.rs.core.HttpHeaders;
+import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.aws.s3.domain.Payer;
@@ -35,6 +33,7 @@ import org.jclouds.rest.Binder;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindPayerToXmlPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object toBind) {
@@ -45,9 +44,6 @@ public class BindPayerToXmlPayload implements Binder {
                         "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>%s</Payer></RequestPaymentConfiguration>",
                         ((Payer) toBind).value());
       request.setPayload(text);
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-               Collections.singletonList(text.getBytes().length + ""));
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               Collections.singletonList(MediaType.TEXT_XML));
+      request.getPayload().setContentType(MediaType.TEXT_XML);
    }
 }

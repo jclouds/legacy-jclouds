@@ -32,8 +32,8 @@ import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.http.functions.CloseContentAndReturn;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.functions.GetFirstInstanceInList;
 import org.jclouds.ibmdev.functions.ParseAddressFromJson;
@@ -79,8 +79,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -89,9 +89,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
       // for example, using basic authentication, we should get "only one" header
-      assertHeadersEqual(httpRequest,
+      assertNonPayloadHeadersEqual(httpRequest,
                "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
-      assertPayloadEquals(httpRequest, null);
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImagesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -108,8 +108,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -126,10 +126,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -146,9 +146,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 17\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "visibility=PUBLIC");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "visibility=PUBLIC", "application/x-www-form-urlencoded",
+               false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -165,8 +165,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseInstancesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -185,8 +185,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/requests/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseInstancesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -203,8 +203,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseInstanceFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -223,9 +223,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 24\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "expirationTime=123215235");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "expirationTime=123215235", "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseExpirationTimeFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -242,11 +242,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 13\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "state=restart");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "state=restart", "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -262,11 +262,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 29\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "state=restart&keyName=keyName");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "state=restart&keyName=keyName", "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -282,9 +282,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 54\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "state=save&description=imageDescription&name=imageName");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "state=save&description=imageDescription&name=imageName", "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -300,10 +300,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -318,8 +318,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeysFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -336,8 +336,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -354,9 +354,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 8\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "name=key");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "name=key", "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -374,11 +374,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 29\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "name=key&publicKey=publicbits");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "name=key&publicKey=publicbits", "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -394,11 +394,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/key HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 20\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "publicKey=publicbits");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "publicKey=publicbits", "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -415,11 +415,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/key HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 12\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "default=true");
+      assertNonPayloadHeadersEqual(httpRequest,
+               "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "default=true", "application/x-www-form-urlencoded", false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -434,10 +434,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -452,8 +452,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -470,8 +470,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumeFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -490,9 +490,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 51\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "location=location&format=format&name=name&size=size");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "location=location&format=format&name=name&size=size",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumeFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -512,9 +512,9 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 57\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "location=1&imageID=22&name=name&instanceType=instanceType");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "location=1&imageID=22&name=name&instanceType=instanceType",
+               "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, httpRequest, GetFirstInstanceInList.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -538,11 +538,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 221\nContent-Type: application/x-www-form-urlencoded\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(
                httpRequest,
-               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.0.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3");
+               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.0.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, GetFirstInstanceInList.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -559,10 +559,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
@@ -577,8 +577,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/locations HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: text/xml\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/xml\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationsHandler.class);
@@ -595,8 +595,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/locations/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: text/xml\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/xml\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationHandler.class);
@@ -613,8 +613,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseAddressesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -633,9 +633,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses HTTP/1.1");
-      assertHeadersEqual(httpRequest,
-               "Accept: application/json\nContent-Length: 10\nContent-Type: application/x-www-form-urlencoded\n");
-      assertPayloadEquals(httpRequest, "location=1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, "location=1", "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseAddressFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -652,10 +651,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses/1 HTTP/1.1");
-      assertHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, CloseContentAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 

@@ -68,7 +68,8 @@ public class ChefErrorHandler implements HttpErrorHandler {
                break;
          }
       } finally {
-         Closeables.closeQuietly(response.getContent());
+         if (response.getPayload() != null)
+            Closeables.closeQuietly(response.getPayload().getInput());
          command.setException(exception);
       }
    }
