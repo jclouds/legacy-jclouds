@@ -23,10 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketLogging;
@@ -36,7 +34,6 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
-import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.aws.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYou;
@@ -61,25 +58,19 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code S3Client}
@@ -87,7 +78,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "s3.S3ClientTest")
-public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
+public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class,
@@ -228,8 +219,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(request,
                "PUT https://destinationbucket.s3.amazonaws.com/destinationObject HTTP/1.1");
-      assertNonPayloadHeadersEqual(
-               request,
+      assertNonPayloadHeadersEqual(request,
                "Host: destinationbucket.s3.amazonaws.com\nx-amz-copy-source: /sourceBucket/sourceObject\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -416,8 +406,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       HttpRequest request = processor.createRequest(method, "EU", "bucket");
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request,
-               "Host: bucket.s3.amazonaws.com\n");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(
                request,
                "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
@@ -434,7 +423,7 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
             IllegalArgumentException, NoSuchMethodException, IOException {
 
       Method method = S3AsyncClient.class.getMethod("putObject", String.class, S3Object.class,
-               Array.newInstance(PutObjectOptions.class, 0).getClass());
+               PutObjectOptions[].class);
       HttpRequest request = processor.createRequest(method, "bucket", blobToS3Object
                .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
@@ -522,37 +511,9 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
       checkFilters(request);
    }
 
-   BlobToObject blobToS3Object;
-   RequestAuthorizeSignature filter;
-
-   @Override
-   protected void checkFilters(HttpRequest request) {
-      assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), RequestAuthorizeSignature.class);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
-
-   @BeforeClass
-   @Override
-   protected void setupFactory() throws IOException {
-      super.setupFactory();
-      blobToS3Object = injector.getInstance(BlobToObject.class);
-      filter = injector.getInstance(RequestAuthorizeSignature.class);
-   }
-
-   @Override
-   protected Module createModule() {
-      return new TestS3RestClientModule();
-   }
-
    @RequiresHttp
    @ConfiguresRestClient
-   private static final class TestS3RestClientModule extends S3RestClientModule {
+   protected static final class TestS3RestClientModule extends S3RestClientModule {
       @Override
       protected void configure() {
          super.configure();
@@ -565,9 +526,8 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("s3", "identity", "credential",
-               new Properties());
+   protected Module createModule() {
+      return new TestS3RestClientModule();
    }
 
 }

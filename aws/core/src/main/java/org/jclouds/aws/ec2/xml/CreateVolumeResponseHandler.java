@@ -32,6 +32,7 @@ import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -43,7 +44,8 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volume> {
+public class CreateVolumeResponseHandler extends
+         ParseSax.HandlerForGeneratedRequestWithResult<Volume> {
    private StringBuilder currentText = new StringBuilder();
 
    @Resource
@@ -154,11 +156,11 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    }
 
    @Override
-   public void setContext(GeneratedHttpRequest<?> request) {
+   public CreateVolumeResponseHandler setContext(HttpRequest request) {
       super.setContext(request);
-      region = EC2Utils.findRegionInArgsOrNull(request);
+      region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
       if (region == null) {
-         String zone = EC2Utils.findAvailabilityZoneInArgsOrNull(request);
+         String zone = EC2Utils.findAvailabilityZoneInArgsOrNull((GeneratedHttpRequest<?>) request);
          if (zone != null) {
             region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
                      "zone %s not in %s", zone, availabilityZoneToRegion));
@@ -166,5 +168,6 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
             region = defaultRegion;
          }
       }
+      return this;
    }
 }

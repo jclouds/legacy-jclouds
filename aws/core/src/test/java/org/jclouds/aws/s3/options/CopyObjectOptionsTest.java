@@ -70,6 +70,7 @@ public class CopyObjectOptionsTest {
    void testGoodMetaStatic() {
       CopyObjectOptions options = overrideMetadataWith(goodMeta);
       options.setMetadataPrefix("x-amz-meta-");
+      options.setHeaderTag("amz");
       assertGoodMeta(options);
    }
 
@@ -92,6 +93,7 @@ public class CopyObjectOptionsTest {
    @Test
    void testGoodMeta() {
       CopyObjectOptions options = new CopyObjectOptions();
+      options.setHeaderTag("amz");
       options.setMetadataPrefix("x-amz-meta-");
       options.overrideMetadataWith(goodMeta);
       assertGoodMeta(options);
@@ -269,6 +271,8 @@ public class CopyObjectOptionsTest {
    @Test
    void testBuildRequestHeadersWhenMetadataNull() throws UnsupportedEncodingException {
       CopyObjectOptions options = new CopyObjectOptions();
+      options.setHeaderTag("amz");
+
       options.setMetadataPrefix("x-amz-meta-");
       assert options.buildRequestHeaders() != null;
    }
@@ -277,6 +281,8 @@ public class CopyObjectOptionsTest {
    void testBuildRequestHeaders() throws UnsupportedEncodingException {
       CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag)
                .overrideMetadataWith(goodMeta);
+      options.setHeaderTag("amz");
+
       options.setMetadataPrefix("x-amz-meta-");
 
       Multimap<String, String> headers = options.buildRequestHeaders();
@@ -304,6 +310,8 @@ public class CopyObjectOptionsTest {
    @Test
    void testBuildRequestHeadersACL() throws UnsupportedEncodingException {
       CopyObjectOptions options = overrideAcl(CannedAccessPolicy.AUTHENTICATED_READ);
+      options.setHeaderTag("amz");
+
       options.setMetadataPrefix("x-amz-meta-");
 
       Multimap<String, String> headers = options.buildRequestHeaders();

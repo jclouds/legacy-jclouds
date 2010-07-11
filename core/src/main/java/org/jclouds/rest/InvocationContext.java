@@ -20,7 +20,7 @@ package org.jclouds.rest;
 
 import javax.ws.rs.PathParam;
 
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.http.HttpRequest;
 
 /**
  * Passes generated Http request into this object;
@@ -29,5 +29,5 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * @author Adrian Cole
  */
 public interface InvocationContext {
-   void setContext(GeneratedHttpRequest<?> request);
+   Object setContext(HttpRequest request);
 }

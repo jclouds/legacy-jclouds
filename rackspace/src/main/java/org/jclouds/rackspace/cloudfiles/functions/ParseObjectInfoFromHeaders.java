@@ -25,11 +25,11 @@ import javax.inject.Inject;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -68,8 +68,10 @@ public class ParseObjectInfoFromHeaders implements
       return to;
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseObjectInfoFromHeaders setContext(HttpRequest request) {
       blobMetadataParser.setContext(request);
+      return this;
    }
 
 }

@@ -23,8 +23,8 @@ import static org.jclouds.util.Utils.propagateOrNull;
 import java.net.URI;
 
 import org.jclouds.blobstore.KeyAlreadyExistsException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -43,8 +43,10 @@ public class ReturnEndpointIfAlreadyExists implements Function<Exception, URI>, 
       return URI.class.cast(propagateOrNull(from));
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ReturnEndpointIfAlreadyExists setContext(HttpRequest request) {
       this.endpoint = request == null ? null : request.getEndpoint();
+      return this;
    }
 
 }

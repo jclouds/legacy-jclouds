@@ -22,12 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -39,7 +39,7 @@ import com.google.common.base.Function;
 public class ParseContainerCDNMetadataFromHeaders implements
          Function<HttpResponse, ContainerCDNMetadata>, InvocationContext {
 
-   private GeneratedHttpRequest<?> request;
+   private HttpRequest request;
 
    /**
     * parses the http response headers to create a new {@link ContainerCDNMetadata} object.
@@ -60,7 +60,9 @@ public class ParseContainerCDNMetadataFromHeaders implements
       }
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseContainerCDNMetadataFromHeaders setContext(HttpRequest request) {
       this.request = request;
+      return this;
    }
 }

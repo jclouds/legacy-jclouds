@@ -32,7 +32,6 @@ import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.MutableObjectMetadataImpl;
-import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
@@ -61,7 +60,7 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http,
-               "\"abc\""), blobToObjectMetadata, encryptionService);
+               "\"abc\""), blobToObjectMetadata, encryptionService, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -75,9 +74,9 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
-      http.getHeaders().put(S3Headers.AMZ_MD5, "\"abc\"");
+      http.getHeaders().put("x-amz-meta-object-eTag", "\"abc\"");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http,
-               null), blobToObjectMetadata, encryptionService);
+               null), blobToObjectMetadata, encryptionService, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }

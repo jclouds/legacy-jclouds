@@ -34,6 +34,7 @@ import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Maps;
@@ -48,7 +49,8 @@ import com.google.common.collect.Sets;
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
  *      />
  */
-public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Set<Image>> {
+public class DescribeImagesResponseHandler extends
+         ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
 
    @Inject
    public DescribeImagesResponseHandler(@Region String defaultRegion) {
@@ -151,7 +153,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
             this.deleteOnTermination = true;
          } else if (!inProductCodes) {
             try {
-               String region = EC2Utils.findRegionInArgsOrNull(request);
+               String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
                if (region == null)
                   region = defaultRegion;
                contents.add(new Image(region, architecture, this.name, description, imageId,

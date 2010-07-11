@@ -18,43 +18,33 @@
  */
 package org.jclouds.aws.s3.filters;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.Properties;
 
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.Constants;
+import org.jclouds.aws.s3.BaseS3AsyncClientTest;
+import org.jclouds.aws.s3.S3AsyncClient;
+import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.CannedAccessPolicy;
+import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.options.PutObjectOptions;
+import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
-
 @Test(groups = "unit", testName = "s3.RequestAuthorizeSignatureTest")
-public class RequestAuthorizeSignatureTest {
-
-   private RequestAuthorizeSignature filter;
+public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest {
 
    @DataProvider(parallel = true)
-   public Object[][] dataProvider() {
-      return new Object[][] {
-               { new HttpRequest(HttpMethod.GET, URI.create("http://s3.amazonaws.com:80")) },
-               { new HttpRequest(
-                        HttpMethod.GET,
-                        URI
-                                 .create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80/testObject")) },
-               { new HttpRequest(HttpMethod.GET, URI.create("http://s3.amazonaws.com:80/?acl"))
+   public Object[][] dataProvider() throws NoSuchMethodException {
+      return new Object[][] { { listOwnedBuckets() }, { putObject() }, { putBucketAcl() }
 
-               } };
+      };
    }
 
    /**
@@ -62,7 +52,7 @@ public class RequestAuthorizeSignatureTest {
     * this was once per second. If this timestamp update interval is increased, it could make this
     * test appear to hang for a long time.
     */
-   @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 3000)
+   @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 10000)
    void testIdempotent(HttpRequest request) {
       filter.filter(request);
       String signature = request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION);
@@ -84,70 +74,69 @@ public class RequestAuthorizeSignatureTest {
    }
 
    @Test
-   void testAppendBucketNameHostHeader() {
-      URI host = URI.create("http://s3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
-      request.getHeaders().put(HttpHeaders.HOST, "adriancole.s3int5.s3.amazonaws.com");
+   void testAppendBucketNameHostHeader() throws SecurityException, NoSuchMethodException {
+      HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod(
+               "getBucketLocation", String.class), "bucket");
       StringBuilder builder = new StringBuilder();
       filter.appendBucketName(request, builder);
-      assertEquals(builder.toString(), "/adriancole.s3int5");
+      assertEquals(builder.toString(), "/bucket");
    }
 
    @Test
-   void testAclQueryString() {
-      URI host = URI.create("http://s3.amazonaws.com:80/?acl");
-      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
+   void testAclQueryString() throws SecurityException, NoSuchMethodException {
+      HttpRequest request = putBucketAcl();
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
       assertEquals(builder.toString(), "/?acl");
    }
 
+   private GeneratedHttpRequest<S3AsyncClient> putBucketAcl() throws NoSuchMethodException {
+      return processor.createRequest(S3AsyncClient.class.getMethod("putBucketACL", String.class,
+               AccessControlList.class), "bucket", AccessControlList.fromCannedAccessPolicy(
+               CannedAccessPolicy.PRIVATE, "1234"));
+   }
+
    // "?acl", "?location", "?logging", or "?torrent"
 
    @Test
-   void testAppendBucketNameHostHeaderService() {
-      URI host = URI.create("http://s3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
-      request.getHeaders().put(HttpHeaders.HOST, "s3.amazonaws.com");
+   void testAppendBucketNameHostHeaderService() throws SecurityException, NoSuchMethodException {
+      HttpRequest request = listOwnedBuckets();
       StringBuilder builder = new StringBuilder();
       filter.appendBucketName(request, builder);
       assertEquals(builder.toString(), "");
    }
 
-   @Test
-   void testHeadersGoLowercase() {
-      URI host = URI.create("http://s3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
-      request.getHeaders().put("x-amz-adrian", "s3.amazonaws.com");
-      StringBuilder builder = new StringBuilder();
-      filter.appendBucketName(request, builder);
-      assertEquals(builder.toString(), "");
+   private GeneratedHttpRequest<S3AsyncClient> listOwnedBuckets() throws NoSuchMethodException {
+      return processor.createRequest(S3AsyncClient.class.getMethod("listOwnedBuckets"));
    }
 
    @Test
-   void testAppendBucketNameURIHost() {
-      URI host = URI.create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
+   void testHeadersGoLowercase() throws SecurityException, NoSuchMethodException {
+      HttpRequest request = putObject();
       StringBuilder builder = new StringBuilder();
-      filter.appendBucketName(request, builder);
-      assertEquals(builder.toString(), "/adriancole.s3int5");
+      filter.appendAmzHeaders(request, builder);
+      assertEquals(builder.toString(), "x-amz-meta-x-amz-adrian:foo\n");
    }
 
-   /**
-    * before class, as we need to ensure that the filter is threadsafe.
-    * 
-    * @throws IOException
-    * 
-    */
-   @BeforeClass
-   protected void createFilter() throws IOException {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_SESSION_INTERVAL, "1");
-      Injector injector = new RestContextFactory().createContextBuilder("s3", "foo", "bar",
-               ImmutableSet.of(new MockModule(), new NullLoggingModule()), overrides)
-               .buildInjector();
+   private HttpRequest putObject() throws NoSuchMethodException {
+      S3Object object = blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB);
 
-      filter = injector.getInstance(RequestAuthorizeSignature.class);
+      object.getMetadata().getUserMetadata().put("x-amz-Adrian", "foo");
+      HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod("putObject",
+               String.class, S3Object.class, PutObjectOptions[].class), "bucket", object);
+      return request;
    }
 
+   @Test
+   void testAppendBucketNameURIHost() throws SecurityException, NoSuchMethodException {
+      HttpRequest request = processor.createRequest(S3AsyncClient.class.getMethod(
+               "getBucketLocation", String.class), "bucket");
+      assertEquals(request.getEndpoint().getHost(), "bucket.s3.amazonaws.com");
+   }
+   
+   protected Properties getProperties() {
+      Properties overrides=  new Properties();
+      overrides.setProperty(PROPERTY_SESSION_INTERVAL, 1 + "");
+      return overrides;
+   }
 }

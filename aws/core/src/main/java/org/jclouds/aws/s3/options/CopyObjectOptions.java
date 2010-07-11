@@ -20,11 +20,13 @@ package org.jclouds.aws.s3.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -70,11 +72,8 @@ import com.google.common.collect.Multimap;
  */
 public class CopyObjectOptions extends BaseHttpRequestOptions {
    private final static DateService dateService = new SimpleDateFormatDateService();
-
    public static final CopyObjectOptions NONE = new CopyObjectOptions();
-
    private Map<String, String> metadata;
-
    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;
 
    private String metadataPrefix;
@@ -82,6 +81,13 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    @Inject
    public void setMetadataPrefix(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.metadataPrefix = metadataPrefix;
+   }
+
+   private String headerTag;
+
+   @Inject
+   public void setHeaderTag(@Named(PROPERTY_HEADER_TAG) String headerTag) {
+      this.headerTag = headerTag;
    }
 
    /**
@@ -251,15 +257,18 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 
    @Override
    public Multimap<String, String> buildRequestHeaders() {
+      checkState(headerTag != null, "headerTag should have been injected!");
       checkState(metadataPrefix != null, "metadataPrefix should have been injected!");
       Multimap<String, String> returnVal = LinkedHashMultimap.create();
-      returnVal.putAll(headers);
+      for (Entry<String, String> entry : headers.entries()) {
+         returnVal.put(entry.getKey().replace("aws", headerTag), entry.getValue());
+      }
       if (metadata != null) {
          for (String key : metadata.keySet()) {
             returnVal.put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata
                      .get(key));
          }
-         returnVal.put("x-amz-metadata-directive", "REPLACE");
+         returnVal.put("x-" + headerTag + "-metadata-directive", "REPLACE");
       }
       return returnVal;
    }

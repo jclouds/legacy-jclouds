@@ -16,34 +16,18 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.aws.s3;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Prefixes the hostname of the endpoint with the contents of a method parameter,
- * 
- * @author Adrian Cole
+ * Annotates the parameter that this is a bucket.
  */
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface HostPrefixParam {
-
-   /**
-    * Defines the characters that will be inserted in-between the value of the annotated method
-    * argument and the existing hostname.
-    * 
-    * <p />
-    * <ul>
-    * <li>hostname was {@code mydomain.com}</li>
-    * <li>method argument is {@code myhost}</li>
-    * <li>if {@code joinOn} is not set, result is {@code myhostmydomain.com}</li>
-    * <li>if {@code joinOn} is set to {@code .}, result is {@code myhost.mydomain.com}</li>
-    * </ul>
-    * 
-    */
-   String value() default ".";
+@Target(PARAMETER)
+@Retention(RUNTIME)
+public @interface Bucket {
 }

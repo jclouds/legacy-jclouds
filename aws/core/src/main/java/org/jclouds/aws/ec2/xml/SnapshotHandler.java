@@ -28,12 +28,13 @@ import org.jclouds.aws.ec2.domain.Snapshot.Status;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
+public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Snapshot> {
    private StringBuilder currentText = new StringBuilder();
 
    protected final DateService dateService;
@@ -56,7 +57,7 @@ public class SnapshotHandler extends ParseSax.HandlerWithResult<Snapshot> {
    }
 
    public Snapshot getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull(request);
+      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
       if (region == null)
          region = defaultRegion;
       Snapshot snapshot = new Snapshot(region, id, volumeId, volumeSize, status, startTime,

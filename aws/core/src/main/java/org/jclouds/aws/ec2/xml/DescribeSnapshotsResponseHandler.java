@@ -23,8 +23,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.Snapshot;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -66,8 +66,9 @@ public class DescribeSnapshotsResponseHandler extends ParseSax.HandlerWithResult
    }
 
    @Override
-   public void setContext(GeneratedHttpRequest<?> request) {
+   public DescribeSnapshotsResponseHandler setContext(HttpRequest request) {
       snapshotHandler.setContext(request);
       super.setContext(request);
+      return this;
    }
 }

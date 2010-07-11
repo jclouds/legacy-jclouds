@@ -30,6 +30,7 @@ import org.jclouds.aws.elb.domain.LoadBalancer.AppCookieStickinessPolicy;
 import org.jclouds.aws.elb.domain.LoadBalancer.LBCookieStickinessPolicy;
 import org.jclouds.aws.elb.domain.LoadBalancer.LoadBalancerListener;
 import org.jclouds.date.DateService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -42,7 +43,7 @@ import com.google.common.collect.Sets;
  * @author Lili Nadar
  */
 public class DescribeLoadBalancersResponseHandler extends
-         ParseSax.HandlerWithResult<Set<LoadBalancer>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<Set<LoadBalancer>> {
    @Inject
    public DescribeLoadBalancersResponseHandler(@Region String defaultRegion) {
       this.defaultRegion = defaultRegion;
@@ -129,7 +130,7 @@ public class DescribeLoadBalancersResponseHandler extends
          } else if (!(inListenerDescriptions || inAppCookieStickinessPolicies || inInstances
                   || inLBCookieStickinessPolicies || inAvailabilityZones)) {
             try {
-               String region = EC2Utils.findRegionInArgsOrNull(request);
+               String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
                if (region == null)
                   region = defaultRegion;
 
@@ -158,9 +159,10 @@ public class DescribeLoadBalancersResponseHandler extends
    }
 
    @Override
-   public void setContext(GeneratedHttpRequest<?> request) {
+   public DescribeLoadBalancersResponseHandler setContext(HttpRequest request) {
       listenerHandler.setContext(request);
       super.setContext(request);
+      return this;
    }
 
    public class LoadBalancerListenerHandler extends

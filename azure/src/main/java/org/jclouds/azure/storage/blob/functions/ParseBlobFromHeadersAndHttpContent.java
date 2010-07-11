@@ -23,9 +23,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -57,8 +57,10 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
       return blob;
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseBlobFromHeadersAndHttpContent setContext(HttpRequest request) {
       metadataParser.setContext(request);
+      return this;
    }
 
 }

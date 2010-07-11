@@ -21,20 +21,9 @@ package org.jclouds.aws.s3.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.util.Patterns;
 
 /**
@@ -42,26 +31,7 @@ import org.jclouds.util.Patterns;
  * 
  * @author Adrian Cole
  */
-@Singleton
 public class S3Utils {
-
-   @Inject
-   AWSUtils util;
-
-   public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
-            InputStream content) throws HttpException {
-      AWSError error = util.parseAWSErrorFromContent(command.getRequest(), response, content);
-      if (error.getRequestId() == null)
-         error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
-      error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
-      return error;
-   }
-
-   public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
-            String content) throws HttpException {
-      return parseAWSErrorFromContent(command, response, new ByteArrayInputStream(content
-               .getBytes()));
-   }
 
    public static final Pattern BUCKET_NAME_PATTERN = Pattern.compile("^[a-z0-9][-_.a-z0-9]+");
 

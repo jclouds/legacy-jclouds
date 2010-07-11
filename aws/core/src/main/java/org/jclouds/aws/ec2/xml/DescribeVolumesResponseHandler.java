@@ -23,8 +23,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.Volume;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -73,8 +73,9 @@ public class DescribeVolumesResponseHandler extends ParseSax.HandlerWithResult<S
    }
 
    @Override
-   public void setContext(GeneratedHttpRequest<?> request) {
+   public DescribeVolumesResponseHandler setContext(HttpRequest request) {
       volumeHandler.setContext(request);
       super.setContext(request);
+      return this;
    }
 }

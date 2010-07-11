@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.reportMatcher;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 
 import java.net.URI;
 
@@ -22,6 +23,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -57,7 +59,7 @@ public class ParseAWSErrorFromXmlContentTest {
                   @Override
                   protected void configure() {
                      bind(RequestSigner.class).toInstance(createMock(RequestSigner.class));
-
+                     bindConstant().annotatedWith(Names.named(PROPERTY_HEADER_TAG)).to("amz");
                   }
 
                }).getInstance(ParseAWSErrorFromXmlContent.class);

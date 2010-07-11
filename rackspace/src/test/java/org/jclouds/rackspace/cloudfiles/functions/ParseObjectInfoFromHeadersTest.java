@@ -25,6 +25,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
@@ -52,6 +53,7 @@ public class ParseObjectInfoFromHeadersTest {
          bindConstant()
                   .annotatedWith(Names.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to(
                            "sdf");
+         bindConstant().annotatedWith(Names.named(Constants.PROPERTY_API_VERSION)).to("1");
       }
 
    });

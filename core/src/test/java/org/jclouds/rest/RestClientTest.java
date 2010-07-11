@@ -21,6 +21,7 @@ package org.jclouds.rest;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
@@ -60,10 +61,13 @@ public abstract class RestClientTest<T> extends BaseRestClientTest {
    protected void setupFactory() throws IOException {
       ContextSpec<?, ?> contextSpec = createContextSpec();
       injector = createContextBuilder(contextSpec,
-               ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()))
-               .buildInjector();
+               ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()),
+               getProperties()).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       processor = injector.getInstance(Key.get(createTypeLiteral()));
    }
 
+   protected Properties getProperties() {
+      return new Properties();
+   }
 }

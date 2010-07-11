@@ -21,11 +21,12 @@ package org.jclouds.aws.s3;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_AUTH_TAG;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_HEADER_TAG;
-import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SERVICE_EXPR;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
@@ -47,9 +48,10 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
-      properties.setProperty(PROPERTY_S3_AUTH_TAG, "AWS");
-      properties.setProperty(PROPERTY_S3_HEADER_TAG, "amz");
-      properties.setProperty(PROPERTY_S3_SERVICE_EXPR, "\\.s3[^.]*\\.amazonaws\\.com");
+      properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_HEADER_TAG, "amz");
+      properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/");
+      properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "true");
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       addEndpoints(properties);
       properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
@@ -90,7 +92,7 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    protected void setMetaPrefix() {
       if (properties.getProperty(PROPERTY_USER_METADATA_PREFIX) == null) {
          properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-%s-meta-",
-                  properties.getProperty(PROPERTY_S3_HEADER_TAG)));
+                  properties.getProperty(PROPERTY_HEADER_TAG)));
       }
    }
 

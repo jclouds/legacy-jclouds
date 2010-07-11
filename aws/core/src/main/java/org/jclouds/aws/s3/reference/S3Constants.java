@@ -33,10 +33,7 @@ public interface S3Constants {
    public static final String MARKER = "marker";
    public static final String MAX_KEYS = "max-keys";
    public static final String DELIMITER = "delimiter";
-
-   public static final String PROPERTY_S3_SERVICE_EXPR = "jclouds.service.expr";
-
-   public static final String PROPERTY_S3_AUTH_TAG = "jclouds.s3.auth.tag";
-   public static final String PROPERTY_S3_HEADER_TAG = "jclouds.s3.header.tag";
+   public static final String PROPERTY_S3_SERVICE_PATH = "jclouds.s3.service-path";
+   public static final String PROPERTY_S3_VIRTUAL_HOST_BUCKETS = "jclouds.s3.virtual-host-buckets";
 
 }

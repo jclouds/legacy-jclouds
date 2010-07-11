@@ -22,10 +22,10 @@ import static org.jclouds.http.HttpUtils.releasePayload;
 
 import javax.annotation.Resource;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -38,16 +38,16 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
    public static class NoContentMD5Exception extends RuntimeException {
 
       private static final long serialVersionUID = 1L;
-      private final GeneratedHttpRequest<?> request;
+      private final HttpRequest request;
       private final HttpResponse response;
 
-      public NoContentMD5Exception(GeneratedHttpRequest<?> request, HttpResponse response) {
+      public NoContentMD5Exception(HttpRequest request, HttpResponse response) {
          super(String.format("no MD5 returned from request: %s; response %s", request, response));
          this.request = request;
          this.response = response;
       }
 
-      public GeneratedHttpRequest<?> getRequest() {
+      public HttpRequest getRequest() {
          return request;
       }
 
@@ -59,7 +59,7 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private GeneratedHttpRequest<?> request;
+   private HttpRequest request;
 
    public byte[] apply(HttpResponse from) {
       releasePayload(from);
@@ -69,8 +69,10 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
       throw new NoContentMD5Exception(request, from);
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseContentMD5FromHeaders setContext(HttpRequest request) {
       this.request = request;
+      return this;
    }
 
 }

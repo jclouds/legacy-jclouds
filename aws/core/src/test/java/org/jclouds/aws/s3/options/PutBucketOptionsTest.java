@@ -52,8 +52,10 @@ public class PutBucketOptionsTest {
    @Test
    void testBuildRequestHeaders() throws UnsupportedEncodingException {
 
-      Multimap<String, String> headers = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ)
-               .buildRequestHeaders();
+      PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
+
+      options.setHeaderTag("amz");
+      Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
                CannedAccessPolicy.AUTHENTICATED_READ.toString());
    }

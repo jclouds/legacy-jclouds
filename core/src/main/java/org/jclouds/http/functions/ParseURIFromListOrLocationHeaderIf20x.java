@@ -30,10 +30,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -52,7 +52,7 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
       this.uriBuilderProvider = uriBuilderProvider;
    }
 
-   private GeneratedHttpRequest<?> request;
+   private HttpRequest request;
 
    public URI apply(HttpResponse from) {
       if (from.getStatusCode() > 206)
@@ -93,7 +93,9 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
       }
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseURIFromListOrLocationHeaderIf20x setContext(HttpRequest request) {
       this.request = request;
+      return this;
    }
 }

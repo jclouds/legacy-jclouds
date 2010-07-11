@@ -20,8 +20,6 @@ package org.jclouds.aws.handlers;
 
 import static org.jclouds.http.HttpUtils.releasePayload;
 
-import java.io.IOException;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,7 +37,6 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -67,7 +64,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       HttpRequest request = command.getRequest();
       Exception exception = new HttpResponseException(command, response);
       try {
-         AWSError error = parseErrorFromContentOrNull(request, response);
+         AWSError error = utils.parseAWSErrorFromContent(request, response);
          exception = error != null ? new AWSResponseException(command, response, error) : exception;
          switch (response.getStatusCode()) {
             case 400:
@@ -103,16 +100,4 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       }
    }
 
-   AWSError parseErrorFromContentOrNull(HttpRequest request, HttpResponse response) {
-      if (response.getPayload() != null) {
-         try {
-            String content = Utils.toStringAndClose(response.getPayload().getInput());
-            if (content != null && content.indexOf('<') >= 0)
-               return utils.parseAWSErrorFromContent(request, response, content);
-         } catch (IOException e) {
-            logger.warn(e, "exception reading error from response", response);
-         }
-      }
-      return null;
-   }
 }

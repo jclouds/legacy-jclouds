@@ -20,11 +20,11 @@ package org.jclouds.rackspace.cloudfiles.functions;
 
 import javax.inject.Inject;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -57,8 +57,9 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       return object;
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
       infoParser.setContext(request);
+      return this;
    }
-
 }

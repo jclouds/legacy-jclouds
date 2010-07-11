@@ -19,10 +19,20 @@
 package org.jclouds.aws.s3.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+
+import java.util.Map.Entry;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Contains options supported in the REST API for the PUT bucket operation. <h2>
@@ -46,6 +56,23 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  */
 public class PutBucketOptions extends BaseHttpRequestOptions {
    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;
+
+   private String headerTag;
+
+   @Inject
+   public void setHeaderTag(@Named(PROPERTY_HEADER_TAG) String headerTag) {
+      this.headerTag = headerTag;
+   }
+
+   @Override
+   public Multimap<String, String> buildRequestHeaders() {
+      checkState(headerTag != null, "headerTag should have been injected!");
+      Multimap<String, String> returnVal = LinkedHashMultimap.create();
+      for (Entry<String, String> entry : headers.entries()) {
+         returnVal.put(entry.getKey().replace("aws", headerTag), entry.getValue());
+      }
+      return returnVal;
+   }
 
    /**
     * Override the default ACL (private) with the specified one.

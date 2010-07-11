@@ -27,9 +27,9 @@ import org.jclouds.azure.storage.blob.blobstore.functions.BlobMetadataToBlobProp
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -64,8 +64,10 @@ public class ParseBlobPropertiesFromHeaders implements
       return to;
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseBlobPropertiesFromHeaders setContext(HttpRequest request) {
       blobMetadataParser.setContext(request);
+      return this;
    }
 
 }

@@ -109,7 +109,6 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
@@ -121,6 +120,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.binders.BindAsHostPrefix;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
@@ -1494,8 +1494,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       public HttpRequest request;
 
-      public void setContext(GeneratedHttpRequest<?> request) {
+      public ReturnStringIf200Context setContext(HttpRequest request) {
          this.request = request;
+         return this;
       }
 
    }
@@ -1723,27 +1724,17 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                .singletonList("localhost"));
    }
 
-   public class TestVirtualHost {
+   public interface TestVirtualHost {
       @GET
       @Path("/{id}")
       @VirtualHost
-      public ListenableFuture<String> get(@PathParam("id") String id, String foo) {
-         return null;
-      }
+      ListenableFuture<String> get(@PathParam("id") String id, String foo);
 
       @GET
       @Path("/{id}")
-      public ListenableFuture<String> getPrefix(@PathParam("id") String id,
-               @HostPrefixParam("") String foo) {
-         return null;
-      }
+      ListenableFuture<String> getPrefix(@PathParam("id") String id,
+               @BinderParam(BindAsHostPrefix.class) String foo);
 
-      @GET
-      @Path("/{id}")
-      public ListenableFuture<String> getPrefixDot(@PathParam("id") String id,
-               @HostPrefixParam String foo) {
-         return null;
-      }
    }
 
    @Test
@@ -1764,17 +1755,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestVirtualHost.class.getMethod("getPrefix", String.class, String.class);
       HttpRequest request = factory(TestVirtualHost.class).createRequest(method,
                new Object[] { "1", "holy" });
-      assertEquals(request.getEndpoint().getHost(), "holylocalhost");
-      assertEquals(request.getEndpoint().getPath(), "/1");
-      assertEquals(request.getMethod(), HttpMethod.GET);
-      assertEquals(request.getHeaders().size(), 0);
-   }
-
-   @Test
-   public void testHostPrefixDot() throws SecurityException, NoSuchMethodException {
-      Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
-      HttpRequest request = factory(TestVirtualHost.class).createRequest(method,
-               new Object[] { "1", "holy" });
       assertEquals(request.getEndpoint().getHost(), "holy.localhost");
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
@@ -1782,15 +1762,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testHostPrefixDotEmpty() throws SecurityException, NoSuchMethodException {
-      Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
-      factory(TestVirtualHost.class).createRequest(method, new Object[] { "1", "" });
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testHostPrefixDotNull() throws SecurityException, NoSuchMethodException {
-      Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
-      factory(TestVirtualHost.class).createRequest(method, new Object[] { "1", null });
+   public void testHostPrefixEmpty() throws SecurityException, NoSuchMethodException {
+      Method method = TestVirtualHost.class.getMethod("getPrefix", String.class, String.class);
+      factory(TestVirtualHost.class).createRequest(method, "1", "");
    }
 
    public class TestHeaders {

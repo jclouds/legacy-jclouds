@@ -18,12 +18,14 @@
  */
 package org.jclouds.mezeo.pcs2.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.rest.InvocationContext;
@@ -64,8 +66,12 @@ public class AddMetadataItemIntoMap implements Function<HttpResponse, Void>, Inv
       return null;
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
-      this.request = request;
+   @Override
+   public AddMetadataItemIntoMap setContext(HttpRequest request) {
+      checkArgument(request instanceof GeneratedHttpRequest<?>,
+               "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest<?>) request;
+      return this;
    }
 
 }

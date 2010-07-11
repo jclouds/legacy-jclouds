@@ -487,8 +487,8 @@ public class HttpUtils {
       return formBuilder.toString();
    }
 
-   public void setPayloadPropertiesFromHeaders(Multimap<String, String> headers, HttpMessage request) {
-      Payload payload = request.getPayload();
+   public void setPayloadPropertiesFromHeaders(Multimap<String, String> headers, HttpMessage message) {
+      Payload payload = message.getPayload();
       boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
          @Override
          public boolean apply(Entry<String, String> input) {
@@ -508,32 +508,32 @@ public class HttpUtils {
             if (payload != null)
                payload.setContentType(header.getValue());
          } else {
-            request.getHeaders().put(header.getKey(), header.getValue());
+            message.getHeaders().put(header.getKey(), header.getValue());
          }
       }
 
-      String contentRange = request.getFirstHeaderOrNull("Content-Range");
-      if (contentRange != null) {
-         payload.setContentLength(Long.parseLong(contentRange.substring(0, contentRange
-                  .lastIndexOf('/'))));
+      if (message instanceof HttpRequest) {
+         checkArgument(
+                  message.getPayload() == null
+                           || message.getFirstHeaderOrNull(CONTENT_TYPE) == null,
+                  "configuration error please use request.getPayload().setContentType(value) as opposed to adding a content type   header: "
+                           + message);
+         checkArgument(
+                  message.getPayload() == null
+                           || message.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
+                  "configuration error please use request.getPayload().setContentLength(value) as opposed to adding a content length header: "
+                           + message);
+         checkArgument(message.getPayload() == null
+                  || message.getPayload().getContentLength() != null
+                  || "chunked".equalsIgnoreCase(message.getFirstHeaderOrNull("Transfer-Encoding")),
+                  "either chunked encoding must be set on the http request or contentlength set on the payload: "
+                           + message);
+         checkArgument(
+                  message.getPayload() == null
+                           || message.getFirstHeaderOrNull("Content-MD5") == null,
+                  "configuration error please use request.getPayload().setContentMD5(value) as opposed to adding a content md5 header: "
+                           + message);
       }
-
-      checkArgument(
-               request.getPayload() == null || request.getFirstHeaderOrNull(CONTENT_TYPE) == null,
-               "configuration error please use request.getPayload().setContentType(value) as opposed to adding a content type   header: "
-                        + request);
-      checkArgument(
-               request.getPayload() == null || request.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
-               "configuration error please use request.getPayload().setContentLength(value) as opposed to adding a content length header: "
-                        + request);
-      checkArgument(request.getPayload() == null || request.getPayload().getContentLength() != null
-               || "chunked".equalsIgnoreCase(request.getFirstHeaderOrNull("Transfer-Encoding")),
-               "either chunked encoding must be set on the http request or contentlength set on the payload: "
-                        + request);
-      checkArgument(
-               request.getPayload() == null || request.getFirstHeaderOrNull("Content-MD5") == null,
-               "configuration error please use request.getPayload().setContentMD5(value) as opposed to adding a content md5 header: "
-                        + request);
    }
 
    public static void releasePayload(HttpResponse from) {

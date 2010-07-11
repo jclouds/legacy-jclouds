@@ -58,7 +58,7 @@ public class ParseBlobMetadataFromHeadersTest {
    void setUp() {
 
       parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider,
-               new SimpleDateFormatDateService(), "prefix");
+               new SimpleDateFormatDateService(), "prefix", "default");
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();

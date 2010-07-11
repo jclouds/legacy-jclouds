@@ -26,7 +26,8 @@ import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.util.EC2Utils;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
+import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -46,7 +47,8 @@ import com.google.common.collect.Sets;
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-StopInstancesResponseInfoType.html"
  *      />
  */
-public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<InstanceStateChange>> {
+public class InstanceStateChangeHandler extends
+         HandlerForGeneratedRequestWithResult<SortedSet<InstanceStateChange>> {
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @Region
@@ -89,7 +91,7 @@ public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<Inst
             previousState = InstanceState.fromValue(currentOrNull());
          }
       } else if (qName.equals("item")) {
-         String region = EC2Utils.findRegionInArgsOrNull(request);
+         String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
          if (region == null)
             region = defaultRegion;
          instances.add(new InstanceStateChange(region, instanceId, shutdownState, previousState));

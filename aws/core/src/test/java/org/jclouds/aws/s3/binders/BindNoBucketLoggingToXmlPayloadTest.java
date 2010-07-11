@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
+import org.jclouds.aws.s3.BaseS3AsyncClientTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "s3.BindNoBucketLoggingToXmlPayloadTest")
-public class BindNoBucketLoggingToXmlPayloadTest extends BaseHandlerTest {
+public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest {
 
    public void testApplyInputStream() throws IOException {
 
@@ -41,8 +41,7 @@ public class BindNoBucketLoggingToXmlPayloadTest extends BaseHandlerTest {
       BindNoBucketLoggingToXmlPayload binder = injector
                .getInstance(BindNoBucketLoggingToXmlPayload.class);
 
-      binder.bindToRequest(request, null);
-      assertEquals(request.getPayload().getContentType(), "text/xml");
+      binder.bindToRequest(request, "bucket");
       assertEquals(request.getPayload().getRawContent(),
                "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
 

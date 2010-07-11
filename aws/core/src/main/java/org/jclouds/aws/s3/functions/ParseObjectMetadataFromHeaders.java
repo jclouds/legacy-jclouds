@@ -18,20 +18,21 @@
  */
 package org.jclouds.aws.s3.functions;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
-import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -49,13 +50,16 @@ public class ParseObjectMetadataFromHeaders implements
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final BlobToObjectMetadata blobToObjectMetadata;
    private final EncryptionService encryptionService;
+   private final String userMdPrefix;
 
    @Inject
    public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            BlobToObjectMetadata blobToObjectMetadata, EncryptionService encryptionService) {
+            BlobToObjectMetadata blobToObjectMetadata, EncryptionService encryptionService,
+            @Named(PROPERTY_USER_METADATA_PREFIX) String userMdPrefix) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectMetadata = blobToObjectMetadata;
       this.encryptionService = encryptionService;
+      this.userMdPrefix = userMdPrefix;
    }
 
    /**
@@ -80,15 +84,17 @@ public class ParseObjectMetadataFromHeaders implements
    @VisibleForTesting
    protected void addETagTo(HttpResponse from, MutableObjectMetadata metadata) {
       if (metadata.getETag() == null) {
-         String eTagHeader = from.getFirstHeaderOrNull(S3Headers.AMZ_MD5);
+         String eTagHeader = from.getFirstHeaderOrNull(userMdPrefix + "object-eTag");
          if (eTagHeader != null) {
             metadata.setETag(eTagHeader);
          }
       }
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseObjectMetadataFromHeaders setContext(HttpRequest request) {
       blobMetadataParser.setContext(request);
+      return this;
    }
 
 }

@@ -16,31 +16,44 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.binders;
+package org.jclouds.rest.binders;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.net.InternetDomainName.isValid;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.net.InternetDomainName;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BindNoBucketLoggingToXmlPayload implements Binder {
-   private final BindAsHostPrefixIfConfigured bindAsHostPrefixIfConfigured;
+public class BindAsHostPrefix implements Binder {
+
+   private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   BindNoBucketLoggingToXmlPayload(BindAsHostPrefixIfConfigured bindAsHostPrefixIfConfigured) {
-      this.bindAsHostPrefixIfConfigured = bindAsHostPrefixIfConfigured;
+   public BindAsHostPrefix(Provider<UriBuilder> uriBuilderProvider) {
+      this.uriBuilderProvider = uriBuilderProvider;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
-      bindAsHostPrefixIfConfigured.bindToRequest(request, payload);
-      String stringPayload = "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>";
-      request.setPayload(stringPayload);
+      checkNotNull(payload, "hostprefix");
+      checkArgument(isValid(request.getEndpoint().getHost()), "this is only valid for hostnames: "
+               + request);
+      UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
+      InternetDomainName name = InternetDomainName.from(request.getEndpoint().getHost()).child(
+               payload.toString());
+      builder.host(name.name());
+      request.setEndpoint(builder.build());
    }
-
 }

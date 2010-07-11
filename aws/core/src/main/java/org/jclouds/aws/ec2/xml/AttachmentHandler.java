@@ -29,12 +29,13 @@ import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class AttachmentHandler extends ParseSax.HandlerWithResult<Attachment> {
+public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Attachment> {
    private StringBuilder currentText = new StringBuilder();
 
    @Resource
@@ -51,7 +52,7 @@ public class AttachmentHandler extends ParseSax.HandlerWithResult<Attachment> {
    private Date attachTime;
 
    public Attachment getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull(request);
+      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
       if (region == null)
          region = defaultRegion;
       return new Attachment(region, volumeId, instanceId, device, attachmentStatus, attachTime);

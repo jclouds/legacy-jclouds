@@ -69,7 +69,7 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
 
    @Provides
    @Singleton
-   RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
+   protected RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
       return in;
    }
 
@@ -79,7 +79,7 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
    @Provides
    @TimeStamp
    @Singleton
-   Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
             final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {

@@ -29,6 +29,7 @@ import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -41,7 +42,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class DescribeSecurityGroupsResponseHandler extends
-         ParseSax.HandlerWithResult<SortedSet<SecurityGroup>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<SortedSet<SecurityGroup>> {
    @Inject
    @Region
    String defaultRegion;
@@ -117,7 +118,7 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.userId = null;
             this.userIdGroupName = null;
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {
-            String region = EC2Utils.findRegionInArgsOrNull(request);
+            String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
             if (region == null)
                region = defaultRegion;
             securtyGroups.add(new SecurityGroup(region, groupName, ownerId, groupDescription,

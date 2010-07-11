@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
@@ -180,7 +181,11 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
       }
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
-      this.request = request;
+   @Override
+   public ParseObjectInfoListFromJsonResponse setContext(HttpRequest request) {
+      checkArgument(request instanceof GeneratedHttpRequest<?>,
+               "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest<?>) request;
+      return this;
    }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
 import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
@@ -32,6 +34,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -47,14 +50,18 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
+   private final String apiVersion;
+
    private GeneratedHttpRequest<?> request;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
-            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
+            @Named(PROPERTY_API_VERSION) String apiVersion) {
       this.metadataFactory = metadataFactory;
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
+      this.apiVersion = apiVersion;
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
@@ -92,7 +99,13 @@ public class ParseSystemAndUserMetadataFromHeaders implements
       if (lastModified == null)
          throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
                   + from.getStatusLine());
-      metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
+      // Eucalyptus 1.6 returns iso8601 dates
+      if (apiVersion.indexOf("Walrus-1.6") != -1) {
+         metadata.setLastModified(dateParser.iso8601DateParse(lastModified.replace("+0000", "Z")));
+      } else {
+         metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
+      }
+
       if (metadata.getLastModified() == null)
          throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": "
                   + lastModified);
@@ -122,7 +135,10 @@ public class ParseSystemAndUserMetadataFromHeaders implements
          throw new HttpException(HttpHeaders.CONTENT_TYPE + " not found in headers");
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
-      this.request = request;
+   public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {
+      checkArgument(request instanceof GeneratedHttpRequest<?>,
+               "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest<?>) request;
+      return this;
    }
 }

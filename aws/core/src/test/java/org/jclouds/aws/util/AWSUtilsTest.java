@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.util;
+package org.jclouds.aws.util;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -28,16 +28,13 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -50,10 +47,9 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, groups = { "unit" }, testName = "s3.S3UtilsTest")
-public class S3UtilsTest {
-   S3Utils utils = null;
-   private HttpResponse response;
+@Test(sequential = true, groups = { "unit" }, testName = "aws.AWSUtilsTest")
+public class AWSUtilsTest {
+   AWSUtils utils = null;
    private HttpCommand command;
 
    @BeforeTest
@@ -63,10 +59,8 @@ public class S3UtilsTest {
                ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties())
                .buildInjector();
 
-      utils = injector.getInstance(S3Utils.class);
-      response = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
-      response.getHeaders().put(S3Headers.REQUEST_ID, "requestid");
-      response.getHeaders().put(S3Headers.REQUEST_TOKEN, "requesttoken");
+      utils = injector.getInstance(AWSUtils.class);
+
       command = createMock(HttpCommand.class);
       expect(command.getRequest()).andReturn(createMock(HttpRequest.class)).atLeastOnce();
       replay(command);
@@ -77,28 +71,22 @@ public class S3UtilsTest {
       utils = null;
    }
 
-   @Test
-   public void testParseAWSErrorFromContentHttpCommandHttpResponseInputStream() {
-      InputStream content = getClass().getResourceAsStream("/error.xml");
-      AWSError error = utils.parseAWSErrorFromContent(command, response, content);
-      validate(error);
+   HttpResponse response(InputStream content) {
+      HttpResponse response = new HttpResponse(400, "boa", Payloads.newInputStreamPayload(content));
+      response.getHeaders().put("x-amz-request-id", "requestid");
+      response.getHeaders().put("x-amz-id-2", "requesttoken");
+      return response;
    }
 
-   private void validate(AWSError error) {
+   @Test
+   public void testParseAWSErrorFromContentHttpCommandHttpResponseInputStream() {
+      AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response(getClass()
+               .getResourceAsStream("/error.xml")));
       assertEquals(error.getCode(), "NoSuchKey");
       assertEquals(error.getMessage(), "The resource you requested does not exist");
       assertEquals(error.getRequestToken(), "requesttoken");
       assertEquals(error.getRequestId(), "4442587FB7D0A2F9");
       assertEquals(error.getDetails().get("Resource"), "/mybucket/myfoto.jpg");
-   }
-
-   @Test
-   public void testParseAWSErrorFromContentHttpCommandHttpResponseString() throws HttpException,
-            IOException {
-      InputStream content = getClass().getResourceAsStream("/error.xml");
-      AWSError error = utils.parseAWSErrorFromContent(command, response, Utils
-               .toStringAndClose(content));
-      validate(error);
    }
 
    @Test

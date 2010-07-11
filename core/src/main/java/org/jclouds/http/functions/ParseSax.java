@@ -18,40 +18,43 @@
  */
 package org.jclouds.http.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.io.Closeables.closeQuietly;
 
 import java.io.InputStream;
+import java.io.StringReader;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.Utils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
 
 /**
- * This object will parse the body of an HttpResponse and return the result of
- * type <T> back to the caller.
+ * This object will parse the body of an HttpResponse and return the result of type <T> back to the
+ * caller.
  * 
  * @author Adrian Cole
  */
-public class ParseSax<T> implements Function<HttpResponse, T>,
-      InvocationContext {
+public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext {
 
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
    @Resource
    protected Logger logger = Logger.NULL;
-   private GeneratedHttpRequest<?> request;
+   private HttpRequest request;
 
    public static interface Factory {
       <T> ParseSax<T> create(HandlerWithResult<T> handler);
@@ -63,34 +66,67 @@ public class ParseSax<T> implements Function<HttpResponse, T>,
       this.handler = checkNotNull(handler, "handler");
    }
 
-   public T apply(HttpResponse from) throws HttpException {
+   public T apply(HttpResponse from) {
+      try {
+         checkNotNull(from, "http response");
+         checkNotNull(from.getPayload(), "payload in " + from);
+      } catch (NullPointerException e) {
+         return addRequestDetailsToException(e);
+      }
+      if (from.getStatusCode() >= 300)
+         return convertStreamToStringAndParse(from);
       return parse(from.getPayload().getInput());
    }
 
-   public T parse(InputStream from) throws HttpException {
-      if (from == null)
-         throw new HttpException("No input to parse");
+   private T convertStreamToStringAndParse(HttpResponse from) {
       try {
+         return parse(Utils.toStringAndClose(from.getPayload().getInput()));
+      } catch (Exception e) {
+         return addRequestDetailsToException(e);
+      }
+   }
+
+   public T parse(String from) {
+      try {
+         checkNotNull(from, "xml string");
+         checkArgument(from.indexOf('<') >= 0, String.format("not an xml document [%s] ",from));
+      } catch (RuntimeException e) {
+         return addRequestDetailsToException(e);
+      }
+      return parse(new InputSource(new StringReader(from)));
+   }
+
+   public T parse(InputStream from) {
+      try {
+         return parse(new InputSource(from));
+      } finally {
+         closeQuietly(from);
+      }
+   }
+
+   public T parse(InputSource from) {
+      try {
+         checkNotNull(from, "xml inputsource");
          parser.setContentHandler(getHandler());
          // This method should accept documents with a BOM (Byte-order mark)
-         parser.parse(new InputSource(from));
+         parser.parse(from);
          return getHandler().getResult();
       } catch (Exception e) {
-         if (request != null) {
+         return addRequestDetailsToException(e);
+      }
+   }
 
-            StringBuilder message = new StringBuilder();
-            message.append("Error parsing input for ").append(
-                  request.getRequestLine()).append(": ");
-            message.append(e.getMessage());
-            logger.error(e, message.toString());
-            throw new HttpException(message.toString(), e);
-         } else {
-            Throwables.propagate(e);
-            assert false : "should have propagated: " + e;
-            return null;
-         }
-      } finally {
-         Closeables.closeQuietly(from);
+   private T addRequestDetailsToException(Exception e) {
+      if (request != null) {
+         StringBuilder message = new StringBuilder();
+         message.append("Error parsing input for ").append(request.getRequestLine()).append(": ");
+         message.append(e.getMessage());
+         logger.error(e, message.toString());
+         throw new HttpException(message.toString(), e);
+      } else {
+         propagate(e);
+         assert false : "should have propagated: " + e;
+         return null;
       }
    }
 
@@ -99,26 +135,38 @@ public class ParseSax<T> implements Function<HttpResponse, T>,
    }
 
    /**
-    * Handler that produces a useable domain object accessible after parsing
-    * completes.
+    * Handler that produces a useable domain object accessible after parsing completes.
     * 
     * @author Adrian Cole
     */
-   public abstract static class HandlerWithResult<T> extends DefaultHandler
-         implements InvocationContext {
-      protected GeneratedHttpRequest<?> request;
+   public abstract static class HandlerWithResult<T> extends DefaultHandler implements
+            InvocationContext {
+      protected HttpRequest request;
 
       public abstract T getResult();
 
       @Override
-      public void setContext(GeneratedHttpRequest<?> request) {
+      public HandlerWithResult<T> setContext(HttpRequest request) {
          this.request = request;
+         return this;
+      }
+   }
+
+   public abstract static class HandlerForGeneratedRequestWithResult<T> extends
+            HandlerWithResult<T> {
+      @Override
+      public HandlerForGeneratedRequestWithResult<T> setContext(HttpRequest request) {
+         checkArgument(request instanceof GeneratedHttpRequest<?>,
+                  "note this handler requires a GeneratedHttpRequest");
+         super.setContext(request);
+         return this;
       }
    }
 
    @Override
-   public void setContext(GeneratedHttpRequest<?> request) {
+   public ParseSax<T> setContext(HttpRequest request) {
       handler.setContext(request);
       this.request = request;
+      return this;
    }
 }

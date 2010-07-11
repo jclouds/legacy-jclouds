@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -30,6 +32,7 @@ import org.jclouds.azure.storage.blob.domain.internal.MutableContainerProperties
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -99,8 +102,12 @@ public class ParseContainerPropertiesFromHeaders implements
       }
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
-      this.request = request;
+   @Override
+   public ParseContainerPropertiesFromHeaders setContext(HttpRequest request) {
+      checkArgument(request instanceof GeneratedHttpRequest<?>,
+               "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest<?>) request;
+      return this;
    }
 
 }

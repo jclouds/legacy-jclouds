@@ -36,7 +36,5 @@ public interface S3Headers {
     */
    public static final String CANNED_ACL = "x-amz-acl";
    public static final String AMZ_MD5 = "x-amz-meta-object-eTag";
-   public static final String REQUEST_ID = "x-amz-request-id";
-   public static final String REQUEST_TOKEN = "x-amz-id-2";
 
 }

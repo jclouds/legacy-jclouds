@@ -32,7 +32,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
@@ -57,33 +56,26 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
                && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
-         byte[] content = closeClientButKeepContentStream(response);
          if (command.getRequest().getMethod() == HttpMethod.HEAD) {
             changeToGETRequest(command.getRequest());
             return true;
          } else {
             command.incrementRedirectCount();
-            try {
-               AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response,
-                        new String(content));
-               String host = error.getDetails().get("Endpoint");
-               if (host != null) {
-                  if (host.equals(command.getRequest().getEndpoint().getHost())) {
-                     // must be an amazon error related to
-                     // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
-                     return backoffHandler.shouldRetryRequest(command, response);
-                  } else {
-                     changeSchemeHostAndPortTo(command.getRequest(), command.getRequest()
-                              .getEndpoint().getScheme(), host, command.getRequest().getEndpoint()
-                              .getPort(), uriBuilderProvider.get());
-                  }
-                  return true;
+            closeClientButKeepContentStream(response);
+            AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response);
+            String host = error.getDetails().get("Endpoint");
+            if (host != null) {
+               if (host.equals(command.getRequest().getEndpoint().getHost())) {
+                  // must be an amazon error related to
+                  // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
+                  return backoffHandler.shouldRetryRequest(command, response);
                } else {
-                  return false;
+                  changeSchemeHostAndPortTo(command.getRequest(), command.getRequest()
+                           .getEndpoint().getScheme(), host, command.getRequest().getEndpoint()
+                           .getPort(), uriBuilderProvider.get());
                }
-            } catch (HttpException e) {
-               logger.error(e, "error on redirect for command %s; response %s; retrying...",
-                        command, response);
+               return true;
+            } else {
                return false;
             }
          }

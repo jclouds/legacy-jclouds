@@ -22,9 +22,9 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -57,8 +57,10 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       return object;
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
+   @Override
+   public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
       metadataParser.setContext(request);
+      return this;
    }
 
 }

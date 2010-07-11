@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.handlers;
 
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -25,10 +27,8 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -59,20 +59,16 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
          return false;
       if (response.getStatusCode() == 400 || response.getStatusCode() == 403
                || response.getStatusCode() == 409) {
-         byte[] content = HttpUtils.closeClientButKeepContentStream(response);
          command.incrementFailureCount();
          // Content can be null in the case of HEAD requests
-         if (content != null) {
-            try {
-               AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response,
-                        new String(content));
-               if ("RequestTimeout".equals(error.getCode())
-                        || "OperationAborted".equals(error.getCode())
-                        || "SignatureDoesNotMatch".equals(error.getCode())) {
-                  return true;
-               }
-            } catch (HttpException e) {
-               logger.warn(e, "error parsing response: %s", new String(content));
+         if (response.getPayload() != null) {
+            closeClientButKeepContentStream(response);
+            AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response);
+            if (error != null
+                     && ("RequestTimeout".equals(error.getCode())
+                              || "OperationAborted".equals(error.getCode()) || "SignatureDoesNotMatch"
+                              .equals(error.getCode()))) {
+               return true;
             }
          }
       }

@@ -18,11 +18,13 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.util.Utils.propagateOrNull;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -64,8 +66,12 @@ public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, Invo
       return Void.class.cast(propagateOrNull(from));
    }
 
-   public void setContext(GeneratedHttpRequest<?> request) {
-      this.request = request;
+   @Override
+   public ClearAndDeleteIfNotEmpty setContext(HttpRequest request) {
+      checkArgument(request instanceof GeneratedHttpRequest<?>,
+               "note this handler requires a GeneratedHttpRequest");
+      this.request = (GeneratedHttpRequest<?>) request;
+      return this;
    }
 
 }

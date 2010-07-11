@@ -26,8 +26,9 @@ import javax.inject.Inject;
 import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
+import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.collect.Sets;
 
@@ -36,7 +37,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class DescribeAddressesResponseHandler extends
-         HandlerWithResult<Set<PublicIpInstanceIdPair>> {
+         HandlerForGeneratedRequestWithResult<Set<PublicIpInstanceIdPair>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -59,7 +60,7 @@ public class DescribeAddressesResponseHandler extends
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("item")) {
-         String region = EC2Utils.findRegionInArgsOrNull(request);
+         String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
          if (region == null)
             region = defaultRegion;
          pairs.add(new PublicIpInstanceIdPair(region, ipAddress, instanceId));

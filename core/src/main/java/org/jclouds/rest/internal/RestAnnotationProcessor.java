@@ -19,7 +19,6 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Iterables.concat;
@@ -100,7 +99,6 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
@@ -150,7 +148,6 @@ public class RestAnnotationProcessor<T> {
 
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToDecoratorParamAnnotation = createMethodToIndexOfParamToAnnotation(BinderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointParamAnnotations = createMethodToIndexOfParamToAnnotation(EndpointParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
@@ -299,7 +296,6 @@ public class RestAnnotationProcessor<T> {
             for (int index = 0; index < method.getParameterTypes().length; index++) {
                methodToIndexOfParamToDecoratorParamAnnotation.get(method).get(index);
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
-               methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
                methodToIndexOfParamToMatrixParamAnnotations.get(method).get(index);
                methodToIndexOfParamToFormParamAnnotations.get(method).get(index);
                methodToIndexOfParamToQueryParamAnnotations.get(method).get(index);
@@ -385,7 +381,7 @@ public class RestAnnotationProcessor<T> {
       }
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
-      UriBuilder builder = addHostPrefixIfPresent(endpoint, method, args);
+      UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
 
       Multimap<String, String> tokenValues = LinkedHashMultimap.create();
 
@@ -629,26 +625,6 @@ public class RestAnnotationProcessor<T> {
          }
       }
       return null;
-   }
-
-   private UriBuilder addHostPrefixIfPresent(URI endpoint, Method method, Object... args) {
-      Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@HostPrefixParam",
-               methodToIndexOfParamToHostPrefixParamAnnotations);
-      UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
-      if (map.size() == 1) {
-         HostPrefixParam param = (HostPrefixParam) map.values().iterator().next().iterator().next();
-         int index = map.keySet().iterator().next();
-
-         String prefix = checkNotNull(args[index],
-                  String.format("argument at index %d on method %s", index, method)).toString();
-         checkArgument(!prefix.equals(""), String.format(
-                  "argument at index %d must be a valid hostname for method %s", index, method));
-         String joinOn = param.value();
-         String host = endpoint.getHost();
-
-         builder.host(prefix + joinOn + host);
-      }
-      return builder;
    }
 
    public static final TypeLiteral<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeLiteral<ListenableFuture<Boolean>>() {
