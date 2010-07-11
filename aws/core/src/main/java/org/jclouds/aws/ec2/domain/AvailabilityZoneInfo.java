@@ -33,28 +33,12 @@ import com.google.common.collect.Sets;
  */
 public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
 
-   public static enum State {
-      UNKNOWN, AVAILABLE;
-      public String value() {
-         return name().toLowerCase();
-      }
-
-      @Override
-      public String toString() {
-         return value();
-      }
-
-      public static State fromValue(String state) {
-         return valueOf(checkNotNull(state, "state").toUpperCase());
-      }
-   }
-
    private final String zone;
-   private final State state;
+   private final String state;
    private final String region;
    private final Set<String> messages = Sets.newHashSet();
 
-   public AvailabilityZoneInfo(String zone, State zoneState,
+   public AvailabilityZoneInfo(String zone, String zoneState,
             String region, Iterable<String> messages) {
       this.zone = checkNotNull(zone, "zone");
       this.state = checkNotNull(zoneState, "zoneState");
@@ -72,7 +56,7 @@ public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
    /**
     * State of the Availability Zone.
     */
-   public State getState() {
+   public String getState() {
       return state;
    }
 

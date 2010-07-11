@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo.State;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
@@ -43,7 +42,7 @@ public class DescribeAvailabilityZonesResponseHandler extends
    @Resource
    protected Logger logger = Logger.NULL;
    private String region;
-   private State zoneState;
+   private String zoneState;
    private boolean inMessageSet;
    private Set<String> messages = Sets.newHashSet();
 
@@ -68,19 +67,13 @@ public class DescribeAvailabilityZonesResponseHandler extends
             region = "UNKNOWN";
          }
       } else if (qName.equals("zoneState")) {
-         try {
-            zoneState = AvailabilityZoneInfo.State.fromValue(currentText.toString().trim());
-         } catch (IllegalArgumentException e) {
-            logger.warn(e, "unsupported zoneState: %s", currentText.toString().trim());
-            zoneState = AvailabilityZoneInfo.State.UNKNOWN;
-         }
+         zoneState = currentText.toString().trim();
       } else if (qName.equals("message")) {
          messages.add(currentText.toString().trim());
       } else if (qName.equals("messageSet")) {
          inMessageSet = false;
       } else if (qName.equals("item") && !inMessageSet) {
-         availablilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region,
-                  messages));
+         availablilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region, messages));
          this.zone = null;
          this.region = null;
          this.zoneState = null;

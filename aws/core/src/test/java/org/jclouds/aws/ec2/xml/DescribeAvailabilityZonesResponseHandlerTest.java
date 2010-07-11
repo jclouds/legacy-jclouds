@@ -45,20 +45,15 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
 
       Set<AvailabilityZoneInfo> expected = ImmutableSet.<AvailabilityZoneInfo> of(
 
-                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1A,
-                                AvailabilityZoneInfo.State.AVAILABLE, Region.US_EAST_1, ImmutableSet
-                                .<String> of()),
-                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1B,
-                                AvailabilityZoneInfo.State.AVAILABLE,
-                                Region.US_EAST_1, ImmutableSet.<String> of()),
+      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1A, "available", Region.US_EAST_1,
+               ImmutableSet.<String> of()), new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1B,
+               "available", Region.US_EAST_1, ImmutableSet.<String> of()),
 
-                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1C,
-                                AvailabilityZoneInfo.State.AVAILABLE, Region.US_EAST_1, ImmutableSet
-                                .<String> of("our service is awesome")),
+      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1C, "available", Region.US_EAST_1,
+               ImmutableSet.<String> of("our service is awesome")),
 
-                        new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1D,
-                        AvailabilityZoneInfo.State.UNKNOWN, Region.US_EAST_1, ImmutableSet
-                                 .<String> of()));
+      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1D, "downlikeaclown", Region.US_EAST_1,
+               ImmutableSet.<String> of()));
       Set<AvailabilityZoneInfo> result = factory.create(
                injector.getInstance(DescribeAvailabilityZonesResponseHandler.class)).parse(is);
 
