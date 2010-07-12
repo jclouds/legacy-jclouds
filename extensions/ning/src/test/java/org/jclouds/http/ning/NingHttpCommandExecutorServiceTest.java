@@ -44,7 +44,6 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test
 public class NingHttpCommandExecutorServiceTest extends
          BaseHttpCommandExecutorServiceIntegrationTest {
    static {
@@ -79,9 +78,9 @@ public class NingHttpCommandExecutorServiceTest extends
    }
 
    // OOM
-   @Test(enabled=false, invocationCount = 1, timeOut = 5000)
+   @Test(enabled = false, invocationCount = 1, timeOut = 5000)
    public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException,
             IOException {
-      super.testGetBigFile();
    }
+
 }

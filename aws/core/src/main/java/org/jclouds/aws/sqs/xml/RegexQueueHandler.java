@@ -28,7 +28,7 @@ import org.jclouds.aws.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.xml.internal.BaseRegexQueueHandler;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
 import com.google.inject.internal.Iterables;
@@ -42,10 +42,10 @@ import com.google.inject.internal.Iterables;
 @Singleton
 public class RegexQueueHandler extends BaseRegexQueueHandler implements
          Function<HttpResponse, Queue> {
-   private final ReturnStringIf200 returnStringIf200;
+   private final ReturnStringIf2xx returnStringIf200;
 
    @Inject
-   RegexQueueHandler(@Region Map<String, URI> regionMap, ReturnStringIf200 returnStringIf200) {
+   RegexQueueHandler(@Region Map<String, URI> regionMap, ReturnStringIf2xx returnStringIf200) {
       super(regionMap);
       this.returnStringIf200 = returnStringIf200;
    }

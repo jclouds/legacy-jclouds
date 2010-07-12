@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
 import com.google.inject.Singleton;
@@ -39,11 +39,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
    Pattern pattern = Pattern.compile("<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>");
-   private final ReturnStringIf200 returnStringIf200;
+   private final ReturnStringIf2xx returnStringIf200;
    private final EncryptionService encryptionService;
 
    @Inject
-   RegexMD5Handler(EncryptionService encryptionService, ReturnStringIf200 returnStringIf200) {
+   RegexMD5Handler(EncryptionService encryptionService, ReturnStringIf2xx returnStringIf200) {
       this.encryptionService = encryptionService;
       this.returnStringIf200 = returnStringIf200;
    }

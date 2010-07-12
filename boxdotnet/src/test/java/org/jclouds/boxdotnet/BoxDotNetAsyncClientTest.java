@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -71,7 +71,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
-      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -88,7 +88,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
-      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
       // note that get methods should convert 404's to null
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);

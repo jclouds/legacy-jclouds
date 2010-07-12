@@ -36,14 +36,14 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnStringIf200 implements Function<HttpResponse, String> {
+public class ReturnStringIf2xx implements Function<HttpResponse, String> {
 
    public String apply(HttpResponse from) {
+      if (from.getPayload() == null)
+         return null;
       try {
-         if (from.getStatusCode() == 200) {
+         if (from.getStatusCode() >= 200) {
             InputStream payload = from.getPayload().getInput();
-            if (payload == null)
-               throw new HttpException("no content");
             String toReturn = null;
             try {
                toReturn = Utils.toStringAndClose(payload);

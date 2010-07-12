@@ -34,7 +34,6 @@
     <modules>
         <module>gae</module>
         <module>apachehc</module>
-        <module>ning</module>
         <module>joda</module>
         <module>bouncycastle</module>
         <module>log4j</module>

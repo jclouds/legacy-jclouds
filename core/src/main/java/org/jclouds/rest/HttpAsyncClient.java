@@ -10,9 +10,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
 import org.jclouds.http.Payload;
+import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -28,20 +30,24 @@ public interface HttpAsyncClient {
     * @see HttpClient#post
     */
    @PUT
-   ListenableFuture<Void> put(@EndpointParam URI location, Payload payload);
+   @ResponseParser(ParseETagHeader.class)
+   ListenableFuture<String> put(@EndpointParam URI location, Payload payload);
 
    @PUT
-   ListenableFuture<Void> put(@EndpointParam URI location, Payload payload,
+   @ResponseParser(ParseETagHeader.class)
+   ListenableFuture<String> put(@EndpointParam URI location, Payload payload,
             HttpRequestOptions options);
 
    /**
     * @see HttpClient#post
     */
    @POST
-   ListenableFuture<Void> post(@EndpointParam URI location, Payload payload);
+   @ResponseParser(ParseETagHeader.class)
+   ListenableFuture<String> post(@EndpointParam URI location, Payload payload);
 
    @POST
-   ListenableFuture<Void> post(@EndpointParam URI location, Payload payload,
+   @ResponseParser(ParseETagHeader.class)
+   ListenableFuture<String> post(@EndpointParam URI location, Payload payload,
             HttpRequestOptions options);
 
    /**

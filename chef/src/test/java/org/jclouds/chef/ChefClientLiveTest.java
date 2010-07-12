@@ -24,23 +24,22 @@
 package org.jclouds.chef;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.chef.domain.ChecksumStatus;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Resource;
 import org.jclouds.chef.domain.UploadSandbox;
-import org.jclouds.http.Payload;
 import org.jclouds.http.Payloads;
-import org.jclouds.http.options.BaseHttpRequestOptions;
+import org.jclouds.http.payloads.FilePayload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -52,6 +51,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
+import com.google.common.primitives.Bytes;
 import com.google.inject.Module;
 
 /**
@@ -116,43 +116,29 @@ public class ChefClientLiveTest {
       clientConnection.getApi().clientExists(PREFIX);
    }
 
-   // TODO when uploading files, there are a few headers that are needed or else request signing
-   // fails
-   // make this a method on ChefClient to avoid exposing these details to the api users
-   static class PutContentOptions extends BaseHttpRequestOptions {
-
-      public PutContentOptions(String md5Base64) {
-         super();
-         this.headers.replaceValues(HttpHeaders.ACCEPT, ImmutableSet.of("application/json"));
-         this.headers.replaceValues(HttpHeaders.CONTENT_TYPE, ImmutableSet
-                  .of("application/x-binary"));
-         this.headers.replaceValues("Content-MD5", ImmutableSet.of(md5Base64));
-      }
-
-   }
-
-   // TODO: clean up this api so that it is simpler
    public void testCreateNewCookbook() throws Exception {
+
       // define the file you want in the cookbook
-      Payload pom = Payloads.newFilePayload(new File(System.getProperty("user.dir"), "pom.xml"));
+      FilePayload content = Payloads.newFilePayload(new File(System.getProperty("user.dir"),
+               "pom.xml"));
 
       // get an md5 so that you can see if the server already has it or not
-      byte[] md5 = adminConnection.utils().encryption().md5(pom.getInput());
-      String md5Hex = adminConnection.utils().encryption().hex(md5);
+      adminConnection.utils().encryption().generateMD5BufferingIfNotRepeatable(content);
+
+      // Note that java collections cannot effectively do equals or hashcodes on byte arrays,
+      // so let's convert to a list of bytes.
+      List<Byte> md5 = Bytes.asList(content.getContentMD5());
 
       // request an upload site for this file
-      // TODO: this json ball is not named, and is different than SandBox, using UploadSite for now
-      UploadSandbox site = adminConnection.getApi().getUploadSandboxForChecksums(ImmutableSet.of(md5Hex));
+      UploadSandbox site = adminConnection.getApi().getUploadSandboxForChecksums(
+               ImmutableSet.of(md5));
 
       try {
-         assert site.getChecksums().containsKey(md5Hex) : md5Hex + " not in " + site.getChecksums();
+         assert site.getChecksums().containsKey(md5) : md5 + " not in " + site.getChecksums();
 
-         ChecksumStatus status = site.getChecksums().get(md5Hex);
+         ChecksumStatus status = site.getChecksums().get(md5);
          if (status.needsUpload()) {
-            // upload the file, adding a few other headers it was signed with
-            // note that we need to convert the md5 to base64
-            adminConnection.utils().http().put(status.getUrl(), pom,
-                     new PutContentOptions(adminConnection.utils().encryption().base64(md5)));
+            adminConnection.utils().http().put(status.getUrl(), content);
          }
 
          // if we were able to get here, close the sandbox
@@ -164,7 +150,7 @@ public class ChefClientLiveTest {
 
       // create a new cookbook
       CookbookVersion cookbook = new CookbookVersion("test3", "0.0.0");
-      cookbook.getRootFiles().add(new Resource("pom.xml", md5Hex, "pom.xml"));
+      cookbook.getRootFiles().add(new Resource(content));
 
       // upload the cookbook to the remote server
       adminConnection.getApi().updateCookbook("test3", "0.0.0", cookbook);
@@ -198,10 +184,7 @@ public class ChefClientLiveTest {
                try {
                   InputStream stream = adminConnection.utils().http().get(resource.getUrl());
                   byte[] md5 = adminConnection.utils().encryption().md5(stream);
-                  String md5Hex = adminConnection.utils().encryption().hex(md5);
-                  assert md5Hex.equals(resource.getChecksum()) : String.format(
-                           "hex for %s was: %s should be %s ", resource, md5Hex, resource
-                                    .getChecksum());
+                  assertEquals(md5, resource.getChecksum());
                } catch (NullPointerException e) {
                   assert false : "resource not found: " + resource;
                }

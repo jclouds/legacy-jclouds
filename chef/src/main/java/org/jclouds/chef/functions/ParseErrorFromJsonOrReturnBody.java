@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
 
@@ -42,10 +42,10 @@ import com.google.common.base.Function;
 @Singleton
 public class ParseErrorFromJsonOrReturnBody implements Function<HttpResponse, String> {
    Pattern pattern = Pattern.compile(".*\\[\"([^\"]+)\"\\].*");
-   private final ReturnStringIf200 returnStringIf200;
+   private final ReturnStringIf2xx returnStringIf200;
 
    @Inject
-   ParseErrorFromJsonOrReturnBody(ReturnStringIf200 returnStringIf200) {
+   ParseErrorFromJsonOrReturnBody(ReturnStringIf2xx returnStringIf200) {
       this.returnStringIf200 = returnStringIf200;
    }
 

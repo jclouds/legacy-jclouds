@@ -55,12 +55,11 @@ public class IBMDeveloperCloudParserModule extends AbstractModule {
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_GSON_ADAPTERS)
-   public Map<Class, Object> provideCustomAdapterBindings(CurlyBraceCapableURIAdapter adapter) {
-      return ImmutableMap.<Class, Object> of(URI.class, adapter);
+   public Map<Type, Object> provideCustomAdapterBindings(CurlyBraceCapableURIAdapter adapter) {
+      return ImmutableMap.<Type, Object> of(URI.class, adapter);
    }
 
    @Override

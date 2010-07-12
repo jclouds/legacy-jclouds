@@ -41,6 +41,7 @@
  */
 package org.jclouds.chef;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -61,7 +62,14 @@ import org.jclouds.rest.AuthorizationException;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ChefClient {
-   UploadSandbox getUploadSandboxForChecksums(Set<String> hexEncodedmd5s);
+   /**
+    * 
+    * FIXME Comment this
+    * 
+    * @param md5s raw md5s; uses {@code Bytes.asList()} and {@code Bytes.toByteArray()} as necessary
+    * @return
+    */
+   UploadSandbox getUploadSandboxForChecksums(Set<List<Byte>> md5s);
 
    Sandbox commitSandbox(String id, boolean isCompleted);
 

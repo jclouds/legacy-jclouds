@@ -23,6 +23,7 @@
  */
 package org.jclouds.chef;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -35,10 +36,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.chef.binders.BindChecksumsToJsonPayload;
 import org.jclouds.chef.binders.BindClientnameToJsonPayload;
 import org.jclouds.chef.binders.BindGenerateKeyForClientToJsonPayload;
 import org.jclouds.chef.binders.BindIsCompletedToJsonPayload;
-import org.jclouds.chef.binders.BindHexEncodedMD5sToJsonPayload;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.chef.domain.UploadSandbox;
@@ -82,12 +83,12 @@ public interface ChefAsyncClient {
    @Path("sandboxes")
    @ResponseParser(ParseUploadSiteFromJson.class)
    ListenableFuture<UploadSandbox> getUploadSandboxForChecksums(
-            @BinderParam(BindHexEncodedMD5sToJsonPayload.class) Set<String> hexEncodedmd5s);
+            @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
 
    @PUT
    ListenableFuture<Void> uploadContent(
-            @BinderParam(BindHexEncodedMD5sToJsonPayload.class) Set<String> hexEncodedmd5s);
-   
+            @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
+
    /**
     * @see ChefClient#commitSandbox
     */

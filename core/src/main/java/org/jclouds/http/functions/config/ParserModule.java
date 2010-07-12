@@ -86,13 +86,12 @@ public class ParserModule extends AbstractModule {
       return factory;
    }
 
-   @SuppressWarnings("unchecked")
    @Provides
    @Singleton
    Gson provideGson(DateAdapter adapter, GsonAdapterBindings bindings) {
       GsonBuilder gson = new GsonBuilder();
       gson.registerTypeAdapter(Date.class, adapter);
-      for (Map.Entry<Class, Object> binding : bindings.getBindings().entrySet()) {
+      for (Map.Entry<Type, Object> binding : bindings.getBindings().entrySet()) {
          gson.registerTypeAdapter(binding.getKey(), binding.getValue());
       }
       return gson.create();
@@ -149,7 +148,7 @@ public class ParserModule extends AbstractModule {
       }
 
    }
-   
+
    @Singleton
    public static class LongDateAdapter implements DateAdapter {
 
@@ -168,17 +167,14 @@ public class ParserModule extends AbstractModule {
 
    @Singleton
    public static class GsonAdapterBindings {
-      @SuppressWarnings("unchecked")
-      private final Map<Class, Object> bindings = Maps.newHashMap();
+      private final Map<Type, Object> bindings = Maps.newHashMap();
 
-      @SuppressWarnings("unchecked")
       @com.google.inject.Inject(optional = true)
-      public void setBindings(@Named(Constants.PROPERTY_GSON_ADAPTERS) Map<Class, Object> bindings) {
+      public void setBindings(@Named(Constants.PROPERTY_GSON_ADAPTERS) Map<Type, Object> bindings) {
          this.bindings.putAll(bindings);
       }
 
-      @SuppressWarnings("unchecked")
-      public Map<Class, Object> getBindings() {
+      public Map<Type, Object> getBindings() {
          return bindings;
       }
    }

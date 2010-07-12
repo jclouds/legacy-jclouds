@@ -91,7 +91,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.http.options.BaseHttpRequestOptions;
@@ -1328,7 +1328,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       int noTransformer();
 
       @GET
-      @ResponseParser(ReturnStringIf200.class)
+      @ResponseParser(ReturnStringIf2xx.class)
       void oneTransformer();
 
       @GET
@@ -1489,7 +1489,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(transformer, ParseURIFromListOrLocationHeaderIf20x.class);
    }
 
-   public static class ReturnStringIf200Context extends ReturnStringIf200 implements
+   public static class ReturnStringIf200Context extends ReturnStringIf2xx implements
             InvocationContext {
 
       public HttpRequest request;
@@ -1523,7 +1523,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestTransformers.class.getMethod("oneTransformer");
       Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
                .getParserOrThrowException(method);
-      assertEquals(transformer, ReturnStringIf200.class);
+      assertEquals(transformer, ReturnStringIf2xx.class);
    }
 
    public interface TestRequest {
@@ -1539,7 +1539,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @GET
       @Path("/{id}")
-      @ResponseParser(ReturnStringIf200.class)
+      @ResponseParser(ReturnStringIf2xx.class)
       ListenableFuture<String> get(@PathParam("id") String id,
                @HeaderParam(HttpHeaders.HOST) String host);
 

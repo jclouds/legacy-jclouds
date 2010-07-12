@@ -34,13 +34,25 @@ import org.jclouds.http.options.HttpRequestOptions;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface HttpClient {
 
-   void put(URI location, Payload payload);
+   /**
+    * @return eTag
+    */
+   String put(URI location, Payload payload);
 
-   void put(URI location, Payload payload, HttpRequestOptions options);
+   /**
+    * @return eTag
+    */
+   String put(URI location, Payload payload, HttpRequestOptions options);
 
-   void post(URI location, Payload payload);
+   /**
+    * @return eTag
+    */
+   String post(URI location, Payload payload);
 
-   void post(URI location, Payload payload, HttpRequestOptions options);
+   /**
+    * @return eTag
+    */
+   String post(URI location, Payload payload, HttpRequestOptions options);
 
    boolean exists(URI location);
 

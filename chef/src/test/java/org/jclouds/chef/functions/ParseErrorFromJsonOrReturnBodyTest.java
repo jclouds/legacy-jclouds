@@ -30,7 +30,7 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -46,7 +46,7 @@ public class ParseErrorFromJsonOrReturnBodyTest {
                .toInputStream("{\"error\":[\"invalid tarball: tarball root must contain java-bytearray\"]}");
 
       ParseErrorFromJsonOrReturnBody parser = new ParseErrorFromJsonOrReturnBody(
-               new ReturnStringIf200());
+               new ReturnStringIf2xx());
       String response = parser.apply(new HttpResponse(200, "ok", Payloads.newPayload(is)));
       assertEquals(response, "invalid tarball: tarball root must contain java-bytearray");
    }

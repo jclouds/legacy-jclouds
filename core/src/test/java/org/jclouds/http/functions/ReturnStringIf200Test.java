@@ -39,24 +39,18 @@ import com.google.common.base.Function;
 public class ReturnStringIf200Test {
 
    @Test
-   public void testExceptionWhenNoContentOn200() throws ExecutionException, InterruptedException,
+   public void testNullWhenNoContentOn200() throws ExecutionException, InterruptedException,
             TimeoutException, IOException {
-      Function<HttpResponse, String> function = new ReturnStringIf200();
+      Function<HttpResponse, String> function = new ReturnStringIf2xx();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
-      expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getInput()).andReturn(null);
-      payload.release();
+      expect(response.getPayload()).andReturn(null);
 
       replay(payload);
       replay(response);
-      try {
-         function.apply(response);
-      } catch (Exception e) {
-         assert e.getMessage().equals("no content");
-      }
+      assert function.apply(response) == null;
+
       verify(payload);
       verify(response);
    }
@@ -64,7 +58,7 @@ public class ReturnStringIf200Test {
    @Test
    public void testExceptionWhenIOExceptionOn200() throws ExecutionException, InterruptedException,
             TimeoutException, IOException {
-      Function<HttpResponse, String> function = new ReturnStringIf200();
+      Function<HttpResponse, String> function = new ReturnStringIf2xx();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
@@ -87,7 +81,7 @@ public class ReturnStringIf200Test {
 
    @Test
    public void testResponseOk() throws Exception {
-      Function<HttpResponse, String> function = new ReturnStringIf200();
+      Function<HttpResponse, String> function = new ReturnStringIf2xx();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 

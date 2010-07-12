@@ -80,7 +80,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
@@ -649,7 +649,7 @@ public class RestAnnotationProcessor<T> {
             return ReturnTrueIf2xx.class;
          } else if (method.getReturnType().equals(String.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {
-            return ReturnStringIf200.class;
+            return ReturnStringIf2xx.class;
          } else if (method.getReturnType().equals(void.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
             return ReleasePayloadAndReturn.class;

@@ -42,7 +42,7 @@ import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.TransformingHttpCommandImpl;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -173,7 +173,7 @@ public class BackoffLimitedRetryHandlerTest {
       Method method = IntegrationTestAsyncClient.class.getMethod("download", String.class);
 
       return new TransformingHttpCommandImpl<String>(executorService, processor.createRequest(
-               method, "1"), new ReturnStringIf200());
+               method, "1"), new ReturnStringIf2xx());
    }
 
    @Test

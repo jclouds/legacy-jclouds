@@ -26,13 +26,18 @@ package org.jclouds.chef.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
+
+import com.google.common.primitives.Bytes;
 
 /**
  * 
@@ -40,20 +45,26 @@ import org.jclouds.rest.binders.BindToStringPayload;
  * @author Adrian Cole
  */
 @Singleton
-public class BindHexEncodedMD5sToJsonPayload extends BindToStringPayload {
+public class BindChecksumsToJsonPayload extends BindToStringPayload {
+   private final EncryptionService encryptionService;
+
+   @Inject
+   BindChecksumsToJsonPayload(EncryptionService encryptionService) {
+      this.encryptionService = encryptionService;
+   }
 
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Set,
                "this binder is only valid for Set!");
 
-      Set<String> hexEncodedmd5s = (Set<String>) input;
+      Set<List<Byte>> md5s = (Set<List<Byte>>) input;
 
       StringBuilder builder = new StringBuilder();
       builder.append("{\"checksums\":{");
 
-      for (String hexEncodedmd5 : hexEncodedmd5s)
-         builder.append(String.format("\"%s\":null,", hexEncodedmd5));
+      for (List<Byte> md5 : md5s)
+         builder.append(String.format("\"%s\":null,", encryptionService.hex(Bytes.toArray(md5))));
       builder.deleteCharAt(builder.length() - 1);
       builder.append("}}");
       super.bindToRequest(request, builder.toString());

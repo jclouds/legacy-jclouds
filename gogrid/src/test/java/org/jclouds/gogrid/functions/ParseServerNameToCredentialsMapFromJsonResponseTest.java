@@ -21,6 +21,7 @@ package org.jclouds.gogrid.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.util.Map;
 
@@ -67,10 +68,10 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
 
       @Provides
       @Singleton
-      @SuppressWarnings( { "unused", "unchecked" })
+      @SuppressWarnings("unused")
       @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
-      public Map<Class, Object> provideCustomAdapterBindings() {
-         Map<Class, Object> bindings = Maps.newHashMap();
+      public Map<Type, Object> provideCustomAdapterBindings() {
+         Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
          bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
          bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());

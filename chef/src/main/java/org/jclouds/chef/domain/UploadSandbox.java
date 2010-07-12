@@ -19,6 +19,7 @@
 package org.jclouds.chef.domain;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -30,11 +31,11 @@ import com.google.gson.annotations.SerializedName;
  */
 public class UploadSandbox {
    private URI uri;
-   private Map<String, ChecksumStatus> checksums = Maps.newLinkedHashMap();
+   private Map<List<Byte>, ChecksumStatus> checksums = Maps.newLinkedHashMap();
    @SerializedName("sandbox_id")
    private String sandboxId;
 
-   public UploadSandbox(URI uri, Map<String, ChecksumStatus> checksums, String sandboxId) {
+   public UploadSandbox(URI uri, Map<List<Byte>, ChecksumStatus> checksums, String sandboxId) {
       this.uri = uri;
       this.checksums.putAll(checksums);
       this.sandboxId = sandboxId;
@@ -48,7 +49,7 @@ public class UploadSandbox {
       return uri;
    }
 
-   public Map<String, ChecksumStatus> getChecksums() {
+   public Map<List<Byte>, ChecksumStatus> getChecksums() {
       return checksums;
    }
 
@@ -60,8 +61,7 @@ public class UploadSandbox {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((checksums == null) ? 0 : checksums.hashCode());
+      result = prime * result + ((checksums == null) ? 0 : checksums.hashCode());
       result = prime * result + ((sandboxId == null) ? 0 : sandboxId.hashCode());
       result = prime * result + ((uri == null) ? 0 : uri.hashCode());
       return result;
@@ -96,8 +96,7 @@ public class UploadSandbox {
 
    @Override
    public String toString() {
-      return "UploadSite [checksums=" + checksums + ", id=" + sandboxId + ", uri=" + uri
-            + "]";
+      return "UploadSite [checksums=" + checksums + ", id=" + sandboxId + ", uri=" + uri + "]";
    }
 
 }

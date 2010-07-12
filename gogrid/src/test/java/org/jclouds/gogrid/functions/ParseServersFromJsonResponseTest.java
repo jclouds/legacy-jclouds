@@ -34,7 +34,7 @@ import java.util.SortedSet;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.gogrid.config.DateSecondsAdapter;
+import org.jclouds.gogrid.config.GoGridJsonAdapterModule;
 import org.jclouds.gogrid.domain.BillingToken;
 import org.jclouds.gogrid.domain.Customer;
 import org.jclouds.gogrid.domain.Ip;
@@ -93,7 +93,7 @@ public class ParseServersFromJsonResponseTest {
    Injector i = Guice.createInjector(new ParserModule() {
       @Override
       protected void configure() {
-         bind(DateAdapter.class).to(DateSecondsAdapter.class);
+         install(new GoGridJsonAdapterModule());
          super.configure();
       }
 

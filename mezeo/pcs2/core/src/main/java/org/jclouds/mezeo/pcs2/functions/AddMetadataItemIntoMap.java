@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
@@ -38,11 +38,11 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class AddMetadataItemIntoMap implements Function<HttpResponse, Void>, InvocationContext {
-   ReturnStringIf200 returnIf200;
+   ReturnStringIf2xx returnIf200;
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   private AddMetadataItemIntoMap(ReturnStringIf200 returnIf200) {
+   private AddMetadataItemIntoMap(ReturnStringIf2xx returnIf200) {
       this.returnIf200 = returnIf200;
    }
 

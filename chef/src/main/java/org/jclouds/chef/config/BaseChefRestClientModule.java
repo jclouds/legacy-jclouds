@@ -130,6 +130,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Override
    protected void configure() {
+      install(new ChefTypeAdapterModule());
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }

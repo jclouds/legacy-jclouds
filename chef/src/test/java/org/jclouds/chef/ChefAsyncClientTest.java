@@ -40,10 +40,11 @@ import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.chef.functions.ParseSandboxFromJson;
 import org.jclouds.chef.functions.ParseUploadSiteFromJson;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
@@ -58,6 +59,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.primitives.Bytes;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -89,11 +91,16 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    public void testGetUploadSandboxForChecksums() throws SecurityException, NoSuchMethodException,
             IOException {
-
+      EncryptionService encryptionService = injector.getInstance(EncryptionService.class);
       Method method = ChefAsyncClient.class.getMethod("getUploadSandboxForChecksums", Set.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
-               ImmutableSet.of("0189e76ccc476701d6b374e5a1a27347",
-                        "0c5ecd7788cf4f6c7de2a57193897a6c", "1dda05ed139664f1f89b9dec482b77c0"));
+               ImmutableSet
+                        .of(Bytes.asList(encryptionService
+                                 .fromHex("0189e76ccc476701d6b374e5a1a27347")), Bytes
+                                 .asList(encryptionService
+                                          .fromHex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes
+                                 .asList(encryptionService
+                                          .fromHex("1dda05ed139664f1f89b9dec482b77c0"))));
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
       assertPayloadEquals(
@@ -202,7 +209,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -232,8 +239,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/clients HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest,
-               "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);

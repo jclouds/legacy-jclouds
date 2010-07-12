@@ -21,6 +21,7 @@ package org.jclouds.gogrid.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
@@ -84,12 +85,12 @@ public class ParseJobsFromJsonResponseTest {
          super.configure();
       }
 
-      @SuppressWarnings( { "unused", "unchecked" })
+      @SuppressWarnings("unused")
       @Provides
       @Singleton
       @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
-      public Map<Class, Object> provideCustomAdapterBindings() {
-         Map<Class, Object> bindings = Maps.newHashMap();
+      public Map<Type, Object> provideCustomAdapterBindings() {
+         Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());
          bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
          return bindings;

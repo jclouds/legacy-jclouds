@@ -31,7 +31,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
 import org.jclouds.nirvanix.sdn.filters.InsertUserContextIntoPath;
@@ -148,7 +148,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, ReturnStringIf200.class);
+      assertResponseParserClassEquals(method, request, ReturnStringIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

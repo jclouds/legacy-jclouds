@@ -19,6 +19,11 @@
 package org.jclouds.chef.domain;
 
 import java.net.URI;
+import java.util.Arrays;
+
+import org.jclouds.http.payloads.FilePayload;
+
+import com.google.common.primitives.Bytes;
 
 /**
  * Cookbook object.
@@ -29,15 +34,20 @@ public class Resource {
 
    private String name;
    private URI url;
-   private String checksum;
+   private byte[] checksum;
    private String path;
    private String specificity;
 
-   public Resource(String name, String checksum, String path) {
+   public Resource(FilePayload payload) {
+      this(payload.getRawContent().getName(), null, payload.getContentMD5(), payload
+               .getRawContent().getPath(), "default");
+   }
+
+   public Resource(String name, byte[] checksum, String path) {
       this(name, null, checksum, path, "default");
    }
 
-   public Resource(String name, URI url, String checksum, String path, String specificity) {
+   public Resource(String name, URI url, byte[] checksum, String path, String specificity) {
       this.name = name;
       this.url = url;
       this.checksum = checksum;
@@ -57,7 +67,7 @@ public class Resource {
       return url;
    }
 
-   public String getChecksum() {
+   public byte[] getChecksum() {
       return checksum;
    }
 
@@ -73,7 +83,7 @@ public class Resource {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
+      result = prime * result + Arrays.hashCode(checksum);
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((path == null) ? 0 : path.hashCode());
       result = prime * result + ((specificity == null) ? 0 : specificity.hashCode());
@@ -90,10 +100,7 @@ public class Resource {
       if (getClass() != obj.getClass())
          return false;
       Resource other = (Resource) obj;
-      if (checksum == null) {
-         if (other.checksum != null)
-            return false;
-      } else if (!checksum.equals(other.checksum))
+      if (!Arrays.equals(checksum, other.checksum))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -120,7 +127,7 @@ public class Resource {
 
    @Override
    public String toString() {
-      return "Resource [checksum=" + checksum + ", name=" + name + ", path=" + path
+      return "Resource [checksum=" + Bytes.asList(checksum) + ", name=" + name + ", path=" + path
                + ", specificity=" + specificity + ", url=" + url + "]";
    }
 
