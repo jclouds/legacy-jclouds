@@ -27,11 +27,11 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.Option;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Singleton;
 
 /**
  * Parses the list of generic options.
@@ -40,10 +40,11 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author Oleksiy Yarmula
  */
+@Singleton
 public class ParseOptionsFromJsonResponse extends ParseJson<SortedSet<Option>> {
 
    @Inject
-   public ParseOptionsFromJsonResponse(Gson gson) {
+   ParseOptionsFromJsonResponse(Gson gson) {
       super(gson);
    }
 
@@ -52,7 +53,8 @@ public class ParseOptionsFromJsonResponse extends ParseJson<SortedSet<Option>> {
       }.getType();
       GenericResponseContainer<Option> response;
       try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+               setType);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

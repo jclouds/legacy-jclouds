@@ -23,36 +23,41 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.util.SortedSet;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.inject.internal.Iterables.getOnlyElement;
+
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.jclouds.gogrid.domain.Server;
-import org.jclouds.http.functions.ParseJson;
+import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpResponse;
 
-import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
-import com.google.inject.Singleton;
+import com.google.common.base.Function;
 
 /**
- * Parses a single {@link Server} from a json string.
  * 
- * This class delegates parsing to {@link ParseServerListFromJsonResponse}.
- * 
- * @author Oleksiy Yarmula
+ * @author Adrian Cole
  */
 @Singleton
-public class ParseServerFromJsonResponse extends ParseJson<Server> {
+public class ParseCredentialsFromJsonResponse implements
+      Function<HttpResponse, Credentials> {
+
+   private final ParseServerNameToCredentialsMapFromJsonResponse parser;
 
    @Inject
-   ParseServerFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseCredentialsFromJsonResponse(
+         ParseServerNameToCredentialsMapFromJsonResponse parser) {
+      this.parser = parser;
    }
 
-   public Server apply(InputStream stream) {
-      SortedSet<Server> allServers = new ParseServerListFromJsonResponse(gson)
-            .apply(stream);
-      return Iterables.getOnlyElement(allServers);
+   @Override
+   public Credentials apply(HttpResponse input) {
+      Map<String, Credentials> returnVal = parser.apply(input);
+      checkState(!(returnVal.size() > 1),
+            "expecting only 1 credential in response, but had more: "
+                  + returnVal.keySet());
+      return (returnVal.size() > 0) ? getOnlyElement(returnVal.values()) : null;
    }
 }

@@ -23,36 +23,64 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
 import java.util.SortedSet;
 
-import javax.inject.Inject;
-
-import org.jclouds.gogrid.domain.Server;
-import org.jclouds.http.functions.ParseJson;
-
-import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
-import com.google.inject.Singleton;
-
 /**
- * Parses a single {@link Server} from a json string.
+ * General format of GoGrid's response.
  * 
- * This class delegates parsing to {@link ParseServerListFromJsonResponse}.
+ * This is the wrapper for most responses, and the actual result (or error) will
+ * be set to {@link #list}. Note that even the single returned item will be set
+ * to {@link #list} per GoGrid's design.
+ * 
+ * This class is not intended to be used by customers directly, it is here to
+ * assist in deserialization.
  * 
  * @author Oleksiy Yarmula
  */
-@Singleton
-public class ParseServerFromJsonResponse extends ParseJson<Server> {
+class GenericResponseContainer<T> {
 
-   @Inject
-   ParseServerFromJsonResponse(Gson gson) {
-      super(gson);
+   private Summary summary;
+   private String status;
+   private String method;
+   private SortedSet<T> list;
+
+   public Summary getSummary() {
+      return summary;
    }
 
-   public Server apply(InputStream stream) {
-      SortedSet<Server> allServers = new ParseServerListFromJsonResponse(gson)
-            .apply(stream);
-      return Iterables.getOnlyElement(allServers);
+   public String getStatus() {
+      return status;
    }
+
+   public String getMethod() {
+      return method;
+   }
+
+   public SortedSet<T> getList() {
+      return list;
+   }
+
+   static class Summary {
+      private int total;
+      private int start;
+      private int numPages;
+      private int returned;
+
+      public int getTotal() {
+         return total;
+      }
+
+      public int getStart() {
+         return start;
+      }
+
+      public int getNumPages() {
+         return numPages;
+      }
+
+      public int getReturned() {
+         return returned;
+      }
+   }
+
 }

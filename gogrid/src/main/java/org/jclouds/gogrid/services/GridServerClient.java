@@ -89,6 +89,12 @@ public interface GridServerClient {
    Map<String, Credentials> getServerCredentialsList();
 
    /**
+    * 
+    * @return the login user and password of a server, or null if none found
+    */
+   Credentials getServerCredentials(long id);
+
+   /**
     * Adds a server with specified attributes
     * 
     * @param name
@@ -104,7 +110,7 @@ public interface GridServerClient {
     * @return created server
     */
    Server addServer(String name, String image, String ram, String ip,
-            AddServerOptions... addServerOptions);
+         AddServerOptions... addServerOptions);
 
    /**
     * Changes the server's state according to {@link PowerCommand}
@@ -129,8 +135,8 @@ public interface GridServerClient {
    /**
     * Deletes the server by name;
     * 
-    * NOTE: Using this parameter may generate an error if one or more servers share a non-unique
-    * name.
+    * NOTE: Using this parameter may generate an error if one or more servers
+    * share a non-unique name.
     * 
     * @param name
     *           name of the server to be deleted
@@ -140,20 +146,22 @@ public interface GridServerClient {
    Server deleteByName(String name);
 
    /**
-    * Retrieves the list of supported RAM configurations. The objects will have RAM ID, name and
-    * description. In most cases, id or name will be used for {@link #addServer}.
+    * Retrieves the list of supported RAM configurations. The objects will have
+    * RAM ID, name and description. In most cases, id or name will be used for
+    * {@link #addServer}.
     * 
     * To see how RAM maps to CPU and disk space (as of March 2010), see
-    * {@link org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule#provideSizeToRam}.
+    * {@link org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule#provideSizeToRam}
+    * .
     * 
     * @return supported ram sizes
     */
    Set<Option> getRamSizes();
 
    /**
-    * Retrieves the list of supported Datacenters to launch servers into. The objects will have
-    * datacenter ID, name and description. In most cases, id or name will be used for
-    * {@link #addServer}.
+    * Retrieves the list of supported Datacenters to launch servers into. The
+    * objects will have datacenter ID, name and description. In most cases, id
+    * or name will be used for {@link #addServer}.
     * 
     * @return supported datacenters
     */

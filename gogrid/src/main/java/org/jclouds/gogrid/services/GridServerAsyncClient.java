@@ -48,6 +48,7 @@ import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
+import org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
@@ -112,6 +113,14 @@ public interface GridServerAsyncClient {
    @ResponseParser(ParseServerNameToCredentialsMapFromJsonResponse.class)
    @Path("/support/password/list")
    ListenableFuture<Map<String, Credentials>> getServerCredentialsList();
+   
+   /**
+    * @see GridServerClient#getServerCredentials
+    */
+   @GET
+   @ResponseParser(ParseCredentialsFromJsonResponse.class)
+   @Path("/support/grid/password/get")
+   ListenableFuture<Credentials> getServerCredentials(@QueryParam("id") long id);
 
    /**
     * @see GridServerClient#addServer(String, String, String, String,
@@ -130,8 +139,9 @@ public interface GridServerAsyncClient {
    @GET
    @ResponseParser(ParseServerFromJsonResponse.class)
    @Path("/grid/server/power")
-   ListenableFuture<Server> power(@QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName,
-            @QueryParam(POWER_KEY) PowerCommand power);
+   ListenableFuture<Server> power(
+         @QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName,
+         @QueryParam(POWER_KEY) PowerCommand power);
 
    /**
     * @see GridServerClient#deleteById(Long)

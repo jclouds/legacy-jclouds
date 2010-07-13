@@ -18,28 +18,32 @@
  */
 package org.jclouds.gogrid.functions;
 
-import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
+import java.io.InputStream;
+import java.util.SortedSet;
+
+import javax.inject.Inject;
+
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.http.functions.ParseJson;
 
-import javax.inject.Inject;
-import java.io.InputStream;
-import java.util.SortedSet;
+import com.google.common.collect.Iterables;
+import com.google.gson.Gson;
+import com.google.inject.Singleton;
 
 /**
  * @author Oleksiy Yarmula
  */
+@Singleton
 public class ParseImageFromJsonResponse extends ParseJson<ServerImage> {
 
-    @Inject
-    public ParseImageFromJsonResponse(Gson gson) {
-        super(gson);
-    }
+   @Inject
+   ParseImageFromJsonResponse(Gson gson) {
+      super(gson);
+   }
 
-    public ServerImage apply(InputStream stream) {
-        SortedSet<ServerImage> allImages =
-                new ParseImageListFromJsonResponse(gson).apply(stream);
-        return Iterables.getOnlyElement(allImages);
-    }
+   public ServerImage apply(InputStream stream) {
+      SortedSet<ServerImage> allImages = new ParseImageListFromJsonResponse(
+            gson).apply(stream);
+      return Iterables.getOnlyElement(allImages);
+   }
 }

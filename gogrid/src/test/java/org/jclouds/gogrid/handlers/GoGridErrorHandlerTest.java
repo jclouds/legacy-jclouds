@@ -30,15 +30,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jclouds.gogrid.functions.ParseErrorFromJsonResponse;
 import org.jclouds.gogrid.mock.HttpCommandMock;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.config.ParserModule;
 import org.testng.TestException;
 import org.testng.annotations.Test;
 
-import com.google.gson.GsonBuilder;
+import com.google.inject.Guice;
 
 /**
  * Tests that the GoGridErrorHandler is correctly handling the exceptions.
@@ -51,8 +51,8 @@ public class GoGridErrorHandlerTest {
    public void testHandler() {
       InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
 
-      GoGridErrorHandler handler = new GoGridErrorHandler(new ParseErrorFromJsonResponse(
-               new GsonBuilder().create()));
+     
+      GoGridErrorHandler handler = Guice.createInjector(new ParserModule()).getInstance(GoGridErrorHandler.class);
 
       HttpCommand command = createHttpCommand();
       handler.handleError(command, new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));

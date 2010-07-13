@@ -20,6 +20,8 @@ package org.jclouds.gogrid.functions;
 
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
+import com.google.inject.Singleton;
+
 import org.jclouds.gogrid.domain.LoadBalancer;
 import org.jclouds.http.functions.ParseJson;
 
@@ -29,22 +31,24 @@ import java.util.SortedSet;
 
 /**
  * Parses the single load balancer out of the response.
- *
- * This class delegates parsing to {@link ParseLoadBalancerListFromJsonResponse}.  
- *
+ * 
+ * This class delegates parsing to {@link ParseLoadBalancerListFromJsonResponse}
+ * .
+ * 
  * @author Oleksiy Yarmula
  */
+@Singleton
 public class ParseLoadBalancerFromJsonResponse extends ParseJson<LoadBalancer> {
 
-    @Inject
-    public ParseLoadBalancerFromJsonResponse(Gson gson) {
-        super(gson);
-    }
+   @Inject
+   ParseLoadBalancerFromJsonResponse(Gson gson) {
+      super(gson);
+   }
 
-    public LoadBalancer apply(InputStream stream) {
-        SortedSet<LoadBalancer> allLoadBalancers =
-                new ParseLoadBalancerListFromJsonResponse(gson).apply(stream);
-        return Iterables.getOnlyElement(allLoadBalancers);
-    }
+   public LoadBalancer apply(InputStream stream) {
+      SortedSet<LoadBalancer> allLoadBalancers = new ParseLoadBalancerListFromJsonResponse(
+            gson).apply(stream);
+      return Iterables.getOnlyElement(allLoadBalancers);
+   }
 
 }

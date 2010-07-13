@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.common.collect.Maps;
@@ -42,10 +41,10 @@ import com.google.gson.reflect.TypeToken;
  */
 @Singleton
 public class ParseServerNameToCredentialsMapFromJsonResponse extends
-         ParseJson<Map<String, Credentials>> {
+      ParseJson<Map<String, Credentials>> {
 
    @Inject
-   public ParseServerNameToCredentialsMapFromJsonResponse(Gson gson) {
+   ParseServerNameToCredentialsMapFromJsonResponse(Gson gson) {
       super(gson);
    }
 
@@ -54,19 +53,22 @@ public class ParseServerNameToCredentialsMapFromJsonResponse extends
       }.getType();
       GenericResponseContainer<Password> response;
       try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+               setType);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }
       Map<String, Credentials> serverNameToCredentials = Maps.newHashMap();
       for (Password password : response.getList()) {
-         serverNameToCredentials.put(password.getServer().getName(), new Credentials(password
-                  .getUserName(), password.getPassword()));
+         serverNameToCredentials.put(password.getServer().getName(),
+               new Credentials(password.getUserName(), password.getPassword()));
       }
       return serverNameToCredentials;
    }
 
-   public static class Password implements Comparable<Password> {
+   // incidental wrapper class to assist in getting the correct data
+   // deserialized from json
+   private static class Password implements Comparable<Password> {
       @SerializedName("username")
       private String userName;
       private String password;
@@ -93,11 +95,14 @@ public class ParseServerNameToCredentialsMapFromJsonResponse extends
 
          Password password1 = (Password) o;
 
-         if (password != null ? !password.equals(password1.password) : password1.password != null)
+         if (password != null ? !password.equals(password1.password)
+               : password1.password != null)
             return false;
-         if (server != null ? !server.equals(password1.server) : password1.server != null)
+         if (server != null ? !server.equals(password1.server)
+               : password1.server != null)
             return false;
-         if (userName != null ? !userName.equals(password1.userName) : password1.userName != null)
+         if (userName != null ? !userName.equals(password1.userName)
+               : password1.userName != null)
             return false;
 
          return true;

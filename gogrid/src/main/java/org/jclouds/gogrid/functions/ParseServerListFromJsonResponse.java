@@ -33,7 +33,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
@@ -45,10 +44,11 @@ import com.google.gson.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseServerListFromJsonResponse extends ParseJson<SortedSet<Server>> {
+public class ParseServerListFromJsonResponse extends
+      ParseJson<SortedSet<Server>> {
 
    @Inject
-   public ParseServerListFromJsonResponse(Gson gson) {
+   ParseServerListFromJsonResponse(Gson gson) {
       super(gson);
    }
 
@@ -57,7 +57,8 @@ public class ParseServerListFromJsonResponse extends ParseJson<SortedSet<Server>
       }.getType();
       GenericResponseContainer<Server> response;
       try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+               setType);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

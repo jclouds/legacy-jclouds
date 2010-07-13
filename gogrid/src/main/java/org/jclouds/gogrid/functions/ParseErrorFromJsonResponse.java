@@ -32,7 +32,6 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.internal.ErrorResponse;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
@@ -40,18 +39,19 @@ import com.google.gson.reflect.TypeToken;
 import com.google.inject.Singleton;
 
 /**
- * Parses {@link org.jclouds.gogrid.domain.internal.ErrorResponse error response} from a json
- * string.
+ * Parses {@link org.jclouds.gogrid.domain.internal.ErrorResponse error
+ * response} from a json string.
  * 
  * GoGrid may return multiple error objects, if multiple errors were found.
  * 
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseErrorFromJsonResponse extends ParseJson<SortedSet<ErrorResponse>> {
+public class ParseErrorFromJsonResponse extends
+      ParseJson<SortedSet<ErrorResponse>> {
 
    @Inject
-   public ParseErrorFromJsonResponse(Gson gson) {
+   ParseErrorFromJsonResponse(Gson gson) {
       super(gson);
    }
 
@@ -60,7 +60,8 @@ public class ParseErrorFromJsonResponse extends ParseJson<SortedSet<ErrorRespons
       }.getType();
       GenericResponseContainer<ErrorResponse> response;
       try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+               setType);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }

@@ -27,21 +27,24 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.LoadBalancer;
-import org.jclouds.gogrid.domain.internal.GenericResponseContainer;
 import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Singleton;
 
 /**
- * Parses {@link org.jclouds.gogrid.domain.LoadBalancer jobs} from a json string.
+ * Parses {@link org.jclouds.gogrid.domain.LoadBalancer jobs} from a json
+ * string.
  * 
  * @author Oleksiy Yarmula
  */
-public class ParseLoadBalancerListFromJsonResponse extends ParseJson<SortedSet<LoadBalancer>> {
+@Singleton
+public class ParseLoadBalancerListFromJsonResponse extends
+      ParseJson<SortedSet<LoadBalancer>> {
 
    @Inject
-   public ParseLoadBalancerListFromJsonResponse(Gson gson) {
+   ParseLoadBalancerListFromJsonResponse(Gson gson) {
       super(gson);
    }
 
@@ -50,7 +53,8 @@ public class ParseLoadBalancerListFromJsonResponse extends ParseJson<SortedSet<L
       }.getType();
       GenericResponseContainer<LoadBalancer> response;
       try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+               setType);
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }
