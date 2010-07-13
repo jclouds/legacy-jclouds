@@ -18,9 +18,9 @@
  */
 package org.jclouds.rest.config;
 
+import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
@@ -36,6 +36,7 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.annotations.Caller;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
@@ -43,8 +44,10 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -61,47 +64,87 @@ public class RestModule extends AbstractModule {
    protected void configure() {
       install(new ParserModule());
       bind(UriBuilder.class).to(UriBuilderImpl.class);
-      bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
+      bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(
+            Scopes.SINGLETON);
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
-      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap
-               .<Class<?>, Class<?>> of(HttpClient.class, HttpAsyncClient.class));
+      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class,
+            ImmutableMap.<Class<?>, Class<?>> of(HttpClient.class,
+                  HttpAsyncClient.class));
    }
 
    @Provides
    @Singleton
    @Named("async")
    ConcurrentMap<ClassMethodArgs, Object> provideAsyncDelegateMap(
-            CreateAsyncClientForCaller createAsyncClientForCaller) {
+         CreateAsyncClientForCaller createAsyncClientForCaller) {
       return new MapMaker().makeComputingMap(createAsyncClientForCaller);
    }
 
-   static class CreateAsyncClientForCaller implements Function<ClassMethodArgs, Object> {
+   static class CreateAsyncClientForCaller implements
+         Function<ClassMethodArgs, Object> {
       private final Injector injector;
       private final AsyncRestClientProxy.Factory factory;
 
+      @Caller
+      @Inject(optional = true)
+      Module callerModule = new CallerScopedBindingModule();
+
       @Inject
-      CreateAsyncClientForCaller(Injector injector, AsyncRestClientProxy.Factory factory) {
+      CreateAsyncClientForCaller(Injector injector,
+            AsyncRestClientProxy.Factory factory) {
          this.injector = injector;
          this.factory = factory;
       }
 
       @SuppressWarnings("unchecked")
       @Override
-      public Object apply(ClassMethodArgs from) {
+      public Object apply(final ClassMethodArgs from) {
          Class clazz = from.getAsyncClass();
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
-         RestAnnotationProcessor util = (RestAnnotationProcessor) injector.getInstance(Key
-                  .get(TypeLiteral.get(Types.newParameterizedType(RestAnnotationProcessor.class,
-                           clazz))));
-         util.setCaller(from);
+         Injector injector = this.injector.createChildInjector(callerModule,
+               new AbstractModule() {
 
-         ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
-                  new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
-                  }, Names.named("async")));
-         AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector, factory, util,
-                  typeLiteral, delegateMap);
+                  @Override
+                  protected void configure() {
+                     bind(ClassMethodArgs.class).annotatedWith(Caller.class)
+                           .toInstance(from);
+                     install(callerModule);
+                  }
+
+               });
+         RestAnnotationProcessor util = (RestAnnotationProcessor) injector
+               .getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                     RestAnnotationProcessor.class, clazz))));
+         // not sure why we have to go back and re-inject this...
+         injector.injectMembers(util);
+         ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector
+               .getInstance(Key.get(
+                     new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+                     }, Names.named("async")));
+         AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector,
+               factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);
          return AsyncClientFactory.create(clazz, proxy);
+      }
+   }
+
+   @Singleton
+   public static class CallerScopedBindingModule extends AbstractModule {
+
+      @Provides
+      @Caller
+      URI provideCallerScopedURI(Injector injector, @Caller ClassMethodArgs args) {
+         try {
+            return RestAnnotationProcessor.getEndpointFor(args.getMethod(),
+                  args.getArgs(), injector);
+         } catch (IllegalStateException e) {
+            return null;
+         }
+      }
+
+      @Override
+      protected void configure() {
+
       }
    }
 
@@ -111,8 +154,9 @@ public class RestModule extends AbstractModule {
 
       @SuppressWarnings("unchecked")
       public TransformingHttpCommand<?> create(HttpRequest request,
-               Function<HttpResponse, ?> transformer) {
-         return new TransformingHttpCommandImpl(executorService, request, transformer);
+            Function<HttpResponse, ?> transformer) {
+         return new TransformingHttpCommandImpl(executorService, request,
+               transformer);
       }
 
    }
