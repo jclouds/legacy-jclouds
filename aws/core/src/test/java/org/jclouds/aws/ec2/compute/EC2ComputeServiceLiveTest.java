@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -32,7 +33,10 @@ import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
@@ -40,6 +44,7 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -61,6 +66,33 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
+   public void testTemplateChoiceForInstanceByCCSizeId() throws Exception {
+      Set<? extends Size> sizes = context.getComputeService().listSizes();
+      assert Iterables.any(sizes, new Predicate<Size>() {
+
+         @Override
+         public boolean apply(Size arg0) {
+            return arg0.getProviderId().equals(InstanceType.CC1_4XLARGE);
+         }
+
+      }) : sizes;
+      Set<? extends Image> images = context.getComputeService().listImages();
+      assert Iterables.any(images, new Predicate<Image>() {
+
+         @Override
+         public boolean apply(Image arg0) {
+            return arg0.getId().equals("us-east-1/ami-7ea24a17");
+         }
+
+      }) : images;
+      Template template = context.getComputeService().templateBuilder()
+            .fastest().build();
+      assert template != null : "The returned template was null, but it should have a value.";
+      assertEquals(template.getSize().getProviderId(), InstanceType.CC1_4XLARGE);
+      assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testTemplateChoiceForInstanceByCCSizeId")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
             context.getProviderSpecificContext().getApi())
@@ -132,7 +164,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
+   @Test(enabled = true, dependsOnMethods = "testTemplateChoiceForInstanceByCCSizeId")
    public void testExtendedOptionsNoKeyPair() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
             context.getProviderSpecificContext().getApi())
@@ -190,14 +222,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
+   @Test(enabled = true, dependsOnMethods = "testTemplateChoiceForInstanceByCCSizeId")
    public void testExtendedOptionsWithSubnetId() throws Exception {
-       
+
       String subnetId = System.getProperty("jclouds.test.subnetId");
-      if(subnetId == null)
-      {
-          //Skip test and return
-          return;
+      if (subnetId == null) {
+         // Skip test and return
+         return;
       }
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(
             context.getProviderSpecificContext().getApi())
@@ -214,7 +245,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       TemplateOptions options = client.templateOptions();
 
-      //options.as(EC2TemplateOptions.class).securityGroups(tag);
+      // options.as(EC2TemplateOptions.class).securityGroups(tag);
       options.as(EC2TemplateOptions.class).keyPair(tag);
       options.as(EC2TemplateOptions.class).subnetId(subnetId);
 
@@ -224,14 +255,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
 
          // create the security group
-         //securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
+         // securityGroupClient.createSecurityGroupInRegion(null, tag, tag);
 
          // create a keypair to pass in as well
          keyPairClient.createKeyPairInRegion(null, tag);
 
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1,
                options);
-         
+
          NodeMetadata first = Iterables.get(nodes, 0);
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
@@ -245,7 +276,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       } finally {
          if (nodeId != null)
-             client.destroyNode(nodeId);
+            client.destroyNode(nodeId);
          if (startedId != null) {
             // ensure we didn't delete these resources!
             assertEquals(keyPairClient.describeKeyPairsInRegion(null, tag)
@@ -254,7 +285,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
       }
    }
-   
+
    private RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables
             .getOnlyElement(Iterables.getOnlyElement(instanceClient

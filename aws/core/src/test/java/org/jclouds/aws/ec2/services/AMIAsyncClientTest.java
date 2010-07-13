@@ -59,7 +59,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=CreateImage&InstanceId=instanceId&Name=name",
+               "Version=2010-06-15&Action=CreateImage&InstanceId=instanceId&Name=name",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ImageIdHandler.class);
@@ -80,7 +80,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=CreateImage&InstanceId=instanceId&Name=name&Description=description&NoReboot=true",
+               "Version=2010-06-15&Action=CreateImage&InstanceId=instanceId&Name=name&Description=description&NoReboot=true",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -97,12 +97,12 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeImages",
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeImages",
                "application/x-www-form-urlencoded", false);
       filter.filter(request);
       assertPayloadEquals(
                request,
-               "Action=DescribeImages&Signature=IYist5Mfzd44GO3%2BX8WJ4Ti%2BWe3UmrZQC10XdCkT5Fk%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-11-30&AWSAccessKeyId=identity",
+               "Action=DescribeImages&Signature=qE4vexSFJqS0UWK%2BccV3s%2BP9woL3M5HI5bTBoM7s%2FLY%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -123,7 +123,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=DescribeImages&ExecutableBy=me&Owner.1=fred&Owner.2=nancy&ImageId.1=1&ImageId.2=2",
+               "Version=2010-06-15&Action=DescribeImages&ExecutableBy=me&Owner.1=fred&Owner.2=nancy&ImageId.1=1&ImageId.2=2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -140,7 +140,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=DeregisterImage&ImageId=imageId",
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DeregisterImage&ImageId=imageId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -160,7 +160,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=RegisterImage&ImageLocation=pathToManifest&Name=name",
+               "Version=2010-06-15&Action=RegisterImage&ImageLocation=pathToManifest&Name=name",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ImageIdHandler.class);
@@ -181,7 +181,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=RegisterImage&ImageLocation=pathToManifest&Name=name&Description=description",
+               "Version=2010-06-15&Action=RegisterImage&ImageLocation=pathToManifest&Name=name&Description=description",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -202,7 +202,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=RegisterImage&RootDeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.Ebs.SnapshotId=snapshotId&Name=imageName",
+               "Version=2010-06-15&Action=RegisterImage&RootDeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.Ebs.SnapshotId=snapshotId&Name=imageName",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ImageIdHandler.class);
@@ -225,7 +225,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=RegisterImage&RootDeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.Ebs.SnapshotId=snapshotId&Name=imageName&Description=description&BlockDeviceMapping.1.Ebs.DeleteOnTermination=false&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fdevice&BlockDeviceMapping.1.Ebs.SnapshotId=snapshot&BlockDeviceMapping.2.Ebs.DeleteOnTermination=false&BlockDeviceMapping.2.DeviceName=%2Fdev%2Fnewdevice&BlockDeviceMapping.2.VirtualName=newblock&BlockDeviceMapping.2.Ebs.VolumeSize=100",
+               "Version=2010-06-15&Action=RegisterImage&RootDeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.DeviceName=%2Fdev%2Fsda1&BlockDeviceMapping.0.Ebs.SnapshotId=snapshotId&Name=imageName&Description=description&BlockDeviceMapping.1.Ebs.DeleteOnTermination=false&BlockDeviceMapping.1.DeviceName=%2Fdev%2Fdevice&BlockDeviceMapping.1.Ebs.SnapshotId=snapshot&BlockDeviceMapping.2.Ebs.DeleteOnTermination=false&BlockDeviceMapping.2.DeviceName=%2Fdev%2Fnewdevice&BlockDeviceMapping.2.VirtualName=newblock&BlockDeviceMapping.2.Ebs.VolumeSize=100",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -245,7 +245,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=DescribeImageAttribute&Attribute=productCodes&ImageId=imageId",
+               "Version=2010-06-15&Action=DescribeImageAttribute&Attribute=productCodes&ImageId=imageId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -265,7 +265,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=DescribeImageAttribute&Attribute=blockDeviceMapping&ImageId=imageId",
+               "Version=2010-06-15&Action=DescribeImageAttribute&Attribute=blockDeviceMapping&ImageId=imageId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -285,7 +285,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=DescribeImageAttribute&Attribute=launchPermission&ImageId=imageId",
+               "Version=2010-06-15&Action=DescribeImageAttribute&Attribute=launchPermission&ImageId=imageId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -306,12 +306,12 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=add&Attribute=launchPermission&ImageId=imageId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
+               "Version=2010-06-15&Action=ModifyImageAttribute&OperationType=add&Attribute=launchPermission&ImageId=imageId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
                "application/x-www-form-urlencoded", false);
       filter.filter(request);
       assertPayloadEquals(
                request,
-               "Action=ModifyImageAttribute&Attribute=launchPermission&ImageId=imageId&OperationType=add&Signature=Nf2oLuEQ%2BDgwhAxNt7Cdicjacz3PYTVR08%2BaGuXMfwU%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&UserGroup.1=all&UserId.1=bob&UserId.2=sue&Version=2009-11-30&AWSAccessKeyId=identity",
+               "Action=ModifyImageAttribute&Attribute=launchPermission&ImageId=imageId&OperationType=add&Signature=WZzNWOC1KHbuySvXEuLTiBA%2BVUfKpSBN2Lud6MrhlCQ%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&UserGroup.1=all&UserId.1=bob&UserId.2=sue&Version=2010-06-15&AWSAccessKeyId=identity",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -332,7 +332,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=remove&Attribute=launchPermission&ImageId=imageId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
+               "Version=2010-06-15&Action=ModifyImageAttribute&OperationType=remove&Attribute=launchPermission&ImageId=imageId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -351,7 +351,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=ResetImageAttribute&Attribute=launchPermission&ImageId=imageId",
+               "Version=2010-06-15&Action=ResetImageAttribute&Attribute=launchPermission&ImageId=imageId",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -371,7 +371,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=add&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2",
+               "Version=2010-06-15&Action=ModifyImageAttribute&OperationType=add&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -392,7 +392,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=ModifyImageAttribute&OperationType=remove&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2",
+               "Version=2010-06-15&Action=ModifyImageAttribute&OperationType=remove&Attribute=productCodes&ImageId=imageId&ProductCode.1=code1&ProductCode.2=code2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);

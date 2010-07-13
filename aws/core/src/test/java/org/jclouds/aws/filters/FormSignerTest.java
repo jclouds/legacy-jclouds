@@ -37,8 +37,8 @@ public class FormSignerTest extends BaseEC2AsyncClientTest<String> {
                         "AWSAccessKeyId", "foo").put("Action", "DescribeImages").put("Expires",
                         "2008-02-10T12:00:00Z").put("ImageId.1", "ami-2bb65342").put(
                         "SignatureMethod", "HmacSHA256").put("SignatureVersion", "2").put(
-                        "Version", "2009-11-30").build()),
-               "AWSAccessKeyId=foo&Action=DescribeImages&Expires=2008-02-10T12%3A00%3A00Z&ImageId.1=ami-2bb65342&SignatureMethod=HmacSHA256&SignatureVersion=2&Version=2009-11-30");
+                        "Version", "2010-06-15").build()),
+               "AWSAccessKeyId=foo&Action=DescribeImages&Expires=2008-02-10T12%3A00%3A00Z&ImageId.1=ami-2bb65342&SignatureMethod=HmacSHA256&SignatureVersion=2&Version=2010-06-15");
    }
 
    @Override

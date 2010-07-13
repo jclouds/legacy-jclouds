@@ -50,7 +50,7 @@ public class ElasticIPAddressAsyncClientTest extends
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DisassociateAddress&PublicIp=127.0.0.1",
+               "Version=2010-06-15&Action=DisassociateAddress&PublicIp=127.0.0.1",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -68,7 +68,7 @@ public class ElasticIPAddressAsyncClientTest extends
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1",
+               "Version=2010-06-15&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -85,7 +85,7 @@ public class ElasticIPAddressAsyncClientTest extends
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=ReleaseAddress&PublicIp=127.0.0.1",
+      assertPayloadEquals(request, "Version=2010-06-15&Action=ReleaseAddress&PublicIp=127.0.0.1",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -103,7 +103,7 @@ public class ElasticIPAddressAsyncClientTest extends
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DescribeAddresses&PublicIp.1=127.0.0.1",
+               "Version=2010-06-15&Action=DescribeAddresses&PublicIp.1=127.0.0.1",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -120,7 +120,7 @@ public class ElasticIPAddressAsyncClientTest extends
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=AllocateAddress",
+      assertPayloadEquals(request, "Version=2010-06-15&Action=AllocateAddress",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

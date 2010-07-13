@@ -34,7 +34,7 @@ import static org.jclouds.compute.reference.ComputeServiceConstants.LOCAL_PARTIT
  * describe what partitions are formatted initially. To format/mount an available device, refer to
  * <a href="http://meinit.nl/howto-use-amazon-elastic-compute-cloud-ec2">this article</a>.
  *
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2009-11-30/UserGuide/index.html?instance-storage-concepts.html" />
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2010-06-15/UserGuide/index.html?instance-storage-concepts.html" />
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?instance-types.html" />
  *
  * @author Oleksiy Yarmula
@@ -76,7 +76,7 @@ public class RunningInstanceToStorageMappingUnix implements Function<RunningInst
     * @param instanceType for which the root partition size is to be determined
     * @return size in GB
     *
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2009-11-30/UserGuide/index.html?instance-storage-concepts.html" />
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2010-06-15/UserGuide/index.html?instance-storage-concepts.html" />
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?instance-types.html" />
     */
    public int getRootPartitionSizeForInstanceType(String instanceType) {

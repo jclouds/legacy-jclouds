@@ -45,7 +45,7 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
       HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      String payload = "Version=2009-11-30&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2";
+      String payload = "Version=2010-06-15&Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2";
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, payload, "application/x-www-form-urlencoded", false);
 
@@ -65,7 +65,7 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2",
+               "Version=2010-06-15&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

@@ -38,6 +38,28 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class ImagePredicates {
+   /**
+    * evaluates true if the Image
+    * 
+    * @param ids
+    *           ids of the images
+    * @return predicate
+    */
+   public static Predicate<Image> idIn(Iterable<String> ids) {
+      checkNotNull(ids, "ids must be defined");
+      final Set<String> search = Sets.newHashSet(ids);
+      return new Predicate<Image>() {
+         @Override
+         public boolean apply(Image image) {
+            return search.contains(image.getId());
+         }
+
+         @Override
+         public String toString() {
+            return "idIn(" + search + ")";
+         }
+      };
+   }
 
    /**
     * evaluates true if the Image
@@ -61,7 +83,8 @@ public class ImagePredicates {
       };
    }
 
-   public static Predicate<Image> architectureIn(Iterable<Architecture> architectures) {
+   public static Predicate<Image> architectureIn(
+         Iterable<Architecture> architectures) {
       checkNotNull(architectures, "architectures must be defined");
       final Set<Architecture> search = Sets.newHashSet(architectures);
       return new Predicate<Image>() {

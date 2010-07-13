@@ -31,7 +31,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import com.google.common.collect.Sets;
 
 /**
- * Parses: DescribeKeyPairsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
+ * Parses: DescribeKeyPairsResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/"
  * 
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html"
  *      />

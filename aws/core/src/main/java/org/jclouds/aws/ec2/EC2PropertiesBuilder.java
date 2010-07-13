@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_ELB_ENDPOINT;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
@@ -46,6 +47,8 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
                "https://elasticloadbalancing.us-east-1.amazonaws.com");
       // alestic, canonical, and rightscale
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477,411009282317");
+      // amis that work with the cluster instances
+      properties.setProperty(PROPERTY_EC2_CC_AMIs, "us-east-1/ami-7ea24a17");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
       properties.setProperty("jclouds.ssh.max_retries", "6");

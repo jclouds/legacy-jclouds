@@ -25,6 +25,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Server;
@@ -39,6 +40,7 @@ import com.google.gson.reflect.TypeToken;
 /**
  * @author Oleksiy Yarmula
  */
+@Singleton
 public class ParseServerNameToCredentialsMapFromJsonResponse extends
          ParseJson<Map<String, Credentials>> {
 

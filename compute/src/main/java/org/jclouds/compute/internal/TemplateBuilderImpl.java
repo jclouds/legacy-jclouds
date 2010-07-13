@@ -462,7 +462,13 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
                                  @Override
                                  public boolean apply(Image input) {
-                                    return size.supportsImage(input);
+                                    boolean returnVal = size
+                                          .supportsImage(input);
+                                    if (!returnVal && input.getId().equals("us-east-1/ami-7ea24a17")) {
+                                       System.err.println("goo");
+                                    }
+                                    return returnVal;
+
                                  }
 
                               });

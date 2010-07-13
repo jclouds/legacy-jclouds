@@ -61,14 +61,14 @@ public class HttpUtilsTest extends PerformanceTest {
 
    public void testParseBase64InForm() {
       Multimap<String, String> expects = LinkedListMultimap.create();
-      expects.put("Version", "2009-11-30");
+      expects.put("Version", "2010-06-15");
       expects.put("Action", "ModifyInstanceAttribute");
       expects.put("Attribute", "userData");
       expects.put("Value", "dGVzdA==");
       expects.put("InstanceId", "1");
       assertEquals(
                expects,
-               parseQueryToMap("Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"));
+               parseQueryToMap("Version=2010-06-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"));
    }
 
    @Test

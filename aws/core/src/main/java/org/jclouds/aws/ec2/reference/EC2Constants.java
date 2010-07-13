@@ -33,4 +33,11 @@ public interface EC2Constants{
    public static final String PROPERTY_EC2_AMI_OWNERS = "jclouds.ec2.ami-owners";
    public static final String PROPERTY_ELB_ENDPOINT = "jclouds.elb.endpoint";
 
+   /**
+    * amis that work on the cluster instance type
+    * 
+    * @see InstanceType.CC1_4XLARGE
+    */
+   public static final String PROPERTY_EC2_CC_AMIs = "jclouds.ec2.cc-amis";
+
 }

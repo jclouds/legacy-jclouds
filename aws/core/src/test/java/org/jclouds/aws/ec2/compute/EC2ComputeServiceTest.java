@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
@@ -65,6 +66,10 @@ import com.google.inject.util.Providers;
  * @author Oleksiy Yarmula
  */
 public class EC2ComputeServiceTest {
+   private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
+
+   private static final EC2Size CC1_4XLARGE = new EC2Size(location,
+                                 InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690, new String[]{"us-east-1/cc-image"});
 
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
@@ -83,6 +88,17 @@ public class EC2ComputeServiceTest {
                String.valueOf(template.getSize()));
    }
 
+   @Test
+   public void testTemplateChoiceForInstanceByCCSizeId() throws Exception {
+      Template template = newTemplateBuilder().fastest().build();
+
+      assert template != null : "The returned template was null, but it should have a value.";
+      assert CC1_4XLARGE.equals(template.getSize()) : format(
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(),
+               String.valueOf(template.getSize()));
+   }
+
+   
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
     * on physical attributes (# of cores, ram, etc).
@@ -121,7 +137,6 @@ public class EC2ComputeServiceTest {
 
    @SuppressWarnings("unchecked")
    private TemplateBuilder newTemplateBuilder() {
-      Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
 
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -129,7 +144,7 @@ public class EC2ComputeServiceTest {
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      Image image = new ImageImpl("ami-image", "image", "us-east-1/ami-image", location, null, Maps
+      Image image = new ImageImpl("cc-image", "image", "us-east-1/cc-image", location, null, Maps
                .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
                Architecture.X86_64, new Credentials("root", null));
       replay(optionsProvider);
@@ -141,7 +156,7 @@ public class EC2ComputeServiceTest {
       Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
                .<Size> of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL,
                         EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
-                        EC2Size.M2_4XLARGE));
+                        EC2Size.M2_4XLARGE, CC1_4XLARGE ));
 
       return new TemplateBuilderImpl(locations, images, sizes, location, optionsProvider,
                templateBuilderProvider) {

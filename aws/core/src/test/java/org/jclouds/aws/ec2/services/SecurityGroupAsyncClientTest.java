@@ -50,7 +50,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=DeleteSecurityGroup&GroupName=name",
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DeleteSecurityGroup&GroupName=name",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -70,7 +70,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=CreateSecurityGroup&GroupDescription=description&GroupName=name",
+               "Version=2010-06-15&Action=CreateSecurityGroup&GroupDescription=description&GroupName=name",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -88,7 +88,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2009-11-30&Action=DescribeSecurityGroups",
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeSecurityGroups",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -107,7 +107,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2009-11-30&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2",
+               "Version=2010-06-15&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -129,7 +129,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup",
+               "Version=2010-06-15&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -151,7 +151,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
+               "Version=2010-06-15&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -173,7 +173,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup",
+               "Version=2010-06-15&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -195,7 +195,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-30&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
+               "Version=2010-06-15&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);

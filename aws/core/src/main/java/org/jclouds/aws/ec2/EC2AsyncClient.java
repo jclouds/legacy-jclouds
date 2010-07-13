@@ -34,7 +34,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface EC2AsyncClient {
-   public final static String VERSION = "2009-11-30";
+   public final static String VERSION = "2010-06-15";
 
    /**
     * Provides asynchronous access to AMI services.

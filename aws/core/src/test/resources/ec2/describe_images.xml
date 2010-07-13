@@ -17,6 +17,7 @@
             <ramdiskId>ari-4538dd2c</ramdiskId>
             <rootDeviceType>instance-store</rootDeviceType>
             <blockDeviceMapping />
+            <virtualizationType>paravirtual</virtualizationType>
         </item>
     </imagesSet>
 </DescribeImagesResponse>

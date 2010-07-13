@@ -90,7 +90,6 @@ import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Caller;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -375,18 +374,18 @@ public class RestAnnotationProcessor<T> {
 
    final Injector injector;
 
-   ClassMethodArgs caller;
+   private ClassMethodArgs caller;
+   private URI callerEndpoint;
 
-   @Inject(optional = true)
-   public void setCaller(@Caller ClassMethodArgs caller) {
+   public void setCaller(ClassMethodArgs caller) {
       seedCache(caller.getMethod().getDeclaringClass());
       this.caller = caller;
+      try {
+         callerEndpoint = getEndpointFor(caller.getMethod(), caller.getArgs(),
+               injector);
+      } catch (IllegalStateException e) {
+      }
    }
-
-   @Inject(optional = true)
-   @Caller
-   @Nullable
-   URI callerEndpoint;
 
    public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
       inputParamValidator.validateMethodParametersOrThrow(method, args);
@@ -680,7 +679,8 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   public static URI getEndpointFor(Method method, Object[] args, Injector injector) {
+   public static URI getEndpointFor(Method method, Object[] args,
+         Injector injector) {
       URI endpoint = getEndpointInParametersOrNull(method, args, injector);
       if (endpoint == null) {
          Endpoint annotation;

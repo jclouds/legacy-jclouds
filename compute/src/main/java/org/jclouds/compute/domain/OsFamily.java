@@ -37,7 +37,7 @@ public enum OsFamily {
    /**
     * Oracle Enterprise Linux
     */
-   OEL, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, SUSE, GENTOO, WINDOWS;
+   OEL, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, SUSE, SOLARIS, GENTOO, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }
@@ -48,7 +48,7 @@ public enum OsFamily {
    }
 
    public static OsFamily fromValue(String operatingSystem) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(
-               operatingSystem, "region")));
+      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
+            checkNotNull(operatingSystem, "region")));
    }
 }

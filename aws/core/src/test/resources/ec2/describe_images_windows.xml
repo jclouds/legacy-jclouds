@@ -16,6 +16,7 @@
             <platform>windows</platform>
             <rootDeviceType>instance-store</rootDeviceType>
             <blockDeviceMapping/>
+            <virtualizationType>paravirtual</virtualizationType>
         </item>
     </imagesSet>
 </DescribeImagesResponse>

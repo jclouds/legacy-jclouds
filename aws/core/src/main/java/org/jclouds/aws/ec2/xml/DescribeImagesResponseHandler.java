@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
 /**
  * Parses the following XML document:
  * <p/>
- * DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
+ * DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/"
  * 
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
@@ -83,6 +83,8 @@ public class DescribeImagesResponseHandler extends
    private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
    private String deviceName;
    private String snapshotId;
+   private String virtualizationType = "paravirtual";
+
    private int volumeSize;
    private boolean deleteOnTermination = true;// correct default is true.
 
@@ -143,6 +145,8 @@ public class DescribeImagesResponseHandler extends
          rootDeviceType = RootDeviceType.fromValue(currentText.toString().trim());
       } else if (qName.equals("rootDeviceName")) {
          rootDeviceName = currentText.toString().trim();
+      } else if (qName.equals("virtualizationType")) {
+         virtualizationType = currentText.toString().trim();
       } else if (qName.equals("item")) {
          if (inBlockDeviceMapping) {
             ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize,
@@ -159,7 +163,7 @@ public class DescribeImagesResponseHandler extends
                contents.add(new Image(region, architecture, this.name, description, imageId,
                         imageLocation, imageOwnerId, imageState, imageType, isPublic, productCodes,
                         kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName,
-                        ebsBlockDevices));
+                        ebsBlockDevices, virtualizationType));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
@@ -179,6 +183,7 @@ public class DescribeImagesResponseHandler extends
             this.rootDeviceType = null;
             this.rootDeviceName = null;
             this.ebsBlockDevices = Maps.newHashMap();
+            this.virtualizationType = "paravirtual";
          }
 
       }

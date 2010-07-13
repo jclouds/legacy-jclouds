@@ -58,14 +58,22 @@ public class Image implements Comparable<Image> {
    private final RootDeviceType rootDeviceType;
    @Nullable
    private final String rootDeviceName;
-   private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps
+         .newHashMap();
+   private final String virtualizationType;
 
-   public Image(String region, Architecture architecture, @Nullable String name,
-            @Nullable String description, String imageId, String imageLocation,
-            String imageOwnerId, ImageState imageState, ImageType imageType, boolean isPublic,
-            Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
-            @Nullable String ramdiskId, RootDeviceType rootDeviceType,
-            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices) {
+   public String getVirtualizationType() {
+      return virtualizationType;
+   }
+
+   public Image(String region, Architecture architecture,
+         @Nullable String name, @Nullable String description, String imageId,
+         String imageLocation, String imageOwnerId, ImageState imageState,
+         ImageType imageType, boolean isPublic, Iterable<String> productCodes,
+         @Nullable String kernelId, @Nullable String platform,
+         @Nullable String ramdiskId, RootDeviceType rootDeviceType,
+         @Nullable String rootDeviceName,
+         Map<String, EbsBlockDevice> ebsBlockDevices, String virtualizationType) {
       this.region = checkNotNull(region, "region");
       this.architecture = checkNotNull(architecture, "architecture");
       this.imageId = checkNotNull(imageId, "imageId");
@@ -79,10 +87,14 @@ public class Image implements Comparable<Image> {
       this.isPublic = isPublic;
       this.kernelId = kernelId;
       this.platform = platform;
-      Iterables.addAll(this.productCodes, checkNotNull(productCodes, "productCodes"));
+      Iterables.addAll(this.productCodes, checkNotNull(productCodes,
+            "productCodes"));
       this.ramdiskId = ramdiskId;
       this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
-      this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
+      this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices,
+            "ebsBlockDevices"));
+      this.virtualizationType = checkNotNull(virtualizationType,
+            "virtualizationType");
    }
 
    /** The serialVersionUID */
@@ -137,7 +149,7 @@ public class Image implements Comparable<Image> {
       private final boolean deleteOnTermination;
 
       public EbsBlockDevice(@Nullable String snapshotId, long volumeSize,
-               boolean deleteOnTermination) {
+            boolean deleteOnTermination) {
          this.snapshotId = snapshotId;
          this.volumeSize = volumeSize;
          this.deleteOnTermination = deleteOnTermination;
@@ -160,7 +172,8 @@ public class Image implements Comparable<Image> {
          final int prime = 31;
          int result = 1;
          result = prime * result + (deleteOnTermination ? 1231 : 1237);
-         result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());
+         result = prime * result
+               + ((snapshotId == null) ? 0 : snapshotId.hashCode());
          result = prime * result + (int) (volumeSize ^ (volumeSize >>> 32));
          return result;
       }
@@ -188,8 +201,9 @@ public class Image implements Comparable<Image> {
 
       @Override
       public String toString() {
-         return "EbsBlockDevice [deleteOnTermination=" + deleteOnTermination + ", snapshotId="
-                  + snapshotId + ", volumeSize=" + volumeSize + "]";
+         return "EbsBlockDevice [deleteOnTermination=" + deleteOnTermination
+               + ", snapshotId=" + snapshotId + ", volumeSize=" + volumeSize
+               + "]";
       }
 
    }
@@ -231,9 +245,10 @@ public class Image implements Comparable<Image> {
    }
 
    /**
-    * Current state of the AMI. If the operation returns available, the image is successfully
-    * registered and avail able for launching. If the operation returns deregistered, the image is
-    * deregistered and no longer available for launching.
+    * Current state of the AMI. If the operation returns available, the image is
+    * successfully registered and avail able for launching. If the operation
+    * returns deregistered, the image is deregistered and no longer available
+    * for launching.
     */
    public ImageState getImageState() {
       return imageState;
@@ -247,15 +262,16 @@ public class Image implements Comparable<Image> {
    }
 
    /**
-    * Returns true if this image has public launch permissions. Returns false if it only has
-    * implicit and explicit launch permissions.
+    * Returns true if this image has public launch permissions. Returns false if
+    * it only has implicit and explicit launch permissions.
     */
    public boolean isPublic() {
       return isPublic;
    }
 
    /**
-    * The kernel associated with the image, if any. Only applicable for machine images.
+    * The kernel associated with the image, if any. Only applicable for machine
+    * images.
     */
    public String getKernelId() {
       return kernelId;
@@ -276,7 +292,8 @@ public class Image implements Comparable<Image> {
    }
 
    /**
-    * The RAM disk associated with the image, if any. Only applicable for machine images.
+    * The RAM disk associated with the image, if any. Only applicable for
+    * machine images.
     */
    public String getRamdiskId() {
       return ramdiskId;
@@ -291,8 +308,8 @@ public class Image implements Comparable<Image> {
 
    /**
     * 
-    * @return The root device type used by the AMI. The AMI can use an Amazon EBS or instance store
-    *         root device.
+    * @return The root device type used by the AMI. The AMI can use an Amazon
+    *         EBS or instance store root device.
     */
    public RootDeviceType getRootDeviceType() {
       return rootDeviceType;
@@ -318,23 +335,37 @@ public class Image implements Comparable<Image> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
+      result = prime * result
+            + ((architecture == null) ? 0 : architecture.hashCode());
+      result = prime * result
+            + ((description == null) ? 0 : description.hashCode());
+      result = prime * result
+            + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-      result = prime * result + ((imageLocation == null) ? 0 : imageLocation.hashCode());
-      result = prime * result + ((imageOwnerId == null) ? 0 : imageOwnerId.hashCode());
-      result = prime * result + ((imageState == null) ? 0 : imageState.hashCode());
-      result = prime * result + ((imageType == null) ? 0 : imageType.hashCode());
+      result = prime * result
+            + ((imageLocation == null) ? 0 : imageLocation.hashCode());
+      result = prime * result
+            + ((imageOwnerId == null) ? 0 : imageOwnerId.hashCode());
+      result = prime * result
+            + ((imageState == null) ? 0 : imageState.hashCode());
+      result = prime * result
+            + ((imageType == null) ? 0 : imageType.hashCode());
       result = prime * result + (isPublic ? 1231 : 1237);
       result = prime * result + ((kernelId == null) ? 0 : kernelId.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((platform == null) ? 0 : platform.hashCode());
-      result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
-      result = prime * result + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
+      result = prime * result
+            + ((productCodes == null) ? 0 : productCodes.hashCode());
+      result = prime * result
+            + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
       result = prime * result + ((region == null) ? 0 : region.hashCode());
-      result = prime * result + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
-      result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
+      result = prime * result
+            + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
+      result = prime * result
+            + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
+      result = prime
+            * result
+            + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
       return result;
    }
 
@@ -429,19 +460,26 @@ public class Image implements Comparable<Image> {
             return false;
       } else if (!rootDeviceType.equals(other.rootDeviceType))
          return false;
+      if (virtualizationType == null) {
+         if (other.virtualizationType != null)
+            return false;
+      } else if (!virtualizationType.equals(other.virtualizationType))
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "Image [architecture=" + architecture + ", description=" + description
-               + ", ebsBlockDevices=" + ebsBlockDevices + ", imageId=" + imageId
-               + ", imageLocation=" + imageLocation + ", imageOwnerId=" + imageOwnerId
-               + ", imageState=" + imageState + ", imageType=" + imageType + ", isPublic="
-               + isPublic + ", kernelId=" + kernelId + ", name=" + name + ", platform=" + platform
-               + ", productCodes=" + productCodes + ", ramdiskId=" + ramdiskId + ", region="
-               + region + ", rootDeviceName=" + rootDeviceName + ", rootDeviceType="
-               + rootDeviceType + "]";
+      return "Image [architecture=" + architecture + ", description="
+            + description + ", ebsBlockDevices=" + ebsBlockDevices
+            + ", imageId=" + imageId + ", imageLocation=" + imageLocation
+            + ", imageOwnerId=" + imageOwnerId + ", imageState=" + imageState
+            + ", imageType=" + imageType + ", isPublic=" + isPublic
+            + ", kernelId=" + kernelId + ", name=" + name + ", platform="
+            + platform + ", productCodes=" + productCodes + ", ramdiskId="
+            + ramdiskId + ", region=" + region + ", rootDeviceName="
+            + rootDeviceName + ", rootDeviceType=" + rootDeviceType
+            + ", virtualizationType=" + virtualizationType + "]";
    }
 
 }

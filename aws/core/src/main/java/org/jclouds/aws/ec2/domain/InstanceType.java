@@ -18,19 +18,17 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.jclouds.aws.ec2.EC2AsyncClient;
 
 /**
- *
+ * 
  * The type of the instance. Description accurate as of 8-15-2009 release.
- *
+ * 
  * @author Adrian Cole
  * @see EC2AsyncClient#describeInstances
  * @see EC2AsyncClient#runInstances
  * @see EC2AsyncClient#terminateInstances
- *
+ * 
  */
 public class InstanceType {
    /**
@@ -70,7 +68,8 @@ public class InstanceType {
     * High-Memory Extra Large Instance
     * <ul>
     * <li>17.1 GB of memory</li>
-    * <li>6.5 EC2 Compute Units (2 virtual cores with 3.25 EC2 Compute Units each)</li>
+    * <li>6.5 EC2 Compute Units (2 virtual cores with 3.25 EC2 Compute Units
+    * each)</li>
     * <li>420 GB of instance storage</li>
     * <li>64-bit platform</li>
     * <li>I/O Performance: Moderate</li>
@@ -81,7 +80,8 @@ public class InstanceType {
     * High-Memory Double Extra Large Instance
     * <ul>
     * <li>34.2 GB of memory</li>
-    * <li>13 EC2 Compute Units (4 virtual cores with 3.25 EC2 Compute Units each)</li>
+    * <li>13 EC2 Compute Units (4 virtual cores with 3.25 EC2 Compute Units
+    * each)</li>
     * <li>850 GB of instance storage</li>
     * <li>64-bit platform</li>
     * <li>I/O Performance: High</li>
@@ -92,7 +92,8 @@ public class InstanceType {
     * High-Memory Quadruple Extra Large Instance
     * <ul>
     * <li>68.4 GB of memory</li>
-    * <li>26 EC2 Compute Units (8 virtual cores with 3.25 EC2 Compute Units each)</li>
+    * <li>26 EC2 Compute Units (8 virtual cores with 3.25 EC2 Compute Units
+    * each)</li>
     * <li>1690 GB of instance storage</li>
     * <li>64-bit platform</li>
     * <li>I/O Performance: High</li>
@@ -114,7 +115,8 @@ public class InstanceType {
     * High-CPU Extra Large Instance
     * <ul>
     * <li>7 GB of memory</li>
-    * <li>20 EC2 Compute Units (8 virtual cores with 2.5 EC2 Compute Units each)</li>
+    * <li>20 EC2 Compute Units (8 virtual cores with 2.5 EC2 Compute Units each)
+    * </li>
     * <li>1690 GB of instance storage</li>
     * <li>64-bit platform</li>
     * <li>I/O Performance: High</li>
@@ -122,12 +124,18 @@ public class InstanceType {
     */
    public static final String C1_XLARGE = "c1.xlarge";
 
-   public static String fromValue(String type) {
-      return checkNotNull(type, "type").replaceAll("\\.", "_").toUpperCase();
-   }
-
-   public static String toDotSeparatorLowercaseNotation(String type) {
-      return checkNotNull(type, "type").replaceAll("_", "\\.").toLowerCase();
-   }
+   /**
+    * Cluster Compute Instance
+    * <ul>
+    * <li>23 GB of memory</li>
+    * <li>33.5 EC2 Compute Units (2 x Intel Xeon X5570, quad-core "Nehalem"
+    * architecture)</li>
+    * <li>1690 GB of 64-bit storage (2 x 840 GB, plus 10 GB root partition)</li>
+    * <li>10 Gbps Ethernet</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: High</li>
+    * </ul>
+    */
+   public static final String CC1_4XLARGE = "cc1.4xlarge";
 
 }

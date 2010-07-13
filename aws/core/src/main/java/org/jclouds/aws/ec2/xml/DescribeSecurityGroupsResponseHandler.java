@@ -35,7 +35,7 @@ import org.xml.sax.Attributes;
 import com.google.common.collect.Sets;
 
 /**
- * Parses: DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
+ * Parses: DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/"
  * 
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DescribeSecurityGroups.html"
  *      />

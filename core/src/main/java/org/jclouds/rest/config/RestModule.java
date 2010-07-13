@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.config;
 
-import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Named;
@@ -36,7 +35,6 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
-import org.jclouds.rest.annotations.Caller;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
@@ -47,7 +45,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -85,10 +82,6 @@ public class RestModule extends AbstractModule {
       private final Injector injector;
       private final AsyncRestClientProxy.Factory factory;
 
-      @Caller
-      @Inject(optional = true)
-      Module callerModule = new CallerScopedBindingModule();
-
       @Inject
       CreateAsyncClientForCaller(Injector injector,
             AsyncRestClientProxy.Factory factory) {
@@ -101,22 +94,12 @@ public class RestModule extends AbstractModule {
       public Object apply(final ClassMethodArgs from) {
          Class clazz = from.getAsyncClass();
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
-         Injector injector = this.injector.createChildInjector(callerModule,
-               new AbstractModule() {
-
-                  @Override
-                  protected void configure() {
-                     bind(ClassMethodArgs.class).annotatedWith(Caller.class)
-                           .toInstance(from);
-                     install(callerModule);
-                  }
-
-               });
          RestAnnotationProcessor util = (RestAnnotationProcessor) injector
                .getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                      RestAnnotationProcessor.class, clazz))));
-         // not sure why we have to go back and re-inject this...
-         injector.injectMembers(util);
+         // cannot use child injectors due to the super coarse guice lock on 
+         // Singleton
+         util.setCaller(from);
          ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector
                .getInstance(Key.get(
                      new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
@@ -125,26 +108,6 @@ public class RestModule extends AbstractModule {
                factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);
          return AsyncClientFactory.create(clazz, proxy);
-      }
-   }
-
-   @Singleton
-   public static class CallerScopedBindingModule extends AbstractModule {
-
-      @Provides
-      @Caller
-      URI provideCallerScopedURI(Injector injector, @Caller ClassMethodArgs args) {
-         try {
-            return RestAnnotationProcessor.getEndpointFor(args.getMethod(),
-                  args.getArgs(), injector);
-         } catch (IllegalStateException e) {
-            return null;
-         }
-      }
-
-      @Override
-      protected void configure() {
-
       }
    }
 
