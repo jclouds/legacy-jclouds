@@ -41,10 +41,11 @@ public abstract class BasePayload<V> implements Payload {
    protected byte[] contentMD5;
    protected transient volatile boolean written;
 
-   protected BasePayload(V content, @Nullable String contentType, @Nullable Long contentLength,
-            @Nullable byte[] contentMD5) {
+   protected BasePayload(V content, @Nullable String contentType,
+         @Nullable Long contentLength, @Nullable byte[] contentMD5) {
       this.content = checkNotNull(content, "content");
-      this.contentType = contentType == null ? "application/unknown" : contentType;
+      this.contentType = contentType == null ? "application/unknown"
+            : contentType;
       this.contentLength = contentLength;
       if (contentMD5 != null)
          setContentMD5(contentMD5);
@@ -121,7 +122,8 @@ public abstract class BasePayload<V> implements Payload {
     */
    @Override
    public void writeTo(OutputStream outstream) throws IOException {
-      checkState(!written || isRepeatable(), "can only be writted to an outputstream once");
+      checkState(!written || isRepeatable(),
+            "can only be writted to an outputstream once");
       written = true;
       InputStream in = getInput();
       try {
@@ -158,9 +160,9 @@ public abstract class BasePayload<V> implements Payload {
 
    @Override
    public String toString() {
-      return "[content=" + (content != null) + ", contentLength=" + contentLength + ", contentMD5="
-               + (contentMD5 != null) + ", contentType=" + contentType + ", written=" + written
-               + "]";
+      return "[content=" + (content != null) + ", contentLength="
+            + contentLength + ", contentMD5=" + (contentMD5 != null)
+            + ", contentType=" + contentType + ", written=" + written + "]";
    }
 
    /**
@@ -178,4 +180,11 @@ public abstract class BasePayload<V> implements Payload {
    public void release() {
    }
 
+   /**
+    * Delegates to release()
+    */
+   @Override
+   public void close() {
+      release();
+   }
 }

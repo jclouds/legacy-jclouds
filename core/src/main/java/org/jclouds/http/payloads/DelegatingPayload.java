@@ -143,4 +143,9 @@ public class DelegatingPayload implements Payload {
    public void release() {
       delegate.release();
    }
+
+   @Override
+   public void close() throws IOException {
+      delegate.close();
+   }
 }

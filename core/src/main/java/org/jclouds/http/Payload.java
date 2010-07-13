@@ -18,6 +18,7 @@
  */
 package org.jclouds.http;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,7 +30,7 @@ import com.google.common.io.InputSupplier;
 /**
  * @author Adrian Cole
  */
-public interface Payload extends InputSupplier<InputStream> {
+public interface Payload extends InputSupplier<InputStream>, Closeable{
 
    /**
     * Creates a new InputStream object of the payload.
