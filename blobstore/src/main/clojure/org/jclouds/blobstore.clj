@@ -288,7 +288,7 @@ note that this implies rebuffering, if the blob's payload isn't repeatable"
                blob-or-name)
        (md5-blob blob-or-name blobstore-or-payload *blobstore*)))
     ([#^String name payload #^BlobStore blobstore]
-     (md5-blob (blob name payload *blobstore*) *blobstore*)))
+     (md5-blob (blob name payload blobstore) blobstore)))
 
 (defn upload-blob
   "Create anrepresenting text data:
