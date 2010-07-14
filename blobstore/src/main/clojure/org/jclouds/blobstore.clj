@@ -283,9 +283,11 @@ note that this implies rebuffering, if the blob's payload isn't repeatable"
     ([#^Blob blob]
      (md5-blob *blobstore*))
     ([blob-or-name blobstore-or-payload]
-      ( if (blobstore? blobstore-or-payload)
-       (.generateMD5BufferingIfNotRepeatable (.encryption (.utils (blobstore-context blobstore-or-payload)))
-               blob-or-name)
+      (if (blobstore? blobstore-or-payload)
+        (-> (blobstore-context blobstore-or-payload)
+            .utils
+            .encryption
+            .generateMD5BufferingIfNotRepeatable blob-or-name)
        (md5-blob blob-or-name blobstore-or-payload *blobstore*)))
     ([#^String name payload #^BlobStore blobstore]
      (md5-blob (blob name payload blobstore) blobstore)))
