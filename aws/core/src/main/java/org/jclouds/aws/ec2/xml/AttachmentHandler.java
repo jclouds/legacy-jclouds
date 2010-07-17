@@ -61,10 +61,8 @@ public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("volumeId")) {
          volumeId = currentText.toString().trim();
-
       } else if (qName.equals("volumeId")) {
          volumeId = currentText.toString().trim();
-
       } else if (qName.equals("status")) {
          attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
       } else if (qName.equals("instanceId")) {

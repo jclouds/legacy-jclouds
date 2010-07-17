@@ -54,8 +54,7 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "ec2.InstanceAsyncClientTest")
 public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, Array.newInstance(
-            String.class, 0).getClass());
+      Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, String[].class);
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -71,8 +70,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    }
 
    public void testDescribeInstancesArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, Array.newInstance(
-            String.class, 0).getClass());
+      Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, String[].class);
       HttpRequest request = processor.createRequest(method, null, "1", "2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");

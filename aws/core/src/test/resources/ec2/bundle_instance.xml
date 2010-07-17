@@ -1,0 +1,18 @@
+<BundleInstanceResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+	<requestId>bun-c1a540a8</requestId>
+	<bundleInstanceTask>
+		<instanceId>i-12345678</instanceId>
+		<bundleId>bun-c1a540a8</bundleId>
+		<state>bundling</state>
+		<startTime>2008-10-07T11:41:50.000Z</startTime>
+		<updateTime>2008-10-07T11:51:50.000Z</updateTime>
+		<progress>70%</progress>
+		<storage>
+			<S3>
+				<bucket>my-bucket</bucket>
+				<prefix>winami</prefix>
+			</S3>
+		</storage>
+	</bundleInstanceTask>
+</BundleInstanceResponse>
+

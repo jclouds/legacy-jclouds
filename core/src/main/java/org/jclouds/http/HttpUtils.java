@@ -417,7 +417,6 @@ public class HttpUtils {
 
    public static void addFormParamTo(HttpRequest request, String key, String value) {
       addFormParamTo(request, key, ImmutableSet.<Object> of(value));
-
    }
 
    public static void addFormParamTo(HttpRequest request, String key, Iterable<?> values) {

@@ -22,8 +22,7 @@ public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
    private EC2AsyncClient asyncClient;
    private EC2Client syncClient;
 
-   public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException,
-            ExecutionException {
+   public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert syncClient.getAMIServices() != null;
       assert syncClient.getAvailabilityZoneAndRegionServices() != null;
       assert syncClient.getElasticBlockStoreServices() != null;
@@ -32,10 +31,11 @@ public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
       assert syncClient.getKeyPairServices() != null;
       assert syncClient.getMonitoringServices() != null;
       assert syncClient.getSecurityGroupServices() != null;
+      assert syncClient.getWindowsServices() != null;
+
    }
 
-   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException,
-            ExecutionException {
+   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert asyncClient.getAMIServices() != null;
       assert asyncClient.getAvailabilityZoneAndRegionServices() != null;
       assert asyncClient.getElasticBlockStoreServices() != null;
@@ -44,6 +44,7 @@ public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
       assert asyncClient.getKeyPairServices() != null;
       assert asyncClient.getMonitoringServices() != null;
       assert asyncClient.getSecurityGroupServices() != null;
+      assert asyncClient.getWindowsServices() != null;
    }
 
    @Override

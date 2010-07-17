@@ -1,0 +1,16 @@
+<CancelBundleTaskResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+	<bundleInstanceTask>
+		<instanceId>i-12345678</instanceId>
+		<bundleId>bun-cla322b9</bundleId>
+		<state>canceling</state>
+		<startTime>2008-10-07T11:41:50.000Z</startTime>
+		<updateTime>2008-10-07T11:51:50.000Z</updateTime>
+		<progress>20%</progress>
+		<storage>
+			<S3>
+				<bucket>my-bucket</bucket>
+				<prefix>my-new-image</prefix>
+			</S3>
+		</storage>
+	</bundleInstanceTask>
+</CancelBundleTaskResponse>

@@ -28,6 +28,7 @@ import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
+import org.jclouds.aws.ec2.services.WindowsClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -73,6 +74,12 @@ public interface EC2Client {
     */
    @Delegate
    MonitoringClient getMonitoringServices();
+
+   /**
+    * Provides asynchronous access to Windows services.
+    */
+   @Delegate
+   WindowsClient getWindowsServices();
 
    /**
     * Provides synchronous access to Availability Zones and Regions services.
