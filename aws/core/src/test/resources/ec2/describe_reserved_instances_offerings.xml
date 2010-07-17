@@ -1,0 +1,15 @@
+<DescribeReservedInstancesOfferingsResponse
+	xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+	<reservedInstancesOfferingsSet>
+		<item>
+			<reservedInstancesOfferingId>4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8
+			</reservedInstancesOfferingId>
+			<instanceType>m1.small</instanceType>
+			<availabilityZone>us-east-1a</availabilityZone>
+			<duration>12</duration>
+			<fixedPrice>0.00</fixedPrice>
+			<usagePrice>0.00</usagePrice>
+			<productDescription>m1.small offering in us-east-1a</productDescription>
+		</item>
+	</reservedInstancesOfferingsSet>
+</DescribeReservedInstancesOfferingsResponse>

@@ -20,7 +20,6 @@ package org.jclouds.aws.ec2.xml;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.Region;
@@ -28,7 +27,6 @@ import org.jclouds.aws.ec2.domain.BundleTask;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
@@ -38,8 +36,6 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithResult<BundleTask> {
    private StringBuilder currentText = new StringBuilder();
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    @Inject
    protected DateService dateService;
    @Inject
